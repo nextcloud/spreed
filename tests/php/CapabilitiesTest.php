@@ -223,7 +223,7 @@ class CapabilitiesTest extends TestCase {
 		], $capabilities->getCapabilities());
 	}
 
-	public function dataGetCapabilitiesUserAllowed(): array {
+	public static function dataGetCapabilitiesUserAllowed(): array {
 		return [
 			[true, false, 'none', true, Participant::PRIVACY_PRIVATE],
 			[false, true, '1 MB', true, Participant::PRIVACY_PUBLIC],
@@ -428,7 +428,7 @@ class CapabilitiesTest extends TestCase {
 		$this->assertEquals($data['spreed']['config']['call']['recording'], $enabled);
 	}
 
-	public function dataTestConfigRecording(): array {
+	public static function dataTestConfigRecording(): array {
 		return [
 			[true],
 			[false],

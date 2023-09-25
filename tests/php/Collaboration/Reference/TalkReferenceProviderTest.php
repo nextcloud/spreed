@@ -75,7 +75,7 @@ class TalkReferenceProviderTest extends TestCase {
 		);
 	}
 
-	public function dataGetTalkAppLinkToken(): array {
+	public static function dataGetTalkAppLinkToken(): array {
 		return [
 			['https://localhost/', null],
 			['https://localhost/call', null],

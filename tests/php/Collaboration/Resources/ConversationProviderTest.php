@@ -155,7 +155,7 @@ class ConversationProviderTest extends TestCase {
 		$this->assertFalse($this->provider->canAccessResource($resource, $user));
 	}
 
-	public function dataCanAccessResourceYes(): array {
+	public static function dataCanAccessResourceYes(): array {
 		return [
 			[Participant::OWNER],
 			[Participant::MODERATOR],

@@ -71,7 +71,7 @@ class ExecutorTest extends TestCase {
 		);
 	}
 
-	public function dataExecApp(): array {
+	public static function dataExecApp(): array {
 		return [
 			['arguments1', ''],
 			['arguments2', "output from\nevent"],
@@ -115,7 +115,7 @@ class ExecutorTest extends TestCase {
 		$this->assertSame($expected, self::invokePrivate($executor, 'execApp', [$room, $message, $command, $arguments]));
 	}
 
-	public function dataExecShell(): array {
+	public static function dataExecShell(): array {
 		return [
 			['admin', 'token', '', '', ''],
 			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} {ARGUMENTS}', 'foo bar "hello bear"', 'output1'],

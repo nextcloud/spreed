@@ -50,7 +50,7 @@ class RestrictStartingCallsTest extends TestCase {
 		$this->listener = new RestrictStartingCalls($this->serverConfig, $this->participantService);
 	}
 
-	public function dataCheckStartCallPermissions(): array {
+	public static function dataCheckStartCallPermissions(): array {
 		return [
 			'default blocked' => [Room::TYPE_PUBLIC, '', false, false, true],
 

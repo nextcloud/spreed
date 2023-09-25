@@ -31,11 +31,13 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -147,7 +149,7 @@ class ListenerTest extends TestCase {
 		$this->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 	}
 
-	public function roomTypesProvider() {
+	public static function dataRoomTypes(): array {
 		$expectedMessages = [
 			[
 				'actorType' => 'users',
@@ -158,7 +160,17 @@ class ListenerTest extends TestCase {
 				'actorType' => 'users',
 				'actorId' => 'alice_actor',
 				'message' => ['message' => 'user_added', 'parameters' => ['user' => 'bob']],
-			]
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'alice_actor',
+				'message' => ['message' => 'user_added', 'parameters' => ['user' => 'carmen']],
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'alice_actor',
+				'message' => ['message' => 'user_added', 'parameters' => ['user' => 'delta']],
+			],
 		];
 
 		$allParticipants = [
@@ -172,12 +184,6 @@ class ListenerTest extends TestCase {
 				'actorId' => 'alice_actor',
 				'participantType' => Participant::USER,
 			],
-			// alice_actor adding self-joined mode
-			[
-				'actorType' => 'users',
-				'actorId' => 'alice_actor',
-				'participantType' => Participant::USER_SELF_JOINED,
-			],
 			// alice_actor added bob
 			[
 				'actorType' => 'users',
@@ -187,7 +193,13 @@ class ListenerTest extends TestCase {
 			// empty participant type
 			[
 				'actorType' => 'users',
-				'actorId' => 'alice_actor',
+				'actorId' => 'carmen',
+			],
+			// alice_actor adding self-joined mode
+			[
+				'actorType' => 'users',
+				'actorId' => 'delta',
+				'participantType' => Participant::USER_SELF_JOINED,
 			],
 		];
 
@@ -201,7 +213,7 @@ class ListenerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider roomTypesProvider
+	 * @dataProvider dataRoomTypes
 	 *
 	 * @param int $roomType
 	 */
@@ -215,6 +227,7 @@ class ListenerTest extends TestCase {
 		// TODO: add all cases
 		$event = new AddParticipantsEvent($room, $participants);
 
+		$consecutive = [];
 		foreach ($expectedMessages as $expectedMessage) {
 			$consecutive[] = [
 				$room,
@@ -224,18 +237,26 @@ class ListenerTest extends TestCase {
 				$this->dummyTime,
 				false,
 				self::DUMMY_REFERENCE_ID,
+				null,
+				false,
 			];
 		}
-		if (isset($consecutive)) {
-			$this->chatManager
+		if (!empty($consecutive)) {
+			$i = 0;
+			$this->chatManager->expects($this->exactly(count($consecutive)))
 				->method('addSystemMessage')
-				->withConsecutive(...$consecutive);
+				->willReturnCallback(function () use ($consecutive, &$i) {
+					Assert::assertArrayHasKey($i, $consecutive);
+					Assert::assertSame($consecutive[$i], func_get_args());
+					$i++;
+					return $this->createMock(IComment::class);
+				});
 		}
 
 		$this->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 	}
 
-	public function participantTypeChangeProvider() {
+	public static function dataParticipantTypeChange(): array {
 		return [
 			[
 				Attendee::ACTOR_EMAILS,
@@ -277,12 +298,7 @@ class ListenerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider participantTypeChangeProvider
-	 *
-	 * @param int $actorType
-	 * @param int $oldParticipantType
-	 * @param int $newParticipantType
-	 * @param array $expectedMessages
+	 * @dataProvider dataParticipantTypeChange
 	 */
 	public function testAfterParticipantTypeSet(string $actorType, int $oldParticipantType, int $newParticipantType, array $expectedMessages): void {
 		$this->mockLoggedInUser('alice_actor');
@@ -307,19 +323,27 @@ class ListenerTest extends TestCase {
 				json_encode($expectedMessage),
 				$this->dummyTime,
 				false,
-				self::DUMMY_REFERENCE_ID
+				self::DUMMY_REFERENCE_ID,
+				null,
+				false,
 			];
 		}
 		if (isset($consecutive)) {
-			$this->chatManager->expects($this->once())
+			$i = 0;
+			$this->chatManager->expects($this->exactly(count($consecutive)))
 				->method('addSystemMessage')
-				->withConsecutive(...$consecutive);
+				->willReturnCallback(function () use ($consecutive, &$i) {
+					Assert::assertArrayHasKey($i, $consecutive);
+					Assert::assertSame($consecutive[$i], func_get_args());
+					$i++;
+					return $this->createMock(IComment::class);
+				});
 		}
 
 		$this->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
-	public function callRecordingChangeProvider() {
+	public static function dataCallRecordingChange(): array {
 		return [
 			[
 				Room::RECORDING_VIDEO_STARTING,
@@ -549,13 +573,7 @@ class ListenerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider callRecordingChangeProvider
-	 *
-	 * @param int $newStatus
-	 * @param int $oldStatus
-	 * @param string|null $actorType
-	 * @param string|null $actorId
-	 * @param array|null $expectedMessage
+	 * @dataProvider dataCallRecordingChange
 	 */
 	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, ?array $expectedMessage): void {
 		$this->mockLoggedInUser('logged_in_user');

@@ -38,7 +38,7 @@ class ChecksumVerificationServiceTest extends TestCase {
 		$this->service = new ChecksumVerificationService();
 	}
 
-	public function dataValidateRequest(): array {
+	public static function dataValidateRequest(): array {
 		$validRandom = md5(random_bytes(15));
 		$fakeData = json_encode(['fake' => 'data']);
 		$validSecret = 'valid secret';

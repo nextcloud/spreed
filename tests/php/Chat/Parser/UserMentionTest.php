@@ -188,7 +188,7 @@ class UserMentionTest extends TestCase {
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
-	public function dataGetRichMessageWithMentionsFullyIncludedInOtherMentions() {
+	public static function dataGetRichMessageWithMentionsFullyIncludedInOtherMentions() {
 		// Based on valid characters from server/lib/private/User/Manager.php
 		return [
 			['testUser', 'testUser1', false],
@@ -224,14 +224,10 @@ class UserMentionTest extends TestCase {
 
 		$this->userManager->expects($this->exactly(2))
 			->method('getDisplayName')
-			->withConsecutive(
-				[$longerId],
-				[$baseId]
-			)
-			->willReturnOnConsecutiveCalls(
-				$longerId . ' display name',
-				$baseId . ' display name'
-			);
+			->willReturnMap([
+				[$longerId, $longerId . ' display name'],
+				[$baseId, $baseId . ' display name']
+			]);
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
@@ -275,29 +271,19 @@ class UserMentionTest extends TestCase {
 
 		$this->commentsManager->expects($this->exactly(3))
 			->method('resolveDisplayName')
-			->withConsecutive(
-				['user', 'testUser1'],
-				['user', 'testUser2'],
-				['user', 'testUser3']
-			)
-			->willReturn(
-				'testUser1 display name',
-				'testUser2 display name',
-				'testUser3 display name'
-			);
+			->willReturnMap([
+				['user', 'testUser1', 'testUser1 display name'],
+				['user', 'testUser2', 'testUser2 display name'],
+				['user', 'testUser3', 'testUser3 display name'],
+			]);
 
 		$this->userManager->expects($this->exactly(3))
 			->method('getDisplayName')
-			->withConsecutive(
-				['testUser1'],
-				['testUser2'],
-				['testUser3']
-			)
-			->willReturnOnConsecutiveCalls(
-				'testUser1 display name',
-				'testUser2 display name',
-				'testUser3 display name'
-			);
+			->willReturnMap([
+				['testUser1', 'testUser1 display name'],
+				['testUser2', 'testUser2 display name'],
+				['testUser3', 'testUser3 display name'],
+			]);
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);

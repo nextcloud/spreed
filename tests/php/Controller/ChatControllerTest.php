@@ -55,6 +55,7 @@ use OCP\IUserManager;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\UserStatus\IManager as IUserStatusManager;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -411,15 +412,23 @@ class ChatControllerTest extends TestCase {
 
 		$this->messageParser->expects($this->exactly(2))
 			->method('createMessage')
-			->withConsecutive(
-				[$this->room, $participant, $parent, $this->l],
-				[$this->room, $participant, $comment, $this->l]
-			)
-			->willReturnOnConsecutiveCalls($parentMessage, $chatMessage);
+			->willReturnMap([
+				[$this->room, $participant, $parent, $this->l, $parentMessage],
+				[$this->room, $participant, $comment, $this->l, $chatMessage],
+			]);
 
+		$i = 0;
+		$expectedCalls = [
+			[$parentMessage],
+			[$chatMessage],
+		];
 		$this->messageParser->expects($this->exactly(2))
 			->method('parseMessage')
-			->withConsecutive([$parentMessage], [$chatMessage]);
+			->willReturnCallback(function () use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey($i, $expectedCalls);
+				Assert::assertSame($expectedCalls[$i], func_get_args());
+				$i++;
+			});
 
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($participant);
@@ -750,15 +759,18 @@ class ChatControllerTest extends TestCase {
 		$participant = $this->createMock(Participant::class);
 
 		$i = 4;
+		$expectedCalls = [
+			[$this->room, $participant, $comment4, $this->l],
+			[$this->room, $participant, $comment3, $this->l],
+			[$this->room, $participant, $comment2, $this->l],
+			[$this->room, $participant, $comment1, $this->l],
+		];
 		$this->messageParser->expects($this->exactly(4))
 			->method('createMessage')
-			->withConsecutive(
-				[$this->room, $participant, $comment4, $this->l],
-				[$this->room, $participant, $comment3, $this->l],
-				[$this->room, $participant, $comment2, $this->l],
-				[$this->room, $participant, $comment1, $this->l]
-			)
-			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey(4 - $i, $expectedCalls);
+				Assert::assertSame($expectedCalls[4 - $i], func_get_args());
+
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -816,15 +828,18 @@ class ChatControllerTest extends TestCase {
 			]);
 
 		$i = 4;
+		$expectedCalls = [
+			[$this->room, $participant, $comment4, $this->l],
+			[$this->room, $participant, $comment3, $this->l],
+			[$this->room, $participant, $comment2, $this->l],
+			[$this->room, $participant, $comment1, $this->l],
+		];
 		$this->messageParser->expects($this->exactly(4))
 			->method('createMessage')
-			->withConsecutive(
-				[$this->room, $participant, $comment4, $this->l],
-				[$this->room, $participant, $comment3, $this->l],
-				[$this->room, $participant, $comment2, $this->l],
-				[$this->room, $participant, $comment1, $this->l]
-			)
-			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey(4 - $i, $expectedCalls);
+				Assert::assertSame($expectedCalls[4 - $i], func_get_args());
+
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -885,15 +900,18 @@ class ChatControllerTest extends TestCase {
 			]);
 
 		$i = 4;
+		$expectedCalls = [
+			[$this->room, $participant, $comment4, $this->l],
+			[$this->room, $participant, $comment3, $this->l],
+			[$this->room, $participant, $comment2, $this->l],
+			[$this->room, $participant, $comment1, $this->l],
+		];
 		$this->messageParser->expects($this->exactly(4))
 			->method('createMessage')
-			->withConsecutive(
-				[$this->room, $participant, $comment4, $this->l],
-				[$this->room, $participant, $comment3, $this->l],
-				[$this->room, $participant, $comment2, $this->l],
-				[$this->room, $participant, $comment1, $this->l]
-			)
-			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey(4 - $i, $expectedCalls);
+				Assert::assertSame($expectedCalls[4 - $i], func_get_args());
+
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -962,15 +980,18 @@ class ChatControllerTest extends TestCase {
 			->willReturn($testUser);
 
 		$i = 1;
-		$this->messageParser->expects($this->exactly(4))
+		$expectedCalls = [
+			[$this->room, $participant, $comment1, $this->l],
+			[$this->room, $participant, $comment2, $this->l],
+			[$this->room, $participant, $comment3, $this->l],
+			[$this->room, $participant, $comment4, $this->l],
+		];
+		$this->messageParser->expects($this->exactly(count($expectedCalls)))
 			->method('createMessage')
-			->withConsecutive(
-				[$this->room, $participant, $comment1, $this->l],
-				[$this->room, $participant, $comment2, $this->l],
-				[$this->room, $participant, $comment3, $this->l],
-				[$this->room, $participant, $comment4, $this->l]
-			)
-			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use (&$i) {
+			->willReturnCallback(function ($room, $participant, IComment $comment, $l) use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey($i - 1, $expectedCalls);
+				Assert::assertSame($expectedCalls[$i - 1], func_get_args());
+
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
@@ -1069,7 +1090,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function dataMentions() {
+	public static function dataMentions() {
 		return [
 			['tes', 10, ['exact' => []], []],
 			['foo', 20, [

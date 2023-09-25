@@ -191,7 +191,7 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($room, $this->service->createOneToOneConversation($user1, $user2));
 	}
 
-	public function dataCreateConversationInvalidNames(): array {
+	public static function dataCreateConversationInvalidNames(): array {
 		return [
 			[''],
 			['        '],
@@ -217,7 +217,7 @@ class RoomServiceTest extends TestCase {
 		$this->service->createConversation(Room::TYPE_GROUP, $name);
 	}
 
-	public function dataCreateConversationInvalidTypes(): array {
+	public static function dataCreateConversationInvalidTypes(): array {
 		return [
 			[Room::TYPE_ONE_TO_ONE],
 			[Room::TYPE_UNKNOWN],
@@ -239,7 +239,7 @@ class RoomServiceTest extends TestCase {
 		$this->service->createConversation($type, 'abc');
 	}
 
-	public function dataCreateConversationInvalidObjects(): array {
+	public static function dataCreateConversationInvalidObjects(): array {
 		return [
 			[str_repeat('a', 65), 'a', 'object_type'],
 			['a', str_repeat('a', 65), 'object_id'],
@@ -263,7 +263,7 @@ class RoomServiceTest extends TestCase {
 		$this->service->createConversation(Room::TYPE_PUBLIC, 'a', null, $type, $id);
 	}
 
-	public function dataCreateConversation(): array {
+	public static function dataCreateConversation(): array {
 		return [
 			[Room::TYPE_GROUP, 'Group conversation', 'admin', '', ''],
 			[Room::TYPE_PUBLIC, 'Public conversation', '', 'files', '123456'],
@@ -311,7 +311,7 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($room, $this->service->createConversation($type, $name, $owner, $objectType, $objectId));
 	}
 
-	public function dataPrepareConversationName(): array {
+	public static function dataPrepareConversationName(): array {
 		return [
 			['', ''],
 			['    ', ''],

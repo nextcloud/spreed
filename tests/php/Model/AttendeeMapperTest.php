@@ -44,7 +44,7 @@ class AttendeeMapperTest extends TestCase {
 		);
 	}
 
-	public function dataModifyPermissions(): array {
+	public static function dataModifyPermissions(): array {
 		return [
 			0 => [
 				[

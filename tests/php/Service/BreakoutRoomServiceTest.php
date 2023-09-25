@@ -80,7 +80,7 @@ class BreakoutRoomServiceTest extends TestCase {
 			$this->l
 		);
 	}
-	public function dataParseAttendeeMap(): array {
+	public static function dataParseAttendeeMap(): array {
 		return [
 			'Empty string means no map' => ['', 3, [], false],
 			'Empty array means no map' => ['[]', 3, [], false],

@@ -43,7 +43,7 @@ class TalkSessionTest extends TestCase {
 		$this->talkSession = new TalkSession($this->session);
 	}
 
-	public function dataGet(): array {
+	public static function dataGet(): array {
 		return [
 			'session is null' => [null, null],
 			'corrupted json' => ['{invalid json', null],
@@ -80,7 +80,7 @@ class TalkSessionTest extends TestCase {
 		$this->assertSame($expected, $this->talkSession->getPasswordForRoom('t1'));
 	}
 
-	public function dataSet(): array {
+	public static function dataSet(): array {
 		return [
 			'session is null' => [null, json_encode(['t1' => 'd1'])],
 			'corrupted json' => ['{invalid json', json_encode(['t1' => 'd1'])],
@@ -123,7 +123,7 @@ class TalkSessionTest extends TestCase {
 		$this->talkSession->setPasswordForRoom('t1', 'd1');
 	}
 
-	public function dataRemove(): array {
+	public static function dataRemove(): array {
 		return [
 			'session is null' => [null, json_encode([])],
 			'corrupted json' => ['{invalid json', json_encode([])],

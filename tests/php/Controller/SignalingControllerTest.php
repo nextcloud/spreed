@@ -705,7 +705,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function dataBackendRoomUserPublicPermissions(): array {
+	public static function dataBackendRoomUserPublicPermissions(): array {
 		return [
 			[Attendee::PERMISSIONS_DEFAULT, []],
 			[Attendee::PERMISSIONS_PUBLISH_AUDIO, ['publish-audio']],

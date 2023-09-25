@@ -93,7 +93,7 @@ class AvatarServiceTest extends TestCase {
 		}
 	}
 
-	public function dataGetAvatarVersion(): array {
+	public static function dataGetAvatarVersion(): array {
 		return [
 			['', 'STRING WITH 8 CHARS'],
 			['1', '1'],
@@ -101,7 +101,7 @@ class AvatarServiceTest extends TestCase {
 		];
 	}
 
-	public function dataGetFirstCombinedEmoji(): array {
+	public static function dataGetFirstCombinedEmoji(): array {
 		return [
 			['👋 Hello', '👋'],
 			['Only leading emojis 🚀', ''],

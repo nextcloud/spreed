@@ -105,7 +105,7 @@ class SearchPluginTest extends TestCase {
 				$this->userId,
 				$this->l,
 			])
-			->setMethods($methods)
+			->onlyMethods($methods)
 			->getMock();
 	}
 
@@ -170,7 +170,7 @@ class SearchPluginTest extends TestCase {
 		$plugin->search('fo', 10, 0, $result);
 	}
 
-	public function dataSearchUsers() {
+	public static function dataSearchUsers() {
 		return [
 			['test', [], [], [], []],
 			['test', ['current', 'foo', 'test', 'test1'], [
@@ -216,7 +216,7 @@ class SearchPluginTest extends TestCase {
 		self::invokePrivate($plugin, 'searchUsers', [$search, $userIds, $result]);
 	}
 
-	public function dataSearchGuests() {
+	public static function dataSearchGuests() {
 		return [
 			['test', [], [], []],
 			['', ['abcdef' => ''], [['abcdef' => 'Guest']], []],
@@ -269,7 +269,7 @@ class SearchPluginTest extends TestCase {
 		return $user;
 	}
 
-	public function dataCreateResult() {
+	public static function dataCreateResult() {
 		return [
 			['user', 'foo', 'bar', '', ['label' => 'bar', 'value' => ['shareType' => 'user', 'shareWith' => 'foo']]],
 			['user', 'test', 'Test', '', ['label' => 'Test', 'value' => ['shareType' => 'user', 'shareWith' => 'test']]],
@@ -304,7 +304,7 @@ class SearchPluginTest extends TestCase {
 	}
 
 
-	public function dataCreateGuestResult(): array {
+	public static function dataCreateGuestResult(): array {
 		return [
 			['1234', 'foo', ['label' => 'foo', 'value' => ['shareType' => 'guest', 'shareWith' => 'guest/1234']]],
 			['abcd', 'bar', ['label' => 'bar', 'value' => ['shareType' => 'guest', 'shareWith' => 'guest/abcd']]],
@@ -359,7 +359,7 @@ class SearchPluginTest extends TestCase {
 		$this->assertCount($totalExactMatches, $actual['exact']['groups']);
 	}
 
-	public function dataSearchGroups(): array {
+	public static function dataSearchGroups(): array {
 		return [
 			// $search, $groupIds, $isGroup, $displayName, $totalMatches, $totalExactMatches
 			['',        ['groupid'], true,  'group', 1, 0],
