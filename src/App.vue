@@ -54,6 +54,7 @@ import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 
+import { useActiveSession } from './composables/useActiveSession.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
 import browserCheck from './mixins/browserCheck.js'
@@ -92,7 +93,9 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		const supportSessionState = useActiveSession()
+
+		return { isInCall, supportSessionState }
 	},
 
 	data() {

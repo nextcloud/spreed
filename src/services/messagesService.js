@@ -67,6 +67,7 @@ const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }, op
 			lastKnownMessageId,
 			limit,
 			includeLastKnown: 0,
+			markNotificationsAsRead: 0,
 		},
 	}))
 }

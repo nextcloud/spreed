@@ -164,6 +164,18 @@ const resendInvitations = async (token, { attendeeId = null }) => {
 		attendeeId,
 	})
 }
+/**
+ * Joins the current user to a conversation specified with
+ * the token.
+ *
+ * @param {string} token The conversation token;
+ * @param {number} state Session state;
+ */
+const setSessionState = async (token, state) => {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/state', { token }),
+		{ state }
+	)
+}
 
 /**
  * Sends call notification for the given attendee in the conversation.
@@ -247,5 +259,6 @@ export {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 	setPermissions,
+	setSessionState,
 	setTyping,
 }
