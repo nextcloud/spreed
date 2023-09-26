@@ -1065,6 +1065,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sets session state to (\d) in room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSessionState(string $user, int $state, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/state',
+			['state' => $state]
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" views call-URL of room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user

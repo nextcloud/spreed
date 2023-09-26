@@ -1358,10 +1358,13 @@ class ParticipantService {
 		$helper->selectAttendeesTable($query);
 		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
-			// Currently we only care if the user has a session at all, so we can select any: #ThisIsFine
+			// Currently we only care if the user has an active session at all, so we can select any
 			->leftJoin(
 				'a', 'talk_sessions', 's',
-				$query->expr()->eq('s.attendee_id', 'a.id')
+				$query->expr()->andX(
+					$query->expr()->eq('s.attendee_id', 'a.id'),
+					$query->expr()->eq('s.state', $query->createNamedParameter(Session::STATE_ACTIVE, IQueryBuilder::PARAM_INT))
+				)
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));

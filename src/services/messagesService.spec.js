@@ -109,6 +109,7 @@ describe('messagesService', () => {
 					lastKnownMessageId: 1234,
 					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 0,
+					markNotificationsAsRead: 0,
 				},
 			}
 		)

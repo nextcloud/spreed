@@ -24,6 +24,14 @@ export const SIGNALING = {
 		CLUSTER_CONVERSATION: 'conversation_cluster',
 	},
 }
+
+export const SESSION = {
+	STATE: {
+		INACTIVE: 0,
+		ACTIVE: 1,
+	},
+}
+
 export const CHAT = {
 	FETCH_LIMIT: 100,
 	MINIMUM_VISIBLE: 5,

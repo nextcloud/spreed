@@ -126,3 +126,6 @@
 * `remind-me-later` - Support for "Remind me later" for chat messages exists
 * `bots-v1` - Support of the first version for Bots and Webhooks is available
 * `markdown-messages` - Chat messages support markdown and are rendered automatically
+
+## 18
+* `session-state` - Sessions can mark themselves as inactive, so the participant receives notifications again

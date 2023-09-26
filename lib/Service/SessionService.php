@@ -66,6 +66,18 @@ class SessionService {
 	}
 
 	/**
+	 * @throws \InvalidArgumentException
+	 */
+	public function updateSessionState(Session $session, int $state): void {
+		if (!in_array($state, [Session::STATE_INACTIVE, Session::STATE_ACTIVE], true)) {
+			throw new \InvalidArgumentException('state');
+		}
+
+		$session->setState($state);
+		$this->sessionMapper->update($session);
+	}
+
+	/**
 	 * @param int[] $ids
 	 */
 	public function deleteSessionsById(array $ids): void {

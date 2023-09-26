@@ -160,6 +160,18 @@
         + `403 Forbidden` When the current user is not a moderator or owner
         + `404 Not Found` When the given attendee was not found in the conversation
 
+## Set session state
+
+* Required capability: `session-state`
+* Method: `PUT`
+* Endpoint: `/room/{token}/participants/state`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the provided state is invalid (see [constants list](constants.md#participant-state))
+        + `404 Not Found` When the conversation could not be found for the participant
+
 ## Leave a conversation (not available for call and chat anymore)
 
 * Method: `DELETE`

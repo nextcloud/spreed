@@ -84,6 +84,8 @@ return [
 		['name' => 'Room#resendInvitations', 'url' => '/api/{apiVersion}/room/{token}/participants/resend-invitations', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::leaveRoom() */
 		['name' => 'Room#leaveRoom', 'url' => '/api/{apiVersion}/room/{token}/participants/active', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::setSessionState() */
+		['name' => 'Room#setSessionState', 'url' => '/api/{apiVersion}/room/{token}/participants/state', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::promoteModerator() */
 		['name' => 'Room#promoteModerator', 'url' => '/api/{apiVersion}/room/{token}/moderators', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::demoteModerator() */

@@ -140,6 +140,7 @@ class CapabilitiesTest extends TestCase {
 			'remind-me-later',
 			'bots-v1',
 			'markdown-messages',
+			'session-state',
 			'message-expiration',
 			'reactions',
 		];

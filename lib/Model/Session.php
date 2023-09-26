@@ -29,10 +29,6 @@ use OCP\AppFramework\Db\Entity;
  * A session is the "I'm online in this conversation" state of Talk, you get one
  * when opening the conversation while the inCall flag tells if you are just
  * online (chatting), or in a call (with audio, camera or even sip).
- * Currently it's limited to 1 per attendee, but the plan is to remove this
- * restriction in the future, so e.g. in the future you can join with your phone
- * on the SIP bridge, have your video/screenshare on the laptop and chat in the
- * mobile app.
  *
  * @method void setAttendeeId(int $attendeeId)
  * @method string getAttendeeId()
@@ -42,8 +38,13 @@ use OCP\AppFramework\Db\Entity;
  * @method int getInCall()
  * @method void setLastPing(int $lastPing)
  * @method int getLastPing()
+ * @method void setState(int $state)
+ * @method int getState()
  */
 class Session extends Entity {
+	public const STATE_INACTIVE = 0;
+	public const STATE_ACTIVE = 1;
+
 	public const SESSION_TIMEOUT = 30;
 	public const SESSION_TIMEOUT_KILL = self::SESSION_TIMEOUT * 3 + 10;
 
@@ -59,11 +60,15 @@ class Session extends Entity {
 	/** @var int */
 	protected $lastPing;
 
+	/** @var int */
+	protected $state;
+
 	public function __construct() {
 		$this->addType('attendeeId', 'int');
 		$this->addType('sessionId', 'string');
 		$this->addType('inCall', 'int');
 		$this->addType('lastPing', 'int');
+		$this->addType('state', 'int');
 	}
 
 	/**

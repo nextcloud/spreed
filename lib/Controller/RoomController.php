@@ -1226,6 +1226,18 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	#[PublicPage]
+	#[RequireParticipant]
+	public function setSessionState(int $state): DataResponse {
+		try {
+			$this->sessionService->updateSessionState($this->participant->getSession(), $state);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	#[PublicPage]
 	public function leaveRoom(string $token): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		$this->session->removeSessionForRoom($token);
