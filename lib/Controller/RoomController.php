@@ -688,7 +688,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		if ($this->userId !== null
 			&& $includeStatus
-			&& count($participants) < 100
+			&& count($participants) < Config::USER_STATUS_INTEGRATION_LIMIT
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(static function (Participant $participant) {
 				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
