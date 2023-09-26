@@ -137,8 +137,7 @@ class Capabilities implements IPublicCapability {
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
-					// Transform the JsonSerializable language tuples to arrays
-					'translations' => json_decode(json_encode($this->translationManager->getLanguages()), true),
+					'has-translation-providers' => $this->translationManager->hasProviders(),
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 				],
 				'conversations' => [
