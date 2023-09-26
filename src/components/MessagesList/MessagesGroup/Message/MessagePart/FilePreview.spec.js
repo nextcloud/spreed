@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
@@ -29,6 +30,7 @@ describe('FilePreview.vue', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		oldPixelRatio = window.devicePixelRatio
 

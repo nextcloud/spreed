@@ -51,6 +51,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import SharedItems from './SharedItems.vue'
 
+import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import { sharedItemsOrder, sharedItemTitle } from './sharedItemsConstants.js'
 
 export default {
@@ -82,7 +83,10 @@ export default {
 	emits: ['update:active-tab'],
 
 	setup() {
+		const sharedItemsStore = useSharedItemsStore()
+
 		return {
+			sharedItemsStore,
 			sharedItemTitle,
 			sharedItemsOrder,
 		}
@@ -130,10 +134,7 @@ export default {
 
 		async fetchItems(type) {
 			this.isRequestingMoreItems[this.activeTab] = true
-			const { hasMoreItems } = await this.$store.dispatch('getSharedItems', {
-				token: this.token,
-				type,
-			})
+			const { hasMoreItems } = await this.sharedItemsStore.getSharedItems(this.token, type)
 			if (hasMoreItems === false) {
 				this.hasFetchedAllItems[this.activeTab] = true
 			}

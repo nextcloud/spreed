@@ -86,6 +86,7 @@ import AudioPlayer from './AudioPlayer.vue'
 
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.js'
+import { useSharedItemsStore } from '../../../../../stores/sharedItems.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -244,10 +245,12 @@ export default {
 
 	setup() {
 		const { openViewer, generateViewerObject } = useViewer()
+		const sharedItemsStore = useSharedItemsStore()
 
 		return {
 			openViewer,
 			generateViewerObject,
+			sharedItemsStore,
 		}
 	},
 
@@ -491,11 +494,10 @@ export default {
 					.map(item => this.generateViewerObject(item.messageParameters.file))
 
 				// Get available media files from store and put them to the list to navigate through slides
-				const mediaFiles = this.$store.getters.sharedItems(this.token).media
+				const mediaFiles = this.sharedItemsStore.sharedItems(this.token).media
 				const list = getRevertedList(mediaFiles)
 				const loadMore = async () => {
-					const { messages } = await this.$store.dispatch('getSharedItems',
-						{ token: this.token, type: SHARED_ITEM.TYPES.MEDIA })
+					const { messages } = await this.sharedItemsStore.getSharedItems(this.token, SHARED_ITEM.TYPES.MEDIA)
 					return getRevertedList(messages)
 				}
 
