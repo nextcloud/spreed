@@ -291,25 +291,27 @@ export default {
 
 	watch: {
 		conversation(newConversation, oldConversation) {
-			if (!this.isRenamingConversation) {
-				this.conversationName = this.conversation.displayName
-			}
+			this.$nextTick(() => {
+				if (!this.isRenamingConversation) {
+					this.conversationName = this.conversation.displayName
+				}
 
-			if (newConversation.token === oldConversation.token || this.isOneToOne) {
-				return
-			}
+				if (newConversation.token === oldConversation.token || this.isOneToOne) {
+					return
+				}
 
-			// Remain on "breakout-rooms" tab, when switching back to main room
-			if (this.breakoutRoomsConfigured && this.activeTab === 'breakout-rooms') {
-				return
-			}
+				// Remain on "breakout-rooms" tab, when switching back to main room
+				if (this.breakoutRoomsConfigured && this.activeTab === 'breakout-rooms') {
+					return
+				}
 
-			// In other case switch to other tabs
-			if (this.isInCall) {
-				this.activeTab = 'chat'
-			} else {
-				this.activeTab = 'participants'
-			}
+				// In other case switch to other tabs
+				if (this.isInCall) {
+					this.activeTab = 'chat'
+				} else {
+					this.activeTab = 'participants'
+				}
+			})
 		},
 
 		isOneToOne: {
