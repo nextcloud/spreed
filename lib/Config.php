@@ -43,6 +43,13 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	/**
+	 * Currently limiting to 1k users because the user_status API would yield
+	 * an error on Oracle otherwise. Clients should use a virtual scrolling
+	 * mechanism so the data should not be a problem nowadays
+	 */
+	public const USER_STATUS_INTEGRATION_LIMIT = 1000;
+
 	protected array $canEnableSIP = [];
 
 	public function __construct(
