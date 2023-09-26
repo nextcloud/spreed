@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<div v-if="!loading && active">
+	<LoadingComponent v-if="loading" class="tab-loading" />
+	<div v-else>
+		<!-- Shared items grouped by type -->
 		<template v-for="type in sharedItemsOrder">
 			<div v-if="sharedItems[type]" :key="type">
 				<NcAppNavigationCaption :title="getTitle(type)" />
@@ -77,6 +79,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 
+import LoadingComponent from '../../LoadingComponent.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 
@@ -90,13 +93,14 @@ export default {
 	components: {
 		SharedItems,
 		CollectionList,
+		DotsHorizontal,
+		FolderMultipleImage,
+		LoadingComponent,
 		NcAppNavigationCaption,
 		NcRelatedResourcesPanel,
 		NcButton,
 		NcEmptyContent,
 		SharedItemsBrowser,
-		DotsHorizontal,
-		FolderMultipleImage,
 	},
 
 	mixins: [sharedItems],
@@ -142,25 +146,21 @@ export default {
 		hasSharedItems() {
 			return Object.keys(this.$store.getters.sharedItems(this.token)).length > 0
 		},
+
+		isSidebarOpen() {
+			return this.$store.getters.getSidebarStatus
+		},
+
+		sharedItemsIdentifier() {
+			return this.token + ':' + this.active + ':' + this.isSidebarOpen
+		},
 	},
 
 	watch: {
-		active: {
-			immediate: true,
-			handler(newValue) {
-				if (newValue && this.token) {
-					this.getSharedItemsOverview()
-				}
-			},
-		},
-
-		token: {
-			immediate: true,
-			handler(newValue) {
-				if (newValue && this.active) {
-					this.getSharedItemsOverview()
-				}
-			},
+		sharedItemsIdentifier() {
+			if (this.token && this.active && this.isSidebarOpen) {
+				this.getSharedItemsOverview()
+			}
 		},
 	},
 
@@ -231,5 +231,9 @@ export default {
 			color: var(--color-primary-element) !important;
 		}
 	}
+}
+
+.tab-loading {
+	margin-top: 50%;
 }
 </style>
