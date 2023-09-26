@@ -335,10 +335,11 @@ export default {
 					return
 				}
 
-			// In other case switch to other tabs
-			if (!this.isOneToOne) {
-				this.activeTab = 'participants'
-			}
+				// In other case switch to other tabs
+				if (!this.isOneToOne) {
+					this.activeTab = 'participants'
+				}
+			})
 		},
 
 		token() {
