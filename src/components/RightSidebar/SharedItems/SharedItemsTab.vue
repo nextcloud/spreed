@@ -94,6 +94,7 @@ import LoadingComponent from '../../LoadingComponent.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
 
+import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import {
 	sharedItemButtonTitle,
 	sharedItemsOrder,
@@ -126,7 +127,9 @@ export default {
 	},
 
 	setup() {
+		const sharedItemsStore = useSharedItemsStore()
 		return {
+			sharedItemsStore,
 			sharedItemButtonTitle,
 			sharedItemTitle,
 			sharedItemsOrder,
@@ -157,15 +160,15 @@ export default {
 		},
 
 		loading() {
-			return !this.$store.getters.isOverviewLoaded(this.token)
+			return !this.sharedItemsStore.overviewLoaded[this.token]
 		},
 
 		sharedItems() {
-			return this.$store.getters.sharedItems(this.token)
+			return this.sharedItemsStore.sharedItems(this.token)
 		},
 
 		hasSharedItems() {
-			return Object.keys(this.$store.getters.sharedItems(this.token)).length > 0
+			return Object.keys(this.sharedItems).length > 0
 		},
 
 		isSidebarOpen() {
@@ -180,16 +183,12 @@ export default {
 	watch: {
 		sharedItemsIdentifier() {
 			if (this.token && this.active && this.isSidebarOpen) {
-				this.getSharedItemsOverview()
+				this.sharedItemsStore.getSharedItemsOverview(this.token)
 			}
 		},
 	},
 
 	methods: {
-		getSharedItemsOverview() {
-			this.$store.dispatch('getSharedItemsOverview', { token: this.token })
-		},
-
 		hasMore(type, items) {
 			return Object.values(items).length > this.limit(type)
 		},
