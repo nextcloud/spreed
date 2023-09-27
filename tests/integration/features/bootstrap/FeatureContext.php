@@ -3842,10 +3842,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^last response body (contains|does not contain|starts with|starts not with|ends with|ends not with) "([^"]*)"$/
+	 * @When /^last response body (contains|does not contain|starts with|starts not with|ends with|ends not with) "([^"]*)"(| with newlines)$/
 	 * @param string $needle
 	 */
-	public function lastResponseBodyContains(string $comparison, string $needle) {
+	public function lastResponseBodyContains(string $comparison, string $needle, string $replaceNWithNewlines) {
+		if ($replaceNWithNewlines) {
+			$needle = str_replace('\n', "\n", $needle);
+		}
+
 		if ($comparison === 'contains') {
 			Assert::assertStringContainsString($needle, $this->response->getBody()->getContents());
 		} elseif ($comparison === 'does not contain') {
