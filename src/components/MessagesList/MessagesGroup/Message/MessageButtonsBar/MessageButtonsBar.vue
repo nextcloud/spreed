@@ -111,6 +111,14 @@
 						</template>
 						{{ t('spreed', 'Go to file') }}
 					</NcActionLink>
+					<NcActionButton v-if="canForwardMessage && !isInNoteToSelf"
+						close-after-click
+						@click="forwardToNote">
+						<template #icon>
+							<Note :size="16" />
+						</template>
+						{{ t('spreed', 'Add to Note') }}
+					</NcActionButton>
 					<NcActionButton v-if="canForwardMessage"
 						close-after-click
 						@click.stop="openForwarder">
@@ -242,6 +250,7 @@
 <script>
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
 import data from 'emoji-mart-vue-fast/data/all.json'
+import cloneDeep from 'lodash/cloneDeep.js'
 
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
@@ -256,6 +265,7 @@ import DeleteIcon from 'vue-material-design-icons/Delete.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
+import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
@@ -311,6 +321,7 @@ export default {
 		EmoticonOutline,
 		EyeOffOutline,
 		File,
+		Note,
 		OpenInNewIcon,
 		Plus,
 		Reply,
@@ -536,6 +547,10 @@ export default {
 				&& this.messageParameters?.object?.type === 'talk-poll'
 		},
 
+		isInNoteToSelf() {
+			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
 		canForwardMessage() {
 			return !this.isCurrentGuest
 				&& !this.isFileShare
@@ -700,6 +715,54 @@ export default {
 		openReactionsMenu() {
 			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isReactionsMenuOpen', true)
+		},
+
+		async forwardToNote() {
+			const NoteToSelf = this.$store.getters.conversationsList.filter(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)[0]
+			const messageToBeForwarded = cloneDeep(this.messageObject)
+			// Overwrite the Note-To-Self conversation token
+			messageToBeForwarded.token = NoteToSelf.token
+
+			if (messageToBeForwarded.parent) {
+				delete messageToBeForwarded.parent
+			}
+
+			if (messageToBeForwarded.message === '{object}' && messageToBeForwarded.messageParameters.object) {
+				const richObject = messageToBeForwarded.messageParameters.object
+				try {
+					await this.$store.dispatch('forwardRichObject', {
+						token: this.token,
+						richObject: {
+							objectId: richObject.id,
+							objectType: richObject.type,
+							metaData: JSON.stringify(richObject),
+							referenceId: '',
+						},
+					})
+					showSuccess(t('spreed', 'Message added to Note to self'))
+				} catch (error) {
+					console.error('Error while adding message to Note', error)
+					showError(t('spreed', 'Error while adding message to Note'))
+				}
+				return
+			}
+
+			// If there are mentions in the message to be forwarded, replace them in the message
+			// text.
+			if (this.mentions) {
+				for (const mention in this.mentions) {
+					messageToBeForwarded.message = messageToBeForwarded.message.replace(`{${mention}}`, '@' + this.mentions[mention].name)
+				}
+			}
+
+			try {
+				await this.$store.dispatch('forwardMessage', { messageToBeForwarded })
+				showSuccess(t('spreed', 'Message added to Note to self'))
+			} catch (error) {
+				console.error('Error while adding message to Note', error)
+				showError(t('spreed', 'Error while adding message to Note'))
+			}
+
 		},
 
 		openForwarder() {
