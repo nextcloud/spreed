@@ -36,7 +36,8 @@
 
 		<template v-if="!isBreakoutRoom">
 			<!-- Notifications settings and devices preview screen -->
-			<NcAppSettingsSection id="notifications"
+			<NcAppSettingsSection v-if="!isNoteToSelf"
+				id="notifications"
 				:title="t('spreed', 'Personal')">
 				<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 					type="switch">
@@ -49,8 +50,8 @@
 			<NcAppSettingsSection v-if="canFullModerate"
 				id="conversation-settings"
 				:title="t('spreed', 'Moderation')">
-				<ListableSettings :token="token" />
-				<LinkShareSettings ref="linkShareSettings" />
+				<ListableSettings v-if="!isNoteToSelf" :token="token" />
+				<LinkShareSettings v-if="!isNoteToSelf" ref="linkShareSettings" />
 				<ExpirationSettings :token="token" can-full-moderate />
 			</NcAppSettingsSection>
 			<NcAppSettingsSection v-else
@@ -60,7 +61,7 @@
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
-			<NcAppSettingsSection v-if="canFullModerate"
+			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
 				id="meeting"
 				:title="t('spreed', 'Meeting')">
 				<LobbySettings :token="token" />
@@ -68,7 +69,7 @@
 			</NcAppSettingsSection>
 
 			<!-- Conversation permissions -->
-			<NcAppSettingsSection v-if="canFullModerate"
+			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
 				id="permissions"
 				:title="t('spreed', 'Permissions')">
 				<ConversationPermissionsSettings :token="token" />
@@ -99,7 +100,7 @@
 			<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
 				id="dangerzone"
 				:title="t('spreed', 'Danger zone')">
-				<LockingSettings :token="token" />
+				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
 				<DangerZone :conversation="conversation"
 					:can-leave-conversation="canLeaveConversation"
 					:can-delete-conversation="canDeleteConversation" />
@@ -171,6 +172,10 @@ export default {
 
 		canUserEnableSIP() {
 			return this.conversation.canEnableSIP
+		},
+
+		isNoteToSelf() {
+			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
 		},
 
 		token() {
