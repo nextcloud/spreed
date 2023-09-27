@@ -32,10 +32,7 @@
 		:counter-type="counterType"
 		@click="onClick">
 		<template #icon>
-			<ConversationIcon :item="item"
-				:hide-favorite="false"
-				:hide-call="false"
-				:disable-menu="true" />
+			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
 		</template>
 		<template #subtitle>
 			<strong v-if="item.unreadMessages"

@@ -33,10 +33,7 @@
 				:sub-text="getSubText(item)"
 				:item="item">
 				<template #avatar>
-					<ConversationIcon :item="item"
-						:hide-favorite="true"
-						:hide-call="false"
-						:disable-menu="true" />
+					<ConversationIcon :item="item" :hide-call="false" />
 				</template>
 			</NcDashboardWidgetItem>
 		</template>

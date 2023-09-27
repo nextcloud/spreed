@@ -44,18 +44,16 @@
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status="showUserStatus"
-			:show-user-status-compact="disableMenu"
+			:show-user-status="!hideUserStatus"
+			:show-user-status-compact="!showUserOnlineStatus"
 			:menu-container="menuContainer"
 			menu-position="left"
 			class="conversation-icon__avatar" />
-		<div v-if="showCall"
-			class="overlap-icon">
+		<div v-if="showCall" class="overlap-icon">
 			<VideoIcon :size="20" :fill-color="'#E9322D'" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
-		<div v-else-if="showFavorite"
-			class="overlap-icon">
+		<div v-else-if="showFavorite" class="overlap-icon">
 			<Star :size="20" :fill-color="'#FFCC00'" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
@@ -101,12 +99,17 @@ export default {
 
 		disableMenu: {
 			type: Boolean,
+			default: true,
+		},
+
+		hideUserStatus: {
+			type: Boolean,
 			default: false,
 		},
 
-		showUserStatus: {
+		showUserOnlineStatus: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 
 		item: {
@@ -145,7 +148,7 @@ export default {
 		},
 
 		preloadedUserStatus() {
-			if (this.showUserStatus && Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
+			if (!this.hideUserStatus && Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
 				// We preloaded the status
 				return {
 					status: this.item.status || null,

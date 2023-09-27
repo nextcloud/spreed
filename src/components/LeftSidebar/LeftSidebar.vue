@@ -171,7 +171,7 @@
 								:title="item.label"
 								@click="createAndJoinConversation(item)">
 								<template #icon>
-									<ConversationIcon :item="iconData(item)" disable-menu />
+									<ConversationIcon :item="iconData(item)" />
 								</template>
 							</NcListItem>
 						</template>
@@ -187,7 +187,7 @@
 									:title="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
-										<ConversationIcon :item="iconData(item)" disable-menu />
+										<ConversationIcon :item="iconData(item)" />
 									</template>
 								</NcListItem>
 							</template>
@@ -201,7 +201,7 @@
 									:title="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
-										<ConversationIcon :item="iconData(item)" disable-menu />
+										<ConversationIcon :item="iconData(item)" />
 									</template>
 								</NcListItem>
 							</template>
