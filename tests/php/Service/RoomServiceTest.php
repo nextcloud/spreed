@@ -222,7 +222,7 @@ class RoomServiceTest extends TestCase {
 			[Room::TYPE_ONE_TO_ONE],
 			[Room::TYPE_UNKNOWN],
 			[Room::TYPE_ONE_TO_ONE_FORMER],
-			[6],
+			[7],
 		];
 	}
 

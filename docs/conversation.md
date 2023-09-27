@@ -154,6 +154,39 @@
 
     - Data: See array definition in `Get user´s conversations`
 
+## Get "Note-to-self" conversation
+
+The conversation is like a group conversation and the user is the owner, but with the following limitations:
+
+* Can not add participants to the conversation
+* Can not allow guests
+* Can not make read-only
+* Can not open the conversations to users or guests
+* Can not change permissions
+* Can not set lobby
+* Can not enable SIP
+* Can not configure breakout rooms
+* Can not call
+
+If the conversation does not exist at the moment, it will be generated and the user added automatically.
+
+* Required capability: `note-to-self`
+* Method: `GET`
+* Endpoint: `/room/note-to-self`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` When the user is not logged in
+
+    - Header:
+
+| field                   | type   | Description                                                                                                                                              |
+|-------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed. |
+
+    - Data: See array definition in `Get user´s conversations`
+
 ## Get open conversations
 
 * Required capability: `listable-rooms`

@@ -128,6 +128,7 @@ class RoomService {
 			Room::TYPE_GROUP,
 			Room::TYPE_PUBLIC,
 			Room::TYPE_CHANGELOG,
+			Room::TYPE_NOTE_TO_SELF,
 		], true)) {
 			throw new InvalidArgumentException('type');
 		}
@@ -167,6 +168,10 @@ class RoomService {
 
 	public function setPermissions(Room $room, string $level, string $method, int $permissions, bool $resetCustomPermissions): bool {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			return false;
+		}
+
+		if ($room->getType() === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
 
@@ -408,6 +413,10 @@ class RoomService {
 		}
 
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			return false;
+		}
+
+		if ($room->getType() === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
 

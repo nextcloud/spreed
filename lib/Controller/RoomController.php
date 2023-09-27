@@ -29,6 +29,7 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
@@ -51,6 +52,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
+use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
@@ -95,6 +97,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected Manager $manager,
 		protected RoomService $roomService,
 		protected BreakoutRoomService $breakoutRoomService,
+		protected NoteToSelfService $noteToSelfService,
 		protected ParticipantService $participantService,
 		protected SessionService $sessionService,
 		protected GuestManager $guestManager,
@@ -155,6 +158,8 @@ class RoomController extends AEnvironmentAwareController {
 
 		$event = new UserEvent($this->userId);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
+		$event = new BeforeRoomsFetchEvent($this->userId);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($noStatusUpdate === 0) {
 			$isMobileApp = $this->request->isUserAgent([
@@ -323,6 +328,18 @@ class RoomController extends AEnvironmentAwareController {
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
+	}
+
+	/**
+	 * Get the "Note to self" conversation for the user
+	 *
+	 * It will be automatically created when it is currently missing
+	 */
+	#[NoAdminRequired]
+	public function getNoteToSelfConversation(): DataResponse {
+		$room = $this->noteToSelfService->ensureNoteToSelfExistsForUser($this->userId);
+		$participant = $this->participantService->getParticipant($room, $this->userId, false);
+		return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $this->getTalkHashHeader());
 	}
 
 	/**
@@ -822,6 +839,7 @@ class RoomController extends AEnvironmentAwareController {
 	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $this->room->getType() === Room::TYPE_NOTE_TO_SELF
 			|| $this->room->getObjectType() === 'share:password') {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

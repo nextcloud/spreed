@@ -281,7 +281,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$rooms = $this->getDataFromResponse($this->response);
 
 		$rooms = array_filter($rooms, function ($room) {
-			return $room['type'] !== 4;
+			// Filter out "Talk updates" and "Note to self" conversations
+			return $room['type'] !== 4 && $room['type'] !== 6;
 		});
 
 		if ($formData === null) {
@@ -314,7 +315,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$rooms = $this->getDataFromResponse($this->response);
 
 		$rooms = array_filter($rooms, function ($room) {
-			return $room['type'] !== 4;
+			// Filter out "Talk updates" and "Note to self" conversations
+			return $room['type'] !== 4 && $room['type'] !== 6;
 		});
 
 		if ($formData === null) {
@@ -555,7 +557,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$rooms = $this->getDataFromResponse($this->response);
 
 		$rooms = array_filter($rooms, function ($room) {
-			return $room['type'] !== 4;
+			// Filter out "Talk updates" and "Note to self" conversations
+			return $room['type'] !== 4 && $room['type'] !== 6;
 		});
 
 		if ($isParticipant) {
