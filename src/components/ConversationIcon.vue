@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<div ref="conversation-icon"
-		class="conversation-icon"
+	<div class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
 		<div v-if="iconClass"
@@ -130,20 +129,10 @@ export default {
 			default: false,
 		},
 
-		/**
-		 * Passing in true will make this component fill all the available space in its container.
-		 * This is not reactive as it will take the size of the container once mounted.
-		 */
-		isBig: {
-			type: Boolean,
-			default: false,
+		size: {
+			type: Number,
+			default: 44,
 		},
-	},
-
-	data() {
-		return {
-			parentElement: undefined,
-		}
 	},
 
 	computed: {
@@ -217,14 +206,6 @@ export default {
 			return undefined
 		},
 
-		size() {
-			if (this.isBig && this.parentElement) {
-				return Math.min(this.parentElement.clientHeight, this.parentElement.clientWidth)
-			} else {
-				return 44
-			}
-		},
-
 		isOneToOne() {
 			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
@@ -241,11 +222,6 @@ export default {
 				avatarVersion: this.item.avatarVersion,
 			})
 		},
-	},
-
-	mounted() {
-		// Get the size of the parent once the component is mounted
-		this.parentElement = this.$refs['conversation-icon'].parentElement
 	},
 }
 </script>
