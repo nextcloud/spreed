@@ -40,7 +40,7 @@
 			:source="participant.source || participant.actorType"
 			:disable-menu="isSearched"
 			disable-tooltip
-			:show-user-status="showUserStatus && !isSearched"
+			:show-user-status="showUserStatus"
 			:preloaded-user-status="preloadedUserStatus"
 			:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
 			:offline="isOffline" />
