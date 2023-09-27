@@ -72,6 +72,7 @@ export const CONVERSATION = {
 		PUBLIC: 3,
 		CHANGELOG: 4,
 		ONE_TO_ONE_FORMER: 5,
+		NOTE_TO_SELF: 6,
 	},
 
 	BREAKOUT_ROOM_MODE: {
