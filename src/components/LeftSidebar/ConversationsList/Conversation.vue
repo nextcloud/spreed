@@ -80,7 +80,7 @@
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
-			<NcActionButton v-if="canLeaveConversation && !isNoteToSelf"
+			<NcActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
 				@click="leaveConversation">
 				<template #icon>

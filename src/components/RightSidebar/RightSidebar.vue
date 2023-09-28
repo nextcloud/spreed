@@ -41,7 +41,7 @@
 			</template>
 			<ChatView :is-visible="opened" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="(getUserId || isModeratorOrUser) && !isOneToOne"
+		<NcAppSidebarTab v-if="showParticipantsTab"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
@@ -266,6 +266,14 @@ export default {
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === 'room')
 		},
 
+		showParticipantsTab() {
+			return (this.getUserId || this.isModeratorOrUser) && !this.isOneToOne && !this.isNoteToSelf
+		},
+
+		isNoteToSelf() {
+			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
 		breakoutRoomsText() {
 			return t('spreed', 'Breakout rooms')
 		},
@@ -292,6 +300,15 @@ export default {
 			} else {
 				this.activeTab = 'participants'
 			}
+		},
+
+		isNoteToSelf: {
+			immediate: true,
+			handler(value) {
+				if (value) {
+					this.activeTab = 'shared-items'
+				}
+			},
 		},
 
 		isOneToOne: {

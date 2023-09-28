@@ -117,7 +117,7 @@
 						<template #icon>
 							<Note :size="16" />
 						</template>
-						{{ t('spreed', 'Add to Note') }}
+						{{ t('spreed', 'Note to self') }}
 					</NcActionButton>
 					<NcActionButton v-if="canForwardMessage"
 						close-after-click
@@ -287,6 +287,7 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import Forwarder from './Forwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { fetchNoteToSelfConversation } from '../../../../../services/conversationsService.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 
@@ -718,7 +719,12 @@ export default {
 		},
 
 		async forwardToNote() {
-			const NoteToSelf = this.$store.getters.conversationsList.filter(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)[0]
+			let NoteToSelf = this.$store.getters.conversationsList.filter(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)?.[0]
+			if (!NoteToSelf) {
+				const response = await fetchNoteToSelfConversation()
+				NoteToSelf = response.data.ocs.data
+				this.$store.dispatch('addConversation', NoteToSelf)
+			}
 			const messageToBeForwarded = cloneDeep(this.messageObject)
 			// Overwrite the Note-To-Self conversation token
 			messageToBeForwarded.token = NoteToSelf.token
@@ -739,10 +745,10 @@ export default {
 							referenceId: '',
 						},
 					})
-					showSuccess(t('spreed', 'Message added to Note to self'))
+					showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
 				} catch (error) {
-					console.error('Error while adding message to Note', error)
-					showError(t('spreed', 'Error while adding message to Note'))
+					console.error('Error while forwarding message to "Note to self"', error)
+					showError(t('spreed', 'Error while forwarding message to "Note to self"'))
 				}
 				return
 			}
@@ -757,10 +763,10 @@ export default {
 
 			try {
 				await this.$store.dispatch('forwardMessage', { messageToBeForwarded })
-				showSuccess(t('spreed', 'Message added to Note to self'))
+				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
-				console.error('Error while adding message to Note', error)
-				showError(t('spreed', 'Error while adding message to Note'))
+				console.error('Error while forwarding message to "Note to self"', error)
+				showError(t('spreed', 'Error while forwarding message to "Note to self"'))
 			}
 
 		},
