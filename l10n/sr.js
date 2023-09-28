@@ -1468,6 +1468,7 @@ OC.L10N.register(
     "Show all call recordings" : "Прикажи све снимке позива",
     "Show all audio" : "Прикажи сав звук",
     "Show all other" : "Прикажи све остало",
+    "Session has been marked as inactive" : "Сесија је означена као неактивна",
     "You reconnected to the call" : "Поново сте се повезали на позив",
     "{actor} reconnected to the call" : "{actor} се поново придружио позиву",
     "You added {user0} and {user1}" : "Додали сте кориснике {user0} и {user1}",

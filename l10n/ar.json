@@ -1466,6 +1466,7 @@
     "Show all call recordings" : "عرض جميع تسجيلات المكالمات",
     "Show all audio" : "عرض كل الأصوات",
     "Show all other" : "عرض كل الآخرين",
+    "Session has been marked as inactive" : "جلسة العمل تمّ تمييزها كـ\"غير نشطة\"",
     "You reconnected to the call" : "تمّت إعادة توصيلك بالمكالمة",
     "{actor} reconnected to the call" : "تمّت إعادة توصيل {actor} بالمكالمة",
     "You added {user0} and {user1}" : "أنت قمت بإضافة {user0} و  {user1}",
