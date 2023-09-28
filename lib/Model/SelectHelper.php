@@ -84,6 +84,7 @@ class SelectHelper {
 			->addSelect($alias . 'permissions')
 			->addSelect($alias . 'access_token')
 			->addSelect($alias . 'remote_id')
+			->addSelect($alias . 'phone_number')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

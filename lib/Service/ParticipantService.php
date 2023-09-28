@@ -514,6 +514,9 @@ class ParticipantService {
 			if (isset($participant['remoteId'])) {
 				$attendee->setRemoteId($participant['remoteId']);
 			}
+			if (isset($participant['phoneNumber'])) {
+				$attendee->setPhoneNumber($participant['phoneNumber']);
+			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);

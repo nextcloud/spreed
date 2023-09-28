@@ -77,6 +77,7 @@ use OCP\HintException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\IPhoneNumberUtil;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -119,6 +120,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected IConfig $config,
 		protected Config $talkConfig,
 		protected ICloudIdManager $cloudIdManager,
+		protected IPhoneNumberUtil $phoneNumberUtil,
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
 	) {
@@ -915,6 +917,7 @@ class RoomController extends AEnvironmentAwareController {
 				'permissions' => $participant->getPermissions(),
 				'attendeePermissions' => $participant->getAttendee()->getPermissions(),
 				'attendeePin' => '',
+				'phoneNumber' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()
 				&& $this->room->getSIPEnabled() !== Webinary::SIP_DISABLED
@@ -978,7 +981,14 @@ class RoomController extends AEnvironmentAwareController {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+				if ($this->talkConfig->isSIPConfigured()
+					&& $this->participant->hasModeratorPermissions(false)) {
+					$result['phoneNumber'] = $participant->getAttendee()->getPhoneNumber();
+				}
 			}
+
 
 			$results[$attendeeId] = $result;
 		}
@@ -1096,6 +1106,28 @@ class RoomController extends AEnvironmentAwareController {
 				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
 				'actorId' => $newUser->getId(),
 				'displayName' => $newUser->getDisplayId(),
+			];
+		} elseif ($source === 'phones') {
+			if (!$this->talkConfig->isSIPConfigured()) {
+				// FIXME require a special config?
+				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+			}
+
+			$phoneRegion = $this->config->getSystemValueString('default_phone_region');
+			if ($phoneRegion === '') {
+				$phoneRegion = null;
+			}
+
+			$formattedNumber = $this->phoneNumberUtil->convertToStandardFormat($newParticipant, $phoneRegion);
+			if ($formattedNumber === null) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+
+			$participantsToAdd[] = [
+				'actorType' => Attendee::ACTOR_PHONES,
+				'actorId' => sha1($formattedNumber . '#' . $this->timeFactory->getTime()),
+				'displayName' => substr($formattedNumber, 0, -4) . '…', // FIXME Allow the UI to hand in a name (when selected from contacts?)
+				'phoneNumber' => $formattedNumber,
 			];
 		} else {
 			$this->logger->error('Trying to add participant from unsupported source ' . $source);
