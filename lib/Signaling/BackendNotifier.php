@@ -447,6 +447,42 @@ class BackendNotifier {
 	}
 
 	/**
+	 * Send dial-out requests to the HPB
+	 *
+	 * @param Room $room
+	 * @throws \Exception
+	 */
+	public function dialOut(Room $room): void {
+		$attendees = $this->participantService->getActorsByType($room, Attendee::ACTOR_PHONES);
+		foreach ($attendees as $attendee) {
+			if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
+				continue;
+			}
+
+			$start = microtime(true);
+			/* FIXME get callId from server response */
+			$this->backendRequest($room, [
+				'type' => 'dialout',
+				'dialout' => [
+					'number' => $attendee->getPhoneNumber(),
+					'options' => [
+						'attendeeId' => $attendee->getId(),
+						'actorType' => $attendee->getActorType(),
+						'actorId' => $attendee->getActorId(),
+					]
+				],
+			]);
+			$duration = microtime(true) - $start;
+			$this->logger->debug('Room dial out: {token} {number} ({duration})', [
+				'token' => $room->getToken(),
+				'number' => $attendee->getPhoneNumber(),
+				'duration' => sprintf('%.2f', $duration),
+				'app' => 'spreed-hpb',
+			]);
+		}
+	}
+
+	/**
 	 * Send a message to all sessions currently joined in a room. The message
 	 * will be received by "processRoomMessageEvent" in "signaling.js".
 	 *
