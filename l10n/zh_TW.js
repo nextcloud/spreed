@@ -1468,6 +1468,7 @@ OC.L10N.register(
     "Show all call recordings" : "顯示所有通話錄音",
     "Show all audio" : "顯示所有音訊",
     "Show all other" : "顯示所有其他東西",
+    "Session has been marked as inactive" : "工作階段已被標記為非作用中",
     "You reconnected to the call" : "您已重新連線至通話",
     "{actor} reconnected to the call" : "{actor} 已重新連線至通話",
     "You added {user0} and {user1}" : "您已新增 {user0} 與 {user1}",

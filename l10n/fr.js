@@ -1288,7 +1288,7 @@ OC.L10N.register(
     "Grant all permissions" : "Accorder toutes les permissions",
     "Remove all permissions" : "Retirer toutes les permissions",
     "Remove group and members" : "Supprimer un groupe et ses membres",
-    "Remove participant" : "Supprimer un participant",
+    "Remove participant" : "Retirer le participant",
     "Settings for participant \"{user}\"" : "Paramètres du participant \"{user}\"",
     "Add participant \"{user}\"" : "Ajouter le participant \"{user}\"",
     "Participant \"{user}\"" : "Participant \"{user}\"",
