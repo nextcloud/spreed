@@ -1468,6 +1468,7 @@ OC.L10N.register(
     "Show all call recordings" : "Show all call recordings",
     "Show all audio" : "Show all audio",
     "Show all other" : "Show all other",
+    "Session has been marked as inactive" : "Session has been marked as inactive",
     "You reconnected to the call" : "You reconnected to the call",
     "{actor} reconnected to the call" : "{actor} reconnected to the call",
     "You added {user0} and {user1}" : "You added {user0} and {user1}",
