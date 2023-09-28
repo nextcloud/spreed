@@ -1466,6 +1466,7 @@
     "Show all call recordings" : "顯示所有通話錄音",
     "Show all audio" : "顯示所有音頻",
     "Show all other" : "顯示所有其他",
+    "Session has been marked as inactive" : "該工作節話已被標記為非活動狀態",
     "You reconnected to the call" : "您已重新連線至通話",
     "{actor} reconnected to the call" : "{actor} 已重新連線至通話",
     "You added {user0} and {user1}" : "您添加了 {user0} 與 {user1}",

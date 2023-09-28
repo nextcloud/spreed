@@ -1468,6 +1468,7 @@ OC.L10N.register(
     "Show all call recordings" : "Alle Anrufaufnahmen ansehen",
     "Show all audio" : "Alle Audios anzeigen",
     "Show all other" : "Alle anderen anzeigen",
+    "Session has been marked as inactive" : "Die Sitzung wurde als inaktiv markiert",
     "You reconnected to the call" : "Sie haben sich wieder mit dem Anruf verbunden",
     "{actor} reconnected to the call" : "{actor} hat sich wieder mit dem Anruf verbunden",
     "You added {user0} and {user1}" : "Sie haben {user0} und {user1} hinzugefügt",

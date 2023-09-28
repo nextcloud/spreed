@@ -1468,6 +1468,7 @@ OC.L10N.register(
     "Show all call recordings" : "Tüm çağrı kayıtlarını görüntüle",
     "Show all audio" : "Tüm sesleri görüntüle",
     "Show all other" : "Tüm diğerlerini görüntüle",
+    "Session has been marked as inactive" : "Oturum etkin değil olarak işaretlendi",
     "You reconnected to the call" : "Çağrı ile yeniden bağlantı kurdunuz",
     "{actor} reconnected to the call" : "{actor} çağrı ile yeniden bağlantı kurdu",
     "You added {user0} and {user1}" : "{user0} ve {user1} kullanıcılarını eklediniz",
