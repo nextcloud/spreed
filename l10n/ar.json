@@ -377,6 +377,8 @@
     "There is a problem with deleting the account. Please check your logs for further information." : "حدثت مشكلة عند حذف الحساب. يرجى التحقق من السجلات الخاصة بك للحصول على مزيد من المعلومات.",
     "Too many requests are sent from your servers address. Please try again later." : "تم ارسال طلبات متعددة من عنوان خادمك. يرجى المحاولة لاحقًا.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "فشل حذف الحساب لأن لا يمكن الوصول لخادم الإصدار التجريبي. يرجى معاودة المحاولة لاحقًا.",
+    "Note to self" : "ملاحظة شخصية",
+    "A place for your private notes, thoughts and ideas" : "مكان لتسجيل ملاحظاتك و خططك و أفكارك",
     "Andorra" : "أندورا",
     "United Arab Emirates" : "الإمارات العربية المتحدة",
     "Afghanistan" : "أفغانستان",

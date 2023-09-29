@@ -379,6 +379,8 @@ OC.L10N.register(
     "There is a problem with deleting the account. Please check your logs for further information." : "Постоји проблем за брисањем налога. Молимо вас да погледате своје дневнике за више информација.",
     "Too many requests are sent from your servers address. Please try again later." : "Са адресе вашег сервера се шаље превише захтева. Молимо вас да покушате поново касније.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "Није успело брисање налога јер пробни сервер није доступан. Молимо вас да покушате касније.",
+    "Note to self" : "Белешка самом себи",
+    "A place for your private notes, thoughts and ideas" : "Место за ваше приватне белешке, мисли и идеје",
     "Andorra" : "Андора",
     "United Arab Emirates" : "Уједињени Арапски Емирати",
     "Afghanistan" : "Авганистан",
