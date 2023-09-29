@@ -1,7 +1,7 @@
 <!--
   - @copyright Copyright (c) 2019, Daniel Calviño Sánchez (danxuliu@gmail.com)
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -50,24 +50,14 @@
 			<div v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
-				<template v-if="participantUserId">
-					<VideoBackground :display-name="participantName"
-						:user="participantUserId" />
-					<NcAvatar :size="avatarSize"
-						:disable-menu="true"
-						:disable-tooltip="true"
-						:user="participantUserId"
-						:display-name="participantName"
-						:show-user-status="false"
-						:class="avatarClass" />
-				</template>
-				<template v-else>
-					<VideoBackground :display-name="participantName" />
-					<div :class="guestAvatarClass"
-						class="avatar guest">
-						{{ firstLetterOfGuestName }}
-					</div>
-				</template>
+				<VideoBackground :display-name="participantName" :user="participantUserId" />
+				<AvatarWrapper :id="participantUserId"
+					:name="participantName"
+					:source="participantActorType"
+					:size="avatarSize"
+					disable-menu
+					disable-tooltip
+					:class="avatarClass" />
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -101,8 +91,7 @@ import SHA1 from 'crypto-js/sha1.js'
 
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../TransitionWrapper.vue'
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
@@ -119,7 +108,7 @@ export default {
 	name: 'VideoVue',
 
 	components: {
-		NcAvatar,
+		AvatarWrapper,
 		TransitionWrapper,
 		VideoBackground,
 		AccountCircle,
@@ -317,21 +306,10 @@ export default {
 			}
 		},
 
-		guestAvatarClass() {
-			return Object.assign(this.avatarClass, {
-				['avatar-' + this.avatarSize + 'px']: true,
-			})
-		},
-
 		connectionMessageClass() {
 			return {
 				'below-avatar': this.showBackgroundAndAvatar,
 			}
-		},
-
-		firstLetterOfGuestName() {
-			const customName = this.participantName && this.participantName !== t('spreed', 'Guest') ? this.participantName : '?'
-			return customName.charAt(0)
 		},
 
 		sessionHash() {
@@ -359,6 +337,18 @@ export default {
 			return this.$store.getters.findParticipant(this.$store.getters.getToken(), {
 				sessionId: this.peerId,
 			}) || {}
+		},
+
+		participantActorType() {
+			if (this.participant?.actorType) {
+				return this.participant.actorType
+			} else if (this.peerData?.actorType) {
+				return this.peerData.actorType
+			} else {
+				return this.participantUserId
+					? ATTENDEE.ACTOR_TYPE.USERS
+					: ATTENDEE.ACTOR_TYPE.GUESTS
+			}
 		},
 
 		participantUserId() {
@@ -588,11 +578,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/avatar';
-@import '../../../assets/variables';
-@include avatar-mixin(64px);
-@include avatar-mixin(128px);
-
 .forced-white {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
