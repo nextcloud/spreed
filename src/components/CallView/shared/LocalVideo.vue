@@ -3,7 +3,7 @@
   -
   - @author Grigorii Shartsev <me@shgk.me>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -42,19 +42,13 @@
 			<VideoBackground v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
-			<NcAvatar v-if="userId"
+			<AvatarWrapper :id="userId"
+				:name="displayName"
+				:source="actorType"
 				:size="avatarSize"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:show-user-status="false"
-				:user="userId"
-				:display-name="displayName"
+				disable-menu
+				disable-tooltip
 				:class="avatarClass" />
-			<div v-if="!userId"
-				:class="guestAvatarClass"
-				class="avatar guest">
-				{{ firstLetterOfGuestName }}
-			</div>
 		</div>
 
 		<div v-if="mouseover && isSelectable" class="hover-shadow" />
@@ -76,9 +70,9 @@ import SHA1 from 'crypto-js/sha1.js'
 
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from './VideoBackground.vue'
 
 import video from '../../../mixins/video.js'
@@ -90,7 +84,7 @@ export default {
 	name: 'LocalVideo',
 
 	components: {
-		NcAvatar,
+		AvatarWrapper,
 		NcButton,
 		VideoBackground,
 	},
@@ -187,13 +181,12 @@ export default {
 			return this.$store.getters.getUserId()
 		},
 
-		displayName() {
-			return this.$store.getters.getDisplayName()
+		actorType() {
+			return this.$store.getters.getActorType()
 		},
 
-		firstLetterOfGuestName() {
-			const customName = this.guestName !== t('spreed', 'Guest') ? this.guestName : '?'
-			return customName.charAt(0)
+		displayName() {
+			return this.$store.getters.getDisplayName()
 		},
 
 		sessionHash() {
@@ -221,12 +214,6 @@ export default {
 			return {
 				'icon-loading': this.isNotConnected,
 			}
-		},
-
-		guestAvatarClass() {
-			return Object.assign(this.avatarClass, {
-				['avatar-' + this.avatarSize + 'px']: true,
-			})
 		},
 
 		localStreamVideoError() {
@@ -364,11 +351,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
-@import '../../../assets/avatar';
-@include avatar-mixin(64px);
-@include avatar-mixin(128px);
-
 .not-connected {
 	video,
 	.avatar-container {
