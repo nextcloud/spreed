@@ -368,12 +368,12 @@ export default {
 // Always display the local video in the last row
 .localVideoContainer {
 	grid-row-end: -1;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 	z-index: 1;
 }
 
 .video-container-grid {
-	position:relative;
+	position: relative;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -444,7 +444,7 @@ export default {
 	left: 0;
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
 .bottom-bar {
@@ -456,13 +456,16 @@ export default {
 	justify-content: center;
 	align-items: center;
 	height: 40px;
+
 	&--big {
 		justify-content: center;
 		height: 48px;
 	}
+
 	& &__button {
 		opacity: 0.8;
 		background-color: var(--color-background-dark);
+
 		&:hover,
 		&:focus {
 			opacity: 1;

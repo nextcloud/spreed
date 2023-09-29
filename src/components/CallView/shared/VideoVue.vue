@@ -64,9 +64,7 @@
 			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
-				<AccountCircle v-if="isPromoted || isSelected"
-					fill-color="#FFFFFF"
-					:size="36" />
+				<AccountCircle v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
 			</div>
 		</TransitionWrapper>
 		<div v-if="connectionMessage"
@@ -195,7 +193,6 @@ export default {
 	},
 
 	computed: {
-
 		videoWrapperStyle() {
 			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig || this.isGrid) {
 				return
@@ -239,7 +236,7 @@ export default {
 		 * A "failed" connection state will trigger a reconnection, but that may
 		 * not immediately change the "negotiating" or "connecting" attributes
 		 * (for example, while the new offer requested to the HPB was not
-		 * received yet). Similarly both "negotiating" and "connecting" need to
+		 * received yet). Similarly, both "negotiating" and "connecting" need to
 		 * be checked, as the negotiation will start before the connection
 		 * attempt is started.
 		 *
@@ -341,7 +338,7 @@ export default {
 
 		participant() {
 			/**
-			 * This only works for logged in users. Guests can not load the data
+			 * This only works for logged-in users. Guests can not load the data
 			 * via the participant list
 			 */
 			return this.$store.getters.findParticipant(this.$store.getters.getToken(), {
@@ -438,9 +435,9 @@ export default {
 		showSharedScreen() {
 			// Big screen
 			if (this.isBig) {
-				// Alwais show shared screen if there's one
+				// Always show shared screen if there's one
 				return this.hasSharedScreen
-			// Stripe
+				// Stripe
 			} else if (this.isStripe) {
 				if (this.isSharedScreenPromoted) {
 					return false
@@ -449,9 +446,9 @@ export default {
 					return !((this.isSelected) ? this.isSelected : this.isPromoted) && this.hasSharedScreen
 				}
 
-			// Grid
+				// Grid
 			} else {
-				// Alwais show shared screen if there's one
+				// Always show shared screen if there's one
 				return this.hasSharedScreen
 			}
 		},
@@ -606,15 +603,17 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
 .video-container-big {
 	position: absolute;
+
 	&.one-to-one {
 		width: calc(100% - 16px);
 		height: calc(100% - 8px);
 	}
+
 	& .videoWrapper {
 		margin: auto;
 	}
@@ -637,14 +636,14 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
 .videoWrapper,
 .video {
 	height: 100%;
 	width: 100%;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
 .videoWrapper.icon-loading:after {
@@ -688,7 +687,7 @@ export default {
 	top: 0;
 	left: 0;
 	box-shadow: inset 0 0 0 2px white;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
 .hover-shadow {
@@ -699,6 +698,6 @@ export default {
 	left: 0;
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 </style>

@@ -228,8 +228,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../assets/variables";
-
 .viewer-overlay-ghost {
 	position: absolute;
 	bottom: 8px;

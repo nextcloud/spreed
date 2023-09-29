@@ -339,7 +339,7 @@ export default {
 		},
 		showUpdateChangesButton() {
 			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
-			 || this.videoDeviceStateChanged
+				|| this.videoDeviceStateChanged
 		},
 	},
 
@@ -552,7 +552,7 @@ export default {
 
 <style lang="scss" scoped>
 .media-settings {
-	padding: calc(var(--default-grid-baseline)*4);
+	padding: calc(var(--default-grid-baseline) * 4);
 	background-color: var(--color-main-background);
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -562,14 +562,15 @@ export default {
 	&__title {
 		text-align: center;
 	}
+
 	&__preview {
 		position: relative;
-		margin: 0 auto calc(var(--default-grid-baseline)*3) auto;
+		margin: 0 auto calc(var(--default-grid-baseline) * 3);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		border-radius: calc(var(--default-grid-baseline)*3);
+		border-radius: calc(var(--default-grid-baseline) * 3);
 		background-color: var(--color-loading-dark);
 		height: 300px;
 		width: 400px;
@@ -601,7 +602,7 @@ export default {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: calc(var(--default-grid-baseline)*2);
+		gap: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__call-buttons {
@@ -637,7 +638,7 @@ export default {
 .checkbox {
 	display: flex;
 	justify-content: center;
-	margin: calc(var(--default-grid-baseline)*2);
+	margin: calc(var(--default-grid-baseline) * 2);
 }
 
 :deep(.modal-container) {
