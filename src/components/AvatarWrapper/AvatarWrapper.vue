@@ -21,18 +21,12 @@
 -->
 
 <template>
-	<div class="avatar-wrapper" :class="avatarClass" :style="{'--condensed-overlap': condensedOverlap}">
-		<div v-if="iconClass"
-			class="icon"
-			:class="[`avatar-${size}px`, iconClass]" />
-		<div v-else-if="isGuest || isDeletedUser"
-			class="guest"
-			:class="`avatar-${size}px`">
+	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
+		<div v-if="iconClass" class="avatar icon" :class="[iconClass]" />
+		<div v-else-if="isGuest || isDeletedUser" class="avatar guest">
 			{{ firstLetterOfGuestName }}
 		</div>
-		<div v-else-if="isBot"
-			class="bot"
-			:class="`avatar-${size}px`">
+		<div v-else-if="isBot" class="avatar bot">
 			{{ '>_' }}
 		</div>
 		<NcAvatar v-else
@@ -146,10 +140,14 @@ export default {
 		avatarClass() {
 			return {
 				'avatar-wrapper--offline': this.offline,
-				'avatar-wrapper--small': this.small,
-				'avatar-wrapper--medium': this.medium,
 				'avatar-wrapper--condensed': this.condensed,
 				'avatar-wrapper--highlighted': this.highlighted,
+			}
+		},
+		avatarStyle() {
+			return {
+				'--avatar-size': this.size + 'px',
+				'--condensed-overlap': this.condensedOverlap,
 			}
 		},
 		isUser() {
@@ -184,26 +182,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/avatar';
-
 .avatar-wrapper {
-	height: 44px;
-	width: 44px;
-	border-radius: 44px;
-	@include avatar-mixin(44px);
+	height: var(--avatar-size);
+	width: var(--avatar-size);
+	border-radius: var(--avatar-size);
 
-	&--small {
-		height: 22px;
-		width: 22px;
-		border-radius: 22px;
-		@include avatar-mixin(22px);
-	}
+	.avatar {
+		position: sticky;
+		top: 0;
+		width: var(--avatar-size);
+		height: var(--avatar-size);
+		line-height: var(--avatar-size);
+		font-size: calc(var(--avatar-size) / 2);
+		border-radius: 50%;
 
-	&--medium {
-		height: 32px;
-		width: 32px;
-		border-radius: 32px;
-		@include avatar-mixin(32px);
+		&.icon {
+			background-color: var(--color-background-darker);
+		}
+
+		&.bot {
+			padding-left: 5px;
+			background-color: var(--color-background-darker);
+		}
+
+		&.guest {
+			color: #ffffff;
+			background-color: #b9b9b9;
+			padding: 0;
+			display: block;
+			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
+		}
 	}
 
 	&--condensed {
