@@ -25,7 +25,7 @@
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
-			small
+			:size="AVATAR.SIZE.EXTRA_SMALL"
 			disable-menu
 			disable-tooltip />
 		<span class="contact-selection-bubble__username">
@@ -48,6 +48,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
+import { AVATAR } from '../../../../../constants.js'
+
 export default {
 	name: 'ContactSelectionBubble',
 
@@ -62,6 +64,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+	},
+
+	setup() {
+		return { AVATAR }
 	},
 
 	computed: {

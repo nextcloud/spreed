@@ -69,7 +69,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
-import { CONVERSATION } from '../constants.js'
+import { AVATAR, CONVERSATION } from '../constants.js'
 import { isDarkTheme } from '../utils/isDarkTheme.js'
 
 const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
@@ -134,7 +134,7 @@ export default {
 
 		size: {
 			type: Number,
-			default: 44,
+			default: AVATAR.SIZE.DEFAULT,
 		},
 	},
 
