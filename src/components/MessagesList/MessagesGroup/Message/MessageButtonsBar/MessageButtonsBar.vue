@@ -250,7 +250,6 @@
 <script>
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
 import data from 'emoji-mart-vue-fast/data/all.json'
-import cloneDeep from 'lodash/cloneDeep.js'
 
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
@@ -287,7 +286,6 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import Forwarder from './Forwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
-import { fetchNoteToSelfConversation } from '../../../../../services/conversationsService.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 
@@ -719,56 +717,13 @@ export default {
 		},
 
 		async forwardToNote() {
-			let NoteToSelf = this.$store.getters.conversationsList.filter(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)?.[0]
-			if (!NoteToSelf) {
-				const response = await fetchNoteToSelfConversation()
-				NoteToSelf = response.data.ocs.data
-				this.$store.dispatch('addConversation', NoteToSelf)
-			}
-			const messageToBeForwarded = cloneDeep(this.messageObject)
-			// Overwrite the Note-To-Self conversation token
-			messageToBeForwarded.token = NoteToSelf.token
-
-			if (messageToBeForwarded.parent) {
-				delete messageToBeForwarded.parent
-			}
-
-			if (messageToBeForwarded.message === '{object}' && messageToBeForwarded.messageParameters.object) {
-				const richObject = messageToBeForwarded.messageParameters.object
-				try {
-					await this.$store.dispatch('forwardRichObject', {
-						token: this.token,
-						richObject: {
-							objectId: richObject.id,
-							objectType: richObject.type,
-							metaData: JSON.stringify(richObject),
-							referenceId: '',
-						},
-					})
-					showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
-				} catch (error) {
-					console.error('Error while forwarding message to "Note to self"', error)
-					showError(t('spreed', 'Error while forwarding message to "Note to self"'))
-				}
-				return
-			}
-
-			// If there are mentions in the message to be forwarded, replace them in the message
-			// text.
-			if (this.mentions) {
-				for (const mention in this.mentions) {
-					messageToBeForwarded.message = messageToBeForwarded.message.replace(`{${mention}}`, '@' + this.mentions[mention].name)
-				}
-			}
-
 			try {
-				await this.$store.dispatch('forwardMessage', { messageToBeForwarded })
+				await this.$store.dispatch('forwardMessage', { messageToBeForwarded: this.messageObject })
 				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
 				console.error('Error while forwarding message to "Note to self"', error)
 				showError(t('spreed', 'Error while forwarding message to "Note to self"'))
 			}
-
 		},
 
 		openForwarder() {
