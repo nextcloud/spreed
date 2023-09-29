@@ -819,8 +819,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .scroller {
 	padding: 0 4px 0 6px;
 }

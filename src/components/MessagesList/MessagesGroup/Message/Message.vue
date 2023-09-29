@@ -940,8 +940,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../assets/variables';
-
 .message {
 	position: relative;
 
@@ -954,8 +952,8 @@ export default {
 
 .message-body {
 	padding: 4px;
-	font-size: $chat-font-size;
-	line-height: $chat-line-height;
+	font-size: var(--default-font-size);
+	line-height: var(--default-line-height);
 	position: relative;
 	&__main {
 		display: flex;
@@ -1006,7 +1004,7 @@ export default {
 			user-select: none;
 			display: flex;
 			color: var(--color-text-maxcontrast);
-			font-size: $chat-font-size;
+			font-size: var(--default-font-size);
 			flex: 1 0 auto;
 			padding: 0 8px 0 8px;
 		}
@@ -1029,7 +1027,7 @@ export default {
 }
 
 .date {
-	margin-right: $clickable-area;
+	margin-right: var(--default-clickable-area);
 	&--self {
 		margin-right: 0;
 	}
@@ -1072,7 +1070,7 @@ export default {
 }
 
 .message-status {
-	width: $clickable-area;
+	width: var(--default-clickable-area);
 	height: 24px;
 	display: flex;
 	justify-content: center;

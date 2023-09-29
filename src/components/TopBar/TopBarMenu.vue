@@ -490,10 +490,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-.top-bar {
-	&__wrapper {
-		display: flex;
-	}
+.top-bar__wrapper {
+	display: flex;
 }
 </style>

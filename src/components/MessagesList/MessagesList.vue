@@ -1173,7 +1173,7 @@ export default {
 	}
 
 	&__date-text {
-		margin-right: $clickable-area * 2;
+		margin-right: calc(var(--default-clickable-area) * 2);
 		content: attr(data-date);
 		padding: 4px 12px;
 		left: 50%;

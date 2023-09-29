@@ -77,8 +77,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/variables';
-
 .main-view {
 	height: 100%;
 	width: 100%;

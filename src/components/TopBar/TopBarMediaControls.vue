@@ -564,8 +564,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .buttons-bar {
 	display: flex;
 	align-items: center;
@@ -598,7 +596,7 @@ export default {
 		padding-top:4px;
 	}
 	&__button {
-		height: $clickable-area;
+		height: var(--default-clickable-area);
 	}
 }
 
