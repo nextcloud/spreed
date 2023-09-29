@@ -47,7 +47,7 @@
 <script>
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
-import { ATTENDEE } from '../../constants.js'
+import { ATTENDEE, AVATAR } from '../../constants.js'
 
 export default {
 
@@ -70,13 +70,9 @@ export default {
 			type: String,
 			default: null,
 		},
-		small: {
-			type: Boolean,
-			default: false,
-		},
-		medium: {
-			type: Boolean,
-			default: false,
+		size: {
+			type: Number,
+			default: AVATAR.SIZE.DEFAULT,
 		},
 		condensed: {
 			type: Boolean,
@@ -120,9 +116,6 @@ export default {
 		},
 	},
 	computed: {
-		size() {
-			return this.small ? 22 : this.medium ? 32 : 44
-		},
 		// Determines which icon is displayed
 		iconClass() {
 			if (!this.source || this.isUser || this.isBot || this.isGuest || this.isDeletedUser) {
