@@ -300,7 +300,7 @@ class RoomFormatter {
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
 					&& $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER
 					&& $currentParticipant->hasModeratorPermissions(false);
-				$roomData['canLeaveConversation'] = true;
+				$roomData['canLeaveConversation'] = $room->getType() !== Room::TYPE_NOTE_TO_SELF;
 				$roomData['canEnableSIP'] =
 					$this->talkConfig->isSIPConfigured()
 					&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
