@@ -31,6 +31,8 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\PreConditionNotMetException;
+use OCP\Security\ISecureRandom;
 
 class NoteToSelfService {
 	public function __construct(
@@ -40,6 +42,7 @@ class NoteToSelfService {
 		protected RoomService $roomService,
 		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
+		protected ISecureRandom $secureRandom,
 		protected IL10N $l,
 	) {
 	}
@@ -60,7 +63,7 @@ class NoteToSelfService {
 			throw new \InvalidArgumentException('User not found');
 		}
 
-		return $this->createNoteToSelfConversation($currentUser);
+		return $this->createNoteToSelfConversation($currentUser, $noteToSelfId);
 	}
 
 	public function initialCreateNoteToSelfForUser(string $userId): void {
@@ -69,15 +72,19 @@ class NoteToSelfService {
 			return;
 		}
 
+		// Prefixing with zz, so that casting to int does not give a random roomId for other requests
+		$randomLock = 'zz' . $this->secureRandom->generate(3);
+		$this->config->setUserValue($userId, 'spreed', 'note_to_self', $randomLock);
+
 		$currentUser = $this->userManager->get($userId);
 		if (!$currentUser instanceof IUser) {
 			throw new \InvalidArgumentException('User not found');
 		}
 
-		$this->createNoteToSelfConversation($currentUser);
+		$this->createNoteToSelfConversation($currentUser, $randomLock);
 	}
 
-	protected function createNoteToSelfConversation(IUser $user): Room {
+	protected function createNoteToSelfConversation(IUser $user, string|int $previousValue): Room {
 		$room = $this->roomService->createConversation(
 			Room::TYPE_NOTE_TO_SELF,
 			$this->l->t('Note to self'),
@@ -85,7 +92,22 @@ class NoteToSelfService {
 			'note_to_self',
 			$user->getUID()
 		);
-		$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string) $room->getId());
+
+		try {
+			$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string) $room->getId(), (string) $previousValue);
+		} catch (PreConditionNotMetException $e) {
+			// This process didn't win the race for creating the conversation, so fetch the other one
+			$this->roomService->deleteRoom($room);
+
+			// This is a little trick to bypass local caching
+			$values = $this->config->getUserValueForUsers('spreed', 'note_to_self', [$user->getUID()]);
+			if (isset($values[$user->getUID()])) {
+				return $this->manager->getRoomById($values[$user->getUID()]);
+			}
+
+			// Failed to read parallel note-to-self creation
+			throw new RoomNotFoundException('Failed due to parallel requests');
+		}
 
 		$this->roomService->setDescription(
 			$room,
