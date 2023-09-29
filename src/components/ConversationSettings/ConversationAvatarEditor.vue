@@ -32,9 +32,8 @@
 				</div>
 				<ConversationIcon v-else-if="!loading"
 					:item="conversation"
-					:is-big="true"
-					:show-user-status="false"
-					:disable-menu="true" />
+					:size="180"
+					hide-user-status />
 				<div v-else class="icon-loading" />
 			</div>
 			<VueCropper v-show="showCropper"

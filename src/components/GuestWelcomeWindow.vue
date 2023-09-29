@@ -27,9 +27,7 @@
 		size="small">
 		<div class="modal__content">
 			<div class="conversation-information">
-				<ConversationIcon :item="conversation"
-					:show-user-status="false"
-					disable-menu />
+				<ConversationIcon :item="conversation" hide-user-status />
 				<h2>{{ conversationDisplayName }}</h2>
 			</div>
 			<p class="description">

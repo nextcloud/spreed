@@ -2,8 +2,9 @@
   - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -20,14 +21,7 @@
 -->
 
 <template>
-	<div class="avatar-wrapper"
-		:class="{
-			'avatar-wrapper--offline': offline,
-			'avatar-wrapper--small': small,
-			'avatar-wrapper--condensed': condensed,
-			'avatar-wrapper--highlighted': highlighted,
-		}"
-		:style="{'--condensed-overlap': condensedOverlap}">
+	<div class="avatar-wrapper" :class="avatarClass" :style="{'--condensed-overlap': condensedOverlap}">
 		<div v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${size}px`, iconClass]" />
@@ -35,6 +29,11 @@
 			class="guest"
 			:class="`avatar-${size}px`">
 			{{ firstLetterOfGuestName }}
+		</div>
+		<div v-else-if="isBot"
+			class="bot"
+			:class="`avatar-${size}px`">
+			{{ '>_' }}
 		</div>
 		<NcAvatar v-else
 			:key="id"
@@ -53,6 +52,8 @@
 
 <script>
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+
+import { ATTENDEE } from '../../constants.js'
 
 export default {
 
@@ -76,6 +77,10 @@ export default {
 			default: null,
 		},
 		small: {
+			type: Boolean,
+			default: false,
+		},
+		medium: {
 			type: Boolean,
 			default: false,
 		},
@@ -122,18 +127,36 @@ export default {
 	},
 	computed: {
 		size() {
-			return this.small ? 22 : 44
+			return this.small ? 22 : this.medium ? 32 : 44
 		},
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.source === 'users' || this.isGuest || this.isDeletedUser) {
+			if (!this.source || this.isUser || this.isBot || this.isGuest || this.isDeletedUser) {
 				return ''
 			}
 			if (this.source === 'emails') {
 				return 'icon-mail'
 			}
+			if (this.source === 'bots' && this.id === 'changelog') {
+				return 'icon-changelog'
+			}
 			// source: groups, circles
 			return 'icon-contacts'
+		},
+		avatarClass() {
+			return {
+				'avatar-wrapper--offline': this.offline,
+				'avatar-wrapper--small': this.small,
+				'avatar-wrapper--medium': this.medium,
+				'avatar-wrapper--condensed': this.condensed,
+				'avatar-wrapper--highlighted': this.highlighted,
+			}
+		},
+		isUser() {
+			return this.source === 'users' || this.source === ATTENDEE.ACTOR_TYPE.BRIDGED
+		},
+		isBot() {
+			return this.source === 'bots' && this.id !== 'changelog'
 		},
 		isGuest() {
 			return this.source === 'guests'
@@ -161,7 +184,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/avatar.scss';
+@import '../../assets/avatar';
 
 .avatar-wrapper {
 	height: 44px;
@@ -174,6 +197,13 @@ export default {
 		width: 22px;
 		border-radius: 22px;
 		@include avatar-mixin(22px);
+	}
+
+	&--medium {
+		height: 32px;
+		width: 32px;
+		border-radius: 32px;
+		@include avatar-mixin(32px);
 	}
 
 	&--condensed {

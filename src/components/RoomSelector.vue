@@ -46,10 +46,7 @@
 							:key="room.token"
 							:class="{selected: selectedRoom === room.token }"
 							@click="selectedRoom=room.token">
-							<ConversationIcon :item="room"
-								:hide-call="true"
-								:hide-favorite="false"
-								:disable-menu="true" />
+							<ConversationIcon :item="room" :hide-favorite="false" />
 							<span>{{ room.displayName }}</span>
 						</li>
 					</ul>

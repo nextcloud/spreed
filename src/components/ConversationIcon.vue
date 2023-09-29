@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<div ref="conversation-icon"
-		class="conversation-icon"
+	<div class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
 		<div v-if="iconClass"
@@ -45,18 +44,16 @@
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status="showUserStatus"
-			:show-user-status-compact="disableMenu"
+			:show-user-status="!hideUserStatus"
+			:show-user-status-compact="!showUserOnlineStatus"
 			:menu-container="menuContainer"
 			menu-position="left"
 			class="conversation-icon__avatar" />
-		<div v-if="showCall"
-			class="overlap-icon">
+		<div v-if="showCall" class="overlap-icon">
 			<VideoIcon :size="20" :fill-color="'#E9322D'" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
-		<div v-else-if="showFavorite"
-			class="overlap-icon">
+		<div v-else-if="showFavorite" class="overlap-icon">
 			<Star :size="20" :fill-color="'#FFCC00'" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
@@ -102,12 +99,17 @@ export default {
 
 		disableMenu: {
 			type: Boolean,
+			default: true,
+		},
+
+		hideUserStatus: {
+			type: Boolean,
 			default: false,
 		},
 
-		showUserStatus: {
+		showUserOnlineStatus: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 
 		item: {
@@ -130,20 +132,10 @@ export default {
 			default: false,
 		},
 
-		/**
-		 * Passing in true will make this component fill all the available space in its container.
-		 * This is not reactive as it will take the size of the container once mounted.
-		 */
-		isBig: {
-			type: Boolean,
-			default: false,
+		size: {
+			type: Number,
+			default: 44,
 		},
-	},
-
-	data() {
-		return {
-			parentElement: undefined,
-		}
 	},
 
 	computed: {
@@ -156,7 +148,7 @@ export default {
 		},
 
 		preloadedUserStatus() {
-			if (this.showUserStatus && Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
+			if (!this.hideUserStatus && Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
 				// We preloaded the status
 				return {
 					status: this.item.status || null,
@@ -217,14 +209,6 @@ export default {
 			return undefined
 		},
 
-		size() {
-			if (this.isBig && this.parentElement) {
-				return Math.min(this.parentElement.clientHeight, this.parentElement.clientWidth)
-			} else {
-				return 44
-			}
-		},
-
 		isOneToOne() {
 			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
@@ -241,11 +225,6 @@ export default {
 				avatarVersion: this.item.avatarVersion,
 			})
 		},
-	},
-
-	mounted() {
-		// Get the size of the parent once the component is mounted
-		this.parentElement = this.$refs['conversation-icon'].parentElement
 	},
 }
 </script>
