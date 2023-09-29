@@ -377,6 +377,8 @@
     "There is a problem with deleting the account. Please check your logs for further information." : "Es gibt ein Problem mit dem Löschen des Kontos. Bitte die Protokolldateien für weitere Informationen überprüfen.",
     "Too many requests are sent from your servers address. Please try again later." : "Es wurden zu viele Anfragen von Ihrer Serveradresse gesendet. Bitte später erneut versuchen.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "Fehler beim Löschen des Kontos, da der Trial-Testserver nicht erreichbar ist. Bitte versuchen Sie es später erneut.",
+    "Note to self" : "Notiz an mich",
+    "A place for your private notes, thoughts and ideas" : "Ein Platz für Ihre privaten Notizen, Gedanken und Ideen",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Vereinigte Arabische Emirate",
     "Afghanistan" : "Afghanistan",
