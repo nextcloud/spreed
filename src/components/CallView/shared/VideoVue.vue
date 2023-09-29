@@ -97,7 +97,7 @@ import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 
-import { ATTENDEE } from '../../../constants.js'
+import { ATTENDEE, AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
@@ -138,6 +138,10 @@ export default {
 		showVideoOverlay: {
 			type: Boolean,
 			default: true,
+		},
+		isGrid: {
+			type: Boolean,
+			default: false,
 		},
 		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
@@ -193,7 +197,7 @@ export default {
 	computed: {
 
 		videoWrapperStyle() {
-			if (!this.containerAspectRatio || !this.videoAspectRatio) {
+			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig || this.isGrid) {
 				return
 			}
 
@@ -297,7 +301,13 @@ export default {
 		},
 
 		avatarSize() {
-			return this.isBig ? 128 : 128
+			if (this.isStripe || (!this.isBig && !this.isGrid)) {
+				return AVATAR.SIZE.LARGE
+			} else if (!this.containerAspectRatio) {
+				return AVATAR.SIZE.FULL
+			} else {
+				return Math.min(AVATAR.SIZE.FULL, this.$refs.videoContainer.clientHeight / 2, this.$refs.videoContainer.clientWidth / 2)
+			}
 		},
 
 		avatarClass() {
@@ -513,7 +523,7 @@ export default {
 		// Set initial state
 		this._setStream(this.model.attributes.stream)
 
-		if (this.isBig) {
+		if (this.isBig || this.isGrid) {
 			this.resizeObserver = new ResizeObserver(this.updateContainerAspectRatio)
 			this.resizeObserver.observe(this.$refs.videoContainer)
 		}

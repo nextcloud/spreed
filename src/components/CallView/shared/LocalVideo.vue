@@ -75,6 +75,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from './VideoBackground.vue'
 
+import { AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -104,7 +105,7 @@ export default {
 			type: Object,
 			required: true,
 		},
-		useConstrainedLayout: {
+		isGrid: {
 			type: Boolean,
 			default: false,
 		},
@@ -169,7 +170,7 @@ export default {
 		},
 
 		videoWrapperStyle() {
-			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig) {
+			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig || this.isGrid) {
 				return
 			}
 			return (this.containerAspectRatio > this.videoAspectRatio)
@@ -207,7 +208,13 @@ export default {
 		},
 
 		avatarSize() {
-			return this.useConstrainedLayout ? 64 : 128
+			if (this.isStripe || (!this.isBig && !this.isGrid)) {
+				return AVATAR.SIZE.LARGE
+			} else if (!this.containerAspectRatio) {
+				return AVATAR.SIZE.FULL
+			} else {
+				return Math.min(AVATAR.SIZE.FULL, this.$refs.videoContainer.clientHeight / 2, this.$refs.videoContainer.clientWidth / 2)
+			}
 		},
 
 		avatarClass() {
@@ -281,7 +288,7 @@ export default {
 		// Set initial state
 		this._setLocalStream(this.localMediaModel.attributes.localStream)
 
-		if (this.isBig) {
+		if (this.isBig || this.isGrid) {
 			this.resizeObserver = new ResizeObserver(this.updateContainerAspectRatio)
 			this.resizeObserver.observe(this.$refs.videoContainer)
 		}

@@ -43,7 +43,7 @@
 					<AvatarWrapper :id="userId"
 						:name="displayName"
 						:source="actorType"
-						:size="128"
+						:size="AVATAR.SIZE.EXTRA_LARGE"
 						disable-menu
 						disable-tooltip />
 				</div>
@@ -199,7 +199,7 @@ import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
+import { AVATAR, CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -239,7 +239,7 @@ export default {
 	setup() {
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
-		return { isInCall, guestNameStore }
+		return { AVATAR, isInCall, guestNameStore }
 	},
 
 	data() {
