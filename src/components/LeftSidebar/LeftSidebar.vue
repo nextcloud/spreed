@@ -96,7 +96,7 @@
 						<template #icon>
 							<Note :size="20" />
 						</template>
-						{{ t('spreed','New Personal Note') }}
+						{{ t('spreed','New personal note') }}
 					</NcActionButton>
 
 					<NcActionButton close-after-click
@@ -409,7 +409,7 @@ export default {
 		},
 
 		hasNoteToSelf() {
-			return this.conversationsList.filter(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF).length
+			return this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
 		},
 
 		sourcesWithoutResults() {
@@ -632,7 +632,7 @@ export default {
 			}
 		},
 
-		addAndOpenConversation(conversation) {
+		switchToConversation(conversation) {
 			this.$store.dispatch('addConversation', conversation)
 			this.abortSearch()
 			this.$router.push({
@@ -644,13 +644,13 @@ export default {
 		async createConversation(name) {
 			const response = await createPrivateConversation(name)
 			const conversation = response.data.ocs.data
-			this.addAndOpenConversation(conversation)
+			this.switchToConversation(conversation)
 		},
 
 		async restoreNoteToSelfConversation() {
 			const response = await fetchNoteToSelfConversation()
 			const conversation = response.data.ocs.data
-			this.addAndOpenConversation(conversation)
+			this.switchToConversation(conversation)
 		},
 
 		hasOneToOneConversationWith(userId) {

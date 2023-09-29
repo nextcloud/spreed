@@ -285,7 +285,7 @@ export default {
 				this.conversationName = this.conversation.displayName
 			}
 
-			if (newConversation.token === oldConversation.token || this.isOneToOne) {
+			if (newConversation.token === oldConversation.token || !this.showParticipantsTab) {
 				return
 			}
 
@@ -302,19 +302,10 @@ export default {
 			}
 		},
 
-		isNoteToSelf: {
+		showParticipantsTab: {
 			immediate: true,
 			handler(value) {
-				if (value) {
-					this.activeTab = 'shared-items'
-				}
-			},
-		},
-
-		isOneToOne: {
-			immediate: true,
-			handler(value) {
-				if (value) {
+				if (!value) {
 					this.activeTab = 'shared-items'
 				}
 			},
