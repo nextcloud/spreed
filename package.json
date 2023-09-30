@@ -75,7 +75,7 @@
     "@babel/preset-env": "^7.22.20",
     "@nextcloud/babel-config": "^1.0.0",
     "@nextcloud/browserslist-config": "^3.0.0",
-    "@nextcloud/eslint-config": "^8.2.1",
+    "@nextcloud/eslint-config": "^8.3.0",
     "@nextcloud/stylelint-config": "^2.3.1",
     "@nextcloud/webpack-vue-config": "^6.0.0",
     "@types/jest": "^29.5.5",
