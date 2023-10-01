@@ -377,6 +377,8 @@
     "There is a problem with deleting the account. Please check your logs for further information." : "Hesap silinirken bir sorun çıktı. Lütfen ayrıntılı bilgi almak için günlük kayıtlarına bakın.",
     "Too many requests are sent from your servers address. Please try again later." : "Sunucunuzun adresinden çok fazla sayıda istekte bulunuldu. Lütfen bir süre sonra yeniden deneyin.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "Deneme sunucusuna erişilemediğinden hesap silinemedi. Lütfen bir süre sonra yeniden deneyin.",
+    "Note to self" : "Kendime not",
+    "A place for your private notes, thoughts and ideas" : "Kişisel notlarınızı, düşüncelerinizi ve fikirlerinizi buraya yazabilirsiniz",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Birleşik Arap Emirlikleri",
     "Afghanistan" : "Afganistan",
