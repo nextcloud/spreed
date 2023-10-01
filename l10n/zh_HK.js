@@ -379,6 +379,8 @@ OC.L10N.register(
     "There is a problem with deleting the account. Please check your logs for further information." : "刪除賬戶存在問題。請檢查系統日誌以獲取更多信息。",
     "Too many requests are sent from your servers address. Please try again later." : "您的伺服器地址發送了太多請求。請稍後再試。",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "由於無法訪問試用伺服器，因此無法刪除賬戶。請稍後再檢查。",
+    "Note to self" : "給自己的備註",
+    "A place for your private notes, thoughts and ideas" : "一個用於儲存您的私人筆記、思考和想法的地方。",
     "Andorra" : "安道爾",
     "United Arab Emirates" : "阿聯酋",
     "Afghanistan" : "阿富汗",
