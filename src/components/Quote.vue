@@ -37,7 +37,7 @@ components.
 				<AvatarWrapper :id="actorId"
 					:name="getDisplayName"
 					:source="actorType"
-					small
+					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				{{ getDisplayName }}
 			</div>
@@ -74,6 +74,7 @@ import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
+import { AVATAR } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 
 export default {
@@ -140,6 +141,11 @@ export default {
 			default: false,
 		},
 	},
+
+	setup() {
+		return { AVATAR }
+	},
+
 	computed: {
 		/**
 		 * The message actor display name.

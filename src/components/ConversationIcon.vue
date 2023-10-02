@@ -69,7 +69,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
-import { CONVERSATION } from '../constants.js'
+import { AVATAR, CONVERSATION } from '../constants.js'
 import { isDarkTheme } from '../utils/isDarkTheme.js'
 
 const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
@@ -134,7 +134,7 @@ export default {
 
 		size: {
 			type: Number,
-			default: 44,
+			default: AVATAR.SIZE.DEFAULT,
 		},
 	},
 
@@ -230,19 +230,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$icon-size: var(--icon-size, 44px);
-
 .conversation-icon {
-	width: $icon-size;
-	height: $icon-size;
+	width: var(--icon-size);
+	height: var(--icon-size);
 	position: relative;
 
 	.avatar.icon {
 		display: block;
-		width: $icon-size;
-		height: $icon-size;
-		line-height: $icon-size;
-		background-size: calc($icon-size / 2);
+		width: var(--icon-size);
+		height: var(--icon-size);
+		line-height: var(--icon-size);
+		background-size: calc(var(--icon-size) / 2);
 		background-color: var(--color-background-darker);
 
 		&.icon-changelog {
@@ -253,7 +251,7 @@ $icon-size: var(--icon-size, 44px);
 	.overlap-icon {
 		position: absolute;
 		top: 0;
-		left: calc(#{$icon-size} - 12px);
+		left: calc(var(--icon-size) - 12px);
 		line-height: 100%;
 		display: inline-block;
 		vertical-align: middle;

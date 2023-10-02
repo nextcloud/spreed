@@ -196,8 +196,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .upload-editor {
 	height: 100%;
 	display: flex;

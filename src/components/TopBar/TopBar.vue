@@ -402,8 +402,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .top-bar {
 	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
@@ -414,7 +412,7 @@ export default {
 	border-bottom: 1px solid var(--color-border);
 
 	.talk-sidebar-callview & {
-		margin-right: $clickable-area;
+		margin-right: var(--default-clickable-area);
 	}
 
 	&.in-call {
@@ -487,7 +485,7 @@ export default {
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
-		height: $clickable-area;
+		height: var(--default-clickable-area);
 		&--offline {
 			color: var(--color-text-maxcontrast);
 		}

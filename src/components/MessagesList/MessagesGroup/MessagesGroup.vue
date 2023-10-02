@@ -25,9 +25,9 @@
 			<AvatarWrapper :id="actorId"
 				:name="actorDisplayName"
 				:source="actorType"
+				:size="AVATAR.SIZE.SMALL"
 				:disable-menu="disableMenu"
-				disable-tooltip
-				medium />
+				disable-tooltip />
 		</div>
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
@@ -50,7 +50,7 @@
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Message from './Message/Message.vue'
 
-import { ATTENDEE } from '../../../constants.js'
+import { ATTENDEE, AVATAR } from '../../../constants.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {
@@ -91,7 +91,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+		return { AVATAR, guestNameStore }
 	},
 
 	expose: ['highlightMessage'],

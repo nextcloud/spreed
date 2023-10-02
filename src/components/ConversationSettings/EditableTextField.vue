@@ -256,7 +256,7 @@ export default {
 	width: 100%;
 	overflow: hidden;
 	position: relative;
-	min-height: $clickable-area;
+	min-height: var(--default-clickable-area);
 	align-items: flex-end;
 
 	&__edit {
@@ -271,8 +271,8 @@ export default {
 }
 
 .spinner {
-	width: $clickable-area;
-	height: $clickable-area;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
 	margin: 0 0 0 44px;
 }
 

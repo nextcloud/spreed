@@ -31,7 +31,7 @@
 						:key="index"
 						:name="getDisplayName(item)"
 						:source="item.actorType"
-						small
+						:size="AVATAR.SIZE.EXTRA_SMALL"
 						condensed
 						disable-menu
 						disable-tooltip />
@@ -45,7 +45,7 @@
 				<AvatarWrapper :id="item.actorId"
 					:name="getDisplayName(item)"
 					:source="item.actorType"
-					small
+					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				<p class="poll-voters-details__display-name">
 					{{ getDisplayName(item) }}
@@ -61,7 +61,7 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE } from '../../../../../constants.js'
+import { ATTENDEE, AVATAR } from '../../../../../constants.js'
 
 export default {
 
@@ -78,6 +78,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+	},
+
+	setup() {
+		return { AVATAR }
 	},
 
 	methods: {

@@ -32,7 +32,7 @@
 				</div>
 				<ConversationIcon v-else-if="!loading"
 					:item="conversation"
-					:size="180"
+					:size="AVATAR.SIZE.EXTRA_LARGE"
 					hide-user-status />
 				<div v-else class="icon-loading" />
 			</div>
@@ -132,6 +132,8 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
 
+import { AVATAR } from '../../constants.js'
+
 // eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
 
@@ -184,6 +186,10 @@ export default {
 	},
 
 	emits: ['avatar-edited'],
+
+	setup() {
+		return { AVATAR }
+	},
 
 	data() {
 		return {

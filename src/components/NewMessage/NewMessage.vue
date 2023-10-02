@@ -784,8 +784,6 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .wrapper {
 	padding: 12px 0;
 	min-height: 69px;
@@ -835,9 +833,9 @@ export default {
 	&__icon:hover,
 	&__icon:focus,
 	&__icon:active {
-		opacity: $opacity_full;
+		opacity: 1;
 		// good looking on dark AND white bg
-		background-color: $icon-focus-bg;
+		background-color: rgba(127, 127, 127, .25);
 	}
 }
 

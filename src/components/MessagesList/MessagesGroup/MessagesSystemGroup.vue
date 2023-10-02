@@ -279,7 +279,7 @@ export default {
 	padding: 0;
 	&--system {
 		flex-direction: column;
-		padding-left: $clickable-area + 8px;
+		padding-left: calc(var(--default-clickable-area) + 8px);
 	}
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);

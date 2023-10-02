@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -40,17 +40,12 @@
 					class="preview__novideo">
 					<VideoBackground :display-name="displayName"
 						:user="userId" />
-					<NcAvatar v-if="userId"
-						:size="128"
-						:disable-menu="true"
-						:disable-tooltip="true"
-						:show-user-status="false"
-						:user="userId"
-						:display-name="displayName" />
-					<div v-if="!userId"
-						class="avatar avatar-128px guest">
-						{{ firstLetterOfGuestName }}
-					</div>
+					<AvatarWrapper :id="userId"
+						:name="displayName"
+						:source="actorType"
+						:size="AVATAR.SIZE.EXTRA_LARGE"
+						disable-menu
+						disable-tooltip />
 				</div>
 			</div>
 
@@ -190,13 +185,13 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import CallButton from '../TopBar/CallButton.vue'
@@ -204,7 +199,7 @@ import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
+import { AVATAR, CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -219,6 +214,7 @@ export default {
 	},
 
 	components: {
+		AvatarWrapper,
 		Bell,
 		BellOff,
 		CallButton,
@@ -226,7 +222,6 @@ export default {
 		Creation,
 		NcActionButton,
 		NcActions,
-		NcAvatar,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
@@ -244,7 +239,7 @@ export default {
 	setup() {
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
-		return { isInCall, guestNameStore }
+		return { AVATAR, isInCall, guestNameStore }
 	},
 
 	data() {
@@ -279,13 +274,12 @@ export default {
 			)
 		},
 
-		firstLetterOfGuestName() {
-			const customName = this.guestName !== t('spreed', 'Guest') ? this.guestName : '?'
-			return customName.charAt(0)
-		},
-
 		userId() {
 			return this.$store.getters.getUserId()
+		},
+
+		actorType() {
+			return this.$store.getters.getActorType()
 		},
 
 		token() {
@@ -345,7 +339,7 @@ export default {
 		},
 		showUpdateChangesButton() {
 			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
-			 || this.videoDeviceStateChanged
+				|| this.videoDeviceStateChanged
 		},
 	},
 
@@ -557,13 +551,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-@import '../../assets/avatar';
-@include avatar-mixin(64px);
-@include avatar-mixin(128px);
-
 .media-settings {
-	padding: calc(var(--default-grid-baseline)*4);
+	padding: calc(var(--default-grid-baseline) * 4);
 	background-color: var(--color-main-background);
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -573,14 +562,15 @@ export default {
 	&__title {
 		text-align: center;
 	}
+
 	&__preview {
 		position: relative;
-		margin: 0 auto calc(var(--default-grid-baseline)*3) auto;
+		margin: 0 auto calc(var(--default-grid-baseline) * 3);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		border-radius: calc(var(--default-grid-baseline)*3);
+		border-radius: calc(var(--default-grid-baseline) * 3);
 		background-color: var(--color-loading-dark);
 		height: 300px;
 		width: 400px;
@@ -608,11 +598,11 @@ export default {
 	}
 
 	&__call-preferences {
-		height: $clickable-area;
+		height: var(--default-clickable-area);
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: calc(var(--default-grid-baseline)*2);
+		gap: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__call-buttons {
@@ -648,7 +638,7 @@ export default {
 .checkbox {
 	display: flex;
 	justify-content: center;
-	margin: calc(var(--default-grid-baseline)*2);
+	margin: calc(var(--default-grid-baseline) * 2);
 }
 
 :deep(.modal-container) {
