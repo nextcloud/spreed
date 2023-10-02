@@ -20,66 +20,14 @@
  *
  */
 
-@use 'sass:math';
-
-// https://uxplanet.org/7-rules-for-mobile-ui-button-design-e9cf2ea54556
-// recommended is 48px
-// 44px is what we choose and have very good visual-to-usability ratio
-$clickable-area: 44px;
-
-// background icon size
-// also used for the scss icon font
-$icon-size: 16px;
-
-// icon padding for a $clickable-area width and a $icon-size icon
-// ( 44px - 16px ) / 2
-$icon-margin: math.div($clickable-area - $icon-size, 2);
-
-// transparency background for icons
-$icon-focus-bg: rgba(127, 127, 127, .25);
-
-// popovermenu arrow width from the triangle center
-$arrow-width: 9px;
-
-// opacities
-$opacity_disabled: .5;
-$opacity_normal: .7;
-$opacity_full: 1;
-
-// menu round background hover feedback
-// good looking on dark AND white bg
-$action-background-hover: rgba(127, 127, 127, .25);
-
-// various structure data used in the
-// `NcAppNavigation` component
-$header-height: 50px;
-$navigation-width: 300px;
-
-// mobile breakpoint
-$breakpoint-mobile: 1024px;
-
 //messages list max width
 $messages-list-max-width: 800px;
-
-//message max width
-$message-max-width: 680px;
 
 //message utils width
 $message-utils-width: 100px;
 
-//message form max height
-$message-form-max-height: 180px;
-
+// background color of call container
 $color-call-background: rgba(34, 34, 34, 0.8);
-$color-guests-avatar: #ffffff;
-$color-background-guests-avatar: #b9b9b9;
-
-
-//chat font size
-$chat-font-size: 15px;
-
-//chat line height
-$chat-line-height: 1.6em;
 
 // transition
 $transition-duration-quick: var(--animation-quick, 100ms);

@@ -3,7 +3,7 @@
   -
   - @author Grigorii Shartsev <me@shgk.me>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -42,19 +42,13 @@
 			<VideoBackground v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
-			<NcAvatar v-if="userId"
+			<AvatarWrapper :id="userId"
+				:name="displayName"
+				:source="actorType"
 				:size="avatarSize"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:show-user-status="false"
-				:user="userId"
-				:display-name="displayName"
+				disable-menu
+				disable-tooltip
 				:class="avatarClass" />
-			<div v-if="!userId"
-				:class="guestAvatarClass"
-				class="avatar guest">
-				{{ firstLetterOfGuestName }}
-			</div>
 		</div>
 
 		<div v-if="mouseover && isSelectable" class="hover-shadow" />
@@ -76,11 +70,12 @@ import SHA1 from 'crypto-js/sha1.js'
 
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from './VideoBackground.vue'
 
+import { AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -90,7 +85,7 @@ export default {
 	name: 'LocalVideo',
 
 	components: {
-		NcAvatar,
+		AvatarWrapper,
 		NcButton,
 		VideoBackground,
 	},
@@ -110,7 +105,7 @@ export default {
 			type: Object,
 			required: true,
 		},
-		useConstrainedLayout: {
+		isGrid: {
 			type: Boolean,
 			default: false,
 		},
@@ -175,7 +170,7 @@ export default {
 		},
 
 		videoWrapperStyle() {
-			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig) {
+			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig || this.isGrid) {
 				return
 			}
 			return (this.containerAspectRatio > this.videoAspectRatio)
@@ -187,13 +182,12 @@ export default {
 			return this.$store.getters.getUserId()
 		},
 
-		displayName() {
-			return this.$store.getters.getDisplayName()
+		actorType() {
+			return this.$store.getters.getActorType()
 		},
 
-		firstLetterOfGuestName() {
-			const customName = this.guestName !== t('spreed', 'Guest') ? this.guestName : '?'
-			return customName.charAt(0)
+		displayName() {
+			return this.$store.getters.getDisplayName()
 		},
 
 		sessionHash() {
@@ -214,19 +208,19 @@ export default {
 		},
 
 		avatarSize() {
-			return this.useConstrainedLayout ? 64 : 128
+			if (this.isStripe || (!this.isBig && !this.isGrid)) {
+				return AVATAR.SIZE.LARGE
+			} else if (!this.containerAspectRatio) {
+				return AVATAR.SIZE.FULL
+			} else {
+				return Math.min(AVATAR.SIZE.FULL, this.$refs.videoContainer.clientHeight / 2, this.$refs.videoContainer.clientWidth / 2)
+			}
 		},
 
 		avatarClass() {
 			return {
 				'icon-loading': this.isNotConnected,
 			}
-		},
-
-		guestAvatarClass() {
-			return Object.assign(this.avatarClass, {
-				['avatar-' + this.avatarSize + 'px']: true,
-			})
 		},
 
 		localStreamVideoError() {
@@ -294,7 +288,7 @@ export default {
 		// Set initial state
 		this._setLocalStream(this.localMediaModel.attributes.localStream)
 
-		if (this.isBig) {
+		if (this.isBig || this.isGrid) {
 			this.resizeObserver = new ResizeObserver(this.updateContainerAspectRatio)
 			this.resizeObserver.observe(this.$refs.videoContainer)
 		}
@@ -364,11 +358,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
-@import '../../../assets/avatar';
-@include avatar-mixin(64px);
-@include avatar-mixin(128px);
-
 .not-connected {
 	video,
 	.avatar-container {
@@ -379,12 +368,12 @@ export default {
 // Always display the local video in the last row
 .localVideoContainer {
 	grid-row-end: -1;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 	z-index: 1;
 }
 
 .video-container-grid {
-	position:relative;
+	position: relative;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -455,7 +444,7 @@ export default {
 	left: 0;
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	border-radius: calc(var(--default-clickable-area)/2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
 .bottom-bar {
@@ -467,13 +456,16 @@ export default {
 	justify-content: center;
 	align-items: center;
 	height: 40px;
+
 	&--big {
 		justify-content: center;
 		height: 48px;
 	}
+
 	& &__button {
 		opacity: 0.8;
 		background-color: var(--color-background-dark);
+
 		&:hover,
 		&:focus {
 			opacity: 1;

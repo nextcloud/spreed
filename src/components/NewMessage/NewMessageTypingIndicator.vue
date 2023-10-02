@@ -28,7 +28,7 @@
 					:key="index"
 					:name="participant.displayName"
 					:source="participant.actorType"
-					small
+					:size="AVATAR.SIZE.EXTRA_SMALL"
 					condensed
 					:condensed-overlap="8"
 					disable-menu
@@ -45,6 +45,7 @@ import escapeHtml from 'escape-html'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
+import { AVATAR } from '../../constants.js'
 import { useGuestNameStore } from '../../stores/guestName.js'
 
 export default {
@@ -63,7 +64,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+		return { AVATAR, guestNameStore }
 	},
 
 	computed: {

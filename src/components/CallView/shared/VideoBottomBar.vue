@@ -285,8 +285,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
-
 .wrapper {
 	display: flex;
 	align-items: center;

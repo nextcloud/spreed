@@ -49,17 +49,18 @@ describe('AvatarWrapper.vue', () => {
 			expect(avatar.exists()).toBeFalsy()
 		})
 
-		test('component renders NcAvatar with smaller size', () => {
+		test('component renders NcAvatar with specified size', () => {
+			const size = 22
 			const wrapper = shallowMount(AvatarWrapper, {
 				store,
 				propsData: {
 					name: USER_NAME,
-					small: true,
+					size,
 				},
 			})
 
 			const avatar = wrapper.findComponent(NcAvatar)
-			expect(avatar.props('size')).toBe(22)
+			expect(avatar.props('size')).toBe(size)
 		})
 
 		test('component pass props to NcAvatar correctly', async () => {
