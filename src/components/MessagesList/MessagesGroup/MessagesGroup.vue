@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -22,9 +22,12 @@
 <template>
 	<div class="wrapper">
 		<div class="messages__avatar">
-			<AuthorAvatar :author-type="actorType"
-				:author-id="actorId"
-				:display-name="actorDisplayName" />
+			<AvatarWrapper :id="actorId"
+				:name="actorDisplayName"
+				:source="actorType"
+				:disable-menu="disableMenu"
+				disable-tooltip
+				medium />
 		</div>
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
@@ -44,7 +47,7 @@
 </template>
 
 <script>
-import AuthorAvatar from './AuthorAvatar.vue'
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Message from './Message/Message.vue'
 
 import { ATTENDEE } from '../../../constants.js'
@@ -54,7 +57,7 @@ export default {
 	name: 'MessagesGroup',
 
 	components: {
-		AuthorAvatar,
+		AvatarWrapper,
 		Message,
 	},
 	inheritAttrs: false,
@@ -128,6 +131,12 @@ export default {
 
 			return displayName
 		},
+
+		disableMenu() {
+			// disable the menu if accessing the conversation as guest
+			// or the message sender is a bridged user
+			return this.$store.getters.getActorType() === 'guests' || this.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED
+		},
 	},
 
 	methods: {
@@ -151,6 +160,7 @@ export default {
 	display: flex;
 	margin: auto;
 	padding: 0;
+
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
@@ -163,6 +173,7 @@ export default {
 	flex-direction: column;
 	width: 100%;
 	min-width: 0;
+
 	&__avatar {
 		position: sticky;
 		top: 0;

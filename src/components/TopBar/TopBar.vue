@@ -23,9 +23,10 @@
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
-			:offline="isPeerOffline"
+			:offline="isPeerInactive"
 			:item="conversation"
-			:disable-menu="isAvatarMenuDisabled"
+			:disable-menu="disableMenu"
+			show-user-online-status
 			:hide-favorite="false"
 			:hide-call="false" />
 		<!-- conversation header -->
@@ -33,7 +34,7 @@
 			class="conversation-header"
 			@click="openConversationSettings">
 			<div class="conversation-header__text"
-				:class="{'conversation-header__text--offline': isPeerOffline}">
+				:class="{'conversation-header__text--offline': isPeerInactive}">
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
@@ -164,7 +165,7 @@ import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 
 import { CONVERSATION } from '../../constants.js'
-import isInLobby from '../../mixins/isInLobby.js'
+import getParticipants from '../../mixins/getParticipants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
@@ -195,7 +196,7 @@ export default {
 
 	mixins: [
 		richEditor,
-		isInLobby,
+		getParticipants,
 	],
 
 	props: {
@@ -272,7 +273,7 @@ export default {
 		/**
 		 * Online status of the peer in one to one conversation.
 		 */
-		isPeerOffline() {
+		isPeerInactive() {
 			// Only compute this in one-to-one conversations
 			if (!this.isOneToOneConversation) {
 				return undefined
@@ -300,7 +301,7 @@ export default {
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 		},
 
-		isAvatarMenuDisabled() {
+		disableMenu() {
 			// NcAvatarMenu doesn't work on Desktop
 			// See: https://github.com/nextcloud/talk-desktop/issues/34
 			return IS_DESKTOP
@@ -342,6 +343,18 @@ export default {
 				// discard notification if the call ends
 				this.notifyUnreadMessages(null)
 			}
+		},
+
+		isOneToOneConversation: {
+			immediate: true,
+			// Group conversations have mixin in RightSidebar, so should work only for one-to-one
+			handler(newValue) {
+				if (newValue) {
+					this.initialiseGetParticipantsMixin()
+				} else {
+					this.stopGetParticipantsMixin()
+				}
+			},
 		},
 	},
 
