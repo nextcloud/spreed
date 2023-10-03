@@ -1,4 +1,3 @@
-
 /**
  * SET_TIMEOUT constant is used to set interval and it is set in
  * the id property of the request.data property. timeMs property must

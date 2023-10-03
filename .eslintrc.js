@@ -10,10 +10,12 @@ module.exports = {
 		IS_DESKTOP: 'readonly',
 	},
 	rules: {
+		'comma-dangle': 'off',
+		'jsdoc/no-defaults': 'off',
 		'import/newline-after-import': 'warn',
 		'import/no-named-as-default-member': 'off',
 		'import/order': [
-			'warn',
+			'off', // TODO disabled with #10622 as it breaks tests and changes many components
 			{
 				groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index'], 'unknown'],
 				pathGroups: [
