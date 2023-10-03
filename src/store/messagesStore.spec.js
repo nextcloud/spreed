@@ -11,12 +11,16 @@ import {
 	ATTENDEE, CHAT,
 } from '../constants.js'
 import {
+	fetchNoteToSelfConversation,
+} from '../services/conversationsService.js'
+import {
 	deleteMessage,
 	updateLastReadMessage,
 	fetchMessages,
 	getMessageContext,
 	lookForNewMessages,
 	postNewMessage,
+	postRichObjectToConversation,
 } from '../services/messagesService.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -31,6 +35,11 @@ jest.mock('../services/messagesService', () => ({
 	getMessageContext: jest.fn(),
 	lookForNewMessages: jest.fn(),
 	postNewMessage: jest.fn(),
+	postRichObjectToConversation: jest.fn(),
+}))
+
+jest.mock('../services/conversationsService', () => ({
+	fetchNoteToSelfConversation: jest.fn(),
 }))
 
 jest.mock('../utils/cancelableRequest')
@@ -1776,6 +1785,184 @@ describe('messagesStore', () => {
 		test('returns false if known last message id is past the one from known conversation', () => {
 			setupWithValues(200, 123)
 			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(false)
+		})
+	})
+
+	describe('Forward a message', () => {
+		let conversations
+		let message1
+		let messageToBeForwarded
+		let targetToken
+		let messageExpected
+
+		beforeEach(() => {
+			localVue = createLocalVue()
+			localVue.use(Vuex)
+
+			testStoreConfig = cloneDeep(storeConfig)
+			// eslint-disable-next-line import/no-named-as-default-member
+			store = new Vuex.Store(testStoreConfig)
+
+			message1 = {
+				id: 1,
+				token: TOKEN,
+				message: 'simple text message',
+				messageParameters: {},
+			}
+			conversations = [
+				{
+					token: TOKEN,
+					type: 3,
+					dispalyName: 'conversation 1',
+				},
+				{
+					token: 'token-self',
+					type: 6,
+					dispalyName: 'Note to self',
+				},
+				{
+					token: 'token-2',
+					type: 3,
+					dispalyName: 'conversation 2',
+				},
+			]
+		})
+
+		test('forwards a message to the conversation when a token is given', () => {
+			// Arrange
+			targetToken = 'token-2'
+			messageToBeForwarded = message1
+			messageExpected = cloneDeep(message1)
+			messageExpected.token = targetToken
+
+			// Act
+			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
+
+			// Assert
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+		})
+		test('forwards a message to Note to self when no token is given ', () => {
+			// Arrange
+			targetToken = 'token-self'
+			messageToBeForwarded = message1
+			messageExpected = cloneDeep(message1)
+			messageExpected.token = targetToken
+
+			store.dispatch('addConversation', conversations[1])
+
+			// Act
+			store.dispatch('forwardMessage', { messageToBeForwarded })
+
+			// Assert
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+		})
+
+		test('generates Note to self when it does not exist ', async () => {
+			// Arrange
+			messageToBeForwarded = message1
+			messageExpected = cloneDeep(message1)
+			messageExpected.token = 'token-self'
+
+			const response = {
+				data: {
+					ocs: {
+						data: conversations[1],
+					},
+				},
+			}
+			fetchNoteToSelfConversation.mockResolvedValueOnce(response)
+
+			// Act
+			store.dispatch('forwardMessage', { messageToBeForwarded })
+			await flushPromises()
+
+			// Assert
+			expect(store.getters.conversationsList).toContain(conversations[1])
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+		})
+		test('removes parent message ', () => {
+			// Arrange : prepare the expected message to be forwarded
+			messageToBeForwarded = {
+				id: 1,
+				token: TOKEN,
+				parent: message1,
+				message: 'simple text message',
+				messageParameters: {},
+			}
+			messageExpected = cloneDeep(messageToBeForwarded)
+			targetToken = 'token-2'
+			messageExpected.token = targetToken
+			delete messageExpected.parent
+
+			// Act
+			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
+
+			// Assert
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+		})
+		test('forwards an object message', () => {
+			// Arrange
+			messageToBeForwarded = {
+				id: 1,
+				token: TOKEN,
+				message: '{object}',
+				messageParameters: {
+					object: {
+						id: '100',
+						type: 'deck-card',
+					},
+				},
+			}
+			const objectToBeForwarded = messageToBeForwarded.messageParameters.object
+			targetToken = 'token-2'
+
+			// Act
+			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
+
+			// Assert
+			expect(postRichObjectToConversation).toHaveBeenCalledWith(
+				targetToken,
+				{
+					objectId: objectToBeForwarded.id,
+					objectType: objectToBeForwarded.type,
+					metaData: JSON.stringify(objectToBeForwarded),
+					referenceId: '',
+				},
+			)
+
+		})
+		test('forwards a message with mentions and remove the latter', () => {
+			messageToBeForwarded = {
+				id: 1,
+				token: TOKEN,
+				message: 'Hello {mention-user1}, {mention-user2}',
+				messageParameters: {
+					'mention-user1': {
+						id: 'taylor',
+						name: 'Taylor',
+						type: 'user',
+					},
+					'mention-user2': {
+						id: 'adam',
+						name: 'Adam',
+						type: 'user',
+					},
+				},
+			}
+			targetToken = 'token-2'
+			const mentions = [
+				messageToBeForwarded.messageParameters['mention-user1'],
+				messageToBeForwarded.messageParameters['mention-user2'],
+			]
+			messageExpected = cloneDeep(messageToBeForwarded)
+			messageExpected.message = `Hello @'${mentions[0].name}', @'${mentions[1].name}'`
+			messageExpected.token = targetToken
+
+			// Act
+			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
+
+			// Assert
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
 		})
 	})
 })
