@@ -842,6 +842,7 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Встановити нагадування на завтра",
     "Set reminder for this weekend" : "Встановити нагадування на ці вихідні",
     "Set reminder for next week" : "Встановити нагадування на наступний тиждень",
+    "Translate from" : "Перекласти з",
     "Contact" : "Контакт",
     "End poll" : "Завершити опитування",
     "No messages" : "Відсутні повідомлення",
