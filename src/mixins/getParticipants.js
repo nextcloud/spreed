@@ -1,4 +1,3 @@
-
 /**
  * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
  *

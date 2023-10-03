@@ -33,14 +33,20 @@ import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.js'
  */
 
 /**
+ * @typedef {object} Message
+ * @property {string} token - conversation token
+ * @property {number} id - message id
+ */
+
+/**
  * @typedef {object} Messages
- * @property {Object<number, object>} messages - messages with shared items for this conversation
+ * @property {{[key: number]: Message}} messages - messages with shared items for this conversation
  */
 
 /**
  * @typedef {object} State
- * @property {Object<Token, Object<Type, Messages>>} sharedItemsPool - The shared items pool.
- * @property {Object<Token, boolean>} overviewLoaded - The overview loaded state.
+ * @property {{[key: Token]: {[key: Type]: Messages}}} sharedItemsPool - The shared items pool.
+ * @property {{[key: Token]: boolean}} overviewLoaded - The overview loaded state.
  */
 
 /**
@@ -77,7 +83,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 
 		/**
 		 * @param {Token} token conversation token
-		 * @param {Object<Type, object>} data server response
+		 * @param {{[key: Type]: Message[]}} data server response
 		 */
 		addSharedItemsFromOverview(token, data) {
 			for (const type of Object.keys(data)) {
@@ -95,7 +101,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
-		 * @param {object} message message with shared items
+		 * @param {Message} message message with shared items
 		 */
 		addSharedItemFromMessage(message) {
 			const token = message.token
@@ -110,7 +116,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		/**
 		 * @param {Token} token conversation token
 		 * @param {Type} type type of shared item
-		 * @param {Array} messages message with shared items
+		 * @param {Message[]} messages message with shared items
 		 */
 		addSharedItemsFromMessages(token, type, messages) {
 			this.checkForExistence(token, type)
