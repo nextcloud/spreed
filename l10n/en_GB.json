@@ -377,6 +377,8 @@
     "There is a problem with deleting the account. Please check your logs for further information." : "There is a problem with deleting the account. Please check your logs for further information.",
     "Too many requests are sent from your servers address. Please try again later." : "Too many requests are sent from your servers address. Please try again later.",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "Failed to delete the account because the trial server is unreachable. Please check back later.",
+    "Note to self" : "Note to self",
+    "A place for your private notes, thoughts and ideas" : "A place for your private notes, thoughts and ideas",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "United Arab Emirates",
     "Afghanistan" : "Afghanistan",
