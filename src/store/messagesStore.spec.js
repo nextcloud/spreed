@@ -1800,7 +1800,6 @@ describe('messagesStore', () => {
 			localVue.use(Vuex)
 
 			testStoreConfig = cloneDeep(storeConfig)
-			// eslint-disable-next-line import/no-named-as-default-member
 			store = new Vuex.Store(testStoreConfig)
 
 			message1 = {
@@ -1813,17 +1812,17 @@ describe('messagesStore', () => {
 				{
 					token: TOKEN,
 					type: 3,
-					dispalyName: 'conversation 1',
+					displayName: 'conversation 1',
 				},
 				{
 					token: 'token-self',
 					type: 6,
-					dispalyName: 'Note to self',
+					displayName: 'Note to self',
 				},
 				{
 					token: 'token-2',
 					type: 3,
-					dispalyName: 'conversation 2',
+					displayName: 'conversation 2',
 				},
 			]
 		})
@@ -1839,7 +1838,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 		test('forwards a message to Note to self when no token is given ', () => {
 			// Arrange
@@ -1854,7 +1853,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 
 		test('generates Note to self when it does not exist ', async () => {
@@ -1878,7 +1877,7 @@ describe('messagesStore', () => {
 
 			// Assert
 			expect(store.getters.conversationsList).toContain(conversations[1])
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 		test('removes parent message ', () => {
 			// Arrange : prepare the expected message to be forwarded
@@ -1898,7 +1897,7 @@ describe('messagesStore', () => {
 			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 		test('forwards an object message', () => {
 			// Arrange
@@ -1932,6 +1931,7 @@ describe('messagesStore', () => {
 
 		})
 		test('forwards a message with mentions and remove the latter', () => {
+			// Arrange
 			messageToBeForwarded = {
 				id: 1,
 				token: TOKEN,
@@ -1950,19 +1950,15 @@ describe('messagesStore', () => {
 				},
 			}
 			targetToken = 'token-2'
-			const mentions = [
-				messageToBeForwarded.messageParameters['mention-user1'],
-				messageToBeForwarded.messageParameters['mention-user2'],
-			]
 			messageExpected = cloneDeep(messageToBeForwarded)
-			messageExpected.message = `Hello @'${mentions[0].name}', @'${mentions[1].name}'`
+			messageExpected.message = 'Hello @Taylor, @Adam'
 			messageExpected.token = targetToken
 
 			// Act
 			store.dispatch('forwardMessage', { targetToken, messageToBeForwarded })
 
 			// Assert
-			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: true })
+			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 	})
 })

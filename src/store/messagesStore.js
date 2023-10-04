@@ -1264,7 +1264,7 @@ const actions = {
 	 * @param {object} context default store context;
 	 * will be forwarded;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.targetToken the conversation token to where the message will be forwarded;
+	 * @param {string} [data.targetToken] the conversation token to where the message will be forwarded;
 	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { targetToken, messageToBeForwarded }) {
@@ -1306,11 +1306,11 @@ const actions = {
 		for (const key in message.messageParameters) {
 			if (key.startsWith('mention')) {
 				const mention = message.messageParameters[key]
-				message.message = message.message.replace(`{${key}}`, `@'${mention.name}'`)
+				message.message = message.message.replace(`{${key}}`, `@${mention.name}`)
 			}
 		}
 
-		const response = await postNewMessage(message, { silent: true })
+		const response = await postNewMessage(message, { silent: false })
 		return response
 
 	},
