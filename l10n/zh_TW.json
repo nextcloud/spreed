@@ -377,6 +377,8 @@
     "There is a problem with deleting the account. Please check your logs for further information." : "刪除帳號時發生問題。請檢查您的紀錄檔以取得更多資訊。",
     "Too many requests are sent from your servers address. Please try again later." : "您的伺服器地址傳送了太多請求。請稍後再試。",
     "Failed to delete the account because the trial server is unreachable. Please check back later." : "因為無法連結試用伺服器，因此無法刪除帳號。請稍後再試。",
+    "Note to self" : "給自己的備註",
+    "A place for your private notes, thoughts and ideas" : "一個用於儲存您的私人筆記、思考與想法的地方",
     "Andorra" : "安道爾",
     "United Arab Emirates" : "阿拉伯聯合大公國",
     "Afghanistan" : "阿富汗",

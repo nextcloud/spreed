@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados","%n inivitados"],
+    "Talk" : "Hablar",
     "Guest" : "Invitado",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
