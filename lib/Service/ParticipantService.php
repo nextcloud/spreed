@@ -811,6 +811,9 @@ class ParticipantService {
 		}
 	}
 
+	/**
+	 * @return Attendee[]
+	 */
 	public function getActorsByType(Room $room, string $actorType): array {
 		return $this->attendeeMapper->getActorsByType($room->getId(), $actorType);
 	}
@@ -1383,6 +1386,14 @@ class ParticipantService {
 		}
 
 		return array_values($uniqueAttendees);
+	}
+
+	/**
+	 * @return Participant[]
+	 */
+	public function getParticipantsByActorType(Room $room, string $actorType): array {
+		$attendees = $this->getActorsByType($room, $actorType);
+		return array_map(static fn (Attendee $attendee) => new Participant($room, $attendee, null), $attendees);
 	}
 
 	/**
