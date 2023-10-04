@@ -111,6 +111,14 @@
 						</template>
 						{{ t('spreed', 'Go to file') }}
 					</NcActionLink>
+					<NcActionButton v-if="canForwardMessage && !isInNoteToSelf"
+						close-after-click
+						@click="forwardToNote">
+						<template #icon>
+							<Note :size="16" />
+						</template>
+						{{ t('spreed', 'Note to self') }}
+					</NcActionButton>
 					<NcActionButton v-if="canForwardMessage"
 						close-after-click
 						@click.stop="openForwarder">
@@ -256,6 +264,7 @@ import DeleteIcon from 'vue-material-design-icons/Delete.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
+import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
@@ -311,6 +320,7 @@ export default {
 		EmoticonOutline,
 		EyeOffOutline,
 		File,
+		Note,
 		OpenInNewIcon,
 		Plus,
 		Reply,
@@ -536,6 +546,10 @@ export default {
 				&& this.messageParameters?.object?.type === 'talk-poll'
 		},
 
+		isInNoteToSelf() {
+			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
 		canForwardMessage() {
 			return !this.isCurrentGuest
 				&& !this.isFileShare
@@ -700,6 +714,16 @@ export default {
 		openReactionsMenu() {
 			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isReactionsMenuOpen', true)
+		},
+
+		async forwardToNote() {
+			try {
+				await this.$store.dispatch('forwardMessage', { messageToBeForwarded: this.messageObject })
+				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
+			} catch (error) {
+				console.error('Error while forwarding message to "Note to self"', error)
+				showError(t('spreed', 'Error while forwarding message to "Note to self"'))
+			}
 		},
 
 		openForwarder() {

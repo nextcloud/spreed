@@ -62,6 +62,14 @@ const searchListedConversations = async function({ searchText }, options) {
 }
 
 /**
+ * Generate note-to-self conversation
+ *
+ */
+const fetchNoteToSelfConversation = async function() {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/note-to-self'))
+}
+
+/**
  * Fetch possible conversations
  *
  * @param {object} data the wrapping object;
@@ -438,6 +446,7 @@ const deleteConversationAvatar = async function(token) {
 export {
 	fetchConversations,
 	fetchConversation,
+	fetchNoteToSelfConversation,
 	searchListedConversations,
 	searchPossibleConversations,
 	createOneToOneConversation,

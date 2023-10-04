@@ -254,6 +254,7 @@ export default {
 
 		showStartCallButton() {
 			return this.callEnabled
+				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& !this.isInCall
 		},

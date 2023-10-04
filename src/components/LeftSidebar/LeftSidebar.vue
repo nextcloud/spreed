@@ -90,6 +90,15 @@
 						{{ t('spreed','Create a new conversation') }}
 					</NcActionButton>
 
+					<NcActionButton v-if="!hasNoteToSelf"
+						close-after-click
+						@click="restoreNoteToSelfConversation">
+						<template #icon>
+							<Note :size="20" />
+						</template>
+						{{ t('spreed','New personal note') }}
+					</NcActionButton>
+
 					<NcActionButton close-after-click
 						@click="showModalListConversations">
 						<template #icon>
@@ -239,6 +248,7 @@ import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import List from 'vue-material-design-icons/FormatListBulleted.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
+import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { showError } from '@nextcloud/dialogs'
@@ -267,6 +277,7 @@ import { CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	createPrivateConversation,
+	fetchNoteToSelfConversation,
 	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService.js'
@@ -303,6 +314,7 @@ export default {
 		ChatPlus,
 		List,
 		DotsVertical,
+		Note,
 	},
 
 	mixins: [
@@ -394,6 +406,10 @@ export default {
 
 		isSearching() {
 			return this.searchText !== ''
+		},
+
+		hasNoteToSelf() {
+			return this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
 		},
 
 		sourcesWithoutResults() {
@@ -616,15 +632,25 @@ export default {
 			}
 		},
 
-		async createConversation(name) {
-			const response = await createPrivateConversation(name)
-			const conversation = response.data.ocs.data
+		switchToConversation(conversation) {
 			this.$store.dispatch('addConversation', conversation)
 			this.abortSearch()
 			this.$router.push({
 				name: 'conversation',
 				params: { token: conversation.token },
 			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+
+		async createConversation(name) {
+			const response = await createPrivateConversation(name)
+			const conversation = response.data.ocs.data
+			this.switchToConversation(conversation)
+		},
+
+		async restoreNoteToSelfConversation() {
+			const response = await fetchNoteToSelfConversation()
+			const conversation = response.data.ocs.data
+			this.switchToConversation(conversation)
 		},
 
 		hasOneToOneConversationWith(userId) {

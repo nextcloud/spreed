@@ -68,7 +68,6 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep.js'
 
 import Check from 'vue-material-design-icons/Check.vue'
 
@@ -128,70 +127,22 @@ export default {
 			return this.$store.getters?.conversation(this.selectedConversationToken).displayName
 		},
 
-		/**
-		 * Object containing all the mentions in the message that will be forwarded
-		 *
-		 * @return {object} mentions.
-		 */
-		mentions() {
-			const mentions = {}
-			for (const key in this.messageObject.messageParameters) {
-				if (key.startsWith('mention')) {
-					mentions[key] = this.messageObject.messageParameters[key]
-				}
-			}
-			return mentions
-		},
 	},
 
 	methods: {
 		async setSelectedConversationToken(token) {
 			this.selectedConversationToken = token
-			const messageToBeForwarded = cloneDeep(this.messageObject)
-			// Overwrite the selected conversation token
-			messageToBeForwarded.token = token
-
-			if (messageToBeForwarded.parent) {
-				delete messageToBeForwarded.parent
-			}
-
-			if (messageToBeForwarded.message === '{object}' && messageToBeForwarded.messageParameters.object) {
-				const richObject = messageToBeForwarded.messageParameters.object
-				try {
-					const response = await this.$store.dispatch('forwardRichObject', {
-						token,
-						richObject: {
-							objectId: richObject.id,
-							objectType: richObject.type,
-							metaData: JSON.stringify(richObject),
-							referenceId: '',
-						},
-					})
-					this.showForwardedConfirmation = true
-					this.forwardedMessageID = response.data.ocs.data.id
-				} catch (error) {
-					console.error('Error while forwarding message', error)
-					showError(t('spreed', 'Error while forwarding message'))
-				}
-				return
-			}
-
-			// If there are mentions in the message to be forwarded, replace them in the message
-			// text.
-			if (this.mentions !== {}) {
-				for (const mention in this.mentions) {
-					messageToBeForwarded.message = messageToBeForwarded.message.replace(`{${mention}}`, '@' + this.mentions[mention].name)
-				}
-			}
 			try {
-				const response = await this.$store.dispatch('forwardMessage', { messageToBeForwarded })
-				this.showForwardedConfirmation = true
+				const response = await this.$store.dispatch('forwardMessage', {
+					targetToken: this.selectedConversationToken,
+					messageToBeForwarded: this.messageObject,
+				 })
 				this.forwardedMessageID = response.data.ocs.data.id
+				this.showForwardedConfirmation = true
 			} catch (error) {
 				console.error('Error while forwarding message', error)
 				showError(t('spreed', 'Error while forwarding message'))
 			}
-
 		},
 
 		openConversation() {
