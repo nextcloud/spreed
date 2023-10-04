@@ -69,6 +69,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $botNameToId;
 	/** @var array<string, string> */
 	protected static array $botNameToHash;
+	/** @var array<string, string> */
+	protected static array $phoneNumberToActorId;
 	/** @var array<string, mixed>|null */
 	protected static ?array $nextChatRequestParameters = null;
 
@@ -665,6 +667,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['displayName'])) {
 					$data['displayName'] = (string) $attendee['displayName'];
 				}
+				if (isset($expectedKeys['phoneNumber'])) {
+					$data['phoneNumber'] = (string) $attendee['phoneNumber'];
+				}
 
 				if (!isset(self::$userToAttendeeId[$identifier][$attendee['actorType']])) {
 					self::$userToAttendeeId[$identifier][$attendee['actorType']] = [];
@@ -683,12 +688,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$attendee['actorId'] .= '@' . rtrim($this->baseRemoteUrl, '/');
 				}
 
+				if (isset($attendee['actorId'], $attendee['actorType'], $attendee['phoneNumber'])
+					&& $attendee['actorType'] === 'phones'
+					&& $attendee['actorId'] === 'PHONE(' . $actual['phoneNumber'] . ')'
+					&& $attendee['phoneNumber'] === $actual['phoneNumber']) {
+					$attendee['actorId'] = $actual['actorId'];
+					self::$phoneNumberToActorId[$attendee['phoneNumber']] = $actual['actorId'];
+				}
+
 				// Breakout room regex
 				if (isset($attendee['actorId']) && strpos($attendee['actorId'], '/') === 0 && preg_match($attendee['actorId'], $actual['actorId'])) {
 					$attendee['actorId'] = $actual['actorId'];
 				}
 
 				if (isset($attendee['participantType'])) {
+					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
+				}
+
+				if (isset($attendee['actorType']) && $attendee['actorType'] === 'phones') {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
 				}
 				return $attendee;
@@ -1526,7 +1543,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle|remote) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle|remote|phone) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
