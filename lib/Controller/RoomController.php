@@ -1497,36 +1497,92 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Get a participant by their dial-in PIN
+	 * Verify a dial-in PIN (SIP bridge)
 	 *
-	 * @param string $pin PIN the participant used to dial-in
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param numeric-string $pin PIN the participant used to dial-in
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
 	 *
 	 * 200: Participant returned
 	 * 401: SIP request invalid
 	 * 404: Participant not found
+	 * 501: SIP dial-in is not configured
 	 */
 	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[RequireRoom]
-	public function getParticipantByDialInPin(string $pin): DataResponse {
+	public function verifyDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
+		}
+
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
 			$participant = $this->participantService->getParticipantByPin($this->room, $pin);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $participant));
+	}
+
+	/**
+	 * Verify a dial-out number (SIP bridge)
+	 *
+	 * @param string $number E164 formatted phone number
+	 * @param array{actorId?: string, actorType?: string, attendeeId?: int} $options Additional details to verify the validity of the request
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 *
+	 *  200: Participant created successfully
+	 *  400: Phone number and details could not be confirmed
+	 *  401: SIP request invalid
+	 *  501: SIP dialout is not configured
+	 */
+	#[IgnoreOpenAPI]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[RequireRoom]
+	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+		} catch (UnauthorizedException) {
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
+		}
+
+		if (!$this->talkConfig->isSIPConfigured()) {
+			// FIXME require a special config?
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		if (!isset($options['actorId'], $options['actorType']) || $options['actorType'] !== Attendee::ACTOR_PHONES) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_PHONES, $options['actorId']);
+		} catch (ParticipantNotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($participant->getAttendee()->getPhoneNumber() !== $number) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $participant));

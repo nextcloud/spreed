@@ -96,10 +96,14 @@ return [
 		['name' => 'Room#addToFavorites', 'url' => '/api/{apiVersion}/room/{token}/favorite', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::removeFromFavorites() */
 		['name' => 'Room#removeFromFavorites', 'url' => '/api/{apiVersion}/room/{token}/favorite', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
-		/** @see \OCA\Talk\Controller\RoomController::getParticipantByDialInPin() */
-		['name' => 'Room#getParticipantByDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
+		/** @see \OCA\Talk\Controller\RoomController::verifyDialInPin() */
+		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
 			'pin' => '\d{7,32}',
 		])],
+		/** @see \OCA\Talk\Controller\RoomController::verifyDialInPin() */
+		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/verify-dialin', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::verifyDialOutNumber() */
+		['name' => 'Room#verifyDialOutNumber', 'url' => '/api/{apiVersion}/room/{token}/verify-dialout', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::createGuestByDialIn() */
 		['name' => 'Room#createGuestByDialIn', 'url' => '/api/{apiVersion}/room/{token}/open-dial-in', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setNotificationLevel() */

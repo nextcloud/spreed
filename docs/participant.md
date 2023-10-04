@@ -265,7 +265,8 @@ Setting custom permissions for a self-joined user will also make them a permanen
 
 ## Get a participant by their pin
 
-Note: This is only allowed with validate SIP bridge requests
+Note: Deprecated - Use [Verify a dial-in PIN](#Verify-a-dial-in-PIN) instead
+Note: This is only allowed as validate SIP bridge requests
 
 * Required capability: `sip-support`
 * Method: `GET`
@@ -276,6 +277,51 @@ Note: This is only allowed with validate SIP bridge requests
         + `200 OK`
         + `401 Unauthorized` When the validation as SIP bridge failed
         + `404 Not Found` When the conversation or participant could not be found
+
+    - Data: See array definition in `Get user´s conversations`
+
+## Verify a dial-in PIN
+
+Note: This is only allowed as validate SIP bridge requests
+
+* Required capability: `sip-support-dialout`
+* Method: `POST`
+* Endpoint: `/room/{token}/verify-dialin`
+* Data:
+
+| field | type   | Description                         |
+|-------|--------|-------------------------------------|
+| `pin` | string | PIN the participant used to dial-in |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` When the validation as SIP bridge failed
+        + `404 Not Found` When the conversation or participant could not be found
+        + `501 Not Implemented` When SIP is not configured
+
+    - Data: See array definition in `Get user´s conversations`
+
+## Verify a dial-out number
+
+Note: This is only allowed as validate SIP bridge requests
+
+* Required capability: `sip-support-dialout`
+* Method: `POST`
+* Endpoint: `/room/{token}/verify-dialout`
+* Data:
+
+| field     | type   | Description                                                                                                                     |
+|-----------|--------|---------------------------------------------------------------------------------------------------------------------------------|
+| `number`  | string | E164 formatted phone number                                                                                                     |
+| `options` | string | Additional details to verify the validity of the request as JSON encoded object (Should contain actorId, actorType, attendeeId) |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` When the validation as SIP bridge failed
+        + `404 Not Found` When the conversation or participant could not be found
+        + `501 Not Implemented` When SIP or SIP dial-out is not configured
 
     - Data: See array definition in `Get user´s conversations`
 
