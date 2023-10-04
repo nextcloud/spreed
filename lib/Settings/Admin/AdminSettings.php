@@ -473,6 +473,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('sip_bridge_groups', $groups);
 		$this->initialState->provideInitialState('sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
 		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
+		$this->initialState->provideInitialState('sip_bridge_dialout', $this->talkConfig->isSIPDialOutEnabled());
 	}
 
 	protected function getGroupDetailsArray(array $gids, string $configKey): array {

@@ -1010,6 +1010,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 200: Participant successfully added
 	 * 400: Adding participant is not possible
 	 * 404: User, group or other target to invite was not found
+	 * 501: SIP dial-out is not configured
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1036,6 +1037,8 @@ class RoomController extends AEnvironmentAwareController {
 				$remoteParticipantsByFederatedId[$participant->getAttendee()->getActorId()] = $participant;
 			}
 		}
+
+		$addedBy = $this->userManager->get($this->userId);
 
 		// list of participants to attempt adding,
 		// existing ones will be filtered later below
@@ -1108,8 +1111,12 @@ class RoomController extends AEnvironmentAwareController {
 				'displayName' => $newUser->getDisplayId(),
 			];
 		} elseif ($source === 'phones') {
-			if (!$this->talkConfig->isSIPConfigured()) {
-				// FIXME require a special config?
+			if (
+				!$addedBy instanceof IUser
+				|| !$this->talkConfig->isSIPConfigured()
+				|| !$this->talkConfig->canUserDialOutSIP($addedBy)
+				|| preg_match(Room::SIP_INCOMPATIBLE_REGEX, $this->room->getToken())
+				|| ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_PUBLIC)) {
 				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 			}
 
@@ -1151,8 +1158,6 @@ class RoomController extends AEnvironmentAwareController {
 				$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
 			}
 		}
-
-		$addedBy = $this->userManager->get($this->userId);
 
 		if ($source === 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			$parentRoom = $this->manager->getRoomByToken($this->room->getObjectId());
@@ -1547,7 +1552,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *  200: Participant created successfully
 	 *  400: Phone number and details could not be confirmed
 	 *  401: SIP request invalid
-	 *  501: SIP dialout is not configured
+	 *  501: SIP dial-out is not configured
 	 */
 	#[IgnoreOpenAPI]
 	#[PublicPage]
@@ -1566,8 +1571,7 @@ class RoomController extends AEnvironmentAwareController {
 			return $response;
 		}
 
-		if (!$this->talkConfig->isSIPConfigured()) {
-			// FIXME require a special config?
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 		}
 
