@@ -1068,6 +1068,42 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" resends invite for room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userResendsInvite(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+
+		/** @var ?array $body */
+		$body = null;
+		if ($formData instanceof TableNode) {
+			$attendee = $formData?->getRowsHash()['attendeeId'] ?? '';
+			if (isset(self::$userToAttendeeId[$identifier]['emails'][$attendee])) {
+				$body = [
+					'attendeeId' => self::$userToAttendeeId[$identifier]['emails'][$attendee],
+				];
+			} elseif (str_starts_with($attendee, 'not-found')) {
+				$body = [
+					'attendeeId' => max(self::$userToAttendeeId[$identifier]['emails']) + 1000,
+				];
+			} else {
+				throw new \InvalidArgumentException('Unknown attendee, did you pull participants?');
+			}
+		}
+
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/resend-invitations',
+			$body
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets session state to (\d) in room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user

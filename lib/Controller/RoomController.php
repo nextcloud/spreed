@@ -1441,6 +1441,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function resendInvitations(?int $attendeeId): DataResponse {
+		/** @var Participant[] $participants */
 		$participants = [];
 
 		// targeting specific participant
@@ -1451,7 +1452,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 		} else {
-			$participants = $this->participantService->getActorsByType($this->room, Attendee::ACTOR_EMAILS);
+			$participants = $this->participantService->getParticipantsByActorType($this->room, Attendee::ACTOR_EMAILS);
 		}
 
 		foreach ($participants as $participant) {
