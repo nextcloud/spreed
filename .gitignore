@@ -36,3 +36,8 @@
 
 # JetBrains Fleet settings
 /.fleet
+
+# Recording server packages
+/recording/packaging/build/
+/recording/src/nextcloud/talk/recording/__pycache__/
+/recording/src/nextcloud_talk_recording.egg-info/

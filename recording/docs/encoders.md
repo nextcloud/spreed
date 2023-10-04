@@ -12,11 +12,11 @@ Nevertheless, please note that VP8 and Opus are just the default ones and that t
 
 A benchmark tool is provided to check the resources used by the recorder process as well as the quality of the output file using different configurations.
 
-The benchmark tool does not record an actual call; it plays a video file and records its audio and video (or, optionally, only its audio). This makes possible to easily compare the quality between different configurations, as they can be generated from the same input. There is no default input file, though; a specific file must be provided.
+The benchmark tool does not record an actual call; it plays a video file and records its audio and video (or, optionally, only its audio). This makes it possible to easily compare the quality between different configurations, as they can be generated from the same input. There is no default input file, though; a specific file must be provided.
 
 ### Usage example
 
-The different options accepted by the benchmark tool can be seen with `python3 -m nextcloud.talk.recording.Benchmark --help`.
+The different options accepted by the benchmark tool can be seen with `nextcloud-talk-recording-benchmark --help` (or, if the helper script is not available, directly with `python3 -m nextcloud.talk.recording.Benchmark --help`).
 
 Each run of the benchmark tool records a single video (or audio) file with the given options. Using a Bash script several runs can be batched to check the result of running different options. For example:
 ```
@@ -51,6 +51,6 @@ do
     # Split the input tuple on ","
     IFS="," read FFMPEG_OUTPUT_VIDEO FILENAME_SUFFIX <<< "${TEST}"
     # Run the test
-    python3 -m nextcloud.talk.recording.Benchmark --length 300 --ffmpeg-output-video "${FFMPEG_OUTPUT_VIDEO}" /tmp/recording/files/example.mkv /tmp/recording/files/test-"${FILENAME_SUFFIX}".webm
+    nextcloud-talk-recording-benchmark --length 300 --ffmpeg-output-video "${FFMPEG_OUTPUT_VIDEO}" /tmp/recording/files/example.mkv /tmp/recording/files/test-"${FILENAME_SUFFIX}".webm
 done
 ```

@@ -1,0 +1,3 @@
+pulsectl python3-pulsectl
+pyvirtualdisplay python3-pyvirtualdisplay (>= 2.0)
+selenium python3-selenium (>= 4.6.0)

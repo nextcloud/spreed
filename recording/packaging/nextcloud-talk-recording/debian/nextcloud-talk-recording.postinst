@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+# The user running nextcloud-talk-recording needs a home directory for
+# geckodriver and PulseAudio related files.
+# The user will not be automatically removed if the package is uninstalled or
+# purged to avoid leaving behind files owned by the user/group.
+adduser --system nextcloud-talk-recording
+
+#DEBHELPER#
