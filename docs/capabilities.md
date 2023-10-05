@@ -131,3 +131,4 @@
 * `session-state` - Sessions can mark themselves as inactive, so the participant receives notifications again
 * `note-to-self` - Support for "Note-to-self" conversation exists
 * `config => chat => has-translation-providers` - When true, translation tuples can be loaded from the [OCS Translation API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-translation-api.html#get-available-translation-options).
+* `config => call => recording-consent` - Whether users need to consent into call recording before joining a call (see [constants list](constants.md#recording-consent-required))

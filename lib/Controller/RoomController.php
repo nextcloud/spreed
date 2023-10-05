@@ -151,6 +151,7 @@ class RoomController extends AEnvironmentAwareController {
 				$this->config->getAppValue('spreed', 'sip_bridge_groups', '[]') . '#' .
 				$this->config->getAppValue('spreed', 'sip_bridge_dialin_info') . '#' .
 				$this->config->getAppValue('spreed', 'sip_bridge_shared_secret') . '#' .
+				$this->config->getAppValue('spreed', 'recording_consent') . '#' .
 				$this->config->getAppValue('theming', 'cachebuster', '1')
 			)];
 	}

@@ -130,6 +130,10 @@
 * `4` - Starting audio recording
 * `5` - Recording failed
 
+### Recording consent required
+* `no` - No recording consent is required to join a call
+* `yes` - Recording consent is required on admin level
+
 ## Chat
 
 ### Shared item types
