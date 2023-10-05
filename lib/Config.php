@@ -191,15 +191,18 @@ class Config {
 			return RecordingService::CONSENT_REQUIRED_NO;
 		}
 
-		return match ($this->getRecordingConsentConfig()) {
+		return $this->getRecordingConsentConfig();
+	}
+
+	/**
+	 * @return RecordingService::CONSENT_REQUIRED_*
+	 */
+	public function getRecordingConsentConfig(): int {
+		return match ((int) $this->config->getAppValue('spreed', 'recording_consent', (string) RecordingService::CONSENT_REQUIRED_NO)) {
 			RecordingService::CONSENT_REQUIRED_YES => RecordingService::CONSENT_REQUIRED_YES,
 			RecordingService::CONSENT_REQUIRED_OPTIONAL => RecordingService::CONSENT_REQUIRED_OPTIONAL,
 			default => RecordingService::CONSENT_REQUIRED_NO,
 		};
-	}
-
-	protected function getRecordingConsentConfig(): int {
-		return (int) $this->config->getAppValue('spreed', 'recording_consent', (string) RecordingService::CONSENT_REQUIRED_NO);
 	}
 
 	public function getRecordingFolder(string $userId): string {
