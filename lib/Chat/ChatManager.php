@@ -576,6 +576,16 @@ class ChatManager {
 
 		return array_pop($messages);
 	}
+	
+	/**
+ 	* Proxy function for Notifier->markMentionNotificationsRead
+	* @param Room $chat
+ 	* @param string $userid
+  	*/
+	public function markMentionNotificationsRead($chat, $userid){
+		$this->notifier->markMentionNotificationsRead($chat, $userid);
+	}
+	
 
 	/**
 	 * If there are currently no messages the response will not be sent
@@ -599,9 +609,6 @@ class ChatManager {
 	 *         timeout expired.
 	 */
 	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true): array {
-		if ($markNotificationsAsRead && $user instanceof IUser) {
-			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
-		}
 
 		if ($this->cache instanceof NullCache
 			|| $this->cache instanceof ArrayCache) {
