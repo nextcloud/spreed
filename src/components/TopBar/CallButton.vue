@@ -143,6 +143,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		isRecordingFromStart: {
+			type: Boolean,
+			default: false,
+		}
 	},
 
 	setup() {
@@ -307,6 +312,13 @@ export default {
 				silent: this.hasCall ? true : this.silentCall,
 			})
 			this.loading = false
+
+			if (this.isRecordingFromStart) {
+				this.$store.dispatch('startCallRecording', {
+					token: this.token,
+					callRecording: CALL.RECORDING.VIDEO,
+				})
+			}
 		},
 
 		async leaveCall(endMeetingForAll = false) {
