@@ -127,10 +127,10 @@ export default {
 
 	props: {
 		/**
-		 * Skips the media settings dialog and joins or starts the call
-		 * upon clicking the button
+		 * Whether the component is used in MediaSettings or not
+		 * (when click will directly start a call)
 		 */
-		forceJoinCall: {
+		isMediaSettings: {
 			type: Boolean,
 			default: false,
 		},
@@ -336,10 +336,17 @@ export default {
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 			this.$store.dispatch('createAudioObjects')
 
-			const shouldShowMediaSettingsScreen = (BrowserStorage.getItem('showMediaSettings' + this.token) === null
-				|| BrowserStorage.getItem('showMediaSettings' + this.token) === 'true') && !this.forceJoinCall
-			console.debug(shouldShowMediaSettingsScreen)
-			if (((this.isStartingRecording || this.isRecording) && !this.forceJoinCall) || shouldShowMediaSettingsScreen) {
+			if (this.isMediaSettings) {
+				emit('talk:media-settings:hide')
+				this.joinCall()
+				return
+			}
+
+			const showMediaSettings = BrowserStorage.getItem('showMediaSettings' + this.token)
+			const shouldShowMediaSettingsScreen = (showMediaSettings === null || showMediaSettings === 'true')
+			console.debug('showMediaSettings:', shouldShowMediaSettingsScreen)
+
+			if (this.isStartingRecording || this.isRecording || shouldShowMediaSettingsScreen) {
 				emit('talk:media-settings:show')
 			} else {
 				emit('talk:media-settings:hide')

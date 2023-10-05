@@ -163,7 +163,7 @@
 				<!-- Join call -->
 				<CallButton v-if="!isInCall"
 					class="call-button"
-					:force-join-call="true"
+					is-media-settings
 					:silent-call="silentCall" />
 				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
 					{{ t('spreed', 'Apply settings') }}
