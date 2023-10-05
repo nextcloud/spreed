@@ -30,9 +30,11 @@ use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -374,7 +376,7 @@ class RoomServiceTest extends TestCase {
 			Room::LISTABLE_NONE,
 			0,
 			Webinary::LOBBY_NONE,
-			0,
+			Webinary::SIP_DISABLED,
 			null,
 			'foobar',
 			'Test',
@@ -394,9 +396,10 @@ class RoomServiceTest extends TestCase {
 			null,
 			'',
 			'',
-			0,
-			0,
-			0
+			BreakoutRoom::MODE_NOT_CONFIGURED,
+			BreakoutRoom::STATUS_STOPPED,
+			Room::RECORDING_NONE,
+			RecordingService::CONSENT_REQUIRED_NO,
 		);
 
 		$verificationResult = $service->verifyPassword($room, '1234');

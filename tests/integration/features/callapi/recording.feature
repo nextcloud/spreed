@@ -546,3 +546,51 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
+
+  Scenario: Recording consent required by admin
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 1 |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 400 (v4)
+    And user "participant1" joins call "room1" with 400 (v4)
+      | recordingConsent | 0 |
+    And user "participant1" joins call "room1" with 200 (v4)
+      | recordingConsent | 1 |
+
+  Scenario: Recording consent optional by admin enabled by moderator
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    # Can not enable consent when a call is on-going …
+    When user "participant1" sets the recording consent to 1 for room "room1" with 400 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room1 | 0                |
+    When user "participant1" leaves call "room1" with 200 (v4)
+    And user "participant1" sets the recording consent to 1 for room "room1" with 200 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room1 | 1                |
+    And user "participant1" joins call "room1" with 400 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+      | recordingConsent | 1 |
+    # … but can disable consent when a call is on-going
+    When user "participant1" sets the recording consent to 0 for room "room1" with 200 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room1 | 0                |
+    When user "participant1" leaves call "room1" with 200 (v4)
+    # Invalid value on conversation level
+    When user "participant1" sets the recording consent to 2 for room "room1" with 400 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room1 | 0                |

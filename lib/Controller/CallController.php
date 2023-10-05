@@ -116,10 +116,14 @@ class CallController extends AEnvironmentAwareController {
 	 * @param int|null $flags In-Call flags
 	 * @param int|null $forcePermissions In-call permissions
 	 * @param bool $silent Join the call silently
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param bool $recordingConsent When the user ticked a checkbox and agreed with being recorded
+	 *  (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
+	 *   or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
+	 *   and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Call joined successfully
-	 * 400: Failed to join the call
+	 * 400: No recording consent was given
 	 * 404: Call not found
 	 */
 	#[PublicPage]
@@ -129,7 +133,13 @@ class CallController extends AEnvironmentAwareController {
 	#[RequireReadWriteConversation]
 	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
 		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
+				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
+			}
+			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL
+				&& $this->room->getRecordingConsent() === RecordingService::CONSENT_REQUIRED_YES) {
+				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);

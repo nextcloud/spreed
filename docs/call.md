@@ -40,11 +40,11 @@
 * Endpoint: `/call/{token}`
 * Data:
 
-| field              | type | Description                                                                                                                                            |
-|--------------------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `flags`            | int  | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag))                 |
-| `silent`           | bool | Disable start call notifications for group/public calls                                                                                                |
-| `recordingConsent` | bool | When the user ticked a checkbox and agreed with being recorded (Only needed for certain states of the `config => call => recording-consent` capability |
+| field              | type | Description                                                                                                                                                                                                                        |
+|--------------------|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `flags`            | int  | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag))                                                                                             |
+| `silent`           | bool | Disable start call notifications for group/public calls                                                                                                                                                                            |
+| `recordingConsent` | bool | When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to `1` or the capability is `2` and the conversation `recordingConsent` value is `1`) |
 
 * Response:
     - Status code:

@@ -107,6 +107,7 @@
 | `isCustomAvatar`        | bool    | v4    |         | Flag if the conversation has a custom avatar (only available with `avatar` capability)                                                                                                                                                                                                                                                                                                            |
 | `callStartTime`         | int     | v4    |         | Timestamp when the call was started (only available with `recording-v1` capability)                                                                                                                                                                                                                                                                                                               |
 | `callRecording`         | int     | v4    |         | Type of call recording (see [Constants - Call recording status](constants.md#call-recording-status)) (only available with `recording-v1` capability)                                                                                                                                                                                                                                              |
+| `recordingConsent`      | int     | v4    |         | Whether recording consent is required before joining a call (see [constants list](constants.md#recording-consent-required)) (only available with `recording-consent` capability)                                                                                                                                                                                                                  |
 
 ## Creating a new conversation
 
@@ -438,6 +439,25 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `400 Bad Request` Invalid value
         + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+## Set recording consent
+
+* Required capability: `recording-consent`
+* Method: `PUT`
+* Endpoint: `/room/{token}/recording-consent`
+* Data:
+
+| field              | type | Description                                                                                                                                 |
+|--------------------|------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `recordingConsent` | int  | New consent setting for the conversation (Only `0` and `1` from the [constants](constants.md#recording-consent-required) are allowed here.) |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the consent value is invalid
+        + `400 Bad Request` When the consent is being enabled while a call is going on
+        + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
 
 ## Open a conversation

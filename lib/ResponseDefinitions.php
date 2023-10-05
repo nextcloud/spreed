@@ -211,6 +211,7 @@ namespace OCA\Talk;
  *     participantType: int,
  *     permissions: int,
  *     readOnly: int,
+ *     recordingConsent: int,
  *     sessionId: string,
  *     sipEnabled: int,
  *     status?: string,

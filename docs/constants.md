@@ -131,8 +131,9 @@
 * `5` - Recording failed
 
 ### Recording consent required
-* `no` - No recording consent is required to join a call
-* `yes` - Recording consent is required on admin level
+* `0` - No recording consent is required to join a call
+* `1` - Recording consent is required
+* `2` - Recording consent can be enabled by moderators on conversation level
 
 ## Chat
 

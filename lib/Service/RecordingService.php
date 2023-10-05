@@ -53,8 +53,9 @@ use OCP\SpeechToText\ISpeechToTextManager;
 use Psr\Log\LoggerInterface;
 
 class RecordingService {
-	public const CONSENT_REQUIRED_NO = 'no';
-	public const CONSENT_REQUIRED_YES = 'yes';
+	public const CONSENT_REQUIRED_NO = 0;
+	public const CONSENT_REQUIRED_YES = 1;
+	public const CONSENT_REQUIRED_OPTIONAL = 2;
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
