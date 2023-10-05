@@ -627,7 +627,7 @@ const actions = {
 		return false
 	},
 
-	async joinCall({ commit, getters }, { token, participantIdentifier, flags, silent }) {
+	async joinCall({ commit, getters }, { token, participantIdentifier, flags, silent, recordingConsent }) {
 		if (!participantIdentifier?.sessionId) {
 			console.error('Trying to join call without sessionId')
 			return
@@ -645,7 +645,7 @@ const actions = {
 			flags,
 		})
 
-		const actualFlags = await joinCall(token, flags, silent)
+		const actualFlags = await joinCall(token, flags, silent, recordingConsent)
 
 		const updatedData = {
 			inCall: actualFlags,

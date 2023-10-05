@@ -132,8 +132,23 @@
 			</NcCheckboxRadioSwitch>
 
 			<!-- Recording warning -->
-			<NcNoteCard v-else-if="isStartingRecording || isRecording" type="warning">
-				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
+			<NcNoteCard v-if="showRecordingWarning" type="warning">
+				<p v-if="isStartingRecording || isRecording">
+					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
+				</p>
+				<p v-else>
+					<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+				</p>
+				<template v-if="isRecordingConsentRequired">
+					<p>
+						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+					</p>
+					<NcCheckboxRadioSwitch class="checkbox--warning"
+						:checked="recordingConsentGiven"
+						@update:checked="setRecordingConsentGiven">
+						{{ t('spreed', 'Give consent to the recording of this call') }}
+					</NcCheckboxRadioSwitch>
+				</template>
 			</NcNoteCard>
 
 			<!-- buttons bar at the bottom -->
@@ -169,7 +184,9 @@
 				<CallButton v-if="!isInCall"
 					class="call-button"
 					is-media-settings
-					:is-recording-from-start.sync="isRecordingFromStart"
+					:is-recording-from-start="isRecordingFromStart"
+					:disabled="isRecordingConsentRequired && !recordingConsentGiven"
+					:recording-consent-given="recordingConsentGiven"
 					:silent-call="silentCall" />
 				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
 					{{ t('spreed', 'Apply settings') }}
@@ -214,6 +231,7 @@ import { useGuestNameStore } from '../../stores/guestName.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
+const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent']
 
 export default {
 	name: 'MediaSettings',
@@ -244,6 +262,15 @@ export default {
 	},
 
 	mixins: [devices, isInLobby],
+
+	props: {
+		recordingConsentGiven: {
+			type: Boolean,
+			default: false
+		}
+	},
+
+	emits: ['update:recording-consent-given'],
 
 	setup() {
 		const isInCall = useIsInCall()
@@ -341,6 +368,15 @@ export default {
 			return this.canFullModerate && recordingEnabled
 		},
 
+		isRecordingConsentRequired() {
+			return recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
+				|| (recordingConsent === CALL.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED)
+		},
+
+		showRecordingWarning() {
+			return !this.isInCall && (this.isStartingRecording || this.isRecording || this.isRecordingConsentRequired)
+		},
+
 		showSilentCallOption() {
 			return !(this.hasCall && !this.isInLobby)
 		},
@@ -403,6 +439,10 @@ export default {
 			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
+		},
+
+		isRecordingFromStart(value) {
+			this.setRecordingConsentGiven(value)
 		},
 	},
 
@@ -565,6 +605,10 @@ export default {
 				this.tabContent = 'none'
 			}
 		},
+
+		setRecordingConsentGiven(value) {
+			this.$emit('update:recording-consent-given', value)
+		}
 	},
 }
 </script>
@@ -653,6 +697,13 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin: calc(var(--default-grid-baseline) * 2);
+
+	&--warning {
+		&:focus-within :deep(.checkbox-radio-switch__label),
+		& :deep(.checkbox-radio-switch__label:hover) {
+			background-color: var(--note-background) !important;
+		}
+	}
 }
 
 :deep(.modal-container) {

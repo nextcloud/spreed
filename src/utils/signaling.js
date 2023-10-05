@@ -84,6 +84,7 @@ function Base(settings) {
 	this.currentCallToken = null
 	this.currentCallFlags = null
 	this.currentCallSilent = null
+	this.currentCallRecordingConsent = null
 	this.nextcloudSessionId = null
 	this.handlers = {}
 	this.features = {}
@@ -174,6 +175,7 @@ Signaling.Base.prototype._resetCurrentCallParameters = function() {
 	this.currentCallToken = null
 	this.currentCallFlags = null
 	this.currentCallSilent = null
+	this.currentCallRecordingConsent = null
 }
 
 Signaling.Base.prototype.disconnect = function() {
@@ -244,7 +246,7 @@ Signaling.Base.prototype.joinRoom = function(token, sessionId) {
 		resolve()
 		if (this.currentCallToken === token) {
 			// We were in this call before, join again.
-			this.joinCall(token, this.currentCallFlags, this.currentCallSilent)
+			this.joinCall(token, this.currentCallFlags, this.currentCallSilent, this.currentCallRecordingConsent)
 		} else {
 			this._resetCurrentCallParameters()
 		}
@@ -286,18 +288,20 @@ Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
 	// Override in subclasses if necessary.
 }
 
-Signaling.Base.prototype.joinCall = function(token, flags, silent) {
+Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingConsent) {
 	return new Promise((resolve, reject) => {
 		this._trigger('beforeJoinCall', [token])
 
 		axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), {
 			flags,
 			silent,
+			recordingConsent,
 		})
 			.then(function() {
 				this.currentCallToken = token
 				this.currentCallFlags = flags
 				this.currentCallSilent = silent
+				this.currentCallRecordingConsent = recordingConsent
 				this._trigger('joinCall', [token])
 				resolve()
 				this._joinCallSuccess(token)
@@ -523,7 +527,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
 					if (this._joinCallAgainOnceDisconnected && !localParticipant.inCall) {
 						this._joinCallAgainOnceDisconnected = false
-						this.joinCall(this.currentCallToken, this.currentCallFlags, this.currentCallSilent)
+						this.joinCall(this.currentCallToken, this.currentCallFlags, this.currentCallSilent, this.currentCallRecordingConsent)
 					}
 
 					break
@@ -1184,7 +1188,7 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 	}.bind(this))
 }
 
-Signaling.Standalone.prototype.joinCall = function(token, flags, silent) {
+Signaling.Standalone.prototype.joinCall = function(token, flags, silent, recordingConsent) {
 	if (this.signalingRoomJoined !== token) {
 		console.debug('Not joined room yet, not joining call', token)
 
@@ -1199,6 +1203,7 @@ Signaling.Standalone.prototype.joinCall = function(token, flags, silent) {
 				token,
 				flags,
 				silent,
+				recordingConsent,
 				resolve,
 				reject,
 			}
@@ -1219,6 +1224,7 @@ Signaling.Standalone.prototype.joinCall = function(token, flags, silent) {
 			this.currentCallToken = token
 			this.currentCallFlags = flags
 			this.currentCallSilent = silent
+			this.currentCallRecordingConsent = recordingConsent
 			this._trigger('joinCall', [token])
 
 			resolve()
@@ -1235,11 +1241,13 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		const pendingJoinCallResolve = this.pendingJoinCall.resolve
 		const pendingJoinCallReject = this.pendingJoinCall.reject
 
-		this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags, this.pendingJoinCall.silent).then(() => {
-			pendingJoinCallResolve()
-		}).catch(error => {
-			pendingJoinCallReject(error)
-		})
+		const { flags, silent, recordingConsent } = this.pendingJoinCall
+		this.joinCall(token, flags, silent, recordingConsent)
+			.then(() => {
+				pendingJoinCallResolve()
+			}).catch(error => {
+				pendingJoinCallReject(error)
+			})
 
 		this.pendingJoinCall = null
 	}

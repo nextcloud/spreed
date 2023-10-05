@@ -152,8 +152,9 @@ let failedToStartCall = null
  * @param {object} configuration Media to connect with
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
+ * @param {boolean} recordingConsent Whether the participant gave his consent to be recorded
  */
-function startCall(signaling, configuration, silent) {
+function startCall(signaling, configuration, silent, recordingConsent) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
 		if (configuration.audio) {
@@ -164,7 +165,7 @@ function startCall(signaling, configuration, silent) {
 		}
 	}
 
-	signaling.joinCall(pendingJoinCallToken, flags, silent).then(() => {
+	signaling.joinCall(pendingJoinCallToken, flags, silent, recordingConsent).then(() => {
 		startedCall(flags)
 	}).catch(error => {
 		failedToStartCall(error)
@@ -209,10 +210,11 @@ async function signalingJoinConversation(token, sessionId) {
  * @param {number} flags Bitwise combination of PARTICIPANT.CALL_FLAG
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
+ * @param {boolean} recordingConsent Whether the participant gave his consent to be recorded
  * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
-async function signalingJoinCall(token, flags, silent) {
+async function signalingJoinCall(token, flags, silent, recordingConsent) {
 	if (tokensInSignaling[token]) {
 		pendingJoinCallToken = token
 
@@ -269,13 +271,13 @@ async function signalingJoinCall(token, flags, silent) {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
 
-				startCall(_signaling, configuration, silent)
+				startCall(_signaling, configuration, silent, recordingConsent)
 			}
 			const startCallOnceLocalMediaError = () => {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
 
-				startCall(_signaling, null, silent)
+				startCall(_signaling, null, silent, recordingConsent)
 			}
 
 			// ".once" can not be used, as both handlers need to be removed when

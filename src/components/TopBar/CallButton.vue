@@ -127,6 +127,11 @@ export default {
 	],
 
 	props: {
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+
 		/**
 		 * Whether the component is used in MediaSettings or not
 		 * (when click will directly start a call)
@@ -148,7 +153,12 @@ export default {
 		isRecordingFromStart: {
 			type: Boolean,
 			default: false,
-		}
+		},
+
+		recordingConsentGiven: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup() {
@@ -203,8 +213,8 @@ export default {
 		},
 
 		startCallButtonDisabled() {
-			return (!this.conversation.canStartCall
-					&& !this.hasCall)
+			return this.disabled
+				|| (!this.conversation.canStartCall && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
@@ -311,6 +321,7 @@ export default {
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 				flags,
 				silent: this.hasCall ? true : this.silentCall,
+				recordingConsent: this.recordingConsentGiven,
 			})
 			this.loading = false
 
