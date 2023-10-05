@@ -789,6 +789,7 @@ class ChatController extends AEnvironmentAwareController {
 		$response = new DataResponse();
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
+			$this->chatManager->markMentionNotificationsRead($this->room, $this->userId);
 		}
 		return $response;
 	}
