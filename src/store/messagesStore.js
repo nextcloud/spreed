@@ -1306,7 +1306,8 @@ const actions = {
 		for (const key in message.messageParameters) {
 			if (key.startsWith('mention')) {
 				const mention = message.messageParameters[key]
-				message.message = message.message.replace(`{${key}}`, `@${mention.name}`)
+				const mentionString = key.includes('mention-call') ? `**${mention.name}**` : `@"${mention.id}"`
+				message.message = message.message.replace(`{${key}}`, mentionString)
 			}
 		}
 
