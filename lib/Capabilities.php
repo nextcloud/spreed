@@ -55,40 +55,40 @@ class Capabilities implements IPublicCapability {
 
 	/**
 	 * @return array{
-	 *     spreed: array{
-	 *         features: string[],
-	 *         config: array{
-	 *             attachments: array{
-	 *                 allowed: bool,
-	 *                 folder?: string,
-	 *             },
-	 *             call: array{
-	 *                 enabled: bool,
-	 *                 breakout-rooms: bool,
-	 *                 recording: bool,
-	 *     			   supported-reactions: string[],
-	 *     			   predefined-backgrounds?: string[],
-	 *     			   can-upload-background?: bool,
-	 *             },
-	 *             chat: array{
-	 *                 max-length: int,
-	 *                 read-privacy: int,
-	 *                 translations: string,
-	 *     			   typing-privacy: int,
-	 *             },
-	 *             conversations: array{
-	 *                 can-create: bool,
-	 *             },
-	 *             previews: array{
-	 *                 max-gif-size: int,
-	 *             },
-	 *             signaling: array{
-	 *                 session-ping-limit: int,
-	 *                 hello-v2-token-key?: string,
-	 *             },
-	 *         },
-	 *         version: string,
-	 *	   },
+	 *      spreed: array{
+	 *          features: string[],
+	 *          config: array{
+	 *              attachments: array{
+	 *                  allowed: bool,
+	 *                  folder?: string,
+	 *              },
+	 *              call: array{
+	 *                  enabled: bool,
+	 *                  breakout-rooms: bool,
+	 *                  recording: bool,
+	 *                  supported-reactions: string[],
+	 *                  predefined-backgrounds: string[],
+	 *                  can-upload-background: bool,
+	 *              },
+	 *              chat: array{
+	 *                  max-length: int,
+	 *                  read-privacy: int,
+	 *                  has-translation-providers: bool,
+	 *                  typing-privacy: int,
+	 *              },
+	 *              conversations: array{
+	 *                  can-create: bool,
+	 *              },
+	 *              previews: array{
+	 *                  max-gif-size: int,
+	 *              },
+	 *              signaling: array{
+	 *                  session-ping-limit: int,
+	 *                  hello-v2-token-key?: string,
+	 *              },
+	 *          },
+	 *          version: string,
+	 *       },
 	 * }|array<empty>
 	 */
 	public function getCapabilities(): array {
