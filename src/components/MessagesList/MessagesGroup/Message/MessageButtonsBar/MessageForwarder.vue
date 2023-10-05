@@ -20,25 +20,12 @@
 -->
 
 <template>
-	<div class="forwarder">
-		<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}')">
-			<template #icon>
-				<Check :size="64" />
-			</template>
-			<template #action>
-				<NcButton type="tertiary" @click="handleClose">
-					{{ t('spreed', 'Dismiss') }}
-				</NcButton>
-				<NcButton type="primary" @click="openConversation">
-					{{ t('spreed', 'Go to conversation') }}
-				</NcButton>
-			</template>
-		</NcEmptyContent>
+	<div class="message-forwarder">
 		<!-- First step of the flow: selection of the room to which forward the
 		message to -->
 		<RoomSelector v-if="!showForwardedConfirmation"
 			:container="container"
-			:show-postable-only="true"
+			show-postable-only
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
 			@select="setSelectedConversationToken"
@@ -80,7 +67,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import RoomSelector from '../../../../RoomSelector.vue'
 
 export default {
-	name: 'Forwarder',
+	name: 'MessageForwarder',
 
 	components: {
 		RoomSelector,
@@ -107,6 +94,7 @@ export default {
 			selectedConversationToken: null,
 			showForwardedConfirmation: false,
 			forwardedMessageID: '',
+			error: false,
 		}
 	},
 
@@ -168,8 +156,7 @@ export default {
 
 <style lang="scss" scoped>
 
-.forwarder {
-	padding: 20px;
+:deep(.empty-content__action) {
+	gap: 10px;
 }
-
 </style>

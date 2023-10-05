@@ -241,7 +241,7 @@
 				</NcButton>
 			</NcEmojiPicker>
 		</template>
-		<Forwarder v-if="isForwarderOpen"
+		<MessageForwarder v-if="isForwarderOpen"
 			:message-object="messageObject"
 			@close="closeForwarder" />
 	</div>
@@ -283,7 +283,7 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
-import Forwarder from './Forwarder.vue'
+import MessageForwarder from './MessageForwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
@@ -298,7 +298,7 @@ export default {
 	name: 'MessageButtonsBar',
 
 	components: {
-		Forwarder,
+		MessageForwarder,
 		NcActionButton,
 		NcActionInput,
 		NcActionLink,
