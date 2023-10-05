@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
@@ -36,6 +37,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -53,6 +55,7 @@ class CallController extends AEnvironmentAwareController {
 		private RoomService $roomService,
 		private IUserManager $userManager,
 		private ITimeFactory $timeFactory,
+		private Config $talkConfig,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -100,7 +103,11 @@ class CallController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
-	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false): DataResponse {
+	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
+		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 
 		$session = $this->participant->getSession();
