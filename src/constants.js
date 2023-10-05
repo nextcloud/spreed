@@ -46,6 +46,11 @@ export const CALL = {
 		AUDIO_STARTING: 4,
 		FAILED: 5,
 	},
+	RECORDING_CONSENT: {
+		OFF: 0,
+		REQUIRED: 1,
+		OPTIONAL: 2,
+	},
 }
 
 export const CONVERSATION = {

@@ -65,6 +65,26 @@
 			:label="t('spreed', 'Shared secret')"
 			label-visible
 			@update:value="updateSecret" />
+
+		<template v-if="servers.length && recordingConsentCapability">
+			<h3>{{ t('spreed', 'Recording consent') }}</h3>
+
+			<template v-for="level in recordingConsentOptions">
+				<NcCheckboxRadioSwitch :key="level.value + '_radio'"
+					:value="level.value.toString()"
+					:checked.sync="recordingConsentSelected"
+					name="recording-consent"
+					type="radio"
+					:disabled="loading"
+					@update:checked="setRecordingConsent">
+					{{ level.label }}
+				</NcCheckboxRadioSwitch>
+
+				<p :key="level.value + '_description'" class="consent-description">
+					{{ getRecordingConsentDescription(level.value) }}
+				</p>
+			</template>
+		</template>
 	</section>
 </template>
 
@@ -73,27 +93,45 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
+import { CALL } from '../../constants.js'
 import TransitionWrapper from '../TransitionWrapper.vue'
+
+const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
+const recordingConsentOptions = [
+	{ value: CALL.RECORDING_CONSENT.OFF, label: t('spreed', 'Disabled for all calls') },
+	{ value: CALL.RECORDING_CONSENT.REQUIRED, label: t('spreed', 'Enabled for all calls') },
+	{ value: CALL.RECORDING_CONSENT.OPTIONAL, label: t('spreed', 'Configurable on conversation level by moderators') },
+]
 
 export default {
 	name: 'RecordingServers',
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
 		NcNoteCard,
 		NcTextField,
 		Plus,
 		RecordingServer,
 		TransitionWrapper,
+	},
+
+	setup() {
+		return {
+			recordingConsentCapability,
+			recordingConsentOptions,
+		}
 	},
 
 	data() {
@@ -103,6 +141,7 @@ export default {
 			uploadLimit: 0,
 			loading: false,
 			saved: false,
+			recordingConsentSelected: loadState('spreed', 'recording_consent').toString(),
 		}
 	},
 
@@ -164,6 +203,27 @@ export default {
 			})
 		},
 
+		setRecordingConsent(value) {
+			this.loading = true
+			OCP.AppConfig.setValue('spreed', 'recording_consent', value, {
+				success: function() {
+					this.loading = false
+				}.bind(this),
+			})
+		},
+
+		getRecordingConsentDescription(value) {
+			switch (value) {
+			case CALL.RECORDING_CONSENT.OPTIONAL:
+				return t('spreed', 'Moderators will be allowed to enable consent on conversation level. The consent to be recorded will be required for each participant before joining every call in this conversation.')
+			case CALL.RECORDING_CONSENT.REQUIRED:
+				return t('spreed', 'The consent to be recorded will be required for each participant before joining every call.')
+			case CALL.RECORDING_CONSENT.OFF:
+			default:
+				return t('spreed', 'The consent to be recorded is not required.')
+			}
+		},
+
 		toggleSave() {
 			this.saved = true
 			setTimeout(() => {
@@ -181,5 +241,15 @@ export default {
 
 .additional-top-margin {
 	margin-top: 10px;
+}
+
+h3 {
+	margin-top: 24px;
+	font-weight: 600;
+}
+
+.consent-description {
+	margin-bottom: 12px;
+	opacity: 0.7;
 }
 </style>
