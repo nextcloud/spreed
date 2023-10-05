@@ -594,11 +594,6 @@ class Notifier {
 			}
 		}
 
-		if ($participant->getSession() instanceof Session) {
-			// User is online
-			return $participant->getSession()->getLastPing() < $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
-		}
-
 		return true;
 	}
 }
