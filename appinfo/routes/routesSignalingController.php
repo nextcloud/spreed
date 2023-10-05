@@ -24,12 +24,12 @@ declare(strict_types=1);
  */
 
 $requirements = [
-	'apiVersion' => 'v3',
+	'apiVersion' => '(v3)',
 ];
 
 
 $requirementsWithToken = [
-	'apiVersion' => 'v3',
+	'apiVersion' => '(v3)',
 	'token' => '[a-z0-9]{4,30}',
 ];
 
