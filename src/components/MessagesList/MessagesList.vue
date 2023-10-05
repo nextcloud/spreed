@@ -1024,7 +1024,8 @@ export default {
 				// FIXME: this doesn't wait for the smooth scroll to end
 				await element.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
-					block: 'center',
+					// block: 'center',
+					block: 'end', // will scroll at the end of the focused message
 					inline: 'nearest',
 				})
 				if (!smooth) {
