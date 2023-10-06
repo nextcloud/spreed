@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -35,6 +36,7 @@ use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
@@ -44,6 +46,9 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 use OCP\IUserManager;
 
+/**
+ * @psalm-import-type TalkCallPeer from ResponseDefinitions
+ */
 class CallController extends AEnvironmentAwareController {
 
 	public function __construct(
@@ -57,6 +62,13 @@ class CallController extends AEnvironmentAwareController {
 		parent::__construct($appName, $request);
 	}
 
+	/**
+	 * Get the peers for a call
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkCallPeer[], array{}>
+	 *
+	 * 200: List of peers in the call returned
+	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireModeratorOrNoLobby]
@@ -95,6 +107,18 @@ class CallController extends AEnvironmentAwareController {
 		return new DataResponse($result);
 	}
 
+	/**
+	 * Join a call
+	 *
+	 * @param int|null $flags In-Call flags
+	 * @param int|null $forcePermissions In-call permissions
+	 * @param bool $silent Join the call silently
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 *
+	 * 200: Call joined successfully
+	 * 400: Failed to join the call
+	 * 404: Call not found
+	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireModeratorOrNoLobby]
@@ -125,6 +149,15 @@ class CallController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
+	/**
+	 * Ring an attendee
+	 *
+	 * @param int $attendeeId ID of the attendee to ring
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 *
+	 * 200: Attendee rang successfully
+	 * 400: Ringing attendee is not possible
+	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireParticipant]
@@ -145,6 +178,16 @@ class CallController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
+	/**
+	 * Update the in-call flags
+	 *
+	 * @param int $flags New flags
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 *
+	 * 200: In-call flags updated successfully
+	 * 400: Updating in-call flags is not possible
+	 * 404: Call session not found
+	 */
 	#[PublicPage]
 	#[RequireParticipant]
 	public function updateCallFlags(int $flags): DataResponse {
@@ -163,8 +206,13 @@ class CallController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Leave a call
+	 *
 	 * @param bool $all whether to also terminate the call for all participants
-	 * @return DataResponse
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 *
+	 * 200: Call left successfully
+	 * 404: Call session not found
 	 */
 	#[PublicPage]
 	#[RequireParticipant]

@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Kate Döen <kate.doeen@nextcloud.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -76,9 +78,6 @@ class Command extends Entity {
 		$this->addType('enabled', 'int');
 	}
 
-	/**
-	 * @return array
-	 */
 	public function asArray(): array {
 		return [
 			'id' => $this->getId(),

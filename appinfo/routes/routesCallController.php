@@ -24,7 +24,7 @@ declare(strict_types=1);
  */
 
 $requirements = [
-	'apiVersion' => 'v4',
+	'apiVersion' => '(v4)',
 	'token' => '[a-z0-9]{4,30}',
 ];
 

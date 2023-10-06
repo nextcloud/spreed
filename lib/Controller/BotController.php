@@ -40,6 +40,7 @@ use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
@@ -55,6 +56,10 @@ use OCP\Comments\NotFoundException;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type TalkBot from ResponseDefinitions
+ * @psalm-import-type TalkBotWithDetails from ResponseDefinitions
+ */
 class BotController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
@@ -116,19 +121,23 @@ class BotController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Sends a new chat message to the given room.
+	 * Sends a new chat message to the given room
 	 *
 	 * The author and timestamp are automatically set to the current user/guest
 	 * and time.
 	 *
-	 * @param string $token conversation token
-	 * @param string $message the message to send
-	 * @param string $referenceId for the message to be able to later identify it again
+	 * @param string $token Conversation token
+	 * @param string $message The message to send
+	 * @param string $referenceId For the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @param bool $silent If sent silent the chat message will not create any notifications
-	 * @return DataResponse the status code is "201 Created" if successful, and
-	 *         "404 Not found" if the room or session for a guest user was not
-	 *         found".
+	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
+	 *
+	 * 201: Message sent successfully
+	 * 400: Sending message is not possible
+	 * 401: Sending message is not allowed
+	 * 404: Room or session not found
+	 * 413: Message too long
 	 */
 	#[BruteForceProtection(action: 'bot')]
 	#[PublicPage]
@@ -136,7 +145,9 @@ class BotController extends AEnvironmentAwareController {
 		try {
 			$bot = $this->getBotFromHeaders($token, $message);
 		} catch (\InvalidArgumentException $e) {
-			$response = new DataResponse([], $e->getCode());
+			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
+			$status = $e->getCode();
+			$response = new DataResponse([], $status);
 			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
 				$response->throttle(['action' => 'bot']);
 			}
@@ -172,13 +183,29 @@ class BotController extends AEnvironmentAwareController {
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
 
+	/**
+	 * Adds a reaction to a chat message
+	 *
+	 * @param string $token Conversation token
+	 * @param int $messageId ID of the message
+	 * @param string $reaction Reaction to add
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 *
+	 * 200: Reaction already exists
+	 * 201: Reacted successfully
+	 * 400: Reacting is not possible
+	 * 401: Reacting is not allowed
+	 * 404: Reaction not found
+	 */
 	#[BruteForceProtection(action: 'bot')]
 	#[PublicPage]
 	public function react(string $token, int $messageId, string $reaction): DataResponse {
 		try {
 			$bot = $this->getBotFromHeaders($token, $reaction);
 		} catch (\InvalidArgumentException $e) {
-			$response = new DataResponse([], $e->getCode());
+			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
+			$status = $e->getCode();
+			$response = new DataResponse([], $status);
 			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
 				$response->throttle(['action' => 'bot']);
 			}
@@ -209,13 +236,28 @@ class BotController extends AEnvironmentAwareController {
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
 
+	/**
+	 * Deletes a reaction from a chat message
+	 *
+	 * @param string $token Conversation token
+	 * @param int $messageId ID of the message
+	 * @param string $reaction Reaction to delete
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_UNAUTHORIZED, array<empty>, array{}>
+	 *
+	 * 200: Reaction deleted successfully
+	 * 400: Reacting is not possible
+	 * 401: Reacting is not allowed
+	 * 404: Reaction not found
+	 */
 	#[BruteForceProtection(action: 'bot')]
 	#[PublicPage]
 	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
 		try {
 			$bot = $this->getBotFromHeaders($token, $reaction);
 		} catch (\InvalidArgumentException $e) {
-			$response = new DataResponse([], $e->getCode());
+			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
+			$status = $e->getCode();
+			$response = new DataResponse([], $status);
 			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
 				$response->throttle(['action' => 'bot']);
 			}
@@ -245,7 +287,11 @@ class BotController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Admin required
+	 * List admin bots
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkBotWithDetails[], array{}>
+	 *
+	 * 200: Bot list returned
 	 */
 	public function adminListBots(): DataResponse {
 		$data = [];
@@ -259,6 +305,13 @@ class BotController extends AEnvironmentAwareController {
 		return new DataResponse($data);
 	}
 
+	/**
+	 * List bots
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkBot[], array{}>
+	 *
+	 * 200: Bot list returned
+	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function listBots(): DataResponse {
@@ -278,6 +331,16 @@ class BotController extends AEnvironmentAwareController {
 		return new DataResponse($data);
 	}
 
+	/**
+	 * Enables a bot
+	 *
+	 * @param int $botId ID of the bot
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, ?TalkBot, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 *
+	 * 200: Bot already enabled
+	 * 201: Bot enabled successfully
+	 * 400: Enabling bot errored
+	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function enableBot(int $botId): DataResponse {
@@ -312,6 +375,15 @@ class BotController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatBot($bot, true), Http::STATUS_CREATED);
 	}
 
+	/**
+	 * Disables a bot
+	 *
+	 * @param int $botId ID of the bot
+	 * @return DataResponse<Http::STATUS_OK, ?TalkBot, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 *
+	 * 200: Bot disabled successfully
+	 * 400: Disabling bot errored
+	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function disableBot(int $botId): DataResponse {
@@ -337,7 +409,7 @@ class BotController extends AEnvironmentAwareController {
 	 * @param BotServer $bot
 	 * @param bool $conversationEnabled
 	 * @return array|null
-	 * @psalm-return array{id: int, name: string, description: null|string, state: int}
+	 * @psalm-return ?TalkBot
 	 */
 	protected function formatBot(BotServer $bot, bool $conversationEnabled): ?array {
 		$state = $conversationEnabled ? Bot::STATE_ENABLED : Bot::STATE_DISABLED;

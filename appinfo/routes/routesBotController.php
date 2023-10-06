@@ -24,18 +24,18 @@ declare(strict_types=1);
  */
 
 $requirements = [
-	'apiVersion' => 'v1',
+	'apiVersion' => '(v1)',
 	'token' => '[a-z0-9]{4,30}',
 ];
 
 $requirementsWithMessageId = [
-	'apiVersion' => 'v1',
+	'apiVersion' => '(v1)',
 	'token' => '[a-z0-9]{4,30}',
 	'messageId' => '[0-9]+',
 ];
 
 $requirementsWithBotId = [
-	'apiVersion' => 'v1',
+	'apiVersion' => '(v1)',
 	'token' => '[a-z0-9]{4,30}',
 	'botId' => '[0-9]+',
 ];

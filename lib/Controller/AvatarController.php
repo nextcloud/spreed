@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2022, Vitor Mattos <vitor@php.rio>
  *
  * @author Vitor Mattos <vitor@php.rio>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -29,6 +30,7 @@ namespace OCA\Talk\Controller;
 use InvalidArgumentException;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversation;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
@@ -42,6 +44,9 @@ use OCP\IRequest;
 use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type TalkRoom from ResponseDefinitions
+ */
 class AvatarController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
@@ -55,6 +60,15 @@ class AvatarController extends AEnvironmentAwareController {
 		parent::__construct($appName, $request);
 	}
 
+	/**
+	 *
+	 * Upload an avatar for a room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 *
+	 * 200: Avatar uploaded successfully
+	 * 400: Avatar invalid
+	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function uploadAvatar(): DataResponse {
@@ -78,6 +92,16 @@ class AvatarController extends AEnvironmentAwareController {
 		}
 	}
 
+	/**
+	 * Set an emoji as avatar
+	 *
+	 * @param string $emoji Emoji
+	 * @param ?string $color Color of the emoji
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 *
+	 * 200: Avatar set successfully
+	 * 400: Setting emoji avatar is not possible
+	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function emojiAvatar(string $emoji, ?string $color): DataResponse {
@@ -100,26 +124,47 @@ class AvatarController extends AEnvironmentAwareController {
 		}
 	}
 
+	/**
+	 * Get the avatar of a room
+	 *
+	 * @param bool $darkTheme Theme used for background
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: Room avatar returned
+	 */
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatar(bool $darkTheme = false): Response {
 		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $darkTheme);
 
-		$response = new FileDisplayResponse($file);
-		$response->addHeader('Content-Type', $file->getMimeType());
+		$response = new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => $file->getMimeType()]);
 		// Cache for 1 day
 		$response->cacheFor(60 * 60 * 24, false, true);
 		return $response;
 	}
 
+	/**
+	 * Get the dark mode avatar of a room
+	 *
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: Room avatar returned
+	 */
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[RequireParticipantOrLoggedInAndListedConversation]
-	public function getAvatarDark(): Response {
+	public function getAvatarDark(): FileDisplayResponse {
 		return $this->getAvatar(true);
 	}
 
+	/**
+	 * Delete the avatar of a room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Avatar removed successfully
+	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function deleteAvatar(): DataResponse {

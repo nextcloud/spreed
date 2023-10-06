@@ -24,11 +24,11 @@ declare(strict_types=1);
  */
 
 $requirementsFile = [
-	'apiVersion' => 'v1',
+	'apiVersion' => '(v1)',
 	'fileId' => '.+',
 ];
 $requirementsShare = [
-	'apiVersion' => 'v1',
+	'apiVersion' => '(v1)',
 	'shareToken' => '.+',
 ];
 
