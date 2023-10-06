@@ -425,7 +425,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $source Source of the invite ID ('circles' to create a room with a circle, etc.)
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
@@ -459,7 +459,7 @@ class RoomController extends AEnvironmentAwareController {
 				return $this->createEmptyRoom($roomName);
 		}
 
-		return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+		return new DataResponse([], Http::STATUS_BAD_REQUEST);
 	}
 
 	/**
@@ -540,12 +540,12 @@ class RoomController extends AEnvironmentAwareController {
 	 * Initiates a group video call from the selected circle
 	 *
 	 * @param string $targetCircleId
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createCircleRoom(string $targetCircleId): DataResponse {
 		if (!$this->appManager->isEnabledForUser('circles')) {
-			return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
@@ -568,7 +568,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = ''): DataResponse {
@@ -608,7 +608,7 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId);
 		} catch (InvalidArgumentException $e) {
-			return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$currentParticipant = $this->participantService->getParticipant($room, $currentUser->getUID(), false);
@@ -970,8 +970,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $newParticipant New participant
 	 * @param string $source Source of the participant
-	 * @return DataResponse<Http::STATUS_OK, array{type: ?int}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>
-	 * return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, ?array{type?: int, error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type: int}|array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Participant successfully added
 	 * 400: Adding participant is not possible
@@ -984,7 +983,7 @@ class RoomController extends AEnvironmentAwareController {
 			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $this->room->getType() === Room::TYPE_NOTE_TO_SELF
 			|| $this->room->getObjectType() === 'share:password') {
-			return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($source !== 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
@@ -1031,7 +1030,7 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->addGroup($this->room, $group, $participants);
 		} elseif ($source === 'circles') {
 			if (!$this->appManager->isEnabledForUser('circles')) {
-				return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 
 			try {
@@ -1042,16 +1041,16 @@ class RoomController extends AEnvironmentAwareController {
 
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
-			$type = null;
+			$data = [];
 			if ($this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
-				$type = $this->room->getType();
+				$data = ['type' => $this->room->getType()];
 			}
 
 			$participant = $this->participantService->inviteEmailAddress($this->room, $newParticipant);
 
 			$this->guestManager->sendEmailInvitation($this->room, $participant);
 
-			return new DataResponse(['type' => $type]);
+			return new DataResponse($data);
 		} elseif ($source === 'remotes') {
 			if (!$this->talkConfig->isFederationEnabled()) {
 				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
@@ -1062,7 +1061,7 @@ class RoomController extends AEnvironmentAwareController {
 				$this->logger->error($e->getMessage(), [
 					'exception' => $e,
 				]);
-				return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 
 			$participantsToAdd[] = [
@@ -1072,7 +1071,7 @@ class RoomController extends AEnvironmentAwareController {
 			];
 		} else {
 			$this->logger->error('Trying to add participant from unsupported source ' . $source);
-			return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		// attempt adding the listed users to the room
@@ -1120,7 +1119,7 @@ class RoomController extends AEnvironmentAwareController {
 		// add the remaining users in batch
 		$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
 
-		return new DataResponse(['type' => null]);
+		return new DataResponse([]);
 	}
 
 	/**
@@ -1300,7 +1299,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Set a password for a room
 	 *
 	 * @param string $password New password
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: ?string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message?: string}, array{}>
 	 *
 	 * 200: Password set successfully
 	 * 400: Setting password is not possible
@@ -1315,7 +1314,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			if (!$this->roomService->setPassword($this->room, $password)) {
-				return new DataResponse(['message' => null], Http::STATUS_BAD_REQUEST);
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 		} catch (HintException $e) {
 			return new DataResponse([
@@ -1816,7 +1815,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Update message expiration time
 	 *
 	 * @param int $seconds New time
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Message expiration time updated successfully
 	 * 400: Updating message expiration time is not possible
@@ -1825,7 +1824,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[RequireModeratorParticipant]
 	public function setMessageExpiration(int $seconds): DataResponse {
 		if ($seconds < 0) {
-			return new DataResponse(['error' => null], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'seconds'], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
