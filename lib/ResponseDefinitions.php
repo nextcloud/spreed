@@ -27,7 +27,74 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 /**
- * @psalm-type SpreedRoomShare = array{
+ * @psalm-type TalkBot = array{
+ *     description: ?string,
+ *     id: int,
+ *     name: string,
+ *     state: int,
+ * }
+ *
+ * @psalm-type TalkBotWithDetails = TalkBot&array{
+ *     error_count: int,
+ *     features: int,
+ *     last_error_date: int,
+ *     last_error_message: string,
+ *     url: string,
+ *     url_hash: string,
+ * }
+ *
+ * @psalm-type TalkBotWithDetailsAndSecret = TalkBotWithDetails&array{
+ *     secret: string,
+ * }
+ *
+ * @psalm-type TalkCallPeer = array{
+ *     actorId: string,
+ *     actorType: string,
+ *     displayName: string,
+ *     lastPing: int,
+ *     sessionId: string,
+ *     token: string,
+ * }
+ *
+ * @psalm-type TalkChatMentionSuggestion = array{
+ *     id: string,
+ *     label: string,
+ *     source: string,
+ *     status: ?string,
+ *     statusClearAt: ?int,
+ *     statusIcon: ?string,
+ *     statusMessage: ?string,
+ * }
+ *
+ * @psalm-type TalkChatMessage = array{
+ *     actorDisplayName: string,
+ *     actorId: string,
+ *     actorType: string,
+ *     deleted?: true,
+ *     expirationTimestamp: int,
+ *     id: int,
+ *     isReplyable: bool,
+ *     markdown: bool,
+ *     message: string,
+ *     messageParameters: array<string, array<string, mixed>>,
+ *     messageType: string,
+ *     reactions: array<string, integer>|\stdClass,
+ *     referenceId: string,
+ *     systemMessage: string,
+ *     timestamp: int,
+ *     token: string,
+ * }
+ *
+ * @psalm-type TalkChatMessageWithParent = TalkChatMessage&array{parent?: TalkChatMessage}
+ *
+ * @psalm-type TalkChatReminder = array{
+ *     messageId: int,
+ *     timestamp: int,
+ *     token: string,
+ *     userId: string
+ * }
+ *
+ * @psalm-type TalkFederationInvite = array{
  *     access_token: string,
  *     id: int,
  *     remote_id: string,
@@ -37,25 +104,52 @@ namespace OCA\Talk;
  *     user_id: string,
  * }
  *
- * @psalm-type SpreedReaction = array{
- *     actorDisplayName: string,
- *     actorId: string,
- *     actorType: string,
- *     timestamp: int,
+ * @psalm-type TalkMatterbridgeConfigFields = array<array<string, mixed>>
+ *
+ * @psalm-type TalkMatterbridge = array{
+ *     enabled: bool,
+ *     parts: TalkMatterbridgeConfigFields,
+ *     pid: int,
  * }
  *
- * @psalm-type SpreedPollVote = array{
+ * @psalm-type TalkMatterbridgeProcessState = array{
+ *     log: string,
+ *     running: bool,
+ * }
+ *
+ * @psalm-type TalkMatterbridgeWithProcessState = TalkMatterbridge&TalkMatterbridgeProcessState
+ *
+ * @psalm-type TalkParticipant = array{
+ *     actorId: string,
+ *     actorType: string,
+ *     attendeeId: int,
+ *     attendeePermissions: int,
+ *     attendeePin: string,
+ *     displayName: string,
+ *     inCall: int,
+ *     lastPing: int,
+ *     participantType: int,
+ *     permissions: int,
+ *     roomToken: string,
+ *     sessionIds: string[],
+ *     status?: string,
+ *     statusClearAt?: ?int,
+ *     statusIcon?: ?string,
+ *     statusMessage?: ?string,
+ * }
+ *
+ * @psalm-type TalkPollVote = array{
  *     actorDisplayName: string,
  *     actorId: string,
  *     actorType: string,
  *     optionId: int,
- * }
+ *  }
  *
- * @psalm-type SpreedPoll = array{
+ * @psalm-type TalkPoll = array{
  *     actorDisplayName: string,
  *     actorId: string,
  *     actorType: string,
- *     details?: SpreedPollVote[],
+ *     details?: TalkPollVote[],
  *     id: int,
  *     maxVotes: int,
  *     numVoters?: int,
@@ -67,32 +161,14 @@ namespace OCA\Talk;
  *     votes?: array<string, int>,
  * }
  *
- * @psalm-type SpreedPollWithRoomId = SpreedPoll&array{
- *     roomId: string,
- * }
- *
- * @psalm-type SpreedMessage = array{
+ * @psalm-type TalkReaction = array{
  *     actorDisplayName: string,
  *     actorId: string,
  *     actorType: string,
- *     deleted?: true,
- *     expirationTimestamp: int,
- *     id: int,
- *     isReplyable: bool,
- *     message: string,
- *     messageParameters: array<string, mixed>,
- *     messageType: string,
- *     reactions: array<string, integer>|\stdClass,
- *     referenceId: string,
- *     systemMessage: string,
- *     threadId: int,
  *     timestamp: int,
- *     token: string,
  * }
  *
- * @psalm-type SpreedMessageWithParent = SpreedMessage&array{parent?: SpreedMessage}
- *
- * @psalm-type SpreedRoom = array{
+ * @psalm-type TalkRoom = array{
  *     actorId: string,
  *     actorType: string,
  *     attendeeId: int,
@@ -119,7 +195,7 @@ namespace OCA\Talk;
  *     isFavorite: bool,
  *     lastActivity: int,
  *     lastCommonReadMessage: int,
- *     lastMessage: SpreedMessage|array<empty>,
+ *     lastMessage: TalkChatMessage|array<empty>,
  *     lastPing: int,
  *     lastReadMessage: int,
  *     listable: int,
@@ -148,60 +224,16 @@ namespace OCA\Talk;
  *     unreadMessages: int,
  * }
  *
- * @psalm-type SpreedRoomParticipant = array{
- *     actorId: string,
- *     actorType: string,
- *     attendeeId: int,
- *     attendeePermissions: int,
- *     attendeePin: string,
- *     displayName: string,
+ * @psalm-type TalkSignalingSession = array{
  *     inCall: int,
  *     lastPing: int,
- *     participantType: int,
- *     permissions: int,
- *     roomToken: string,
- *     sessionIds: string[],
- *     status?: string,
- *     statusClearAt?: ?int,
- *     statusIcon?: ?string,
- *     statusMessage?: ?string,
- * }
- *
- * @psalm-type SpreedCallPeer = array{
- *     actorId: string,
- *     actorType: string,
- *     displayName: string,
- *     lastPing: int,
+ *     participantPermissions: int,
+ *     roomId: int,
  *     sessionId: string,
- *     token: string,
+ *     userId: string,
  * }
  *
- * @psalm-type SpreedMention = array{
- *     id: string,
- *     label: string,
- *     source: string,
- *     status: ?string,
- *     statusClearAt: ?int,
- *     statusIcon: ?string,
- *     statusMessage: ?string,
- * }
- *
- * @psalm-type SpreedMatterbridgeParts = array<array<string, mixed>>
- *
- * @psalm-type SpreedMatterbridge = array{
- *     enabled: bool,
- *     parts: SpreedMatterbridgeParts,
- *     pid: int,
- * }
- *
- * @psalm-type SpreedMatterbridgeProcessState = array{
- *     log: string,
- *     running: bool,
- * }
- *
- * @psalm-type SpreedMatterbridgeWithProcessState = SpreedMatterbridge&SpreedMatterbridgeProcessState
- *
- * @psalm-type SpreedSignalingSettings = array{
+ * @psalm-type TalkSignalingSettings = array{
  *     helloAuthParams: array{
  *         "1.0": array{
  *             userid: ?string,
@@ -219,46 +251,6 @@ namespace OCA\Talk;
  *     ticket: string,
  *     turnservers: array{urls: string[], username: string, credential: mixed}[],
  *     userId: ?string,
- * }
- *
- * @psalm-type SpreedSignalingUsers = array{
- *     inCall: int,
- *     lastPing: int,
- *     participantPermissions: int,
- *     roomId: int,
- *     sessionId: string,
- *     userId: string,
- * }
- *
- * @psalm-type SpreedBot = array{
- *     id: int,
- *     name: string,
- *     description: ?string,
- *     state: int,
- * }
- *
- * @psalm-type SpreedAdminBot = array{
- *     description: ?string,
- *     error_count: int,
- *     features: int,
- *     id: int,
- *     last_error_date: int,
- *     last_error_message: string,
- *     name: string,
- *     state: int,
- *     url: string,
- *     url_hash: string,
- * }
- *
- * @psalm-type SpreedAdminBotWithSecret = SpreedAdminBot&array{
- *     secret: string,
- * }
- *
- * @psalm-type SpreedReminder = array{
- *     messageId: int,
- *     timestamp: int,
- *     token: string,
- *     userId: string
  * }
  */
 class ResponseDefinitions {

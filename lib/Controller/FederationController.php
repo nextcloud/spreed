@@ -44,7 +44,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 /**
- * @psalm-import-type SpreedRoomShare from ResponseDefinitions
+ * @psalm-import-type TalkFederationInvite from ResponseDefinitions
  */
 class FederationController extends OCSController {
 
@@ -58,7 +58,7 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * Accept a federated share
+	 * Accept a federation invites
 	 *
 	 * @param int $id ID of the share
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
@@ -66,7 +66,7 @@ class FederationController extends OCSController {
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
 	 *
-	 * 200: Share accepted successfully
+	 * 200: Invite accepted successfully
 	 */
 	#[NoAdminRequired]
 	public function acceptShare(int $id): DataResponse {
@@ -79,7 +79,7 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * Reject a federated share
+	 * Decline a federation invites
 	 *
 	 * @param int $id ID of the share
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
@@ -87,7 +87,7 @@ class FederationController extends OCSController {
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
 	 *
-	 * 200: Share rejected successfully
+	 * 200: Invite declined successfully
 	 */
 	#[NoAdminRequired]
 	public function rejectShare(int $id): DataResponse {
@@ -100,11 +100,11 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * Get a list of federated shares
+	 * Get a list of federation invites
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoomShare[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkFederationInvite[], array{}>
 	 *
-	 * 200: Get list of received shares successfully
+	 * 200: Get list of received federation invites successfully
 	 */
 	#[NoAdminRequired]
 	public function getShares(): DataResponse {

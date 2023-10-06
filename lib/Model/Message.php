@@ -33,7 +33,7 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 
 /**
- * @psalm-import-type SpreedMessage from ResponseDefinitions
+ * @psalm-import-type TalkChatMessage from ResponseDefinitions
  */
 class Message {
 
@@ -160,7 +160,7 @@ class Message {
 	/**
 	 * @param string $format
 	 * @psalm-param 'json'|'xml' $format
-	 * @return SpreedMessage
+	 * @return TalkChatMessage
 	 */
 	public function toArray(string $format): array {
 		$expireDate = $this->getComment()->getExpireDate();

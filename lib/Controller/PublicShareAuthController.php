@@ -65,7 +65,7 @@ class PublicShareAuthController extends OCSController {
 	 * The share must have "send password by Talk" enabled; an error is returned
 	 * otherwise.
 	 *
-	 * @param string $shareToken Token of the share
+	 * @param string $shareToken Token of the file share
 	 * @return DataResponse<Http::STATUS_CREATED, array{token: string, name: string, displayName: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 * 201: Room created successfully
 	 * 404: Share not found

@@ -45,7 +45,7 @@ use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-import-type SpreedRoom from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class AvatarController extends AEnvironmentAwareController {
 	public function __construct(
@@ -64,7 +64,7 @@ class AvatarController extends AEnvironmentAwareController {
 	 *
 	 * Upload an avatar for a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: Avatar uploaded successfully
 	 * 400: Avatar invalid
@@ -97,9 +97,9 @@ class AvatarController extends AEnvironmentAwareController {
 	 *
 	 * @param string $emoji Emoji
 	 * @param ?string $color Color of the emoji
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
-	 * 200: Room returned
+	 * 200: Avatar set successfully
 	 * 400: Setting emoji avatar is not possible
 	 */
 	#[PublicPage]
@@ -161,9 +161,9 @@ class AvatarController extends AEnvironmentAwareController {
 	/**
 	 * Delete the avatar of a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *
-	 * 200: Room returned
+	 * 200: Avatar removed successfully
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]

@@ -42,7 +42,7 @@ use OCP\Comments\NotFoundException;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type SpreedReaction from ResponseDefinitions
+ * @psalm-import-type TalkReaction from ResponseDefinitions
  */
 class ReactionController extends AEnvironmentAwareController {
 
@@ -59,7 +59,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param string $reaction Emoji to add
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, SpreedReaction[]>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, TalkReaction[]>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reaction already existed
 	 * 201: Reaction added successfully
@@ -97,7 +97,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param string $reaction Emoji to remove
-	 * @return DataResponse<Http::STATUS_OK, array<string, SpreedReaction[]>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reaction deleted successfully
 	 * 400: Deleting reaction is not possible
@@ -132,7 +132,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param string|null $reaction Emoji to filter
-	 * @return DataResponse<Http::STATUS_OK, array<string, SpreedReaction[]>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reactions returned
 	 * 404: Message or reaction not found

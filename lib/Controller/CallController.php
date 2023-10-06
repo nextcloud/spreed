@@ -47,7 +47,7 @@ use OCP\IRequest;
 use OCP\IUserManager;
 
 /**
- * @psalm-import-type SpreedCallPeer from ResponseDefinitions
+ * @psalm-import-type TalkCallPeer from ResponseDefinitions
  */
 class CallController extends AEnvironmentAwareController {
 
@@ -65,7 +65,7 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * Get the peers for a call
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedCallPeer[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkCallPeer[], array{}>
 	 *
 	 * 200: List of peers in the call returned
 	 */
@@ -113,9 +113,10 @@ class CallController extends AEnvironmentAwareController {
 	 * @param int|null $flags In-Call flags
 	 * @param int|null $forcePermissions In-call permissions
 	 * @param bool $silent Join the call silently
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Call joined successfully
+	 * 400: Failed to join the call
 	 * 404: Call not found
 	 */
 	#[PublicPage]

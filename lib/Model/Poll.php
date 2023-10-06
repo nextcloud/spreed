@@ -53,7 +53,7 @@ use OCP\AppFramework\Db\Entity;
  * @method void setMaxVotes(int $maxVotes)
  * @method int getMaxVotes()
  *
- * @psalm-import-type SpreedPollWithRoomId from ResponseDefinitions
+ * @psalm-import-type TalkPoll from ResponseDefinitions
  */
 class Poll extends Entity {
 	public const STATUS_OPEN = 0;
@@ -89,7 +89,7 @@ class Poll extends Entity {
 	}
 
 	/**
-	 * @return SpreedPollWithRoomId
+	 * @return TalkPoll
 	 */
 	public function asArray(): array {
 		$votes = json_decode($this->getVotes(), true, 512, JSON_THROW_ON_ERROR);

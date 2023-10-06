@@ -57,8 +57,8 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-import-type SpreedAdminBot from ResponseDefinitions
- * @psalm-import-type SpreedBot from ResponseDefinitions
+ * @psalm-import-type TalkBot from ResponseDefinitions
+ * @psalm-import-type TalkBotWithDetails from ResponseDefinitions
  */
 class BotController extends AEnvironmentAwareController {
 	public function __construct(
@@ -289,7 +289,7 @@ class BotController extends AEnvironmentAwareController {
 	/**
 	 * List admin bots
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedAdminBot[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkBotWithDetails[], array{}>
 	 *
 	 * 200: Bot list returned
 	 */
@@ -308,7 +308,7 @@ class BotController extends AEnvironmentAwareController {
 	/**
 	 * List bots
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedBot[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkBot[], array{}>
 	 *
 	 * 200: Bot list returned
 	 */
@@ -335,11 +335,11 @@ class BotController extends AEnvironmentAwareController {
 	 * Enables a bot
 	 *
 	 * @param int $botId ID of the bot
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, ?SpreedBot, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, ?TalkBot, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Bot already enabled
 	 * 201: Bot enabled successfully
-	 * 400: Enabling bot is not possible
+	 * 400: Enabling bot errored
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -379,13 +379,11 @@ class BotController extends AEnvironmentAwareController {
 	 * Disables a bot
 	 *
 	 * @param int $botId ID of the bot
-	 * @return DataResponse<Http::STATUS_OK, ?SpreedBot, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ?TalkBot, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
-	 * 200: Bot already enabled
-	 * 201: Bot enabled successfully
-	 * 400: Enabling bot is not possible
+	 * 200: Bot disabled successfully
+	 * 400: Disabling bot errored
 	 */
-
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function disableBot(int $botId): DataResponse {
@@ -411,7 +409,7 @@ class BotController extends AEnvironmentAwareController {
 	 * @param BotServer $bot
 	 * @param bool $conversationEnabled
 	 * @return array|null
-	 * @psalm-return ?SpreedBot
+	 * @psalm-return ?TalkBot
 	 */
 	protected function formatBot(BotServer $bot, bool $conversationEnabled): ?array {
 		$state = $conversationEnabled ? Bot::STATE_ENABLED : Bot::STATE_DISABLED;

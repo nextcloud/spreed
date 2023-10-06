@@ -48,7 +48,7 @@ use OCP\AppFramework\Db\Entity;
  * @method void setFeatures(int $features)
  * @method int getFeatures()
  *
- * @psalm-import-type SpreedAdminBotWithSecret from ResponseDefinitions
+ * @psalm-import-type TalkBotWithDetailsAndSecret from ResponseDefinitions
  */
 class BotServer extends Entity implements \JsonSerializable {
 	protected string $name = '';
@@ -76,7 +76,7 @@ class BotServer extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return SpreedAdminBotWithSecret
+	 * @return TalkBotWithDetailsAndSecret
 	 */
 	public function jsonSerialize(): array {
 		return [

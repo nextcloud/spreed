@@ -44,6 +44,7 @@ use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -60,8 +61,8 @@ use OCP\Security\Bruteforce\IThrottler;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-import-type SpreedSignalingSettings from ResponseDefinitions
- * @psalm-import-type SpreedSignalingUsers from ResponseDefinitions
+ * @psalm-import-type TalkSignalingSession from ResponseDefinitions
+ * @psalm-import-type TalkSignalingSettings from ResponseDefinitions
  */
 class SignalingController extends OCSController {
 	/** @var int */
@@ -124,7 +125,7 @@ class SignalingController extends OCSController {
 	 * Get the signaling settings
 	 *
 	 * @param string $token Token of the room
-	 * @return DataResponse<Http::STATUS_OK, SpreedSignalingSettings, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkSignalingSettings, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Signaling settings returned
 	 * 401: Recording request invalid
@@ -220,7 +221,7 @@ class SignalingController extends OCSController {
 	/**
 	 * Get the welcome message from a signaling server
 	 *
-	 * Only available for logged in users because guests can not use the apps
+	 * Only available for logged-in users because guests can not use the apps
 	 * right now.
 	 *
 	 * @param int $serverId ID of the signaling server
@@ -350,7 +351,7 @@ class SignalingController extends OCSController {
 	 * Get signaling messages
 	 *
 	 * @param string $token Token of the room
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND|Http::STATUS_CONFLICT, array{type: string, data: SpreedSignalingUsers[]}[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND|Http::STATUS_CONFLICT, array{type: string, data: TalkSignalingSession[]}[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
 	 *
 	 * 200: Signaling messages returned
 	 * 400: Getting signaling messages is not possible
@@ -449,7 +450,7 @@ class SignalingController extends OCSController {
 	/**
 	 * @param Room $room
 	 * @param int $pingTimestamp
-	 * @return SpreedSignalingUsers[]
+	 * @return TalkSignalingSession[]
 	 */
 	protected function getUsersInRoom(Room $room, int $pingTimestamp): array {
 		$usersInRoom = [];
@@ -536,6 +537,7 @@ class SignalingController extends OCSController {
 	 *
 	 * 200: Always, sorry about that
 	 */
+	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSignalingSecret')]
 	public function backend(): DataResponse {

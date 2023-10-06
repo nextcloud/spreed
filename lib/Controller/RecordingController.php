@@ -42,6 +42,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -73,7 +74,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_OK, array{version: float}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string}, array{}>
 	 *
 	 * 200: Welcome message returned
-	 * 404: Recording server not found
+	 * 404: Recording server not found or not configured
 	 */
 	public function getWelcomeMessage(int $serverId): DataResponse {
 		$recordingServers = $this->talkConfig->getRecordingServers();
@@ -167,6 +168,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 * 403: Missing permissions to update recording status
 	 * 404: Room not found
 	 */
+	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function backend(): DataResponse {

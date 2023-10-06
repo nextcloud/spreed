@@ -38,7 +38,7 @@ use OCP\IL10N;
 use OCP\PreConditionNotMetException;
 
 /**
- * @psalm-import-type SpreedReaction from ResponseDefinitions
+ * @psalm-import-type TalkReaction from ResponseDefinitions
  */
 class ReactionManager {
 
@@ -144,7 +144,7 @@ class ReactionManager {
 	}
 
 	/**
-	 * @return array<string, SpreedReaction[]>
+	 * @return array<string, TalkReaction[]>
 	 * @throws PreConditionNotMetException
 	 */
 	public function retrieveReactionMessages(Room $chat, Participant $participant, int $messageId, ?string $reaction = null): array {

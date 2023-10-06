@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
-use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -41,8 +40,6 @@ use OCP\AppFramework\Db\Entity;
  * @method int getResponse()
  * @method void setEnabled(int $enabled)
  * @method int getEnabled()
- *
- * @psalm-import-type SpreedCommand from ResponseDefinitions
  */
 class Command extends Entity {
 	public const RESPONSE_NONE = 0;
@@ -81,9 +78,6 @@ class Command extends Entity {
 		$this->addType('enabled', 'int');
 	}
 
-	/**
-	 * @return SpreedCommand
-	 */
 	public function asArray(): array {
 		return [
 			'id' => $this->getId(),

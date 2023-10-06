@@ -64,6 +64,7 @@ use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -84,8 +85,8 @@ use OCP\UserStatus\IUserStatus;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-import-type SpreedRoom from ResponseDefinitions
- * @psalm-import-type SpreedRoomParticipant from ResponseDefinitions
+ * @psalm-import-type TalkParticipant from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
@@ -160,7 +161,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
 	 * @param bool $includeStatus Include the user status
 	 * @param int $modifiedSince Filter rooms modified after a timestamp
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom[], array{X-Nextcloud-Talk-Hash: string, X-Nextcloud-Talk-Modified-Before: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{X-Nextcloud-Talk-Hash: string, X-Nextcloud-Talk-Modified-Before: numeric-string}>
 	 *
 	 * 200: Return list of rooms
 	 */
@@ -243,7 +244,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Get listed rooms with optional search term
 	 *
 	 * @param string $searchTerm search term
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>
 	 *
 	 * 200: Return list of matching rooms
 	 */
@@ -260,9 +261,9 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Get all (for moderators and in case of "free selection) or the assigned breakout room
+	 * Get all (for moderators and in case of "free selection") or the assigned breakout room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Breakout rooms returned
 	 * 400: Getting breakout rooms is not possible
@@ -296,7 +297,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Get a room
 	 *
 	 * @param string $token Token of the room
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Room returned
 	 * 401: SIP request invalid
@@ -369,9 +370,9 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * It will be automatically created when it is currently missing
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{X-Nextcloud-Talk-Hash: string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Hash: string}>
 	 *
-	 *  200: Room returned
+	 *  200: Room returned successfully
 	 */
 	#[NoAdminRequired]
 	public function getNoteToSelfConversation(): DataResponse {
@@ -401,7 +402,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return SpreedRoom
+	 * @return TalkRoom
 	 */
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {
 		return $this->roomFormatter->formatRoom(
@@ -419,18 +420,18 @@ class RoomController extends AEnvironmentAwareController {
 	 * Create a room with a user, a group or a circle
 	 *
 	 * @param int $roomType Type of the room
-	 * @param string $invite User or circle to invite
+	 * @param string $invite User, group, … ID to invite
 	 * @param string $roomName Name of the room
-	 * @param string $source Source of the room ('circles' to create a circle room)
+	 * @param string $source Source of the invite ID ('circles' to create a room with a circle, etc.)
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
 	 * 400: Room type invalid
 	 * 403: Missing permissions to create room
-	 * 404: User not found
+	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
 	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = '', string $objectType = '', string $objectId = ''): DataResponse {
@@ -465,7 +466,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
 	 * @param string $targetUserId ID of the user
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, SpreedRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createOneToOneRoom(string $targetUserId): DataResponse {
@@ -513,7 +514,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Initiates a group video call from the selected group
 	 *
 	 * @param string $targetGroupName
-	 * @return DataResponse<Http::STATUS_CREATED, SpreedRoom, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createGroupRoom(string $targetGroupName): DataResponse {
@@ -539,7 +540,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Initiates a group video call from the selected circle
 	 *
 	 * @param string $targetCircleId
-	 * @return DataResponse<Http::STATUS_CREATED, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createCircleRoom(string $targetCircleId): DataResponse {
@@ -567,7 +568,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	#[NoAdminRequired]
 	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = ''): DataResponse {
@@ -776,7 +777,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Get a list of participants for a room
 	 *
 	 * @param bool $includeStatus Include the user statuses
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoomParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>|DataResponse<Http::STATUS_FORBIDDEN, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>|DataResponse<Http::STATUS_FORBIDDEN, array<empty>, array{}>
 	 *
 	 * 200: Participants returned
 	 * 403: Missing permissions for getting participants
@@ -798,7 +799,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Get the breakout room participants for a room
 	 *
 	 * @param bool $includeStatus Include the user statuses
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoomParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array<empty>, array{}>
 	 *
 	 * 200: Breakout room participants returned
 	 * 400: Getting breakout room participants is not possible
@@ -827,7 +828,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @param Participant[] $participants
 	 * @param bool $includeStatus
-	 * @return DataResponse<Http::STATUS_OK, list<SpreedRoomParticipant>, array{X-Nextcloud-Has-User-Statuses?: true}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkParticipant>, array{X-Nextcloud-Has-User-Statuses?: true}>
 	 */
 	protected function formatParticipantList(array $participants, bool $includeStatus): DataResponse {
 		$results = $headers = $statuses = [];
@@ -974,7 +975,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * 200: Participant successfully added
 	 * 400: Adding participant is not possible
-	 * 404: User, group or circle not found
+	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1213,12 +1214,12 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Make a private room public
+	 * Allowed guests to join conversation
 	 *
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
-	 * 200: Room published successfully
-	 * 400: Publishing room is not possible
+	 * 200: Allowed guests successfully
+	 * 400: Allowing guests is not possible
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1231,12 +1232,12 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Make a public room private
+	 * Disallowed guests to join conversation
 	 *
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
-	 * 200: Room unpublished successfully
-	 * 400: Unpublishing room is not possible
+	 * 200: Room unpublished Disallowing guests successfully
+	 * 400: Disallowing guests is not possible
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1303,7 +1304,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * 200: Password set successfully
 	 * 400: Setting password is not possible
-	 * 403: Setting password is not possible
+	 * 403: Setting password is not allowed
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
@@ -1331,7 +1332,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $token Token of the room
 	 * @param string $password Password of the room
 	 * @param bool $force Create a new session if necessary
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
 	 *
 	 * 200: Room joined successfully
 	 * 403: Joining room is not allowed
@@ -1419,12 +1420,13 @@ class RoomController extends AEnvironmentAwareController {
 	 * Get a participant by their dial-in PIN
 	 *
 	 * @param string $pin PIN the participant used to dial-in
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
-	 * 200: Room returned
+	 * 200: Participant returned
 	 * 401: SIP request invalid
 	 * 404: Participant not found
 	 */
+	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[RequireRoom]
@@ -1453,12 +1455,13 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Create a guest by their dial-in
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, array<empty>, array{}>
 	 *
 	 * 200: Participant created successfully
 	 * 400: SIP not enabled
 	 * 401: SIP request invalid
 	 */
+	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[RequireRoom]
@@ -1488,9 +1491,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * Set active state for a session
 	 *
 	 * @param int $state of the room
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
-	 * 200: Room returned
+	 * 200: Session state set successfully
 	 * 400: The provided new state was invalid
 	 */
 	#[PublicPage]
@@ -1622,7 +1625,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $mode Level of the permissions ('call', 'default')
 	 * @param int $permissions New permissions
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -1677,7 +1680,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param string $method Method of updating permissions ('set', 'remove', 'add')
 	 * @param int $permissions New permissions
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -1697,7 +1700,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param int $state New state
 	 * @param int|null $timer Timer when the lobby will be removed
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
 	 * 200: Lobby state updated successfully
 	 * 400: Updating lobby state is not possible
@@ -1742,7 +1745,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Update SIP enabled state
 	 *
 	 * @param int $state New state
-	 * @return DataResponse<Http::STATUS_OK, SpreedRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
 	 *
 	 * 200: SIP enabled state updated successfully
 	 * 400: Updating SIP enabled state is not possible
@@ -1774,7 +1777,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Resend invitiations
+	 * Resend invitations
 	 *
 	 * @param int|null $attendeeId ID of the attendee
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>

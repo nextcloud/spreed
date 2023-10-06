@@ -50,7 +50,7 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-import-type SpreedPoll from ResponseDefinitions
+ * @psalm-import-type TalkPoll from ResponseDefinitions
  */
 class PollController extends AEnvironmentAwareController {
 
@@ -73,7 +73,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @param string[] $options Options of the poll
 	 * @param int $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
-	 * @return DataResponse<Http::STATUS_CREATED, SpreedPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
 	 * 201: Poll created successfully
 	 * 400: Creating poll is not possible
@@ -132,7 +132,7 @@ class PollController extends AEnvironmentAwareController {
 	 * Get a poll
 	 *
 	 * @param int $pollId ID of the poll
-	 * @return DataResponse<Http::STATUS_OK, SpreedPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Poll returned
 	 * 404: Poll not found
@@ -161,7 +161,7 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @param int[] $optionIds IDs of the selected options
-	 * @return DataResponse<Http::STATUS_OK, SpreedPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Voted successfully
 	 * 400: Voting is not possible
@@ -213,7 +213,7 @@ class PollController extends AEnvironmentAwareController {
 	 * Close a poll
 	 *
 	 * @param int $pollId ID of the poll
-	 * @return DataResponse<Http::STATUS_OK, SpreedPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
 	 *
 	 * 200: Poll closed successfully
 	 * 400: Poll already closed
@@ -273,12 +273,11 @@ class PollController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return SpreedPoll
+	 * @return TalkPoll
 	 * @throws JsonException
 	 */
 	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
 		$data = $poll->asArray();
-		unset($data['roomId']);
 
 		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
 

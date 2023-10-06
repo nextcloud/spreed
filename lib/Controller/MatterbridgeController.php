@@ -37,10 +37,10 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type SpreedMatterbridge from ResponseDefinitions
- * @psalm-import-type SpreedMatterbridgeParts from ResponseDefinitions
- * @psalm-import-type SpreedMatterbridgeProcessState from ResponseDefinitions
- * @psalm-import-type SpreedMatterbridgeWithProcessState from ResponseDefinitions
+ * @psalm-import-type TalkMatterbridge from ResponseDefinitions
+ * @psalm-import-type TalkMatterbridgeConfigFields from ResponseDefinitions
+ * @psalm-import-type TalkMatterbridgeProcessState from ResponseDefinitions
+ * @psalm-import-type TalkMatterbridgeWithProcessState from ResponseDefinitions
  */
 class MatterbridgeController extends AEnvironmentAwareController {
 
@@ -57,9 +57,9 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	/**
 	 * Get bridge information of one room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedMatterbridgeWithProcessState, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkMatterbridgeWithProcessState, array{}>
 	 *
-	 * 200: Return list of configured Matterbridges
+	 * 200: Return list of configured bridges
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -75,7 +75,7 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	/**
 	 * Get bridge process information
 	 *
-	 * @return DataResponse<Http::STATUS_OK, SpreedMatterbridgeProcessState, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkMatterbridgeProcessState, array{}>
 	 *
 	 * 200: Return list of running processes
 	 */
@@ -90,8 +90,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * Edit bridge information of one room
 	 *
 	 * @param bool $enabled If the bridge should be enabled
-	 * @param SpreedMatterbridgeParts $parts New parts
-	 * @return DataResponse<Http::STATUS_OK, SpreedMatterbridgeProcessState, array{}>|DataResponse<Http::STATUS_NOT_ACCEPTABLE, array{error: string}, array{}>
+	 * @param TalkMatterbridgeConfigFields $parts New parts
+	 * @return DataResponse<Http::STATUS_OK, TalkMatterbridgeProcessState, array{}>|DataResponse<Http::STATUS_NOT_ACCEPTABLE, array{error: string}, array{}>
 	 *
 	 * 200: Bridge edited successfully
 	 * 406: Editing bridge is not possible

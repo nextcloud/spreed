@@ -78,10 +78,10 @@ use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 
 /**
- * @psalm-import-type SpreedMessage from ResponseDefinitions
- * @psalm-import-type SpreedMessageWithParent from ResponseDefinitions
- * @psalm-import-type SpreedMention from ResponseDefinitions
- * @psalm-import-type SpreedReminder from ResponseDefinitions
+ * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
+ * @psalm-import-type TalkChatMessage from ResponseDefinitions
+ * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
+ * @psalm-import-type TalkChatReminder from ResponseDefinitions
  */
 class ChatController extends AEnvironmentAwareController {
 	/** @var string[] */
@@ -137,9 +137,9 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, ?SpreedMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 */
-	public function parseCommentToResponse(IComment $comment, Message $parentMessage = null): DataResponse {
+	protected function parseCommentToResponse(IComment $comment, Message $parentMessage = null): DataResponse {
 		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($chatMessage);
 
@@ -174,11 +174,11 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param string $referenceId for the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @param bool $silent If sent silent the chat message will not create any notifications
-	 * @return DataResponse<Http::STATUS_CREATED, ?SpreedMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
-	 * 404: Guest not found
+	 * 404: Actor not found
 	 * 413: Message too long
 	 */
 	#[PublicPage]
@@ -237,11 +237,11 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param string $metaData Additional metadata
 	 * @param string $actorDisplayName Guest name
 	 * @param string $referenceId Reference ID
-	 * @return DataResponse<Http::STATUS_CREATED, ?SpreedMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
 	 *
 	 * 201: Object shared successfully
 	 * 400: Sharing object is not possible
-	 * 404: Guest not found
+	 * 404: Actor not found
 	 * 413: Message too long
 	 */
 	#[PublicPage]
@@ -369,7 +369,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
 	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
 	 * @param int $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, SpreedMessage[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
 	 *
 	 * 200: Messages returned
 	 * 304: No messages
@@ -443,12 +443,10 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, SpreedMessage[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
 	 */
 	protected function prepareCommentsAsDataResponse(array $comments, int $lastCommonReadId = 0): DataResponse {
 		if (empty($comments)) {
-			/** @var SpreedMessage[] $messages */
-			$messages = [];
 			if ($lastCommonReadId && $this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 				$newLastCommonRead = $this->chatManager->getLastCommonReadMessage($this->room);
 				if ($lastCommonReadId !== $newLastCommonRead) {
@@ -457,10 +455,10 @@ class ChatController extends AEnvironmentAwareController {
 					// stripped out on 304: https://stackoverflow.com/a/17822709
 					/** @var array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string} $headers */
 					$headers = ['X-Chat-Last-Common-Read' => (string) $newLastCommonRead];
-					return new DataResponse($messages, Http::STATUS_OK, $headers);
+					return new DataResponse([], Http::STATUS_OK, $headers);
 				}
 			}
-			return new DataResponse($messages, Http::STATUS_NOT_MODIFIED);
+			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
 
 		$this->preloadShares($comments);
@@ -580,7 +578,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId The focused message which should be in the "middle" of the returned context
 	 * @param int $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, SpreedMessage[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
 	 *
 	 * 200: Message context returned
 	 * 304: No messages
@@ -649,10 +647,10 @@ class ChatController extends AEnvironmentAwareController {
 	 * Delete a chat message
 	 *
 	 * @param int $messageId ID of the message
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, SpreedMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 *
 	 * 200: Message deleted successfully
-	 * 202: Message deleted successfully
+	 * 202: Message deleted successfully, but Matterbridge is configured, so the information can be replicated elsewhere
 	 * 400: Deleting message is not possible
 	 * 403: Missing permissions to delete message
 	 * 404: Message not found
@@ -731,7 +729,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param int $timestamp Timestamp of the reminder
-	 * @return DataResponse<Http::STATUS_CREATED, SpreedReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 201: Reminder created successfully
 	 * 404: Message not found
@@ -761,9 +759,10 @@ class ChatController extends AEnvironmentAwareController {
 	 * Get the reminder for a chat message
 	 *
 	 * @param int $messageId ID of the message
-	 * @return DataResponse<Http::STATUS_OK, SpreedReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reminder returned
+	 * 404: No reminder found
 	 * 404: Message not found
 	 */
 	#[NoAdminRequired]
@@ -818,10 +817,10 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * Clear the chat history
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, SpreedMessage, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_FORBIDDEN, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessage, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_FORBIDDEN, array<empty>, array{}>
 	 *
 	 * 200: History cleared successfully
-	 * 202: History cleared successfully
+	 * 202: History cleared successfully, but Matterbridge is configured, so the information can be replicated elsewhere
 	 * 403: Missing permissions to clear history
 	 */
 	#[NoAdminRequired]
@@ -881,7 +880,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
-	 * 200: Conversation marked unread successfully
+	 * 200: Read marker set successfully
 	 */
 	#[NoAdminRequired]
 	#[RequireParticipant]
@@ -911,7 +910,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * Get objects that are shared in the room overview
 	 *
 	 * @param int $limit Maximum number of objects
-	 * @return DataResponse<Http::STATUS_OK, array<string, SpreedMessage[]>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, TalkChatMessage[]>, array{}>
 	 *
 	 * 200: List of shared objects messages of each type returned
 	 */
@@ -964,7 +963,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param string $objectType Type of the objects
 	 * @param int $lastKnownMessageId ID of the last known message
 	 * @param int $limit Maximum number of objects
-	 * @return DataResponse<Http::STATUS_OK, SpreedMessage[], array{X-Chat-Last-Given?: string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatMessage[], array{X-Chat-Last-Given?: string}>
 	 *
 	 * 200: List of shared objects messages returned
 	 */
@@ -989,7 +988,7 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @return SpreedMessage[]
+	 * @return TalkChatMessage[]
 	 */
 	protected function getMessagesForRoom(array $messageIds): array {
 		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
@@ -1024,7 +1023,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param string $search Text to search for
 	 * @param int $limit Maximum number of results
 	 * @param bool $includeStatus Include the user statuses
-	 * @return DataResponse<Http::STATUS_OK, SpreedMention[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
 	 *
 	 * 200: List of mention suggestions returned
 	 */
@@ -1075,7 +1074,7 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * @param array $results
 	 * @param IUserStatus[] $statuses
-	 * @return SpreedMention[]
+	 * @return TalkChatMentionSuggestion[]
 	 */
 	protected function prepareResultArray(array $results, array $statuses): array {
 		$output = [];

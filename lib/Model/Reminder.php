@@ -38,7 +38,7 @@ use OCP\AppFramework\Db\Entity;
  * @method void setDateTime(\DateTime $dateTime)
  * @method \DateTime getDateTime()
  *
- * @psalm-import-type SpreedReminder from ResponseDefinitions
+ * @psalm-import-type TalkChatReminder from ResponseDefinitions
  */
 class Reminder extends Entity implements \JsonSerializable {
 	protected string $userId = '';
@@ -54,7 +54,7 @@ class Reminder extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return SpreedReminder
+	 * @return TalkChatReminder
 	 */
 	public function jsonSerialize(): array {
 		return [

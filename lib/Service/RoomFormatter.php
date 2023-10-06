@@ -46,8 +46,8 @@ use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
 /**
- * @psalm-import-type SpreedRoom from ResponseDefinitions
- * @psalm-import-type SpreedMessage from ResponseDefinitions
+ * @psalm-import-type TalkChatMessage from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class RoomFormatter {
 	public function __construct(
@@ -67,7 +67,7 @@ class RoomFormatter {
 	}
 
 	/**
-	 * @return SpreedRoom
+	 * @return TalkRoom
 	 */
 	public function formatRoom(
 		string $responseFormat,
@@ -91,7 +91,7 @@ class RoomFormatter {
 
 	/**
 	 * @param array<int, int> $commonReadMessages
-	 * @return SpreedRoom
+	 * @return TalkRoom
 	 */
 	public function formatRoomV4(
 		string $responseFormat,
@@ -369,7 +369,7 @@ class RoomFormatter {
 	}
 
 	/**
-	 * @return SpreedMessage|array<empty>
+	 * @return TalkChatMessage|array<empty>
 	 */
 	public function formatLastMessage(
 		string $responseFormat,

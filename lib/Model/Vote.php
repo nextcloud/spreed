@@ -44,7 +44,7 @@ use OCP\AppFramework\Db\Entity;
  * @method void setOptionId(int $optionId)
  * @method int getOptionId()
  *
- * @psalm-import-type SpreedPollVote from ResponseDefinitions
+ * @psalm-import-type TalkPollVote from ResponseDefinitions
  */
 class Vote extends Entity {
 	protected int $pollId = 0;
@@ -64,7 +64,7 @@ class Vote extends Entity {
 	}
 
 	/**
-	 * @return SpreedPollVote
+	 * @return TalkPollVote
 	 */
 	public function asArray(): array {
 		return [
