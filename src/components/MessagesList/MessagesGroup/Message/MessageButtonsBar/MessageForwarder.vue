@@ -94,7 +94,6 @@ export default {
 			selectedConversationToken: null,
 			showForwardedConfirmation: false,
 			forwardedMessageID: '',
-			error: false,
 		}
 	},
 
@@ -156,6 +155,9 @@ export default {
 
 <style lang="scss" scoped>
 
+:deep(.empty-content) {
+	padding: 20px;
+}
 :deep(.empty-content__action) {
 	gap: 10px;
 }

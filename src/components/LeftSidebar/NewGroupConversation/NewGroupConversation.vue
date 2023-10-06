@@ -123,27 +123,27 @@
 			@close="closeModal">
 			<NcEmptyContent>
 				<template #icon>
-					<Check v-if="!error && success && isPublic" :size="64" />
-					<div v-if="isLoading && !error && !success" class="icon-loading spinner" />
-					<AlertCircle v-if="error" :size="64" />
+					<LoadingComponent v-if="isLoading" />
+					<AlertCircle v-else-if="error" :size="64" />
+					<Check v-else-if="success && isPublic" :size="64" />
 				</template>
 
 				<template #description>
-					<p v-if="isLoading && !error && !success" class="confirmation__warning">
+					<p v-if="isLoading">
 						{{ t('spreed', 'Creating the conversation …') }}
 					</p>
-					<p v-if="!error && success && isPublic" class="confirmation__warning">
-						{{ t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName }) }}
-					</p>
-					<p v-if="error" class="confirmation__warning">
+					<p v-else-if="error">
 						{{ t('spreed', 'Error while creating the conversation') }}
+					</p>
+					<p v-else-if="success && isPublic">
+						{{ t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName }) }}
 					</p>
 				</template>
 
 				<template #action>
-					<NcButton v-if="error || isPublic"
+					<NcButton v-if="(error || isPublic) && !isLoading"
 						ref="closeButton"
-						type="primary"
+						type="tertiary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
 					</NcButton>
@@ -169,13 +169,14 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import LoadingComponent from '../../LoadingComponent.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
@@ -207,6 +208,7 @@ export default {
 	components: {
 		ConversationAvatarEditor,
 		ListableSettings,
+		LoadingComponent,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcEmptyContent,
@@ -271,9 +273,6 @@ export default {
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
 		},
-		getSize() {
-			return this.page === 2 ? '' : 'normal'
-		}
 	},
 
 	watch: {
@@ -403,6 +402,7 @@ export default {
 			}
 
 			this.success = true
+			this.isLoading = false
 
 			if (!this.isInCall) {
 				// Push the newly created conversation's route.
@@ -479,21 +479,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.confirmation {
-	&__icon {
-		padding-top: 80px;
-	}
-
-	&__warning {
-		margin-top: 10px;
-		text-align: center;
-	}
-
-	&__copy-link {
-		margin: 50px auto 0 auto;
-	}
-}
-
 .new-group-conversation {
 	&__header {
 		flex-shrink: 0;
@@ -538,13 +523,11 @@ export default {
 		margin-left: auto;
 	}
 }
-.conversation-form{
-	:deep(.modal-wrapper .modal-container) {
+.conversation-form :deep(.modal-wrapper .modal-container) {
 	display: flex !important;
 	flex-direction: column;
 	height: 90%;
 	overflow: hidden !important;
-	}
 }
 
 :deep(.app-settings-section__hint) {
@@ -556,6 +539,10 @@ export default {
 	&:first-child {
 		margin-top: 0;
 	}
+}
+
+:deep(.empty-content) {
+	padding: 20px;
 }
 
 :deep(.empty-content__action) {
