@@ -20,25 +20,28 @@
 -->
 
 <template>
-	<div>
-		<div>
-			<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
-				:disabled="isListableLoading"
-				type="switch"
-				@update:checked="toggleListableUsers">
-				{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
-			</NcCheckboxRadioSwitch>
-		</div>
-		<div v-if="listable !== LISTABLE.NONE">
-			<div v-if="isGuestsAccountsEnabled">
-				<NcCheckboxRadioSwitch :checked="listable === LISTABLE.ALL"
-					:disabled="isListableLoading"
-					type="switch"
-					@update:checked="toggleListableGuests">
-					{{ t('spreed', 'Also open to guest app users') }}
-				</NcCheckboxRadioSwitch>
-			</div>
-		</div>
+	<div v-if="canFullModerate">
+		<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
+			:disabled="isListableLoading"
+			type="switch"
+			@update:checked="toggleListableUsers">
+			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
+		</NcCheckboxRadioSwitch>
+		<NcCheckboxRadioSwitch v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
+			class="additional-top-margin"
+			:checked="listable === LISTABLE.ALL"
+			:disabled="isListableLoading"
+			type="switch"
+			@update:checked="toggleListableGuests">
+			{{ t('spreed', 'Also open to guest app users') }}
+		</NcCheckboxRadioSwitch>
+	</div>
+
+	<div v-else>
+		<h5 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Open conversation') }}
+		</h5>
+		<p>{{ summaryLabel }}</p>
 	</div>
 </template>
 
@@ -63,6 +66,11 @@ export default {
 			default: null,
 		},
 
+		canFullModerate: {
+			type: Boolean,
+			default: true,
+		},
+
 		value: {
 			type: Number,
 			default: null,
@@ -85,11 +93,30 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
+		summaryLabel() {
+			switch (this.listable) {
+			case CONVERSATION.LISTABLE.ALL:
+				return t('spreed', 'This conversation is open to registered and guest app users')
+			case CONVERSATION.LISTABLE.USERS:
+				return t('spreed', 'This conversation is open to registered users')
+			case CONVERSATION.LISTABLE.NONE:
+			default:
+				return t('spreed', 'This conversation is limited to the current participants')
+			}
+		}
 	},
 
 	watch: {
 		value(value) {
 			this.listable = value
+		},
+
+		conversation: {
+			immediate: true,
+			handler() {
+				this.listable = this.conversation.listable
+			},
 		},
 	},
 
@@ -153,3 +180,9 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+.additional-top-margin {
+	margin-top: 10px;
+}
+</style>
