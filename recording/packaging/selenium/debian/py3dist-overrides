@@ -1,4 +1,0 @@
-urllib3 python3-urllib3 (>=1.26), python3-urllib3 (<<2.0)
-trio python3-trio (>=0.17), python3-trio (<<1.0)
-trio-websocket python3-trio-websocket (>=0.9), python3-trio-websocket (<<1.0)
-certifi python3-certifi (>=2021.10.8)
