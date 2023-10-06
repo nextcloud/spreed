@@ -327,6 +327,18 @@ const setSIPEnabled = async function(token, newState) {
 }
 
 /**
+ * Change the recording consent per conversation
+ *
+ * @param {string} token The token of the conversation to be modified
+ * @param {number} newState The new recording consent state to set
+ */
+const setRecordingConsent = async function(token, newState) {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/recording-consent', { token }), {
+		recordingConsent: newState,
+	})
+}
+
+/**
  * Change the lobby state
  *
  * @param {string} token The token of the conversation to be modified
@@ -461,6 +473,7 @@ export {
 	makePublic,
 	makePrivate,
 	setSIPEnabled,
+	setRecordingConsent,
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,

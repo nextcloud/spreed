@@ -50,6 +50,7 @@
 				:name="canFullModerate ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
 				<ListableSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-full-moderate="canFullModerate" />
 				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-full-moderate="canFullModerate" />
+				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-full-moderate="canFullModerate" />
 				<ExpirationSettings :token="token" :can-full-moderate="canFullModerate" />
 			</NcAppSettingsSection>
 
@@ -123,10 +124,15 @@ import LobbySettings from './LobbySettings.vue'
 import LockingSettings from './LockingSettings.vue'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
+import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 
-import { PARTICIPANT, CONVERSATION } from '../../constants.js'
+import { CALL, PARTICIPANT, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+
+const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
+const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
+const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent'] !== CALL.RECORDING_CONSENT.OFF
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -147,6 +153,7 @@ export default {
 		NcAppSettingsSection,
 		NcCheckboxRadioSwitch,
 		NotificationsSettings,
+		RecordingConsentSettings,
 		SipSettings,
 	},
 
@@ -229,6 +236,10 @@ export default {
 				&& breakoutRoomsEnabled
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
 		},
+
+		recordingConsentAvailable() {
+			return recordingEnabled && recordingConsentCapability && recordingConsent
+		}
 	},
 
 	watch: {
