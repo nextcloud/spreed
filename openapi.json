@@ -646,6 +646,7 @@
                                             "enabled",
                                             "breakout-rooms",
                                             "recording",
+                                            "recording-consent",
                                             "supported-reactions",
                                             "predefined-backgrounds",
                                             "can-upload-background"
@@ -659,6 +660,10 @@
                                             },
                                             "recording": {
                                                 "type": "boolean"
+                                            },
+                                            "recording-consent": {
+                                                "type": "integer",
+                                                "format": "int64"
                                             },
                                             "supported-reactions": {
                                                 "type": "array",
@@ -819,6 +824,7 @@
                     "participantType",
                     "permissions",
                     "readOnly",
+                    "recordingConsent",
                     "sessionId",
                     "sipEnabled",
                     "token",
@@ -981,6 +987,10 @@
                         "format": "int64"
                     },
                     "readOnly": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "recordingConsent": {
                         "type": "integer",
                         "format": "int64"
                     },
@@ -3982,6 +3992,15 @@
                         }
                     },
                     {
+                        "name": "recordingConsent",
+                        "in": "query",
+                        "description": "When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES} or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL} and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    },
+                    {
                         "name": "apiVersion",
                         "in": "path",
                         "required": true,
@@ -4042,8 +4061,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Failed to join the call",
+                    "404": {
+                        "description": "Call not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4070,8 +4089,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Call not found",
+                    "400": {
+                        "description": "No recording consent was given",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4090,7 +4109,14 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15111,6 +15137,164 @@
                     },
                     "412": {
                         "description": "SIP not configured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/recording-consent": {
+            "put": {
+                "operationId": "room-set-recording-consent",
+                "summary": "Set recording consent requirement for this conversation",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "recordingConsent",
+                        "in": "query",
+                        "description": "New consent setting for the conversation (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recording consent requirement set successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Setting recording consent requirement is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "412": {
+                        "description": "No recording server is configured",
                         "content": {
                             "application/json": {
                                 "schema": {

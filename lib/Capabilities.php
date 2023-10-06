@@ -66,6 +66,7 @@ class Capabilities implements IPublicCapability {
 	 *                  enabled: bool,
 	 *                  breakout-rooms: bool,
 	 *                  recording: bool,
+	 *                  recording-consent: int,
 	 *                  supported-reactions: string[],
 	 *                  predefined-backgrounds: string[],
 	 *                  can-upload-background: bool,
@@ -163,6 +164,7 @@ class Capabilities implements IPublicCapability {
 				'markdown-messages',
 				'session-state',
 				'note-to-self',
+				'recording-consent',
 			],
 			'config' => [
 				'attachments' => [
@@ -172,6 +174,7 @@ class Capabilities implements IPublicCapability {
 					'enabled' => ((int) $this->serverConfig->getAppValue('spreed', 'start_calls', (string) Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
 					'breakout-rooms' => $this->talkConfig->isBreakoutRoomsEnabled(),
 					'recording' => $this->talkConfig->isRecordingEnabled(),
+					'recording-consent' => $this->talkConfig->recordingConsentRequired(),
 					'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
 				],
 				'chat' => [
@@ -216,14 +219,18 @@ class Capabilities implements IPublicCapability {
 			$capabilities['features'][] = 'chat-reference-id';
 		}
 
-		$predefinedBackgrounds = $this->talkCache->get('predefined_backgrounds');
-		if ($predefinedBackgrounds !== null) {
+		/** @var ?string[] $predefinedBackgrounds */
+		$predefinedBackgrounds = null;
+		$cachedPredefinedBackgrounds = $this->talkCache->get('predefined_backgrounds');
+		if ($cachedPredefinedBackgrounds !== null) {
 			// Try using cached value
-			$predefinedBackgrounds = json_decode($predefinedBackgrounds, true);
+			/** @var string[]|null $predefinedBackgrounds */
+			$predefinedBackgrounds = json_decode($cachedPredefinedBackgrounds, true);
 		}
 
 		if (!is_array($predefinedBackgrounds)) {
 			// Cache was empty or invalid, regenerate
+			/** @var string[] $predefinedBackgrounds */
 			$predefinedBackgrounds = [];
 			if (file_exists(__DIR__ . '/../img/backgrounds')) {
 				$directoryIterator = new \DirectoryIterator(__DIR__ . '/../img/backgrounds');

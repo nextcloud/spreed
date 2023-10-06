@@ -56,6 +56,7 @@ use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
@@ -151,6 +152,7 @@ class RoomController extends AEnvironmentAwareController {
 				$this->config->getAppValue('spreed', 'sip_bridge_groups', '[]') . '#' .
 				$this->config->getAppValue('spreed', 'sip_bridge_dialin_info') . '#' .
 				$this->config->getAppValue('spreed', 'sip_bridge_shared_secret') . '#' .
+				$this->config->getAppValue('spreed', 'recording_consent') . '#' .
 				$this->config->getAppValue('theming', 'cachebuster', '1')
 			)];
 	}
@@ -1776,6 +1778,34 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Set recording consent requirement for this conversation
+	 *
+	 * @param int $recordingConsent New consent setting for the conversation
+	 *   (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
+	 *
+	 * 200: Recording consent requirement set successfully
+	 * 400: Setting recording consent requirement is not possible
+	 * 412: No recording server is configured
+	 */
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	public function setRecordingConsent(int $recordingConsent): DataResponse {
+		if (!$this->talkConfig->isRecordingEnabled()) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		try {
+			$this->roomService->setRecordingConsent($this->room, $recordingConsent);
+		} catch (\InvalidArgumentException $exception) {
+			return new DataResponse(['error' => $exception->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Resend invitations
 	 *
 	 * @param int|null $attendeeId ID of the attendee
@@ -1830,7 +1860,7 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$this->roomService->setMessageExpiration($this->room, $seconds);
 		} catch (\InvalidArgumentException $exception) {
-			return new DataResponse(['error' => $exception], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $exception->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();

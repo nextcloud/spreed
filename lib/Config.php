@@ -25,6 +25,7 @@ namespace OCA\Talk;
 
 use OCA\Talk\Events\GetTurnServersEvent;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -180,6 +181,28 @@ class Config {
 		}
 
 		return true;
+	}
+
+	/**
+	 * @return RecordingService::CONSENT_REQUIRED_*
+	 */
+	public function recordingConsentRequired(): int {
+		if (!$this->isRecordingEnabled()) {
+			return RecordingService::CONSENT_REQUIRED_NO;
+		}
+
+		return $this->getRecordingConsentConfig();
+	}
+
+	/**
+	 * @return RecordingService::CONSENT_REQUIRED_*
+	 */
+	public function getRecordingConsentConfig(): int {
+		return match ((int) $this->config->getAppValue('spreed', 'recording_consent', (string) RecordingService::CONSENT_REQUIRED_NO)) {
+			RecordingService::CONSENT_REQUIRED_YES => RecordingService::CONSENT_REQUIRED_YES,
+			RecordingService::CONSENT_REQUIRED_OPTIONAL => RecordingService::CONSENT_REQUIRED_OPTIONAL,
+			default => RecordingService::CONSENT_REQUIRED_NO,
+		};
 	}
 
 	public function getRecordingFolder(string $userId): string {

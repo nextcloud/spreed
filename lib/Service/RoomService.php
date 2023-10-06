@@ -25,9 +25,11 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\BeforeRoomModifiedEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -269,6 +271,41 @@ class RoomService {
 
 		return true;
 	}
+
+	/**
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
+	 * @throws \InvalidArgumentException When the room has an active call or the value is invalid
+	 */
+	public function setRecordingConsent(Room $room, int $recordingConsent): void {
+		$oldRecordingConsent = $room->getRecordingConsent();
+
+		if ($recordingConsent === $oldRecordingConsent) {
+			return;
+		}
+
+		if (!in_array($recordingConsent, [RecordingService::CONSENT_REQUIRED_NO, RecordingService::CONSENT_REQUIRED_YES], true)) {
+			throw new InvalidArgumentException('value');
+		}
+
+		if ($recordingConsent !== RecordingService::CONSENT_REQUIRED_NO && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+			throw new InvalidArgumentException('call');
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, 'recordingConsent', $recordingConsent, $oldRecordingConsent);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('recording_consent', $update->createNamedParameter($recordingConsent, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setRecordingConsent($recordingConsent);
+
+		$event = new RoomModifiedEvent($room, 'recordingConsent', $recordingConsent, $oldRecordingConsent);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
 	/**
 	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
 	 * @param string|null $oldName

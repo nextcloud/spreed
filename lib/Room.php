@@ -33,6 +33,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -167,6 +168,9 @@ class Room {
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
 
+	/**
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
+	 */
 	public function __construct(
 		private Manager $manager,
 		private IDBConnection $db,
@@ -201,6 +205,7 @@ class Room {
 		private int $breakoutRoomMode,
 		private int $breakoutRoomStatus,
 		private int $callRecording,
+		private int $recordingConsent,
 	) {
 	}
 
@@ -588,5 +593,20 @@ class Room {
 
 	public function setCallRecording(int $callRecording): void {
 		$this->callRecording = $callRecording;
+	}
+
+	/**
+	 * @return RecordingService::CONSENT_REQUIRED_*
+	 */
+	public function getRecordingConsent(): int {
+		return $this->recordingConsent;
+	}
+
+	/**
+	 * @param int $recordingConsent
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
+	 */
+	public function setRecordingConsent(int $recordingConsent): void {
+		$this->recordingConsent = $recordingConsent;
 	}
 }

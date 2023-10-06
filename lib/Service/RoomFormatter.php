@@ -152,6 +152,7 @@ class RoomFormatter {
 			'isCustomAvatar' => $this->avatarService->isCustomAvatar($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
+			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -209,6 +210,7 @@ class RoomFormatter {
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
 			'callRecording' => $room->getCallRecording(),
+			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 			'lastActivity' => $lastActivity,
 			'callFlag' => $room->getCallFlag(),
 			'isFavorite' => $attendee->isFavorite(),

@@ -141,6 +141,7 @@ class CapabilitiesTest extends TestCase {
 			'markdown-messages',
 			'session-state',
 			'note-to-self',
+			'recording-consent',
 			'message-expiration',
 			'reactions',
 		];
@@ -190,6 +191,7 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => true,
 						'breakout-rooms' => false,
 						'recording' => false,
+						'recording-consent' => 0,
 						'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
 						'predefined-backgrounds' => [
 							'1_office.jpg',
@@ -314,6 +316,7 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => false,
 						'breakout-rooms' => true,
 						'recording' => false,
+						'recording-consent' => 0,
 						'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
 						'predefined-backgrounds' => [
 							'1_office.jpg',

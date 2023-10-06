@@ -464,6 +464,7 @@ class AdminSettings implements ISettings {
 			'secret' => $this->talkConfig->getRecordingSecret(),
 			'uploadLimit' => is_infinite($uploadLimit) ? 0 : $uploadLimit,
 		]);
+		$this->initialState->provideInitialState('recording_consent', $this->talkConfig->getRecordingConsentConfig());
 	}
 
 	protected function initSIPBridge(): void {

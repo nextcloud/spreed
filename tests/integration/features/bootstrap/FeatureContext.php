@@ -440,6 +440,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['callRecording'])) {
 				$data['callRecording'] = (int) $room['callRecording'];
 			}
+			if (isset($expectedRoom['recordingConsent'])) {
+				$data['recordingConsent'] = (int) $room['recordingConsent'];
+			}
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
@@ -3439,6 +3442,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expiration', [
 			'seconds' => $messageExpiration,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" sets the recording consent to (\d+) for room "([^"]*)" with (\d+) \((v4)\)$/
+	 */
+	public function userSetsTheRecordingConsentToXWithStatusCode(string $user, int $recordingConsent, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('PUT', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/recording-consent', [
+			'recordingConsent' => $recordingConsent,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}

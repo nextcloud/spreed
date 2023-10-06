@@ -40,14 +40,16 @@
 * Endpoint: `/call/{token}`
 * Data:
 
-| field    | type | Description                                                                                                                            |
-|----------|------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `flags`  | int  | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag)) |
-| `silent` | bool | Disable start call notifications for group/public calls                                                                                |
+| field              | type | Description                                                                                                                                                                                                                        |
+|--------------------|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `flags`            | int  | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag))                                                                                             |
+| `silent`           | bool | Disable start call notifications for group/public calls                                                                                                                                                                            |
+| `recordingConsent` | bool | When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to `1` or the capability is `2` and the conversation `recordingConsent` value is `1`) |
 
 * Response:
     - Status code:
         + `200 OK`
+        + `400 Bad Request` When recording consent is required but was not given
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the user did not join the conversation before
