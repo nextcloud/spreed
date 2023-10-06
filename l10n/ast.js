@@ -247,6 +247,7 @@ OC.L10N.register(
     "Delete" : "Desaniciar",
     "Password" : "Contraseña",
     "Nickname" : "Nomatu",
+    "Notifications" : "Avisos",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
     "An error occurred while performing the search" : "Prodúxose un error mentanto se facía la busca",
