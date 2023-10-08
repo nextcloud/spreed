@@ -22,43 +22,38 @@
 
 const { resolve } = require('node:path')
 
+// Listed packages will be transformed with babel-jest
 // TODO: find a way to consolidate this in one place, with webpack.common.js
 const ignorePatterns = [
-	'(vue-material-design-icons)',
-	'(@juliushaertl)',
-	'(tributejs)',
-	'(@nextcloud/vue)',
-	'(splitpanes)',
-	'(string-length)',
-	'(strip-ansi)',
-	'(ansi-regex)',
-	'(char-regex)',
-	'(uuid)',
-	'(unist*)',
-	'(unified)',
-	'(bail)',
-	'(remark*)',
-	'(is-*)',
-	'(trough)',
-	'(vfile)',
-	'(mdast*)',
-	'(micromark)',
-	'(decode-named-character-reference)',
-	'(trim-lines)',
-	'(rehype*)',
-	'(hast-*)',
-	'(property-information)',
-	'(space-separated-tokens)',
-	'(comma-separated-tokens)',
-	'(web-namespaces)',
+	'bail',
+	'comma-separated-tokens',
+	'decode-named-character-reference',
+	'devlop',
+	'escape-string-regexp',
+	'hast-.*',
+	'is-.*',
+	'mdast-.*',
+	'micromark',
+	'property-information',
+	'rehype-.*',
+	'remark-.*',
+	'space-separated-tokens',
+	'trim-lines',
+	'trough',
+	'unified',
+	'unist-.*',
+	'vfile',
+	'vue-material-design-icons',
+	'web-namespaces',
 ]
 
 module.exports = {
 
 	// Allow tests in the src and in tests/unit folders
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
+	// Transform packages from top-level and nested 'node_modules'
 	transformIgnorePatterns: [
-		'node_modules/(?!' + ignorePatterns.join('|') + '/)',
+		`<rootDir>/node_modules/(?!(?:.*\\/node_modules\\/)?(?:${ignorePatterns.join('|')}))`,
 	],
 	resetMocks: false,
 	setupFiles: ['jest-localstorage-mock'],
