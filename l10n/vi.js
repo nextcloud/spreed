@@ -552,6 +552,7 @@ OC.L10N.register(
     "An error occurred while deleting the message" : "Đã xảy ra lỗi khi xóa tin nhắn",
     "Dismiss" : "Bỏ qua",
     "Reply" : "Trả l",
+    "Set reminder" : "Thiết lập nhắc nhở",
     "Reply privately" : "Trả lời riêng tư",
     "Copy message link" : "Sao chép liên kết tin nhắn",
     "Go to file" : "Tới tập tin",
