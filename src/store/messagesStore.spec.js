@@ -1935,7 +1935,7 @@ describe('messagesStore', () => {
 			messageToBeForwarded = {
 				id: 1,
 				token: TOKEN,
-				message: 'Hello {mention-user1}, {mention-user2}',
+				message: 'Hello {mention-user1}, {mention-user2}, and {mention-call1}',
 				messageParameters: {
 					'mention-user1': {
 						id: 'taylor',
@@ -1943,15 +1943,20 @@ describe('messagesStore', () => {
 						type: 'user',
 					},
 					'mention-user2': {
-						id: 'adam',
+						id: 'adam driver',
 						name: 'Adam',
 						type: 'user',
+					},
+					'mention-call1': {
+						id: TOKEN,
+						name: 'Team X',
+						type: 'call',
 					},
 				},
 			}
 			targetToken = 'token-2'
 			messageExpected = cloneDeep(messageToBeForwarded)
-			messageExpected.message = 'Hello @Taylor, @Adam'
+			messageExpected.message = 'Hello @"taylor", @"adam driver", and **Team X**'
 			messageExpected.token = targetToken
 
 			// Act
