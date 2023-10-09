@@ -64,7 +64,7 @@ jobs:
           ref: ${{ matrix.server-versions }}
 
       - name: Patch version check for nightly PHP
-        if: ${{ matrix.php-versions == '8.3' }}
+        if: ${{ matrix.php-versions == '8.4' }}
         run: echo "<?php" > lib/versioncheck.php
 
       - name: Checkout app
