@@ -118,7 +118,10 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	protected function getActorInfo(string $actorDisplayName = ''): array {
-		if ($this->userId === null) {
+		if ($this->getRemoteAccessCloudId()) {
+			$actorType = Attendee::ACTOR_FEDERATED_USERS;
+			$actorId = $this->getRemoteAccessCloudId();
+		} elseif ($this->userId === null) {
 			$actorType = Attendee::ACTOR_GUESTS;
 			$actorId = $this->participant->getAttendee()->getActorId();
 
