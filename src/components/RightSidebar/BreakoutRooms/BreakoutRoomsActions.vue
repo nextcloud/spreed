@@ -286,6 +286,7 @@ export default {
 	}
 
 	&__editor {
+		height: 100%;
 		padding: 20px;
 	}
 }

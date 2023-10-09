@@ -343,12 +343,13 @@ export default {
 	width: 100%;
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
-	height: 100%;
+	height: calc(100% - 42px);
 
 	&__section {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline) 0;
 
 	}
+
 	&__scroller {
 		height: 100%;
 		overflow: auto;

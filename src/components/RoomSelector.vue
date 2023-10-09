@@ -208,6 +208,12 @@ export default {
 	height: 700px;
 }
 
+/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4350 regression is solved */
+/* Force modal close button to be above modal content */
+:deep(.modal-container__close) {
+	z-index: 1;
+}
+
 .talk-modal {
 	height: 80vh;
 }
@@ -222,6 +228,7 @@ export default {
 	justify-content: center;
 	height: 100%;
 	box-sizing: border-box;
+
 	h2 {
 		margin-bottom: 4px;
 	}
@@ -241,13 +248,13 @@ export default {
 	height: 100%;
 }
 
-.no-match-message{
+.no-match-message {
 	padding: 40px 0;
 	text-align: center;
 
 }
 
-.no-match-title{
+.no-match-title {
 	font-weight: normal;
 }
 

@@ -523,11 +523,18 @@ export default {
 		margin-left: auto;
 	}
 }
-.conversation-form :deep(.modal-wrapper .modal-container) {
-	display: flex !important;
-	flex-direction: column;
-	height: 90%;
-	overflow: hidden !important;
+
+.conversation-form :deep(.modal-wrapper) {
+	.modal-container {
+		height: 90%;
+	}
+
+	.modal-container__content {
+		display: flex !important;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden !important;
+	}
 }
 
 :deep(.app-settings-section__hint) {
