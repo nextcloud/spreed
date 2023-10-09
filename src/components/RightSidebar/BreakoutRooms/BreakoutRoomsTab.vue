@@ -38,7 +38,9 @@
 				</BreakoutRoomItem>
 			</template>
 		</ul>
-		<NcEmptyContent v-else :title="t('spreed', 'Breakout rooms are not started')">
+		<NcEmptyContent v-else
+			class="breakout-rooms__empty-content"
+			:name="t('spreed', 'Breakout rooms are not started')">
 			<template #icon>
 				<DotsCircle :size="20" />
 			</template>
@@ -169,6 +171,14 @@ export default {
 <style lang="scss" scoped>
 
 .breakout-rooms {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	&__empty-content {
+		flex: 1;
+	}
+
 	&__room {
 		margin-top: var(--default-grid-baseline);
 	}
