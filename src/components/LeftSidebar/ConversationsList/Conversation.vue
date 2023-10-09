@@ -21,7 +21,7 @@
 
 <template>
 	<NcListItem ref="listItem"
-		:title="item.displayName"
+		:name="item.displayName"
 		class="conversation-item"
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:data-nav-id="`conversation_${item.token}`"
@@ -34,7 +34,7 @@
 		<template #icon>
 			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
 		</template>
-		<template #subtitle>
+		<template #subname>
 			<strong v-if="item.unreadMessages"
 				class="subtitle">
 				{{ conversationInformation }}
@@ -333,7 +333,7 @@ export default {
 			immediate: true,
 			handler(value) {
 				this.$nextTick().then(() => {
-					const titleSpan = this.$refs.listItem?.$el?.querySelector('.line-one__title')
+					const titleSpan = this.$refs.listItem?.$el?.querySelector('.line-one__name')
 
 					if (titleSpan && titleSpan.offsetWidth < titleSpan.scrollWidth) {
 						titleSpan.setAttribute('title', value)
@@ -448,10 +448,6 @@ export default {
 
 .subtitle {
 	font-weight: bold;
-}
-
-:deep(.action-text__title) {
-	margin-left: 12px;
 }
 
 .critical {

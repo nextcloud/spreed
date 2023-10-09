@@ -70,8 +70,8 @@ function findNcButton(wrapper, text) {
 function findNcListItems(wrapper, text) {
 	const listItems = wrapper.findAllComponents(NcListItem)
 	return (Array.isArray(text))
-		? listItems.filter(listItem => text.includes(listItem.vm.title))
-		: listItems.filter(listItem => listItem.vm.title === text)
+		? listItems.filter(listItem => text.includes(listItem.vm.name))
+		: listItems.filter(listItem => listItem.vm.name === text)
 }
 
 /**

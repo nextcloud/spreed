@@ -48,7 +48,7 @@
 						<template #icon>
 							<AtIcon :size="20" />
 						</template>
-						{{ t('spreed','Filter unread mentions') }}
+						{{ t('spreed', 'Filter unread mentions') }}
 					</NcActionButton>
 
 					<NcActionButton close-after-click
@@ -58,7 +58,7 @@
 						<template #icon>
 							<MessageBadge :size="20" />
 						</template>
-						{{ t('spreed','Filter unread messages') }}
+						{{ t('spreed', 'Filter unread messages') }}
 					</NcActionButton>
 
 					<NcActionButton v-if="isFiltered"
@@ -87,7 +87,7 @@
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						{{ t('spreed','Create a new conversation') }}
+						{{ t('spreed', 'Create a new conversation') }}
 					</NcActionButton>
 
 					<NcActionButton v-if="!hasNoteToSelf"
@@ -96,7 +96,7 @@
 						<template #icon>
 							<Note :size="20" />
 						</template>
-						{{ t('spreed','New personal note') }}
+						{{ t('spreed', 'New personal note') }}
 					</NcActionButton>
 
 					<NcActionButton close-after-click
@@ -104,7 +104,7 @@
 						<template #icon>
 							<List :size="20" />
 						</template>
-						{{ t('spreed','Join open conversations') }}
+						{{ t('spreed', 'Join open conversations') }}
 					</NcActionButton>
 				</NcActions>
 			</TransitionWrapper>
@@ -118,17 +118,18 @@
 
 		<template #list>
 			<li ref="container" class="left-sidebar__list">
-				<ul class="scroller h-100">
+				<ul class="h-100" :class="{'scroller': isSearching}">
 					<!-- Conversations List -->
 					<template v-if="!isSearching">
 						<li class="h-100">
 							<ConversationsListVirtual ref="scroller"
 								:conversations="filteredConversationsList"
 								:loading="!initialisedConversations"
-								class="h-100"
+								class="scroller h-100"
 								@scroll.native="debounceHandleScroll" />
 						</li>
-						<Hint v-if="initialisedConversations && filteredConversationsList.length === 0" :hint="t('spreed', 'No matches found')" />
+						<Hint v-if="initialisedConversations && filteredConversationsList.length === 0"
+							:hint="t('spreed', 'No matches found')" />
 
 						<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 							class="unread-mention-button"
@@ -142,12 +143,13 @@
 					<template v-else-if="isSearching">
 						<!-- Create a new conversation -->
 						<NcListItem v-if="searchResultsConversationList.length === 0 && canStartConversations"
-							:title="t('spreed', 'Create a new conversation')"
+							:name="t('spreed', 'Create a new conversation')"
+							data-nav-id="conversation_create_new"
 							@click="createConversation(searchText)">
 							<template #icon>
 								<ChatPlus :size="30" />
 							</template>
-							<template #subtitle>
+							<template #subname>
 								{{ searchText }}
 							</template>
 						</NcListItem>
@@ -177,7 +179,7 @@
 							<NcListItem v-for="item of searchResultsUsers"
 								:key="`user_${item.id}`"
 								:data-nav-id="`user_${item.id}`"
-								:title="item.label"
+								:name="item.label"
 								@click="createAndJoinConversation(item)">
 								<template #icon>
 									<ConversationIcon :item="iconData(item)" />
@@ -193,7 +195,7 @@
 								<NcListItem v-for="item of searchResultsGroups"
 									:key="`group_${item.id}`"
 									:data-nav-id="`group_${item.id}`"
-									:title="item.label"
+									:name="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
 										<ConversationIcon :item="iconData(item)" />
@@ -207,7 +209,7 @@
 								<NcListItem v-for="item of searchResultsCircles"
 									:key="`circle_${item.id}`"
 									:data-nav-id="`circle_${item.id}`"
-									:title="item.label"
+									:name="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
 										<ConversationIcon :item="iconData(item)" />
@@ -846,7 +848,7 @@ export default {
 
 <style lang="scss" scoped>
 .scroller {
-	padding: 0 4px 0 6px;
+	padding: 0 4px;
 }
 
 .h-100 {
@@ -865,7 +867,7 @@ export default {
 
 	.filters {
 		position: absolute;
-		top : 8px;
+		top: 8px;
 		right: 56px;
 	}
 
@@ -895,25 +897,30 @@ export default {
 }
 
 .conversations-search {
-	padding: 4px 0;
+	padding: 3px 0;
 	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
 	// Filters button width : 44 px
 	// Spacing : 3px + 1px
 	// Total : 100 px
-	width : calc(100% - 100px);
-	display : flex;
+	width: calc(100% - 100px);
+	display: flex;
+
 	&--expanded {
-		width : calc(100% - 8px);
+		width: calc(100% - 8px);
 	}
 
+	:deep(.input-field) {
+		margin-block-start: 0;
+	}
 }
 
 .filter-actions__button--active {
 	background-color: var(--color-primary-element-light);
 	border-radius: 6px;
-	:deep(.action-button__longtext){
+
+	:deep(.action-button__longtext) {
 		font-weight: bold;
 	}
 
@@ -923,23 +930,17 @@ export default {
 	justify-content: flex-start !important;
 }
 
-:deep(.app-navigation ul) {
-	padding: 0 !important;
-}
-
-:deep(.app-navigation-toggle) {
-	top: 8px !important;
-	right: -6px !important;
-}
-
 :deep(.app-navigation__list) {
 	padding: 0 !important;
 }
 
-:deep(.list-item:focus, .list-item:focus-visible) {
-	z-index: 1;
-	border: 2px solid var(--color-primary-element);
-	padding : 6px;
-	outline: none; // Remove the default outline
+// FIXME upstream https://github.com/nextcloud-libraries/nextcloud-vue/issues/4625
+:deep(.list-item__wrapper--active) {
+	.list-item:hover,
+	.list-item:focus,
+	.list-item:focus-visible,
+	.list-item:active {
+		background-color: var(--color-primary-element-hover);
+	}
 }
 </style>
