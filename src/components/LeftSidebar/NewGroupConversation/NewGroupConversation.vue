@@ -22,9 +22,9 @@
 <template>
 	<div class="wrapper">
 		<!-- New group form -->
-		<NcModal v-if="modal"
+		<NcModal v-if="modal && page !== 2"
+			class="conversation-form"
 			:container="container"
-			size="normal"
 			@close="closeModal">
 			<h2 class="new-group-conversation__header">
 				{{ t('spreed', 'Create a new group conversation') }}
@@ -83,37 +83,6 @@
 				<SetContacts v-if="page === 1"
 					class="new-group-conversation__content"
 					:conversation-name="conversationNameTrimmed" />
-
-				<!-- Third page -->
-				<div v-else-if="page === 2" class="new-group-conversation__content">
-					<template v-if="isLoading && !error">
-						<template v-if="!success">
-							<div class="icon-loading confirmation__icon" />
-							<p class="confirmation__warning">
-								{{ t('spreed', 'Creating your conversation') }}
-							</p>
-						</template>
-						<template v-if="success && isPublic">
-							<div class="icon-checkmark confirmation__icon" />
-							<p class="confirmation__warning">
-								{{ t('spreed', 'All set') }}
-							</p>
-							<NcButton id="copy-link"
-								ref="copyLink"
-								type="secondary"
-								class="confirmation__copy-link"
-								@click="onClickCopyLink">
-								{{ t('spreed', 'Copy conversation link') }}
-							</NcButton>
-						</template>
-					</template>
-					<template v-else>
-						<div class="icon-error confirmation__icon" />
-						<p class="confirmation__warning">
-							{{ t('spreed', 'Error while creating the conversation') }}
-						</p>
-					</template>
-				</div>
 			</div>
 
 			<!-- Navigation: different buttons with different actions and
@@ -145,15 +114,48 @@
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
 				</NcButton>
-				<!-- Third page -->
-				<NcButton v-if="page===2 && (error || isPublic)"
-					ref="closeButton"
-					type="primary"
-					class="new-group-conversation__button"
-					@click="closeModal">
-					{{ t('spreed', 'Close') }}
-				</NcButton>
 			</div>
+		</NcModal>
+
+		<!-- Third page : this is the confirmation page-->
+		<NcModal v-else-if="page === 2"
+			:container="container"
+			@close="closeModal">
+			<NcEmptyContent>
+				<template #icon>
+					<LoadingComponent v-if="isLoading" />
+					<AlertCircle v-else-if="error" :size="64" />
+					<Check v-else-if="success && isPublic" :size="64" />
+				</template>
+
+				<template #description>
+					<p v-if="isLoading">
+						{{ t('spreed', 'Creating the conversation …') }}
+					</p>
+					<p v-else-if="error">
+						{{ t('spreed', 'Error while creating the conversation') }}
+					</p>
+					<p v-else-if="success && isPublic">
+						{{ t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName }) }}
+					</p>
+				</template>
+
+				<template #action>
+					<NcButton v-if="(error || isPublic) && !isLoading"
+						ref="closeButton"
+						type="tertiary"
+						@click="closeModal">
+						{{ t('spreed', 'Close') }}
+					</NcButton>
+					<NcButton v-if="!error && success && isPublic"
+						id="copy-link"
+						ref="copyLink"
+						type="secondary"
+						@click="onClickCopyLink">
+						{{ t('spreed', 'Copy conversation link') }}
+					</NcButton>
+				</template>
+			</NcEmptyContent>
 		</NcModal>
 	</div>
 </template>
@@ -162,15 +164,19 @@
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
+import Check from 'vue-material-design-icons/Check.vue'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
+import LoadingComponent from '../../LoadingComponent.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
@@ -202,12 +208,16 @@ export default {
 	components: {
 		ConversationAvatarEditor,
 		ListableSettings,
+		LoadingComponent,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcEmptyContent,
 		NcModal,
 		NcPasswordField,
 		NcTextField,
 		SetContacts,
+		Check,
+		AlertCircle,
 	},
 
 	mixins: [participant],
@@ -392,6 +402,7 @@ export default {
 			}
 
 			this.success = true
+			this.isLoading = false
 
 			if (!this.isInCall) {
 				// Push the newly created conversation's route.
@@ -468,21 +479,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.confirmation {
-	&__icon {
-		padding-top: 80px;
-	}
-
-	&__warning {
-		margin-top: 10px;
-		text-align: center;
-	}
-
-	&__copy-link {
-		margin: 50px auto 0 auto;
-	}
-}
-
 .new-group-conversation {
 	&__header {
 		flex-shrink: 0;
@@ -527,8 +523,7 @@ export default {
 		margin-left: auto;
 	}
 }
-
-:deep(.modal-wrapper .modal-container) {
+.conversation-form :deep(.modal-wrapper .modal-container) {
 	display: flex !important;
 	flex-direction: column;
 	height: 90%;
@@ -544,6 +539,14 @@ export default {
 	&:first-child {
 		margin-top: 0;
 	}
+}
+
+:deep(.empty-content) {
+	padding: 20px;
+}
+
+:deep(.empty-content__action) {
+	gap: 10px;
 }
 
 </style>
