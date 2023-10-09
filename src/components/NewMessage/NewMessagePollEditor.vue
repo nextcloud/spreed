@@ -67,12 +67,12 @@
 				{{ t('spreed', 'Settings') }}
 			</p>
 			<div class="poll-editor__settings">
-				<NcCheckBoxRadioSwitch :checked.sync="isPrivate" type="checkbox">
+				<NcCheckboxRadioSwitch :checked.sync="isPrivate" type="checkbox">
 					{{ t('spreed', 'Private poll') }}
-				</NcCheckBoxRadioSwitch>
-				<NcCheckBoxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
 					{{ t('spreed', 'Multiple answers') }}
-				</NcCheckBoxRadioSwitch>
+				</NcCheckboxRadioSwitch>
 			</div>
 			<div class="poll-editor__actions">
 				<NcButton type="tertiary" @click="dismissEditor">
@@ -92,7 +92,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -102,7 +102,7 @@ export default {
 	name: 'NewMessagePollEditor',
 
 	components: {
-		NcCheckBoxRadioSwitch,
+		NcCheckboxRadioSwitch,
 		NcButton,
 		NcModal,
 		NcTextField,
@@ -207,13 +207,6 @@ export default {
 		display: flex;
 		justify-content: flex-end;
 		gap: 4px;
-	}
-
-	// FIXME Upstream
-	:deep(.checkbox-radio-switch__label) {
-			min-height: unset;
-			margin: 0;
-			border-radius: var(--border-radius-large);
 	}
 }
 </style>
