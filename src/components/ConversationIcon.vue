@@ -47,7 +47,6 @@
 			:show-user-status="!hideUserStatus"
 			:show-user-status-compact="!showUserOnlineStatus"
 			:menu-container="menuContainer"
-			menu-position="left"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
 			<VideoIcon :size="20" :fill-color="'#E9322D'" />

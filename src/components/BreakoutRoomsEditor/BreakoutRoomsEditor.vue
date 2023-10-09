@@ -30,7 +30,7 @@
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
 					<label class="breakout-rooms-editor__caption" for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
-					<NcInputField id="room-number"
+					<NcTextField id="room-number"
 						:value="amount.toString()"
 						class="breakout-rooms-editor__number-input"
 						type="number"
@@ -83,8 +83,8 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
 
@@ -95,7 +95,7 @@ export default {
 		BreakoutRoomsParticipantsEditor,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NcInputField,
+		NcTextField,
 		NcModal,
 	},
 

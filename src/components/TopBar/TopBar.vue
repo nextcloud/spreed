@@ -128,7 +128,7 @@
 						fill-color="#ffffff" />
 					<NcCounterBubble v-if="unreadMessagesCounter > 0"
 						class="chat-button__unread-messages-counter"
-						:highlighted="hasUnreadMentions">
+						:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
 						{{ unreadMessagesCounter }}
 					</NcCounterBubble>
 				</template>

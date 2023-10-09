@@ -41,7 +41,7 @@
 				<div>
 					<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 				</div>
-				<NcDatetimePicker id="moderation_settings_lobby_timer_field"
+				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
 					aria-describedby="moderation_settings_lobby_timer_hint"
 					:value="lobbyTimer"
 					:default-value="defaultLobbyTimer"
@@ -60,7 +60,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcDatetimePicker from '@nextcloud/vue/dist/Components/NcDatetimePicker.js'
+import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import { WEBINAR } from '../../constants.js'
@@ -70,7 +70,7 @@ export default {
 
 	components: {
 		NcCheckboxRadioSwitch,
-		NcDatetimePicker,
+		NcDateTimePicker,
 		NcNoteCard,
 	},
 
