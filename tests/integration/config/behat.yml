@@ -1,5 +1,7 @@
 default:
   formatters:
+    junit:
+      output_path: '%paths.base%/../output'
     pretty:
       output_styles:
         comment: [ 'bright-blue' ]
@@ -18,8 +20,3 @@ default:
               - admin
               - admin
             regularUserPassword: 123456
-
-  extensions:
-      jarnaiz\JUnitFormatter\JUnitFormatterExtension:
-          filename: report.xml
-          outputDir: '%paths.base%/../output/'
