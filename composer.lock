@@ -134,12 +134,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "e46faa548db2165eb30158352386fcfde42dca82"
+                "reference": "e190b8f76e21b46d921f61883b88f18ca4e7b8a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/e46faa548db2165eb30158352386fcfde42dca82",
-                "reference": "e46faa548db2165eb30158352386fcfde42dca82",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/e190b8f76e21b46d921f61883b88f18ca4e7b8a1",
+                "reference": "e190b8f76e21b46d921f61883b88f18ca4e7b8a1",
                 "shasum": ""
             },
             "require": {
@@ -169,7 +169,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/stable26"
             },
-            "time": "2023-09-30T00:30:19+00:00"
+            "time": "2023-10-04T09:19:39+00:00"
         },
         {
             "name": "psr/container",
