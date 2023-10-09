@@ -21,18 +21,18 @@
 
 <template>
 	<NcAppSettingsDialog :open.sync="showSettings"
-		:title="t('spreed', 'Talk settings')"
+		:name="t('spreed', 'Talk settings')"
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"
 		:container="container">
 		<NcAppSettingsSection id="devices"
-			:title="t('spreed', 'Choose devices')"
+			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="attachments"
-			:title="t('spreed', 'Attachments folder')"
+			:name="t('spreed', 'Attachments folder')"
 			class="app-settings-section">
 			<h3 class="app-settings-section__hint">
 				{{ locationHint }}
@@ -50,7 +50,7 @@
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="privacy"
-			:title="t('spreed', 'Privacy')"
+			:name="t('spreed', 'Privacy')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
@@ -71,7 +71,7 @@
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection id="sounds"
-			:title="t('spreed', 'Sounds')"
+			:name="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="play_sounds"
 				:checked="playSounds"
@@ -91,7 +91,7 @@
 			</a>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection id="performance"
-			:title="t('spreed', 'Performance')"
+			:name="t('spreed', 'Performance')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="blur-call-background"
 				:checked="isBackgroundBlurred"
@@ -103,7 +103,7 @@
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!disableKeyboardShortcuts"
 			id="shortcuts"
-			:title="t('spreed', 'Keyboard shortcuts')">
+			:name="t('spreed', 'Keyboard shortcuts')">
 			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
 
 			<dl>

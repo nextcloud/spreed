@@ -33,7 +33,7 @@
 			:loading="!participantsInitialised" />
 
 		<div v-else class="scroller">
-			<NcAppNavigationCaption v-if="canAdd" :title="t('spreed', 'Participants')" />
+			<NcAppNavigationCaption v-if="canAdd" :name="t('spreed', 'Participants')" />
 
 			<ParticipantsList v-if="filteredParticipants.length"
 				:items="filteredParticipants"

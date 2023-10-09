@@ -153,7 +153,7 @@
 						</NcListItem>
 
 						<!-- Search results: user's conversations -->
-						<NcAppNavigationCaption :title="t('spreed', 'Conversations')" />
+						<NcAppNavigationCaption :name="t('spreed', 'Conversations')" />
 						<Conversation v-for="item of searchResultsConversationList"
 							:key="`conversation_${item.id}`"
 							:ref="`conversation-${item.token}`"
@@ -163,7 +163,7 @@
 
 						<!-- Search results: listed (open) conversations -->
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
+							<NcAppNavigationCaption :name="t('spreed', 'Open conversations')" />
 							<Conversation v-for="item of searchResultsListedConversations"
 								:key="`open-conversation_${item.id}`"
 								:item="item"
@@ -173,7 +173,7 @@
 
 						<!-- Search results: users -->
 						<template v-if="searchResultsUsers.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
+							<NcAppNavigationCaption :name="t('spreed', 'Users')" />
 							<NcListItem v-for="item of searchResultsUsers"
 								:key="`user_${item.id}`"
 								:data-nav-id="`user_${item.id}`"
@@ -189,7 +189,7 @@
 						<template v-if="canStartConversations">
 							<!-- New conversations: Groups -->
 							<template v-if="searchResultsGroups.length !== 0">
-								<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
+								<NcAppNavigationCaption :name="t('spreed', 'Groups')" />
 								<NcListItem v-for="item of searchResultsGroups"
 									:key="`group_${item.id}`"
 									:data-nav-id="`group_${item.id}`"
@@ -203,7 +203,7 @@
 
 							<!-- New conversations: Circles -->
 							<template v-if="searchResultsCircles.length !== 0">
-								<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
+								<NcAppNavigationCaption :name="t('spreed', 'Circles')" />
 								<NcListItem v-for="item of searchResultsCircles"
 									:key="`circle_${item.id}`"
 									:data-nav-id="`circle_${item.id}`"
@@ -217,7 +217,7 @@
 						</template>
 
 						<!-- Search results: no results (yet) -->
-						<NcAppNavigationCaption v-if="sourcesWithoutResults" :title="sourcesWithoutResultsList" />
+						<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
 						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 						<Hint v-else :hint="t('spreed', 'No search results')" />
 					</template>

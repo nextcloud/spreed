@@ -20,16 +20,15 @@
 -->
 
 <template>
-	<NcAppSettingsDialog role="dialog"
-		:aria-label="t('spreed', 'Conversation settings')"
-		:title="t('spreed', 'Conversation settings')"
+	<NcAppSettingsDialog :aria-label="t('spreed', 'Conversation settings')"
+		:name="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
 		<!-- description -->
 		<NcAppSettingsSection v-if="showDescription"
 			id="basic-info"
-			:title="t('spreed', 'Basic Info')">
+			:name="t('spreed', 'Basic Info')">
 			<BasicInfo :conversation="conversation"
 				:can-full-moderate="canFullModerate" />
 		</NcAppSettingsSection>
@@ -38,7 +37,7 @@
 			<!-- Notifications settings and devices preview screen -->
 			<NcAppSettingsSection v-if="!isNoteToSelf"
 				id="notifications"
-				:title="t('spreed', 'Personal')">
+				:name="t('spreed', 'Personal')">
 				<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 					type="switch">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
@@ -49,21 +48,21 @@
 
 			<NcAppSettingsSection v-if="canFullModerate"
 				id="conversation-settings"
-				:title="t('spreed', 'Moderation')">
+				:name="t('spreed', 'Moderation')">
 				<ListableSettings v-if="!isNoteToSelf" :token="token" />
 				<LinkShareSettings v-if="!isNoteToSelf" ref="linkShareSettings" />
 				<ExpirationSettings :token="token" can-full-moderate />
 			</NcAppSettingsSection>
 			<NcAppSettingsSection v-else
 				id="conversation-settings"
-				:title="t('spreed', 'Setup summary')">
+				:name="t('spreed', 'Setup summary')">
 				<ExpirationSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
 			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
 				id="meeting"
-				:title="t('spreed', 'Meeting')">
+				:name="t('spreed', 'Meeting')">
 				<LobbySettings :token="token" />
 				<SipSettings v-if="canUserEnableSIP" />
 			</NcAppSettingsSection>
@@ -71,35 +70,35 @@
 			<!-- Conversation permissions -->
 			<NcAppSettingsSection v-if="canFullModerate && !isNoteToSelf"
 				id="permissions"
-				:title="t('spreed', 'Permissions')">
+				:name="t('spreed', 'Permissions')">
 				<ConversationPermissionsSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Breakout rooms -->
 			<NcAppSettingsSection v-if="canConfigureBreakoutRooms"
 				id="breakout-rooms"
-				:title="t('spreed', 'Breakout Rooms')">
+				:name="t('spreed', 'Breakout Rooms')">
 				<BreakoutRoomsSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Matterbridge settings -->
 			<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
 				id="matterbridge"
-				:title="t('spreed', 'Matterbridge')">
+				:name="t('spreed', 'Matterbridge')">
 				<MatterbridgeSettings />
 			</NcAppSettingsSection>
 
 			<!-- Bots settings -->
 			<NcAppSettingsSection v-if="selfIsOwnerOrModerator && hasBotV1API"
 				id="bots"
-				:title="t('spreed', 'Bots')">
+				:name="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Destructive actions -->
 			<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
 				id="dangerzone"
-				:title="t('spreed', 'Danger zone')">
+				:name="t('spreed', 'Danger zone')">
 				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
 				<DangerZone :conversation="conversation"
 					:can-leave-conversation="canLeaveConversation"

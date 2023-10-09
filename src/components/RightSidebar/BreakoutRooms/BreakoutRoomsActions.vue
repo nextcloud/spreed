@@ -71,6 +71,7 @@
 					<template #icon>
 						<Send :size="20" />
 					</template>
+					{{ sendMessageLabel }}
 				</NcActionButton>
 				<NcActionButton v-if="canModerate"
 					:title="manageBreakoutRoomsTitle"
@@ -79,6 +80,7 @@
 					<template #icon>
 						<Cog :size="20" />
 					</template>
+					{{ manageBreakoutRoomsTitle }}
 				</NcActionButton>
 			</NcActions>
 		</div>

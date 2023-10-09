@@ -42,9 +42,10 @@
 				placement="bottom">
 				<NcActionLink icon="icon-info"
 					target="_blank"
-					:title="t('spreed', 'More information')"
 					:href="type.infoTarget"
-					:close-after-click="true" />
+					close-after-click>
+					{{ t('spreed', 'More information') }}
+				</NcActionLink>
 				<NcActionButton v-if="editable"
 					icon="icon-delete"
 					:close-after-click="true"

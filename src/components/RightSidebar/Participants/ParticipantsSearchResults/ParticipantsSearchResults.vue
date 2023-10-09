@@ -23,32 +23,32 @@
 	<div class="participants-search-results"
 		:class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
-			<NcAppNavigationCaption :title="t('spreed', 'Add users')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
-			<NcAppNavigationCaption :title="t('spreed', 'Add groups')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
 			<ParticipantsList :items="addableGroups"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
-			<NcAppNavigationCaption :title="t('spreed', 'Add emails')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
 			<ParticipantsList :items="addableEmails"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
-			<NcAppNavigationCaption :title="t('spreed', 'Add circles')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Add circles')" />
 			<ParticipantsList :items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
 
 		<!-- integrations -->
 		<template v-if="integrations.length !== 0">
-			<NcAppNavigationCaption :title="t('spreed', 'Integrations')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Integrations')" />
 			<ul>
 				<NcButton v-for="(integration, index) in integrations"
 					:key="'integration' + index"
@@ -64,12 +64,11 @@
 		</template>
 
 		<template v-if="addableRemotes.length !== 0">
-			<NcAppNavigationCaption :title="t('spreed', 'Add federated users')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
 			<ParticipantsList :items="addableRemotes"
 				@click="handleClickParticipant" />
 		</template>
-		<NcAppNavigationCaption v-if="sourcesWithoutResults"
-			:title="sourcesWithoutResultsList" />
+		<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-if="!contactsLoading && sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
 		<template v-if="isNewGroupConversation">
