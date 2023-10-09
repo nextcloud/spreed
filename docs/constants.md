@@ -24,7 +24,7 @@
 
 ### Listable scope
 * `0` Participants only
-* `1` Regular users only, excluding guest app users
+* `1` Regular users only, excluding users created with the Guests app
 * `2` Everyone
 
 ### Webinar lobby states

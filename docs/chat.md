@@ -455,7 +455,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `read_only` - {actor} locked the conversation
 * `listable_none` - {actor} limited the conversation to the current participants
 * `listable_users` - {actor} opened the conversation accessible to registered users
-* `listable_all` - {actor} opened the conversation accessible to registered and guest app users
+* `listable_all` - {actor} opened the conversation accessible to registered users and users created with the Guests app
 * `lobby_timer_reached` - The conversation is now open to everyone
 * `lobby_none` - {actor} opened the conversation to everyone
 * `lobby_non_moderators` - {actor} restricted the conversation to moderators

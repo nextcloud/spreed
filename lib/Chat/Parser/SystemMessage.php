@@ -191,11 +191,11 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('An administrator opened the conversation to registered users');
 			}
 		} elseif ($message === 'listable_all') {
-			$parsedMessage = $this->l->t('{actor} opened the conversation to registered and guest app users');
+			$parsedMessage = $this->l->t('{actor} opened the conversation to registered users and users created with the Guests app');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You opened the conversation to registered and guest app users');
+				$parsedMessage = $this->l->t('You opened the conversation to registered users and users created with the Guests app');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator opened the conversation to registered and guest app users');
+				$parsedMessage = $this->l->t('An administrator opened the conversation to registered users and users created with the Guests app');
 			}
 		} elseif ($message === 'lobby_timer_reached') {
 			$parsedMessage = $this->l->t('The conversation is now open to everyone');

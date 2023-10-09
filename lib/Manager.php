@@ -1291,8 +1291,7 @@ class Manager {
 	}
 
 	/**
-	 * Returns whether the given user id is a guest user from
-	 * the guest app
+	 * Returns whether the given user id is a user created with the Guests app
 	 *
 	 * @param string $userId user id to check
 	 * @return bool true if the user is a guest, false otherwise

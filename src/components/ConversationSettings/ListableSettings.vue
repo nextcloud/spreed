@@ -33,7 +33,7 @@
 			:disabled="isListableLoading"
 			type="switch"
 			@update:checked="toggleListableGuests">
-			{{ t('spreed', 'Also open to guest app users') }}
+			{{ t('spreed', 'Also open to users created with the Guests app') }}
 		</NcCheckboxRadioSwitch>
 	</div>
 
@@ -97,7 +97,7 @@ export default {
 		summaryLabel() {
 			switch (this.listable) {
 			case CONVERSATION.LISTABLE.ALL:
-				return t('spreed', 'This conversation is open to registered and guest app users')
+				return t('spreed', 'This conversation is open to both registered users and users created with the Guests app')
 			case CONVERSATION.LISTABLE.USERS:
 				return t('spreed', 'This conversation is open to registered users')
 			case CONVERSATION.LISTABLE.NONE:
@@ -166,7 +166,7 @@ export default {
 				} else if (listable === CONVERSATION.LISTABLE.USERS) {
 					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to registered users'))
 				} else if (listable === CONVERSATION.LISTABLE.ALL) {
-					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to registered and guest app users'))
+					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to both registered users and users created with the Guests app'))
 				}
 				this.listable = listable
 			} catch (e) {
