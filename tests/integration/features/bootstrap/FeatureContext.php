@@ -3996,7 +3996,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = array_merge($options, ['cookies' => $this->getUserCookieJar($this->currentUser)]);
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} elseif (str_starts_with($this->currentUser, 'federation')) {
+		} elseif ($this->currentUser !== null && str_starts_with($this->currentUser, 'federation')) {
 			$auth = explode('#', $this->currentUser);
 			array_shift($auth);
 			$options['auth'] = $auth;
