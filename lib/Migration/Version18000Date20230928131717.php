@@ -47,7 +47,12 @@ class Version18000Date20230928131717 extends SimpleMigrationStep {
 			$table->addColumn('phone_number', Types::STRING, [
 				'notnull' => false,
 				'default' => '',
-				'length' => 255
+				'length' => 255,
+			]);
+			$table->addColumn('call_id', Types::STRING, [
+				'notnull' => false,
+				'default' => '',
+				'length' => 255,
 			]);
 			return $schema;
 		}

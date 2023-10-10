@@ -60,8 +60,10 @@ use OCP\AppFramework\Db\Entity;
  * @method null|string getAccessToken()
  * @method void setRemoteId(string $remoteId)
  * @method string getRemoteId()
- * @method void setPhoneNumber(string $phoneNumber)
- * @method string getPhoneNumber()
+ * @method void setPhoneNumber(?string $phoneNumber)
+ * @method ?string getPhoneNumber()
+ * @method void setCallId(?string $callId)
+ * @method ?string getCallId()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -154,8 +156,11 @@ class Attendee extends Entity {
 	/** @var string */
 	protected $remoteId;
 
-	/** @var string */
+	/** @var null|string */
 	protected $phoneNumber;
+
+	/** @var null|string */
+	protected $callId;
 
 	public function __construct() {
 		$this->addType('roomId', 'int');
@@ -176,6 +181,7 @@ class Attendee extends Entity {
 		$this->addType('accessToken', 'string');
 		$this->addType('remote_id', 'string');
 		$this->addType('phone_number', 'string');
+		$this->addType('call_id', 'string');
 	}
 
 	public function getDisplayName(): string {
@@ -206,6 +212,7 @@ class Attendee extends Entity {
 			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
 			'phone_number' => $this->getPhoneNumber(),
+			'call_id' => $this->getCallId(),
 		];
 	}
 }
