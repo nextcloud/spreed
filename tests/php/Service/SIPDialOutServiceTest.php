@@ -23,28 +23,28 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
-use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SIPDialOutService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\Signaling\Responses\DialOut;
 use OCA\Talk\Signaling\Responses\DialOutError;
 use OCA\Talk\Signaling\Responses\Response;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class SIPDialOutServiceTest extends TestCase {
-	protected ParticipantService|MockObject $participantService;
 	protected BackendNotifier|MockObject $backendNotifier;
+	protected LoggerInterface|MockObject $logger;
 	private ?SIPDialOutService $service = null;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->backendNotifier = $this->createMock(BackendNotifier::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new SIPDialOutService(
-			$this->participantService,
 			$this->backendNotifier,
+			$this->logger,
 		);
 	}
 

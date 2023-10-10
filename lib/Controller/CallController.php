@@ -29,6 +29,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
@@ -198,6 +199,41 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse();
+	}
+
+	/**
+	 * Call a SIP dial-out attendee
+	 *
+	 * @param int $attendeeId ID of the attendee to call
+	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 *
+	 * 201: Dial-out initiated successfully
+	 * 400: SIP dial-out not possible
+	 * 404: Participant could not be found or is a wrong type
+	 * 501: SIP dial-out is not configured on the server
+	 */
+	#[PublicPage]
+	#[RequireCallEnabled]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::START_CALL)]
+	public function sipDialOut(int $attendeeId): DataResponse {
+		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getSession() && $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$this->participantService->startDialOutRequest($this->room, $attendeeId);
+		} catch (ParticipantNotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		return new DataResponse([], Http::STATUS_CREATED);
 	}
 
 	/**

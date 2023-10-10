@@ -33,24 +33,27 @@ use OCA\Talk\Signaling\Responses\Response;
 use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\MappingError;
 use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\Source\Source;
 use OCA\Talk\Vendor\CuyZ\Valinor\MapperBuilder;
+use Psr\Log\LoggerInterface;
 
 class SIPDialOutService {
 
 	public function __construct(
-		public ParticipantService $participantService,
-		public BackendNotifier $backendNotifier,
+		protected BackendNotifier $backendNotifier,
+		protected LoggerInterface $logger,
 	) {
 	}
 
-	public function dialOut(Room $room): void {
-		$attendees = $this->participantService->getActorsByType($room, Attendee::ACTOR_PHONES);
-		foreach ($attendees as $attendee) {
-			if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
-				continue;
-			}
+	public function sendDialOutRequestToBackend(Room $room, Attendee $attendee): ?Response {
+		if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
+			return null;
+		}
 
-			$response = $this->backendNotifier->dialOutToAttendee($room, $attendee);
-			$dialOutResponse = $this->validateDialOutResponse($response);
+		$response = $this->backendNotifier->dialOutToAttendee($room, $attendee);
+		try {
+			return $this->validateDialOutResponse($response);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			return null;
 		}
 	}
 
@@ -71,12 +74,12 @@ class SIPDialOutService {
 						'dialout.callid' => 'callId',
 					])
 				);
-		} catch (MappingError) {
-			throw new \InvalidArgumentException('Not a valid dial-out response');
+		} catch (MappingError $e) {
+			throw new \InvalidArgumentException('Not a valid dial-out response', 0, $e);
 		}
 
 		if ($dialOutResponse->dialOut === null) {
-			throw new \InvalidArgumentException('Not a valid dial-out response');
+			throw new \InvalidArgumentException('Not a valid dial-out response', 1);
 		}
 
 		return $dialOutResponse;
