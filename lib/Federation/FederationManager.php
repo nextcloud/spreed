@@ -51,7 +51,7 @@ use OCP\IUser;
 class FederationManager {
 	public const TALK_ROOM_RESOURCE = 'talk-room';
 	public const TALK_PROTOCOL_NAME = 'nctalk';
-	public const TOKEN_LENGTH = 15;
+	public const TOKEN_LENGTH = 64;
 
 	public function __construct(
 		private IConfig $config,

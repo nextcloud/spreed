@@ -31,9 +31,11 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
+use OCA\Talk\Events\FederatedUserJoinedRoomEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
@@ -78,7 +80,9 @@ use OCP\Server;
 
 class ParticipantService {
 
-	protected array $userCache;
+	/** @var array<int, array<string, array<string, Participant>>> */
+	protected array $actorCache;
+	/** @var array<int, array<string, Participant>> */
 	protected array $sessionCache;
 
 	public function __construct(
@@ -334,6 +338,33 @@ class ParticipantService {
 		$session = $this->sessionService->createSessionForAttendee($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CONNECT, $event);
+
+		return new Participant($room, $attendee, $session);
+	}
+
+	/**
+	 * @throws UnauthorizedException
+	 */
+	public function joinRoomAsFederatedUser(Room $room, string $actorType, string $actorId): Participant {
+		$event = new BeforeFederatedUserJoinedRoomEvent($room, $actorId);
+		$this->dispatcher->dispatchTyped($event);
+
+		if ($event->isJoinCanceled()) {
+			throw new UnauthorizedException('Participant is not allowed to join');
+		}
+
+		try {
+			$participant = $this->getParticipantByActor($room, $actorType, $actorId);
+			$attendee = $participant->getAttendee();
+		} catch (ParticipantNotFoundException $e) {
+			// shouldn't happen unless some code called joinRoom without previous checks
+			throw new UnauthorizedException('Participant is not allowed to join');
+		}
+
+		$session = $this->sessionService->createSessionForAttendee($attendee);
+
+		$event = new FederatedUserJoinedRoomEvent($room, $actorId);
+		$this->dispatcher->dispatchTyped($event);
 
 		return new Participant($room, $attendee, $session);
 	}
@@ -1602,12 +1633,10 @@ class ParticipantService {
 
 	public function cacheParticipant(Room $room, Participant $participant): void {
 		$attendee = $participant->getAttendee();
-		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
-			return;
-		}
 
-		$this->userCache[$room->getId()] ??= [];
-		$this->userCache[$room->getId()][$attendee->getActorId()] = $participant;
+		$this->actorCache[$room->getId()] ??= [];
+		$this->actorCache[$room->getId()][$attendee->getActorType()] ??= [];
+		$this->actorCache[$room->getId()][$attendee->getActorType()][$attendee->getActorId()] = $participant;
 		if ($participant->getSession()) {
 			$participantSessionId = $participant->getSession()->getSessionId();
 			$this->sessionCache[$room->getId()] ??= [];
@@ -1668,8 +1697,8 @@ class ParticipantService {
 			throw new ParticipantNotFoundException('Not a user');
 		}
 
-		if (isset($this->userCache[$room->getId()][$userId])) {
-			$participant = $this->userCache[$room->getId()][$userId];
+		if (isset($this->actorCache[$room->getId()][Attendee::ACTOR_USERS][$userId])) {
+			$participant = $this->actorCache[$room->getId()][Attendee::ACTOR_USERS][$userId];
 			if (!$sessionId
 				|| ($participant->getSession() instanceof Session
 					&& $participant->getSession()->getSessionId() === $sessionId)) {
@@ -1701,8 +1730,9 @@ class ParticipantService {
 
 		$participant = $this->getParticipantFromQuery($query, $room);
 
-		$this->userCache[$room->getId()] ??= [];
-		$this->userCache[$room->getId()][$userId] = $participant;
+		$this->actorCache[$room->getId()] ??= [];
+		$this->actorCache[$room->getId()][Attendee::ACTOR_USERS] ??= [];
+		$this->actorCache[$room->getId()][Attendee::ACTOR_USERS][$userId] = $participant;
 		if ($participant->getSession()) {
 			$participantSessionId = $participant->getSession()->getSessionId();
 			$this->sessionCache[$room->getId()] ??= [];
@@ -1780,6 +1810,10 @@ class ParticipantService {
 	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
 	 */
 	public function getParticipantByActor(Room $room, string $actorType, string $actorId): Participant {
+		if (isset($this->actorCache[$room->getId()][$actorType][$actorId])) {
+			return $this->actorCache[$room->getId()][$actorType][$actorId];
+		}
+
 		if ($actorType === Attendee::ACTOR_USERS) {
 			return $this->getParticipant($room, $actorId, false);
 		}
@@ -1793,6 +1827,8 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
 			->setMaxResults(1);
 
-		return $this->getParticipantFromQuery($query, $room);
+		$participant = $this->getParticipantFromQuery($query, $room);
+		$this->cacheParticipant($room, $participant);
+		return $participant;
 	}
 }

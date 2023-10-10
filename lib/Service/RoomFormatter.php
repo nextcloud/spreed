@@ -327,6 +327,12 @@ class RoomFormatter {
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
 
+		if ($room->getRemoteServer() && $room->getRemoteToken()) {
+			$roomData['remoteServer'] = $room->getRemoteServer();
+			$roomData['remoteToken'] = $room->getRemoteToken();
+			$roomData['remoteAccessToken'] = $attendee->getAccessToken();
+		}
+
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			$participants = json_decode($room->getName(), true);

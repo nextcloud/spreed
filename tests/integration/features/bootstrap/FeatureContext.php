@@ -57,6 +57,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $remoteToInviteId;
 	/** @var array<int, string> */
 	protected static array $inviteIdToRemote;
+	/** @var array<string, string> */
+	protected static array $remoteAuth;
 	/** @var array<string, int> */
 	protected static array $questionToPollId;
 	/** @var array[] */
@@ -367,6 +369,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertEquals($expected, array_map(function ($room, $expectedRoom) {
+			if (isset($room['remoteAccessToken'])) {
+				self::$remoteAuth[self::translateRemoteServer($room['remoteServer']) . '#' . self::$identifierToToken[$room['name']]] = $room['remoteAccessToken'];
+			}
 			if (!isset(self::$identifierToToken[$room['name']])) {
 				self::$identifierToToken[$room['name']] = $room['token'];
 			}
@@ -1044,7 +1049,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|null $formData
 	 */
 	public function userJoinsRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
-		$this->setCurrentUser($user);
+		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
 			$formData
@@ -1301,7 +1306,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userGetsRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v4', TableNode $formData = null): void {
-		$this->setCurrentUser($user);
+		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 
@@ -1777,7 +1782,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$body = new TableNode([['message', $message]]);
 		}
 
-		$this->setCurrentUser($user);
+		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier],
 			$body
@@ -2448,7 +2453,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
-				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: $message['actorId'],
+				'actorId' => $message['actorType'] === 'guests' ? self::$sessionIdToUser[$message['actorId']] : $message['actorId'],
 				'actorDisplayName' => $message['actorDisplayName'],
 				// TODO test timestamp; it may require using Runkit, php-timecop
 				// or something like that.
@@ -3095,8 +3100,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Given /^as user "([^"]*)"$/
 	 */
-	public function setCurrentUser(?string $user): ?string {
+	public function setCurrentUser(?string $user, ?string $identifier = null): ?string {
 		$oldUser = $this->currentUser;
+
+		if ($identifier && str_starts_with($user, 'federation/')) {
+			$user = substr($user, 11);
+
+			$authArrayKey = 'LOCAL#' . self::$identifierToToken[$identifier];
+			if (!isset(self::$remoteAuth[$authArrayKey])) {
+				throw new \Exception(
+					'No remote auth available for: ' . 'LOCAL#' . self::$identifierToToken[$identifier]
+					. '. Did you pull rooms for the recipient? (user: ' . $user . ')'
+				);
+			}
+			$user = 'federation#' . urlencode($user . '@' . 'http://localhost:8180') . '#' . self::$remoteAuth[$authArrayKey];
+		}
+
 		$this->currentUser = $user;
 		return $oldUser;
 	}
@@ -3977,6 +3996,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = array_merge($options, ['cookies' => $this->getUserCookieJar($this->currentUser)]);
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
+		} elseif ($this->currentUser !== null && str_starts_with($this->currentUser, 'federation')) {
+			$auth = explode('#', $this->currentUser);
+			array_shift($auth);
+			$options['auth'] = $auth;
+			$headers['X-Nextcloud-Federation'] = 1;
 		} elseif ($this->currentUser !== null && !str_starts_with($this->currentUser, 'guest')) {
 			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}

@@ -112,6 +112,9 @@ class MessageParser {
 					$displayName = $botName . ' (Bot)';
 				}
 			}
+		} elseif ($comment->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			// FIXME Read from some addressbooks?
+			$displayName = $actorId;
 		}
 
 		$message->setActor(

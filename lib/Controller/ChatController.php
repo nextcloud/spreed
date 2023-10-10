@@ -117,23 +117,27 @@ class ChatController extends AEnvironmentAwareController {
 		parent::__construct($appName, $request);
 	}
 
+	/**
+	 * @return list{0: Attendee::ACTOR_*, 1: string}
+	 */
 	protected function getActorInfo(string $actorDisplayName = ''): array {
-		if ($this->userId === null) {
-			$actorType = Attendee::ACTOR_GUESTS;
-			$actorId = $this->participant->getAttendee()->getActorId();
+		$remoteCloudId = $this->getRemoteAccessCloudId();
+		if ($remoteCloudId !== null) {
+			return [Attendee::ACTOR_FEDERATED_USERS, $remoteCloudId];
+		}
 
+		if ($this->userId === null) {
 			if ($actorDisplayName) {
 				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
 			}
-		} elseif ($this->userId === MatterbridgeManager::BRIDGE_BOT_USERID && $actorDisplayName) {
-			$actorType = Attendee::ACTOR_BRIDGED;
-			$actorId = str_replace(["/", "\""], "", $actorDisplayName);
-		} else {
-			$actorType = Attendee::ACTOR_USERS;
-			$actorId = $this->userId;
+			return [Attendee::ACTOR_GUESTS, $this->participant->getAttendee()->getActorId()];
+		}
+		
+		if ($this->userId === MatterbridgeManager::BRIDGE_BOT_USERID && $actorDisplayName) {
+			return [Attendee::ACTOR_BRIDGED, str_replace(['/', '"'], '', $actorDisplayName)];
 		}
 
-		return [$actorType, $actorId];
+		return [Attendee::ACTOR_USERS, $this->userId];
 	}
 
 	/**
