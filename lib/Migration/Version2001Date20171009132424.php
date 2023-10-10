@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\Types;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -42,7 +42,7 @@ class Version2001Date20171009132424 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('spreedme_rooms');
-		$table->addColumn('activeSince', Types::DATETIME_MUTABLE, [
+		$table->addColumn('activeSince', Types::DATETIME, [
 			'notnull' => false,
 		]);
 		$table->addColumn('activeGuests', Types::INTEGER, [

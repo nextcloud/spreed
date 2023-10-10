@@ -26,10 +26,10 @@ namespace OCA\Talk\Migration;
 
 use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\DB\Types;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -108,7 +108,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				'length' => 255,
 				'default' => '',
 			]);
-			$table->addColumn('activeSince', Types::DATETIME_MUTABLE, [
+			$table->addColumn('activeSince', Types::DATETIME, [
 				'notnull' => false,
 			]);
 			$table->addColumn('activeGuests', Types::INTEGER, [
@@ -210,7 +210,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 */
 	protected function copyParticipants(array $roomIdMap): void {
 		$insert = $this->connection->getQueryBuilder();
-		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
 			$insert->insert('talk_participants')
 				->values([
 					'userId' => $insert->createParameter('userId'),
@@ -246,7 +246,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('lastPing', (int) $row['lastPing'], IQueryBuilder::PARAM_INT)
 				->setParameter('sessionId', $row['sessionId'])
 			;
-			if (!$this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+			if (!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
 				$insert->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT);
 			} else {
 				$insert->setParameter('participantType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);

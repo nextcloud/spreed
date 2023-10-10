@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\Types;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -41,7 +41,7 @@ class Version7000Date20190717141457 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_participants');
 		if (!$table->hasColumn('last_joined_call')) {
-			$table->addColumn('last_joined_call', Types::DATETIME_MUTABLE, [
+			$table->addColumn('last_joined_call', Types::DATETIME, [
 				'notnull' => false,
 			]);
 		}

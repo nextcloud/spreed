@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\Types;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -43,7 +43,7 @@ class Version3003Date20180730080327 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_participants');
 		if (!$table->hasColumn('last_mention')) {
-			$table->addColumn('last_mention', Types::DATETIME_MUTABLE, [
+			$table->addColumn('last_mention', Types::DATETIME, [
 				'notnull' => false,
 			]);
 		}
