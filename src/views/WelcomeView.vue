@@ -5,7 +5,6 @@
 		<p class="emptycontent-additional">
 			{{ t('spreed', 'Say hi to your friends and colleagues!') }}
 		</p>
-		<div id="shareRoomContainer" />
 	</div>
 </template>
 
