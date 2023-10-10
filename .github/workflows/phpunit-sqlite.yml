@@ -7,18 +7,6 @@ name: PHPUnit sqlite
 
 on:
   pull_request:
-    paths:
-      - '.github/workflows/**'
-      - 'appinfo/**'
-      - 'lib/**'
-      - 'templates/**'
-      - 'tests/**'
-      - 'vendor/**'
-      - 'vendor-bin/**'
-      - '.php-cs-fixer.dist.php'
-      - 'composer.json'
-      - 'composer.lock'
-
   push:
     branches:
       - main
@@ -33,8 +21,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      src: ${{ steps.changes.outputs.src}}
+
+    steps:
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # v2.11.1
+        id: changes
+        with:
+          filters: |
+            src:
+              - '.github/workflows/**'
+              - 'appinfo/**'
+              - 'lib/**'
+              - 'templates/**'
+              - 'tests/**'
+              - 'vendor/**'
+              - 'vendor-bin/**'
+              - '.php-cs-fixer.dist.php'
+              - 'composer.json'
+              - 'composer.lock'
+
   phpunit-sqlite:
     runs-on: ubuntu-latest
+
+    needs: changes
+    if: needs.changes.outputs.src == 'true'
 
     strategy:
       matrix:
@@ -48,19 +62,19 @@ jobs:
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
       - name: Checkout server
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
 
       - name: Checkout app
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           path: apps/${{ env.APP_NAME }}
 
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d # v2
+        uses: shivammathur/setup-php@4bd44f22a98a19e0950cbad5f31095157cc9621b # v2
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -137,7 +151,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: phpunit-sqlite
+    needs: [changes, phpunit-sqlite]
 
     if: always()
 
@@ -145,4 +159,4 @@ jobs:
 
     steps:
       - name: Summary status
-        run: if ${{ needs.phpunit-sqlite.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes.outputs.src == 'true' && needs.phpunit-sqlite.result != 'success' }}; then exit 1; fi
