@@ -136,6 +136,8 @@ namespace OCA\Talk;
  *     statusClearAt?: ?int,
  *     statusIcon?: ?string,
  *     statusMessage?: ?string,
+ *     phoneNumber?: ?string,
+ *     callId?: ?string,
  * }
  *
  * @psalm-type TalkPollVote = array{
