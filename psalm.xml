@@ -31,8 +31,7 @@
 				<referencedClass name="Doctrine\DBAL\Exception\InvalidFieldNameException" />
 				<referencedClass name="Doctrine\DBAL\Exception\TableNotFoundException" />
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
-				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
-				<referencedClass name="Doctrine\DBAL\Types\Types" />
+				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQLPlatform" />
 				<referencedClass name="GuzzleHttp\Exception\ClientException" />
 				<referencedClass name="GuzzleHttp\Exception\ServerException" />
 				<referencedClass name="GuzzleHttp\Exception\ConnectException" />

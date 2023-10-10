@@ -27,8 +27,8 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\Types;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 

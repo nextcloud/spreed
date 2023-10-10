@@ -24,9 +24,9 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\Types;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -55,7 +55,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 		$table = $schema->getTable('talk_rooms');
 
 		if (!$table->hasColumn('active_since')) {
-			$table->addColumn('active_since', Types::DATETIME_MUTABLE, [
+			$table->addColumn('active_since', Types::DATETIME, [
 				'notnull' => false,
 			]);
 			$table->addColumn('active_guests', Types::INTEGER, [
@@ -116,7 +116,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			return;
 		}
 
-		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_rooms')
 				->set('active_since', 'activeSince')
