@@ -180,7 +180,10 @@ export default {
 			// text.
 			if (this.mentions !== {}) {
 				for (const mention in this.mentions) {
-					messageToBeForwarded.message = messageToBeForwarded.message.replace(`{${mention}}`, '@' + this.mentions[mention].name)
+					const mentionString = mention.includes('mention-call')
+						? `**${this.mentions[mention].name}**`
+						: `@"${this.mentions[mention].id}"`
+					messageToBeForwarded.message = messageToBeForwarded.message.replace(`{${mention}}`, mentionString)
 				}
 			}
 			try {
