@@ -33,6 +33,10 @@
 			:display-name="name"
 			:avatar-image="'icon-user-forced-white'"
 			:primary="isCurrentGuest" />
+		<NcUserBubble v-else-if="isRemoteUser"
+			:display-name="name"
+			:avatar-image="'icon-user-forced-white'"
+			:primary="isCurrentUser" />
 		<NcUserBubble v-else
 			:display-name="name"
 			:user="id"
@@ -69,6 +73,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		server: {
+			type: String,
+			default: '',
+		},
 	},
 
 	computed: {
@@ -81,6 +89,9 @@ export default {
 		isMentionToGuest() {
 			return this.type === 'guest'
 		},
+		isRemoteUser() {
+			return this.type === 'user' && this.server !== ''
+		},
 		isCurrentGuest() {
 			// On mention bubbles the id is actually "guest/ACTOR_ID" for guests
 			// This is to make sure guests can never collide with users,
@@ -91,6 +102,11 @@ export default {
 				&& this.id === ('guest/' + this.$store.getters.getActorId())
 		},
 		isCurrentUser() {
+			if (this.isRemoteUser) {
+				// For now, we don't highlight remote users even if they are the one
+				return false
+			}
+
 			return this.$store.getters.getActorType() === 'users'
 				&& this.id === this.$store.getters.getUserId()
 		},
