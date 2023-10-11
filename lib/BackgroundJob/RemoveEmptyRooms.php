@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -47,6 +48,7 @@ class RemoveEmptyRooms extends TimedJob {
 		protected Manager $manager,
 		protected RoomService $roomService,
 		protected ParticipantService $participantService,
+		protected FederationManager $federationManager,
 		protected LoggerInterface $logger,
 		protected IUserMountCache $userMountCache,
 	) {
@@ -86,6 +88,11 @@ class RemoveEmptyRooms extends TimedJob {
 		}
 
 		if ($this->participantService->getNumberOfActors($room) !== 0) {
+			return false;
+		}
+
+		if ($room->getRemoteServer() && $room->getRemoteToken()
+			&& $this->federationManager->getNumberOfInvitations($room) !== 0) {
 			return false;
 		}
 

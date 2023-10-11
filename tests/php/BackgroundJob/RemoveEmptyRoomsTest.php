@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\BackgroundJob;
 
 use OCA\Talk\BackgroundJob\RemoveEmptyRooms;
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -44,6 +45,8 @@ class RemoveEmptyRoomsTest extends TestCase {
 	protected $roomService;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var ParticipantService|MockObject */
+	protected $federationManager;
 	/** @var LoggerInterface|MockObject */
 	protected $loggerInterface;
 	/** @var IUserMountCache|MockObject */
@@ -56,6 +59,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->federationManager = $this->createMock(FederationManager::class);
 		$this->loggerInterface = $this->createMock(LoggerInterface::class);
 		$this->userMountCache = $this->createMock(IUserMountCache::class);
 	}
@@ -66,8 +70,9 @@ class RemoveEmptyRoomsTest extends TestCase {
 			$this->manager,
 			$this->roomService,
 			$this->participantService,
+			$this->federationManager,
 			$this->loggerInterface,
-			$this->userMountCache
+			$this->userMountCache,
 		);
 	}
 
@@ -77,12 +82,12 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$room->method('getType')
 			->willReturn(Room::TYPE_GROUP);
-		$numDeletedRooms = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRooms = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals(0, $numDeletedRooms, 'Invalid default quantity of rooms');
 
-		$this->invokePrivate($backgroundJob, 'doDeleteRoom', [$room]);
+		self::invokePrivate($backgroundJob, 'doDeleteRoom', [$room]);
 
-		$numDeletedRooms = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRooms = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals(1, $numDeletedRooms, 'Invalid final quantity of rooms');
 	}
 
@@ -92,7 +97,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 	public function testDeleteIfFileIsRemoved(string $objectType, array $fileList, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 
-		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRoomsActual = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals(0, $numDeletedRoomsActual, 'Invalid default quantity of rooms');
 
 		$room = $this->createMock(Room::class);
@@ -101,13 +106,13 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$room->method('getObjectType')
 			->willReturn($objectType);
 
-		$userMountCache = $this->invokePrivate($backgroundJob, 'userMountCache');
+		$userMountCache = self::invokePrivate($backgroundJob, 'userMountCache');
 		$userMountCache->method('getMountsForFileId')
 			->willReturn($fileList);
 
-		$this->invokePrivate($backgroundJob, 'deleteIfFileIsRemoved', [$room]);
+		self::invokePrivate($backgroundJob, 'deleteIfFileIsRemoved', [$room]);
 
-		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRoomsActual = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
@@ -123,10 +128,10 @@ class RemoveEmptyRoomsTest extends TestCase {
 	/**
 	 * @dataProvider dataDeleteIfIsEmpty
 	 */
-	public function testDeleteIfIsEmpty(string $objectType, int $actorsCount, int $numDeletedRoomsExpected): void {
+	public function testDeleteIfIsEmpty(string $objectType, int $actorsCount, int $inviteCount, int $numDeletedRoomsExpected): void {
 		$backgroundJob = $this->getBackgroundJob();
 
-		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRoomsActual = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals(0, $numDeletedRoomsActual, 'Invalid default quantity of rooms');
 
 		$room = $this->createMock(Room::class);
@@ -134,23 +139,33 @@ class RemoveEmptyRoomsTest extends TestCase {
 			->willReturn(Room::TYPE_GROUP);
 		$room->method('getObjectType')
 			->willReturn($objectType);
+		$room->method('getRemoteServer')
+			->willReturn($inviteCount ? 'https://remote.example.tld' : '');
+		$room->method('getRemoteToken')
+			->willReturn($inviteCount ? 'remote' : '');
 
-		$participantService = $this->invokePrivate($backgroundJob, 'participantService');
+		$this->federationManager->method('getNumberOfInvitations')
+			->with($room)
+			->willReturn($inviteCount);
+
+		$participantService = self::invokePrivate($backgroundJob, 'participantService');
 		$participantService->method('getNumberOfActors')
 			->willReturn($actorsCount);
 
-		$this->invokePrivate($backgroundJob, 'deleteIfIsEmpty', [$room]);
+		self::invokePrivate($backgroundJob, 'deleteIfIsEmpty', [$room]);
 
-		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRoomsActual = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
 	public static function dataDeleteIfIsEmpty(): array {
 		return [
-			['', 1, 0],
-			['file', 1, 0],
-			['email', 1, 0],
-			['email', 0, 1]
+			'room with user' => ['', 1, 0, 0],
+			'room with fed invite' => ['', 0, 1, 0],
+			'room to delete' => ['', 0, 0, 1],
+			'file room with user' => ['file', 1, 0, 0],
+			'email room with user' => ['email', 1, 0, 0],
+			'email room without user' => ['email', 0, 0, 1]
 		];
 	}
 
@@ -165,7 +180,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$room->method('getObjectType')
 			->willReturn($objectType);
 		$backgroundJob->callback($room);
-		$numDeletedRoomsActual = $this->invokePrivate($backgroundJob, 'numDeletedRooms');
+		$numDeletedRoomsActual = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 

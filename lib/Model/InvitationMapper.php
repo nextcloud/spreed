@@ -27,9 +27,7 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
-use OCP\DB\Exception as DBException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -50,8 +48,6 @@ class InvitationMapper extends QBMapper {
 	}
 
 	/**
-	 * @throws DBException
-	 * @throws MultipleObjectsReturnedException
 	 * @throws DoesNotExistException
 	 */
 	public function getInvitationById(int $id): Invitation {
@@ -67,7 +63,6 @@ class InvitationMapper extends QBMapper {
 	/**
 	 * @param Room $room
 	 * @return Invitation[]
-	 * @throws DBException
 	 */
 	public function getInvitationsForRoom(Room $room): array {
 		$qb = $this->db->getQueryBuilder();
@@ -82,7 +77,6 @@ class InvitationMapper extends QBMapper {
 	/**
 	 * @param IUser $user
 	 * @return Invitation[]
-	 * @throws DBException
 	 */
 	public function getInvitationsForUser(IUser $user): array {
 		$qb = $this->db->getQueryBuilder();
@@ -94,9 +88,6 @@ class InvitationMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-	/**
-	 * @throws DBException
-	 */
 	public function countInvitationsForRoom(Room $room): int {
 		$qb = $this->db->getQueryBuilder();
 

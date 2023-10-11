@@ -36,8 +36,6 @@ use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
-use OCP\DB\Exception as DBException;
 use OCP\IConfig;
 use OCP\IUser;
 
@@ -81,7 +79,6 @@ class FederationManager {
 	 * @param string $remoteUrl
 	 * @param string $sharedSecret
 	 * @return int share id for this specific remote room share
-	 * @throws DBException
 	 */
 	public function addRemoteRoom(IUser $user, string $remoteId, int $roomType, string $roomName, string $roomToken, string $remoteUrl, string $sharedSecret): int {
 		try {
@@ -100,9 +97,7 @@ class FederationManager {
 	}
 
 	/**
-	 * @throws DBException
 	 * @throws UnauthorizedException
-	 * @throws MultipleObjectsReturnedException
 	 * @throws DoesNotExistException
 	 * @throws CannotReachRemoteException
 	 */
@@ -136,9 +131,7 @@ class FederationManager {
 	}
 
 	/**
-	 * @throws DBException
 	 * @throws UnauthorizedException
-	 * @throws MultipleObjectsReturnedException
 	 * @throws DoesNotExistException
 	 */
 	public function rejectRemoteRoomShare(IUser $user, int $shareId): void {
@@ -157,15 +150,11 @@ class FederationManager {
 	/**
 	 * @param IUser $user
 	 * @return Invitation[]
-	 * @throws DBException
 	 */
 	public function getRemoteRoomShares(IUser $user): array {
 		return $this->invitationMapper->getInvitationsForUser($user);
 	}
 
-	/**
-	 * @throws DBException
-	 */
 	public function getNumberOfInvitations(Room $room): int {
 		return $this->invitationMapper->countInvitationsForRoom($room);
 	}
