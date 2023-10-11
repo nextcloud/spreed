@@ -32,6 +32,7 @@ use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\UserEvent;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -1140,7 +1141,11 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		// add the remaining users in batch
-		$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
+		try {
+			$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
+		} catch (CannotReachRemoteException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 
 		return new DataResponse([]);
 	}
