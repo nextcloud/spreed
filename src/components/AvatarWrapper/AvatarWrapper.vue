@@ -120,6 +120,9 @@ export default {
 			if (!this.source || this.isUser || this.isBot || this.isGuest || this.isDeletedUser) {
 				return ''
 			}
+			if (this.isRemoteUser) {
+				return 'icon-user'
+			}
 			if (this.source === 'emails') {
 				return 'icon-mail'
 			}
@@ -144,6 +147,9 @@ export default {
 		},
 		isUser() {
 			return this.source === 'users' || this.source === ATTENDEE.ACTOR_TYPE.BRIDGED
+		},
+		isRemoteUser() {
+			return this.source === 'federated_users'
 		},
 		isBot() {
 			return this.source === 'bots' && this.id !== 'changelog'

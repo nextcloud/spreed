@@ -289,11 +289,11 @@ class SystemMessage {
 			}
 		} elseif ($message === 'federated_user_added') {
 			$parsedParameters['federated_user'] = $this->getRemoteUser($parameters['federated_user']);
-			$parsedMessage = $this->l->t('{actor} invited {user}');
+			$parsedMessage = $this->l->t('{actor} invited {federated_user}');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You invited {user}');
+				$parsedMessage = $this->l->t('You invited {federated_user}');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator invited {user}');
+				$parsedMessage = $this->l->t('An administrator invited {federated_user}');
 			} elseif ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
 				$parsedMessage = $this->l->t('{federated_user} accepted the invitation');
 			}
