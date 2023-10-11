@@ -323,12 +323,10 @@
                         "type": "string"
                     },
                     "remote_server": {
-                        "type": "string",
-                        "nullable": true
+                        "type": "string"
                     },
                     "remote_token": {
-                        "type": "string",
-                        "nullable": true
+                        "type": "string"
                     },
                     "room_id": {
                         "type": "integer",
