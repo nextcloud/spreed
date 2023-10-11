@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Config;
-use OCA\Talk\Federation\Notifications;
+use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Session;
@@ -67,8 +67,8 @@ class ParticipantServiceTest extends TestCase {
 	protected $groupManager;
 	/** @var MembershipService|MockObject */
 	protected $membershipService;
-	/** @var Notifications|MockObject */
-	protected $federationNotifications;
+	/** @var BackendNotifier|MockObject */
+	protected $federationBackendNotifier;
 	/** @var ITimeFactory|MockObject */
 	protected $time;
 	/** @var ICacheFactory|MockObject */
@@ -89,7 +89,7 @@ class ParticipantServiceTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->membershipService = $this->createMock(MembershipService::class);
-		$this->federationNotifications = $this->createMock(Notifications::class);
+		$this->federationBackendNotifier = $this->createMock(BackendNotifier::class);
 		$this->time = $this->createMock(ITimeFactory::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->service = new ParticipantService(
@@ -104,7 +104,7 @@ class ParticipantServiceTest extends TestCase {
 			$this->userManager,
 			$this->groupManager,
 			$this->membershipService,
-			$this->federationNotifications,
+			$this->federationBackendNotifier,
 			$this->time,
 			$this->cacheFactory
 		);

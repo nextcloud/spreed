@@ -46,12 +46,13 @@ use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Events\SilentModifyParticipantEvent;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\FederationManager;
-use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -97,7 +98,7 @@ class ParticipantService {
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
 		private MembershipService $membershipService,
-		private Notifications $notifications,
+		private BackendNotifier $backendNotifier,
 		private ITimeFactory $timeFactory,
 		private ICacheFactory $cacheFactory,
 	) {
@@ -431,6 +432,7 @@ class ParticipantService {
 	 * @param Room $room
 	 * @param array $participants
 	 * @param IUser|null $addedBy User that is attempting to add these users (must be set for federated users to be added)
+	 * @throws CannotReachRemoteException thrown when sending the federation request didn't work
 	 * @throws \Exception thrown if $addedBy is not set when adding a federated user
 	 */
 	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): void {
@@ -478,11 +480,15 @@ class ParticipantService {
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
 			try {
-				$entity = $this->attendeeMapper->insert($attendee);
+				$this->attendeeMapper->insert($attendee);
 				$attendees[] = $attendee;
 
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-					$this->notifications->sendRemoteShare((string) $entity->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+					if (!$inviteSent) {
+						$this->attendeeMapper->delete($attendee);
+						throw new CannotReachRemoteException();
+					}
 				}
 			} catch (Exception $e) {
 				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {

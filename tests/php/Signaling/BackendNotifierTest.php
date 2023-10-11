@@ -27,7 +27,6 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
-use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -165,7 +164,7 @@ class BackendNotifierTest extends TestCase {
 			$this->userManager,
 			$groupManager,
 			\OC::$server->get(MembershipService::class),
-			\OC::$server->get(Notifications::class),
+			\OC::$server->get(\OCA\Talk\Federation\BackendNotifier::class),
 			$this->timeFactory,
 			\OC::$server->get(ICacheFactory::class)
 		);

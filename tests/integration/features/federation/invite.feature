@@ -14,6 +14,17 @@ Feature: federation/invite
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
 
+  Scenario: Invite an invalid user
+    Given the following "spreed" app config is set
+      | federation_enabled | yes |
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds remote "invalid-user" to room "room" with 404 (v4)
+    When user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+
   Scenario: Accepting an invite
     Given the following "spreed" app config is set
       | federation_enabled | yes |

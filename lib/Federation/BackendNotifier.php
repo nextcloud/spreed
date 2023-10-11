@@ -41,7 +41,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
-class Notifications {
+class BackendNotifier {
 
 	public function __construct(
 		private ICloudFederationFactory $cloudFederationFactory,

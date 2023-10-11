@@ -58,7 +58,7 @@ class FederationManager {
 		private Manager $manager,
 		private ParticipantService $participantService,
 		private InvitationMapper $invitationMapper,
-		private Notifications $notifications,
+		private BackendNotifier $backendNotifier,
 	) {
 	}
 
@@ -115,7 +115,7 @@ class FederationManager {
 		// Add user to the room
 		$room = $this->manager->getRoomById($invitation->getRoomId());
 		if (
-			!$this->notifications->sendShareAccepted($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken())
+			!$this->backendNotifier->sendShareAccepted($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken())
 		) {
 			throw new CannotReachRemoteException();
 		}
@@ -151,7 +151,7 @@ class FederationManager {
 
 		$this->invitationMapper->delete($invitation);
 
-		$this->notifications->sendShareDeclined($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken());
+		$this->backendNotifier->sendShareDeclined($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken());
 	}
 
 	/**
