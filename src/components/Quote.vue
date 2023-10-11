@@ -49,7 +49,7 @@ components.
 			</div>
 			<blockquote v-else
 				class="quote__main__text">
-				<p>{{ shortenedQuoteMessage }}</p>
+				<p dir="auto">{{ shortenedQuoteMessage }}</p>
 			</blockquote>
 		</div>
 		<div v-if="isNewMessageQuote" class="quote__main__right">
@@ -313,6 +313,7 @@ export default {
 				display: -webkit-box;
 				-webkit-line-clamp: 1;
 				-webkit-box-orient: vertical;
+				text-align: start;
 			}
 		}
 	}
