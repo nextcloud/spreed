@@ -120,7 +120,6 @@ class ParticipantService {
 		private BackendNotifier $backendNotifier,
 		private ITimeFactory $timeFactory,
 		private ICacheFactory $cacheFactory,
-		protected SIPDialOutService $dialOutService,
 	) {
 	}
 
@@ -1240,7 +1239,7 @@ class ParticipantService {
 	 * @throws \InvalidArgumentException
 	 * @throws ParticipantNotFoundException
 	 */
-	public function startDialOutRequest(Room $room, int $targetAttendeeId): void {
+	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId): void {
 		try {
 			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
@@ -1255,7 +1254,7 @@ class ParticipantService {
 			throw new ParticipantNotFoundException();
 		}
 
-		$dialOutResponse = $this->dialOutService->sendDialOutRequestToBackend($room, $attendee);
+		$dialOutResponse = $dialOutService->sendDialOutRequestToBackend($room, $attendee);
 
 		if (!$dialOutResponse) {
 			throw new \InvalidArgumentException('backend');

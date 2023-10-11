@@ -43,6 +43,7 @@ use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\SIPDialOutService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -64,6 +65,7 @@ class CallController extends AEnvironmentAwareController {
 		private IUserManager $userManager,
 		private ITimeFactory $timeFactory,
 		private Config $talkConfig,
+		private SIPDialOutService $dialOutService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -226,7 +228,7 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$this->participantService->startDialOutRequest($this->room, $attendeeId);
+			$this->participantService->startDialOutRequest($this->dialOutService, $this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException) {
