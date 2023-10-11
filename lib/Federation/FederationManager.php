@@ -131,6 +131,13 @@ class FederationManager {
 	}
 
 	/**
+	 * @throws DoesNotExistException
+	 */
+	public function getRemoteShareById(int $shareId): Invitation {
+		return $this->invitationMapper->getInvitationById($shareId);
+	}
+
+	/**
 	 * @throws UnauthorizedException
 	 * @throws DoesNotExistException
 	 */

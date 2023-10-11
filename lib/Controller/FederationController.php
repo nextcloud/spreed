@@ -113,17 +113,22 @@ class FederationController extends OCSController {
 			throw new UnauthorizedException();
 		}
 		$invitations = $this->federationManager->getRemoteRoomShares($user);
-		return new DataResponse(array_map(function (Invitation $invitation) {
+
+		/** @var TalkFederationInvite[] $data */
+		$data = array_filter(array_map(function (Invitation $invitation) {
 			$data = $invitation->asArray();
 
 			try {
 				$room = $this->talkManager->getRoomById($invitation->getRoomId());
 				$data['remote_token'] = $room->getRemoteToken();
 				$data['remote_server'] = $room->getRemoteServer();
-			} catch (RoomNotFoundException $exception) {
+			} catch (RoomNotFoundException) {
+				return null;
 			}
 
 			return $data;
 		}, $invitations));
+
+		return new DataResponse($data);
 	}
 }

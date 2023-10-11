@@ -98,8 +98,8 @@ namespace OCA\Talk;
  *     access_token: string,
  *     id: int,
  *     remote_id: string,
- *     remote_server: ?string,
- *     remote_token: ?string,
+ *     remote_server: string,
+ *     remote_token: string,
  *     room_id: int,
  *     user_id: string,
  * }
