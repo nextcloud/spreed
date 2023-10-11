@@ -38,6 +38,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IConfig;
 use OCP\IUser;
+use OCP\Notification\IManager;
 
 /**
  * Class FederationManager
@@ -57,6 +58,7 @@ class FederationManager {
 		private ParticipantService $participantService,
 		private InvitationMapper $invitationMapper,
 		private BackendNotifier $backendNotifier,
+		private IManager $notificationManager,
 	) {
 	}
 
@@ -96,6 +98,14 @@ class FederationManager {
 		return $invitation->getId();
 	}
 
+	protected function markNotificationProcessed(string $userId, int $shareId): void {
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp(Application::APP_ID)
+			->setUser($userId)
+			->setObject('remote_talk_share', (string) $shareId);
+		$this->notificationManager->markProcessed($notification);
+	}
+
 	/**
 	 * @throws UnauthorizedException
 	 * @throws DoesNotExistException
@@ -128,6 +138,8 @@ class FederationManager {
 		$this->participantService->addUsers($room, $participant, $user);
 
 		$this->invitationMapper->delete($invitation);
+
+		$this->markNotificationProcessed($user->getUID(), $shareId);
 	}
 
 	/**
@@ -150,6 +162,8 @@ class FederationManager {
 		$room = $this->manager->getRoomById($invitation->getRoomId());
 
 		$this->invitationMapper->delete($invitation);
+
+		$this->markNotificationProcessed($user->getUID(), $shareId);
 
 		$this->backendNotifier->sendShareDeclined($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken());
 	}
