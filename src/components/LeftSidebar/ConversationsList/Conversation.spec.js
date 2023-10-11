@@ -101,7 +101,7 @@ describe('Conversation.vue', () => {
 
 		const el = wrapper.findComponent({ name: 'NcListItem' })
 		expect(el.exists()).toBe(true)
-		expect(el.props('title')).toBe('conversation one')
+		expect(el.props('name')).toBe('conversation one')
 
 		const icon = el.findComponent({ name: 'ConversationIcon' })
 		expect(icon.props('item')).toStrictEqual(item)
@@ -109,10 +109,10 @@ describe('Conversation.vue', () => {
 		expect(icon.props('hideCall')).toStrictEqual(false)
 	})
 
-	describe('displayed subtitle', () => {
+	describe('displayed subname', () => {
 		/**
 		 * @param {object} item Conversation data
-		 * @param {string} expectedText Expected subtitle of the conversation item
+		 * @param {string} expectedText Expected subname of the conversation item
 		 * @param {boolean} isSearchResult Whether or not the item is a search result (has no … menu)
 		 */
 		function testConversationLabel(item, expectedText, isSearchResult = false) {
@@ -129,7 +129,7 @@ describe('Conversation.vue', () => {
 			})
 
 			const el = wrapper.findComponent({ name: 'NcListItem' })
-			expect(el.vm.$slots.subtitle[0].text.trim()).toBe(expectedText)
+			expect(el.vm.$slots.subname[0].text.trim()).toBe(expectedText)
 		}
 
 		test('display joining conversation message when not joined yet', () => {

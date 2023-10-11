@@ -22,8 +22,8 @@
 
 <template>
 	<NcAppSidebar v-show="opened"
-		:title="title"
-		:title-tooltip="title"
+		:name="name"
+		:title="name"
 		:active="activeTab"
 		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
@@ -222,11 +222,11 @@ export default {
 		},
 
 		/**
-		 * The conversation title value passed into the NcAppSidebar component.
+		 * The conversation name value passed into the NcAppSidebar component.
 		 *
-		 * @return {string} The conversation's title.
+		 * @return {string} The conversation's name.
 		 */
-		title() {
+		name() {
 			if (this.isRenamingConversation) {
 				return this.conversationName
 			} else {

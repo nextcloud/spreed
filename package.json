@@ -35,7 +35,7 @@
     "@nextcloud/moment": "^1.2.1",
     "@nextcloud/paths": "^2.1.0",
     "@nextcloud/router": "^2.1.2",
-    "@nextcloud/vue": "^7.12.6",
+    "@nextcloud/vue": "^8.0.0-beta.8",
     "attachmediastream": "^2.1.0",
     "crypto-js": "^4.1.1",
     "debounce": "^1.2.1",

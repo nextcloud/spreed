@@ -32,10 +32,10 @@
 			name="notification_level"
 			type="radio"
 			@update:checked="setNotificationLevel">
-			<VolumeHigh v-if="level.value === PARTICIPANT.NOTIFY.ALWAYS" class="radio__icon" />
-			<Account v-else-if="level.value === PARTICIPANT.NOTIFY.MENTION" class="radio__icon" />
-			<VolumeOff v-else class="radio__icon" />
-			{{ level.label }}
+			<span class="radio-button">
+				<component :is="notificationLevelIcon(level.value)" />
+				{{ level.label }}
+			</span>
 		</NcCheckboxRadioSwitch>
 
 		<NcCheckboxRadioSwitch id="notification_calls"
@@ -67,9 +67,6 @@ export default {
 
 	components: {
 		NcCheckboxRadioSwitch,
-		VolumeHigh,
-		Account,
-		VolumeOff,
 	},
 
 	props: {
@@ -81,7 +78,6 @@ export default {
 
 	setup() {
 		return {
-			PARTICIPANT,
 			notificationLevels,
 		}
 	},
@@ -94,6 +90,18 @@ export default {
 	},
 
 	methods: {
+		notificationLevelIcon(value) {
+			switch (value) {
+			case PARTICIPANT.NOTIFY.ALWAYS:
+				return VolumeHigh
+			case PARTICIPANT.NOTIFY.MENTION:
+				return Account
+			case PARTICIPANT.NOTIFY.NEVER:
+			default:
+				return VolumeOff
+			}
+		},
+
 		/**
 		 * Set the notification level for the conversation
 		 *
@@ -117,10 +125,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.radio__icon {
+.radio-button {
 	display: flex;
-	width: var(--default-clickable-area);
-	height: var(--default-clickable-area);
-	margin-right: var(--default-grid-baseline);
+	align-items: center;
+	gap: calc(2 * var(--default-grid-baseline));
 }
 </style>

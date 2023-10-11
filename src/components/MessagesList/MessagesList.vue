@@ -56,7 +56,8 @@ get the messagesList array and loop through the list to generate the messages.
 				:count="15" />
 		</template>
 		<NcEmptyContent v-else-if="showEmptyContent"
-			:title="t('spreed', 'No messages')"
+			class="messages-list__empty-content"
+			:name="t('spreed', 'No messages')"
 			:description="t('spreed', 'All messages have expired or have been deleted.')">
 			<template #icon>
 				<Message :size="64" />
@@ -1161,6 +1162,12 @@ export default {
 		width: 40px;
 		transform: translatex(-64px);
 	}
+}
+
+.messages-list {
+  &__empty-content {
+    height: 100%;
+  }
 }
 
 .messages-group {

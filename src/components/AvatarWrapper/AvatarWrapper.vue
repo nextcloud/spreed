@@ -34,7 +34,6 @@
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainerWithFallback"
-			menu-position="left"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="isDisabledMenu"
 			:show-user-status="showUserStatus"

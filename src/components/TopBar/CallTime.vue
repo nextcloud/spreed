@@ -20,7 +20,6 @@
 
 <template>
 	<NcPopover class="call-time"
-		:menu-title="callTime"
 		:shown.sync="showPopover"
 		:focus-trap="isShowRecordingControls"
 		:triggers="[]"

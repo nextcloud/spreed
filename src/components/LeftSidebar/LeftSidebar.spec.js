@@ -343,7 +343,7 @@ describe('LeftSidebar.vue', () => {
 				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
 				captionList.forEach((caption, index) => {
-					expect(captionListItems.at(index).props('title')).toStrictEqual(caption)
+					expect(captionListItems.at(index).props('name')).toStrictEqual(caption)
 				})
 
 				// Check all conversations
@@ -363,7 +363,7 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 				resultsList.forEach((result, index) => {
-					expect(resultsListItems.at(index).props('title')).toStrictEqual(result)
+					expect(resultsListItems.at(index).props('name')).toStrictEqual(result)
 				})
 			})
 
@@ -384,7 +384,7 @@ describe('LeftSidebar.vue', () => {
 				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
 				captionList.forEach((caption, index) => {
-					expect(captionListItems.at(index).props('title')).toStrictEqual(caption)
+					expect(captionListItems.at(index).props('name')).toStrictEqual(caption)
 				})
 
 				// Check all conversations
@@ -404,7 +404,7 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 				resultsList.forEach((result, index) => {
-					expect(resultsListItems.at(index).props('title')).toStrictEqual(result)
+					expect(resultsListItems.at(index).props('name')).toStrictEqual(result)
 				})
 			})
 
@@ -425,7 +425,7 @@ describe('LeftSidebar.vue', () => {
 				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
 				captionList.forEach((caption, index) => {
-					expect(captionListItems.at(index).props('title')).toStrictEqual(caption)
+					expect(captionListItems.at(index).props('name')).toStrictEqual(caption)
 				})
 
 				// Check all conversations
@@ -445,7 +445,7 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 				resultsList.forEach((result, index) => {
-					expect(resultsListItems.at(index).props('title')).toStrictEqual(result)
+					expect(resultsListItems.at(index).props('name')).toStrictEqual(result)
 				})
 			})
 		})
@@ -472,14 +472,14 @@ describe('LeftSidebar.vue', () => {
 				expect(captionsEls.exists()).toBeTruthy()
 				if (listedResults.length > 0) {
 					expect(captionsEls.length).toBeGreaterThan(2)
-					expect(captionsEls.at(0).props('title')).toBe('Conversations')
-					expect(captionsEls.at(1).props('title')).toBe('Open conversations')
+					expect(captionsEls.at(0).props('name')).toBe('Conversations')
+					expect(captionsEls.at(1).props('name')).toBe('Open conversations')
 				} else {
 					expect(captionsEls.length).toBeGreaterThan(1)
-					expect(captionsEls.at(0).props('title')).toBe('Conversations')
+					expect(captionsEls.at(0).props('name')).toBe('Conversations')
 				}
 				// last dynamic caption for "No search results"
-				expect(captionsEls.at(-1).props('title')).toBe(expectedCaption)
+				expect(captionsEls.at(-1).props('name')).toBe(expectedCaption)
 
 				return wrapper
 			}

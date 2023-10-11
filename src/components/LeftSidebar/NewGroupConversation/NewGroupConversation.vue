@@ -67,7 +67,7 @@
 							type="switch"
 							:disabled="!isPublic"
 							@checked="handleCheckboxInput">
-							{{ t('spreed', 'Password protect') }}
+							<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>
 						</NcCheckboxRadioSwitch>
 						<NcPasswordField v-if="passwordProtect"
 							autocomplete="new-password"
@@ -499,10 +499,13 @@ export default {
 	}
 
 	&__wrapper {
-		display: grid;
-		grid-template-columns: 1fr 2fr;
+		display: flex;
 		gap: var(--default-grid-baseline);
 		align-items: center;
+
+		.checkbox__label {
+			white-space: nowrap;
+		}
 	}
 
 	&__label {
@@ -523,11 +526,18 @@ export default {
 		margin-left: auto;
 	}
 }
-.conversation-form :deep(.modal-wrapper .modal-container) {
-	display: flex !important;
-	flex-direction: column;
-	height: 90%;
-	overflow: hidden !important;
+
+.conversation-form :deep(.modal-wrapper) {
+	.modal-container {
+		height: 90%;
+	}
+
+	.modal-container__content {
+		display: flex !important;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden !important;
+	}
 }
 
 :deep(.app-settings-section__hint) {

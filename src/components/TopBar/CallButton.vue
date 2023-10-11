@@ -50,7 +50,8 @@
 		</NcButton>
 		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 			:disabled="loading"
-			:menu-title="leaveCallCombinedLabel"
+			:menu-name="leaveCallCombinedLabel"
+			force-name
 			:container="container"
 			type="error">
 			<template #icon>

@@ -679,6 +679,11 @@ export default {
 	z-index: 10001 !important;
 }
 
+/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4350 regression is solved */
+/* Force modal close button to be above modal content */
+.modal-container__close {
+	z-index: 1;
+}
 </style>
 
 <style lang="scss" scoped>

@@ -130,15 +130,10 @@ export default {
 
 <style lang="scss" scoped>
 .send-message-dialog {
+	padding: 20px 20px 8px;
+
 	&__title {
-		padding: 20px 20px 0 20px;
-		margin-bottom: 0;
+		margin-bottom: 8px;
 	}
 }
-
-:deep(.modal-container) {
-	// Fix visibility for popovers, like EmojiPicker
-	overflow: visible !important;
-}
-
 </style>

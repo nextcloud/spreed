@@ -20,53 +20,57 @@
 -->
 
 <template>
-	<LoadingComponent v-if="loading" class="tab-loading" />
-	<div v-else>
-		<!-- Shared items grouped by type -->
-		<template v-for="type in sharedItemsOrder">
-			<div v-if="sharedItems[type]" :key="type">
-				<NcAppNavigationCaption :title="sharedItemTitle[type] || sharedItemTitle.default" />
-				<SharedItems :type="type"
-					:token="token"
-					tab-view
-					:limit="limit(type)"
-					:items="sharedItems[type]" />
-				<NcButton v-if="hasMore(type, sharedItems[type])"
-					type="tertiary-no-background"
-					class="more"
-					wide
-					@click="showMore(type)">
-					<template #icon>
-						<DotsHorizontal :size="20" />
-					</template>
-					{{ sharedItemButtonTitle[type] || sharedItemButtonTitle.default }}
-				</NcButton>
-			</div>
-		</template>
+	<div class="shared-items">
+		<LoadingComponent v-if="loading" class="shared-items__loading" />
 
-		<!-- Shared from "Related Resources" app -->
-		<NcRelatedResourcesPanel class="related-resources"
-			provider-id="talk"
-			:item-id="conversation.token"
-			@has-resources="value => hasRelatedResources = value" />
-
-		<!-- Shared from "Projects" app -->
-		<template v-if="projectsEnabled">
-			<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
-			<CollectionList v-if="getUserId && token"
-				:id="token"
-				type="room"
-				:name="conversation.displayName"
-				:is-active="active" />
-		</template>
-
-		<!-- No shared content -->
-		<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
-			:title="t('spreed', 'No shared items')">
-			<template #icon>
-				<FolderMultipleImage :size="20" />
+		<template v-else>
+			<!-- Shared items grouped by type -->
+			<template v-for="type in sharedItemsOrder">
+				<div v-if="sharedItems[type]" :key="type">
+					<NcAppNavigationCaption :name="sharedItemTitle[type] || sharedItemTitle.default" />
+					<SharedItems :type="type"
+						:token="token"
+						tab-view
+						:limit="limit(type)"
+						:items="sharedItems[type]" />
+					<NcButton v-if="hasMore(type, sharedItems[type])"
+						type="tertiary-no-background"
+						class="more"
+						wide
+						@click="showMore(type)">
+						<template #icon>
+							<DotsHorizontal :size="20" />
+						</template>
+						{{ sharedItemButtonTitle[type] || sharedItemButtonTitle.default }}
+					</NcButton>
+				</div>
 			</template>
-		</NcEmptyContent>
+
+			<!-- Shared from "Related Resources" app -->
+			<NcRelatedResourcesPanel class="related-resources"
+				provider-id="talk"
+				:item-id="conversation.token"
+				@has-resources="value => hasRelatedResources = value" />
+
+			<!-- Shared from "Projects" app -->
+			<template v-if="projectsEnabled">
+				<NcAppNavigationCaption :name="t('spreed', 'Projects')" />
+				<CollectionList v-if="getUserId && token"
+					:id="token"
+					type="room"
+					:name="conversation.displayName"
+					:is-active="active" />
+			</template>
+
+			<!-- No shared content -->
+			<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
+				class="shared-items__empty-content"
+				:name="t('spreed', 'No shared items')">
+				<template #icon>
+					<FolderMultipleImage :size="20" />
+				</template>
+			</NcEmptyContent>
+		</template>
 
 		<!-- Dialog window -->
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
@@ -223,7 +227,14 @@ export default {
 	}
 }
 
-.tab-loading {
-	margin-top: 50%;
+.shared-items {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	&__loading,
+	&__empty-content {
+		flex: 1;
+	}
 }
 </style>
