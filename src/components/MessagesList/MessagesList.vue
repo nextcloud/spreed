@@ -385,8 +385,8 @@ export default {
 				return false
 			}
 
-			// Only group messages within a short period of time, so unrelated messages are not grouped together
-			return (this.getDateOfMessage(message1).format('X') - this.getDateOfMessage(message2).format('X')) < 300
+			// Only group messages within a short period of time (5 minutes), so unrelated messages are not grouped together
+			return this.getDateOfMessage(message1).diff(this.getDateOfMessage(message2)) < 300 * 1000
 		},
 
 		/**
