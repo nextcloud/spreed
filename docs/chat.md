@@ -498,3 +498,5 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `audio_recording_stopped` - {actor} stopped an audio recording
 * `avatar_set` - {actor} set the conversation avatar
 * `avatar_removed` - {actor} removed the conversation avatar
+* `federated_user_added` - {actor} invited {federated_user} / {federated_user} accepted the invitation
+* `federated_user_removed` - {actor} removed {federated_user} / {federated_user} declined the invitation
