@@ -51,8 +51,8 @@ use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\FederationManager;
-use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -98,7 +98,7 @@ class ParticipantService {
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
 		private MembershipService $membershipService,
-		private Notifications $notifications,
+		private BackendNotifier $backendNotifier,
 		private ITimeFactory $timeFactory,
 		private ICacheFactory $cacheFactory,
 	) {
@@ -484,7 +484,7 @@ class ParticipantService {
 				$attendees[] = $attendee;
 
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-					$inviteSent = $this->notifications->sendRemoteShare((string) $attendee->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
 					if (!$inviteSent) {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();
