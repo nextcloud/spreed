@@ -113,7 +113,7 @@ class Manager {
 			$this->l->t('- You can now blur your background in the newly designed call view'),
 			$this->l->t('- Moderators can now assign general and individual permissions to participants'),
 			$this->l->t('## New in Talk %s', ['14']),
-			$this->l->t('- You can now react to chat message'),
+			$this->l->t('- You can now react to chat messages'),
 			$this->l->t('- In the sidebar you can now find an overview of the latest shared items'),
 			$this->l->t('## New in Talk %s', ['15']),
 			$this->l->t('- Use a poll to collect the opinions of others or settle on a date'),
