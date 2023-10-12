@@ -133,7 +133,7 @@ class BackendNotifier {
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
-			'SHARE_ACCEPTED',
+			FederationManager::NOTIFICATION_SHARE_ACCEPTED,
 			FederationManager::TALK_ROOM_RESOURCE,
 			$id,
 			[
@@ -156,7 +156,7 @@ class BackendNotifier {
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
-			'SHARE_DECLINED',
+			FederationManager::NOTIFICATION_SHARE_DECLINED,
 			FederationManager::TALK_ROOM_RESOURCE,
 			$id,
 			[
@@ -180,7 +180,7 @@ class BackendNotifier {
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
-			'SHARE_UNSHARED',
+			FederationManager::NOTIFICATION_SHARE_UNSHARED,
 			FederationManager::TALK_ROOM_RESOURCE,
 			$id,
 			[

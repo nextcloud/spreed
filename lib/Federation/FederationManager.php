@@ -50,6 +50,9 @@ use OCP\Notification\IManager;
 class FederationManager {
 	public const TALK_ROOM_RESOURCE = 'talk-room';
 	public const TALK_PROTOCOL_NAME = 'nctalk';
+	public const NOTIFICATION_SHARE_ACCEPTED = 'SHARE_ACCEPTED';
+	public const NOTIFICATION_SHARE_DECLINED = 'SHARE_DECLINED';
+	public const NOTIFICATION_SHARE_UNSHARED = 'SHARE_UNSHARED';
 	public const TOKEN_LENGTH = 64;
 
 	public function __construct(
