@@ -290,16 +290,6 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				'roomToken' => $roomToken,
 			]);
 
-		$declineAction = $notification->createAction();
-		$declineAction->setLabel('decline')
-			->setLink($this->urlGenerator->linkToOCSRouteAbsolute('spreed.Federation.rejectShare', ['apiVersion' => 'v1', 'id' => $shareId]), 'DELETE');
-		$notification->addAction($declineAction);
-
-		$acceptAction = $notification->createAction();
-		$acceptAction->setLabel('accept')
-			->setLink($this->urlGenerator->linkToOCSRouteAbsolute('spreed.Federation.acceptShare', ['apiVersion' => 'v1', 'id' => $shareId]), 'POST');
-		$notification->addAction($acceptAction);
-
 		$this->notificationManager->notify($notification);
 	}
 

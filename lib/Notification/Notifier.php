@@ -84,7 +84,6 @@ class Notifier implements INotifier {
 		protected INotificationManager $notificationManager,
 		CommentsManager $commentManager,
 		protected MessageParser $messageParser,
-		protected IURLGenerator $urlGenerator,
 		protected IRootFolder $rootFolder,
 		protected ITimeFactory $timeFactory,
 		protected Definitions $definitions,
@@ -331,7 +330,7 @@ class Notifier implements INotifier {
 			->setParsedLabel($l->t('Share to chat'))
 			->setPrimary(true)
 			->setLink(
-				$this->urlGenerator->linkToOCSRouteAbsolute(
+				$this->url->linkToOCSRouteAbsolute(
 					'spreed.Recording.shareToChat',
 					[
 						'apiVersion' => 'v1',
@@ -345,7 +344,7 @@ class Notifier implements INotifier {
 		$dismissAction = $notification->createAction()
 			->setParsedLabel($l->t('Dismiss notification'))
 			->setLink(
-				$this->urlGenerator->linkToOCSRouteAbsolute(
+				$this->url->linkToOCSRouteAbsolute(
 					'spreed.Recording.notificationDismiss',
 					[
 						'apiVersion' => 'v1',
@@ -442,6 +441,23 @@ class Notifier implements INotifier {
 				$replacements[] = $parameter['name'];
 			}
 		}
+
+		$acceptAction = $notification->createAction();
+		$acceptAction->setParsedLabel($l->t('Accept'));
+		$acceptAction->setLink($this->url->linkToOCSRouteAbsolute(
+			'spreed.Federation.acceptShare',
+			['apiVersion' => 'v1', 'id' => (int) $notification->getObjectId()]
+		), IAction::TYPE_POST);
+		$acceptAction->setPrimary(true);
+		$notification->addParsedAction($acceptAction);
+
+		$declineAction = $notification->createAction();
+		$declineAction->setParsedLabel($l->t('Decline'));
+		$declineAction->setLink($this->url->linkToOCSRouteAbsolute(
+			'spreed.Federation.rejectShare',
+			['apiVersion' => 'v1', 'id' => (int) $notification->getObjectId()]
+		), IAction::TYPE_DELETE);
+		$notification->addParsedAction($declineAction);
 
 		$notification->setParsedSubject(str_replace($placeholders, $replacements, $message));
 		$notification->setRichSubject($message, $rosParameters);
@@ -780,7 +796,7 @@ class Notifier implements INotifier {
 			$action->setLabel($l->t('Dismiss reminder'))
 				->setParsedLabel($l->t('Dismiss reminder'))
 				->setLink(
-					$this->urlGenerator->linkToOCSRouteAbsolute(
+					$this->url->linkToOCSRouteAbsolute(
 						'spreed.Chat.deleteReminder',
 						[
 							'apiVersion' => 'v1',
