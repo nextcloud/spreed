@@ -286,21 +286,21 @@ export default {
 
 <style scoped lang="scss">
 .background-editor {
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
 	gap: calc(var(--default-grid-baseline) * 2);
 	margin-top: calc(var(--default-grid-baseline) * 2);
 
 	&__element {
 		border: none;
-		margin: 0;
+		margin: 0 !important;
 		border-radius: calc(var(--border-radius-large)* 1.5);
-		background: #1cafff2e;
 		height: calc(var(--default-grid-baseline) * 16);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		background-color: #1cafff2e;
 		background-size: cover;
 		background-position: center;
 		flex: 1 0 108px;

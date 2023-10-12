@@ -571,12 +571,7 @@ export default {
 
 <style lang="scss" scoped>
 .media-settings {
-	padding: calc(var(--default-grid-baseline) * 4);
-	background-color: var(--color-main-background);
-	overflow-y: auto;
-	overflow-x: hidden;
-	margin: auto;
-	width: 100%;
+	padding: calc(var(--default-grid-baseline) * 5);
 
 	&__title {
 		text-align: center;
@@ -591,8 +586,8 @@ export default {
 		overflow: hidden;
 		border-radius: calc(var(--default-grid-baseline) * 3);
 		background-color: var(--color-loading-dark);
-		height: 300px;
-		width: 400px;
+		width: 100%;
+		aspect-ratio: 4/3;
 	}
 
 	&__toggles-wrapper {
