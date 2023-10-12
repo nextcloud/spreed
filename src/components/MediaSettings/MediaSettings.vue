@@ -120,14 +120,19 @@
 				@update-background="handleUpdateVirtualBackground" />
 
 			<!-- "Always show" setting -->
-			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
-				class="checkbox">
+			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings" class="checkbox">
 				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
 
+			<!-- Moderator options before starting a call-->
+			<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
+				class="checkbox"
+				:checked.sync="isRecordingFromStart">
+				{{ t('spreed', 'Start recording immediately with the call') }}
+			</NcCheckboxRadioSwitch>
+
 			<!-- Recording warning -->
-			<NcNoteCard v-if="isStartingRecording || isRecording"
-				type="warning">
+			<NcNoteCard v-else-if="isStartingRecording || isRecording" type="warning">
 				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
 			</NcNoteCard>
 
@@ -163,7 +168,8 @@
 				<!-- Join call -->
 				<CallButton v-if="!isInCall"
 					class="call-button"
-					:force-join-call="true"
+					is-media-settings
+					:is-recording-from-start.sync="isRecordingFromStart"
 					:silent-call="silentCall" />
 				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
 					{{ t('spreed', 'Apply settings') }}
@@ -181,6 +187,7 @@ import Creation from 'vue-material-design-icons/Creation.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -199,12 +206,14 @@ import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { AVATAR, CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
+import { AVATAR, CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
+
+const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
 
 export default {
 	name: 'MediaSettings',
@@ -255,6 +264,7 @@ export default {
 			deviceIdChanged: false,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
+			isRecordingFromStart: false,
 		}
 	},
 
@@ -320,6 +330,15 @@ export default {
 		isRecording() {
 			return this.conversation.callRecording === CALL.RECORDING.VIDEO
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		},
+
+		canFullModerate() {
+			return this.conversation.participantType === PARTICIPANT.TYPE.OWNER
+				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerateRecording() {
+			return this.canFullModerate && recordingEnabled
 		},
 
 		showSilentCallOption() {
