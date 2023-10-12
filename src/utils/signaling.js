@@ -167,10 +167,14 @@ Signaling.Base.prototype.getCurrentCallFlags = function() {
 	return this.currentCallFlags
 }
 
-Signaling.Base.prototype.disconnect = function() {
-	this.sessionId = ''
+Signaling.Base.prototype._resetCurrentCallParameters = function() {
 	this.currentCallToken = null
 	this.currentCallFlags = null
+}
+
+Signaling.Base.prototype.disconnect = function() {
+	this.sessionId = ''
+	this._resetCurrentCallParameters()
 }
 
 Signaling.Base.prototype.hasFeature = function(feature) {
@@ -219,8 +223,7 @@ Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
 			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch(reason => { reject(reason) })
-			this.currentCallToken = null
-			this.currentCallFlags = null
+			this._resetCurrentCallParameters()
 		} else {
 			resolve()
 		}
@@ -238,8 +241,7 @@ Signaling.Base.prototype.joinRoom = function(token, sessionId) {
 			// We were in this call before, join again.
 			this.joinCall(token, this.currentCallFlags)
 		} else {
-			this.currentCallToken = null
-			this.currentCallFlags = null
+			this._resetCurrentCallParameters()
 		}
 		this._joinRoomSuccess(token, sessionId)
 	})
@@ -355,8 +357,7 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken, all = false) {
 				resolve()
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
-					this.currentCallToken = null
-					this.currentCallFlags = null
+					this._resetCurrentCallParameters()
 				}
 			}.bind(this))
 			.catch(function() {
@@ -364,8 +365,7 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken, all = false) {
 				reject(new Error())
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
-					this.currentCallToken = null
-					this.currentCallFlags = null
+					this._resetCurrentCallParameters()
 				}
 			}.bind(this))
 	})
