@@ -93,6 +93,8 @@ OC.L10N.register(
     "Private conversation" : "Conversación privada",
     "Deleted user (%s)" : "Usuario eliminado (%s)",
     "Dismiss notification" : "Descartar notificación",
+    "Accept" : "Aceptar",
+    "Decline" : "Rechazar",
     "{user} sent you a private message" : "{user} te envió un mensaje privado",
     "{user} mentioned you in a private conversation" : "{user} te mencionó en una conversación privada",
     "{user} invited you to a private conversation" : " {user} te invitó a una conversación privada",

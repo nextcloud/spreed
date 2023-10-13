@@ -173,6 +173,8 @@
     "Deleted user (%s)" : "Người dùng đã xóa (%s)",
     "Dismiss notification" : "Bỏ qua thông báo ",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} đã chia sẻ cuộc gọi {roomName} trên {remoteServer} với bạn",
+    "Accept" : "Đồng ý",
+    "Decline" : "Từ chối",
     "{user} in {call}" : "{user} trong {call}",
     "Deleted user in {call}" : "Người dùng đã xóa trong {call}",
     "{guest} (guest) in {call}" : "{guest} (khách) trong {call}",

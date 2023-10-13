@@ -177,6 +177,8 @@
     "Deleted user (%s)" : "Избришан корисник (%s)",
     "Dismiss notification" : "Отфрли известување",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} сподели соба {roomName} на {remoteServer} со вас",
+    "Accept" : "Прифати",
+    "Decline" : "Одбиј",
     "{user} in {call}" : "{user} во {call}",
     "Deleted user in {call}" : "Избришан корисник во {call}",
     "{guest} (guest) in {call}" : "{guest} (guest) во {call}",

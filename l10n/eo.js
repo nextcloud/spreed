@@ -11,6 +11,8 @@ OC.L10N.register(
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
     "Dismiss notification" : "Forsendi sciigon",
+    "Accept" : "Akcepti",
+    "Decline" : "Malakcepti",
     "Avatar image is not square" : "Avatarbildo ne estas kvadrata",
     "Andorra" : "Andoro",
     "United Arab Emirates" : "Unuiĝintaj Arabaj Emirlandoj",

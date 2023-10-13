@@ -17,6 +17,8 @@ OC.L10N.register(
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
+    "Accept" : "Aceptar",
+    "Decline" : "Declinar",
     "Join call" : "Unirse a la llamada",
     "A group call has started in {call}" : "Una llamada en grupo ha iniciado en {call}",
     "Open settings" : "Abrir configuraciones",

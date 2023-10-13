@@ -191,6 +191,8 @@ OC.L10N.register(
     "Deleted user (%s)" : "Izbrisan korisnik (%s)",
     "Dismiss notification" : "Zanemari obavijest",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} s vama dijeli sobu {roomName} na {remoteServer}",
+    "Accept" : "Prihvati",
+    "Decline" : "Odbij",
     "{user} in {call}" : "{user} u {call}",
     "Deleted user in {call}" : "Izbrisan korisnik u {call}",
     "{guest} (guest) in {call}" : "{guest} (gost) u {call}",
