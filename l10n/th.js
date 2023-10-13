@@ -7,6 +7,8 @@ OC.L10N.register(
     "Invalid image" : "รูปภาพไม่ถูกต้อง",
     "Unknown filetype" : "ชนิดไฟล์ที่ไม่รู้จัก",
     "Dismiss notification" : "ปิดการแจ้งเตือน",
+    "Accept" : "ยอมรับ",
+    "Decline" : "ปฏิเสธ",
     "Open settings" : "เปิดการตั้งค่า",
     "Invalid date, date format must be YYYY-MM-DD" : "วันที่ไม่ถูกต้อง รูปแบบวันที่จะต้องเป็น ปปปป-ดด-วว",
     "Conversation not found" : "ไม่พบการสนทนา",

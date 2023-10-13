@@ -88,6 +88,8 @@
     "Private conversation" : "Privat samtale",
     "Deleted user (%s)" : "Slettet bruker (%s)",
     "Dismiss notification" : "Ingen varsel",
+    "Accept" : "Aksepter",
+    "Decline" : "Avslå",
     "{user} in {call}" : "{user} i {call}",
     "Deleted user in {call}" : "Slett bruker i {call}",
     "{guest} (guest) in {call}" : "{guest} (gjest) i {call}",

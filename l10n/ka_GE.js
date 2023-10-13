@@ -17,6 +17,8 @@ OC.L10N.register(
     "Invalid file provided" : "არასწორი ფაილი",
     "Invalid image" : "არასწორი სურათი",
     "Unknown filetype" : "ამოუცნობი ფაილის ტიპი",
+    "Accept" : "მიღება",
+    "Decline" : "ურაყოფა",
     "Join call" : "შეუერთდით ზარს",
     "A group call has started in {call}" : "ჯგუფური ზარი დაიწყო {call}-ში",
     "Open settings" : "პარამეტრების გახსნა",

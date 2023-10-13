@@ -195,6 +195,8 @@
     "Transcript now available" : "Transkriptio on nyt saatavilla",
     "The transcript for the call in {call} was uploaded to {file}." : "Puhelun {call} transkriptio on nyt tiedostossa {file}.",
     "Failed to transcript call recording" : "Puhelutallenteen transkriptio epäonnistui",
+    "Accept" : "Hyväksy",
+    "Decline" : "Kieltäydy",
     "{user} in {call}" : "{user} puhelussa {call}",
     "{guest} (guest) in {call}" : "{guest} (vieras) puhelussa {call}",
     "Guest in {call}" : "Vieras puhelussa {call}",

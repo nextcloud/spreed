@@ -27,6 +27,8 @@ OC.L10N.register(
     "Unknown filetype" : "Tipe berkas tak dikenal",
     "You were mentioned" : "Anda disebutkan",
     "Dismiss notification" : "Abaikan notifikasi",
+    "Accept" : "Terima",
+    "Decline" : "Tolak",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Uni Emirat Arab",
     "Afghanistan" : "Afganistan",

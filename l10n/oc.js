@@ -180,6 +180,8 @@ OC.L10N.register(
     "Private conversation" : "Conversacion privada",
     "Deleted user (%s)" : "Utilizaire suprimit (%s)",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} a partejat la sala {roomName} sus {remoteServer} amb vos",
+    "Accept" : "Acceptar",
+    "Decline" : "Declinar",
     "{user} in {call}" : "{user} dins {call}",
     "Deleted user in {call}" : "Utilizaire suprimit dins {call}",
     "{guest} (guest) in {call}" : "{guest} (convidat) dins {call}",
