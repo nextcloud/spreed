@@ -655,7 +655,10 @@
                                             "recording-consent",
                                             "supported-reactions",
                                             "predefined-backgrounds",
-                                            "can-upload-background"
+                                            "can-upload-background",
+                                            "sip-enabled",
+                                            "sip-dialout-enabled",
+                                            "can-enable-sip"
                                         ],
                                         "properties": {
                                             "enabled": {
@@ -684,6 +687,15 @@
                                                 }
                                             },
                                             "can-upload-background": {
+                                                "type": "boolean"
+                                            },
+                                            "sip-enabled": {
+                                                "type": "boolean"
+                                            },
+                                            "sip-dialout-enabled": {
+                                                "type": "boolean"
+                                            },
+                                            "can-enable-sip": {
                                                 "type": "boolean"
                                             }
                                         }

@@ -70,6 +70,9 @@ class Capabilities implements IPublicCapability {
 	 *                  supported-reactions: string[],
 	 *                  predefined-backgrounds: string[],
 	 *                  can-upload-background: bool,
+	 *                  sip-enabled: bool,
+	 *                  sip-dialout-enabled: bool,
+	 *                  can-enable-sip: bool,
 	 *              },
 	 *              chat: array{
 	 *                  max-length: int,
@@ -178,6 +181,8 @@ class Capabilities implements IPublicCapability {
 					'recording' => $this->talkConfig->isRecordingEnabled(),
 					'recording-consent' => $this->talkConfig->recordingConsentRequired(),
 					'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
+					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
+					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -261,8 +266,10 @@ class Capabilities implements IPublicCapability {
 				$quota = Util::computerFileSize($quota);
 			}
 			$capabilities['config']['call']['can-upload-background'] = $quota === 'none' || $quota > 0;
+			$capabilities['config']['call']['can-enable-sip'] = $this->talkConfig->canUserEnableSIP($user);
 		} else {
 			$capabilities['config']['call']['can-upload-background'] = false;
+			$capabilities['config']['call']['can-enable-sip'] = false;
 		}
 
 		return [
