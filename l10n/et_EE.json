@@ -6,6 +6,8 @@
     "Invalid file provided" : "Vigane fail",
     "Invalid image" : "Vigane pilt",
     "Unknown filetype" : "Tundmatu failitüüp",
+    "Accept" : "Nõustu",
+    "Decline" : "Keeldu",
     "Avatar image is not square" : "Avatari pilt pole ruut",
     "Invalid date, date format must be YYYY-MM-DD" : "Vigane kuupäev, formaat peab olema YYYY-MM-DD",
     "Limit to groups" : "Luba gruppidele",

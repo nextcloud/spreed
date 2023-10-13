@@ -177,6 +177,8 @@ OC.L10N.register(
     "Deleted user (%s)" : "Utente cantzelladu (%s)",
     "Dismiss notification" : "Iscarta notìfica",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} at cumpartzidu s'istantza {roomName} in {remoteServer} cun tegus",
+    "Accept" : "Atzeta",
+    "Decline" : "Refuda",
     "{user} in {call}" : "{user} in {call}",
     "Deleted user in {call}" : "Utente cantzelladu in {call}",
     "{guest} (guest) in {call}" : "{guest} (utèntzia istràngia) in {call}",

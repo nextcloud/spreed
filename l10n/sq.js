@@ -8,6 +8,8 @@ OC.L10N.register(
     "Invalid image" : "Figurë e pavlefshme",
     "Unknown filetype" : "Lloj i panjohur skedari",
     "Dismiss notification" : "Hiq lajmërimin",
+    "Accept" : "Prano",
+    "Decline" : "Refuzo",
     "Open settings" : "Hap rregullimet",
     "Conversations" : "Bisedat",
     "Avatar image is not square" : "Imazhi avatar nuk është katror",

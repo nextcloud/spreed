@@ -77,6 +77,8 @@ OC.L10N.register(
     "Private conversation" : "Einkasamtal",
     "Deleted user (%s)" : "Eyddi notanda (%s)",
     "Dismiss notification" : "Afgreiða tilkynningu",
+    "Accept" : "Samþykkja",
+    "Decline" : "Hafna",
     "{user} sent you a private message" : "{user} sendi þér einkaskilaboð",
     "{user} sent a message in conversation {call}" : "{user} sendi skilaboð í samtali {call}",
     "A deleted user sent a message in conversation {call}" : "Eyddur notandi sendi skilaboð í samtali {call}",

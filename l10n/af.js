@@ -6,6 +6,7 @@ OC.L10N.register(
     "Invalid file provided" : "Ongeldige lêer verskaf",
     "Invalid image" : "Ongeldige beeld",
     "Unknown filetype" : "Onbekende lêertipe",
+    "Accept" : "Aanvaar",
     "Open settings" : "Open instellings",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Verenigde Arabiese Emirate",

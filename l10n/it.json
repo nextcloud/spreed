@@ -195,6 +195,8 @@
     "Deleted user (%s)" : "Utente eliminato (%s)",
     "Dismiss notification" : "Cancella notifica",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} ha condiviso la stanza {roomName} su {remoteServer} con te",
+    "Accept" : "Accetta",
+    "Decline" : "Rifiuta",
     "{user} in {call}" : "{user} in {call}",
     "Deleted user in {call}" : "Utente eliminato in {call}",
     "{guest} (guest) in {call}" : "{guest} (guest) in {call}",
