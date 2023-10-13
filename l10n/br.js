@@ -121,6 +121,7 @@ OC.L10N.register(
     "Private conversation" : "Diviz prevez",
     "Deleted user (%s)" : "Lemel implijour (%s)",
     "Dismiss notification" : "Arrest ar gemenadennoù",
+    "Accept" : "Asantiñ",
     "{user} in {call}" : "{user} e {call}",
     "Deleted user in {call}" : "Lemel implijer e {call}",
     "{guest} (guest) in {call}" : "{guest} (kouviad) e {call}",

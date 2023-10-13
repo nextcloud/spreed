@@ -151,6 +151,8 @@ OC.L10N.register(
     "Private conversation" : "Ιδιωτική συνομιλία",
     "Deleted user (%s)" : "Διεγραμένος χρήστης (%s)",
     "Dismiss notification" : "Αποδέσμευση ειδοποίησης",
+    "Accept" : "Αποδοχή",
+    "Decline" : "Απόρριψη",
     "{user} in {call}" : "Ο {user} είναι σε {call}",
     "Deleted user in {call}" : "Διαγράφηκε ο χρήστης στην {call}",
     "{guest} (guest) in {call}" : "{guest} (επισκέπτης) στην {call}",
