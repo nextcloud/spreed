@@ -1070,9 +1070,12 @@ class RoomController extends AEnvironmentAwareController {
 				$data = ['type' => $this->room->getType()];
 			}
 
-			$participant = $this->participantService->inviteEmailAddress($this->room, $newParticipant);
-
-			$this->guestManager->sendEmailInvitation($this->room, $participant);
+			try {
+				$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_EMAILS, $newParticipant);
+			} catch (ParticipantNotFoundException) {
+				$participant = $this->participantService->inviteEmailAddress($this->room, $newParticipant);
+				$this->guestManager->sendEmailInvitation($this->room, $participant);
+			}
 
 			return new DataResponse($data);
 		} elseif ($source === 'remotes') {

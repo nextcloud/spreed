@@ -7,6 +7,9 @@ Feature: conversation/invite-email)
       | roomType | 3 |
       | roomName | room |
     When user "participant1" adds email "test@example.tld" to room "room" with 200 (v4)
+    # Adding the same email again should not error to help the Calendar integration
+    # Ref https://github.com/nextcloud/calendar/pull/5380
+    When user "participant1" adds email "test@example.tld" to room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | participantType | inCall   | actorType | actorId           |
       | 4               | 0        | emails    | test@example.tld  |
