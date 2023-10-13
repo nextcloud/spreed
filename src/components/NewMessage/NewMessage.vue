@@ -91,6 +91,7 @@
 					:menu-container="containerElement"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
+					dir="auto"
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@tribute-active-true.native="isTributePickerActive = true"
@@ -857,5 +858,10 @@ export default {
 	&:disabled {
 		opacity: .5 !important;
 	}
+}
+
+// Hardcode to prevent RTL affecting on user mentions
+:deep(.mention-bubble) {
+	direction: ltr;
 }
 </style>

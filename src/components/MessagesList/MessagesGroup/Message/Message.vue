@@ -54,6 +54,7 @@ the main body of the message as well as a quote.
 					<NcRichText :text="message"
 						:arguments="richParameters"
 						autolink
+						dir="auto"
 						:reference-limit="0" />
 					<CallButton />
 				</div>
@@ -61,6 +62,7 @@ the main body of the message as well as a quote.
 					<NcRichText :text="message"
 						:arguments="richParameters"
 						autolink
+						dir="auto"
 						:reference-limit="0" />
 					<!-- Displays only the "see results" button with the results modal -->
 					<Poll v-if="showResultsButton"
@@ -73,6 +75,7 @@ the main body of the message as well as a quote.
 					<NcRichText :text="message"
 						:arguments="richParameters"
 						autolink
+						dir="auto"
 						:reference-limit="0" />
 				</div>
 				<div v-else
@@ -83,6 +86,7 @@ the main body of the message as well as a quote.
 					<NcRichText :text="message"
 						:arguments="richParameters"
 						autolink
+						dir="auto"
 						:use-markdown="markdown"
 						:reference-limit="1" />
 
@@ -992,6 +996,10 @@ export default {
 				display: flex;
 				border-radius: var(--border-radius-large);
 				align-items: center;
+				:deep(.rich-text--wrapper) {
+					flex-grow: 1;
+					text-align: start;
+				}
 			}
 
 			&--quote {
@@ -1120,17 +1128,24 @@ export default {
 }
 
 .message-body__main__text--markdown {
-  position: relative;
+	position: relative;
 
-  .message-copy-code {
-    position: absolute;
-    top: 0;
-    right: 4px;
-    margin-top: 4px;
-    background-color: var(--color-background-dark);
-  }
+	.message-copy-code {
+		position: absolute;
+		top: 0;
+		right: 4px;
+		margin-top: 4px;
+		background-color: var(--color-background-dark);
+	}
 
 	:deep(.rich-text--wrapper) {
+		text-align: start;
+
+		// Hardcode to prevent RTL affecting on user mentions
+		.rich-text--component {
+			direction: ltr;
+		}
+
 		// Overwrite core styles, otherwise h4 is lesser than default font-size
 		h4 {
 			font-size: 100%;
@@ -1138,6 +1153,12 @@ export default {
 
 		em {
 			font-style: italic;
+		}
+
+		ul,
+		ol {
+			padding-left: 0;
+			padding-inline-start: 15px;
 		}
 
 		pre {
@@ -1162,19 +1183,10 @@ export default {
 		}
 
 		blockquote {
-			position: relative;
+			padding-left: 0;
+			padding-inline-start: 13px;
 			border-left: none;
-
-			&::before {
-				content: ' ';
-				position: absolute;
-				top: 0;
-				left: 0;
-				height: 100%;
-				width: 4px;
-				border-radius: 2px;
-				background-color: var(--color-border);
-			}
+			border-inline-start: 4px solid var(--color-border);
 		}
 	}
 }
