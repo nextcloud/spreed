@@ -325,6 +325,28 @@ Note: This is only allowed as validate SIP bridge requests
 
     - Data: See array definition in `Get user´s conversations`
 
+## Reset call ID of rejected dial-out
+
+Note: This is only allowed as validate SIP bridge requests
+
+* Required capability: `sip-support-dialout`
+* Method: `DELETE`
+* Endpoint: `/room/{token}/rejected-dialout`
+* Data:
+
+| field        | type   | Description                                 |
+|--------------|--------|---------------------------------------------|
+| `attendeeId` | int    | The attendee ID of the dial-out participant |
+| `callId`     | string | The call ID that was rejected               |
+
+* Response:
+    - Status code:
+        + `200 OK` Call ID reset
+        + `400 Bad Request` Call ID mismatch
+        + `401 Unauthorized` SIP request invalid
+        + `404 Not Found` Participant was not found
+        + `501 Not Implemented` When SIP or SIP dial-out is not configured
+
 ## Set display name as a guest
 
 * API: Only `v1`

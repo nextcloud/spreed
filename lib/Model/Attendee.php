@@ -61,9 +61,9 @@ use OCP\AppFramework\Db\Entity;
  * @method void setRemoteId(string $remoteId)
  * @method string getRemoteId()
  * @method void setPhoneNumber(?string $phoneNumber)
- * @method ?string getPhoneNumber()
+ * @method null|string getPhoneNumber()
  * @method void setCallId(?string $callId)
- * @method ?string getCallId()
+ * @method null|string getCallId()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';

@@ -1628,6 +1628,49 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Reset call ID of a dial-out participant when the SIP gateway rejected it
+	 *
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 *
+	 * 200: Call ID reset
+	 * 400: Call ID mismatch
+	 * 401: SIP request invalid
+	 * 404: Participant was not found
+	 * 501: SIP dial-out is not configured
+	 */
+	#[IgnoreOpenAPI]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[RequireRoom]
+	public function rejectedDialOutRequest(int $attendeeId, string $callId): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+		} catch (UnauthorizedException $e) {
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
+		}
+
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		try {
+			$this->participantService->resetDialOutRequest($this->room, $attendeeId, $callId);
+		} catch (ParticipantNotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
 	 * Set active state for a session
 	 *
 	 * @param int $state of the room

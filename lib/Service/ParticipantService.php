@@ -1264,6 +1264,34 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	/**
+	 * @throws \InvalidArgumentException
+	 * @throws ParticipantNotFoundException
+	 */
+	public function resetDialOutRequest(Room $room, int $targetAttendeeId, string $callId): void {
+		try {
+			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
+		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($attendee->getRoomId() !== $room->getId()) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($callId === $attendee->getCallId()) {
+			$attendee->setCallId(null);
+			$this->attendeeMapper->update($attendee);
+		} else {
+			throw new \InvalidArgumentException('callId');
+		}
+
+	}
+
 	public function updateCallFlags(Room $room, Participant $participant, int $flags): void {
 		$session = $participant->getSession();
 		if (!$session instanceof Session) {
