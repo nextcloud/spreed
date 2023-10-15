@@ -40,7 +40,7 @@
 			<div v-else-if="isOther"
 				:key="item.id"
 				class="shared-items__other">
-				<a v-if="item.messageParameters.object.link"
+				<a v-if="item.messageParameters.object?.link"
 					:href="item.messageParameters.object.link"
 					target="_blank">
 					{{ item.messageParameters.object.name }}
