@@ -521,6 +521,16 @@ const actions = {
 					messageId: message.parent.id,
 				})
 			}
+
+			// Check existing messages for having a deleted message as parent, and update them
+			if (message.systemMessage === 'message_deleted') {
+				context.getters.messagesList(message.token)
+					.filter(storedMessage => storedMessage.parent?.id === message.parent.id)
+					.forEach(storedMessage => {
+						context.commit('addMessage', Object.assign({}, storedMessage, { parent: message.parent }))
+					})
+			}
+
 			// Quit processing
 			return
 		}
