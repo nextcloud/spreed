@@ -23,7 +23,7 @@
 	<div class="talk-tab__wrapper">
 		<CallButton class="call-button" />
 		<ChatView />
-		<MediaSettings :initialize-on-mounted="false" />
+		<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
 	</div>
 </template>
 <script>
@@ -42,6 +42,11 @@ export default {
 		MediaSettings,
 	},
 
+	data() {
+		return {
+			recordingConsentGiven: false,
+		}
+	},
 }
 
 </script>

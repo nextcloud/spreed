@@ -30,7 +30,7 @@
 		</NcAppContent>
 		<RightSidebar :is-in-call="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
-		<MediaSettings :initialize-on-mounted="false" />
+		<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
 	</NcContent>
@@ -104,6 +104,7 @@ export default {
 			defaultPageTitle: false,
 			loading: false,
 			isRefreshingCurrentConversation: false,
+			recordingConsentGiven: false,
 		}
 	},
 
@@ -220,12 +221,17 @@ export default {
 			this.setPageTitle(this.getConversationName(this.token), this.atLeastOneLastMessageIdChanged)
 		},
 
-		token() {
-			// Collapse the sidebar if it's a 1to1 conversation
+		token(newValue, oldValue) {
+			// Collapse the sidebar if it's a one to one conversation
 			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || this.isMobile) {
 				this.$store.dispatch('hideSidebar')
 			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 				this.$store.dispatch('showSidebar')
+			}
+
+			// Reset recording consent if switch doesn't happen within breakout rooms or main room
+			if (!this.isBreakoutRoomsNavigation(oldValue, newValue)) {
+				this.recordingConsentGiven = false
 			}
 		},
 	},
@@ -348,6 +354,8 @@ export default {
 						token: params.token,
 						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 						flags,
+						silent: true,
+						recordingConsent: this.recordingConsentGiven,
 					})
 
 					this.$store.dispatch('setForceCallView', false)
@@ -676,6 +684,38 @@ export default {
 			})
 			document.querySelector('.conversations-search input').focus()
 		},
+
+		/**
+		 * Check if conversation was switched within breakout rooms and parent room.
+		 *
+		 * @param {string} oldToken The old conversation's token
+		 * @param {string} newToken The new conversation's token
+		 * @return {boolean}
+		 */
+		isBreakoutRoomsNavigation(oldToken, newToken) {
+			const oldConversation = this.$store.getters.conversation(oldToken)
+			const newConversation = this.$store.getters.conversation(newToken)
+
+			// One of rooms is undefined
+			if (!oldConversation || !newConversation) {
+				return false
+			}
+
+			// Parent to breakout
+			if (oldConversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+				&& newConversation.objectType === 'room') {
+				return true
+			}
+
+			// Breakout to parent
+			if (oldConversation.objectType === 'room'
+				&& newConversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED) {
+				return true
+			}
+
+			// Breakout to breakout
+			return oldConversation.objectType === 'room' && newConversation.objectType === 'room'
+		}
 	},
 }
 </script>

@@ -32,6 +32,7 @@
 					:is-sidebar="true" />
 				<CallView :token="token" :is-sidebar="true" />
 				<ChatView />
+				<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>
@@ -39,10 +40,12 @@
 
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
+import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
+import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
@@ -61,6 +64,7 @@ export default {
 	components: {
 		CallView,
 		ChatView,
+		MediaSettings,
 		TopBar,
 		TransitionWrapper,
 	},
@@ -74,6 +78,7 @@ export default {
 		return {
 			fetchCurrentConversationIntervalId: null,
 			isWaitingToClose: false,
+			recordingConsentGiven: false
 		}
 	},
 
@@ -136,8 +141,9 @@ export default {
 
 			// Joining the call needs to be done once the participant identifier
 			// has been set, which is done once the conversation has been
-			// fetched.
-			this.joinCall()
+			// fetched. MediaSettings are called to set up audio and video devices
+			// and also to give a consent to recording, if set up
+			emit('talk:media-settings:show')
 
 			// FIXME The participant will not be updated with the server data
 			// when the conversation is got again (as "addParticipantOnce" is
@@ -154,14 +160,6 @@ export default {
 				// instead.
 				this.fetchCurrentConversationIntervalId = window.setInterval(this.fetchCurrentConversation, 30000)
 			}
-		},
-
-		async joinCall() {
-			await this.$store.dispatch('joinCall', {
-				token: this.token,
-				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
-				silent: false,
-			})
 		},
 
 		async fetchCurrentConversation() {
