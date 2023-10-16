@@ -308,7 +308,7 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * Share multiple files and a caption into the chat
 	 *
-	 * @param int[] $shareIds The share IDs that should be shown with this message
+	 * @param string[] $shareIds The share IDs that should be shown with this message
 	 * @param string $caption The message to send
 	 * @param string $actorDisplayName for guests
 	 * @param string $referenceId for the message to be able to later identify it again

@@ -191,6 +191,8 @@ class ChatManager {
 
 		if ($messageType === 'object_shared' || $messageType === 'file_shared') {
 			$this->attachmentService->createAttachmentEntry($chat, $comment, $messageType, $messageDecoded['parameters'] ?? []);
+		} elseif ($messageType === 'multiple_files_shared') {
+			$this->attachmentService->createAttachmentEntriesForAllShares($chat, $comment, $messageDecoded['parameters'] ?? []);
 		}
 
 		return $comment;
