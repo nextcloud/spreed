@@ -514,13 +514,15 @@ export default {
 
 		linkToFile() {
 			if (this.isFileShare) {
-				return this.messageParameters?.file?.link
+				const firstFileKey = (Object.keys(this.messageParameters).find(key => key.startsWith('file')))
+				return this.messageParameters?.[firstFileKey]?.link
+			} else {
+				return ''
 			}
-			return ''
 		},
 
 		isFileShare() {
-			return this.message === '{file}' && this.messageParameters?.file
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
 		},
 
 		isCurrentGuest() {
@@ -542,7 +544,6 @@ export default {
 
 		isPollMessage() {
 			return this.messageType === 'comment'
-				&& this.message === '{object}'
 				&& this.messageParameters?.object?.type === 'talk-poll'
 		},
 

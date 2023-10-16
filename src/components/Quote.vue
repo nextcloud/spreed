@@ -172,8 +172,7 @@ export default {
 		},
 
 		isFileShareMessage() {
-			return this.message === '{file}'
-				&& 'file' in this.messageParameters
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
 		},
 
 		richParameters() {

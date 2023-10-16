@@ -567,10 +567,13 @@ const actions = {
 
 		context.commit('addMessage', message)
 
-		if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
-			|| (message.messageType === 'voice-message' && message.message === '{file}' && message.messageParameters?.file)
-			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
-			sharedItemsStore.addSharedItemFromMessage(message)
+		if (message.messageParameters && (message.messageType === 'comment' || message.messageType === 'voice-message')) {
+			if (message.messageParameters?.object || message.messageParameters?.file) {
+				// Handle voice messages, shares with single file, polls, deck cards, e.t.c
+				sharedItemsStore.addSharedItemFromMessage(message)
+			} else if (Object.keys(message.messageParameters).some(key => key.startsWith('file'))) {
+				// Handle shares with multiple files
+			}
 		}
 	},
 
@@ -1297,7 +1300,7 @@ const actions = {
 			delete message.parent
 		}
 
-		if (message.message === '{object}' && message.messageParameters.object) {
+		if (message.messageParameters?.object) {
 			const richObject = message.messageParameters.object
 			const response = await postRichObjectToConversation(
 				targetToken,
