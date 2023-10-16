@@ -30,6 +30,7 @@ jobs:
     steps:
       - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # v2.11.1
         id: changes
+        continue-on-error: true
         with:
           filters: |
             src:
@@ -47,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: changes
-    if: needs.changes.outputs.src == 'true'
+    if: needs.changes.outputs.src != 'false'
 
     name: NPM build
     steps:
@@ -100,4 +101,4 @@ jobs:
 
     steps:
       - name: Summary status
-        run: if ${{ needs.changes.outputs.src == 'true' && needs.build.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes.outputs.src != 'false' && needs.build.result != 'success' }}; then exit 1; fi
