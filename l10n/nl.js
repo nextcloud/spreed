@@ -933,6 +933,7 @@ OC.L10N.register(
     "Copy message link" : "Kopiëren berichtlink",
     "Go to file" : "Ga naar bestand",
     "Forward message" : "Bericht doorsturen",
+    "Translate" : "Vertaal",
     "Close reactions menu" : "Reactie-menu sluiten",
     "React with {emoji}" : "Reageer met {emoji}",
     "React with another emoji" : "Reageer met een andere emoji",
