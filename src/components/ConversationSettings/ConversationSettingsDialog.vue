@@ -46,17 +46,11 @@
 				<NotificationsSettings :conversation="conversation" />
 			</NcAppSettingsSection>
 
-			<NcAppSettingsSection v-if="canFullModerate"
-				id="conversation-settings"
-				:name="t('spreed', 'Moderation')">
-				<ListableSettings v-if="!isNoteToSelf" :token="token" />
-				<LinkShareSettings v-if="!isNoteToSelf" ref="linkShareSettings" />
-				<ExpirationSettings :token="token" can-full-moderate />
-			</NcAppSettingsSection>
-			<NcAppSettingsSection v-else
-				id="conversation-settings"
-				:name="t('spreed', 'Setup summary')">
-				<ExpirationSettings :token="token" />
+			<NcAppSettingsSection id="conversation-settings"
+				:name="canFullModerate ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
+				<ListableSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-full-moderate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-full-moderate="canFullModerate" />
+				<ExpirationSettings :token="token" :can-full-moderate="canFullModerate" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
@@ -175,6 +169,10 @@ export default {
 
 		isNoteToSelf() {
 			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
+		isGuest() {
+			return this.$store.getters.getActorType() === 'guests'
 		},
 
 		token() {

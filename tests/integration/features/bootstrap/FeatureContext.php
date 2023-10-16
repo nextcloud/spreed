@@ -3024,7 +3024,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->guestsAppWasEnabled = in_array('guests', $data['apps'], true);
 
 		if (!$this->guestsAppWasEnabled) {
-			// enable guests app
+			// enable Guests app
 			/*
 			$this->sendRequest('POST', '/cloud/apps/guests');
 			$this->assertStatusCode($this->response, 200);
@@ -3070,7 +3070,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function resetGuestsAppState() {
 		if ($this->guestsAppWasEnabled === null) {
-			// guests app was not touched
+			// Guests app was not touched
 			return;
 		}
 

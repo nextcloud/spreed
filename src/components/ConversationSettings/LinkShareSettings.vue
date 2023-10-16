@@ -25,26 +25,25 @@
 			{{ t('spreed', 'Guest access') }}
 		</h4>
 
-		<NcCheckboxRadioSwitch :checked="isSharedPublicly"
-			:disabled="isSaving"
-			type="switch"
-			aria-describedby="link_share_settings_hint"
-			@update:checked="toggleGuests">
-			{{ t('spreed', 'Allow guests to join this conversation via link') }}
-		</NcCheckboxRadioSwitch>
+		<template v-if="canFullModerate">
+			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
+				:disabled="isSaving"
+				type="switch"
+				aria-describedby="link_share_settings_hint"
+				@update:checked="toggleGuests">
+				{{ t('spreed', 'Allow guests to join this conversation via link') }}
+			</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch v-show="isSharedPublicly"
-			:checked="conversation.hasPassword"
-			:disabled="isSaving"
-			type="switch"
-			aria-describedby="link_share_settings_password_hint"
-			@update:checked="togglePassword">
-			{{ t('spreed', 'Password protection') }}
-		</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
+				:checked="isPasswordProtectionChecked"
+				:disabled="isSaving"
+				type="switch"
+				aria-describedby="link_share_settings_password_hint"
+				@update:checked="togglePassword">
+				{{ t('spreed', 'Password protection') }}
+			</NcCheckboxRadioSwitch>
 
-		<template v-if="showPasswordField">
-			<form class="password-form"
-				@submit.prevent="handleSetNewPassword">
+			<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
 				<NcPasswordField ref="passwordField"
 					:value.sync="password"
 					autocomplete="new-password"
@@ -53,9 +52,7 @@
 					class="password-form__input-field"
 					label-visible
 					:label="t('spreed', 'Enter new password')" />
-				<NcButton :disabled="isSaving"
-					type="primary"
-					native-type="submit">
+				<NcButton :disabled="isSaving" type="primary" native-type="submit">
 					<template #icon>
 						<ArrowRight />
 					</template>
@@ -64,9 +61,15 @@
 			</form>
 		</template>
 
+		<p v-else-if="isSharedPublicly">
+			{{ t('spreed', 'Guests are allowed to join this conversation via link') }}
+		</p>
+		<p v-else>
+			{{ t('spreed', 'Guests are not allowed to join this conversation') }}
+		</p>
+
 		<div class="app-settings-subsection__buttons">
 			<NcButton ref="copyLinkButton"
-				wide
 				@click="handleCopyLink"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
@@ -74,9 +77,8 @@
 				</template>
 				{{ t('spreed', 'Copy conversation link') }}
 			</NcButton>
-			<NcButton v-if="isSharedPublicly"
+			<NcButton v-if="isSharedPublicly && canFullModerate"
 				:disabled="isSendingInvitations"
-				wide
 				@click="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
@@ -115,6 +117,18 @@ export default {
 		Email,
 	},
 
+	props: {
+		token: {
+			type: String,
+			default: null,
+		},
+
+		canFullModerate: {
+			type: Boolean,
+			default: true,
+		},
+	},
+
 	data() {
 		return {
 			// The conversation's password
@@ -131,12 +145,12 @@ export default {
 			return this.conversation.type === CONVERSATION.TYPE.PUBLIC
 		},
 
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isPasswordProtectionChecked() {
+			return this.conversation.hasPassword || this.showPasswordField
 		},
 	},
 
@@ -200,7 +214,7 @@ export default {
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {
-					this.$refs.passwordField.$el.focus()
+					this.$refs.passwordField.focus()
 				})
 			} else {
 				this.showPasswordField = false
@@ -270,5 +284,8 @@ button > .material-design-icon {
 	display: flex;
 	gap: 8px;
 	margin-top: 25px;
+	& > button {
+		flex-basis: 50%;
+	}
 }
 </style>

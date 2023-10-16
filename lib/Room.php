@@ -85,12 +85,12 @@ class Room {
 	public const LISTABLE_NONE = 0;
 
 	/**
-	 * Searchable by all regular users and moderators, even when not joined, excluding users from the guest app
+	 * Searchable by all regular users and moderators, even when not joined, excluding users created with the Guests app
 	 */
 	public const LISTABLE_USERS = 1;
 
 	/**
-	 * Searchable by everyone, which includes guest users (from guest app), even when not joined
+	 * Searchable by everyone, which includes users created with the Guests app, even when not joined
 	 */
 	public const LISTABLE_ALL = 2;
 
