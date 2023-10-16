@@ -77,21 +77,21 @@ trait RecordingTrait {
 	}
 
 	/**
-	 * @Given /^recording server is started$/
+	 * @Given /^(recording|signaling) server is started$/
 	 */
 	public function recordingServerIsStarted() {
 		if ($this->isRunning()) {
 			return;
 		}
 
-		// "the secret" is hardcoded in the fake recording server.
+		// "the … secret" is hardcoded in the fake recording server.
 		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode([
 			'servers' => [
 				[
 					'server' => 'http://' . $this->getRecordingServerAddress()
 				]
 			],
-			'secret' => 'the secret'
+			'secret' => 'the recording secret'
 		])]]));
 		$this->setAppConfig('spreed', new TableNode([['signaling_servers', json_encode([
 			'servers' => [
@@ -99,15 +99,15 @@ trait RecordingTrait {
 					'server' => 'http://' . $this->getSignalingServerAddress()
 				]
 			],
-			'secret' => 'the secret'
+			'secret' => 'the signaling secret'
 		])]]));
 
-		$path = 'features/bootstrap/FakeRecordingServer.php';
+		$path = 'mocks/FakeRecordingServer.php';
 		$this->recordingServerProcess = $this->startMockServer(
 			$this->getRecordingServerAddress() . ' ' . $path
 		);
 
-		$path = 'features/bootstrap/FakeSignalingServer.php';
+		$path = 'mocks/FakeSignalingServer.php';
 		$this->signalingServerProcess = $this->startMockServer(
 			$this->getSignalingServerAddress() . ' ' . $path
 		);
@@ -195,7 +195,7 @@ trait RecordingTrait {
 	/**
 	 * @AfterScenario
 	 *
-	 * @When /^recording server is stopped$/
+	 * @When /^(recording|signaling) server is stopped$/
 	 */
 	public function recordingServerIsStopped() {
 		if (gettype($this->recordingServerProcess) === 'resource') {
@@ -291,7 +291,7 @@ trait RecordingTrait {
 		$body = json_encode($data);
 
 		$random = md5((string) rand());
-		$checksum = hash_hmac('sha256', $random . $body, "the secret");
+		$checksum = hash_hmac('sha256', $random . $body, 'the recording secret');
 
 		$headers = [
 			'Backend-Url' => $this->baseUrl . 'ocs/v2.php/apps/spreed/api/' . $apiVersion . '/recording/backend',
@@ -304,10 +304,14 @@ trait RecordingTrait {
 	}
 
 	/**
-	 * @Then /^recording server received the following requests$/
+	 * @Then /^(recording|signaling) server received the following requests$/
 	 */
-	public function recordingServerReceivedTheFollowingRequests(TableNode $formData = null) {
-		$requests = $this->getRecordingServerReceivedRequests();
+	public function fakeServerReceivedTheFollowingRequests(string $server, TableNode $formData = null) {
+		if ($server === 'recording') {
+			$requests = $this->getRecordingServerReceivedRequests();
+		} else {
+			$requests = $this->getSignalingServerReceivedRequests();
+		}
 
 		if ($formData === null) {
 			Assert::assertEmpty($requests);
@@ -320,7 +324,27 @@ trait RecordingTrait {
 		}
 
 		$expected = array_map(static function (array $request) {
-			$request['token'] = FeatureContext::getTokenForIdentifier($request['token']);
+			$identifier = $request['token'];
+			$request['token'] = FeatureContext::getTokenForIdentifier($identifier);
+
+			$matched = preg_match('/PHONE\((\+\d+)\)/', $request['data'], $matches);
+			if ($matched) {
+				$request['data'] = str_replace(
+					'PHONE(' . $matches[1] . ')',
+					FeatureContext::getActorIdForPhoneNumber($matches[1]),
+					$request['data']
+				);
+			}
+
+			$matched = preg_match('/PHONEATTENDEE\((\+\d+)\)/', $request['data'], $matches);
+			if ($matched) {
+				$request['data'] = str_replace(
+					'PHONEATTENDEE(' . $matches[1] . ')',
+					FeatureContext::getAttendeeIdForPhoneNumber($identifier, $matches[1]),
+					$request['data']
+				);
+			}
+
 			return $request;
 		}, $formData->getHash());
 
@@ -330,8 +354,36 @@ trait RecordingTrait {
 		Assert::assertEquals($expected, $requests);
 	}
 
-	private function getRecordingServerReceivedRequests() {
+	/**
+	 * @Then /^signaling server will respond with$/
+	 */
+	public function nextSignalingServerResponseIs(TableNode $formData): void {
+		$data = $formData->getRowsHash();
+		$nextResponseFile = sys_get_temp_dir() . '/fake-nextcloud-talk-signaling-response';
+		file_put_contents($nextResponseFile, $data['response']);
+	}
+
+	/**
+	 * @Then /^reset (recording|signaling) server requests$/
+	 */
+	public function resetSignalingServerRequests(string $server): void {
+		if ($server === 'recording') {
+			$this->getRecordingServerReceivedRequests();
+		} else {
+			$this->getSignalingServerReceivedRequests();
+		}
+	}
+
+	private function getRecordingServerReceivedRequests(): ?array {
 		$url = 'http://' . $this->getRecordingServerAddress() . '/fake/requests';
+		$client = new Client();
+		$response = $client->get($url);
+
+		return json_decode($response->getBody()->getContents(), true);
+	}
+
+	private function getSignalingServerReceivedRequests(): ?array {
+		$url = 'http://' . $this->getSignalingServerAddress() . '/fake/requests';
 		$client = new Client();
 		$response = $client->get($url);
 

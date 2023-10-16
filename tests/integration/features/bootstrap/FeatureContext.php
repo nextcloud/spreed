@@ -125,6 +125,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$identifierToToken[$identifier];
 	}
 
+	public static function getActorIdForPhoneNumber(string $phoneNumber): string {
+		return self::$phoneNumberToActorId[$phoneNumber];
+	}
+
+	public static function getAttendeeIdForPhoneNumber(string $identifier, string $phoneNumber): string {
+		return self::$userToAttendeeId[$identifier]['phones'][self::$phoneNumberToActorId[$phoneNumber]];
+	}
+
 	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
 		if (!isset(self::$userToAttendeeId[$room][$type][$id])) {
 			if ($user !== null) {
@@ -670,6 +678,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['phoneNumber'])) {
 					$data['phoneNumber'] = (string) $attendee['phoneNumber'];
 				}
+				if (isset($expectedKeys['callId'])) {
+					$data['callId'] = (string) $attendee['callId'];
+				}
 
 				if (!isset(self::$userToAttendeeId[$identifier][$attendee['actorType']])) {
 					self::$userToAttendeeId[$identifier][$attendee['actorType']] = [];
@@ -693,7 +704,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					&& $attendee['actorId'] === 'PHONE(' . $actual['phoneNumber'] . ')'
 					&& $attendee['phoneNumber'] === $actual['phoneNumber']) {
 					$attendee['actorId'] = $actual['actorId'];
-					self::$phoneNumberToActorId[$attendee['phoneNumber']] = $actual['actorId'];
+				}
+
+				if (!empty($actual['phoneNumber'])) {
+					self::$phoneNumberToActorId[$actual['phoneNumber']] = $actual['actorId'];
+				} else {
+					$matched = preg_match('/PHONE\((\+\d+)\)/', $attendee['actorId'], $matches);
+					if ($matched) {
+						$attendee['actorId'] = self::$phoneNumberToActorId[$matches[1]];
+					}
 				}
 
 				// Breakout room regex
@@ -1366,7 +1385,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $description
 	 * @param int $statusCode
 	 * @param string $apiVersion
-	 * @param TableNode
 	 */
 	public function userSetsDescriptionForRoomTo(string $user, string $identifier, string $description, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
@@ -1721,6 +1739,34 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/ring/' . self::$userToAttendeeId[$identifier][$actorType . 's'][$actorId]);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" dials out to "([^"]*)" from call in room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $phoneNumber
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userDialsOut(string $user, string $phoneNumber, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/dialout/'
+			. self::$userToAttendeeId[$identifier]['phones'][self::$phoneNumberToActorId[$phoneNumber]]
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$response = $this->getDataFromResponse($this->response);
+		if (array_key_exists('sessionId', $response)) {
+			// In the chat guest users are identified by their sessionId. The
+			// sessionId is larger than the size of the actorId column in the
+			// database, though, so the ID stored in the database and returned
+			// in chat messages is a hashed version instead.
+			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
+			self::$userToSessionId[$user] = $response['sessionId'];
+		}
 	}
 
 	/**
