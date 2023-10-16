@@ -51,14 +51,13 @@
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
 
-			<NcTextField :value="sharedSecret"
+			<NcTextField :value.sync="sharedSecret"
 				name="shared-secret"
 				class="form__textfield additional-top-margin"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
 				:label="t('spreed', 'Shared secret')"
-				label-visible
-				@update:value="updateSecret" />
+				label-visible />
 
 			<label for="dial-in-info" class="form__label additional-top-margin">
 				{{ t('spreed', 'Dial-in information') }}
@@ -164,10 +163,6 @@ export default {
 
 			this.loading = false
 			showSuccess(t('spreed', 'SIP configuration saved!'))
-		},
-
-		updateSecret(value) {
-			this.secret = value
 		},
 	},
 }
