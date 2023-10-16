@@ -49,6 +49,10 @@ class SIPDialOutService {
 		}
 
 		$response = $this->backendNotifier->dialOutToAttendee($room, $attendee);
+		if ($response === null) {
+			$this->logger->error('Received no response from signaling server on dialout request');
+			return null;
+		}
 		try {
 			return $this->validateDialOutResponse($response);
 		} catch (\InvalidArgumentException $e) {
