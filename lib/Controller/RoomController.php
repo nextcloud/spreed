@@ -877,6 +877,11 @@ class RoomController extends AEnvironmentAwareController {
 			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
 
+		$currentUser = null;
+		if ($this->userId !== null) {
+			$currentUser = $this->userManager->get($this->userId);
+		}
+
 		$cleanGuests = false;
 		foreach ($participants as $participant) {
 			$attendeeId = $participant->getAttendee()->getId();
@@ -918,6 +923,7 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeePermissions' => $participant->getAttendee()->getPermissions(),
 				'attendeePin' => '',
 				'phoneNumber' => '',
+				'callId' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()
 				&& $this->room->getSIPEnabled() !== Webinary::SIP_DISABLED
@@ -986,9 +992,12 @@ class RoomController extends AEnvironmentAwareController {
 				if ($this->talkConfig->isSIPConfigured()
 					&& $this->participant->hasModeratorPermissions(false)) {
 					$result['phoneNumber'] = $participant->getAttendee()->getPhoneNumber();
+
+					if ($currentUser instanceof IUser && $this->talkConfig->canUserDialOutSIP($currentUser)) {
+						$result['callId'] = $participant->getAttendee()->getCallId();
+					}
 				}
 			}
-
 
 			$results[$attendeeId] = $result;
 		}
