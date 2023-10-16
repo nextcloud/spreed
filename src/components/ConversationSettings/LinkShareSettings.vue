@@ -35,7 +35,7 @@
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
-				:checked="conversation.hasPassword"
+				:checked="isPasswordProtectionChecked"
 				:disabled="isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_password_hint"
@@ -148,6 +148,10 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
+		isPasswordProtectionChecked() {
+			return this.conversation.hasPassword || this.showPasswordField
+		},
 	},
 
 	methods: {
@@ -210,7 +214,7 @@ export default {
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {
-					this.$refs.passwordField.$el.focus()
+					this.$refs.passwordField.focus()
 				})
 			} else {
 				this.showPasswordField = false
