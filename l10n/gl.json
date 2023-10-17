@@ -95,9 +95,6 @@
     "{actor} opened the conversation to registered users" : "{actor} abriu a conversa aos usuarios rexistrados",
     "You opened the conversation to registered users" : "Vde. abriu a conversa aos usuarios rexistrados",
     "An administrator opened the conversation to registered users" : "Un administrador abriu a conversa aos usuarios rexistrados",
-    "{actor} opened the conversation to registered and guest app users" : "{actor} abriu a conversa aos usuarios da aplicación rexistrados e convidados",
-    "You opened the conversation to registered and guest app users" : "Vde. abriu a conversa aos usuarios da aplicación rexistrados e convidados",
-    "An administrator opened the conversation to registered and guest app users" : "Un administrador abriu a conversa aos usuarios da aplicación rexistrados e convidados",
     "The conversation is now open to everyone" : "A conversa agora está aberta a todos",
     "{actor} opened the conversation to everyone" : "{actor} abriu a conversa a todos",
     "You opened the conversation to everyone" : "Vde. abriu a conversa a todos",
@@ -910,7 +907,6 @@
     "Personal" : "Persoal",
     "Always show the device preview screen before joining a call in this conversation." : "Amosar sempre a pantalla de vista previa do dispositivo antes de unirse a unha chamada nesta conversa.",
     "Moderation" : "Moderación",
-    "Setup summary" : "Resumo da configuración",
     "Meeting" : "Xuntanza",
     "Permissions" : "Permisos",
     "Breakout Rooms" : "Salas parciais",
@@ -959,7 +955,6 @@
     "Invitations sent" : "Convites enviados",
     "Error occurred when sending invitations" : "Produciuse un erro ao enviar os convites",
     "Open conversation to registered users, showing it in search results" : "Abrir a conversa aos usuarios rexistrados, amosándoa nos resultados da busca",
-    "Also open to guest app users" : "Aberta tamén aos usuarios da aplicación convidados",
     "Error occurred when opening or limiting the conversation" : "Produciuse un erro ao abrir ou limitar a conversa",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "Ao activar o ástrago, os que non son moderadores serán retirados da chamada en curso.",
     "Enable lobby, restricting the conversation to moderators" : "Activar o ástrago, limitando a conversa aos moderadores",
@@ -1586,6 +1581,9 @@
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Dámoslle a benvida a Nextcloud Talk!\nNesta conversa estarás informado sobre novas funcións dispoñíbeis en Nextcloud Talk.",
     "New in Talk %s" : "Novo en Talk %s",
     "- You can now react to chat message" : "– Agora pode reaccionar ás mensaxe de parola",
+    "{actor} opened the conversation to registered and guest app users" : "{actor} abriu a conversa aos usuarios da aplicación rexistrados e convidados",
+    "You opened the conversation to registered and guest app users" : "Vde. abriu a conversa aos usuarios da aplicación rexistrados e convidados",
+    "An administrator opened the conversation to registered and guest app users" : "Un administrador abriu a conversa aos usuarios da aplicación rexistrados e convidados",
     "{actor} invited {user}" : "{actor} convidou a {user}",
     "You invited {user}" : "Vde. convidou a {user}",
     "An administrator invited {user}" : "Un administrador convidou a {user}",
@@ -1598,6 +1596,7 @@
     "Devices settings" : "Axustes dos dispositivos",
     "Conversation link copied to clipboard." : "A ligazón de conversa foi copiada no portapapeis.",
     "The link could not be copied." : "Non foi posíbel copiar a ligazón.",
+    "Also open to guest app users" : "Aberta tamén aos usuarios da aplicación convidados",
     "Cancel editing description" : "Cancelar a edición da descrición",
     "Submit conversation description" : "Enviar a descrición da conversa",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "A descrición debe ser menor ou igual a {maxLength} caracteres. O seu texto actual ten {charactersCount} caracteres.",
@@ -1629,6 +1628,7 @@
     "{actor} removed the conversation avatar" : "{actor} retirou o avatar da conversa",
     "You removed the conversation avatar" : "Vde. retirou o avatar da conversa",
     "The PHP settings 'upload_max_filesize' or 'post_max_size' only will allow to upload files up to {maxUpload}." : "A configuración de PHP «upload_max_filesize» ou «post_max_size» só permitirá enviar ficheiros ata {maxUpload}.",
-    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Amosar sempre este diálogo antes de unirse a unha chamada nesta conversa. O diálogo sempre aparecerá cando se grava a chamada."
+    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Amosar sempre este diálogo antes de unirse a unha chamada nesta conversa. O diálogo sempre aparecerá cando se grava a chamada.",
+    "Setup summary" : "Resumo da configuración"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

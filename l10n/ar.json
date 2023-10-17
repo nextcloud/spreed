@@ -96,9 +96,6 @@
     "{actor} opened the conversation to registered users" : "{actor} اتاح المحادثة للمستخدمين المسجلين ",
     "You opened the conversation to registered users" : "قمت بإتاحة المحادثة للمستخدمين المسجلين ",
     "An administrator opened the conversation to registered users" : "قامت الإدارة بإتاحة المحادثة للمستخدمين المسجلين ",
-    "{actor} opened the conversation to registered and guest app users" : "{actor} اتاح المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
-    "You opened the conversation to registered and guest app users" : "قمت بإتاحة المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
-    "An administrator opened the conversation to registered and guest app users" : "قامت الإدارة بإتاحة المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
     "The conversation is now open to everyone" : "المحادثة الآن مفتوحة للجميع",
     "{actor} opened the conversation to everyone" : "{actor} اتاح المحادثة للجميع",
     "You opened the conversation to everyone" : "أنت سمحت بإتاحة المحادثة للجميع",
@@ -916,7 +913,6 @@
     "Personal" : "شخصي",
     "Always show the device preview screen before joining a call in this conversation." : "اعرض دائمًا شاشة معاينة الجهاز قبل الانضمام إلى مكالمة في هذه المحادثة.",
     "Moderation" : "تنسيق moderation",
-    "Setup summary" : "ملخص الإعداد",
     "Meeting" : "اجتماع",
     "Permissions" : "التصريحات",
     "Breakout Rooms" : "الغرف الجانبية",
@@ -965,7 +961,6 @@
     "Invitations sent" : "تم إرسال الدعوات ",
     "Error occurred when sending invitations" : "حدث خطأ أثناء إرسال الدعوات ",
     "Open conversation to registered users, showing it in search results" : "فتح المحادثة للمستخدمين المسجلين، وإظهارها في نتائج البحث",
-    "Also open to guest app users" : "مفتوح أيضًا لضيوف التطبيق ",
     "Error occurred when opening or limiting the conversation" : "حدث خطأ عند فتح أو تقييد الرد بالمحادثة ",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "سيؤدي تمكين صالة الانتظار إلى إزالة الجميع عدا المنسقين moderators من المكالمة الجارية.",
     "Enable lobby, restricting the conversation to moderators" : "تمكين صالة الانتظار، و قصر المحادثة على المنسقين moderators",
@@ -1599,6 +1594,9 @@
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "مرحبا بك في التحدث نكست كلاود!\nفي هذه المحادثة سيتم إشعارك بكل المميزات المتاحة في التحدث نكست كلاود.",
     "New in Talk %s" : "جديد في التحدث %s",
     "- You can now react to chat message" : "- يمكنك الآن الرَّدّ على رسالة الدردشة",
+    "{actor} opened the conversation to registered and guest app users" : "{actor} اتاح المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
+    "You opened the conversation to registered and guest app users" : "قمت بإتاحة المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
+    "An administrator opened the conversation to registered and guest app users" : "قامت الإدارة بإتاحة المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
     "{actor} invited {user}" : "قام {actor} بدعوة {user}",
     "You invited {user}" : "لقد قمت بدعوة {user}",
     "An administrator invited {user}" : "قام المسؤول بدعوة {user}",
@@ -1611,6 +1609,7 @@
     "Devices settings" : "إعدادات الأجهزة",
     "Conversation link copied to clipboard." : "تم نسخ رابط المحادثة.",
     "The link could not be copied." : "لم يتم نسخ رابط المحادثة.",
+    "Also open to guest app users" : "مفتوح أيضًا لضيوف التطبيق ",
     "Cancel editing description" : "إلغاء تحرير الوصف ",
     "Submit conversation description" : "إرسال وصف المحادثة ",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "يجب أن يكون الوصف أقل من أو يساوي {maxLength} حرفًا. يبلغ طول النص الحالي {characterCount} حرفاً.",
@@ -1642,6 +1641,7 @@
     "{actor} removed the conversation avatar" : "قام {actor} بإزالة الصورة الرمزية للمحادثة",
     "You removed the conversation avatar" : "لقد قمت بإزالة الصورة الرمزية للمحادثة",
     "The PHP settings 'upload_max_filesize' or 'post_max_size' only will allow to upload files up to {maxUpload}." : "تسمح إعدادات PHP ـ \"upload_max_filesize\" أو \"post_max_size\" برفع الملفات حتى حجم {maxUpload} فقط.",
-    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "اعرض مربع الحوار هذا دائمًا قبل الانضمام إلى مكالمة في هذه المحادثة. سيظهر مربع الحوار دائمًا عند تسجيل المكالمة."
+    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "اعرض مربع الحوار هذا دائمًا قبل الانضمام إلى مكالمة في هذه المحادثة. سيظهر مربع الحوار دائمًا عند تسجيل المكالمة.",
+    "Setup summary" : "ملخص الإعداد"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }
