@@ -453,6 +453,10 @@ export default {
 			} else if (to.name === 'notfound') {
 				this.setPageTitle('')
 			}
+
+			if (to.hash === '#direct-call') {
+				emit('talk:media-settings:show')
+			}
 		})
 
 		if (getCurrentUser()) {
@@ -481,6 +485,10 @@ export default {
 			})
 		}
 
+		if (this.$route.hash === '#direct-call') {
+			emit('talk:media-settings:show')
+		}
+
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
 		subscribe('notifications:notification:received', this.interceptNotificationReceived)
 	},
@@ -507,12 +515,12 @@ export default {
 				return
 			}
 
-			const [token, messageId] = load.split('#message_')
+			const [token, hash] = load.split('#')
 			this.$router.push({
 				name: 'conversation',
+				hash: hash ? `#${hash}` : '',
 				params: {
 					token,
-					hash: messageId ? `#message_${messageId}` : '',
 				},
 			})
 
