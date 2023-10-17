@@ -21,6 +21,7 @@
 
 <template>
 	<NcListItem ref="listItem"
+		:key="item.token"
 		:name="item.displayName"
 		class="conversation-item"
 		:class="{'unread-mention-conversation': item.unreadMention}"
