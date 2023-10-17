@@ -38,8 +38,9 @@
 			<NcAppSettingsSection v-if="!isNoteToSelf"
 				id="notifications"
 				:name="t('spreed', 'Personal')">
-				<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
-					type="switch">
+				<NcCheckboxRadioSwitch type="switch"
+					:checked="showMediaSettings"
+					@update:checked="setShowMediaSettings">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
 
@@ -128,7 +129,7 @@ import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 
 import { CALL, PARTICIPANT, CONVERSATION } from '../../constants.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
+import { useSettingsStore } from '../../stores/settings.js'
 
 const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
 const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
@@ -157,11 +158,15 @@ export default {
 		SipSettings,
 	},
 
+	setup() {
+		const settingsStore = useSettingsStore()
+		return { settingsStore }
+	},
+
 	data() {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
-			showMediaSettings: false,
 		}
 	},
 
@@ -185,6 +190,10 @@ export default {
 		token() {
 			return this.$store.getters.getConversationSettingsToken()
 				|| this.$store.getters.getToken()
+		},
+
+		showMediaSettings() {
+			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
 		conversation() {
@@ -242,22 +251,15 @@ export default {
 		}
 	},
 
-	watch: {
-		showMediaSettings(newValue) {
-			const browserValue = newValue ? 'true' : 'false'
-			BrowserStorage.setItem('showMediaSettings' + this.token, browserValue)
-		},
-	},
-
 	mounted() {
 		subscribe('show-conversation-settings', this.handleShowSettings)
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
-		/**
-		 * Get the MediaSettings value from the browser storage.
-		 */
-		this.showMediaSettings = BrowserStorage.getItem('showMediaSettings' + this.token) === null
-			|| BrowserStorage.getItem('showMediaSettings' + this.token) === 'true'
+	},
+
+	beforeDestroy() {
+		unsubscribe('show-conversation-settings', this.handleShowSettings)
+		unsubscribe('hide-conversation-settings', this.handleHideSettings)
 	},
 
 	methods: {
@@ -271,10 +273,9 @@ export default {
 			this.$store.dispatch('updateConversationSettingsToken', '')
 		},
 
-		beforeDestroy() {
-			unsubscribe('show-conversation-settings', this.handleShowSettings)
-			unsubscribe('hide-conversation-settings', this.handleHideSettings)
-		},
+		setShowMediaSettings(newValue) {
+			this.settingsStore.setShowMediaSettings(this.token, newValue)
+		}
 	},
 }
 </script>

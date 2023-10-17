@@ -100,8 +100,8 @@ import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import browserCheck from '../../mixins/browserCheck.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import participant from '../../mixins/participant.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.js'
+import { useSettingsStore } from '../../stores/settings.js'
 
 export default {
 	name: 'CallButton',
@@ -163,7 +163,8 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		const settingsStore = useSettingsStore()
+		return { isInCall, settingsStore }
 	},
 
 	data() {
@@ -195,6 +196,10 @@ export default {
 		isRecording() {
 			return this.conversation.callRecording === CALL.RECORDING.VIDEO
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		},
+
+		showMediaSettings() {
+			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
 		participantType() {
@@ -366,11 +371,7 @@ export default {
 				return
 			}
 
-			const showMediaSettings = BrowserStorage.getItem('showMediaSettings' + this.token)
-			const shouldShowMediaSettingsScreen = (showMediaSettings === null || showMediaSettings === 'true')
-			console.debug('showMediaSettings:', shouldShowMediaSettingsScreen)
-
-			if (this.isStartingRecording || this.isRecording || shouldShowMediaSettingsScreen) {
+			if (this.isStartingRecording || this.isRecording || this.showMediaSettings) {
 				emit('talk:media-settings:show')
 			} else {
 				emit('talk:media-settings:hide')

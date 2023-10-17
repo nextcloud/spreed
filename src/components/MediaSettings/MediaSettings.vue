@@ -120,7 +120,9 @@
 				@update-background="handleUpdateVirtualBackground" />
 
 			<!-- "Always show" setting -->
-			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings" class="checkbox">
+			<NcCheckboxRadioSwitch class="checkbox"
+				:checked="showMediaSettings"
+				@update:checked="setShowMediaSettings">
 				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
 
@@ -228,6 +230,7 @@ import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useGuestNameStore } from '../../stores/guestName.js'
+import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
@@ -275,7 +278,8 @@ export default {
 	setup() {
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
-		return { AVATAR, isInCall, guestNameStore }
+		const settingsStore = useSettingsStore()
+		return { AVATAR, isInCall, guestNameStore, settingsStore }
 	},
 
 	data() {
@@ -285,7 +289,6 @@ export default {
 			tabContent: 'none',
 			audioOn: undefined,
 			videoOn: undefined,
-			showMediaSettings: true,
 			silentCall: false,
 			updatedBackground: undefined,
 			deviceIdChanged: false,
@@ -321,6 +324,10 @@ export default {
 
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		showMediaSettings() {
+			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
 		showVideo() {
@@ -392,6 +399,7 @@ export default {
 		isVirtualBackgroundAvailable() {
 			return this.virtualBackground.isAvailable()
 		},
+
 		showUpdateChangesButton() {
 			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
@@ -416,14 +424,6 @@ export default {
 				this.initializeDevicesMixin()
 			} else {
 				this.stopDevicesMixin()
-			}
-		},
-
-		showMediaSettings(newValue) {
-			if (newValue) {
-				BrowserStorage.setItem('showMediaSettings' + this.token, 'true')
-			} else {
-				BrowserStorage.setItem('showMediaSettings' + this.token, 'false')
 			}
 		},
 
@@ -604,6 +604,10 @@ export default {
 			} else {
 				this.tabContent = 'none'
 			}
+		},
+
+		setShowMediaSettings(newValue) {
+			this.settingsStore.setShowMediaSettings(this.token, newValue)
 		},
 
 		setRecordingConsentGiven(value) {
