@@ -95,9 +95,6 @@
     "{actor} opened the conversation to registered users" : "{actor} открыл(а) доступ к обсуждению для зарегистрированных пользователей",
     "You opened the conversation to registered users" : "Вы открыли доступ к обсуждению для зарегистрированных пользователей",
     "An administrator opened the conversation to registered users" : "Администратор открыл доступ к обсуждению для зарегистрированных пользователей",
-    "{actor} opened the conversation to registered and guest app users" : "{actor} открыл(а) доступ к обсуждению для зарегистрированных пользователей и гостей",
-    "You opened the conversation to registered and guest app users" : "Вы открыли доступ к обсуждению для зарегистрированных пользователей и гостей",
-    "An administrator opened the conversation to registered and guest app users" : "Администратор открыл доступ к обсуждению для зарегистрированных пользователей и гостей",
     "The conversation is now open to everyone" : "Обсуждение теперь открыто для всех",
     "{actor} opened the conversation to everyone" : "{actor} открыл(а) обсуждение для всех",
     "You opened the conversation to everyone" : "Вы открыли обсуждение для всех",
@@ -912,7 +909,6 @@
     "Personal" : "Личное",
     "Always show the device preview screen before joining a call in this conversation." : "Всегда показывайте экран предварительного просмотра устройства перед присоединением к вызову в этом разговоре.",
     "Moderation" : "Модерация",
-    "Setup summary" : "Сводные настройки",
     "Meeting" : "Встреча",
     "Permissions" : "Права доступа",
     "Breakout Rooms" : "Комнаты обсуждения",
@@ -961,7 +957,6 @@
     "Invitations sent" : "Приглашения отправлены",
     "Error occurred when sending invitations" : "Не удалось отправить приглашения",
     "Open conversation to registered users, showing it in search results" : "Это обсуждение будет показано в результатах поиска для зарегистрированных пользователей",
-    "Also open to guest app users" : "Открыть для гостей",
     "Error occurred when opening or limiting the conversation" : "Не удалось открыть или ограничить доступ к обсуждению",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "Включение лобби удалит немодераторов из текущего разговора.",
     "Enable lobby, restricting the conversation to moderators" : "Включить лобби, ограничив обсуждение модераторами",
@@ -1591,6 +1586,9 @@
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Добро пожаловать в приложение Конференции для Nextcloud!\nВ этом обсуждении приведена информация о новых функциях приложения.",
     "New in Talk %s" : "Новое в приложении «Конференции» версии %s",
     "- You can now react to chat message" : "- Теперь вы можете реагировать на сообщения в чате",
+    "{actor} opened the conversation to registered and guest app users" : "{actor} открыл(а) доступ к обсуждению для зарегистрированных пользователей и гостей",
+    "You opened the conversation to registered and guest app users" : "Вы открыли доступ к обсуждению для зарегистрированных пользователей и гостей",
+    "An administrator opened the conversation to registered and guest app users" : "Администратор открыл доступ к обсуждению для зарегистрированных пользователей и гостей",
     "{actor} invited {user}" : "{actor} пригласил(а) пользователя {user}",
     "You invited {user}" : "Вы пригласили пользователя {user}",
     "An administrator invited {user}" : "Администратор пригласил пользователя {user} ",
@@ -1603,6 +1601,7 @@
     "Devices settings" : "Параметры устройства",
     "Conversation link copied to clipboard." : "Ссылка на обсуждение скопирована в буфер обмена.",
     "The link could not be copied." : "Не удалось скопировать ссылку.",
+    "Also open to guest app users" : "Открыть для гостей",
     "Cancel editing description" : "Отменить редактирование описания",
     "Submit conversation description" : "Сохранить описание обсуждения",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Описание должно быть не длиннее {maxLength} символов. Длинна введённого текста: {charactersCount} cимв.",
@@ -1634,6 +1633,7 @@
     "{actor} removed the conversation avatar" : "{actor} удалил аватар обсуждения",
     "You removed the conversation avatar" : "Вы удалили аватар обсуждения",
     "The PHP settings 'upload_max_filesize' or 'post_max_size' only will allow to upload files up to {maxUpload}." : "Настройки PHP 'upload_max_filesize' или 'post_max_size' позволяют загружать только  файлы размером до {maxUpload}.",
-    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Всегда показывать это диалоговое окно перед присоединением к вызову в этом разговоре. Диалог всегда будет отображаться во время записи разговора."
+    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Всегда показывать это диалоговое окно перед присоединением к вызову в этом разговоре. Диалог всегда будет отображаться во время записи разговора.",
+    "Setup summary" : "Сводные настройки"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }
