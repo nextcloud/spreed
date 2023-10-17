@@ -20,8 +20,8 @@
 -->
 
 <template>
-	<div class="shared-items">
-		<LoadingComponent v-if="loading" class="shared-items__loading" />
+	<div class="shared-items-tab">
+		<LoadingComponent v-if="loading" class="shared-items-tab__loading" />
 
 		<template v-else>
 			<!-- Shared items grouped by type -->
@@ -64,7 +64,7 @@
 
 			<!-- No shared content -->
 			<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
-				class="shared-items__empty-content"
+				class="shared-items-tab__empty-content"
 				:name="t('spreed', 'No shared items')">
 				<template #icon>
 					<FolderMultipleImage :size="20" />
@@ -227,7 +227,7 @@ export default {
 	}
 }
 
-.shared-items {
+.shared-items-tab {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
