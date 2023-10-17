@@ -96,9 +96,6 @@
     "{actor} opened the conversation to registered users" : "{actor} görüşmeyi kayıtlı kullanıcılara açtı",
     "You opened the conversation to registered users" : "Görüşmeyi kayıtlı kullanıcılara açtınız",
     "An administrator opened the conversation to registered users" : "Bir yönetici görüşmeyi kayıtlı kullanıcılara açtı",
-    "{actor} opened the conversation to registered and guest app users" : "{actor} görüşmeyi kayıtlı ve konuk uygulama kullanıcılarına açtı",
-    "You opened the conversation to registered and guest app users" : "Görüşmeyi kayıtlı ve konuk uygulama kullanıcılarına açtınız",
-    "An administrator opened the conversation to registered and guest app users" : "Bir yönetici görüşmeyi kayıtlı ve konuk uygulama kullanıcılarına açtı",
     "The conversation is now open to everyone" : "Görüşme şu anda herkese açık",
     "{actor} opened the conversation to everyone" : "{actor} görüşmeyi herkese açtı",
     "You opened the conversation to everyone" : "Görüşmeyi herkese açtınız",
@@ -916,7 +913,6 @@
     "Personal" : "Kişisel",
     "Always show the device preview screen before joining a call in this conversation." : "Bu görüşmede bir çağrıya katılmadan önce her zaman aygıt ön izleme ekranı görüntülenir.",
     "Moderation" : "Yönetim",
-    "Setup summary" : "Kurulum özeti",
     "Meeting" : "Toplantı",
     "Permissions" : "İzinler",
     "Breakout Rooms" : "Çalışma odaları",
@@ -965,7 +961,6 @@
     "Invitations sent" : "Çağrılar gönderildi",
     "Error occurred when sending invitations" : "Çağrılar gönderilirken sorun çıktı",
     "Open conversation to registered users, showing it in search results" : "Görüşme kayıtlı kullanıcılara açılarak arama sonuçlarında görüntülensin",
-    "Also open to guest app users" : "Ayrıca konuk uygulama kullanıcılarına da açılsın",
     "Error occurred when opening or limiting the conversation" : "Görüşme açılır ya da kısıtlanırken sorun çıktı",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "Giriş etkinleştirildiğinde sorumlu olmayanlar sürmekte olan çağrıdan çıkarılır.",
     "Enable lobby, restricting the conversation to moderators" : "Girişi etkinleştir, görüşmeyi sorumlular ile kısıtla",
@@ -1599,6 +1594,9 @@
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Nextcloud Talk uygulamasına hoş geldiniz!\nBu görüşmede yeni Nextcloud Talk özellikleri hakkında bilgilendirileceksiniz.",
     "New in Talk %s" : "Talk %s uygulamasındaki yenilikler",
     "- You can now react to chat message" : "- Artık sohbet iletilerine tepki verebilirsiniz",
+    "{actor} opened the conversation to registered and guest app users" : "{actor} görüşmeyi kayıtlı ve konuk uygulama kullanıcılarına açtı",
+    "You opened the conversation to registered and guest app users" : "Görüşmeyi kayıtlı ve konuk uygulama kullanıcılarına açtınız",
+    "An administrator opened the conversation to registered and guest app users" : "Bir yönetici görüşmeyi kayıtlı ve konuk uygulama kullanıcılarına açtı",
     "{actor} invited {user}" : "{actor}, {user} kullanıcısını çağırdı",
     "You invited {user}" : "{user} kullanıcısını çağırdınız",
     "An administrator invited {user}" : "Bir yönetici, {user} kullanıcısını çağırdı",
@@ -1611,6 +1609,7 @@
     "Devices settings" : "Aygıtların ayarları",
     "Conversation link copied to clipboard." : "Görüşme bağlantısı panoya kopyalandı",
     "The link could not be copied." : "Bağlantı kopyalanamadı.",
+    "Also open to guest app users" : "Ayrıca konuk uygulama kullanıcılarına da açılsın",
     "Cancel editing description" : "Açıklamayı düzenlemekten vazgeç",
     "Submit conversation description" : "Görüşme açıklamasını gönder",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Açıklama {maxLength} ya da daha az karakter uzunluğunda olmalıdır. Şu andaki metin uzunluğu {charactersCount} karakter.",
@@ -1642,6 +1641,7 @@
     "{actor} removed the conversation avatar" : "{actor} görüşme avatarını kaldırdı",
     "You removed the conversation avatar" : "Görüşme avatarını kaldırdınız",
     "The PHP settings 'upload_max_filesize' or 'post_max_size' only will allow to upload files up to {maxUpload}." : "'upload_max_filesize' or 'post_max_size' PHP ayarı en fazla {maxUpload} boyutundaki dosyaların yüklenmesine izin veriyor.",
-    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Bu görüşmedeki bir çağrıya katılmadan önce her zaman bu pencere görüntülenir. Arama kaydedilirken pencere her zaman görüntülenir."
+    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Bu görüşmedeki bir çağrıya katılmadan önce her zaman bu pencere görüntülenir. Arama kaydedilirken pencere her zaman görüntülenir.",
+    "Setup summary" : "Kurulum özeti"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

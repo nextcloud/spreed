@@ -96,9 +96,6 @@
     "{actor} opened the conversation to registered users" : "{actor} 已向註冊用戶開放對話",
     "You opened the conversation to registered users" : "您已向註冊用戶開放對話",
     "An administrator opened the conversation to registered users" : "管理員已向註冊用戶開放對話",
-    "{actor} opened the conversation to registered and guest app users" : "{actor} 已向應用程式用戶（已註冊及來賓）開放對話",
-    "You opened the conversation to registered and guest app users" : "您已向應用程式用戶（已註冊及來賓）開放對話",
-    "An administrator opened the conversation to registered and guest app users" : "管理員已向應用程式用戶（已註冊及來賓）開放對話",
     "The conversation is now open to everyone" : "對話現在向所有人開放",
     "{actor} opened the conversation to everyone" : "{actor} 向所有人開放了對話",
     "You opened the conversation to everyone" : "您向所有人開放了對話",
@@ -916,7 +913,6 @@
     "Personal" : "個人",
     "Always show the device preview screen before joining a call in this conversation." : "在此對話中加入通話之前，一律顯示裝置預覽屏幕。",
     "Moderation" : "主持",
-    "Setup summary" : "設定摘要",
     "Meeting" : "會議",
     "Permissions" : "權限",
     "Breakout Rooms" : "分組討論室",
@@ -965,7 +961,6 @@
     "Invitations sent" : "邀請已傳送",
     "Error occurred when sending invitations" : "發送邀請時發生了錯誤",
     "Open conversation to registered users, showing it in search results" : "向註冊用戶開放對話並在搜索結果中顯示",
-    "Also open to guest app users" : "也向使用應用程式的來賓用戶開放",
     "Error occurred when opening or limiting the conversation" : "打開或限制對話時發生錯誤",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "啟用等候室將從正在進行的通話中刪除非主持人。",
     "Enable lobby, restricting the conversation to moderators" : "啟用等候室，將對話限制為主持人",
@@ -1599,6 +1594,9 @@
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "歡迎來到Nextcloud Talk!\n在此對話中，我們將向您介紹Nextcloud Talk中可用的新功能。",
     "New in Talk %s" : "Talk 的新功能 %s",
     "- You can now react to chat message" : "- 您現在可以對聊天訊息做出反應",
+    "{actor} opened the conversation to registered and guest app users" : "{actor} 已向應用程式用戶（已註冊及來賓）開放對話",
+    "You opened the conversation to registered and guest app users" : "您已向應用程式用戶（已註冊及來賓）開放對話",
+    "An administrator opened the conversation to registered and guest app users" : "管理員已向應用程式用戶（已註冊及來賓）開放對話",
     "{actor} invited {user}" : "{actor} 邀請 {user}",
     "You invited {user}" : "您邀請 {user}",
     "An administrator invited {user}" : "管理員邀請 {user}",
@@ -1611,6 +1609,7 @@
     "Devices settings" : "裝置設定",
     "Conversation link copied to clipboard." : "對話連結已複製到剪貼板。",
     "The link could not be copied." : "連結無法複製。",
+    "Also open to guest app users" : "也向使用應用程式的來賓用戶開放",
     "Cancel editing description" : "取消編輯描述",
     "Submit conversation description" : "遞交對話描述",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "說明的長度必須小於或等於{maxLength}個字符。您當前的文本長度為{charactersCount}個字符。",
@@ -1642,6 +1641,7 @@
     "{actor} removed the conversation avatar" : "{actor} 移除了對話虛擬化身",
     "You removed the conversation avatar" : "您移除了對話虛擬化身",
     "The PHP settings 'upload_max_filesize' or 'post_max_size' only will allow to upload files up to {maxUpload}." : "PHP 設定「upload_max_filesize」或「post_max_size」僅允許上傳最大 {maxUpload} 的檔案。",
-    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "在此對話中加入通話之前一律顯示此對話框。通話錄音時將一律顯示該對話框。"
+    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "在此對話中加入通話之前一律顯示此對話框。通話錄音時將一律顯示該對話框。",
+    "Setup summary" : "設定摘要"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
