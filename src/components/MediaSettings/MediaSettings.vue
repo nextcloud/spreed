@@ -121,7 +121,8 @@
 
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch class="checkbox"
-				:checked="showMediaSettings"
+				:checked="showMediaSettings || showRecordingWarning"
+				:disabled="showRecordingWarning"
 				@update:checked="setShowMediaSettings">
 				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
@@ -135,7 +136,7 @@
 
 			<!-- Recording warning -->
 			<NcNoteCard v-if="showRecordingWarning" type="warning">
-				<p v-if="isStartingRecording || isRecording">
+				<p v-if="isCurrentlyRecording">
 					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
 				</p>
 				<p v-else>
@@ -356,14 +357,9 @@ export default {
 			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
 		},
 
-		isStartingRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
-		},
-
-		isRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		isCurrentlyRecording() {
+			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
+				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
 		},
 
 		canFullModerate() {
@@ -381,7 +377,7 @@ export default {
 		},
 
 		showRecordingWarning() {
-			return !this.isInCall && (this.isStartingRecording || this.isRecording || this.isRecordingConsentRequired)
+			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
 		showSilentCallOption() {

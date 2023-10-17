@@ -39,11 +39,14 @@
 				id="notifications"
 				:name="t('spreed', 'Personal')">
 				<NcCheckboxRadioSwitch type="switch"
+					:disabled="recordingConsentRequired"
 					:checked="showMediaSettings"
 					@update:checked="setShowMediaSettings">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
-
+				<p v-if="recordingConsentRequired">
+					{{ t('spreed', 'The consent to be recorded will be required for each participant before joining every call.') }}
+				</p>
 				<NotificationsSettings :conversation="conversation" />
 			</NcAppSettingsSection>
 
@@ -248,6 +251,10 @@ export default {
 
 		recordingConsentAvailable() {
 			return recordingEnabled && recordingConsentCapability && recordingConsent
+		},
+
+		recordingConsentRequired() {
+			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
 		}
 	},
 

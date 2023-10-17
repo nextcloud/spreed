@@ -188,14 +188,10 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		isStartingRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
-		},
-
-		isRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		showRecordingWarning() {
+			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
+				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
+			|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
 		},
 
 		showMediaSettings() {
@@ -371,7 +367,7 @@ export default {
 				return
 			}
 
-			if (this.isStartingRecording || this.isRecording || this.showMediaSettings) {
+			if (this.showRecordingWarning || this.showMediaSettings) {
 				emit('talk:media-settings:show')
 			} else {
 				emit('talk:media-settings:hide')
