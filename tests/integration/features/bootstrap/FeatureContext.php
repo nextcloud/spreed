@@ -175,6 +175,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$messageIdToText = [];
 		self::$questionToPollId = [];
 		self::$lastNotifications = [];
+		self::$phoneNumberToActorId = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
