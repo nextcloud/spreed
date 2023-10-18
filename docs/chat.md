@@ -191,9 +191,10 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
     - `talkMetaData` array:
 
-| field         | type   | Description                                                                                            |
-|---------------|--------|--------------------------------------------------------------------------------------------------------|
-| `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment` |
+| field         | type   | Description                                                                                                           |
+|---------------|--------|-----------------------------------------------------------------------------------------------------------------------|
+| `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment`                |
+| `caption`     | string | A caption message that should be shown together with the shared file (only available with `media-caption` capability) |
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
 

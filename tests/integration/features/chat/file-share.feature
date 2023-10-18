@@ -22,6 +22,16 @@ Feature: chat/file-share
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
 
+  Scenario: Share a file with caption
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    When user "participant1" shares "welcome.txt" with room "public room"
+      | talkMetaData | {"caption":"Hello @participant2 this is a caption for the attached document"} |
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message                                                           | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | Hello {mention-user1} this is a caption for the attached document | "IGNORE"          |
+
   Scenario: Can not share a file without chat permission
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
