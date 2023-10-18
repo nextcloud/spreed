@@ -48,6 +48,7 @@ use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
+use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
@@ -157,6 +158,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
+		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
 

@@ -25,9 +25,11 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomModifiedEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
+use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -868,8 +870,10 @@ class RoomService {
 	}
 
 	public function deleteRoom(Room $room): void {
-		$event = new RoomEvent($room);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DELETE, $event);
+		$event = new BeforeRoomDeletedEvent($room);
+		$this->dispatcher->dispatchTyped($event);
+		$legacyEvent = new RoomEvent($room);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DELETE, $legacyEvent);
 
 		// Delete all breakout rooms when deleting a parent room
 		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
@@ -891,7 +895,9 @@ class RoomService {
 			->where($delete->expr()->eq('id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DELETE, $event);
+		$event = new RoomDeletedEvent($room);
+		$this->dispatcher->dispatchTyped($event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DELETE, $legacyEvent);
 		if (class_exists(CriticalActionPerformedEvent::class)) {
 			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
 				'Conversation "%s" deleted',

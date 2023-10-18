@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>18.0.0-dev.7</version>
+	<version>18.0.0-dev.8</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -97,6 +97,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<command>OCA\Talk\Command\Monitor\Calls</command>
 		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>
 		<command>OCA\Talk\Command\Monitor\Room</command>
+		<command>OCA\Talk\Command\Recording\Consent</command>
 		<command>OCA\Talk\Command\Room\Add</command>
 		<command>OCA\Talk\Command\Room\Create</command>
 		<command>OCA\Talk\Command\Room\Delete</command>
