@@ -282,9 +282,11 @@ const actions = {
 	 * @param {Function} context.dispatch the contexts dispatch function.
 	 * @param {object} context.getters the contexts getters object.
 	 * @param {object} context.state the contexts state object.
-	 * @param {string} uploadId The unique uploadId
+	 * @param {object} data the wrapping object
+	 * @param {string} data.uploadId The unique uploadId
+	 * @param {string} [data.caption] The text caption to the media
 	 */
-	async uploadFiles({ commit, dispatch, state, getters }, uploadId) {
+	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, caption }) {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
 		}
