@@ -302,13 +302,17 @@ class RoomService {
 		$event = new BeforeRoomModifiedEvent($room, 'recordingConsent', $recordingConsent, $oldRecordingConsent);
 		$this->dispatcher->dispatchTyped($event);
 
+		$now = $this->timeFactory->getDateTime();
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('recording_consent', $update->createNamedParameter($recordingConsent, IQueryBuilder::PARAM_INT))
+			->set('last_activity', $update->createNamedParameter($now, IQueryBuilder::PARAM_DATE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		$room->setRecordingConsent($recordingConsent);
+		$room->setLastActivity($now);
 
 		$event = new RoomModifiedEvent($room, 'recordingConsent', $recordingConsent, $oldRecordingConsent);
 		$this->dispatcher->dispatchTyped($event);
