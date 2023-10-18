@@ -794,6 +794,7 @@ OC.L10N.register(
     "Message could not be deleted because it is too old" : "Δεν ήταν δυνατή η διαγραφή του μηνύματος επειδή είναι αρκετά παλιό ",
     "An error occurred while deleting the message" : "Προέκυψε ένα σφάλμα κατά τη διαγραφή του μηνύματος",
     "Reply" : "Απάντηση",
+    "Set reminder" : "Προσθήκη υπενθύμισης",
     "Reply privately" : "Απάντηση ιδιωτικά",
     "Copy message link" : "Αντιγραφή συνδέσμου μηνύματος",
     "Go to file" : "Μετάβαση στο αρχείο",
