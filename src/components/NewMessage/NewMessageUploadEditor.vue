@@ -40,9 +40,9 @@
 					tag="div"
 					group>
 					<template v-for="file in files">
-						<FilePreview :key="file.temporaryMessage.id"
+						<FilePreview :key="file[1].temporaryMessage.id"
 							:token="token"
-							v-bind="file.temporaryMessage.messageParameters.file"
+							v-bind="file[1].temporaryMessage.messageParameters.file"
 							:is-upload-editor="true"
 							@remove-file="handleRemoveFileFromSelection" />
 					</template>
@@ -117,10 +117,7 @@ export default {
 		},
 
 		files() {
-			if (this.currentUploadId) {
-				return this.$store.getters.getInitialisedUploads(this.currentUploadId)
-			}
-			return []
+			return this.$store.getters.getInitialisedUploads(this.currentUploadId)
 		},
 
 		showModal() {
@@ -136,7 +133,7 @@ export default {
 		},
 
 		firstFile() {
-			return this.files[Object.keys(this.files)[0]]
+			return this.files?.at(0)?.at(1)
 		},
 
 		// Hide the plus button in case this editor is used while sending a voice message

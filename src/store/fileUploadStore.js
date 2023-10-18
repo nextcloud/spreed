@@ -48,36 +48,24 @@ const state = {
 
 const getters = {
 
-	getInitialisedUploads: (state) => (uploadId) => {
+	getUploadsArray: (state) => (uploadId) => {
 		if (state.uploads[uploadId]) {
-			const initialisedUploads = {}
-			for (const index in state.uploads[uploadId].files) {
-				const currentFile = state.uploads[uploadId].files[index]
-				if (currentFile.status === 'initialised') {
-					initialisedUploads[index] = (currentFile)
-				}
-			}
-			return initialisedUploads
+			return Object.entries(state.uploads[uploadId].files)
 		} else {
-			return {}
+			return []
 		}
+	},
+
+	getInitialisedUploads: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'initialised')
 	},
 
 	// Returns all the files that have been successfully uploaded provided an
 	// upload id
-	getShareableFiles: (state) => (uploadId) => {
-		if (state.uploads[uploadId]) {
-			const shareableFiles = {}
-			for (const index in state.uploads[uploadId].files) {
-				const currentFile = state.uploads[uploadId].files[index]
-				if (currentFile.status === 'successUpload') {
-					shareableFiles[index] = (currentFile)
-				}
-			}
-			return shareableFiles
-		} else {
-			return {}
-		}
+	getShareableFiles: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'successUpload')
 	},
 
 	// gets the current attachment folder
@@ -293,22 +281,27 @@ const actions = {
 
 		EventBus.$emit('upload-start')
 
-		// Tag the previously indexed files and add the temporary messages to the
-		// messages list
-		for (const index in state.uploads[uploadId].files) {
+		// Tag previously indexed files and add temporary messages to the MessagesList
+		// If caption is provided, attach to the last temporary message
+		const lastIndex = getters.getUploadsArray(uploadId).at(-1).at(0)
+		for (const [index, uploadedFile] of getters.getUploadsArray(uploadId)) {
 			// mark all files as uploading
 			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
-			const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
+			const temporaryMessage = {
+				...uploadedFile.temporaryMessage,
+				message: index === lastIndex ? caption : '{file}',
+			}
 			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', temporaryMessage)
 			// Scroll the message list
 			EventBus.$emit('scroll-chat-to-bottom')
 		}
+
 		// Iterate again and perform the uploads
-		for (const index in state.uploads[uploadId].files) {
+		await Promise.allSettled(getters.getUploadsArray(uploadId).map(async ([index, uploadedFile]) => {
 			// currentFile to be uploaded
-			const currentFile = state.uploads[uploadId].files[index].file
+			const currentFile = uploadedFile.file
 			// userRoot path
 			const userRoot = '/files/' + getters.getUserId()
 			const fileName = (currentFile.newName || currentFile.name)
@@ -345,41 +338,34 @@ const actions = {
 					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				}
 
-				const temporaryMessage = state.uploads[uploadId].files[index].temporaryMessage
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
-				dispatch('markTemporaryMessageAsFailed', {
-					message: temporaryMessage,
-					reason,
-				})
+				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, reason })
 			}
+		}))
 
-			// Get the files that have successfully been uploaded from the store
-			const shareableFiles = getters.getShareableFiles(uploadId)
-			// Share each of those files to the conversation
-			for (const index in shareableFiles) {
-				const path = shareableFiles[index].sharePath
-				const temporaryMessage = shareableFiles[index].temporaryMessage
-				const metadata = JSON.stringify({ messageType: temporaryMessage.messageType })
-				try {
-					const token = temporaryMessage.token
-					dispatch('markFileAsSharing', { uploadId, index })
-					await shareFile(path, token, temporaryMessage.referenceId, metadata)
-					dispatch('markFileAsShared', { uploadId, index })
-				} catch (error) {
-					if (error?.response?.status === 403) {
-						showError(t('spreed', 'You are not allowed to share files'))
-					} else {
-						showError(t('spreed', 'An error happened when trying to share your file'))
-					}
-					dispatch('markTemporaryMessageAsFailed', {
-						message: temporaryMessage,
-						reason: 'failed-share',
-					})
-					console.error('An error happened when trying to share your file: ', error)
+		// Share the files, that have successfully been uploaded from the store, to the conversation
+		await Promise.all(getters.getShareableFiles(uploadId).map(async ([index, shareableFile]) => {
+			const path = shareableFile.sharePath
+			const temporaryMessage = shareableFile.temporaryMessage
+			const metadata = (caption && index === lastIndex)
+				? JSON.stringify({ messageType: temporaryMessage.messageType, caption })
+				: JSON.stringify({ messageType: temporaryMessage.messageType })
+			try {
+				const token = temporaryMessage.token
+				dispatch('markFileAsSharing', { uploadId, index })
+				await shareFile(path, token, temporaryMessage.referenceId, metadata)
+				dispatch('markFileAsShared', { uploadId, index })
+			} catch (error) {
+				if (error?.response?.status === 403) {
+					showError(t('spreed', 'You are not allowed to share files'))
+				} else {
+					showError(t('spreed', 'An error happened when trying to share your file'))
 				}
+				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, reason: 'failed-share' })
+				console.error('An error happened when trying to share your file: ', error)
 			}
-		}
+		}))
 		EventBus.$emit('upload-finished')
 	},
 	/**
