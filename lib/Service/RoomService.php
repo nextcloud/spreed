@@ -276,7 +276,7 @@ class RoomService {
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
 	 * @throws \InvalidArgumentException When the room has an active call or the value is invalid
 	 */
-	public function setRecordingConsent(Room $room, int $recordingConsent): void {
+	public function setRecordingConsent(Room $room, int $recordingConsent, bool $allowUpdatingBreakoutRooms = false): void {
 		$oldRecordingConsent = $room->getRecordingConsent();
 
 		if ($recordingConsent === $oldRecordingConsent) {
@@ -289,6 +289,14 @@ class RoomService {
 
 		if ($recordingConsent !== RecordingService::CONSENT_REQUIRED_NO && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			throw new InvalidArgumentException('call');
+		}
+
+		if (!$allowUpdatingBreakoutRooms && $room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new InvalidArgumentException('breakout-room');
+		}
+
+		if ($room->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STOPPED) {
+			throw new InvalidArgumentException('breakout-room');
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, 'recordingConsent', $recordingConsent, $oldRecordingConsent);
@@ -304,6 +312,14 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, 'recordingConsent', $recordingConsent, $oldRecordingConsent);
 		$this->dispatcher->dispatchTyped($event);
+
+		// Update the recording consent for all rooms
+		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+			$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+			foreach ($breakoutRooms as $breakoutRoom) {
+				$this->setRecordingConsent($breakoutRoom, $recordingConsent, true);
+			}
+		}
 	}
 
 	/**
