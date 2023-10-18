@@ -43,7 +43,7 @@
 	},
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
-		"cuyz/valinor": "^1.6",
+		"cuyz/valinor": "1.6.0",
 		"firebase/php-jwt": "^6.3"
 	},
 	"extra": {
