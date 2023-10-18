@@ -27,6 +27,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Recording;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\RecordingService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -42,11 +44,17 @@ use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
 class Listener implements IEventListener {
 	public function __construct(
 		protected RecordingService $recordingService,
+		protected ConsentService $consentService,
 		protected IRootFolder $rootFolder,
 	) {
 	}
 
 	public function handle(Event $event): void {
+		if ($event instanceof RoomDeletedEvent) {
+			$this->roomDeleted($event);
+			return;
+		}
+
 		if (!($event instanceof AbstractTranscriptionEvent)) {
 			// Unrelated
 			return;
@@ -85,5 +93,9 @@ class Listener implements IEventListener {
 		}
 
 		$this->recordingService->notifyAboutFailedTranscript($owner, $fileNode);
+	}
+
+	protected function roomDeleted(RoomDeletedEvent $event): void {
+		$this->consentService->deleteByRoom($event->getRoom());
 	}
 }

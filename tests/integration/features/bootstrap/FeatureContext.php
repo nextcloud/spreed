@@ -3477,6 +3477,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Given /^the following recording consent is recorded for (room|user) "([^"]*)"$/
+	 */
+	public function occRecordingConsentLists(string $filterType, string $identifier, TableNode $tableNode): void {
+		if ($filterType === 'room') {
+			$filter = ' --token ' . self::$identifierToToken[$identifier];
+		} else {
+			$filter = ' --actor-type users --actor-id ' . $identifier;
+		}
+		$this->invokingTheCommand('talk:recording:consent --output json' . $filter);
+		$this->theCommandWasSuccessful();
+		$json = $this->getLastStdOut();
+
+		// Replace identifiers with token
+		$expected = array_map(static function (array $data): array {
+			$data['token'] = self::$identifierToToken[$data['token']];
+			return $data;
+		}, $tableNode->getHash());
+
+		// Remove timestamp from output
+		$actual = array_map(static function (array $data): array {
+			Assert::assertIsInt($data['timestamp'], 'Timestamp of recording consent was not an integer');
+			unset($data['timestamp']);
+			return $data;
+		}, json_decode($json, true, 512, JSON_THROW_ON_ERROR));
+
+		Assert::assertEquals($expected, $actual);
+	}
+
+	/**
 	 * @When /^wait for ([0-9]+) (second|seconds)$/
 	 */
 	public function waitForXSecond($seconds): void {

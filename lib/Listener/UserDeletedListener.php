@@ -25,6 +25,7 @@ namespace OCA\Talk\Listener;
 
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\PollService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -38,6 +39,7 @@ class UserDeletedListener implements IEventListener {
 	public function __construct(
 		private Manager $manager,
 		private PollService $pollService,
+		private ConsentService $consentService,
 	) {
 	}
 
@@ -51,5 +53,7 @@ class UserDeletedListener implements IEventListener {
 		$this->manager->removeUserFromAllRooms($user);
 
 		$this->pollService->neutralizeDeletedUser(Attendee::ACTOR_USERS, $user->getUID());
+
+		$this->consentService->deleteByActor(Attendee::ACTOR_USERS, $user->getUID());
 	}
 }

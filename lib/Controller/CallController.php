@@ -38,6 +38,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -56,6 +57,7 @@ class CallController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
+		private ConsentService $consentService,
 		private ParticipantService $participantService,
 		private RoomService $roomService,
 		private IUserManager $userManager,
@@ -140,6 +142,9 @@ class CallController extends AEnvironmentAwareController {
 				&& $this->room->getRecordingConsent() === RecordingService::CONSENT_REQUIRED_YES) {
 				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
 			}
+		} elseif ($recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
+			$attendee = $this->participant->getAttendee();
+			$this->consentService->storeConsent($this->room, $attendee->getActorType(), $attendee->getActorId());
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);

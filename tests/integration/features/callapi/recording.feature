@@ -594,3 +594,9 @@ Feature: callapi/recording
     Then user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | recordingConsent |
       | 2    | room1 | 0                |
+    And the following recording consent is recorded for room "room1"
+      | token | actorType | actorId      |
+      | room1 | users     | participant1 |
+    And the following recording consent is recorded for user "participant1"
+      | token | actorType | actorId      |
+      | room1 | users     | participant1 |

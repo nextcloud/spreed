@@ -224,6 +224,21 @@ Prints the number of attendees, active sessions and participant in the call.
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
 | `--separator` | Separator for the CSV list when output=csv is used | yes | yes | no | *Required* |
 
+## talk:recording:consent
+
+List all matching consent that were given to be audio and video recorded during a call (requires administrator or moderator configuration)
+
+### Usage
+
+* `talk:recording:consent [--output [OUTPUT]] [--token TOKEN] [--actor-type ACTOR-TYPE] [--actor-id ACTOR-ID]`
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
+| `--token` | Limit to the given conversation | yes | yes | no | *Required* |
+| `--actor-type` | Limit to the given actor (only valid when --actor-id is also provided) | yes | yes | no | *Required* |
+| `--actor-id` | Limit to the given actor (only valid when --actor-type is also provided) | yes | yes | no | *Required* |
+
 ## talk:room:add
 
 Adds users to a room

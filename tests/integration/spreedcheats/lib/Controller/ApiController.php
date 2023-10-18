@@ -71,6 +71,9 @@ class ApiController extends OCSController {
 			->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_consent')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_internalsignaling')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
