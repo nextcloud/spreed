@@ -242,6 +242,7 @@ OC.L10N.register(
     "Picture" : "Semeya",
     "The file must be a PNG or JPG" : "El ficheru a ser PNG o JPG",
     "Permissions" : "Permisos",
+    "Submit" : "Unviar",
     "_%n hour_::_%n hours_" : ["%n hora","%n hores"],
     "_%n day_::_%n days_" : ["%n día","%n díes"],
     "_%n week_::_%n weeks_" : ["%n selmana","%n selmanes"],
@@ -266,6 +267,7 @@ OC.L10N.register(
     "Participants" : "Participantes",
     "Details" : "Detalles",
     "Privacy" : "Privacidá",
+    "Keyboard shortcuts" : "Atayos del tecláu",
     "Audio" : "Audiu",
     "An error occurred while requesting assistance" : "Prodúxose un error mentanto se solicitaba l'asistencia"
 },
