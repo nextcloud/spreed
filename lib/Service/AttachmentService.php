@@ -29,12 +29,14 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\AttachmentMapper;
 use OCA\Talk\Room;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 
 class AttachmentService {
 
 	public function __construct(
-		public AttachmentMapper $attachmentMapper,
+		protected AttachmentMapper $attachmentMapper,
+		protected RoomShareProvider $shareProvider,
 	) {
 	}
 
@@ -77,6 +79,36 @@ class AttachmentService {
 		}
 
 		$this->attachmentMapper->insert($attachment);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param IComment $comment
+	 * @param array{shares?: string[], caption?: string}  $parameters
+	 */
+	public function createAttachmentEntriesForAllShares(Room $room, IComment $comment, array $parameters): void {
+
+		$shares = $this->shareProvider->getSharesByIds($parameters['shares']);
+		foreach ($shares as $share) {
+			$mimetype = $share->getNode()->getMimeType();
+
+			$attachment = new Attachment();
+			$attachment->setRoomId($room->getId());
+			$attachment->setActorType($comment->getActorType());
+			$attachment->setActorId($comment->getActorId());
+			$attachment->setMessageId((int) $comment->getId());
+			$attachment->setMessageTime($comment->getCreationDateTime()->getTimestamp());
+
+			if (str_starts_with($mimetype, 'audio/')) {
+				$attachment->setObjectType(Attachment::TYPE_AUDIO);
+			} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+				$attachment->setObjectType(Attachment::TYPE_MEDIA);
+			} else {
+				$attachment->setObjectType(Attachment::TYPE_FILE);
+			}
+
+			$this->attachmentMapper->insert($attachment);
+		}
 	}
 
 	/**

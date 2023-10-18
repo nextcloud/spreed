@@ -409,11 +409,44 @@ class SystemMessage {
 				} else {
 					$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				}
+
+				if (isset($metaData['caption']) && $metaData['caption'] !== '') {
+					$parsedMessage = $metaData['caption'];
+				}
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
+			}
+		} elseif ($message === 'multiple_files_shared') {
+			$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
+
+			$parsedMessage = '';
+			if (isset($parameters['caption']) && $parameters['caption'] !== '') {
+				$parsedMessage = $parameters['caption'];
+			}
+
+			$foundShares = $missingShares = [];
+			foreach ($parameters['shares'] as $key => $shareId) {
+				try {
+					$foundShares['file-' . ($key + 1)] = $this->getFileFromShare($participant, $shareId);
+				} catch (\Exception) {
+					$missingShares['file-missing-' . ($key + 1)] = [
+						'type' => 'highlight',
+						'id' => $shareId,
+						'name' => $this->l->t('Deleted file'),
+					];
+				}
+			}
+
+			if (empty($foundShares)) {
+				$parsedMessage = $this->l->t('{actor} shared files which are no longer available');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You shared files which are no longer available');
+				}
+			} else {
+				$parsedParameters = array_merge($parsedParameters, $foundShares, $missingShares);
 			}
 		} elseif ($message === 'object_shared') {
 			$parsedParameters['object'] = $parameters['metaData'];

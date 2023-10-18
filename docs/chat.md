@@ -191,11 +191,43 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
     - `talkMetaData` array:
 
-| field         | type   | Description                                                                                            |
-|---------------|--------|--------------------------------------------------------------------------------------------------------|
-| `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment` |
+| field         | type   | Description                                                                                                                                                          |
+|---------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment`                                                               |
+| `caption`     | string | A caption message that should be shown together with the shared file (only available with `media-caption` capability)                                                |
+| `noMessage`   | bool   | When no "X shared a file" message should be generated, because a combined caption message will be posted afterwards (only available with `media-caption` capability) |
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
+
+## Share multiple files to the chat
+
+* Required capability: `media-caption`
+* Method: `POST`
+* Endpoint: `/chat/{token}/share-files`
+* Data:
+
+| field              | type   | Description                                                                                                                       |
+|--------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `shareIds`         | int[]  | Array with the integer ID of the shares                                                                                           |
+| `caption`          | string | A caption message that should be shown together with the shared files                                                             |
+| `actorDisplayName` | string | Guest display name (ignored for logged in users)                                                                                  |
+| `referenceId`      | string | A reference string to be able to identify the generated chat message again in a "get messages" request, should be a random sha256 |
+
+* Response:
+    - Status code:
+        + `201 Created`
+        + `400 Bad Request` In case the meta data is invalid
+        + `403 Forbidden` When the conversation is read-only
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+        + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (check the `spreed => config => chat => max-length` capability for the limit)
+        + `413 Payload Too Large` When more than 64 share IDs were provided in one request
+
+    - Header:
+
+| field                     | type | Description                                                                                                                                                                                                     |
+|---------------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-Chat-Last-Common-Read` | int  | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability) |
 
 ## List overview of items shared into a chat
 
