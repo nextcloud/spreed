@@ -380,14 +380,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertEquals($expected, array_map(function ($room, $expectedRoom) {
-			if (isset($room['remoteAccessToken'])) {
-				self::$remoteAuth[self::translateRemoteServer($room['remoteServer']) . '#' . self::$identifierToToken[$room['name']]] = $room['remoteAccessToken'];
-			}
 			if (!isset(self::$identifierToToken[$room['name']])) {
 				self::$identifierToToken[$room['name']] = $room['token'];
 			}
 			if (!isset(self::$tokenToIdentifier[$room['token']])) {
 				self::$tokenToIdentifier[$room['token']] = $room['name'];
+			}
+
+			if (isset($room['remoteAccessToken'])) {
+				self::$remoteAuth[self::translateRemoteServer($room['remoteServer']) . '#' . self::$identifierToToken[$room['name']]] = $room['remoteAccessToken'];
 			}
 
 			$data = [];

@@ -59,6 +59,7 @@ use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
+use OCA\Talk\Federation\Listener as FederationListener;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
@@ -183,6 +184,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
+
+		// Federation listeners
+		$context->registerEventListener(RoomModifiedEvent::class, FederationListener::class);
 
 		// Signaling listeners
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);

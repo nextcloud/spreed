@@ -29,13 +29,18 @@ use Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\Invitation;
+use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception as DBException;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -64,7 +69,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private INotificationManager $notificationManager,
 		private IURLGenerator $urlGenerator,
 		private ParticipantService $participantService,
+		private RoomService $roomService,
 		private AttendeeMapper $attendeeMapper,
+		private InvitationMapper $invitationMapper,
 		private Manager $manager,
 		private ISession $session,
 		private IEventDispatcher $dispatcher,
@@ -151,6 +158,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				return $this->shareDeclined((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_SHARE_UNSHARED:
 				return $this->shareUnshared((int) $providerId, $notification);
+			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
+				return $this->roomModified((int) $providerId, $notification);
 		}
 
 		throw new BadRequestException([$notificationType]);
@@ -222,6 +231,42 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	}
 
 	/**
+	 * @param int $remoteAttendeeId
+	 * @param array{sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null} $notification
+	 * @return array
+	 * @throws ActionNotSupportedException
+	 * @throws AuthenticationFailedException
+	 * @throws ShareNotFound
+	 * @throws \OCA\Talk\Exceptions\RoomNotFoundException
+	 */
+	private function roomModified(int $remoteAttendeeId, array $notification): array {
+		$attendee = $this->getRemoteAttendeeAndValidate($remoteAttendeeId, $notification['sharedSecret']);
+
+		$room = $this->manager->getRoomById($attendee->getRoomId());
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedRemoteRoom()) {
+			throw new ShareNotFound();
+		}
+
+		if ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_AVATAR) {
+			$this->roomService->setAvatar($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
+			$this->roomService->setDescription($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_NAME) {
+			$this->roomService->setName($room, $notification['newValue'], $notification['oldValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_READ_ONLY) {
+			$this->roomService->setReadOnly($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_TYPE) {
+			$this->roomService->setType($room, $notification['newValue']);
+		} else {
+			$this->logger->debug('Update of room property "' . $notification['changedProperty'] . '" is not handled and should not be send via federation');
+		}
+
+		return [];
+	}
+
+	/**
 	 * @throws AuthenticationFailedException
 	 * @throws ActionNotSupportedException
 	 * @throws ShareNotFound
@@ -248,12 +293,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	/**
 	 * @param int $id
 	 * @param string $sharedSecret
-	 * @return Attendee
+	 * @return Attendee|Invitation
 	 * @throws ActionNotSupportedException
 	 * @throws ShareNotFound
 	 * @throws AuthenticationFailedException
 	 */
-	private function getRemoteAttendeeAndValidate(int $id, string $sharedSecret): Attendee {
+	private function getRemoteAttendeeAndValidate(int $id, string $sharedSecret): Attendee|Invitation {
 		if (!$this->federationManager->isEnabled()) {
 			throw new ActionNotSupportedException('Server does not support Talk federation');
 		}
@@ -263,11 +308,16 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		try {
-			$attendee = $this->attendeeMapper->getByRemoteIdAndToken($id, $sharedSecret);
-		} catch (Exception $ex) {
+			return $this->attendeeMapper->getByRemoteIdAndToken($id, $sharedSecret);
+		} catch (DoesNotExistException) {
+			try {
+				return $this->invitationMapper->getByRemoteIdAndToken($id, $sharedSecret);
+			} catch (DoesNotExistException $e) {
+				throw new ShareNotFound();
+			}
+		} catch (Exception) {
 			throw new ShareNotFound();
 		}
-		return $attendee;
 	}
 
 	private function notifyAboutNewShare(IUser $shareWith, string $shareId, string $sharedByFederatedId, string $sharedByName, string $roomName, string $roomToken, string $serverUrl): void {

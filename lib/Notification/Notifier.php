@@ -403,7 +403,7 @@ class Notifier implements INotifier {
 			if ($invite->getUserId() !== $notification->getUser()) {
 				throw new AlreadyProcessedException();
 			}
-			$this->manager->getRoomById($invite->getRoomId());
+			$room = $this->manager->getRoomById($invite->getRoomId());
 		} catch (RoomNotFoundException $e) {
 			// Room does not exist
 			throw new AlreadyProcessedException();
@@ -423,7 +423,7 @@ class Notifier implements INotifier {
 			'roomName' => [
 				'type' => 'highlight',
 				'id' => $subjectParameters['serverUrl'] . '::' . $subjectParameters['roomToken'],
-				'name' => $subjectParameters['roomName'],
+				'name' => $room->getName(),
 			],
 			'remoteServer' => [
 				'type' => 'highlight',
