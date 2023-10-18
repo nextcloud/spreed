@@ -49,6 +49,7 @@ use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -148,6 +149,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
+
+		// Talk internal listeners
+		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);

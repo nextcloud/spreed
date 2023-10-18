@@ -36,6 +36,7 @@ use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
@@ -43,10 +44,22 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
 
-class Listener {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
+
+	public function handle(Event $event): void {
+		if ($event instanceof RoomModifiedEvent) {
+			self::notifyAfterRoomSettingsChanged($event);
+		}
+	}
+
 	public static function register(IEventDispatcher $dispatcher): void {
 		self::registerInternalSignaling($dispatcher);
 		self::registerExternalSignaling($dispatcher);

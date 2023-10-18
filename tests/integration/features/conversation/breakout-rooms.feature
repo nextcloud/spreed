@@ -843,3 +843,36 @@ Feature: conversation/breakout-rooms
     And user "participant1" sets password "Test123!" for room "Room 1" with 403 (v4)
     # Can not set message expiration
     And user "participant1" set the message expiration to 3600 of room "Room 1" with 400 (v4)
+    # Can enable recording consent
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    Then user "participant1" sets the recording consent to 1 for room "Room 1" with 400 (v4)
+
+  Scenario: Handle recording consent for all breakout rooms on the parent
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus | recordingConsent |
+      | 2    | class room | 0          | 1                | 0                  | 0                |
+      | 2    | Room 1     | 1          | 0                | 0                  | 0                |
+      | 2    | Room 2     | 1          | 0                | 0                  | 0                |
+    # Enabling recording consent on the parent is not allowed with breakout rooms running
+    And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
+    Then user "participant1" sets the recording consent to 1 for room "class room" with 400 (v4)
+    And user "participant1" stops breakout rooms in room "class room" with 200 (v1)
+    # Enabling recording consent on the parent updates all breakout rooms
+    Then user "participant1" sets the recording consent to 1 for room "class room" with 200 (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus | recordingConsent |
+      | 2    | class room | 0          | 1                | 0                  | 1                |
+      | 2    | Room 1     | 1          | 0                | 0                  | 1                |
+      | 2    | Room 2     | 1          | 0                | 0                  | 1                |
