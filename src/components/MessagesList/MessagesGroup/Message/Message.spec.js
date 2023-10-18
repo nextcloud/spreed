@@ -325,6 +325,7 @@ describe('Message.vue', () => {
 				const messageEl = wrapper.findComponent({ name: 'NcRichText' })
 				// note: indices as object keys are on purpose
 				expect(messageEl.props('arguments')).toMatchObject(expectedRichParameters)
+				return messageEl
 			}
 
 			test('renders mentions', () => {
@@ -364,7 +365,7 @@ describe('Message.vue', () => {
 				)
 			})
 
-			test('renders file previews', () => {
+			test('renders single file preview', () => {
 				const params = {
 					actor: {
 						id: 'alice',
@@ -389,6 +390,36 @@ describe('Message.vue', () => {
 						},
 					}
 				)
+			})
+
+			test('renders single file preview with caption', () => {
+				const caption = 'text caption'
+				const params = {
+					actor: {
+						id: 'alice',
+						name: 'Alice',
+						type: 'user',
+					},
+					file: {
+						path: 'some/path',
+						type: 'file',
+					},
+				}
+				const messageEl = renderRichObject(
+					caption,
+					params, {
+						actor: {
+							component: Mention,
+							props: params.actor,
+						},
+						file: {
+							component: FilePreview,
+							props: params.file,
+						},
+					}
+				)
+
+				expect(messageEl.props('text')).toBe('{file}' + '\n\n' + caption)
 			})
 
 			test('renders deck cards', () => {
