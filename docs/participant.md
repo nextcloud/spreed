@@ -334,10 +334,10 @@ Note: This is only allowed as validate SIP bridge requests
 * Endpoint: `/room/{token}/rejected-dialout`
 * Data:
 
-| field        | type   | Description                                 |
-|--------------|--------|---------------------------------------------|
-| `attendeeId` | int    | The attendee ID of the dial-out participant |
-| `callId`     | string | The call ID that was rejected               |
+| field     | type   | Description                                    |
+|-----------|--------|------------------------------------------------|
+| `callId`  | string | The call ID that was rejected                  |
+| `options` | string | The options as received in the dialout request |
 
 * Response:
     - Status code:
