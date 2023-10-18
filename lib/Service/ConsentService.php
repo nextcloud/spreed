@@ -26,17 +26,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Talk\AppInfo\Application;
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Consent;
 use OCA\Talk\Model\ConsentMapper;
-use OCA\Talk\Model\Reminder;
-use OCA\Talk\Model\ReminderMapper;
 use OCA\Talk\Room;
-use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Notification\IManager;
 
 class ConsentService {
 	public function __construct(
