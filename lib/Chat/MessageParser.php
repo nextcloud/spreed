@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat;
 
 use OCA\Talk\Events\ChatMessageEvent;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
@@ -42,6 +43,7 @@ use OCP\IUserManager;
  * Helper class to get a rich message from a plain text message.
  */
 class MessageParser {
+	/** @deprecated */
 	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
 
 	protected array $guestNames = [];
@@ -72,6 +74,8 @@ class MessageParser {
 
 		$event = new ChatMessageEvent($message);
 		$this->dispatcher->dispatch(self::EVENT_MESSAGE_PARSE, $event);
+		$event = new MessageParseEvent($message->getRoom(), $message);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	protected function setActor(Message $message): void {

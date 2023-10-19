@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,19 +23,5 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Model\Message;
-
-/**
- * @deprecated
- */
-class ChatMessageEvent extends ChatEvent {
-	public function __construct(
-		protected Message $message,
-	) {
-		parent::__construct($message->getRoom(), $message->getComment());
-	}
-
-	public function getMessage(): Message {
-		return $this->message;
-	}
+class BeforeChatMessageSentEvent extends AMessageSentEvent {
 }

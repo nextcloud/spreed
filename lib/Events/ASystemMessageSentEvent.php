@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -27,20 +27,34 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
-/**
- * @deprecated
- */
-class ChatParticipantEvent extends ChatEvent {
+abstract class ASystemMessageSentEvent extends AMessageSentEvent {
 	public function __construct(
 		Room $room,
-		IComment $message,
-		protected Participant $participant,
-		bool $silent,
+		IComment $comment,
+		?Participant $participant = null,
+		bool $silent = false,
+		protected bool $skipLastActivityUpdate = false,
 	) {
-		parent::__construct($room, $message, false, $silent);
+		parent::__construct(
+			$room,
+			$comment,
+			$participant,
+			$silent
+		);
 	}
 
-	public function getParticipant(): Participant {
-		return $this->participant;
+	/**
+	 * If multiple messages will be posted (e.g. when adding multiple users to a room)
+	 * we can skip the last message and last activity update until the last entry
+	 * was created and then update with those values.
+	 * This will replace O(n) with 1 database update.
+	 *
+	 * A {@see SystemMessagesMultipleSentEvent} will be triggered
+	 * as a final event when all system messages have been created.
+	 *
+	 * @return bool
+	 */
+	public function shouldSkipLastActivityUpdate(): bool {
+		return $this->skipLastActivityUpdate;
 	}
 }

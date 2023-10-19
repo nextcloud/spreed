@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,19 +23,31 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCP\Comments\IComment;
 
-/**
- * @deprecated
- */
-class ChatMessageEvent extends ChatEvent {
+abstract class AMessageSentEvent extends RoomEvent {
 	public function __construct(
-		protected Message $message,
+		Room $room,
+		protected IComment $comment,
+		protected ?Participant $participant = null,
+		protected bool $silent = false,
 	) {
-		parent::__construct($message->getRoom(), $message->getComment());
+		parent::__construct(
+			$room,
+		);
 	}
 
-	public function getMessage(): Message {
-		return $this->message;
+	public function getComment(): IComment {
+		return $this->comment;
+	}
+
+	public function getParticipant(): ?Participant {
+		return $this->participant;
+	}
+
+	public function isSilentMessage(): bool {
+		return $this->silent;
 	}
 }

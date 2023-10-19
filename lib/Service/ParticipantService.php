@@ -50,6 +50,7 @@ use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Events\SilentModifyParticipantEvent;
+use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
@@ -526,6 +527,8 @@ class ParticipantService {
 
 		$event = new ChatEvent($room, $message);
 		$this->dispatcher->dispatch(ChatManager::EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND, $event);
+		$event = new SystemMessagesMultipleSentEvent($room, $message);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	public function getHighestPermissionAttendee(Room $room): ?Attendee {

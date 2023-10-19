@@ -276,6 +276,30 @@ These events were not using the typed-event mechanism and are therefore deprecat
 
 ## Chat related events
 
+### Parse chat message
+
+Used to parse mentions, replace parameters in messages with rich objects, transform system messages into readable and translated chat messages etc.
+
+* Event: `OCA\Talk\Events\MessageParseEvent`
+* Since: 18.0.0
+
+### Chat message sent
+
+* Before event: `OCA\Talk\Events\BeforeChatMessageSentEvent`
+* After event: `OCA\Talk\Events\ChatMessageSentEvent`
+* Since: 18.0.0
+
+### System message sent
+
+`shouldSkipLastActivityUpdate` indicates whether multiple system messages are being sent.
+In case you only need to be notified after the last system message was posted,
+listen to the `OCA\Talk\Events\SystemMessagesMultipleSentEvent` event instead.
+
+* Before event: `OCA\Talk\Events\BeforeSystemMessageSentEvent`
+* After event: `OCA\Talk\Events\SystemMessageSentEvent`
+* Final event: `OCA\Talk\Events\SystemMessagesMultipleSentEvent` - Only sent once as per above explanation
+* Since: 18.0.0
+
 ### Deprecated events
 
 These events were not using the typed-event mechanism and are therefore deprecated and will be removed in a future version.
@@ -286,7 +310,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Chat\ChatManager::EVENT_BEFORE_SYSTEM_MESSAGE_SEND`
 * After event name: `OCA\Talk\Chat\ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeSystemMessageSentEvent` and `OCA\Talk\Events\SystemMessageSentEvent` instead
+* Removed: 19.0.0
 
 #### Post chat message
 
@@ -294,21 +319,23 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Chat\ChatManager::EVENT_BEFORE_MESSAGE_SEND`
 * After event name: `OCA\Talk\Chat\ChatManager::EVENT_AFTER_MESSAGE_SEND`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeChatMessageSentEvent` and `OCA\Talk\Events\ChatMessageSentEvent` instead
+* Removed: 19.0.0
 
 #### Parse chat message
 
 * Event class: `OCA\Talk\Events\ChatMessageEvent`
 * Event name: `OCA\Talk\Chat\MessageParser::EVENT_MESSAGE_PARSE`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\MessageParseEvent` instead
+* Removed: 19.0.0
 
 #### Command execution for apps
 
 * Event class: `OCA\Talk\Events\CommandEvent`
 * Event name: `OCA\Talk\Chat\Command\Executor::EVENT_APP_EXECUTE`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 17.0.0 - Commands are deprecated, please migrate to bots instead
 
 ## Other events
 

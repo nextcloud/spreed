@@ -26,6 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
+/**
+ * @deprecated
+ */
 class ChatEvent extends RoomEvent {
 	public function __construct(
 		Room $room,
