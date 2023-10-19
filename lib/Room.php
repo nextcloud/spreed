@@ -106,25 +106,45 @@ class Room {
 	public const EVENT_AFTER_ROOM_CREATE = self::class . '::createdRoom';
 	public const EVENT_BEFORE_ROOM_DELETE = self::class . '::preDeleteRoom';
 	public const EVENT_AFTER_ROOM_DELETE = self::class . '::postDeleteRoom';
+	/** @deprecated */
 	public const EVENT_BEFORE_NAME_SET = self::class . '::preSetName';
+	/** @deprecated */
 	public const EVENT_AFTER_NAME_SET = self::class . '::postSetName';
+	/** @deprecated */
 	public const EVENT_BEFORE_DESCRIPTION_SET = self::class . '::preSetDescription';
+	/** @deprecated */
 	public const EVENT_AFTER_DESCRIPTION_SET = self::class . '::postSetDescription';
+	/** @deprecated */
 	public const EVENT_BEFORE_PASSWORD_SET = self::class . '::preSetPassword';
+	/** @deprecated */
 	public const EVENT_AFTER_PASSWORD_SET = self::class . '::postSetPassword';
+	/** @deprecated */
 	public const EVENT_BEFORE_TYPE_SET = self::class . '::preSetType';
+	/** @deprecated */
 	public const EVENT_AFTER_TYPE_SET = self::class . '::postSetType';
+	/** @deprecated */
 	public const EVENT_BEFORE_READONLY_SET = self::class . '::preSetReadOnly';
+	/** @deprecated */
 	public const EVENT_AFTER_READONLY_SET = self::class . '::postSetReadOnly';
+	/** @deprecated */
 	public const EVENT_BEFORE_LISTABLE_SET = self::class . '::preSetListable';
+	/** @deprecated */
 	public const EVENT_AFTER_LISTABLE_SET = self::class . '::postSetListable';
+	/** @deprecated */
 	public const EVENT_BEFORE_LOBBY_STATE_SET = self::class . '::preSetLobbyState';
+	/** @deprecated */
 	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
+	/** @deprecated */
 	public const EVENT_BEFORE_END_CALL_FOR_EVERYONE = self::class . '::preEndCallForEveryone';
+	/** @deprecated */
 	public const EVENT_AFTER_END_CALL_FOR_EVERYONE = self::class . '::postEndCallForEveryone';
+	/** @deprecated */
 	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
+	/** @deprecated */
 	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
+	/** @deprecated */
 	public const EVENT_BEFORE_PERMISSIONS_SET = self::class . '::preSetPermissions';
+	/** @deprecated */
 	public const EVENT_AFTER_PERMISSIONS_SET = self::class . '::postSetPermissions';
 	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
 	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
@@ -152,15 +172,25 @@ class Room {
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
+	/** @deprecated  */
 	public const EVENT_BEFORE_SET_MESSAGE_EXPIRATION = self::class . '::beforeSetMessageExpiration';
+	/** @deprecated  */
 	public const EVENT_AFTER_SET_MESSAGE_EXPIRATION = self::class . '::afterSetMessageExpiration';
+	/** @deprecated  */
 	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_MODE = self::class . '::beforeSetBreakoutRoomMode';
+	/** @deprecated  */
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_MODE = self::class . '::afterSetBreakoutRoomMode';
+	/** @deprecated  */
 	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS = self::class . '::beforeSetBreakoutRoomStatus';
+	/** @deprecated  */
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
+	/** @deprecated  */
 	public const EVENT_BEFORE_SET_CALL_RECORDING = self::class . '::beforeSetCallRecording';
+	/** @deprecated  */
 	public const EVENT_AFTER_SET_CALL_RECORDING = self::class . '::afterSetCallRecording';
+	/** @deprecated  */
 	public const EVENT_BEFORE_AVATAR_SET = self::class . '::preSetAvatar';
+	/** @deprecated  */
 	public const EVENT_AFTER_AVATAR_SET = self::class . '::postSetAvatar';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
