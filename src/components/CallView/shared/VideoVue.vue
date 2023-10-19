@@ -22,8 +22,12 @@
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
 		ref="videoContainer"
-		class="videoContainer"
-		:class="containerClass"
+		class="video-container"
+		:class="[containerClass, {
+			speaking: isSpeaking && !isBig,
+			hover: mouseover && !unSelectable && !isBig,
+			presenter: isPresenterOverlay && mouseover
+		}]"
 		@mouseover="showShadow"
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
@@ -77,8 +81,7 @@
 				:has-shadow="hasVideo"
 				:participant-name="participantName" />
 		</slot>
-		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
-		<div v-if="!unSelectable && mouseover && !isBig" class="hover-shadow" />
+		<AccountOff v-if="isPresenterOverlay && mouseover" class="presenter-icon__hide" :size="30" />
 	</div>
 </template>
 
@@ -88,6 +91,7 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
+import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../TransitionWrapper.vue'
@@ -109,9 +113,11 @@ export default {
 		AvatarWrapper,
 		TransitionWrapper,
 		VideoBackground,
-		AccountCircle,
 		Screen,
 		VideoBottomBar,
+		// icons
+		AccountCircle,
+		AccountOff,
 	},
 
 	mixins: [video],
@@ -141,6 +147,12 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		isPresenterOverlay: {
+			type: Boolean,
+			default: false,
+		},
+
 		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
 			type: Boolean,
@@ -449,7 +461,7 @@ export default {
 				// Grid
 			} else {
 				// Always show shared screen if there's one
-				return this.hasSharedScreen
+				return this.hasSharedScreen && !this.isPresenterOverlay
 			}
 		},
 
@@ -457,7 +469,7 @@ export default {
 			// Screenshare have higher priority so return false if screenshare
 			// is shown
 			if (this.hasSharedScreen) {
-				return !this.showSharedScreen && this.hasVideo && !this.isSelected
+				return (!this.showSharedScreen && this.hasVideo && !this.isSelected) || this.isPresenterOverlay
 			} else {
 				if (this.isStripe) {
 					if (this.hasSelectedVideo) {
@@ -680,24 +692,38 @@ export default {
 	top: calc(50% + 80px);
 }
 
-.speaking-shadow {
+.video-container::after {
 	position: absolute;
 	height: 100%;
 	width: 100%;
 	top: 0;
 	left: 0;
-	box-shadow: inset 0 0 0 2px white;
 	border-radius: calc(var(--default-clickable-area) / 2);
+}
+.video-container.speaking::after {
+	content: '';
+	box-shadow: inset 0 0 0 2px white;
 }
 
-.hover-shadow {
+.video-container.hover::after {
+	content: '';
+	box-shadow: inset 0 0 0 3px white;
+	cursor: pointer;
+}
+
+.presenter-icon__hide {
 	position: absolute;
 	height: 100%;
 	width: 100%;
 	top: 0;
 	left: 0;
-	box-shadow: inset 0 0 0 3px white;
-	cursor: pointer;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	color: white;
 }
+
+.video-container.presenter::after {
+	content: '' ;
+	background-color: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+}
+
 </style>
