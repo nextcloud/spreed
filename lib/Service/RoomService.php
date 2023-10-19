@@ -35,6 +35,7 @@ use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -746,14 +747,25 @@ class RoomService {
 		return true;
 	}
 
+	/**
+	 * @return array{result: ?bool, url: string}
+	 */
 	public function verifyPassword(Room $room, string $password): array {
-		$event = new VerifyRoomPasswordEvent($room, $password);
-		$this->dispatcher->dispatch(Room::EVENT_PASSWORD_VERIFY, $event);
+		$event = new RoomPasswordVerifyEvent($room, $password);
+		$this->dispatcher->dispatchTyped($event);
 
+		$legacyEvent = new VerifyRoomPasswordEvent($room, $password);
 		if ($event->isPasswordValid() !== null) {
+			$legacyEvent->setIsPasswordValid($event->isPasswordValid());
+		}
+		$legacyEvent->setRedirectUrl($event->getRedirectUrl());
+
+		$this->dispatcher->dispatch(Room::EVENT_PASSWORD_VERIFY, $legacyEvent);
+
+		if ($legacyEvent->isPasswordValid() !== null) {
 			return [
-				'result' => $event->isPasswordValid(),
-				'url' => $event->getRedirectUrl(),
+				'result' => $legacyEvent->isPasswordValid(),
+				'url' => $legacyEvent->getRedirectUrl(),
 			];
 		}
 

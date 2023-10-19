@@ -165,6 +165,7 @@ class Room {
 	public const EVENT_AFTER_ROOM_DISCONNECT = self::class . '::postUserDisconnectRoom';
 	public const EVENT_BEFORE_GUEST_CONNECT = self::class . '::preJoinRoomGuest';
 	public const EVENT_AFTER_GUEST_CONNECT = self::class . '::postJoinRoomGuest';
+	/** @deprecated  */
 	public const EVENT_PASSWORD_VERIFY = self::class . '::verifyPassword';
 	/** @deprecated  */
 	public const EVENT_BEFORE_GUESTS_CLEAN = self::class . '::preCleanGuests';
