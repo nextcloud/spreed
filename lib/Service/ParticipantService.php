@@ -31,7 +31,9 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
@@ -1047,6 +1049,8 @@ class ParticipantService {
 	}
 
 	public function endCallForEveryone(Room $room, Participant $moderator): void {
+		$event = new BeforeCallEndedForEveryoneEvent($room, $moderator);
+		$this->dispatcher->dispatchTyped($event);
 		$event = new EndCallForEveryoneEvent($room, $moderator);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $event);
 
@@ -1069,6 +1073,8 @@ class ParticipantService {
 		$event->setUserIds($changedUserIds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
+		$event = new CallEndedForEveryoneEvent($room, $moderator, $changedSessionIds, $changedUserIds);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): bool {

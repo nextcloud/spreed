@@ -23,5 +23,35 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-class RoomModifiedEvent extends ARoomModifiedEvent {
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+
+class CallEndedForEveryoneEvent extends ACallEndedForEveryoneEvent {
+	public function __construct(
+		Room $room,
+		?Participant $actor = null,
+		/** @var string[] */
+		protected array $sessionIds = [],
+		/** @var string[] */
+		protected array $userIds = [],
+	) {
+		parent::__construct(
+			$room,
+			$actor
+		);
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getSessionIds(): array {
+		return $this->sessionIds;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getUserIds(): array {
+		return $this->userIds;
+	}
 }

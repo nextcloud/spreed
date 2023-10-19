@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,5 +23,29 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-class RoomModifiedEvent extends ARoomModifiedEvent {
+use OCA\Talk\Room;
+
+abstract class ALobbyModifiedEvent extends ARoomModifiedEvent {
+	public function __construct(
+		Room $room,
+		string|int $newValue,
+		string|int|null $oldValue,
+		protected ?\DateTime $lobbyTimer,
+		protected bool $timerReached,
+	) {
+		parent::__construct(
+			$room,
+			self::PROPERTY_LOBBY,
+			$newValue,
+			$oldValue,
+		);
+	}
+
+	public function getLobbyTimer(): ?\DateTime {
+		return $this->lobbyTimer;
+	}
+
+	public function isTimerReached(): bool {
+		return $this->timerReached;
+	}
 }

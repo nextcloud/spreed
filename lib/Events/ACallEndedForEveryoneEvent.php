@@ -23,5 +23,20 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-class RoomModifiedEvent extends ARoomModifiedEvent {
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+
+abstract class ACallEndedForEveryoneEvent extends ARoomModifiedEvent {
+	public function __construct(
+		Room $room,
+		?Participant $actor = null,
+	) {
+		parent::__construct(
+			$room,
+			self::PROPERTY_IN_CALL,
+			Participant::FLAG_DISCONNECTED,
+			null,
+			$actor
+		);
+	}
 }
