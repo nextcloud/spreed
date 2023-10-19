@@ -121,16 +121,29 @@
 				<ul class="h-100" :class="{'scroller': isSearching}">
 					<!-- Conversations List -->
 					<template v-if="!isSearching">
-						<li class="h-100">
+						<NcEmptyContent v-if="initialisedConversations && filteredConversationsList.length === 0"
+							:name="t('spreed', 'No matches found')"
+							:description="displayedMessage">
+							<template #icon>
+								<MessageBadge v-if="isFiltered" :size="64" />
+								<MessageOutline v-else :size="64" />
+							</template>
+							<template #action>
+								<NcButton v-if="isFiltered" @click="handleFilter(null)">
+									<template #icon>
+										<FilterRemoveIcon :size="20" />
+									</template>
+									{{ t('spreed', 'Clear filter') }}
+								</NcButton>
+							</template>
+						</NcEmptyContent>
+						<li v-show="filteredConversationsList.length > 0" class="h-100">
 							<ConversationsListVirtual ref="scroller"
 								:conversations="filteredConversationsList"
 								:loading="!initialisedConversations"
 								class="scroller h-100"
 								@scroll.native="debounceHandleScroll" />
 						</li>
-						<Hint v-if="initialisedConversations && filteredConversationsList.length === 0"
-							:hint="t('spreed', 'No matches found')" />
-
 						<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 							class="unread-mention-button"
 							type="primary"
@@ -252,6 +265,7 @@ import List from 'vue-material-design-icons/FormatListBulleted.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -264,6 +278,7 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
@@ -287,6 +302,7 @@ import { EventBus } from '../../services/EventBus.js'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
+import { filterFunction } from '../../utils/conversation.js'
 
 export default {
 
@@ -310,6 +326,7 @@ export default {
 		// Icons
 		AtIcon,
 		MessageBadge,
+		MessageOutline,
 		FilterIcon,
 		FilterRemoveIcon,
 		Plus,
@@ -317,6 +334,7 @@ export default {
 		List,
 		DotsVertical,
 		Note,
+		NcEmptyContent,
 	},
 
 	mixins: [
@@ -366,6 +384,7 @@ export default {
 			isCurrentTabLeader: false,
 			isFocused: false,
 			isFiltered: null,
+			isNavigating: false,
 		}
 	},
 
@@ -386,21 +405,39 @@ export default {
 			}
 		},
 
+		token() {
+			return this.$store.getters.getToken()
+		},
+
+		displayedMessage() {
+			switch (this.isFiltered) {
+			case 'mentions':
+				return t('spreed', 'You have no unread mentions in your inbox.')
+			case 'unread':
+				return t('spreed', 'You have no unread messages in your inbox.')
+			default:
+				return t('spreed', 'Your inbox is empty.')
+			}
+		},
+
 		filteredConversationsList() {
 			if (this.isFocused) {
 				return this.conversationsList
 			}
-
-			if (this.isFiltered === 'unread') {
-				return this.conversationsList.filter(conversation => conversation.unreadMessages > 0
-				|| conversation.hasCall || conversation.token === this.$store.getters.getToken())
-			}
-
-			if (this.isFiltered === 'mentions') {
-				return this.conversationsList.filter(conversation => conversation.unreadMention
-				|| conversation.hasCall
-				|| (conversation.unreadMessages > 0 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
-				|| conversation.token === this.$store.getters.getToken())
+			// applying filters
+			if (this.isFiltered) {
+				let validConversationsCount = 0
+				const filteredConversations = this.conversationsList.filter((conversation) => {
+					const conversationIsValid = filterFunction(this.isFiltered, conversation)
+					if (conversationIsValid) {
+						validConversationsCount++
+					}
+					return conversationIsValid
+						|| conversation.hasCall
+						|| conversation.token === this.token
+				})
+				// return empty if it only includes the current conversation without any flags
+				return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
 			}
 
 			return this.conversationsList
@@ -445,6 +482,14 @@ export default {
 						? t('spreed', 'Circles')
 						: t('spreed', 'Other sources')
 				}
+			}
+		},
+	},
+
+	watch: {
+		token(value) {
+			if (value && this.isFiltered) {
+				this.isNavigating = true
 			}
 		},
 	},
@@ -524,16 +569,16 @@ export default {
 
 		handleFilter(filter) {
 			this.isFiltered = filter
-
 			// Store the active filter
 			if (filter) {
 				BrowserStorage.setItem('filterEnabled', filter)
 			} else {
 				BrowserStorage.removeItem('filterEnabled')
 			}
-
 			// Clear the search input once a filter is active
 			this.searchText = ''
+			// Initiate the navigation status
+			this.isNavigating = false
 		},
 
 		scrollBottomUnread() {
@@ -924,6 +969,11 @@ export default {
 		font-weight: bold;
 	}
 
+}
+
+:deep(.empty-content) {
+	text-align: center;
+	padding: 20% 10px 0;
 }
 
 .settings-button {

@@ -580,7 +580,7 @@ const actions = {
 			return
 		}
 
-		commit('updateUnreadMessages', { token, unreadMessages: 0, unreadMention: false })
+		commit('updateUnreadMessages', { token, unreadMessages: 0, unreadMention: false, unreadMentionDirect: false })
 	},
 
 	async markConversationUnread({ commit, dispatch, getters }, { token }) {
