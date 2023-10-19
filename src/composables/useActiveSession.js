@@ -98,7 +98,10 @@ export function useActiveSession() {
 
 		try {
 			await setSessionState(token.value, SESSION.STATE.INACTIVE)
-			showInfo(t('spreed', 'Session has been marked as inactive'))
+			// Show toast message only when tab is visible on screen
+			if (windowIsVisible.value) {
+				showInfo(t('spreed', 'Session has been marked as inactive'))
+			}
 			console.info('Session has been marked as inactive')
 		} catch (error) {
 			console.error(error)
@@ -112,6 +115,7 @@ export function useActiveSession() {
 			document.removeEventListener('mouseenter', handleMouseMove)
 			document.removeEventListener('mouseleave', handleMouseMove)
 		} else if (type === 'blur') {
+			clearTimeout(inactiveTimer.value)
 			inactiveTimer.value = setTimeout(() => {
 				setSessionAsInactive()
 			}, INACTIVE_TIME_MS)
@@ -123,6 +127,7 @@ export function useActiveSession() {
 	}
 
 	const handleMouseMove = (event) => {
+		setSessionAsActive()
 		// Restart timer, if mouse moves around the tab
 		clearTimeout(inactiveTimer.value)
 		inactiveTimer.value = setTimeout(() => {
