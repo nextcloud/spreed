@@ -26,6 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
 
+/**
+ * @deprecated
+ */
 class RoomEvent extends Event {
 
 

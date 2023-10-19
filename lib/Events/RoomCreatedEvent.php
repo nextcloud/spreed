@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,35 +23,5 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCP\EventDispatcher\Event;
-
-/**
- * @deprecated
- */
-class CreateRoomTokenEvent extends Event {
-	protected string $token;
-
-	public function __construct(
-		protected int $entropy,
-		protected string $chars,
-	) {
-		parent::__construct();
-		$this->token = '';
-	}
-
-	public function getEntropy(): int {
-		return $this->entropy;
-	}
-
-	public function getChars(): string {
-		return $this->chars;
-	}
-
-	public function setToken(string $token): void {
-		$this->token = $token;
-	}
-
-	public function getToken(): string {
-		return $this->token;
-	}
+class RoomCreatedEvent extends RoomEvent {
 }

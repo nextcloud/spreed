@@ -33,11 +33,13 @@ use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
+use OCA\Talk\Events\BeforeGuestsCleanedUpEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\FederatedUserJoinedRoomEvent;
+use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
@@ -985,6 +987,8 @@ class ParticipantService {
 	}
 
 	public function cleanGuestParticipants(Room $room): void {
+		$event = new BeforeGuestsCleanedUpEvent($room);
+		$this->dispatcher->dispatchTyped($event);
 		$event = new RoomEvent($room);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUESTS_CLEAN, $event);
 
@@ -1046,6 +1050,8 @@ class ParticipantService {
 		$this->dispatcher->dispatchTyped($attendeeEvent);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUESTS_CLEAN, $event);
+		$event = new GuestsCleanedUpEvent($room);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	public function endCallForEveryone(Room $room, Participant $moderator): void {

@@ -91,6 +91,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class RoomController extends AEnvironmentAwareController {
+	/** @deprecated */
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
 
 	protected array $commonReadMessages = [];

@@ -103,8 +103,11 @@ class Room {
 	public const PARTICIPANT_REMOVED_ALL = 'remove_all';
 	public const PARTICIPANT_LEFT = 'leave';
 
+	/** @deprecated */
 	public const EVENT_AFTER_ROOM_CREATE = self::class . '::createdRoom';
+	/** @deprecated */
 	public const EVENT_BEFORE_ROOM_DELETE = self::class . '::preDeleteRoom';
+	/** @deprecated */
 	public const EVENT_AFTER_ROOM_DELETE = self::class . '::postDeleteRoom';
 	/** @deprecated */
 	public const EVENT_BEFORE_NAME_SET = self::class . '::preSetName';
@@ -163,7 +166,9 @@ class Room {
 	public const EVENT_BEFORE_GUEST_CONNECT = self::class . '::preJoinRoomGuest';
 	public const EVENT_AFTER_GUEST_CONNECT = self::class . '::postJoinRoomGuest';
 	public const EVENT_PASSWORD_VERIFY = self::class . '::verifyPassword';
+	/** @deprecated  */
 	public const EVENT_BEFORE_GUESTS_CLEAN = self::class . '::preCleanGuests';
+	/** @deprecated  */
 	public const EVENT_AFTER_GUESTS_CLEAN = self::class . '::postCleanGuests';
 	public const EVENT_BEFORE_SESSION_JOIN_CALL = self::class . '::preSessionJoinCall';
 	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
