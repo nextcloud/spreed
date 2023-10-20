@@ -345,6 +345,12 @@ These events were not using the typed-event mechanism and are therefore deprecat
 
 ## Other events
 
+### Turn servers get
+
+* Before event: `OCA\Talk\Events\BeforeTurnServersGetEvent`
+* After event: *Not available*
+* Since: 18.0.0
+
 ### Signaling room properties sent
 
 * Before event: `OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent`

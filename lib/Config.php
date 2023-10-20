@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Events\GetTurnServersEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\RecordingService;
@@ -341,6 +342,8 @@ class Config {
 
 		if ($withEvent) {
 			$event = new GetTurnServersEvent($servers);
+			$this->dispatcher->dispatchTyped($event);
+			$event = new BeforeTurnServersGetEvent($event->getServers());
 			$this->dispatcher->dispatchTyped($event);
 			$servers = $event->getServers();
 		}
