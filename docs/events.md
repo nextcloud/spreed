@@ -169,10 +169,30 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * After event: `OCA\Talk\Events\AttendeesRemovedEvent`
 * Since: 12.0.0
 
+### User joined a conversation
+
+* Before event: `OCA\Talk\Events\BeforeUserJoinedRoomEvent`
+* After event: `OCA\Talk\Events\UserJoinedRoomEvent`
+* Since: 18.0.0
+
 ### Federated user joined a conversation
 
 * Before event: `OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent`
 * After event: `OCA\Talk\Events\FederatedUserJoinedRoomEvent`
+* Since: 18.0.0
+
+### Guest joined a conversation
+
+* Before event: `OCA\Talk\Events\BeforeGuestJoinedRoomEvent`
+* After event: `OCA\Talk\Events\GuestJoinedRoomEvent`
+* Since: 18.0.0
+
+### Session left a conversation
+
+This is the invert action to `User joined a conversation`, `Federated user joined a conversation` and `Guest joined a conversation`
+
+* Before event: `OCA\Talk\Events\BeforeSessionLeftRoomEvent`
+* After event: `OCA\Talk\Events\SessionLeftRoomEvent`
 * Since: 18.0.0
 
 ### Call notification send
@@ -230,7 +250,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_ROOM_CONNECT`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_ROOM_CONNECT`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeUserJoinedRoomEvent` and `OCA\Talk\Events\UserJoinedRoomEvent` instead
+* Removed: 19.0.0
 
 #### Join a conversation as guest (Connect)
 
@@ -238,7 +259,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_GUEST_CONNECT`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_GUEST_CONNECT`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeGuestJoinedRoomEvent` and `OCA\Talk\Events\GuestJoinedRoomEvent` instead
+* Removed: 19.0.0
 
 #### Join a call
 
@@ -262,7 +284,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_ROOM_DISCONNECT`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_ROOM_DISCONNECT`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeSessionLeftRoomEvent` and `OCA\Talk\Events\SessionLeftRoomEvent` instead
+* Removed: 19.0.0
 
 #### Remove user
 

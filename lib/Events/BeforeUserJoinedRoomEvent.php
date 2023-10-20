@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -26,29 +26,14 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 use OCP\IUser;
 
-/**
- * @deprecated
- */
-class JoinRoomUserEvent extends RoomEvent {
-	protected bool $cancelJoin;
-
-
+class BeforeUserJoinedRoomEvent extends ABeforeJoinedRoomEvent {
 	public function __construct(
 		Room $room,
 		protected IUser $user,
-		protected string $password,
-		protected bool $passedPasswordProtection,
+		string $password,
+		bool $passedPasswordProtection,
 	) {
-		parent::__construct($room);
-		$this->cancelJoin = false;
-	}
-
-	public function setCancelJoin(bool $cancelJoin): void {
-		$this->cancelJoin = $cancelJoin;
-	}
-
-	public function getCancelJoin(): bool {
-		return $this->cancelJoin;
+		parent::__construct($room, $password, $passedPasswordProtection);
 	}
 
 	public function getUser(): IUser {
@@ -57,13 +42,5 @@ class JoinRoomUserEvent extends RoomEvent {
 
 	public function getPassword(): string {
 		return $this->password;
-	}
-
-	public function setPassedPasswordProtection(bool $passedPasswordProtection): void {
-		$this->passedPasswordProtection = $passedPasswordProtection;
-	}
-
-	public function getPassedPasswordProtection(): bool {
-		return $this->passedPasswordProtection;
 	}
 }

@@ -25,6 +25,9 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
+/**
+ * @deprecated
+ */
 class JoinRoomGuestEvent extends RoomEvent {
 	protected bool $cancelJoin;
 

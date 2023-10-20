@@ -160,11 +160,17 @@ class Room {
 	public const EVENT_AFTER_USER_REMOVE = self::class . '::postRemoveUser';
 	public const EVENT_BEFORE_PARTICIPANT_REMOVE = self::class . '::preRemoveBySession';
 	public const EVENT_AFTER_PARTICIPANT_REMOVE = self::class . '::postRemoveBySession';
+	/** @deprecated */
 	public const EVENT_BEFORE_ROOM_CONNECT = self::class . '::preJoinRoom';
+	/** @deprecated */
 	public const EVENT_AFTER_ROOM_CONNECT = self::class . '::postJoinRoom';
+	/** @deprecated */
 	public const EVENT_BEFORE_ROOM_DISCONNECT = self::class . '::preUserDisconnectRoom';
+	/** @deprecated */
 	public const EVENT_AFTER_ROOM_DISCONNECT = self::class . '::postUserDisconnectRoom';
+	/** @deprecated  */
 	public const EVENT_BEFORE_GUEST_CONNECT = self::class . '::preJoinRoomGuest';
+	/** @deprecated  */
 	public const EVENT_AFTER_GUEST_CONNECT = self::class . '::postJoinRoomGuest';
 	/** @deprecated  */
 	public const EVENT_PASSWORD_VERIFY = self::class . '::verifyPassword';

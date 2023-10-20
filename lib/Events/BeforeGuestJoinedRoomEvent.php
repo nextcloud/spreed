@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,23 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-/**
- * @deprecated
- */
-class ParticipantEvent extends RoomEvent {
-
-
-	public function __construct(
-		Room $room,
-		protected Participant $participant,
-	) {
-		parent::__construct($room);
-	}
-
-	public function getParticipant(): Participant {
-		return $this->participant;
-	}
+class BeforeGuestJoinedRoomEvent extends ABeforeJoinedRoomEvent {
 }

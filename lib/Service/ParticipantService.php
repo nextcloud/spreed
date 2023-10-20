@@ -33,13 +33,17 @@ use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
+use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeGuestsCleanedUpEvent;
+use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
+use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\FederatedUserJoinedRoomEvent;
+use OCA\Talk\Events\GuestJoinedRoomEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -50,8 +54,10 @@ use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
+use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SilentModifyParticipantEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
+use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
@@ -298,10 +304,13 @@ class ParticipantService {
 	 * @throws UnauthorizedException
 	 */
 	public function joinRoom(RoomService $roomService, Room $room, IUser $user, string $password, bool $passedPasswordProtection = false): Participant {
-		$event = new JoinRoomUserEvent($room, $user, $password, $passedPasswordProtection);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_CONNECT, $event);
+		$event = new BeforeUserJoinedRoomEvent($room, $user, $password, $passedPasswordProtection);
+		$this->dispatcher->dispatchTyped($event);
+		$legacyEvent = new JoinRoomUserEvent($room, $user, $password, $event->getPassedPasswordProtection());
+		$legacyEvent->setCancelJoin($event->getCancelJoin());
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_CONNECT, $legacyEvent);
 
-		if ($event->getCancelJoin() === true) {
+		if ($legacyEvent->getCancelJoin() === true) {
 			$this->removeUser($room, $user, Room::PARTICIPANT_LEFT);
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
@@ -313,7 +322,7 @@ class ParticipantService {
 			$manager = Server::get(Manager::class);
 			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
 
-			if (!$isListableByUser && !$event->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
+			if (!$isListableByUser && !$legacyEvent->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
@@ -343,10 +352,13 @@ class ParticipantService {
 		}
 
 		$session = $this->sessionService->createSessionForAttendee($attendee);
+		$participant = new Participant($room, $attendee, $session);
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CONNECT, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CONNECT, $legacyEvent);
+		$event = new UserJoinedRoomEvent($room, $user, $participant);
+		$this->dispatcher->dispatchTyped($event);
 
-		return new Participant($room, $attendee, $session);
+		return $participant;
 	}
 
 	/**
@@ -387,14 +399,17 @@ class ParticipantService {
 	 * @throws UnauthorizedException
 	 */
 	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null): Participant {
-		$event = new JoinRoomGuestEvent($room, $password, $passedPasswordProtection);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUEST_CONNECT, $event);
+		$event = new BeforeGuestJoinedRoomEvent($room, $password, $passedPasswordProtection);
+		$this->dispatcher->dispatchTyped($event);
+		$legacyEvent = new JoinRoomGuestEvent($room, $password, $event->getPassedPasswordProtection());
+		$legacyEvent->setCancelJoin($event->getCancelJoin());
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUEST_CONNECT, $legacyEvent);
 
-		if ($event->getCancelJoin()) {
+		if ($legacyEvent->getCancelJoin()) {
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
 
-		if (!$event->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
+		if (!$legacyEvent->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
 			throw new InvalidPasswordException();
 		}
 
@@ -429,9 +444,13 @@ class ParticipantService {
 			$this->attendeeMapper->update($attendee);
 		}
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUEST_CONNECT, $event);
+		$participant = new Participant($room, $attendee, $session);
 
-		return new Participant($room, $attendee, $session);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_GUEST_CONNECT, $legacyEvent);
+		$event = new GuestJoinedRoomEvent($room, $participant);
+		$this->dispatcher->dispatchTyped($event);
+
+		return $participant;
 	}
 
 	/**
@@ -781,6 +800,8 @@ class ParticipantService {
 	}
 
 	public function leaveRoomAsSession(Room $room, Participant $participant, bool $duplicatedParticipant = false): void {
+		$event = new BeforeSessionLeftRoomEvent($room, $participant, $duplicatedParticipant);
+		$this->dispatcher->dispatchTyped($event);
 		if ($duplicatedParticipant) {
 			$event = new DuplicatedParticipantEvent($room, $participant);
 		} else {
@@ -801,6 +822,8 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DISCONNECT, $event);
+		$event = new SessionLeftRoomEvent($room, $participant, $duplicatedParticipant);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED
 			&& empty($this->sessionMapper->findByAttendeeId($participant->getAttendee()->getId()))) {
