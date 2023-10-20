@@ -29,25 +29,13 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 use OCP\Share\IShare;
 
-/**
- * @deprecated
- */
-class AlreadySharedEvent extends Event {
+class BeforeDuplicateShareSentEvent extends Event {
 	public function __construct(
 		private IShare $share,
 	) {
 		parent::__construct();
 	}
 
-	/**
-	 * Getter for subject property.
-	 *
-	 * @return IShare
-	 * @deprecated
-	 */
-	public function getSubject(): IShare {
-		return $this->share;
-	}
 
 	public function getShare(): IShare {
 		return $this->share;

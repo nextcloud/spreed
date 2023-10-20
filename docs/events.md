@@ -295,6 +295,14 @@ Used to parse mentions, replace parameters in messages with rich objects, transf
 * After event: `OCA\Talk\Events\ChatMessageSentEvent`
 * Since: 18.0.0
 
+### Duplicate share sent
+
+Sharing the same file a second time is prevented by the API. But this event is dispatched, so that the chat message can be created nevertheless.
+
+* Before event: `OCA\Talk\Events\BeforeDuplicateShareSentEvent`
+* After event: *Not available*
+* Since: 18.0.0
+
 ### System message sent
 
 `shouldSkipLastActivityUpdate` indicates whether multiple system messages are being sent.
