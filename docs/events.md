@@ -194,6 +194,12 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * After event: `OCA\Talk\Events\GuestJoinedRoomEvent`
 * Since: 18.0.0
 
+### Email invitation send
+
+* Before event: `OCA\Talk\Events\BeforeEmailInvitationSentEvent`
+* After event: `OCA\Talk\Events\EmailInvitationSentEvent`
+* Since: 18.0.0
+
 ### Session left a conversation
 
 This is the invert action to `User joined a conversation`, `Federated user joined a conversation` and `Guest joined a conversation`
@@ -241,7 +247,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\GuestManager::EVENT_BEFORE_EMAIL_INVITE`
 * After event name: `OCA\Talk\GuestManager::EVENT_AFTER_EMAIL_INVITE`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeEmailInvitationSentEvent` and `OCA\Talk\Events\EmailInvitationSentEvent` instead
+* Removed: 19.0.0
 
 #### Guest changes name
 

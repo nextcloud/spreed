@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,24 +23,19 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 
-/**
- * @deprecated
- */
-class AddEmailEvent extends RoomEvent {
+class EmailInvitationSentEvent extends RoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected string $email,
+		protected Attendee $attendee,
 	) {
 		parent::__construct($room);
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getEmail(): string {
-		return $this->email;
+	public function getAttendee(): Attendee {
+		return $this->attendee;
 	}
 }
