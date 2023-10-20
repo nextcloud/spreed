@@ -807,6 +807,7 @@ OC.L10N.register(
     "Create a new conversation" : "Luo uusi keskustelu",
     "Join open conversations" : "Liity avoimiin keskusteluihin",
     "No matches found" : "Ei tuloksia",
+    "Clear filter" : "Tyhjennä suodatin",
     "Unread mentions" : "Lukemattomat maininnat",
     "Open conversations" : "Avaa keskustelut",
     "Groups" : "Ryhmät",

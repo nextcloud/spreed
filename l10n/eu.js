@@ -1003,6 +1003,7 @@ OC.L10N.register(
     "New personal note" : "Nota pertsonal berria",
     "Join open conversations" : "Sartu elkarrizketa irekietara",
     "No matches found" : "Ez dira emaitzarik aurkitu",
+    "Clear filter" : "Garbitu iragazkia",
     "Unread mentions" : "Irakurri gabeko aipamenak",
     "Open conversations" : "Ireki elkarrizketak",
     "Groups" : "Taldeak",

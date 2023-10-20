@@ -1047,6 +1047,7 @@ OC.L10N.register(
     "Create a new conversation" : "Create a new conversation",
     "Join open conversations" : "Join open conversations",
     "No matches found" : "جستجو حاصلی دربرنداشت",
+    "Clear filter" : "پاک کردن پالایه",
     "Unread mentions" : "Unread mentions",
     "Open conversations" : "مکالمه جدید",
     "Groups" : "گروه ها",

@@ -1074,6 +1074,7 @@ OC.L10N.register(
     "New personal note" : "Yeni kişisel not",
     "Join open conversations" : "Açık görüşmelere katıl",
     "No matches found" : "Eşleşen bir sonuç bulunamadı",
+    "Clear filter" : "Süzgeci temizle",
     "Unread mentions" : "Okunmamış anmalar",
     "Open conversations" : "Açık görüşmeler",
     "Groups" : "Gruplar",

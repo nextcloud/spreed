@@ -1058,6 +1058,7 @@ OC.L10N.register(
     "New personal note" : "Новая личная заметка",
     "Join open conversations" : "Присоединиться к открытым обсуждениям",
     "No matches found" : "Соответствий не найдено",
+    "Clear filter" : "Сбросить фильтр",
     "Unread mentions" : "Непрочитанные упоминания",
     "Open conversations" : "Открыть обсуждения",
     "Groups" : "Группы",

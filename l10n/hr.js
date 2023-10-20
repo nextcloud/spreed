@@ -807,6 +807,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Morate odabrati novog moderatora prije nego što napustite razgovor.",
     "Conversation list" : "Popis razgovora",
     "No matches found" : "Nema pronađenih podudaranja",
+    "Clear filter" : "Ukloni filtar",
     "Unread mentions" : "Nepročitana spominjanja",
     "Open conversations" : "Otvori razgovore",
     "Groups" : "Grupe",

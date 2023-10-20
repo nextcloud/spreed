@@ -833,6 +833,7 @@ OC.L10N.register(
     "Remove from favorites" : "Вилучено з улюбленого",
     "Add to favorites" : "Додати зірочку",
     "You need to promote a new moderator before you can leave the conversation." : "Перед тим, як вийти з розмови, вам потрібно призначити нового модератора.",
+    "Clear filter" : "Очистити фільтр",
     "Unread mentions" : "Непрочитані згадки",
     "Open conversations" : "Відкрити розмови",
     "Groups" : "Групи",

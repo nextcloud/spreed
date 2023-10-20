@@ -835,6 +835,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Devi promuovere un nuovo moderatore prima di poter abbandonare la conversazione. ",
     "Conversation list" : "Elenco delle conversazioni",
     "No matches found" : "Nessuna corrispondenza trovata",
+    "Clear filter" : "Pulisci il filtro",
     "Unread mentions" : "Menzioni non lette",
     "Open conversations" : "Apri conversazioni",
     "Groups" : "Gruppi",
