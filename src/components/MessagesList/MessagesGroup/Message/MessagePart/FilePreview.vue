@@ -32,7 +32,7 @@
 			'file-preview--row-layout': rowLayout }"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
-		<div v-if="!isLoading"
+		<div v-if="!isLoading || fallbackLocalUrl"
 			class="image-container"
 			:class="{'playable': isPlayable}">
 			<span v-if="isPlayable && !smallPreview" class="play-video-button">
@@ -120,6 +120,13 @@ export default {
 		id: {
 			type: String,
 			required: true,
+		},
+		/**
+		 * Reference id from the message
+		 */
+		referenceId: {
+			type: String,
+			default: '',
 		},
 		/**
 		 * File name
@@ -283,6 +290,10 @@ export default {
 			return this.name
 		},
 
+		fallbackLocalUrl() {
+			return this.$store.getters.getLocalUrl(this.referenceId)
+		},
+
 		previewTooltip() {
 			if (this.shouldShowFileDetail) {
 				// no tooltip as the file name is already visible directly
@@ -362,6 +373,9 @@ export default {
 
 			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
 				return this.localUrl
+			}
+			if (this.fallbackLocalUrl) {
+				return this.fallbackLocalUrl
 			}
 			if (this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
 				return OC.MimeType.getIconUrl(this.mimetype)

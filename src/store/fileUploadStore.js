@@ -38,10 +38,9 @@ import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 const state = {
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
 	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
-	uploads: {
-	},
+	uploads: {},
 	currentUploadId: undefined,
-
+	localUrls: {},
 	fileTemplatesInitialised: false,
 	fileTemplates: [],
 }
@@ -78,6 +77,11 @@ const getters = {
 		return state.attachmentFolderFreeSpace
 	},
 
+	// returns the local Url of uploaded image
+	getLocalUrl: (state) => (referenceId) => {
+		return state.localUrls[referenceId]
+	},
+
 	uploadProgress: (state) => (uploadId, index) => {
 		if (state.uploads[uploadId].files[index]) {
 			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
@@ -102,7 +106,7 @@ const getters = {
 const mutations = {
 
 	// Adds a "file to be shared to the store"
-	addFileToBeUploaded(state, { file, temporaryMessage }) {
+	addFileToBeUploaded(state, { file, temporaryMessage, localUrl }) {
 		const uploadId = temporaryMessage.messageParameters.file.uploadId
 		const token = temporaryMessage.messageParameters.file.token
 		const index = temporaryMessage.messageParameters.file.index
@@ -120,6 +124,7 @@ const mutations = {
 			uploadedSize: 0,
 			temporaryMessage,
 		 })
+		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
 	},
 
 	// Marks a given file as failed upload
@@ -242,7 +247,7 @@ const actions = {
 				text: '{file}', token, uploadId, index, file, localUrl, isVoiceMessage,
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
-			commit('addFileToBeUploaded', { file, temporaryMessage })
+			commit('addFileToBeUploaded', { file, temporaryMessage, localUrl })
 		}
 	},
 
@@ -295,7 +300,7 @@ const actions = {
 			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', temporaryMessage)
 			// Scroll the message list
-			EventBus.$emit('scroll-chat-to-bottom')
+			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
 
 		// Iterate again and perform the uploads

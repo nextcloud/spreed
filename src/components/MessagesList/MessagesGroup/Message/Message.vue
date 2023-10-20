@@ -457,6 +457,11 @@ export default {
 			type: Array,
 			default: () => { return [] },
 		},
+
+		referenceId: {
+			type: String,
+			default: '',
+		},
 	},
 
 	emits: ['toggle-combined-system-message'],
@@ -609,6 +614,7 @@ export default {
 						props: Object.assign({
 							token: this.token,
 							itemType,
+							referenceId: this.referenceId,
 						}, this.messageParameters[p]),
 					}
 				} else if (type === 'deck-card') {
