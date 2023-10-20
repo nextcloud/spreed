@@ -750,6 +750,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Πρέπει να προάγεται νέο συντονιστή πρίν αποχωρήσετε από την συνομιλία.",
     "Conversation list" : "Λίστα συνομιλιών",
     "No matches found" : "Δεν βρέθηκαν αντιστοιχίες",
+    "Clear filter" : "Εκκαθάριση φίλτρου",
     "Open conversations" : "Άνοιγμα συνομιλιών",
     "Groups" : "Ομάδες",
     "Circles" : "Κύκλοι",

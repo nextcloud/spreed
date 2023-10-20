@@ -578,6 +578,7 @@ OC.L10N.register(
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių.",
     "No matches found" : "Nerasta jokių atitikmenų",
+    "Clear filter" : "Išvalyti filtrą",
     "Open conversations" : "Atverti pokalbius",
     "Groups" : "Grupės",
     "Circles" : "Ratai",

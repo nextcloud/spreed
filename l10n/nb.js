@@ -494,6 +494,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Conversation list" : "Samtaleliste",
+    "Clear filter" : "Tøm filter",
     "Unread mentions" : "Uleste nevner",
     "Groups" : "Grupper",
     "Circles" : "Sirkler",

@@ -292,6 +292,7 @@ OC.L10N.register(
     "Mark as read" : "tandai sudah dibaca",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Tambah ke favorit",
+    "Clear filter" : "Bersihkan filter",
     "Groups" : "Grup",
     "Loading" : "Memuat",
     "Allow guests to join via link" : "Izinkan tamu untuk bergabung melalui tautan",

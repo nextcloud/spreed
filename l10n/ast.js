@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "a conversation" : "un conversación",
     "Other activities" : "Otres actividaes",
+    "Talk" : "Charra",
     "You added group {group}" : "Amestesti'l grupu «{group}»",
     "You removed group {group}" : "Quietesti'l grupu «{group}»",
     "{actor} added circle {circle}" : "{actor} amestó'l círculu «{circle}»",
@@ -233,6 +234,7 @@ OC.L10N.register(
     "Description" : "Descripción",
     "General settings" : "Configuración xeneral",
     "Language" : "Llingua",
+    "Status" : "Estáu",
     "Error" : "Error",
     "Beta" : "Beta",
     "An error occurred while installing the Matterbridge app" : "Prodúxose un error mentanto s'instalaba l'aplicación Matterbridge",
