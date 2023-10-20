@@ -59,7 +59,10 @@ class EventDocumentationTest extends TestCase {
 		}
 
 		$docs = file_get_contents(__DIR__ . '/../../docs/events.md');
-		$eventIsDocumented = str_contains($docs, '`' . $eventClass . '`');
+		$eventIsDocumented = str_contains($docs, 'Before event: `' . $eventClass . '`')
+			|| str_contains($docs, 'After event: `' . $eventClass . '`')
+			|| str_contains($docs, 'Final event: `' . $eventClass . '`')
+			|| str_contains($docs, 'Event: `' . $eventClass . '`');
 		self::assertTrue($eventIsDocumented, 'Asserting that event ' . $eventClass . ' is documented');
 	}
 }
