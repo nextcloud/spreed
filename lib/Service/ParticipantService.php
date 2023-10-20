@@ -35,6 +35,7 @@ use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
 use OCA\Talk\Events\BeforeGuestsCleanedUpEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
+use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
@@ -1153,11 +1154,14 @@ class ParticipantService {
 			}
 		}
 
+		$target = new Participant($room, $attendee, null);
 		$this->dispatcher->dispatchTyped(new SendCallNotificationEvent(
 			$room,
 			$currentParticipant,
-			new Participant($room, $attendee, null)
+			$target
 		));
+		$event = new CallNotificationSendEvent($room, $currentParticipant, $target);
+		$this->dispatcher->dispatchTyped($event);
 
 		return true;
 	}

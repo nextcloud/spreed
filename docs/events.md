@@ -175,6 +175,12 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * After event: `OCA\Talk\Events\FederatedUserJoinedRoomEvent`
 * Since: 18.0.0
 
+### Call notification send
+
+* **internal:** This event is not part of the public API and you should not rely on it
+* Event: `OCA\Talk\Events\CallNotificationSendEvent`
+* Since: 18.0.0
+
 ### Guests cleaned up
 
 Remove guests without an active session

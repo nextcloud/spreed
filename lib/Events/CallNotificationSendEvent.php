@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -27,9 +27,9 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 /**
- * @deprecated
+ * @internal This event is not part of the public API and you should not rely on it.
  */
-class SendCallNotificationEvent extends RoomEvent {
+class CallNotificationSendEvent extends RoomEvent {
 
 	public function __construct(
 		Room $room,
