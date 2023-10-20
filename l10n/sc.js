@@ -783,6 +783,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Depes promòvere un'àtera persona chi moderet antis de lassare sa resonada.",
     "Conversation list" : "Lista de is resonadas",
     "No matches found" : "Peruna currispondèntzia agatada",
+    "Clear filter" : "Lìmpia filtru",
     "Open conversations" : "Aberre is resonadas",
     "Groups" : "Grupos",
     "Circles" : "Giros",

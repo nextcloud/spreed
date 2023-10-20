@@ -1015,6 +1015,7 @@ OC.L10N.register(
     "Create a new conversation" : "创建一个新对话",
     "Join open conversations" : "加入公开对话",
     "No matches found" : "未找到匹配项",
+    "Clear filter" : "清除筛选",
     "Unread mentions" : "未读的提及",
     "Open conversations" : "开启对话",
     "Groups" : "分组",

@@ -1074,6 +1074,7 @@ OC.L10N.register(
     "New personal note" : "新個人筆記",
     "Join open conversations" : "加入公開對話",
     "No matches found" : "找不到符合的項目",
+    "Clear filter" : "清空過濾器",
     "Unread mentions" : "未讀的提及",
     "Open conversations" : "開放對話",
     "Groups" : "群組",

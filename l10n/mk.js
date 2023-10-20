@@ -679,6 +679,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Треба да промовирате нов модератор пред да го напуштите разговорот.",
     "Create a new conversation" : "Креирај нов разговор",
     "No matches found" : "Не се пронајдени совпаѓања",
+    "Clear filter" : "Исчисти филтри",
     "Groups" : "Групи",
     "Circles" : "Кругови",
     "Loading" : "Се вчитува",
