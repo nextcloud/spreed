@@ -159,7 +159,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 
 ### Attendees added
 
-* Before event: *Not available*
+* Before event: `OCA\Talk\Events\BeforeAttendeesAddedEvent`
+  * Since: 18.0.0
 * After event: `OCA\Talk\Events\AttendeesAddedEvent`
 * Since: 12.0.0
 
@@ -168,6 +169,12 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event: *Not available*
 * After event: `OCA\Talk\Events\AttendeesRemovedEvent`
 * Since: 12.0.0
+
+### Attendee removed
+
+* Before event: `OCA\Talk\Events\BeforeAttendeeRemovedEvent`
+* After event: `OCA\Talk\Events\AttendeeRemovedEvent`
+* Since: 18.0.0
 
 ### User joined a conversation
 
@@ -225,7 +232,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_USERS_ADD`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_USERS_ADD`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeAttendeesAddedEvent` and `OCA\Talk\Events\AttendeesAddedEvent` instead
+* Removed: 19.0.0
 
 #### Add email
 
@@ -276,7 +284,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_SESSION_JOIN_CALL`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_SESSION_JOIN_CALL`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeParticipantModifiedEvent` and `OCA\Talk\Events\ParticipantModifiedEvent` instead
+* Removed: 19.0.0
 
 #### Leave a call
 
@@ -284,7 +293,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_SESSION_LEAVE_CALL`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_SESSION_LEAVE_CALL`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeParticipantModifiedEvent` and `OCA\Talk\Events\ParticipantModifiedEvent` instead
+* Removed: 19.0.0
 
 #### Leave a conversation (Disconnect)
 
@@ -301,7 +311,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_USER_REMOVE`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_USER_REMOVE`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeAttendeeRemovedEvent` and `OCA\Talk\Events\AttendeeRemovedEvent` instead
+* Removed: 19.0.0
 
 #### Remove participant by session
 
@@ -309,7 +320,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_PARTICIPANT_REMOVE`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_PARTICIPANT_REMOVE`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeAttendeeRemovedEvent` and `OCA\Talk\Events\AttendeeRemovedEvent` instead
+* Removed: 19.0.0
 
 ## Chat related events
 

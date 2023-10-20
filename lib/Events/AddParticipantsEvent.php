@@ -26,6 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
+/**
+ * @deprecated
+ */
 class AddParticipantsEvent extends RoomEvent {
 
 	protected ?IComment $lastMessage = null;

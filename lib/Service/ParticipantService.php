@@ -30,8 +30,12 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeesAddedEvent;
+use OCA\Talk\Events\BeforeAttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
@@ -515,12 +519,18 @@ class ParticipantService {
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
+			$attendees[] = $attendee;
+		}
+
+		$attendeeEvent = new BeforeAttendeesAddedEvent($room, $attendees);
+		$this->dispatcher->dispatchTyped($attendeeEvent);
+
+		foreach ($attendees as $attendee) {
 			try {
 				$this->attendeeMapper->insert($attendee);
-				$attendees[] = $attendee;
 
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $participant['accessToken'], $participant['actorId'], $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
 					if (!$inviteSent) {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();
@@ -533,16 +543,17 @@ class ParticipantService {
 			}
 		}
 
-		if (!empty($attendees)) {
-			$attendeeEvent = new AttendeesAddedEvent($room, $attendees);
-			$this->dispatcher->dispatchTyped($attendeeEvent);
+		$attendeeEvent = new AttendeesAddedEvent($room, $attendees, true);
+		$this->dispatcher->dispatchTyped($attendeeEvent);
+		if ($attendeeEvent->getLastMessage()) {
+			$event->setLastMessage($attendeeEvent->getLastMessage());
+		}
 
-			$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 
-			$lastMessage = $event->getLastMessage();
-			if ($lastMessage instanceof IComment) {
-				$this->updateRoomLastMessage($room, $lastMessage);
-			}
+		$lastMessage = $event->getLastMessage();
+		if ($lastMessage instanceof IComment) {
+			$this->updateRoomLastMessage($room, $lastMessage);
 		}
 	}
 
@@ -860,6 +871,9 @@ class ParticipantService {
 			);
 		}
 
+		$event = new BeforeAttendeeRemovedEvent($room, $participant->getAttendee(), $reason, $sessions);
+		$this->dispatcher->dispatchTyped($event);
+
 		if ($isUser) {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
 			$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);
@@ -872,15 +886,17 @@ class ParticipantService {
 		$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		$this->attendeeMapper->delete($participant->getAttendee());
 
-		if (!$attendeeEventIsTriggeredAlready) {
-			$attendeeEvent = new AttendeesRemovedEvent($room, [$participant->getAttendee()]);
-			$this->dispatcher->dispatchTyped($attendeeEvent);
-		}
-
 		if ($isUser) {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
+		}
+		$event = new AttendeeRemovedEvent($room, $participant->getAttendee(), $reason, $sessions);
+		$this->dispatcher->dispatchTyped($event);
+
+		if (!$attendeeEventIsTriggeredAlready) {
+			$attendeeEvent = new AttendeesRemovedEvent($room, [$participant->getAttendee()]);
+			$this->dispatcher->dispatchTyped($attendeeEvent);
 		}
 
 		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
@@ -1009,6 +1025,9 @@ class ParticipantService {
 			$reason = Room::PARTICIPANT_REMOVED;
 		}
 
+		$attendeeEvent = new BeforeAttendeeRemovedEvent($room, $attendee, $reason, $sessions);
+		$this->dispatcher->dispatchTyped($attendeeEvent);
+
 		$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
 
@@ -1017,6 +1036,9 @@ class ParticipantService {
 		}
 
 		$this->attendeeMapper->delete($attendee);
+
+		$attendeeEvent = new AttendeeRemovedEvent($room, $attendee, $reason, $sessions);
+		$this->dispatcher->dispatchTyped($attendeeEvent);
 
 		$attendeeEvent = new AttendeesRemovedEvent($room, [$attendee]);
 		$this->dispatcher->dispatchTyped($attendeeEvent);

@@ -27,6 +27,9 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
+/**
+ * @deprecated
+ */
 class RemoveParticipantEvent extends ParticipantEvent {
 
 	public function __construct(

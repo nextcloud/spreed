@@ -24,32 +24,42 @@ declare(strict_types=1);
 namespace OCA\Talk\Events;
 
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Room;
-use OCP\Comments\IComment;
 
-class AttendeesAddedEvent extends AttendeesEvent {
-	protected ?IComment $lastMessage = null;
+abstract class AAttendeeRemovedEvent extends RoomEvent {
+	public const REASON_REMOVED = 'remove';
+	public const REASON_REMOVED_ALL = 'remove_all';
+	public const REASON_LEFT = 'leave';
 
 	/**
-	 * @param Attendee[] $attendees
+	 * @param self::REASON_* $reason
+	 * @param Session[] $sessions
 	 */
 	public function __construct(
 		Room $room,
-		array $attendees,
-		protected bool $skipLastMessageUpdate = false,
+		protected Attendee $attendee,
+		protected string $reason,
+		protected array $sessions,
 	) {
-		parent::__construct($room, $attendees);
+		parent::__construct($room);
 	}
 
-	public function shouldSkipLastMessageUpdate(): bool {
-		return $this->skipLastMessageUpdate;
+	public function getAttendee(): Attendee {
+		return $this->attendee;
 	}
 
-	public function setLastMessage(IComment $lastMessage): void {
-		$this->lastMessage = $lastMessage;
+	/**
+	 * @return self::REASON_*
+	 */
+	public function getReason(): string {
+		return $this->reason;
 	}
 
-	public function getLastMessage(): ?IComment {
-		return $this->lastMessage;
+	/**
+	 * @return Session[]
+	 */
+	public function getSessions(): array {
+		return $this->sessions;
 	}
 }

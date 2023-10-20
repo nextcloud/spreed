@@ -27,6 +27,9 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IUser;
 
+/**
+ * @deprecated
+ */
 class RemoveUserEvent extends RemoveParticipantEvent {
 
 	public function __construct(
