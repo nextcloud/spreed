@@ -29,12 +29,14 @@ use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeGuestsCleanedUpEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
 use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
@@ -50,6 +52,7 @@ use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ParticipantEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -129,6 +132,8 @@ class ParticipantService {
 			return;
 		}
 
+		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_TYPE, $participantType, $oldType);
+		$this->dispatcher->dispatchTyped($event);
 		$event = new ModifyParticipantEvent($room, $participant, 'type', $participantType, $oldType);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_TYPE_SET, $event);
 
@@ -191,6 +196,8 @@ class ParticipantService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
+		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_TYPE, $participantType, $oldType);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	/**
@@ -227,6 +234,8 @@ class ParticipantService {
 			return false;
 		}
 
+		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, $newPermissions, $oldPermissions);
+		$this->dispatcher->dispatchTyped($event);
 		$event = new ModifyParticipantEvent($room, $participant, 'permissions', $newPermissions, $oldPermissions);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
 
@@ -237,6 +246,8 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
+		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, $newPermissions, $oldPermissions);
+		$this->dispatcher->dispatchTyped($event);
 
 		return true;
 	}
@@ -1128,21 +1139,29 @@ class ParticipantService {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
+		$oldFlags = $session->getInCall();
+		$details = [];
+
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			if ($silent) {
-				$event = new SilentModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+				$legacyEvent = new SilentModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+				$details = [AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT => $silent];
 			} else {
-				$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+				$legacyEvent = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 			}
-			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $legacyEvent);
 		} else {
 			if ($endCallForEveryone) {
-				$event = new ModifyEveryoneEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+				$legacyEvent = new ModifyEveryoneEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+				$details = [AParticipantModifiedEvent::DETAIL_IN_CALL_END_FOR_EVERYONE => $endCallForEveryone];
 			} else {
-				$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+				$legacyEvent = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 			}
-			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $legacyEvent);
 		}
+
+		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
+		$this->dispatcher->dispatchTyped($event);
 
 		$session->setInCall($flags);
 		if (!$endCallForEveryone) {
@@ -1156,10 +1175,12 @@ class ParticipantService {
 		}
 
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_JOIN_CALL, $event);
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_JOIN_CALL, $legacyEvent);
 		} else {
-			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $legacyEvent);
 		}
+		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
+		$this->dispatcher->dispatchTyped($event);
 
 		return true;
 	}
@@ -1211,6 +1232,9 @@ class ParticipantService {
 			$flags &= ~Participant::FLAG_WITH_VIDEO;
 		}
 
+		$oldFlags = $session->getInCall();
+		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags);
+		$this->dispatcher->dispatchTyped($event);
 		$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_UPDATE_CALL_FLAGS, $event);
 
@@ -1218,6 +1242,8 @@ class ParticipantService {
 		$this->sessionMapper->update($session);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $event);
+		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	/**

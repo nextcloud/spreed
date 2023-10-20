@@ -152,9 +152,13 @@ class Room {
 	public const EVENT_AFTER_PERMISSIONS_SET = self::class . '::postSetPermissions';
 	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
 	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
+	/** @deprecated */
 	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
+	/** @deprecated */
 	public const EVENT_AFTER_PARTICIPANT_TYPE_SET = self::class . '::postSetParticipantType';
+	/** @deprecated */
 	public const EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET = self::class . '::preSetParticipantPermissions';
+	/** @deprecated */
 	public const EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET = self::class . '::postSetParticipantPermissions';
 	public const EVENT_BEFORE_USER_REMOVE = self::class . '::preRemoveUser';
 	public const EVENT_AFTER_USER_REMOVE = self::class . '::postRemoveUser';
@@ -178,11 +182,17 @@ class Room {
 	public const EVENT_BEFORE_GUESTS_CLEAN = self::class . '::preCleanGuests';
 	/** @deprecated  */
 	public const EVENT_AFTER_GUESTS_CLEAN = self::class . '::postCleanGuests';
+	/** @deprecated */
 	public const EVENT_BEFORE_SESSION_JOIN_CALL = self::class . '::preSessionJoinCall';
+	/** @deprecated */
 	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
+	/** @deprecated */
 	public const EVENT_BEFORE_SESSION_UPDATE_CALL_FLAGS = self::class . '::preSessionUpdateCallFlags';
+	/** @deprecated */
 	public const EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS = self::class . '::postSessionUpdateCallFlags';
+	/** @deprecated */
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
+	/** @deprecated */
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	/** @deprecated */
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';

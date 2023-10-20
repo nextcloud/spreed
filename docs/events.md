@@ -195,6 +195,12 @@ This is the invert action to `User joined a conversation`, `Federated user joine
 * After event: `OCA\Talk\Events\SessionLeftRoomEvent`
 * Since: 18.0.0
 
+### Participant modified
+
+* Before event: `OCA\Talk\Events\BeforeParticipantModifiedEvent`
+* After event: `OCA\Talk\Events\ParticipantModifiedEvent`
+* Since: 18.0.0
+
 ### Call notification send
 
 * **internal:** This event is not part of the public API and you should not rely on it
@@ -229,12 +235,13 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Since: 8.0.0
 * Deprecated: 18.0.0
 
-#### Remove participant by session
+#### Guest changes name
 
-* Event class: `OCA\Talk\Events\RemoveParticipantEvent`
+* Event class: `OCA\Talk\Events\ParticipantEvent`
 * Event name: `OCA\Talk\GuestManager::EVENT_AFTER_NAME_UPDATE`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeParticipantModifiedEvent` and `OCA\Talk\Events\ParticipantModifiedEvent` instead
+* Removed: 19.0.0
 
 #### Set participant type for user
 
@@ -242,7 +249,8 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Before event name: `OCA\Talk\Room::EVENT_BEFORE_PARTICIPANT_TYPE_SET`
 * After event name: `OCA\Talk\Room::EVENT_AFTER_PARTICIPANT_TYPE_SET`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeParticipantModifiedEvent` and `OCA\Talk\Events\ParticipantModifiedEvent` instead
+* Removed: 19.0.0
 
 #### Join a conversation as user (Connect)
 

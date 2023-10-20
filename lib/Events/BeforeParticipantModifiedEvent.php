@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,42 +23,5 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Participant;
-use OCA\Talk\Room;
-
-/**
- * @deprecated
- */
-class ModifyParticipantEvent extends ParticipantEvent {
-
-	public function __construct(
-		Room $room,
-		Participant $participant,
-		protected string $parameter,
-		protected $newValue,
-		protected $oldValue = null,
-	) {
-		parent::__construct($room, $participant);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getParameter(): string {
-		return $this->parameter;
-	}
-
-	/**
-	 * @return int|string|bool
-	 */
-	public function getNewValue() {
-		return $this->newValue;
-	}
-
-	/**
-	 * @return int|string|bool|null
-	 */
-	public function getOldValue() {
-		return $this->oldValue;
-	}
+class BeforeParticipantModifiedEvent extends AParticipantModifiedEvent {
 }

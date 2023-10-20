@@ -23,5 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
+/**
+ * @deprecated
+ */
 class ModifyEveryoneEvent extends ModifyParticipantEvent {
 }

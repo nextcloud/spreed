@@ -24,7 +24,10 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Events\AddEmailEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
@@ -40,6 +43,7 @@ use OCP\Util;
 class GuestManager {
 	public const EVENT_BEFORE_EMAIL_INVITE = self::class . '::preInviteByEmail';
 	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
+	/** @deprecated */
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
 
 	public function __construct(
@@ -63,6 +67,9 @@ class GuestManager {
 	public function updateName(Room $room, Participant $participant, string $displayName): void {
 		$attendee = $participant->getAttendee();
 		if ($attendee->getDisplayName() !== $displayName) {
+			$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_NAME, $displayName);
+			$this->dispatcher->dispatchTyped($event);
+
 			$this->participantService->updateDisplayNameForActor(
 				$attendee->getActorType(),
 				$attendee->getActorId(),
@@ -75,8 +82,12 @@ class GuestManager {
 				$displayName
 			);
 
+			$attendee->setDisplayName($displayName);
+
 			$event = new ModifyParticipantEvent($room, $participant, 'name', $displayName);
 			$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_UPDATE, $event);
+			$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_NAME, $displayName);
+			$this->dispatcher->dispatchTyped($event);
 		}
 	}
 
