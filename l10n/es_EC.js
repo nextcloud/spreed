@@ -1012,6 +1012,7 @@ OC.L10N.register(
     "Filter unread messages" : "Filtrar mensajes no leídos",
     "Clear filters" : "Borrar filtros",
     "No matches found" : "No se encontraron coincidencias",
+    "Clear filter" : "Borrar filtro",
     "Unread mentions" : "Menciones no leídas",
     "Open conversations" : "Conversaciones abiertas",
     "Groups" : "Grupos",

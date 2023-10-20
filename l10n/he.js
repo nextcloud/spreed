@@ -474,6 +474,7 @@ OC.L10N.register(
     "Remove from favorites" : "הסרה מהמועדפים",
     "Add to favorites" : "הוספה למועדפים",
     "No matches found" : "לא נמצאו התאמות",
+    "Clear filter" : "מחיקת מסנן",
     "Groups" : "קבוצות",
     "Circles" : "מעגלים",
     "Loading" : "בטעינה",

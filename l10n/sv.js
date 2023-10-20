@@ -803,6 +803,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "Create a new conversation" : "Skapa en ny konversation",
     "No matches found" : "Inga träffar hittades",
+    "Clear filter" : "Rensa filter",
     "Groups" : "Grupper",
     "Circles" : "Cirklar",
     "Loading" : "Läser in",

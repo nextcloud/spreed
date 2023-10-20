@@ -1062,6 +1062,7 @@ OC.L10N.register(
     "New personal note" : "Nueva nota personal",
     "Join open conversations" : "Unirse a conversaciones abiertas",
     "No matches found" : "No se han encontrado coincidencias",
+    "Clear filter" : "Borrar filtro",
     "Unread mentions" : "Menciones sin leer",
     "Open conversations" : "Abrir conversaciones",
     "Groups" : "Grupos",

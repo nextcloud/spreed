@@ -1062,6 +1062,7 @@ OC.L10N.register(
     "New personal note" : "Нова лична белешка",
     "Join open conversations" : "Придружи се отвореном разговору",
     "No matches found" : "Нема подударања",
+    "Clear filter" : "Очисти филтер",
     "Unread mentions" : "Непрочитана помињања",
     "Open conversations" : "Отвори разговор",
     "Groups" : "Групе",
