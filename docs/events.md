@@ -339,6 +339,18 @@ These events were not using the typed-event mechanism and are therefore deprecat
 
 ## Other events
 
+### Signaling room properties sent
+
+* Before event: `OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent`
+* After event: *Not available*
+* Since: 18.0.0
+
+### Signaling response sent
+
+* Before event: `OCA\Talk\Events\BeforeSignalingResponseSentEvent`
+* After event: *Not available*
+* Since: 18.0.0
+
 ### Deprecated events
 
 These events were not using the typed-event mechanism and are therefore deprecated and will be removed in a future version.
@@ -348,14 +360,16 @@ These events were not using the typed-event mechanism and are therefore deprecat
 * Event class: `OCA\Talk\Events\SignalingEvent`
 * Event name: `OCA\Talk\Controller\SignalingController::EVENT_BACKEND_SIGNALING_ROOMS`
 * Since: 8.0.0
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeSignalingResponseSentEvent` instead
+* Removed: 19.0.0
 
 #### Get conversation properties for signaling
 
 * Event class: `OCA\Talk\Events\SignalingRoomPropertiesEvent`
 * Event name: `OCA\Talk\Room::EVENT_BEFORE_SIGNALING_PROPERTIES`
 * Since: 8.0.5
-* Deprecated: 18.0.0
+* Deprecated: 18.0.0 - Use `OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent` instead
+* Removed: 19.0.0
 
 ## Inbound events to invoke Talk
 

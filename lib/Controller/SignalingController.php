@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -68,6 +69,7 @@ class SignalingController extends OCSController {
 	/** @var int */
 	private const PULL_MESSAGES_TIMEOUT = 30;
 
+	/** @deprecated */
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
 	public function __construct(
@@ -784,8 +786,13 @@ class SignalingController extends OCSController {
 			$permissions[] = 'control';
 		}
 
-		$event = new SignalingEvent($room, $participant, $action);
-		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $event);
+		$legacyEvent = new SignalingEvent($room, $participant, $action);
+		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $legacyEvent);
+		$event = new BeforeSignalingResponseSentEvent($room, $participant, $action);
+		if ($legacyEvent->getSession()) {
+			$event->setSession($legacyEvent->getSession());
+		}
+		$this->dispatcher->dispatchTyped($event);
 
 		$response = [
 			'type' => 'room',
@@ -796,7 +803,7 @@ class SignalingController extends OCSController {
 				'permissions' => $permissions,
 			],
 		];
-		if ($event->getSession()) {
+		if ($event->getSession() !== '') {
 			$response['room']['session'] = $event->getSession();
 		}
 		return new DataResponse($response);

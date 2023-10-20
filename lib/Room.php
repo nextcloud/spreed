@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -177,6 +178,7 @@ class Room {
 	public const EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS = self::class . '::postSessionUpdateCallFlags';
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
+	/** @deprecated */
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
 	/** @deprecated  */
 	public const EVENT_BEFORE_SET_MESSAGE_EXPIRATION = self::class . '::beforeSetMessageExpiration';
@@ -535,6 +537,8 @@ class Room {
 
 		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIGNALING_PROPERTIES, $event);
+		$event = new BeforeSignalingRoomPropertiesSentEvent($this, $userId, $event->getProperties());
+		$this->dispatcher->dispatchTyped($event);
 		return $event->getProperties();
 	}
 

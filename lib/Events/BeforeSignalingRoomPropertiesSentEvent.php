@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -25,32 +25,5 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
-/**
- * @deprecated
- */
-class SignalingRoomPropertiesEvent extends RoomEvent {
-
-	public function __construct(
-		Room $room,
-		protected ?string $userId,
-		protected array $properties,
-	) {
-		parent::__construct($room);
-	}
-
-	public function getUserId(): ?string {
-		return $this->userId;
-	}
-
-	public function getProperties(): array {
-		return $this->properties;
-	}
-
-	public function setProperty(string $property, $data): void {
-		$this->properties[$property] = $data;
-	}
-
-	public function unsetProperty(string $property): void {
-		unset($this->properties[$property]);
-	}
+class BeforeSignalingRoomPropertiesSentEvent extends SignalingRoomPropertiesEvent {
 }

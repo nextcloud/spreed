@@ -23,34 +23,29 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-/**
- * @deprecated
- */
-class SignalingRoomPropertiesEvent extends RoomEvent {
+class BeforeSignalingResponseSentEvent extends ParticipantEvent {
+	protected mixed $session = '';
 
 	public function __construct(
 		Room $room,
-		protected ?string $userId,
-		protected array $properties,
+		Participant $participant,
+		protected string $action,
 	) {
-		parent::__construct($room);
+		parent::__construct($room, $participant);
 	}
 
-	public function getUserId(): ?string {
-		return $this->userId;
+	public function getAction(): string {
+		return $this->action;
 	}
 
-	public function getProperties(): array {
-		return $this->properties;
+	public function setSession(mixed $session): void {
+		$this->session = $session;
 	}
 
-	public function setProperty(string $property, $data): void {
-		$this->properties[$property] = $data;
-	}
-
-	public function unsetProperty(string $property): void {
-		unset($this->properties[$property]);
+	public function getSession(): mixed {
+		return $this->session;
 	}
 }
