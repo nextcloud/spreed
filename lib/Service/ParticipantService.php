@@ -35,7 +35,6 @@ use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeesAddedEvent;
-use OCA\Talk\Events\BeforeAttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeFederatedUserJoinedRoomEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;

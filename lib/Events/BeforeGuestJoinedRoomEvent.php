@@ -23,7 +23,5 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Room;
-
 class BeforeGuestJoinedRoomEvent extends ABeforeJoinedRoomEvent {
 }
