@@ -120,7 +120,10 @@
 				@update-background="handleUpdateVirtualBackground" />
 
 			<!-- "Always show" setting -->
-			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings" class="checkbox">
+			<NcCheckboxRadioSwitch class="checkbox"
+				:checked="showMediaSettings || showRecordingWarning"
+				:disabled="showRecordingWarning"
+				@update:checked="setShowMediaSettings">
 				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
 
@@ -132,8 +135,23 @@
 			</NcCheckboxRadioSwitch>
 
 			<!-- Recording warning -->
-			<NcNoteCard v-else-if="isStartingRecording || isRecording" type="warning">
-				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
+			<NcNoteCard v-if="showRecordingWarning" type="warning">
+				<p v-if="isCurrentlyRecording">
+					<strong>{{ t('spreed', 'The call is being recorded.') }}</strong>
+				</p>
+				<p v-else>
+					<strong>{{ t('spreed', 'The call might be recorded.') }}</strong>
+				</p>
+				<template v-if="isRecordingConsentRequired">
+					<p>
+						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
+					</p>
+					<NcCheckboxRadioSwitch class="checkbox--warning"
+						:checked="recordingConsentGiven"
+						@update:checked="setRecordingConsentGiven">
+						{{ t('spreed', 'Give consent to the recording of this call') }}
+					</NcCheckboxRadioSwitch>
+				</template>
 			</NcNoteCard>
 
 			<!-- buttons bar at the bottom -->
@@ -169,7 +187,9 @@
 				<CallButton v-if="!isInCall"
 					class="call-button"
 					is-media-settings
-					:is-recording-from-start.sync="isRecordingFromStart"
+					:is-recording-from-start="isRecordingFromStart"
+					:disabled="isRecordingConsentRequired && !recordingConsentGiven"
+					:recording-consent-given="recordingConsentGiven"
 					:silent-call="silentCall" />
 				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
 					{{ t('spreed', 'Apply settings') }}
@@ -211,9 +231,11 @@ import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useGuestNameStore } from '../../stores/guestName.js'
+import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
+const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent']
 
 export default {
 	name: 'MediaSettings',
@@ -245,10 +267,20 @@ export default {
 
 	mixins: [devices, isInLobby],
 
+	props: {
+		recordingConsentGiven: {
+			type: Boolean,
+			default: false
+		}
+	},
+
+	emits: ['update:recording-consent-given'],
+
 	setup() {
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
-		return { AVATAR, isInCall, guestNameStore }
+		const settingsStore = useSettingsStore()
+		return { AVATAR, isInCall, guestNameStore, settingsStore }
 	},
 
 	data() {
@@ -258,7 +290,6 @@ export default {
 			tabContent: 'none',
 			audioOn: undefined,
 			videoOn: undefined,
-			showMediaSettings: true,
 			silentCall: false,
 			updatedBackground: undefined,
 			deviceIdChanged: false,
@@ -296,6 +327,10 @@ export default {
 			return this.$store.getters.getToken()
 		},
 
+		showMediaSettings() {
+			return this.settingsStore.getShowMediaSettings(this.token)
+		},
+
 		showVideo() {
 			return this.videoPreviewAvailable && this.videoOn
 		},
@@ -322,14 +357,9 @@ export default {
 			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
 		},
 
-		isStartingRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
-		},
-
-		isRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		isCurrentlyRecording() {
+			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
+				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
 		},
 
 		canFullModerate() {
@@ -339,6 +369,15 @@ export default {
 
 		canModerateRecording() {
 			return this.canFullModerate && recordingEnabled
+		},
+
+		isRecordingConsentRequired() {
+			return recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
+				|| (recordingConsent === CALL.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED)
+		},
+
+		showRecordingWarning() {
+			return !this.isInCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
 		showSilentCallOption() {
@@ -356,6 +395,7 @@ export default {
 		isVirtualBackgroundAvailable() {
 			return this.virtualBackground.isAvailable()
 		},
+
 		showUpdateChangesButton() {
 			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
@@ -383,14 +423,6 @@ export default {
 			}
 		},
 
-		showMediaSettings(newValue) {
-			if (newValue) {
-				BrowserStorage.setItem('showMediaSettings' + this.token, 'true')
-			} else {
-				BrowserStorage.setItem('showMediaSettings' + this.token, 'false')
-			}
-		},
-
 		audioInputId(audioInputId) {
 			this.deviceIdChanged = true
 			if (this.showDeviceSelection && audioInputId && !this.audioOn) {
@@ -403,6 +435,10 @@ export default {
 			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
+		},
+
+		isRecordingFromStart(value) {
+			this.setRecordingConsentGiven(value)
 		},
 	},
 
@@ -565,18 +601,21 @@ export default {
 				this.tabContent = 'none'
 			}
 		},
+
+		setShowMediaSettings(newValue) {
+			this.settingsStore.setShowMediaSettings(this.token, newValue)
+		},
+
+		setRecordingConsentGiven(value) {
+			this.$emit('update:recording-consent-given', value)
+		}
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 .media-settings {
-	padding: calc(var(--default-grid-baseline) * 4);
-	background-color: var(--color-main-background);
-	overflow-y: auto;
-	overflow-x: hidden;
-	margin: auto;
-	width: 100%;
+	padding: calc(var(--default-grid-baseline) * 5);
 
 	&__title {
 		text-align: center;
@@ -591,8 +630,8 @@ export default {
 		overflow: hidden;
 		border-radius: calc(var(--default-grid-baseline) * 3);
 		background-color: var(--color-loading-dark);
-		height: 300px;
-		width: 400px;
+		width: 100%;
+		aspect-ratio: 4/3;
 	}
 
 	&__toggles-wrapper {
@@ -658,6 +697,13 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin: calc(var(--default-grid-baseline) * 2);
+
+	&--warning {
+		&:focus-within :deep(.checkbox-radio-switch__label),
+		& :deep(.checkbox-radio-switch__label:hover) {
+			background-color: var(--note-background) !important;
+		}
+	}
 }
 
 :deep(.modal-container) {

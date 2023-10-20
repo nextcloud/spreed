@@ -71,7 +71,7 @@
 
 				<!-- Device settings -->
 				<NcActionButton close-after-click
-					@click="showMediaSettings">
+					@click="showMediaSettingsDialog">
 					<template #icon>
 						<VideoIcon :size="20" />
 					</template>
@@ -446,7 +446,7 @@ export default {
 			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 
-		showMediaSettings() {
+		showMediaSettingsDialog() {
 			emit('talk:media-settings:show')
 		},
 

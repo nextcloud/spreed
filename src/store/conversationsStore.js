@@ -36,6 +36,7 @@ import {
 	makePublic,
 	makePrivate,
 	setSIPEnabled,
+	setRecordingConsent,
 	changeLobbyState,
 	changeReadOnlyState,
 	changeListable,
@@ -561,6 +562,18 @@ const actions = {
 		await setSIPEnabled(token, state)
 
 		const conversation = Object.assign({}, getters.conversations[token], { sipEnabled: state })
+
+		commit('addConversation', conversation)
+	},
+
+	async setRecordingConsent({ commit, getters }, { token, state }) {
+		if (!getters.conversations[token]) {
+			return
+		}
+
+		await setRecordingConsent(token, state)
+
+		const conversation = Object.assign({}, getters.conversations[token], { recordingConsent: state })
 
 		commit('addConversation', conversation)
 	},

@@ -200,7 +200,7 @@ export default {
 <style lang="scss" scoped>
 .media-devices-selector {
 	display: flex;
-	margin: 16px 8px 16px 4px;
+	margin: 16px 0;
 	&__icon {
 		display: flex;
 		justify-content: flex-start;

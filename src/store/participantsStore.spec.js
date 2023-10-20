@@ -521,12 +521,13 @@ describe('participantsStore', () => {
 				},
 				flags,
 				silent: false,
+				recordingConsent: false,
 			})
 		})
 
 		test('joins call', async () => {
 			// Assert
-			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false)
+			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false, false)
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(true)
 			expect(store.getters.participantsList(TOKEN)).toStrictEqual([

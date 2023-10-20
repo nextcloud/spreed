@@ -100,8 +100,8 @@ import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import browserCheck from '../../mixins/browserCheck.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import participant from '../../mixins/participant.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.js'
+import { useSettingsStore } from '../../stores/settings.js'
 
 export default {
 	name: 'CallButton',
@@ -127,6 +127,11 @@ export default {
 	],
 
 	props: {
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+
 		/**
 		 * Whether the component is used in MediaSettings or not
 		 * (when click will directly start a call)
@@ -148,12 +153,18 @@ export default {
 		isRecordingFromStart: {
 			type: Boolean,
 			default: false,
-		}
+		},
+
+		recordingConsentGiven: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		const settingsStore = useSettingsStore()
+		return { isInCall, settingsStore }
 	},
 
 	data() {
@@ -177,14 +188,14 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		isStartingRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
+		showRecordingWarning() {
+			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
+				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
+			|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
 		},
 
-		isRecording() {
-			return this.conversation.callRecording === CALL.RECORDING.VIDEO
-				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		showMediaSettings() {
+			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
 		participantType() {
@@ -203,8 +214,8 @@ export default {
 		},
 
 		startCallButtonDisabled() {
-			return (!this.conversation.canStartCall
-					&& !this.hasCall)
+			return this.disabled
+				|| (!this.conversation.canStartCall && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
@@ -311,6 +322,7 @@ export default {
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 				flags,
 				silent: this.hasCall ? true : this.silentCall,
+				recordingConsent: this.recordingConsentGiven,
 			})
 			this.loading = false
 
@@ -355,11 +367,7 @@ export default {
 				return
 			}
 
-			const showMediaSettings = BrowserStorage.getItem('showMediaSettings' + this.token)
-			const shouldShowMediaSettingsScreen = (showMediaSettings === null || showMediaSettings === 'true')
-			console.debug('showMediaSettings:', shouldShowMediaSettingsScreen)
-
-			if (this.isStartingRecording || this.isRecording || shouldShowMediaSettingsScreen) {
+			if (this.showRecordingWarning || this.showMediaSettings) {
 				emit('talk:media-settings:show')
 			} else {
 				emit('talk:media-settings:hide')

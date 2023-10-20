@@ -46,7 +46,7 @@
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
-				<MediaSettings :initialize-on-mounted="false" />
+				<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>
@@ -125,6 +125,7 @@ export default {
 		return {
 			fetchCurrentConversationIntervalId: null,
 			joiningConversation: false,
+			recordingConsentGiven: false,
 		}
 	},
 
