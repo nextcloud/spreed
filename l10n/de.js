@@ -1011,6 +1011,7 @@ OC.L10N.register(
     "Create a new conversation" : "Neue Unterhaltung erstellen",
     "Join open conversations" : "Offener Unterhaltung beitreten",
     "No matches found" : "Keine Übereinstimmungen gefunden",
+    "Clear filter" : "Filter zurücksetzen",
     "Unread mentions" : "Ungelesene Erwähnungen",
     "Open conversations" : "Offene Unterhaltungen",
     "Groups" : "Gruppen",
