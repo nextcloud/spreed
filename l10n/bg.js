@@ -986,6 +986,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Трябва да повишите нов модератор, преди да можете да напуснете разговора.",
     "Conversation list" : "Списък с разговори",
     "No matches found" : "Няма намерени съвпадения",
+    "Clear filter" : "Изчстиване на филтър",
     "Unread mentions" : "Непрочетени споменавания",
     "Open conversations" : "Отворени разговори",
     "Groups" : "Групи",

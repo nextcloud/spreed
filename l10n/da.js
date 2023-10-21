@@ -408,6 +408,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Dig: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "You need to promote a new moderator before you can leave the conversation." : "Du skal udnævne en ny moderator før du kan forlade samtalen.",
+    "Clear filter" : "Ryd filter",
     "Groups" : "Grupper",
     "Circles" : "Cirkler",
     "Loading" : "Indlæser",

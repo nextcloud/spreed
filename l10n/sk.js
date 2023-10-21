@@ -579,7 +579,7 @@ OC.L10N.register(
     "Stay in call" : "Neopustiť hovor",
     "Duplicate session" : "Zduplikovať sedenie",
     "Discuss this file" : "Diskutujte o tomto súbore",
-    "Share this file with others to discuss it" : "Zdieľajte tento súbor s ostatnými pre diskusiu o ňom",
+    "Share this file with others to discuss it" : "Zdieľajte tento súbor s ostatnými a diskutujte o ňom",
     "Share this file" : "Zdieľať tento súbor",
     "Join conversation" : "Pripojiť sa ku konverzácii",
     "Request password" : "Vyžiadať heslo",
