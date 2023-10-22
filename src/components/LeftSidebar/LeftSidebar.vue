@@ -28,6 +28,7 @@
 				<SearchBox ref="searchBox"
 					:value.sync="searchText"
 					:is-focused.sync="isFocused"
+					:list="list"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
 			</div>
@@ -137,7 +138,7 @@
 								</NcButton>
 							</template>
 						</NcEmptyContent>
-						<li v-show="filteredConversationsList.length > 0" class="h-100">
+						<li v-show="filteredConversationsList.length > 0" ref="list" class="h-100">
 							<ConversationsListVirtual ref="scroller"
 								:conversations="filteredConversationsList"
 								:loading="!initialisedConversations"
@@ -344,6 +345,7 @@ export default {
 	setup() {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
+		const list = ref(null)
 
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
 
@@ -352,6 +354,7 @@ export default {
 			resetNavigation,
 			leftSidebar,
 			searchBox,
+			list,
 		}
 	},
 
@@ -864,6 +867,7 @@ export default {
 				}
 			}
 			if (to.name === 'conversation') {
+				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.scrollToConversation(to.params.token)
 			}
