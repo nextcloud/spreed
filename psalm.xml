@@ -89,6 +89,7 @@
 		<file name="tests/stubs/oc_comments_manager.php" />
 		<file name="tests/stubs/oc_core_command_base.php" />
 		<file name="tests/stubs/oc_hooks_emitter.php" />
+		<file name="tests/stubs/oca_circles.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ServerException.php" />
