@@ -26,6 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
+/**
+ * @deprecated Use {@see BeforeRoomModifiedEvent} and {@see RoomModifiedEvent} instead
+ */
 class ModifyRoomEvent extends RoomEvent {
 
 	public function __construct(

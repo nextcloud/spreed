@@ -37,6 +37,7 @@ use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 
 class Executor {
+	/** @deprecated Commands are deprecated, please switch to Nextcloud Talk bots */
 	public const EVENT_APP_EXECUTE = self::class . '::execApp';
 
 	public const PLACEHOLDER_ROOM = '{ROOM}';

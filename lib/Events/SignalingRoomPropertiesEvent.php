@@ -25,6 +25,9 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
+/**
+ * @deprecated
+ */
 class SignalingRoomPropertiesEvent extends RoomEvent {
 
 	public function __construct(

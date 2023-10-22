@@ -26,6 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
+/**
+ * @deprecated
+ */
 class SignalingEvent extends ParticipantEvent {
 	/** @var mixed */
 	protected $session;

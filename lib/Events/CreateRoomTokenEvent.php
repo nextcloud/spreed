@@ -25,6 +25,9 @@ namespace OCA\Talk\Events;
 
 use OCP\EventDispatcher\Event;
 
+/**
+ * @deprecated
+ */
 class CreateRoomTokenEvent extends Event {
 	protected string $token;
 

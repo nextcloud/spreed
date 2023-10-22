@@ -25,6 +25,9 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
+/**
+ * @deprecated
+ */
 class VerifyRoomPasswordEvent extends RoomEvent {
 	protected ?bool $isPasswordValid = null;
 	protected string $redirectUrl = '';

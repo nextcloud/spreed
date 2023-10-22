@@ -25,6 +25,9 @@ namespace OCA\Talk\Events;
 
 use OCP\EventDispatcher\Event;
 
+/**
+ * @deprecated
+ */
 class GetTurnServersEvent extends Event {
 
 	public function __construct(

@@ -27,6 +27,9 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
+/**
+ * @deprecated
+ */
 class ChatParticipantEvent extends ChatEvent {
 	public function __construct(
 		Room $room,

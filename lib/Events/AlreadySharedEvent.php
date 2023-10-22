@@ -29,6 +29,9 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 use OCP\Share\IShare;
 
+/**
+ * @deprecated
+ */
 class AlreadySharedEvent extends Event {
 	public function __construct(
 		private IShare $share,

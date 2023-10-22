@@ -27,6 +27,9 @@ use OCA\Talk\Model\Command;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
+/**
+ * @deprecated
+ */
 class CommandEvent extends ChatEvent {
 	protected string $output = '';
 
