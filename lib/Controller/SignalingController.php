@@ -535,7 +535,7 @@ class SignalingController extends OCSController {
 	 * See sections "Backend validation" in
 	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}, room?: array{version: string, roomid?: string, properties?: array<string, mixed>, permissions?: string[], session?: string}}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}, room?: array{version: string, roomid?: string, properties?: array<string, mixed>, permissions?: string[], session?: array<string, mixed>}}, array{}>
 	 *
 	 * 200: Always, sorry about that
 	 */
@@ -633,7 +633,7 @@ class SignalingController extends OCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, room?: array{version: string, roomid: string, properties: array<string, mixed>, permissions: string[], session?: string}}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, room?: array{version: string, roomid: string, properties: array<string, mixed>, permissions: string[], session?: array<string, mixed>}}, array{}>
 	 */
 	private function backendRoom(array $roomRequest): DataResponse {
 		$token = $roomRequest['roomid']; // It's actually the room token
@@ -789,7 +789,7 @@ class SignalingController extends OCSController {
 		$legacyEvent = new SignalingEvent($room, $participant, $action);
 		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $legacyEvent);
 		$event = new BeforeSignalingResponseSentEvent($room, $participant, $action);
-		if ($legacyEvent->getSession()) {
+		if (is_array($legacyEvent->getSession())) {
 			$event->setSession($legacyEvent->getSession());
 		}
 		$this->dispatcher->dispatchTyped($event);
@@ -803,7 +803,7 @@ class SignalingController extends OCSController {
 				'permissions' => $permissions,
 			],
 		];
-		if ($event->getSession() !== '') {
+		if (!empty($event->getSession())) {
 			$response['room']['session'] = $event->getSession();
 		}
 		return new DataResponse($response);
