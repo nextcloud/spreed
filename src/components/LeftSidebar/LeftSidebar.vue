@@ -122,10 +122,11 @@
 					<!-- Conversations List -->
 					<template v-if="!isSearching">
 						<NcEmptyContent v-if="initialisedConversations && filteredConversationsList.length === 0"
-							:name="t('spreed', 'No matches found')"
-							:description="displayedMessage">
+							:name="emptyContentLabel"
+							:description="emptyContentDescription">
 							<template #icon>
-								<MessageBadge v-if="isFiltered" :size="64" />
+								<AtIcon v-if="isFiltered === 'mentions'" :size="64" />
+								<MessageBadge v-else-if="isFiltered === 'unread'" :size="64" />
 								<MessageOutline v-else :size="64" />
 							</template>
 							<template #action>
@@ -409,14 +410,24 @@ export default {
 			return this.$store.getters.getToken()
 		},
 
-		displayedMessage() {
+		emptyContentLabel() {
 			switch (this.isFiltered) {
 			case 'mentions':
-				return t('spreed', 'You have no unread mentions in your inbox.')
 			case 'unread':
-				return t('spreed', 'You have no unread messages in your inbox.')
+				return t('spreed', 'No matches found')
 			default:
-				return t('spreed', 'Your inbox is empty.')
+				return t('spreed', 'No conversations found')
+			}
+		},
+
+		emptyContentDescription() {
+			switch (this.isFiltered) {
+			case 'mentions':
+				return t('spreed', 'You have no unread mentions.')
+			case 'unread':
+				return t('spreed', 'You have no unread messages.')
+			default:
+				return ''
 			}
 		},
 
