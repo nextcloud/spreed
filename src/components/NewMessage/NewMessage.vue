@@ -109,7 +109,7 @@
 
 			<!-- Send buttons -->
 			<template v-else>
-				<NcActions v-if="!broadcast"
+				<NcActions v-if="!broadcast && !upload"
 					:container="container"
 					:force-menu="true">
 					<!-- Silent send -->
@@ -241,6 +241,14 @@ export default {
 		},
 
 		/**
+		 * Upload files caption.
+		 */
+		upload: {
+			type: Boolean,
+			default: false,
+		},
+
+		/**
 		 * Show an indicator if someone is currently typing a message.
 		 */
 		hasTypingIndicator: {
@@ -359,11 +367,11 @@ export default {
 		},
 
 		showAttachmentsMenu() {
-			return this.canShareFiles && !this.broadcast
+			return this.canShareFiles && !this.broadcast && !this.upload
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
 		},
 		showTypingStatus() {
 			return this.hasTypingIndicator && this.supportTypingStatus
@@ -446,8 +454,15 @@ export default {
 		},
 
 		handleUploadStart() {
-			// refocus on upload start as the user might want to type again while the upload is running
-			this.focusInput()
+			if (this.upload) {
+				return
+			}
+			this.$nextTick(() => {
+				// reset main input in chat view after upload file with caption
+				this.text = this.$store.getters.currentMessageInput(this.token)
+				// refocus on upload start as the user might want to type again while the upload is running
+				this.focusInput()
+			})
 		},
 
 		/**
@@ -464,6 +479,12 @@ export default {
 					await this.handleSubmitSpam(match[1])
 					return
 				}
+			}
+
+			if (this.upload) {
+				this.$emit('sent', this.text)
+				this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: '' })
+				return
 			}
 
 			if (this.hasText) {

@@ -21,6 +21,7 @@
 
 <template>
 	<NcModal v-if="showModal"
+		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		class="upload-editor"
 		:container="container"
@@ -39,9 +40,9 @@
 					tag="div"
 					group>
 					<template v-for="file in files">
-						<FilePreview :key="file.temporaryMessage.id"
+						<FilePreview :key="file[1].temporaryMessage.id"
 							:token="token"
-							v-bind="file.temporaryMessage.messageParameters.file"
+							v-bind="file[1].temporaryMessage.messageParameters.file"
 							:is-upload-editor="true"
 							@remove-file="handleRemoveFileFromSelection" />
 					</template>
@@ -62,14 +63,15 @@
 				<AudioPlayer :name="voiceMessageName"
 					:local-url="voiceMessageLocalURL" />
 			</template>
-			<div class="upload-editor__actions">
-				<NcButton type="tertiary" @click="handleDismiss">
-					{{ t('spreed', 'Dismiss') }}
-				</NcButton>
-				<NcButton ref="submitButton" type="primary" @click="handleUpload">
-					{{ t('spreed', 'Send') }}
-				</NcButton>
-			</div>
+			<NewMessage v-if="modalContainerId"
+				ref="newMessage"
+				role="region"
+				upload
+				:token="token"
+				:container="modalContainerId"
+				:aria-label="t('spreed', 'Post message')"
+				@sent="handleUpload"
+				@failure="handleDismiss" />
 		</div>
 	</NcModal>
 </template>
@@ -83,6 +85,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import NewMessage from './NewMessage.vue'
 import TransitionWrapper from '../TransitionWrapper.vue'
 
 export default {
@@ -94,7 +97,14 @@ export default {
 		Plus,
 		AudioPlayer,
 		NcButton,
+		NewMessage,
 		TransitionWrapper,
+	},
+
+	data() {
+		return {
+			modalContainerId: null,
+		}
 	},
 
 	computed: {
@@ -107,10 +117,7 @@ export default {
 		},
 
 		files() {
-			if (this.currentUploadId) {
-				return this.$store.getters.getInitialisedUploads(this.currentUploadId)
-			}
-			return []
+			return this.$store.getters.getInitialisedUploads(this.currentUploadId)
 		},
 
 		showModal() {
@@ -126,11 +133,10 @@ export default {
 		},
 
 		firstFile() {
-			return this.files[Object.keys(this.files)[0]]
+			return this.files?.at(0)?.at(1)
 		},
 
-		// Hide the plus button in case this editor is used while sending a voice
-		// message
+		// Hide the plus button in case this editor is used while sending a voice message
 		isVoiceMessage() {
 			if (!this.firstFile) {
 				return false
@@ -154,17 +160,21 @@ export default {
 	},
 
 	watch: {
-		showModal(show) {
+		async showModal(show) {
 			if (show) {
-				this.focus()
+				await this.getContainerId()
+				this.$nextTick(() => {
+					this.$refs.newMessage?.focusInput()
+				})
 			}
 		},
 	},
 
 	methods: {
-		focus() {
+		async getContainerId() {
 			this.$nextTick(() => {
-				this.$refs.submitButton.$el.focus()
+				// Postpone render of NewMessage until modal container is mounted
+				this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
 			})
 		},
 
@@ -172,8 +182,8 @@ export default {
 			this.$store.dispatch('discardUpload', this.currentUploadId)
 		},
 
-		handleUpload() {
-			this.$store.dispatch('uploadFiles', this.currentUploadId)
+		handleUpload(caption) {
+			this.$store.dispatch('uploadFiles', { uploadId: this.currentUploadId, caption })
 		},
 		/**
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
@@ -204,20 +214,10 @@ export default {
 	padding: 16px;
 
 	&__previews {
-		overflow-x: hidden !important;
 		display: flex;
 		position: relative;
 		overflow: auto;
 		flex-wrap: wrap;
-	}
-	&__actions {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 16px;
-		margin-bottom: 4px;
-		button {
-			margin: 0 4px 0 4px;
-		}
 	}
 }
 
@@ -230,5 +230,4 @@ export default {
 		margin: auto;
 	}
 }
-
 </style>

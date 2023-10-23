@@ -47,11 +47,11 @@ the main body of the message as well as a quote.
 					class="message-body__main__text">
 					<Quote v-if="parent" v-bind="parent" />
 					<div class="single-emoji">
-						{{ message }}
+						{{ renderedMessage }}
 					</div>
 				</div>
 				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
-					<NcRichText :text="message"
+					<NcRichText :text="renderedMessage"
 						:arguments="richParameters"
 						autolink
 						dir="auto"
@@ -59,7 +59,7 @@ the main body of the message as well as a quote.
 					<CallButton />
 				</div>
 				<div v-else-if="showResultsButton || isSystemMessage" class="message-body__main__text system-message">
-					<NcRichText :text="message"
+					<NcRichText :text="renderedMessage"
 						:arguments="richParameters"
 						autolink
 						dir="auto"
@@ -72,7 +72,7 @@ the main body of the message as well as a quote.
 						show-as-button />
 				</div>
 				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
-					<NcRichText :text="message"
+					<NcRichText :text="renderedMessage"
 						:arguments="richParameters"
 						autolink
 						dir="auto"
@@ -83,7 +83,7 @@ the main body of the message as well as a quote.
 					@mouseover="handleMarkdownMouseOver"
 					@mouseleave="handleMarkdownMouseLeave">
 					<Quote v-if="parent" v-bind="parent" />
-					<NcRichText :text="message"
+					<NcRichText :text="renderedMessage"
 						:arguments="richParameters"
 						autolink
 						dir="auto"
@@ -457,6 +457,11 @@ export default {
 			type: Array,
 			default: () => { return [] },
 		},
+
+		referenceId: {
+			type: String,
+			default: '',
+		},
 	},
 
 	emits: ['toggle-combined-system-message'],
@@ -500,6 +505,15 @@ export default {
 
 		isLastReadMessage() {
 			return !this.isLastMessage && this.id === this.$store.getters.getVisualLastReadMessageId(this.token)
+		},
+
+		renderedMessage() {
+			if (this.messageParameters?.file && this.message !== '{file}') {
+				// Add a new line after file to split content into different paragraphs
+				return '{file}' + '\n\n' + this.message
+			} else {
+				return this.message
+			}
 		},
 
 		messageObject() {
@@ -568,7 +582,7 @@ export default {
 			let match
 			let emojiStrings = ''
 			let emojiCount = 0
-			const trimmedMessage = this.message.trim()
+			const trimmedMessage = this.renderedMessage.trim()
 
 			// eslint-disable-next-line no-cond-assign
 			while (match = regex.exec(trimmedMessage)) {
@@ -600,6 +614,7 @@ export default {
 						props: Object.assign({
 							token: this.token,
 							itemType,
+							referenceId: this.referenceId,
 						}, this.messageParameters[p]),
 					}
 				} else if (type === 'deck-card') {
