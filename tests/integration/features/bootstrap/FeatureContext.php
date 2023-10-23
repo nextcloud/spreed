@@ -688,6 +688,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 				self::$userToAttendeeId[$identifier][$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
 
+				if (!empty($attendee['phoneNumber'])) {
+					self::$phoneNumberToActorId[$attendee['phoneNumber']] = $attendee['actorId'];
+				}
+
 				$result[] = $data;
 			}
 
@@ -702,14 +706,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 				if (isset($attendee['actorId'], $attendee['actorType'], $attendee['phoneNumber'])
 					&& $attendee['actorType'] === 'phones'
-					&& $attendee['actorId'] === 'PHONE(' . $actual['phoneNumber'] . ')'
-					&& $attendee['phoneNumber'] === $actual['phoneNumber']) {
-					$attendee['actorId'] = $actual['actorId'];
-				}
-
-				if (!empty($actual['phoneNumber'])) {
-					self::$phoneNumberToActorId[$actual['phoneNumber']] = $actual['actorId'];
-				} else {
+					&& str_starts_with($attendee['actorId'], 'PHONE(')) {
 					$matched = preg_match('/PHONE\((\+\d+)\)/', $attendee['actorId'], $matches);
 					if ($matched) {
 						$attendee['actorId'] = self::$phoneNumberToActorId[$matches[1]];
