@@ -170,24 +170,21 @@ class PageController extends Controller {
 		return $this->pageHandler($token, $callUser);
 	}
 
-	/**
-	 * @param string $forUser
-	 * @return ?Room
-	 */
-	protected function createPrivateRoom(string $forUser): ?Room {
-		$user = $this->userManager->get($forUser);
+	protected function createPrivateRoom(string $targetUserId): ?Room {
+		$user = $this->userManager->get($targetUserId);
 		if (!$user instanceof IUser) {
 			return null;
 		}
 
+		$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
+
 		try {
-			$objectType = '';
-			$objectId = '';
-			$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
-			$room = $this->roomService->createConversation(Room::TYPE_PUBLIC,
-				$l->t('Contact request'), $user, $objectType, $objectId,
+			$room = $this->roomService->createConversation(
+				Room::TYPE_PUBLIC,
+				$l->t('Contact request'),
+				$user,
 			);
-		} catch (\InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException) {
 			return null;
 		}
 
@@ -206,14 +203,6 @@ class PageController extends Controller {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
 			if ($token === '') {
-				$room = $this->createPrivateRoom($callUser);
-				if ($room === null) {
-					$response = new TemplateResponse('core', '404-profile', [], 'guest');
-					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
-
-					return $response;
-				}
-
 				try {
 					$this->limiter->registerAnonRequest(
 						'create-anonymous-conversation',
@@ -225,11 +214,17 @@ class PageController extends Controller {
 					return new TooManyRequestsResponse();
 				}
 
-				// FIXME: add rate limiting
+				$room = $this->createPrivateRoom($callUser);
+				if ($room === null) {
+					$response = new TemplateResponse('core', '404-profile', [], TemplateResponse::RENDER_AS_GUEST);
+					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
+					return $response;
+				}
+
 				return $this->redirectToConversation($room->getToken());
-			} else {
-				return $this->guestEnterRoom($token, $password);
 			}
+
+			return $this->guestEnterRoom($token, $password);
 		}
 
 		$throttle = false;
