@@ -95,6 +95,7 @@ appstore:
 	--exclude=.php_cs.dist \
 	--exclude=psalm.xml \
 	--exclude=README.md \
+	--exclude=.readthedocs.yaml \
 	--exclude=/recording \
 	--exclude=/src \
 	--exclude=.stylelintignore \
