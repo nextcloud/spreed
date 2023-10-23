@@ -69,6 +69,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Profile\IProfileManager;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\RateLimiting\ILimiter;
 use OCP\Security\RateLimiting\IRateLimitExceededException;
@@ -101,6 +102,7 @@ class PageController extends Controller {
 		IConfig $serverConfig,
 		IGroupManager $groupManager,
 		protected IUserManager $userManager,
+		protected IProfileManager $profileManager,
 		protected ILimiter $limiter,
 		protected IFactory $l10nFactory,
 	) {
@@ -170,25 +172,26 @@ class PageController extends Controller {
 		return $this->pageHandler($token, $callUser);
 	}
 
-	protected function createPrivateRoom(string $targetUserId): ?Room {
+	/**
+	 * @throws \InvalidArgumentException
+	 */
+	protected function createPrivateRoom(string $targetUserId): Room {
 		$user = $this->userManager->get($targetUserId);
 		if (!$user instanceof IUser) {
-			return null;
+			throw new \InvalidArgumentException('user');
+		}
+
+		if ($this->profileManager->isProfileFieldVisible('talk', $user, null)) {
+			throw new \InvalidArgumentException('profile');
 		}
 
 		$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
 
-		try {
-			$room = $this->roomService->createConversation(
-				Room::TYPE_PUBLIC,
-				$l->t('Contact request'),
-				$user,
-			);
-		} catch (\InvalidArgumentException) {
-			return null;
-		}
-
-		return $room;
+		return $this->roomService->createConversation(
+			Room::TYPE_PUBLIC,
+			$l->t('Contact request'),
+			$user,
+		);
 	}
 
 	/**
@@ -214,8 +217,9 @@ class PageController extends Controller {
 					return new TooManyRequestsResponse();
 				}
 
-				$room = $this->createPrivateRoom($callUser);
-				if ($room === null) {
+				try {
+					$room = $this->createPrivateRoom($callUser);
+				} catch (\InvalidArgumentException) {
 					$response = new TemplateResponse('core', '404-profile', [], TemplateResponse::RENDER_AS_GUEST);
 					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
 					return $response;
