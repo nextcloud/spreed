@@ -27,7 +27,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class BeforeSignalingResponseSentEvent extends ParticipantEvent {
-	protected mixed $session = '';
+	protected array $session = [];
 
 	public function __construct(
 		Room $room,
@@ -41,11 +41,11 @@ class BeforeSignalingResponseSentEvent extends ParticipantEvent {
 		return $this->action;
 	}
 
-	public function setSession(mixed $session): void {
+	public function setSession(array $session): void {
 		$this->session = $session;
 	}
 
-	public function getSession(): mixed {
+	public function getSession(): array {
 		return $this->session;
 	}
 }
