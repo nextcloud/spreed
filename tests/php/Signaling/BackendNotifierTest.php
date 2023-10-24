@@ -47,6 +47,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
 use OCP\ICacheFactory;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -72,11 +73,12 @@ class CustomBackendNotifier extends BackendNotifier {
 		$this->requests = [];
 	}
 
-	protected function doRequest(string $url, array $params, int $retries = 3): void {
+	protected function doRequest(string $url, array $params, int $retries = 3): ?IResponse {
 		$this->requests[] = [
 			'url' => $url,
 			'params' => $params,
 		];
+		return null;
 	}
 }
 

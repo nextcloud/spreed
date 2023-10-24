@@ -34,6 +34,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
 use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
@@ -58,12 +59,13 @@ class BackendNotifier {
 	 * @param string $url
 	 * @param array $params
 	 * @param int $retries
+	 * @return ?IResponse
 	 * @throws \Exception
 	 */
-	protected function doRequest(string $url, array $params, int $retries = 3): void {
+	protected function doRequest(string $url, array $params, int $retries = 3): ?IResponse {
 		if (defined('PHPUNIT_RUN')) {
 			// Don't perform network requests when running tests.
-			return;
+			return null;
 		}
 
 		$client = $this->clientService->newClient();
@@ -73,15 +75,19 @@ class BackendNotifier {
 			if (!$this->signalingManager->isCompatibleSignalingServer($response)) {
 				throw new \RuntimeException('Signaling server needs to be updated to be compatible with this version of Talk');
 			}
+
+			return $response;
 		} catch (ServerException | ConnectException $e) {
 			if ($retries > 1) {
 				$this->logger->error('Failed to send message to signaling server, ' . $retries . ' retries left!', ['exception' => $e]);
-				$this->doRequest($url, $params, $retries - 1);
-			} else {
-				$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
+				return $this->doRequest($url, $params, $retries - 1);
 			}
+
+			$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
+			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);
+			throw $e;
 		}
 	}
 
@@ -90,11 +96,12 @@ class BackendNotifier {
 	 *
 	 * @param Room $room
 	 * @param array $data
+	 * @return ?IResponse
 	 * @throws \Exception
 	 */
-	private function backendRequest(Room $room, array $data): void {
+	private function backendRequest(Room $room, array $data): ?IResponse {
 		if ($this->config->getSignalingMode() === Config::SIGNALING_INTERNAL) {
-			return;
+			return null;
 		}
 
 		// FIXME some need to go to all HPBs, but that doesn't scale, so bad luck for now :(
@@ -129,7 +136,7 @@ class BackendNotifier {
 		if (empty($signaling['verify'])) {
 			$params['verify'] = false;
 		}
-		$this->doRequest($url, $params);
+		return $this->doRequest($url, $params);
 	}
 
 	/**
@@ -444,6 +451,42 @@ class BackendNotifier {
 			'duration' => sprintf('%.2f', $duration),
 			'app' => 'spreed-hpb',
 		]);
+	}
+
+	/**
+	 * Send dial-out requests to the HPB
+	 *
+	 * @param Room $room
+	 * @throws \Exception
+	 */
+	public function dialOutToAttendee(Room $room, Attendee $attendee): ?string {
+		$start = microtime(true);
+		$response = $this->backendRequest($room, [
+			'type' => 'dialout',
+			'dialout' => [
+				'number' => $attendee->getPhoneNumber(),
+				'options' => [
+					'attendeeId' => $attendee->getId(),
+					'actorType' => $attendee->getActorType(),
+					'actorId' => $attendee->getActorId(),
+				]
+			],
+		]);
+
+		if ($response === null) {
+			$this->logger->debug('Room dial out response was NULL');
+			return null;
+		}
+
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Room dial out: {token} {number} ({duration})', [
+			'token' => $room->getToken(),
+			'number' => $attendee->getPhoneNumber(),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
+		]);
+
+		return (string) $response->getBody();
 	}
 
 	/**

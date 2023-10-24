@@ -65,6 +65,8 @@ class SystemMessage {
 	protected array $circleLinks = [];
 	/** @var string[] */
 	protected array $guestNames = [];
+	/** @var array<string, array<string, string>> */
+	protected array $phoneNames = [];
 
 	public function __construct(
 		protected IUserManager $userManager,
@@ -338,6 +340,22 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You removed circle {circle}');
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator removed circle {circle}');
+			}
+		} elseif ($message === 'phone_added') {
+			$parsedParameters['phone'] = $this->getPhone($room, $parameters['phone'], $parameters['name']);
+			$parsedMessage = $this->l->t('{actor} added {phone}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You added {phone}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator added {phone}');
+			}
+		} elseif ($message === 'phone_removed') {
+			$parsedParameters['phone'] = $this->getPhone($room, $parameters['phone'], $parameters['name']);
+			$parsedMessage = $this->l->t('{actor} removed {phone}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed {phone}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator removed {phone}');
 			}
 		} elseif ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
@@ -770,6 +788,18 @@ class SystemMessage {
 		];
 	}
 
+	protected function getPhone(Room $room, string $actorId, string $fallbackDisplayName): array {
+		if (!isset($this->phoneNames[$room->getToken()][$actorId])) {
+			$this->phoneNames[$room->getToken()][$actorId] = $this->getDisplayNamePhone($room, $actorId, $fallbackDisplayName);
+		}
+
+		return [
+			'type' => 'highlight',
+			'id' => $actorId,
+			'name' => $this->phoneNames[$room->getToken()][$actorId],
+		];
+	}
+
 	protected function getCircle(string $circleId): array {
 		if (!isset($this->circleNames[$circleId])) {
 			$this->loadCircleDetails($circleId);
@@ -789,6 +819,18 @@ class SystemMessage {
 			'name' => $this->circleNames[$circleId],
 			'url' => $this->circleLinks[$circleId],
 		];
+	}
+
+	protected function getDisplayNamePhone(Room $room, string $actorId, string $fallbackDisplayName): string {
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_PHONES, $actorId);
+			return $participant->getAttendee()->getDisplayName();
+		} catch (ParticipantNotFoundException) {
+			if ($fallbackDisplayName) {
+				return $fallbackDisplayName;
+			}
+			return $this->l->t('Unknown number');
+		}
 	}
 
 	protected function getDisplayNameGroup(string $gid): string {

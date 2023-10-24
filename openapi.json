@@ -492,6 +492,14 @@
                     "statusMessage": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "callId": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -647,7 +655,10 @@
                                             "recording-consent",
                                             "supported-reactions",
                                             "predefined-backgrounds",
-                                            "can-upload-background"
+                                            "can-upload-background",
+                                            "sip-enabled",
+                                            "sip-dialout-enabled",
+                                            "can-enable-sip"
                                         ],
                                         "properties": {
                                             "enabled": {
@@ -676,6 +687,15 @@
                                                 }
                                             },
                                             "can-upload-background": {
+                                                "type": "boolean"
+                                            },
+                                            "sip-enabled": {
+                                                "type": "boolean"
+                                            },
+                                            "sip-dialout-enabled": {
+                                                "type": "boolean"
+                                            },
+                                            "can-enable-sip": {
                                                 "type": "boolean"
                                             }
                                         }
@@ -4476,6 +4496,181 @@
                     },
                     "400": {
                         "description": "Ringing attendee is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/dialout/{attendeeId}": {
+            "post": {
+                "operationId": "call-sip-dial-out",
+                "summary": "Call a SIP dial-out attendee",
+                "tags": [
+                    "call"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "attendeeId",
+                        "in": "path",
+                        "description": "ID of the attendee to call",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Dial-out initiated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "SIP dial-out not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Participant could not be found or is a wrong type",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "SIP dial-out is not configured on the server",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12695,7 +12890,7 @@
                         }
                     },
                     "501": {
-                        "description": "",
+                        "description": "SIP dial-out is not configured",
                         "content": {
                             "application/json": {
                                 "schema": {

@@ -442,6 +442,8 @@ class ChatManagerTest extends TestCase {
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 			'access_token' => '',
 			'remote_id' => '',
+			'phone_number' => '',
+			'call_id' => '',
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -498,6 +500,8 @@ class ChatManagerTest extends TestCase {
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 			'access_token' => '',
 			'remote_id' => '',
+			'phone_number' => '',
+			'call_id' => '',
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -576,6 +580,8 @@ class ChatManagerTest extends TestCase {
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
 			'access_token' => '',
 			'remote_id' => '',
+			'phone_number' => '',
+			'call_id' => '',
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())

@@ -82,6 +82,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\Exception;
@@ -513,6 +514,9 @@ class ParticipantService {
 			}
 			if (isset($participant['remoteId'])) {
 				$attendee->setRemoteId($participant['remoteId']);
+			}
+			if (isset($participant['phoneNumber'])) {
+				$attendee->setPhoneNumber($participant['phoneNumber']);
 			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
@@ -1229,6 +1233,63 @@ class ParticipantService {
 		$this->dispatcher->dispatchTyped($event);
 
 		return true;
+	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 * @throws ParticipantNotFoundException
+	 */
+	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId): void {
+		try {
+			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
+		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($attendee->getRoomId() !== $room->getId()) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
+			throw new ParticipantNotFoundException();
+		}
+
+		$dialOutResponse = $dialOutService->sendDialOutRequestToBackend($room, $attendee);
+
+		if (!$dialOutResponse) {
+			throw new \InvalidArgumentException('backend');
+		}
+
+		$attendee->setCallId($dialOutResponse->dialOut->callId);
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 * @throws ParticipantNotFoundException
+	 */
+	public function resetDialOutRequest(Room $room, int $targetAttendeeId, string $callId): void {
+		try {
+			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
+		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($attendee->getRoomId() !== $room->getId()) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($attendee->getActorType() !== Attendee::ACTOR_PHONES) {
+			throw new ParticipantNotFoundException();
+		}
+
+		if ($callId === $attendee->getCallId()) {
+			$attendee->setCallId(null);
+			$this->attendeeMapper->update($attendee);
+		} else {
+			throw new \InvalidArgumentException('callId');
+		}
+
 	}
 
 	public function updateCallFlags(Room $room, Participant $participant, int $flags): void {

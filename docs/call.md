@@ -77,6 +77,28 @@
         + `404 Not Found` When the conversation could not be found for the participant
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
+## Send SIP dial-out request
+
+* Required capability: `sip-support-dialout`
+* Method: `POST`
+* Endpoint: `/call/{token}/dialout/{attendeeId}`
+* Data:
+
+| field        | type | Description             |
+|--------------|------|-------------------------|
+| `attendeeId` | int  | The participant to call |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the room has no call in process
+        + `400 Bad Request` When the actor is not in the call
+        + `403 Forbidden` When the current user does not have the "Start call" permission
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `404 Not Found` When the target participant could not be found or is not a phone number (Guest, group, etc.)
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+        + `501 Not Implemented` When the SIP functionality is not configured
+
 ## Update call flags
 
 * Method: `PUT`

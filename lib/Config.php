@@ -52,6 +52,7 @@ class Config {
 	 */
 	public const USER_STATUS_INTEGRATION_LIMIT = 1000;
 
+	/** @var array<string, bool> */
 	protected array $canEnableSIP = [];
 
 	public function __construct(
@@ -139,6 +140,18 @@ class Config {
 		}
 
 		return $this->canEnableSIP[$user->getUID()];
+	}
+
+	public function canUserDialOutSIP(IUser $user): bool {
+		if (!$this->isSIPDialOutEnabled()) {
+			return false;
+		}
+
+		return $this->canUserEnableSIP($user);
+	}
+
+	public function isSIPDialOutEnabled(): bool {
+		return $this->config->getAppValue('spreed', 'sip_dialout', 'no') !== 'no';
 	}
 
 	public function getRecordingServers(): array {

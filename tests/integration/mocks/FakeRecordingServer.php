@@ -45,7 +45,7 @@ if (preg_match('/\/api\/v1\/welcome/', $_SERVER['REQUEST_URI'])) {
 
 	$data = file_get_contents('php://input');
 
-	$hash = hash_hmac('sha256', $random . $data, 'the secret');
+	$hash = hash_hmac('sha256', $random . $data, 'the recording secret');
 	if (!hash_equals($hash, strtolower($checksum))) {
 		error_log('fake-recording-server: Checksum does not match');
 
@@ -79,7 +79,7 @@ if (preg_match('/\/api\/v1\/welcome/', $_SERVER['REQUEST_URI'])) {
 
 	curl_setopt($ch, CURLOPT_URL, $_SERVER['HTTP_BACKEND_URL']);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
-		'OCS-APiRequest: true',
+		'OCS-APIRequest: true',
 		'Talk-Recording-Random: ' . $_SERVER['HTTP_TALK_RECORDING_RANDOM'],
 		'Talk-Recording-Checksum: ' . $_SERVER['HTTP_TALK_RECORDING_CHECKSUM'],
 	]);

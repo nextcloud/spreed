@@ -77,6 +77,7 @@ use OCP\HintException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\IPhoneNumberUtil;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -119,6 +120,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected IConfig $config,
 		protected Config $talkConfig,
 		protected ICloudIdManager $cloudIdManager,
+		protected IPhoneNumberUtil $phoneNumberUtil,
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
 	) {
@@ -481,7 +483,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 				return $this->createGroupRoom($invite);
 			case Room::TYPE_PUBLIC:
-				return $this->createEmptyRoom($roomName);
+				return $this->createEmptyRoom($roomName, true, $objectType, $objectId);
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -625,6 +627,9 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
 			}
+		} elseif ($objectType === Room::OBJECT_TYPE_PHONE) {
+			// Ignoring any user input on this one
+			$objectId = $objectType;
 		} elseif ($objectType !== '') {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}
@@ -875,6 +880,11 @@ class RoomController extends AEnvironmentAwareController {
 			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
 
+		$currentUser = null;
+		if ($this->userId !== null) {
+			$currentUser = $this->userManager->get($this->userId);
+		}
+
 		$cleanGuests = false;
 		foreach ($participants as $participant) {
 			$attendeeId = $participant->getAttendee()->getId();
@@ -915,6 +925,8 @@ class RoomController extends AEnvironmentAwareController {
 				'permissions' => $participant->getPermissions(),
 				'attendeePermissions' => $participant->getAttendee()->getPermissions(),
 				'attendeePin' => '',
+				'phoneNumber' => '',
+				'callId' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()
 				&& $this->room->getSIPEnabled() !== Webinary::SIP_DISABLED
@@ -978,6 +990,16 @@ class RoomController extends AEnvironmentAwareController {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+				if ($this->talkConfig->isSIPConfigured()
+					&& $this->participant->hasModeratorPermissions(false)) {
+					$result['phoneNumber'] = $participant->getAttendee()->getPhoneNumber();
+
+					if ($currentUser instanceof IUser && $this->talkConfig->canUserDialOutSIP($currentUser)) {
+						$result['callId'] = $participant->getAttendee()->getCallId();
+					}
+				}
 			}
 
 			$results[$attendeeId] = $result;
@@ -1000,6 +1022,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 200: Participant successfully added
 	 * 400: Adding participant is not possible
 	 * 404: User, group or other target to invite was not found
+	 * 501: SIP dial-out is not configured
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1026,6 +1049,8 @@ class RoomController extends AEnvironmentAwareController {
 				$remoteParticipantsByFederatedId[$participant->getAttendee()->getActorId()] = $participant;
 			}
 		}
+
+		$addedBy = $this->userManager->get($this->userId);
 
 		// list of participants to attempt adding,
 		// existing ones will be filtered later below
@@ -1097,6 +1122,32 @@ class RoomController extends AEnvironmentAwareController {
 				'actorId' => $newUser->getId(),
 				'displayName' => $newUser->getDisplayId(),
 			];
+		} elseif ($source === 'phones') {
+			if (
+				!$addedBy instanceof IUser
+				|| !$this->talkConfig->isSIPConfigured()
+				|| !$this->talkConfig->canUserDialOutSIP($addedBy)
+				|| preg_match(Room::SIP_INCOMPATIBLE_REGEX, $this->room->getToken())
+				|| ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_PUBLIC)) {
+				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+			}
+
+			$phoneRegion = $this->config->getSystemValueString('default_phone_region');
+			if ($phoneRegion === '') {
+				$phoneRegion = null;
+			}
+
+			$formattedNumber = $this->phoneNumberUtil->convertToStandardFormat($newParticipant, $phoneRegion);
+			if ($formattedNumber === null) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+
+			$participantsToAdd[] = [
+				'actorType' => Attendee::ACTOR_PHONES,
+				'actorId' => sha1($formattedNumber . '#' . $this->timeFactory->getTime()),
+				'displayName' => substr($formattedNumber, 0, -4) . '…', // FIXME Allow the UI to hand in a name (when selected from contacts?)
+				'phoneNumber' => $formattedNumber,
+			];
 		} else {
 			$this->logger->error('Trying to add participant from unsupported source ' . $source);
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1119,8 +1170,6 @@ class RoomController extends AEnvironmentAwareController {
 				$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
 			}
 		}
-
-		$addedBy = $this->userManager->get($this->userId);
 
 		if ($source === 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			$parentRoom = $this->manager->getRoomByToken($this->room->getObjectId());
@@ -1465,36 +1514,91 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Get a participant by their dial-in PIN
+	 * Verify a dial-in PIN (SIP bridge)
 	 *
-	 * @param string $pin PIN the participant used to dial-in
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @param numeric-string $pin PIN the participant used to dial-in
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
 	 *
 	 * 200: Participant returned
 	 * 401: SIP request invalid
 	 * 404: Participant not found
+	 * 501: SIP dial-in is not configured
 	 */
 	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[RequireRoom]
-	public function getParticipantByDialInPin(string $pin): DataResponse {
+	public function verifyDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
+		}
+
+		if (!$this->talkConfig->isSIPConfigured()) {
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 		}
 
 		try {
 			$participant = $this->participantService->getParticipantByPin($this->room, $pin);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $participant));
+	}
+
+	/**
+	 * Verify a dial-out number (SIP bridge)
+	 *
+	 * @param string $number E164 formatted phone number
+	 * @param array{actorId?: string, actorType?: string, attendeeId?: int} $options Additional details to verify the validity of the request
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 *
+	 *  200: Participant created successfully
+	 *  400: Phone number and details could not be confirmed
+	 *  401: SIP request invalid
+	 *  501: SIP dial-out is not configured
+	 */
+	#[IgnoreOpenAPI]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[RequireRoom]
+	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+		} catch (UnauthorizedException) {
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
+		}
+
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		if (!isset($options['actorId'], $options['actorType']) || $options['actorType'] !== Attendee::ACTOR_PHONES) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_PHONES, $options['actorId']);
+		} catch (ParticipantNotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($participant->getAttendee()->getPhoneNumber() !== $number) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $participant));
@@ -1533,6 +1637,54 @@ class RoomController extends AEnvironmentAwareController {
 		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $this->room, '', true);
 
 		return new DataResponse($this->formatRoom($this->room, $participant));
+	}
+
+	/**
+	 * Reset call ID of a dial-out participant when the SIP gateway rejected it
+	 *
+	 * @param array{actorId?: string, actorType?: string, attendeeId?: int} $options Additional details to verify the validity of the request
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 *
+	 * 200: Call ID reset
+	 * 400: Call ID mismatch or attendeeId not found in $options
+	 * 401: SIP request invalid
+	 * 404: Participant was not found
+	 * 501: SIP dial-out is not configured
+	 */
+	#[IgnoreOpenAPI]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[RequireRoom]
+	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+		} catch (UnauthorizedException $e) {
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
+		}
+
+		if (empty($options['attendeeId'])) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		try {
+			$this->participantService->resetDialOutRequest($this->room, $options['attendeeId'], $callId);
+		} catch (ParticipantNotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	/**
