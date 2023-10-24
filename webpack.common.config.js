@@ -74,6 +74,10 @@ module.exports = mergeWithRules({
 				test: /\.worker\.js$/,
 				use: { loader: 'worker-loader' },
 			},
+			{
+				resourceQuery: /raw/,
+				type: 'asset/source',
+			}
 		],
 	},
 })
