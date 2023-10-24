@@ -71,7 +71,7 @@ export function useSortParticipants() {
 		const p2IsCircle = participant2.actorType === ATTENDEE.ACTOR_TYPE.CIRCLES
 
 		if (p1IsCircle !== p2IsCircle) {
-			// Circles below participants and groups
+			// Circles below participants, phones and groups
 			return p2IsCircle ? -1 : 1
 		}
 
@@ -79,7 +79,7 @@ export function useSortParticipants() {
 		const p2IsGroup = participant2.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
 
 		if (p1IsGroup !== p2IsGroup) {
-			// Groups below participants
+			// Groups below participants and phones
 			return p2IsGroup ? -1 : 1
 		}
 
@@ -97,6 +97,14 @@ export function useSortParticipants() {
 		 */
 		if (hasSessions1 !== hasSessions2) {
 			return hasSessions1 ? -1 : 1
+		}
+
+		const p1IsPhone = participant1.actorType === ATTENDEE.ACTOR_TYPE.PHONES
+		const p2IsPhone = participant2.actorType === ATTENDEE.ACTOR_TYPE.PHONES
+
+		if (p1IsPhone !== p2IsPhone) {
+			// Phones below online participants and above offline participants
+			return p1IsPhone ? -1 : 1
 		}
 
 		const p1inCall = participant1.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED

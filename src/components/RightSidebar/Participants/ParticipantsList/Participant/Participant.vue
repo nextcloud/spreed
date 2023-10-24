@@ -81,23 +81,18 @@
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
-			<Microphone v-if="callIcon === 'audio'"
-				:size="20" />
-			<Phone v-if="callIcon === 'phone'"
-				:size="20" />
-			<VideoIcon v-if="callIcon === 'video'"
-				:size="20" />
-			<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-			<HandBackLeft v-if="callIcon === 'hand'"
-				:size="18" />
+			<Microphone v-if="callIcon === 'audio'" :size="20" />
+			<Phone v-if="callIcon === 'phone'" :size="20" />
+			<VideoIcon v-if="callIcon === 'video'" :size="20" />
+			<!-- Icon is visually bigger, so we reduce its size -->
+			<HandBackLeft v-if="callIcon === 'hand'" :size="18" />
 		</div>
 
 		<!-- Participant's actions menu -->
 		<NcActions v-if="(canBeModerated || canSendCallNotification) && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
-			:force-menu="true"
+			force-menu
 			placement="bottom-end"
 			class="participant-row__actions">
 			<template #icon>
@@ -110,21 +105,24 @@
 				<DotsHorizontal v-else
 					:size="20" />
 			</template>
-			<NcActionText v-if="attendeePin"
-				:title="t('spreed', 'Dial-in PIN')"
-				icon="icon-password">
+
+			<!-- Information and rights -->
+			<NcActionText v-if="attendeePin" :name="t('spreed', 'Dial-in PIN')">
+				<template #icon>
+					<Lock :size="20" />
+				</template>
 				{{ attendeePin }}
 			</NcActionText>
 			<NcActionButton v-if="canBeDemoted"
-				:close-after-click="true"
+				close-after-click
 				@click="demoteFromModerator">
 				<template #icon>
 					<Account :size="20" />
-					{{ t('spreed', 'Demote from moderator') }}
 				</template>
+				{{ t('spreed', 'Demote from moderator') }}
 			</NcActionButton>
-			<NcActionButton v-if="canBePromoted"
-				:close-after-click="true"
+			<NcActionButton v-else-if="canBePromoted"
+				close-after-click
 				@click="promoteToModerator">
 				<template #icon>
 					<Crown :size="20" />
@@ -132,46 +130,56 @@
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
 			<NcActionButton v-if="canBeModerated && isEmailActor"
-				icon="icon-mail"
-				:close-after-click="true"
+				close-after-click
 				@click="resendInvitation">
+				<template #icon>
+					<Email :size="20" />
+				</template>
 				{{ t('spreed', 'Resend invitation') }}
 			</NcActionButton>
 			<NcActionButton v-if="canSendCallNotification"
-				:close-after-click="true"
+				close-after-click
 				@click="sendCallNotification">
 				<template #icon>
 					<Bell :size="20" />
 				</template>
 				{{ t('spreed', 'Send call notification') }}
 			</NcActionButton>
+			<NcActionButton v-if="canBeModerated && isPhoneActor"
+				close-after-click
+				@click="copyPhoneNumber">
+				<template #icon>
+					<ContentCopy :size="20" />
+				</template>
+				{{ t('spreed', 'Copy phone number') }}
+			</NcActionButton>
 
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
 				<NcActionSeparator />
 				<NcActionButton v-if="hasNonDefaultPermissions"
-					:close-after-click="true"
+					close-after-click
 					@click="applyDefaultPermissions">
 					<template #icon>
 						<LockReset :size="20" />
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</NcActionButton>
-				<NcActionButton :close-after-click="true"
+				<NcActionButton close-after-click
 					@click="grantAllPermissions">
 					<template #icon>
 						<LockOpenVariant :size="20" />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</NcActionButton>
-				<NcActionButton :close-after-click="true"
+				<NcActionButton close-after-click
 					@click="removeAllPermissions">
 					<template #icon>
 						<Lock :size="20" />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</NcActionButton>
-				<NcActionButton :close-after-click="true"
+				<NcActionButton close-after-click
 					@click="showPermissionsEditor">
 					<template #icon>
 						<Pencil :size="20" />
@@ -183,23 +191,22 @@
 			<!-- Remove -->
 			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
 			<NcActionButton v-if="canBeModerated"
-				icon="icon-delete"
-				:close-after-click="true"
+				close-after-click
 				@click="removeParticipant">
-				<template v-if="isGroup">
-					{{ t('spreed', 'Remove group and members') }}
+				<template #icon>
+					<Delete :size="20" />
 				</template>
-				<template v-else>
-					{{ t('spreed', 'Remove participant') }}
-				</template>
+				{{ isGroup ? t('spreed', 'Remove group and members') : t('spreed', 'Remove participant') }}
 			</NcActionButton>
 		</NcActions>
+
 		<ParticipantPermissionsEditor v-if="permissionsEditor"
 			:actor-id="participant.actorId"
-			:close-after-click="true"
+			close-after-click
 			:participant="participant"
 			:token="token"
 			@close="hidePermissionsEditor" />
+
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</component>
@@ -211,8 +218,11 @@ import isEqual from 'lodash/isEqual.js'
 
 import Account from 'vue-material-design-icons/Account.vue'
 import Bell from 'vue-material-design-icons/Bell.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Crown from 'vue-material-design-icons/Crown.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Email from 'vue-material-design-icons/Email.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
@@ -244,27 +254,29 @@ export default {
 	name: 'Participant',
 
 	components: {
+		AvatarWrapper,
 		NcActions,
 		NcActionButton,
 		NcActionText,
 		NcActionSeparator,
-		AvatarWrapper,
 		ParticipantPermissionsEditor,
-
-		// Material design icons
-		Bell,
-		DotsHorizontal,
-		Microphone,
-		Phone,
-		VideoIcon,
-		HandBackLeft,
-		Crown,
+		// Icons
 		Account,
+		Bell,
+		ContentCopy,
+		Crown,
+		Delete,
+		DotsHorizontal,
+		Email,
+		HandBackLeft,
 		Lock,
 		LockOpenVariant,
-		Pencil,
-		Tune,
 		LockReset,
+		Microphone,
+		Pencil,
+		Phone,
+		Tune,
+		VideoIcon,
 	},
 
 	directives: {
@@ -415,8 +427,16 @@ export default {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS
 		},
 
+		isPhoneActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES
+		},
+
 		isUserActor() {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+		},
+
+		isGuestActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
 
 		canSendCallNotification() {
@@ -565,7 +585,7 @@ export default {
 		 * return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
 		 */
 		isOffline() {
-			return !this.sessionIds.length && !this.isSearched
+			return !this.sessionIds.length && !this.isSearched && (this.isUserActor || this.isGuestActor)
 		},
 
 		isGuest() {
@@ -792,6 +812,15 @@ export default {
 				this.timeSpeaking = Date.now() - lastTimestamp + totalCountedTime
 			}
 		},
+
+		async copyPhoneNumber() {
+			try {
+				await navigator.clipboard.writeText(this.participant.phoneNumber)
+				showSuccess(t('spreed', 'Phone number copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be copied'))
+			}
+		}
 	},
 }
 </script>

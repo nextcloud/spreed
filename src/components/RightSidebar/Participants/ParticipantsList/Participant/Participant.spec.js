@@ -702,7 +702,7 @@ describe('Participant.vue', () => {
 				const wrapper = mountParticipant(participant)
 				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('title').includes('PIN')
+					return actionText.props('name').includes('PIN')
 				})
 
 				expect(actionTexts.exists()).toBe(true)
