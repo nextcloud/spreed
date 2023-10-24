@@ -750,6 +750,10 @@ export default {
 		 * or to the bottom of the list bottom.
 		 */
 		async handleScroll() {
+			if (!this.$refs.scroller) {
+				return
+			}
+
 			if (!this.$store.getters.getFirstKnownMessageId(this.token)) {
 				// This can happen if the browser is fast enough to close the sidebar
 				// when switching from a one-to-one to a group conversation.
@@ -816,6 +820,10 @@ export default {
 		 * @return {object} DOM element for the last visible message
 		 */
 		findFirstVisibleMessage(messageEl) {
+			if (!this.$refs.scroller) {
+				return
+			}
+
 			let el = messageEl
 
 			// When the current message is not visible (reaction or expired)
@@ -916,7 +924,8 @@ export default {
 				return
 			}
 
-			if (lastReadMessageElement && (lastReadMessageElement.offsetTop - this.$refs.scroller.scrollTop > 0)) {
+			if (lastReadMessageElement && this.$refs.scroller
+				&& (lastReadMessageElement.offsetTop - this.$refs.scroller.scrollTop > 0)) {
 				// still visible, hasn't disappeared at the top yet
 				return
 			}
@@ -1028,7 +1037,7 @@ export default {
 					block: 'center',
 					inline: 'nearest',
 				})
-				if (!smooth) {
+				if (this.$refs.scroller && !smooth) {
 					// scroll the viewport slightly further to make sure the element is about 1/3 from the top
 					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
