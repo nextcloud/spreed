@@ -236,7 +236,7 @@ import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/Partici
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
-import readableNumber from '../../../../../mixins/readableNumber.js'
+import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
 import { getStatusMessage } from '../../../../../utils/userStatus.js'
 
@@ -270,10 +270,6 @@ export default {
 	directives: {
 		tooltip: Tooltip,
 	},
-
-	mixins: [
-		readableNumber,
-	],
 
 	props: {
 		tag: {
@@ -529,7 +525,7 @@ export default {
 		},
 
 		attendeePin() {
-			return this.canBeModerated && this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
+			return this.canBeModerated && this.participant.attendeePin ? readableNumber(this.participant.attendeePin) : ''
 		},
 
 		token() {
