@@ -87,7 +87,7 @@ class Listener {
 	 * @throws RoomNotFoundException
 	 */
 	public static function preventExtraUsersFromJoining(Room $room, string $userId): void {
-		if ($room->getObjectType() !== 'share:password') {
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
@@ -115,7 +115,7 @@ class Listener {
 	 * @throws RoomNotFoundException
 	 */
 	public static function preventExtraGuestsFromJoining(Room $room): void {
-		if ($room->getObjectType() !== 'share:password') {
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
@@ -136,7 +136,7 @@ class Listener {
 	 * @throws RoomNotFoundException
 	 */
 	public static function preventExtraUsersFromBeingAdded(Room $room, array $participants): void {
-		if ($room->getObjectType() !== 'share:password') {
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
@@ -168,7 +168,7 @@ class Listener {
 	 * @param Room $room
 	 */
 	public static function destroyRoomOnParticipantLeave(Room $room): void {
-		if ($room->getObjectType() !== 'share:password') {
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 

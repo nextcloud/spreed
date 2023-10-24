@@ -60,6 +60,11 @@ class Room {
 	public const TYPE_ONE_TO_ONE_FORMER = 5;
 	public const TYPE_NOTE_TO_SELF = 6;
 
+	public const OBJECT_TYPE_EMAIL = 'emails';
+	public const OBJECT_TYPE_FILE = 'file';
+	public const OBJECT_TYPE_PHONE = 'phone';
+	public const OBJECT_TYPE_VIDEO_VERIFICATION = 'share:password';
+
 	public const RECORDING_NONE = 0;
 	public const RECORDING_VIDEO = 1;
 	public const RECORDING_AUDIO = 2;
