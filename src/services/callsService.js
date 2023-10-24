@@ -69,12 +69,22 @@ const leaveCall = async function(token, all = false) {
 }
 
 const fetchPeers = async function(token, options) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), options)
-	return response
+	return await axios.get(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), options)
+}
+
+/**
+ * Call participant via SIP DialOut
+ *
+ * @param {string} token The token of the conversation
+ * @param {number} attendeeId The attendee id to call to via SIP
+ */
+const callSIPDialOut = async function(token, attendeeId) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}/dialout/{attendeeId}', { token, attendeeId }))
 }
 
 export {
 	joinCall,
 	leaveCall,
 	fetchPeers,
+	callSIPDialOut,
 }

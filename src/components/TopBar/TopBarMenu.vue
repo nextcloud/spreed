@@ -277,7 +277,7 @@ export default {
 		},
 
 		isFileConversation() {
-			return this.conversation.objectType === 'file' && this.conversation.objectId
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.FILE && this.conversation.objectId
 		},
 
 		linkToFile() {

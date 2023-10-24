@@ -118,7 +118,7 @@ const getters = {
 	conversationsList: state => {
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
-			.filter(conversation => conversation.objectType !== 'room')
+			.filter(conversation => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 			// Sort by isFavorite and lastActivity
 			.sort((conversation1, conversation2) => {
 				if (conversation1.isFavorite !== conversation2.isFavorite) {

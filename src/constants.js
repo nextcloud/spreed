@@ -95,6 +95,15 @@ export const CONVERSATION = {
 		STATUS_ASSISTANCE_RESET: 0,
 		STATUS_ASSISTANCE_REQUESTED: 2,
 	},
+
+	OBJECT_TYPE: {
+		EMAIL: 'emails',
+		FILE: 'file',
+		PHONE: 'phone',
+		VIDEO_VERIFICATION: 'share:password',
+		BREAKOUT_ROOM: 'room',
+		DEFAULT: '',
+	}
 }
 export const ATTENDEE = {
 	ACTOR_TYPE: {
@@ -105,6 +114,8 @@ export const ATTENDEE = {
 		CIRCLES: 'circles',
 		BOTS: 'bots',
 		BRIDGED: 'bridged',
+		FEDERATED_USERS: 'federated_users',
+		PHONES: 'phones',
 	},
 
 	BRIDGE_BOT_ID: 'bridge-bot',

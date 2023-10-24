@@ -114,8 +114,10 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
  */
 const createOneToOneConversation = async function(userId) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), { roomType: CONVERSATION.TYPE.ONE_TO_ONE, invite: userId })
-		return response
+		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+			roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+			invite: userId
+		})
 	} catch (error) {
 		console.debug('Error creating new one to one conversation: ', error)
 	}
@@ -129,8 +131,11 @@ const createOneToOneConversation = async function(userId) {
  */
 const createGroupConversation = async function(invite, source) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), { roomType: CONVERSATION.TYPE.GROUP, invite, source: source || 'groups' })
-		return response
+		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+			roomType: CONVERSATION.TYPE.GROUP,
+			invite,
+			source: source || 'groups'
+		})
 	} catch (error) {
 		console.debug('Error creating new group conversation: ', error)
 	}
@@ -140,11 +145,15 @@ const createGroupConversation = async function(invite, source) {
  * Create a new private conversation.
  *
  * @param {string} conversationName The name for the new conversation
+ * @param {string} [objectType] The conversation object type
  */
-const createPrivateConversation = async function(conversationName) {
+const createPrivateConversation = async function(conversationName, objectType) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), { roomType: CONVERSATION.TYPE.GROUP, roomName: conversationName })
-		return response
+		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+			roomType: CONVERSATION.TYPE.GROUP,
+			roomName: conversationName,
+			objectType,
+		})
 	} catch (error) {
 		console.debug('Error creating new private conversation: ', error)
 	}
@@ -154,11 +163,15 @@ const createPrivateConversation = async function(conversationName) {
  * Create a new private conversation.
  *
  * @param {string} conversationName The name for the new conversation
+ * @param {string} [objectType] The conversation object type
  */
-const createPublicConversation = async function(conversationName) {
+const createPublicConversation = async function(conversationName, objectType) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), { roomType: CONVERSATION.TYPE.PUBLIC, roomName: conversationName })
-		return response
+		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+			roomType: CONVERSATION.TYPE.PUBLIC,
+			roomName: conversationName,
+			objectType,
+		})
 	} catch (error) {
 		console.debug('Error creating new public conversation: ', error)
 	}

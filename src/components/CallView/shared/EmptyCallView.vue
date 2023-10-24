@@ -97,11 +97,11 @@ export default {
 		},
 
 		isPasswordRequestConversation() {
-			return this.conversation && this.conversation.objectType === 'share:password'
+			return this.conversation && this.conversation.objectType === CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
 		},
 
 		isFileConversation() {
-			return this.conversation && this.conversation.objectType === 'file'
+			return this.conversation && this.conversation.objectType === CONVERSATION.OBJECT_TYPE.FILE
 		},
 
 		conversationDisplayName() {

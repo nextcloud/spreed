@@ -182,7 +182,7 @@ export default {
 		},
 
 		mainConversationToken() {
-			if (this.conversation.objectType === 'room') {
+			if (this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM) {
 				return this.conversation.objectId
 			}
 			return this.token
@@ -202,7 +202,7 @@ export default {
 
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
+				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION))
 		},
 
 		isSearching() {
@@ -263,7 +263,7 @@ export default {
 
 		showBreakoutRoomsTab() {
 			return this.getUserId && !this.isOneToOne
-				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === 'room')
+				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 		},
 
 		showParticipantsTab() {
