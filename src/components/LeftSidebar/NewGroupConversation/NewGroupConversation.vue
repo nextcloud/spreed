@@ -20,9 +20,9 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div v-if="modal" class="wrapper">
 		<!-- New group form -->
-		<NcModal v-if="modal && page !== 2"
+		<NcModal v-show=" page !== 2"
 			class="conversation-form"
 			:container="container"
 			@close="closeModal">
@@ -118,7 +118,7 @@
 		</NcModal>
 
 		<!-- Third page : this is the confirmation page-->
-		<NcModal v-else-if="page === 2"
+		<NcModal v-if="page === 2"
 			:container="container"
 			@close="closeModal">
 			<NcEmptyContent>
