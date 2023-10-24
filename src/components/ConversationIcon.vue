@@ -177,6 +177,8 @@ export default {
 					return 'icon-password'
 				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.EMAIL) {
 					return 'icon-mail'
+				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE) {
+					return 'icon-phone'
 				} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 					return 'icon-changelog'
 				} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
