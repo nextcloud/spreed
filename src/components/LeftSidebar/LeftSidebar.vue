@@ -114,7 +114,7 @@
 			<OpenConversationsList ref="openConversationsList" />
 
 			<!-- New Conversation dialog-->
-			<NewGroupConversation ref="newGroupConversation" />
+			<NewGroupConversation ref="newGroupConversation" :can-moderate-sip-dial-out="canModerateSipDialOut" />
 		</div>
 
 		<template #list>
@@ -269,6 +269,7 @@ import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -306,8 +307,12 @@ import CancelableRequest from '../../utils/cancelableRequest.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 import { filterFunction } from '../../utils/conversation.js'
 
-export default {
+const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
+	&& getCapabilities()?.spreed?.config.call['sip-enabled']
+	&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
+	&& getCapabilities()?.spreed?.config.call['can-enable-sip']
 
+export default {
 	name: 'LeftSidebar',
 
 	components: {
@@ -356,6 +361,7 @@ export default {
 			leftSidebar,
 			searchBox,
 			list,
+			canModerateSipDialOut,
 		}
 	},
 
