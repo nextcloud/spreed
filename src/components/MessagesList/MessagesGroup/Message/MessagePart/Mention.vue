@@ -20,28 +20,17 @@
 -->
 
 <template>
-	<div class="mention">
-		<NcUserBubble v-if="isMentionToAll"
+	<span ref="mention" class="mention">
+		<NcUserBubble v-if="size"
 			:display-name="name"
 			:avatar-image="avatarUrl"
-			:primary="true" />
-		<NcUserBubble v-else-if="isGroupMention"
-			:display-name="name"
-			:avatar-image="'icon-group-forced-white'"
-			:primary="isCurrentUserGroup" />
-		<NcUserBubble v-else-if="isMentionToGuest"
-			:display-name="name"
-			:avatar-image="'icon-user-forced-white'"
-			:primary="isCurrentGuest" />
-		<NcUserBubble v-else
-			:display-name="name"
 			:user="id"
-			:primary="isCurrentUser" />
-	</div>
+			:size="size"
+			:primary="primary" />
+	</span>
 </template>
 
 <script>
-
 import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
@@ -71,6 +60,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			size: null,
+		}
+	},
+
 	computed: {
 		isMentionToAll() {
 			return this.type === 'call'
@@ -98,11 +93,28 @@ export default {
 			return this.isGroupMention
 				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
 		},
+		primary() {
+			return this.isMentionToAll || this.isCurrentUser
+				|| (this.isGroupMention && this.isCurrentUserGroup)
+				|| (this.isMentionToGuest && this.isCurrentGuest)
+		},
 		avatarUrl() {
+			if (this.isGroupMention) {
+				return 'icon-group-forced-white'
+			} else if (this.isMentionToGuest) {
+				return 'icon-user-forced-white'
+			} else if (!this.isMentionToAll) {
+				return undefined
+			}
+
 			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : ''), {
 				token: this.id,
 			})
 		},
+	},
+
+	mounted() {
+		this.size = parseInt(window.getComputedStyle(this.$refs.mention).fontSize, 10) * 4 / 3 ?? 20
 	},
 }
 </script>
