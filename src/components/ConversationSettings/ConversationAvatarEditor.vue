@@ -238,6 +238,8 @@ export default {
 		},
 	},
 
+	expose: ['saveAvatar'],
+
 	methods: {
 		activateLocalFilePicker() {
 			// Set to null so that selecting the same file will trigger the change event
