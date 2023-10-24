@@ -61,6 +61,11 @@ module.exports = {
 				warnOnUnassignedImports: true,
 			},
 		],
+		'import/no-unresolved': ['error', {
+			// Ignore Webpack query parameters, not supported by eslint-plugin-import
+			// https://github.com/import-js/eslint-plugin-import/issues/2562
+			ignore: ['\\?raw$'],
+		}],
 		// Prepare for Vue 3 Migration
 		'vue/no-deprecated-data-object-declaration': 'warn',
 		'vue/no-deprecated-events-api': 'warn',
