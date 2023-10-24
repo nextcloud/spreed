@@ -530,7 +530,8 @@ export default {
 
 			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
 			// also clear in case lastReadMessage is zero which is due to an older bug
-			if (this.visualLastReadMessageId === 0 || this.$refs.scroller.scrollHeight <= this.$refs.scroller.offsetHeight) {
+			if (this.visualLastReadMessageId === 0
+				|| (this.$refs.scroller && this.$refs.scroller.scrollHeight <= this.$refs.scroller.offsetHeight)) {
 				// clear after a delay, unless scrolling can resume in-between
 				this.debounceUpdateReadMarkerPosition()
 			}
