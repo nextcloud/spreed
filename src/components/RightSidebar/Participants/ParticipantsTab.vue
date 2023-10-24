@@ -21,14 +21,28 @@
 
 <template>
 	<div class="wrapper">
-		<SearchBox v-if="canSearch"
-			:value.sync="searchText"
-			:is-focused.sync="isFocused"
-			:placeholder-text="searchBoxPlaceholder"
-			@input="handleInput"
-			@abort-search="abortSearch" />
+		<div class="search-form">
+			<SearchBox v-if="canSearch"
+				class="search-form__input"
+				:value.sync="searchText"
+				:is-focused.sync="isFocused"
+				:placeholder-text="searchBoxPlaceholder"
+				@input="handleInput"
+				@keydown.enter="addParticipants(participantPhoneItem)"
+				@abort-search="abortSearch" />
+			<DialpadPanel v-if="canAddPhones"
+				:value.sync="searchText"
+				@submit="addParticipants(participantPhoneItem)" />
+		</div>
+
+		<SelectPhoneNumber v-if="canAddPhones"
+			:name="t('spreed', 'Add a phone number')"
+			:value="searchText"
+			:participant-phone-item.sync="participantPhoneItem"
+			@select="addParticipants" />
 
 		<ParticipantsListVirtual v-if="!isSearching"
+			class="h-100"
 			:participants="participants"
 			:loading="!participantsInitialised" />
 
@@ -53,14 +67,17 @@
 <script>
 import debounce from 'debounce'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 
+import DialpadPanel from '../../DialpadPanel.vue'
 import Hint from '../../Hint.vue'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
+import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 import ParticipantsList from './ParticipantsList/ParticipantsList.vue'
 import ParticipantsListVirtual from './ParticipantsList/ParticipantsListVirtual.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
@@ -72,15 +89,22 @@ import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
+const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
+		&& getCapabilities()?.spreed?.config.call['sip-enabled']
+		&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
+		&& getCapabilities()?.spreed?.config.call['can-enable-sip']
+
 export default {
 	name: 'ParticipantsTab',
 	components: {
-		ParticipantsListVirtual,
-		ParticipantsList,
+		DialpadPanel,
 		Hint,
 		NcAppNavigationCaption,
-		SearchBox,
+		ParticipantsList,
+		ParticipantsListVirtual,
 		ParticipantsSearchResults,
+		SearchBox,
+		SelectPhoneNumber,
 	},
 
 	mixins: [getParticipants],
@@ -110,6 +134,7 @@ export default {
 			isFocused: false,
 			searchResults: [],
 			contactsLoading: false,
+			participantPhoneItem: {},
 			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
 			cancelSearchPossibleConversations: () => {},
 		}
@@ -146,12 +171,21 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+		canAddPhones() {
+			return canModerateSipDialOut && this.conversation.canEnableSIP
+		},
 		isSearching() {
 			return this.searchText !== ''
 		},
 		noResults() {
 			return this.searchResults === []
 		},
+	},
+
+	watch: {
+		searchText(value) {
+			this.isFocused = !!value
+		}
 	},
 
 	beforeMount() {
@@ -261,11 +295,25 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .wrapper {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+}
+
+.h-100 {
+	height: 100%;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .search-form__input {
+    margin: 0;
+  }
 }
 
 .scroller {
