@@ -473,8 +473,8 @@ OC.L10N.register(
     "Mark as unread" : "סימון כלא נקרא",
     "Remove from favorites" : "הסרה מהמועדפים",
     "Add to favorites" : "הוספה למועדפים",
-    "No matches found" : "לא נמצאו התאמות",
     "Clear filter" : "מחיקת מסנן",
+    "No matches found" : "לא נמצאו התאמות",
     "Groups" : "קבוצות",
     "Circles" : "מעגלים",
     "Loading" : "בטעינה",
@@ -516,7 +516,6 @@ OC.L10N.register(
     "New file" : "קובץ חדש",
     "Settings" : "הגדרות",
     "Create poll" : "יצירת סקר",
-    "Send" : "שליחה",
     "Add more files" : "הוספת קבצים נוספים",
     "Join" : "הצטרף",
     "moderator" : "מפקח/ת",
@@ -603,6 +602,7 @@ OC.L10N.register(
     "Link copied to the clipboard!" : "הקישור הועתק ללוח הגזירים!",
     "Conversation name" : "שם דיון",
     "Rename conversation" : "שינוי שם הדיון",
-    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
+    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
+    "Send" : "שליחה"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

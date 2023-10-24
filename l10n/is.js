@@ -484,7 +484,6 @@ OC.L10N.register(
     "Blank" : "Tóm",
     "Settings" : "Stillingar",
     "Create poll" : "Búa til könnun",
-    "Send" : "Senda",
     "Join" : "Taka þátt",
     "moderator" : "umsjónarmaður",
     "guest" : "gestanotandi",
@@ -549,6 +548,7 @@ OC.L10N.register(
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Athugaðu að samtöl með fleiri en 4 þátttakendum og án merkjasendingaþjóns geta orðið fyrir truflunum í tengingum ásamt því að valda miklu álagi á tengdum tækjum.",
     "More actions" : "Fleiri aðgerðir",
     "Conversation name" : "Heiti samtals",
-    "Rename conversation" : "Endurnefna samtal"
+    "Rename conversation" : "Endurnefna samtal",
+    "Send" : "Senda"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
