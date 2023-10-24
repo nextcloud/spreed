@@ -76,30 +76,23 @@ class FederationManager {
 		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', 'no') === 'yes';
 	}
 
-	/**
-	 * @param IUser $user
-	 * @param string $remoteId
-	 * @param int $roomType
-	 * @param string $roomName
-	 * @param string $roomToken
-	 * @param string $remoteUrl
-	 * @param string $sharedSecret
-	 * @return int share id for this specific remote room share
-	 */
-	public function addRemoteRoom(IUser $user, string $remoteId, int $roomType, string $roomName, string $roomToken, string $remoteUrl, string $sharedSecret): int {
+	public function addRemoteRoom(IUser $user, int $remoteAttendeeId, int $roomType, string $roomName, string $remoteToken, string $remoteServerUrl, string $sharedSecret): Invitation {
 		try {
-			$room = $this->manager->getRoomByToken($roomToken, null, $remoteUrl);
-		} catch (RoomNotFoundException $ex) {
-			$room = $this->manager->createRemoteRoom($roomType, $roomName, $roomToken, $remoteUrl);
+			$room = $this->manager->getRoomByToken($remoteToken, null, $remoteServerUrl);
+		} catch (RoomNotFoundException) {
+			$room = $this->manager->createRemoteRoom($roomType, $roomName, $remoteToken, $remoteServerUrl);
 		}
+
 		$invitation = new Invitation();
 		$invitation->setUserId($user->getUID());
-		$invitation->setRoomId($room->getId());
+		$invitation->setLocalRoomId($room->getId());
 		$invitation->setAccessToken($sharedSecret);
-		$invitation->setRemoteId($remoteId);
-		$invitation = $this->invitationMapper->insert($invitation);
+		$invitation->setRemoteServerUrl($remoteServerUrl);
+		$invitation->setRemoteToken($remoteToken);
+		$invitation->setRemoteAttendeeId($remoteAttendeeId);
+		$this->invitationMapper->insert($invitation);
 
-		return $invitation->getId();
+		return $invitation;
 	}
 
 	protected function markNotificationProcessed(string $userId, int $shareId): void {
@@ -122,13 +115,12 @@ class FederationManager {
 		}
 
 		// Add user to the room
-		$room = $this->manager->getRoomById($invitation->getRoomId());
+		$room = $this->manager->getRoomById($invitation->getLocalRoomId());
 		if (
-			!$this->backendNotifier->sendShareAccepted($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken())
+			!$this->backendNotifier->sendShareAccepted($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken())
 		) {
 			throw new CannotReachRemoteException();
 		}
-
 
 		$participant = [
 			[
@@ -136,7 +128,7 @@ class FederationManager {
 				'actorId' => $user->getUID(),
 				'displayName' => $user->getDisplayName(),
 				'accessToken' => $invitation->getAccessToken(),
-				'remoteId' => $invitation->getRemoteId(), // FIXME this seems unnecessary
+				'remoteId' => $invitation->getRemoteAttendeeId(), // FIXME this seems unnecessary
 			]
 		];
 		$this->participantService->addUsers($room, $participant, $user);
@@ -163,13 +155,10 @@ class FederationManager {
 			throw new UnauthorizedException('invitation is for a different user');
 		}
 
-		$room = $this->manager->getRoomById($invitation->getRoomId());
-
 		$this->invitationMapper->delete($invitation);
-
 		$this->markNotificationProcessed($user->getUID(), $shareId);
 
-		$this->backendNotifier->sendShareDeclined($room->getRemoteServer(), $invitation->getRemoteId(), $invitation->getAccessToken());
+		$this->backendNotifier->sendShareDeclined($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken());
 	}
 
 	/**
@@ -181,6 +170,6 @@ class FederationManager {
 	}
 
 	public function getNumberOfInvitations(Room $room): int {
-		return $this->invitationMapper->countInvitationsForRoom($room);
+		return $this->invitationMapper->countInvitationsForLocalRoom($room);
 	}
 }

@@ -68,34 +68,35 @@ class Version13000Date20210625232111 extends SimpleMigrationStep {
 			]);
 		}
 
-		if (!$schema->hasTable('talk_invitations')) {
-			$table = $schema->createTable('talk_invitations');
-			$table->addColumn('id', Types::BIGINT, [
-				'autoincrement' => true,
-				'notnull' => true,
-			]);
-			$table->addColumn('room_id', Types::BIGINT, [
-				'notnull' => true,
-				'unsigned' => true,
-			]);
-			$table->addColumn('user_id', Types::STRING, [
-				'notnull' => true,
-				'length' => 255,
-			]);
-			$table->addColumn('access_token', Types::STRING, [
-				'notnull' => true,
-				'length' => 64,
-			]);
-			$table->addColumn('remote_id', Types::STRING, [
-				'notnull' => true,
-				'length' => 255,
-			]);
-
-			$table->setPrimaryKey(['id']);
-
-			$table->addIndex(['room_id']);
-		}
-
+		/** Removed in {@see \OCA\Talk\Migration\Version18000Date20231024141626} */
+		/** Recreated in {@see \OCA\Talk\Migration\Version18000Date20231024141627} */
+		// if (!$schema->hasTable('talk_invitations')) {
+		// $table = $schema->createTable('talk_invitations');
+		// $table->addColumn('id', Types::BIGINT, [
+		// 'autoincrement' => true,
+		// 'notnull' => true,
+		// ]);
+		// $table->addColumn('room_id', Types::BIGINT, [
+		// 'notnull' => true,
+		// 'unsigned' => true,
+		// ]);
+		// $table->addColumn('user_id', Types::STRING, [
+		// 'notnull' => true,
+		// 'length' => 255,
+		// ]);
+		// $table->addColumn('access_token', Types::STRING, [
+		// 'notnull' => true,
+		// 'length' => 64,
+		// ]);
+		// $table->addColumn('remote_id', Types::STRING, [
+		// 'notnull' => true,
+		// 'length' => 255,
+		// ]);
+		//
+		// $table->setPrimaryKey(['id']);
+		//
+		// $table->addIndex(['room_id']);
+		// }
 
 		return $schema;
 	}

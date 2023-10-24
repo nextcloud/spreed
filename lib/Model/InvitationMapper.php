@@ -102,27 +102,17 @@ class InvitationMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-	public function countInvitationsForRoom(Room $room): int {
+	public function countInvitationsForLocalRoom(Room $room): int {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select($qb->func()->count('*', 'num_invitations'))
 			->from($this->getTableName())
-			->where($qb->expr()->eq('room_id', $qb->createNamedParameter($room->getId())));
+			->where($qb->expr()->eq('local_room_id', $qb->createNamedParameter($room->getId())));
 
 		$result = $qb->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
 		return (int) ($row['num_invitations'] ?? 0);
-	}
-
-	public function createInvitationFromRow(array $row): Invitation {
-		return $this->mapRowToEntity([
-			'id' => $row['id'],
-			'room_id' => (int) $row['room_id'],
-			'user_id' => (string) $row['user_id'],
-			'access_token' => (string) $row['access_token'],
-			'remote_id' => (string) $row['remote_id'],
-		]);
 	}
 }

@@ -55,6 +55,9 @@ class BackendNotifier {
 	}
 
 	/**
+	 * Send the invitation to participant to join the federated room
+	 * Sent from Host server to Remote participant server
+	 *
 	 * @throws HintException
 	 * @throws RoomHasNoModeratorException
 	 * @throws Exception
@@ -122,23 +125,21 @@ class BackendNotifier {
 	}
 
 	/**
-	 * send remote share acceptance notification to remote server
+	 * The invited participant accepted joining the federated room
+	 * Sent from Remote participant server to Host server
 	 *
-	 * @param string $remote remote server domain
-	 * @param string $id share id
-	 * @param string $token share secret token
 	 * @return bool success
 	 */
-	public function sendShareAccepted(string $remote, string $id, string $token): bool {
-		$remote = $this->prepareRemoteUrl($remote);
+	public function sendShareAccepted(string $remoteServerUrl, int $remoteAttendeeId, string $accessToken): bool {
+		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_SHARE_ACCEPTED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			$id,
+			(string) $remoteAttendeeId,
 			[
-				'sharedSecret' => $token,
+				'sharedSecret' => $accessToken,
 				'message' => 'Recipient accepted the share',
 			]);
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
@@ -152,16 +153,20 @@ class BackendNotifier {
 		return true;
 	}
 
-	public function sendShareDeclined(string $remote, string $id, string $token): bool {
-		$remote = $this->prepareRemoteUrl($remote);
+	/**
+	 * The invited participant declined joining the federated room
+	 * Sent from Remote participant server to Host server
+	 */
+	public function sendShareDeclined(string $remoteServerUrl, int $remoteAttendeeId, string $accessToken): bool {
+		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_SHARE_DECLINED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			$id,
+			(string) $remoteAttendeeId,
 			[
-				'sharedSecret' => $token,
+				'sharedSecret' => $accessToken,
 				'message' => 'Recipient declined the share',
 			]
 		);
@@ -176,16 +181,16 @@ class BackendNotifier {
 		return true;
 	}
 
-	public function sendRemoteUnShare(string $remote, string $id, string $token): void {
-		$remote = $this->prepareRemoteUrl($remote);
+	public function sendRemoteUnShare(string $remoteServerUrl, int $localAttendeeId, string $accessToken): void {
+		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_SHARE_UNSHARED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			$id,
+			(string) $localAttendeeId,
 			[
-				'sharedSecret' => $token,
+				'sharedSecret' => $accessToken,
 				'message' => 'This room has been unshared',
 			]
 		);
@@ -193,6 +198,10 @@ class BackendNotifier {
 		$this->sendUpdateToRemote($remote, $notification);
 	}
 
+	/**
+	 * Send information to remote participants that the room meta info updated
+	 * Sent from Host server to Remote participant server
+	 */
 	public function sendRoomModifiedUpdate(
 		string $remoteServer,
 		int $localAttendeeId,
@@ -223,13 +232,13 @@ class BackendNotifier {
 	}
 
 	/**
-	 * @internal Used to send retries in background jobs
 	 * @param string $remote
-	 * @param array $data
+	 * @param array{notificationType: string, resourceType: string, providerId: string, notification: array} $data
 	 * @param int $try
 	 * @return void
+	 * @internal Used to send retries in background jobs
 	 */
-	public function sendUpdateDataToRemote(string $remote, array $data = [], int $try = 0): void {
+	public function sendUpdateDataToRemote(string $remote, array $data, int $try): void {
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			$data['notificationType'],
