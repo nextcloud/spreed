@@ -110,7 +110,6 @@ OC.L10N.register(
     "Create new poll" : "Crear nueva encuesta",
     "Settings" : "Configuraciones ",
     "Create poll" : "Crear encuesta",
-    "Send" : "Enviar",
     "moderator" : "moderador",
     "Demote from moderator" : "Degradar de moderador",
     "Promote to moderator" : "Promover a moderador",
@@ -153,6 +152,7 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "More actions" : "Más acciones",
     "Conversation name" : "Nombre de la conversación",
-    "Rename conversation" : "Renombrar conversación"
+    "Rename conversation" : "Renombrar conversación",
+    "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

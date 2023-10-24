@@ -230,7 +230,6 @@ OC.L10N.register(
     "New file" : "Skedë e re",
     "Settings" : "Rregullimet",
     "Create poll" : "Krijo sondazh",
-    "Send" : "Dërgo",
     "guest" : "vizitor",
     "No results" : "Asnjë rezultat",
     "Add users or groups" : "Add users or groups",
@@ -265,6 +264,7 @@ OC.L10N.register(
     "iOS app" : "Aplikacion iOS",
     "More actions" : "Më tepër veprime ",
     "Conversation name" : "Emri i bisedës",
-    "Rename conversation" : "Riemërtojeni bisedën"
+    "Rename conversation" : "Riemërtojeni bisedën",
+    "Send" : "Dërgo"
 },
 "nplurals=2; plural=(n != 1);");

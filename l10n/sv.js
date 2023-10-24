@@ -802,8 +802,8 @@ OC.L10N.register(
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "Create a new conversation" : "Skapa en ny konversation",
-    "No matches found" : "Inga träffar hittades",
     "Clear filter" : "Rensa filter",
+    "No matches found" : "Inga träffar hittades",
     "Groups" : "Grupper",
     "Circles" : "Cirklar",
     "Loading" : "Läser in",
@@ -877,7 +877,6 @@ OC.L10N.register(
     "Settings" : "Inställningar",
     "Private poll" : "Privat omröstning",
     "Create poll" : "Skapa omröstning",
-    "Send" : "Skicka",
     "Start a call" : "Starta samtal",
     "Share the screen" : "Dela skärmen",
     "Join" : "Gå med",
@@ -1029,6 +1028,7 @@ OC.L10N.register(
     "Conversation name" : "Konversationens namn",
     "Toggle fullscreen" : "Växla helskärm",
     "Rename conversation" : "Byt namn på konversation",
+    "Send" : "Skicka",
     "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande."
 },
 "nplurals=2; plural=(n != 1);");

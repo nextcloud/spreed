@@ -106,7 +106,6 @@ OC.L10N.register(
     "Create new poll" : "ახალი გამოკითხვის შექმნა",
     "Settings" : "პარამეტრები",
     "Create poll" : "გამოკითხვის შექმნა",
-    "Send" : "გაგზავნა",
     "moderator" : "მოდერატორი",
     "Demote from moderator" : "ჩამოიქვეითება მოდერატორობისგან",
     "Promote to moderator" : "დაწინაურება მოდერატორობაზე",
@@ -145,6 +144,7 @@ OC.L10N.register(
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
     "More actions" : "მეტი ქმედება",
-    "Conversation name" : "საუბრის სახელწოდება"
+    "Conversation name" : "საუბრის სახელწოდება",
+    "Send" : "გაგზავნა"
 },
 "nplurals=2; plural=(n!=1);");
