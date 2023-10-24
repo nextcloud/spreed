@@ -551,7 +551,6 @@
     "Blank" : "Blank",
     "Settings" : "Innstillinger",
     "Create poll" : "Opprett avstemning",
-    "Send" : "Send",
     "Join" : "Bli med",
     "moderator" : "moderator",
     "guest" : "gjest",
@@ -621,6 +620,7 @@
     "No matches" : "Ingen treff",
     "Creating your conversation" : "Opprett din samtale",
     "Conversation name" : "Samtalenavn",
-    "Rename conversation" : "Endre navn på samtale"
+    "Rename conversation" : "Endre navn på samtale",
+    "Send" : "Send"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

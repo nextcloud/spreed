@@ -747,8 +747,8 @@
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "You need to promote a new moderator before you can leave the conversation." : "Πρέπει να προάγεται νέο συντονιστή πρίν αποχωρήσετε από την συνομιλία.",
     "Conversation list" : "Λίστα συνομιλιών",
-    "No matches found" : "Δεν βρέθηκαν αντιστοιχίες",
     "Clear filter" : "Εκκαθάριση φίλτρου",
+    "No matches found" : "Δεν βρέθηκαν αντιστοιχίες",
     "Open conversations" : "Άνοιγμα συνομιλιών",
     "Groups" : "Ομάδες",
     "Circles" : "Κύκλοι",
@@ -832,7 +832,6 @@
     "Settings" : "Ρυθμίσεις",
     "Private poll" : "Ιδιωτική δημοσκόπηση",
     "Create poll" : "Δημιουργία ψηφοφορίας",
-    "Send" : "Αποστολή",
     "Add more files" : "Προσθήκη περισσότερων αρχείων",
     "Start a call" : "Έναρξη κλήσης",
     "Skip the lobby" : "Παράκαμψη του λόμπι",
@@ -1040,6 +1039,7 @@
     "Rename conversation" : "Μετονομασία συνομιλίας",
     "Exit fullscreen (F)" : "Έξοδος από πλήρη οθόνη (F)",
     "Fullscreen (F)" : "Πλήρης οθόνη (F)",
+    "Send" : "Αποστολή",
     "Sending signaling message has failed." : "Η αποστολή μηνύματος σηματοδοσίας απέτυχε.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Ο διαμορφωμένος διακομιστής σηματοδότησης πρέπει να ενημερωθεί για να είναι συμβατός με αυτήν την έκδοση του Talk. Επικοινωνήστε με τον διαχειριστή σας."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

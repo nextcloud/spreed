@@ -71,7 +71,6 @@ OC.L10N.register(
     "New file" : "ไฟล์ใหม่",
     "Blank" : "ว่าง",
     "Settings" : "การตั้งค่า",
-    "Send" : "ส่ง",
     "bot" : "บอต",
     "guest" : "ผู้เยี่ยมชม",
     "Searching …" : "กำลังค้นหา …",
@@ -93,6 +92,7 @@ OC.L10N.register(
     "Default" : "ค่าเริ่มต้น",
     "The password is wrong. Try again." : "รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอป Android",
-    "iOS app" : "แอป iOS"
+    "iOS app" : "แอป iOS",
+    "Send" : "ส่ง"
 },
 "nplurals=1; plural=0;");
