@@ -483,7 +483,7 @@ class RoomController extends AEnvironmentAwareController {
 				}
 				return $this->createGroupRoom($invite);
 			case Room::TYPE_PUBLIC:
-				return $this->createEmptyRoom($roomName);
+				return $this->createEmptyRoom($roomName, true, $objectType, $objectId);
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -627,6 +627,9 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
 			}
+		} elseif ($objectType === Room::OBJECT_TYPE_PHONE) {
+			// Ignoring any user input on this one
+			$objectId = $objectType;
 		} elseif ($objectType !== '') {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}

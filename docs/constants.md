@@ -12,11 +12,12 @@
 
 ### Object types
 
-| Constant         | Can be created | Description                                                      | Object ID                             |
-|------------------|----------------|------------------------------------------------------------------|---------------------------------------|
-| `file`           | No             | Conversations about a file in the right sidebar of the files app | File ID                               |
-| `share:password` | No             | Video verification to verify the identity of the share recipient | Share token                           |
-| `room`           | Yes            | Room is a breakout room                                          | Token of the main/parent conversation |
+| Constant         | Can be created | Description                                                      | Object ID                                               |
+|------------------|----------------|------------------------------------------------------------------|---------------------------------------------------------|
+| `file`           | No             | Conversations about a file in the right sidebar of the files app | File ID                                                 |
+| `share:password` | No             | Video verification to verify the identity of the share recipient | Share token                                             |
+| `room`           | Yes            | Room is a breakout room                                          | Token of the main/parent conversation                   |
+| `phone`          | Yes            | Room is created when calling a phone number with SIP dial-out    | `phone` (not set atm, just used for the default avatar) |
 
 ### Read-only states
 * `0` Read-write
