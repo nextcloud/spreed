@@ -42,6 +42,8 @@
 | `statusIcon`          | string | v2    |         | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation                                                                       |
 | `statusMessage`       | string | v2    |         | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation                                                                       |
 | `roomToken`           | string | v4    |         | Optional: Only available with `breakout-rooms-v1` capability                                                                                                                                                            |
+| `phoneNumber`         | string | v4    |         | Optional: Only available with `sip-support-dialout` capability and only filled for moderators that are allowed to configure SIP for conversations                                                                       |
+| `callId`              | string | v4    |         | Optional: Only available with `sip-support-dialout` capability and only filled for moderators that are allowed to configure SIP for conversations                                                                       |
 
 
 ## Get list of participants in a conversation including its breakout rooms
