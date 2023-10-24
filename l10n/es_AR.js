@@ -90,7 +90,6 @@ OC.L10N.register(
     "Group" : "Grupo",
     "New file" : "Nuevo archivo",
     "Settings" : "Ajustes",
-    "Send" : "Enviar",
     "Searching …" : "Buscando ...",
     "No results" : "Sin resultados",
     "Add users or groups" : "Agregar usuarios o grupos",
@@ -128,6 +127,7 @@ OC.L10N.register(
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "Conversation name" : "Nombre de conversación",
-    "Rename conversation" : "Renombrar conversación"
+    "Rename conversation" : "Renombrar conversación",
+    "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

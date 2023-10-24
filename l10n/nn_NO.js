@@ -63,7 +63,6 @@ OC.L10N.register(
     "Group" : "Gruppe",
     "Record voice message" : "Ta opp lyd melding ",
     "Settings" : "Instillingar",
-    "Send" : "Send",
     "Demote from moderator" : "Nedrykk frå moderator",
     "Promote to moderator" : "Fremje til moderator",
     "Remove group and members" : "Eksterne gruppe og medlemmar",
@@ -85,6 +84,7 @@ OC.L10N.register(
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Conversation name" : "Samtale namn",
-    "Rename conversation" : "Eksterne samtalar "
+    "Rename conversation" : "Eksterne samtalar ",
+    "Send" : "Send"
 },
 "nplurals=2; plural=(n != 1);");

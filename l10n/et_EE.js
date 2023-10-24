@@ -78,7 +78,6 @@ OC.L10N.register(
     "Blank" : "Tühi",
     "Settings" : "Seaded",
     "Create poll" : "Loo küsitlus",
-    "Send" : "Saada",
     "guest" : "külaline",
     "Searching …" : "Otsin ...",
     "No results" : "Vasteid ei leitud",
@@ -100,6 +99,7 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
-    "iOS app" : "iOS-i rakendus"
+    "iOS app" : "iOS-i rakendus",
+    "Send" : "Saada"
 },
 "nplurals=2; plural=(n != 1);");

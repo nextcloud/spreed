@@ -346,7 +346,6 @@ OC.L10N.register(
     "New file" : "Fișier nou",
     "Blank" : "Gol",
     "Settings" : "Setări",
-    "Send" : "Trimite",
     "guest" : "invitat",
     "No results" : "Niciun rezultat",
     "Add users or groups" : "Add users or groups",
@@ -370,6 +369,7 @@ OC.L10N.register(
     "iOS app" : "Aplicație iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bine ați venit la Nextcloud Talk!\nÎn această conversație veți fi informat despre noile caracteristici disponibile în Nextcloud Talk.",
     "New in Talk %s" : "Nou în Discuții %s",
-    "More actions" : "Mai multe acțiuni"
+    "More actions" : "Mai multe acțiuni",
+    "Send" : "Trimite"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

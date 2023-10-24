@@ -553,7 +553,6 @@ OC.L10N.register(
     "Blank" : "Blank",
     "Settings" : "Innstillinger",
     "Create poll" : "Opprett avstemning",
-    "Send" : "Send",
     "Join" : "Bli med",
     "moderator" : "moderator",
     "guest" : "gjest",
@@ -623,6 +622,7 @@ OC.L10N.register(
     "No matches" : "Ingen treff",
     "Creating your conversation" : "Opprett din samtale",
     "Conversation name" : "Samtalenavn",
-    "Rename conversation" : "Endre navn på samtale"
+    "Rename conversation" : "Endre navn på samtale",
+    "Send" : "Send"
 },
 "nplurals=2; plural=(n != 1);");
