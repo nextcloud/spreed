@@ -65,6 +65,7 @@ use OCA\Talk\Events\SilentModifyParticipantEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -1237,6 +1238,7 @@ class ParticipantService {
 
 	/**
 	 * @throws \InvalidArgumentException
+	 * @throws DialOutFailedException
 	 * @throws ParticipantNotFoundException
 	 */
 	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId): void {
@@ -1258,6 +1260,13 @@ class ParticipantService {
 
 		if (!$dialOutResponse) {
 			throw new \InvalidArgumentException('backend');
+		}
+
+		if ($dialOutResponse->dialOut->error->message) {
+			throw new DialOutFailedException(
+				$dialOutResponse->dialOut->error->code,
+				$dialOutResponse->dialOut->error->message,
+			);
 		}
 
 		$attendee->setCallId($dialOutResponse->dialOut->callId);

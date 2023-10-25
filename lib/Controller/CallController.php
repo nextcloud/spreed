@@ -29,6 +29,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -231,6 +232,11 @@ class CallController extends AEnvironmentAwareController {
 			$this->participantService->startDialOutRequest($this->dialOutService, $this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (DialOutFailedException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+				'message' => $e->getReadableError(),
+			], Http::STATUS_NOT_IMPLEMENTED);
 		} catch (\InvalidArgumentException) {
 			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 		}
