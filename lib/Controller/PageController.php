@@ -175,13 +175,17 @@ class PageController extends Controller {
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	protected function createPrivateRoom(string $targetUserId): Room {
+	protected function createContactRequestRoom(string $targetUserId): Room {
 		$user = $this->userManager->get($targetUserId);
 		if (!$user instanceof IUser) {
 			throw new \InvalidArgumentException('user');
 		}
 
-		if ($this->profileManager->isProfileFieldVisible('talk', $user, null)) {
+		if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
+			throw new \InvalidArgumentException('config');
+		}
+
+		if (!$this->profileManager->isProfileFieldVisible('talk', $user, null)) {
 			throw new \InvalidArgumentException('profile');
 		}
 
@@ -218,7 +222,7 @@ class PageController extends Controller {
 				}
 
 				try {
-					$room = $this->createPrivateRoom($callUser);
+					$room = $this->createContactRequestRoom($callUser);
 				} catch (\InvalidArgumentException) {
 					$response = new TemplateResponse('core', '404-profile', [], TemplateResponse::RENDER_AS_GUEST);
 					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
