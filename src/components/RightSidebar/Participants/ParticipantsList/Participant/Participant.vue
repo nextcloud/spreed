@@ -405,14 +405,37 @@ export default {
 			return this.isInCall && !!this.participant.inCall && !!this.timeSpeaking
 		},
 
+		phoneCallStatus() {
+			if (!this.isPhoneActor || !this.participant.callId) {
+				return undefined
+			}
+			return this.$store.getters.getPhoneStatus(this.participant.callId)
+		},
+
 		statusMessage() {
+			if (this.isInCall && this.phoneCallStatus) {
+				switch (this.phoneCallStatus) {
+				case 'ringing':
+					return '📞 ' + t('spreed', 'Ringing …')
+				case 'rejected':
+					return '⚠️ ' + t('spreed', 'Call rejected')
+				case 'accepted':
+				case 'cleared':
+					return ''
+				case 'connected':
+				default:
+					// Fall through to show the talking time
+					break
+				}
+			}
+
 			if (this.isSpeakingStatusAvailable) {
 				return this.isParticipantSpeaking
 					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
 					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
-			} else {
-				return getStatusMessage(this.participant)
 			}
+
+			return getStatusMessage(this.participant)
 		},
 
 		statusMessageTooltip() {
