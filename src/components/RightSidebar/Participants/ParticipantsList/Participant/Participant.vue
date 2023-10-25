@@ -76,8 +76,23 @@
 			</div>
 		</div>
 
+		<!-- Phone participant dial action -->
+		<div v-if="isInCall && canBeModerated && isPhoneActor"
+			id="participantNavigationId"
+			class="participant-row__dial-actions">
+			<NcButton v-if="!participant.inCall"
+				type="success"
+				:aria-label="t('spreed', 'Dial out phone')"
+				:title="t('spreed', 'Dial out phone')"
+				@click="dialOutPhoneNumber">
+				<template #icon>
+					<Phone :size="20" />
+				</template>
+			</NcButton>
+		</div>
+
 		<!-- Call state icon -->
-		<div v-if="callIcon"
+		<div v-else-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
@@ -145,14 +160,23 @@
 				</template>
 				{{ t('spreed', 'Send call notification') }}
 			</NcActionButton>
-			<NcActionButton v-if="canBeModerated && isPhoneActor"
-				close-after-click
-				@click="copyPhoneNumber">
-				<template #icon>
-					<ContentCopy :size="20" />
-				</template>
-				{{ t('spreed', 'Copy phone number') }}
-			</NcActionButton>
+			<template v-if="canBeModerated && isPhoneActor">
+				<NcActionButton v-if="!conversation.hasCall && !isInCall && !participant.callId"
+					close-after-click
+					@click="dialOutPhoneNumber">
+					<template #icon>
+						<Phone :size="20" />
+					</template>
+					{{ t('spreed', 'Dial out phone number') }}
+				</NcActionButton>
+				<NcActionButton close-after-click
+					@click="copyPhoneNumber">
+					<template #icon>
+						<ContentCopy :size="20" />
+					</template>
+					{{ t('spreed', 'Copy phone number') }}
+				</NcActionButton>
+			</template>
 
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
@@ -234,11 +258,13 @@ import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
@@ -246,6 +272,9 @@ import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/Partici
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
+import {
+	callSIPDialOut,
+} from '../../../../../services/callsService.js'
 import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
 import { getStatusMessage } from '../../../../../utils/userStatus.js'
@@ -259,6 +288,7 @@ export default {
 		NcActionButton,
 		NcActionText,
 		NcActionSeparator,
+		NcButton,
 		ParticipantPermissionsEditor,
 		// Icons
 		Account,
@@ -813,6 +843,36 @@ export default {
 			}
 		},
 
+		async dialOutPhoneNumber() {
+			try {
+				if (!this.isInCall) {
+					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+					flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+
+					// Close navigation
+					emit('toggle-navigation', { open: false })
+					console.info('Joining call')
+					await this.$store.dispatch('joinCall', {
+						token: this.token,
+						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+						flags,
+						silent: false,
+						recordingConsent: true,
+					})
+				}
+				await callSIPDialOut(this.token, this.participant.attendeeId)
+			} catch (error) {
+				if (error?.response?.data?.ocs?.data?.message) {
+					showError(t('spreed', 'Phone number could not be called: {error}', {
+						error: error?.response?.data?.ocs?.data?.message
+					}))
+				} else {
+					console.error(error)
+					showError(t('spreed', 'Phone number could not be called'))
+				}
+			}
+		},
+
 		async copyPhoneNumber() {
 			try {
 				await navigator.clipboard.writeText(this.participant.phoneNumber)
@@ -820,7 +880,7 @@ export default {
 			} catch (error) {
 				showError(t('spreed', 'Phone number could not be copied'))
 			}
-		}
+		},
 	},
 }
 </script>
@@ -903,6 +963,11 @@ export default {
 		opacity: .4;
 		display: flex;
 		align-items: center;
+	}
+
+	&__dial-actions {
+		display: flex;
+		gap: 4px;
 	}
 
 	&:focus,

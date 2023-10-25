@@ -34,9 +34,20 @@
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<VideoIcon :size="20" />
+				<PhoneIcon v-if="isPhoneRoom" :size="20" />
+				<VideoIcon v-else :size="20" />
 			</template>
 			{{ startCallLabel }}
+		</NcButton>
+		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
+			id="call_button"
+			type="error"
+			:disabled="loading"
+			@click="leaveCall(true)">
+			<template #icon>
+				<PhoneHangup :size="20" />
+			</template>
+			{{ t('spreed', 'End call') }}
 		</NcButton>
 		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
@@ -82,7 +93,11 @@
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
+
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import PhoneIcon from 'vue-material-design-icons/Phone.vue'
+import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
@@ -96,10 +111,11 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import browserCheck from '../../mixins/browserCheck.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import participant from '../../mixins/participant.js'
+import { callSIPDialOut } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { useSettingsStore } from '../../stores/settings.js'
 
@@ -113,11 +129,14 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
+		NcButton,
+		// Icons
+		ArrowLeft,
+		PhoneHangup,
+		PhoneIcon,
 		VideoBoxOff,
 		VideoIcon,
 		VideoOff,
-		NcButton,
-		ArrowLeft,
 	},
 
 	mixins: [
@@ -288,6 +307,10 @@ export default {
 		isBreakoutRoom() {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 		},
+
+		isPhoneRoom() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE
+		}
 	},
 
 	mounted() {
@@ -307,7 +330,7 @@ export default {
 			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
 				flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
 			}
-			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
+			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO && !this.isPhoneRoom) {
 				flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			}
 
@@ -331,6 +354,13 @@ export default {
 					token: this.token,
 					callRecording: CALL.RECORDING.VIDEO,
 				})
+			}
+
+			if (this.isPhoneRoom) {
+				const attendeeId = this.$store.getters.participantsList(this.token)
+					.find(participant => participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES)
+					?.attendeeId
+				this.dialOutPhoneNumber(attendeeId)
 			}
 		},
 
@@ -361,7 +391,7 @@ export default {
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 			this.$store.dispatch('createAudioObjects')
 
-			if (this.isMediaSettings) {
+			if (this.isMediaSettings || this.isPhoneRoom) {
 				emit('talk:media-settings:hide')
 				this.joinCall()
 				return
@@ -380,6 +410,21 @@ export default {
 			EventBus.$emit('switch-to-conversation', {
 				token: parentRoomToken,
 			})
+		},
+
+		async dialOutPhoneNumber(attendeeId) {
+			try {
+				await callSIPDialOut(this.token, attendeeId)
+			} catch (error) {
+				if (error?.response?.data?.ocs?.data?.message) {
+					showError(t('spreed', 'Phone number could not be called: {error}', {
+						error: error?.response?.data?.ocs?.data?.message
+					}))
+				} else {
+					console.error(error)
+					showError(t('spreed', 'Phone number could not be called'))
+				}
+			}
 		},
 	},
 }

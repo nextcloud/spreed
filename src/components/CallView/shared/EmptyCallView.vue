@@ -104,6 +104,10 @@ export default {
 			return this.conversation && this.conversation.objectType === CONVERSATION.OBJECT_TYPE.FILE
 		},
 
+		isPhoneConversation() {
+			return this.conversation && this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE
+		},
+
 		conversationDisplayName() {
 			return this.conversation && this.conversation.displayName
 		},
@@ -120,16 +124,21 @@ export default {
 		},
 
 		iconClass() {
-			return {
-				'icon-loading': this.isConnecting,
-				'icon-public': !this.isConnecting && this.isPublicConversation,
-				'icon-contacts': !this.isConnecting && !this.isPublicConversation,
+			if (this.isConnecting) {
+				return 'icon-loading'
+			} else if (this.isPhoneConversation) {
+				return 'icon-phone'
+			} else {
+				return this.isPublicConversation ? 'icon-public' : 'icon-contacts'
 			}
 		},
 
 		title() {
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
+			}
+			if (this.isPhoneConversation) {
+				return t('spreed', 'Calling …')
 			}
 			if (this.isOneToOneConversation) {
 				return t('spreed', 'Waiting for {user} to join the call', { user: this.conversationDisplayName })
@@ -151,6 +160,10 @@ export default {
 			}
 
 			if (this.isGroupConversation && !this.canInviteOthers) {
+				return ''
+			}
+
+			if (this.isPhoneConversation) {
 				return ''
 			}
 

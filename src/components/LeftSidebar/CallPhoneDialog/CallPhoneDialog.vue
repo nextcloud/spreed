@@ -71,7 +71,8 @@ import DialpadPanel from '../../DialpadPanel.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { callSIPDialOut } from '../../../services/callsService.js'
 import { createPrivateConversation } from '../../../services/conversationsService.js'
 import { addParticipant } from '../../../services/participantsService.js'
 
@@ -154,6 +155,8 @@ export default {
 				this.$router.push({ name: 'conversation', params: { token: conversation.token } })
 				await this.$store.dispatch('joinConversation', { token: conversation.token })
 
+				this.startPhoneCall(conversation.token, this.participantPhoneItem.phoneNumber)
+
 				this.closeModal()
 			} catch (exception) {
 				console.debug(exception)
@@ -162,6 +165,42 @@ export default {
 					this.$store.dispatch('deleteConversationFromServer', { token: conversation.token })
 				}
 				this.closeModal()
+			}
+		},
+
+		async startPhoneCall(token, phoneNumber) {
+			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+			flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+
+			try {
+				const response = await this.$store.dispatch('fetchParticipants', { token })
+
+				// Close navigation
+				emit('toggle-navigation', { open: false })
+				console.info('Joining call')
+				await this.$store.dispatch('joinCall', {
+					token,
+					participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+					flags,
+					silent: false,
+					recordingConsent: true,
+				})
+
+				// request above could be cancelled, if there is parallel request, and return null
+				// in that case participants list will be fetched anyway and keeped in the store
+				const participantsList = response?.data.ocs.data || this.$store.getters.participantsList(token)
+				const attendeeId = participantsList.find(participant => participant.phoneNumber === phoneNumber)?.attendeeId
+
+				await callSIPDialOut(token, attendeeId)
+			} catch (error) {
+				if (error?.response?.data?.ocs?.data?.message) {
+					showError(t('spreed', 'Phone number could not be called: {error}', {
+						error: error?.response?.data?.ocs?.data?.message
+					}))
+				} else {
+					console.error(error)
+					showError(t('spreed', 'Phone number could not be called'))
+				}
 			}
 		},
 	},
