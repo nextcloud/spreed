@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 /**
- * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
+ *
+ * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -45,9 +48,11 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -151,6 +156,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
 
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
+
 		// Talk internal listeners
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
@@ -206,7 +214,6 @@ class Application extends App implements IBootstrap {
 			ChangelogListener::register($dispatcher);
 		}
 		ShareListener::register($dispatcher);
-		StatusListener::register($dispatcher);
 
 		$this->registerChatHooks($dispatcher);
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
