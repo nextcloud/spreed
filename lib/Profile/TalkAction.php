@@ -70,16 +70,23 @@ class TalkAction implements ILinkAction {
 
 	#[\Override]
 	public function getTarget(): ?string {
-		$visitingUser = $this->userSession->getUser();
-		if (
-			$this->config->isDisabledForUser($this->targetUser)
-			|| ($visitingUser && $this->config->isDisabledForUser($visitingUser))
-		) {
+		if ($this->config->isDisabledForUser($this->targetUser)) {
 			return null;
 		}
+
+		$visitingUser = $this->userSession->getUser();
 		if ($visitingUser === $this->targetUser) {
 			return $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index');
 		}
+
+		if ($visitingUser && $this->config->isDisabledForUser($visitingUser)) {
+			return null;
+		}
+
+		if (!$visitingUser && $this->config->isNotAllowedToCreateConversations($this->targetUser)) {
+			return null;
+		}
+
 		return $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $this->targetUser->getUID();
 	}
 }
