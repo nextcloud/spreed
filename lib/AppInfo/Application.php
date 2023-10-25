@@ -53,10 +53,12 @@ use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
+use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
+use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
@@ -137,8 +139,13 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
+
+		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
+		$context->registerEventListener(ChatMessageSentEvent::class, BotListener::class);
+		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
+
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
 		$context->registerEventListener(GroupChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
@@ -208,7 +215,6 @@ class Application extends App implements IBootstrap {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
-		BotListener::register($dispatcher);
 		// Register only when Talk Updates are not disabled
 		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
 			ChangelogListener::register($dispatcher);

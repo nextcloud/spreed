@@ -25,8 +25,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\MessageParser;
-use OCA\Talk\Events\ChatEvent;
-use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversation;
@@ -64,7 +64,13 @@ class BotService {
 	) {
 	}
 
-	public function afterChatMessageSent(ChatParticipantEvent $event, MessageParser $messageParser): void {
+	public function afterChatMessageSent(ChatMessageSentEvent $event, MessageParser $messageParser): void {
+		$attendee = $event->getParticipant()?->getAttendee();
+		if (!$attendee instanceof Attendee) {
+			// No bots for bots
+			return;
+		}
+
 		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
 		if (empty($bots)) {
 			return;
@@ -81,8 +87,6 @@ class BotService {
 			'message' => $message->getMessage(),
 			'parameters' => $message->getMessageParameters(),
 		];
-
-		$attendee = $event->getParticipant()->getAttendee();
 
 		$this->sendAsyncRequests($bots, [
 			'type' => 'Create',
@@ -106,7 +110,7 @@ class BotService {
 		]);
 	}
 
-	public function afterSystemMessageSent(ChatEvent $event, MessageParser $messageParser): void {
+	public function afterSystemMessageSent(SystemMessageSentEvent $event, MessageParser $messageParser): void {
 		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
 		if (empty($bots)) {
 			return;
