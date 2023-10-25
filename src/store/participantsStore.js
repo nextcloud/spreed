@@ -602,7 +602,7 @@ const actions = {
 
 			return response
 		} catch (exception) {
-			if (exception?.response.status === 403) {
+			if (exception?.response?.status === 403) {
 				context.dispatch('fetchConversation', { token })
 			} else if (!CancelableRequest.isCancel(exception)) {
 				console.error(exception)
