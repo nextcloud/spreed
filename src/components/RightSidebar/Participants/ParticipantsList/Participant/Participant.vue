@@ -84,11 +84,27 @@
 				type="success"
 				:aria-label="t('spreed', 'Dial out phone')"
 				:title="t('spreed', 'Dial out phone')"
+				:disabled="disabled"
 				@click="dialOutPhoneNumber">
 				<template #icon>
 					<Phone :size="20" />
 				</template>
 			</NcButton>
+			<template v-else>
+				<NcButton type="error"
+					:aria-label="t('spreed', 'Hang up phone')"
+					:title="t('spreed', 'Hang up phone')"
+					:disabled="disabled"
+					@click="hangupPhoneNumber">
+					<template #icon>
+						<PhoneHangup :size="20" />
+					</template>
+				</NcButton>
+				<DialpadPanel :disabled="disabled"
+					container="#tab-participants"
+					dialing
+					@dial:type="dialType" />
+			</template>
 		</div>
 
 		<!-- Call state icon -->
@@ -169,6 +185,41 @@
 					</template>
 					{{ t('spreed', 'Dial out phone number') }}
 				</NcActionButton>
+				<template v-else-if="isInCall && participant.callId">
+					<NcActionButton v-if="phoneMuteState === 'hold'"
+						close-after-click
+						@click="unmutePhoneNumber">
+						<template #icon>
+							<PhoneInTalk :size="20" />
+						</template>
+						{{ t('spreed', 'Resume call for phone number') }}
+					</NcActionButton>
+					<template v-else>
+						<NcActionButton close-after-click
+							@click="holdPhoneNumber">
+							<template #icon>
+								<PhonePaused :size="20" />
+							</template>
+							{{ t('spreed', 'Put phone number on hold') }}
+						</NcActionButton>
+						<NcActionButton v-if="phoneMuteState === 'muted'"
+							close-after-click
+							@click="unmutePhoneNumber">
+							<template #icon>
+								<Microphone :size="20" />
+							</template>
+							{{ t('spreed', 'Unmute phone number') }}
+						</NcActionButton>
+						<NcActionButton v-else
+							close-after-click
+							@click="mutePhoneNumber">
+							<template #icon>
+								<MicrophoneOff :size="20" />
+							</template>
+							{{ t('spreed', 'Mute phone number') }}
+						</NcActionButton>
+					</template>
+				</template>
 				<NcActionButton close-after-click
 					@click="copyPhoneNumber">
 					<template #icon>
@@ -252,8 +303,12 @@ import Lock from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
 import LockReset from 'vue-material-design-icons/LockReset.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
+import PhoneInTalk from 'vue-material-design-icons/PhoneInTalk.vue'
+import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
+import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
@@ -268,12 +323,18 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import DialpadPanel from '../../../../DialpadPanel.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import {
 	callSIPDialOut,
+	callSIPHangupPhone,
+	callSIPHoldPhone,
+	callSIPMutePhone,
+	callSIPUnmutePhone,
+	callSIPSendDTMF,
 } from '../../../../../services/callsService.js'
 import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
@@ -284,6 +345,7 @@ export default {
 
 	components: {
 		AvatarWrapper,
+		DialpadPanel,
 		NcActions,
 		NcActionButton,
 		NcActionText,
@@ -303,8 +365,12 @@ export default {
 		LockOpenVariant,
 		LockReset,
 		Microphone,
+		MicrophoneOff,
 		Pencil,
 		Phone,
+		PhoneInTalk,
+		PhoneHangup,
+		PhonePaused,
 		Tune,
 		VideoIcon,
 	},
@@ -356,6 +422,7 @@ export default {
 			permissionsEditor: false,
 			speakingInterval: null,
 			timeSpeaking: null,
+			disabled: false,
 		}
 	},
 
@@ -410,6 +477,24 @@ export default {
 				return undefined
 			}
 			return this.$store.getters.getPhoneStatus(this.participant.callId)
+		},
+
+		phoneMuteState() {
+			if (!this.isPhoneActor || !this.participant.callId) {
+				return undefined
+			}
+			switch (this.$store.getters.getPhoneMute(this.participant.callId)) {
+			case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
+				return 'muted'
+			}
+			case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
+				return 'hold'
+			}
+			case PARTICIPANT.SIP_DIALOUT_FLAG.NONE:
+			default: {
+				return undefined
+			}
+			}
 		},
 
 		statusMessage() {
@@ -743,6 +828,12 @@ export default {
 				this.speakingInterval = null
 			}
 		},
+
+		phoneCallStatus(value) {
+			if (!value || !(value === 'ringing' || value === 'accepted')) {
+				this.disabled = false
+			}
+		}
 	},
 
 	methods: {
@@ -868,6 +959,7 @@ export default {
 
 		async dialOutPhoneNumber() {
 			try {
+				this.disabled = true
 				if (!this.isInCall) {
 					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 					flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
@@ -885,6 +977,7 @@ export default {
 				}
 				await callSIPDialOut(this.token, this.participant.attendeeId)
 			} catch (error) {
+				this.disabled = false
 				if (error?.response?.data?.ocs?.data?.message) {
 					showError(t('spreed', 'Phone number could not be called: {error}', {
 						error: error?.response?.data?.ocs?.data?.message
@@ -893,6 +986,56 @@ export default {
 					console.error(error)
 					showError(t('spreed', 'Phone number could not be called'))
 				}
+			}
+		},
+
+		async hangupPhoneNumber() {
+			try {
+				this.disabled = true
+				await callSIPHangupPhone(this.sessionIds[0])
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be hanged up'))
+				this.disabled = false
+			}
+		},
+		async holdPhoneNumber() {
+			try {
+				await callSIPHoldPhone(this.sessionIds[0])
+				this.$store.dispatch('setPhoneMute', {
+					callid: this.participant.callId,
+					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER,
+				})
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be putted on hold'))
+			}
+		},
+		async mutePhoneNumber() {
+			try {
+				await callSIPMutePhone(this.sessionIds[0])
+				this.$store.dispatch('setPhoneMute', {
+					callid: this.participant.callId,
+					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE,
+				})
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be muted'))
+			}
+		},
+		async unmutePhoneNumber() {
+			try {
+				await callSIPUnmutePhone(this.sessionIds[0])
+				this.$store.dispatch('setPhoneMute', {
+					callid: this.participant.callId,
+					value: PARTICIPANT.SIP_DIALOUT_FLAG.NONE,
+				})
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be unmuted'))
+			}
+		},
+		async dialType(value) {
+			try {
+				await callSIPSendDTMF(this.sessionIds[0], value)
+			} catch (error) {
+				showError(t('spreed', 'DTMF message could not be sent'))
 			}
 		},
 

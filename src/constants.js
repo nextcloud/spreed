@@ -138,6 +138,12 @@ export const PARTICIPANT = {
 		RAISE_HAND: 8,
 	},
 
+	SIP_DIALOUT_FLAG: {
+		NONE: 0,
+		MUTE_MICROPHONE: 1,
+		MUTE_SPEAKER: 2,
+	},
+
 	NOTIFY: {
 		DEFAULT: 0,
 		ALWAYS: 1,

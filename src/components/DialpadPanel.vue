@@ -26,7 +26,9 @@
 		:container="container"
 		@show="prefillCode">
 		<template #trigger>
-			<NcButton :aria-label="t('spreed', 'Open dialpad')" :title="t('spreed', 'Open dialpad')">
+			<NcButton :disabled="disabled"
+				:aria-label="t('spreed', 'Open dialpad')"
+				:title="t('spreed', 'Open dialpad')">
 				<template #icon>
 					<Dialpad :size="20" />
 				</template>
@@ -159,6 +161,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		disabled: {
+			type: Boolean,
+			default: false,
+		}
 	},
 
 	emits: ['dial:type', 'update:value', 'submit'],

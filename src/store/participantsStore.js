@@ -255,6 +255,10 @@ const getters = {
 		return state.phones[callId]?.state?.status
 	},
 
+	getPhoneMute: (state) => (callId) => {
+		return state.phones[callId]?.mute
+	},
+
 	participantsInCall: (state) => (token) => {
 		if (state.attendees[token]) {
 			return Object.values(state.attendees[token]).filter(attendee => attendee.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED).length
@@ -442,6 +446,13 @@ const mutations = {
 			Vue.set(state.phones, callid, { state: null, mute: 0 })
 		}
 		Vue.set(state.phones[callid], 'state', value)
+	},
+
+	setPhoneMute(state, { callid, value }) {
+		if (!state.phones[callid]) {
+			Vue.set(state.phones, callid, { state: null, mute: 0 })
+		}
+		Vue.set(state.phones[callid], 'mute', value)
 	},
 
 	deletePhoneState(state, callid) {
@@ -949,6 +960,14 @@ const actions = {
 				context.commit('deletePhoneState', value.callid)
 			}, 5000)
 		}
+	},
+
+	deletePhoneState(context, { callid }) {
+		context.commit('deletePhoneState', callid)
+	},
+
+	setPhoneMute(context, { callid, value }) {
+		context.commit('setPhoneMute', { callid, value })
 	},
 }
 
