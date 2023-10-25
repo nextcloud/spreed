@@ -1098,6 +1098,8 @@ OC.L10N.register(
     "No search results" : "لا توجد نتائج",
     "Talk settings" : "إعدادات التحدث",
     "No conversations found" : "لم يتم العثور على المحادثات ",
+    "You have no unread mentions." : "لا توجد لديك أي إشارات غير مقرؤة.",
+    "You have no unread messages." : "لا توجد لديك أي رسائل غير مقرؤة.",
     "Users, groups and circles" : "الاعضاء، المجموعات و الجماعات",
     "Users and groups" : "الاعضاء والمجموعات",
     "Users and circles" : "الاعضاء والجماعات",

@@ -1098,6 +1098,8 @@ OC.L10N.register(
     "No search results" : "No search results",
     "Talk settings" : "Talk settings",
     "No conversations found" : "No conversations found",
+    "You have no unread mentions." : "You have no unread mentions.",
+    "You have no unread messages." : "You have no unread messages.",
     "Users, groups and circles" : "Users, groups and circles",
     "Users and groups" : "Users and groups",
     "Users and circles" : "Users and circles",
