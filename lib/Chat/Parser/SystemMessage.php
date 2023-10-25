@@ -725,6 +725,9 @@ class SystemMessage {
 		if ($actorType === Attendee::ACTOR_GUESTS || $actorType === Attendee::ACTOR_EMAILS) {
 			return $this->getGuest($room, $actorType, $actorId);
 		}
+		if ($actorType === Attendee::ACTOR_PHONES) {
+			return $this->getPhone($room, $actorId, '');
+		}
 		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			return $this->getRemoteUser($actorId);
 		}
