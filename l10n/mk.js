@@ -609,7 +609,7 @@ OC.L10N.register(
     "You need to be logged in to upload files" : "Треба да бидете најавени за да можете да прикачите датотеки",
     "This conversation is read-only" : "Разговорот е само за читање",
     "Drop your files to upload" : "Повлечи датотеки за да прикачите",
-    "Favorite" : "Омилен",
+    "Favorite" : "Омилени",
     "Enter a description for this conversation" : "Внесете опис за овој разговор",
     "Picture" : "Слика",
     "Disable" : "Оневозможи",
