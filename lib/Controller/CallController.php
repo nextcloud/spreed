@@ -208,7 +208,7 @@ class CallController extends AEnvironmentAwareController {
 	 * Call a SIP dial-out attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to call
-	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error?: string, message?: string}, array{}>
 	 *
 	 * 201: Dial-out initiated successfully
 	 * 400: SIP dial-out not possible

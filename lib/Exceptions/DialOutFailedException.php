@@ -26,8 +26,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Exceptions;
 
-use parallel\Events;
-
 class DialOutFailedException extends \RuntimeException {
 	public function __construct(
 		string $errorCode,

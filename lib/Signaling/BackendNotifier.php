@@ -93,7 +93,10 @@ class BackendNotifier {
 			}
 
 			$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
-			return new Response($e->getResponse());
+			if ($e->hasResponse()) {
+				return new Response($e->getResponse());
+			}
+			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);
 			throw $e;
