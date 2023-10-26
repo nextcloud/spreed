@@ -151,6 +151,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
 
 		// Chat listeners
+		$context->registerEventListener(BeforeRoomsFetchEvent::class, ChangelogListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ChatListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
@@ -221,10 +222,6 @@ class Application extends App implements IBootstrap {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
-		// Register only when Talk Updates are not disabled
-		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
-			ChangelogListener::register($dispatcher);
-		}
 		ShareListener::register($dispatcher);
 
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));

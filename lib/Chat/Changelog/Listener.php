@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,32 +25,34 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Changelog;
 
-use OCA\Talk\Controller\RoomController;
-use OCA\Talk\Events\UserEvent;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Server;
+use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
 
-class Listener {
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, [self::class, 'updateChangelog'], -100);
-	}
-
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
 	public function __construct(
 		protected Manager $manager,
+		protected IConfig $serverConfig,
 	) {
 	}
 
-	public static function updateChangelog(UserEvent $event): void {
-		$userId = $event->getUserId();
-		$listener = Server::get(self::class);
-		$listener->preGetRooms($userId);
-	}
-
-	public function preGetRooms(string $userId): void {
-		if (!$this->manager->userHasNewChangelog($userId)) {
+	public function handle(Event $event): void {
+		if (!$event instanceof BeforeRoomsFetchEvent) {
 			return;
 		}
 
-		$this->manager->updateChangelog($userId);
+		if ($this->serverConfig->getAppValue('spreed', 'changelog', 'yes') !== 'yes') {
+			return;
+		}
+
+		if (!$this->manager->userHasNewChangelog($event->getUserId())) {
+			return;
+		}
+
+		$this->manager->updateChangelog($event->getUserId());
 	}
 }
