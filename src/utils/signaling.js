@@ -83,6 +83,7 @@ function Base(settings) {
 	this.currentRoomToken = null
 	this.currentCallToken = null
 	this.currentCallFlags = null
+	this.currentCallSilent = null
 	this.nextcloudSessionId = null
 	this.handlers = {}
 	this.features = {}
@@ -169,11 +170,16 @@ Signaling.Base.prototype.getCurrentCallFlags = function() {
 	return this.currentCallFlags
 }
 
+Signaling.Base.prototype._resetCurrentCallParameters = function() {
+	this.currentCallToken = null
+	this.currentCallFlags = null
+	this.currentCallSilent = null
+}
+
 Signaling.Base.prototype.disconnect = function() {
 	this.sessionId = ''
 	this._trigger('sessionId', [this.sessionId])
-	this.currentCallToken = null
-	this.currentCallFlags = null
+	this._resetCurrentCallParameters()
 }
 
 Signaling.Base.prototype.hasFeature = function(feature) {
@@ -222,8 +228,7 @@ Signaling.Base.prototype.leaveCurrentCall = function() {
 	return new Promise((resolve, reject) => {
 		if (this.currentCallToken) {
 			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch(reason => { reject(reason) })
-			this.currentCallToken = null
-			this.currentCallFlags = null
+			this._resetCurrentCallParameters()
 		} else {
 			resolve()
 		}
@@ -239,10 +244,9 @@ Signaling.Base.prototype.joinRoom = function(token, sessionId) {
 		resolve()
 		if (this.currentCallToken === token) {
 			// We were in this call before, join again.
-			this.joinCall(token, this.currentCallFlags)
+			this.joinCall(token, this.currentCallFlags, this.currentCallSilent)
 		} else {
-			this.currentCallToken = null
-			this.currentCallFlags = null
+			this._resetCurrentCallParameters()
 		}
 		this._joinRoomSuccess(token, sessionId)
 	})
@@ -293,6 +297,7 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent) {
 			.then(function() {
 				this.currentCallToken = token
 				this.currentCallFlags = flags
+				this.currentCallSilent = silent
 				this._trigger('joinCall', [token])
 				resolve()
 				this._joinCallSuccess(token)
@@ -358,8 +363,7 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken, all = false) {
 				resolve()
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
-					this.currentCallToken = null
-					this.currentCallFlags = null
+					this._resetCurrentCallParameters()
 				}
 			}.bind(this))
 			.catch(function() {
@@ -367,8 +371,7 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken, all = false) {
 				reject(new Error())
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
-					this.currentCallToken = null
-					this.currentCallFlags = null
+					this._resetCurrentCallParameters()
 				}
 			}.bind(this))
 	})
@@ -520,7 +523,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
 					if (this._joinCallAgainOnceDisconnected && !localParticipant.inCall) {
 						this._joinCallAgainOnceDisconnected = false
-						this.joinCall(this.currentCallToken, this.currentCallFlags)
+						this.joinCall(this.currentCallToken, this.currentCallFlags, this.currentCallSilent)
 					}
 
 					break
@@ -1181,7 +1184,7 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 	}.bind(this))
 }
 
-Signaling.Standalone.prototype.joinCall = function(token, flags) {
+Signaling.Standalone.prototype.joinCall = function(token, flags, silent) {
 	if (this.signalingRoomJoined !== token) {
 		console.debug('Not joined room yet, not joining call', token)
 
@@ -1195,6 +1198,7 @@ Signaling.Standalone.prototype.joinCall = function(token, flags) {
 			this.pendingJoinCall = {
 				token,
 				flags,
+				silent,
 				resolve,
 				reject,
 			}
@@ -1214,6 +1218,7 @@ Signaling.Standalone.prototype.joinCall = function(token, flags) {
 
 			this.currentCallToken = token
 			this.currentCallFlags = flags
+			this.currentCallSilent = silent
 			this._trigger('joinCall', [token])
 
 			resolve()
@@ -1230,7 +1235,7 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		const pendingJoinCallResolve = this.pendingJoinCall.resolve
 		const pendingJoinCallReject = this.pendingJoinCall.reject
 
-		this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags).then(() => {
+		this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags, this.pendingJoinCall.silent).then(() => {
 			pendingJoinCallResolve()
 		}).catch(error => {
 			pendingJoinCallReject(error)
