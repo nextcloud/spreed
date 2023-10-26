@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 /**
- * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
+ *
+ * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -31,8 +34,8 @@ use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Command\Listener as CommandListener;
+use OCA\Talk\Chat\Listener as ChatListener;
 use OCA\Talk\Chat\Parser\Listener as ParserListener;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
@@ -45,13 +48,16 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
+use OCA\Talk\Events\CallNotificationSendEvent;
+use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
-use OCA\Talk\Events\SendCallNotificationEvent;
+use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
@@ -79,7 +85,6 @@ use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
 use OCA\Talk\Recording\Listener as RecordingListener;
-use OCA\Talk\Room;
 use OCA\Talk\Search\ConversationSearch;
 use OCA\Talk\Search\CurrentMessageSearch;
 use OCA\Talk\Search\MessageSearch;
@@ -129,44 +134,63 @@ class Application extends App implements IBootstrap {
 		$context->registerMiddleWare(InjectionMiddleware::class);
 		$context->registerCapability(Capabilities::class);
 
+		// Listeners to load the UI and integrate it into other apps
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
-		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, MapsPluginLoader::class);
+		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
+
+		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
+		$context->registerEventListener(ChatMessageSentEvent::class, BotListener::class);
+		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
+
+		// Chat listeners
+		$context->registerEventListener(BeforeRoomsFetchEvent::class, ChangelogListener::class);
+		$context->registerEventListener(RoomDeletedEvent::class, ChatListener::class);
+		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
+		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+
+		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
 		$context->registerEventListener(GroupChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
 		$context->registerEventListener(UserChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserAddedEvent::class, GroupMembershipListener::class);
 		$context->registerEventListener(UserRemovedEvent::class, GroupMembershipListener::class);
-		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
-		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
-		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
-		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
-		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
-		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, MapsPluginLoader::class);
-		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
-		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
-		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
-		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
-
-		// Talk internal listeners
-		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
-
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
+		// Call listeners
+		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
+		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, RestrictStartingCallsListener::class, 1000);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
+
+		// Recording listeners
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
 
+		// Signaling listeners
+		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
+
+		// Register other integrations of Talk
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
 		$context->registerSearchProvider(MessageSearch::class);
 
 		$context->registerDashboardWidget(TalkWidget::class);
+
+		$context->registerNotifierService(Notifier::class);
 
 		$context->registerProfileLinkAction(TalkAction::class);
 
@@ -178,7 +202,6 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$server = $context->getServerContainer();
 
-		$this->registerNotifier($server);
 		$this->registerCollaborationResourceProvider($server);
 		$this->registerClientLinks($server);
 		$this->registerNavigationLink($server);
@@ -193,28 +216,15 @@ class Application extends App implements IBootstrap {
 		PublicShareAuthListener::register($dispatcher);
 		FilesListener::register($dispatcher);
 		FilesTemplateLoader::register($dispatcher);
-		RestrictStartingCallsListener::register($dispatcher);
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
-		BotListener::register($dispatcher);
-		// Register only when Talk Updates are not disabled
-		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
-			ChangelogListener::register($dispatcher);
-		}
 		ShareListener::register($dispatcher);
-		StatusListener::register($dispatcher);
 
-		$this->registerChatHooks($dispatcher);
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
-	}
-
-	protected function registerNotifier(IServerContainer $server): void {
-		$manager = $server->getNotificationManager();
-		$manager->registerNotifierService(Notifier::class);
 	}
 
 	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
@@ -248,15 +258,6 @@ class Application extends App implements IBootstrap {
 				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
 			];
 		});
-	}
-
-	protected function registerChatHooks(IEventDispatcher $dispatcher): void {
-		$listener = function (RoomEvent $event): void {
-			/** @var ChatManager $chatManager */
-			$chatManager = $this->getContainer()->query(ChatManager::class);
-			$chatManager->deleteMessages($event->getRoom());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 	}
 
 	protected function registerCloudFederationProviderManager(

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 /**
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2021 Carl Schwan <carl@carlschwan.eu>
  *
  * @author Carl Schwan <carl@carlschwan.eu>
@@ -26,83 +27,94 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Status;
 
-use OCA\Talk\Events\EndCallForEveryoneEvent;
-use OCA\Talk\Events\ModifyEveryoneEvent;
-use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Room;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Server;
+use OCA\Talk\Participant;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
-class Listener {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
 
 	public function __construct(
-		public IManager $statusManager,
+		protected IManager $statusManager,
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, [self::class, 'setUserStatus']);
-
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'revertUserStatusOnLeaveCall']);
-
-		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'revertUserStatusOnEndCallForEveryone']);
-	}
-
-	public static function setUserStatus(ModifyParticipantEvent $event): void {
-		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$status = IUserStatus::AWAY;
-
-			$userId = $event->getParticipant()->getAttendee()->getActorId();
-
-			/** @var self $listener */
-			$listener = Server::get(self::class);
-			$statuses = $listener->statusManager->getUserStatuses([$userId]);
-
-			if (isset($statuses[$userId])) {
-				if ($statuses[$userId]->getStatus() === IUserStatus::INVISIBLE) {
-					// If the user is invisible we do not overwrite the status
-					// with "in a call" which would be visible to any user on the
-					// instance opposed to users in the conversation the call is happening
-					return;
-				}
-
-				if ($statuses[$userId]->getStatus() === IUserStatus::DND) {
-					$status = IUserStatus::DND;
-				}
-			}
-
-			$listener->statusManager->setUserStatus(
-				$userId,
-				'call',
-				$status,
-				true
-			);
+	public function handle(Event $event): void {
+		if ($event instanceof BeforeParticipantModifiedEvent) {
+			$this->beforeParticipantModified($event);
+		}
+		if ($event instanceof CallEndedForEveryoneEvent) {
+			$this->revertUserStatusOnEndCallForEveryone($event);
 		}
 	}
 
-	public static function revertUserStatusOnLeaveCall(ModifyParticipantEvent $event): void {
-		if ($event instanceof ModifyEveryoneEvent) {
+	protected function beforeParticipantModified(BeforeParticipantModifiedEvent $event): void {
+		if ($event->getParticipant()->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
+			return;
+		}
+
+		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
+			return;
+		}
+
+		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_END_FOR_EVERYONE)) {
 			// Do not revert the status with 3 queries per user.
 			// We will update it in one go at the end.
 			return;
 		}
 
-		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			/** @var self $listener */
-			$listener = Server::get(self::class);
-			$listener->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
+		if ($event->getOldValue() === Participant::FLAG_DISCONNECTED && $event->getNewValue() !== Participant::FLAG_DISCONNECTED) {
+			$this->setUserStatus($event);
+		} elseif ($event->getOldValue() !== Participant::FLAG_DISCONNECTED && $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
+			$this->revertUserStatusOnLeaveCall($event);
 		}
 	}
 
-	public static function revertUserStatusOnEndCallForEveryone(EndCallForEveryoneEvent $event): void {
+	protected function setUserStatus(BeforeParticipantModifiedEvent $event): void {
+
+		$status = IUserStatus::AWAY;
+
+		$userId = $event->getParticipant()->getAttendee()->getActorId();
+
+		$statuses = $this->statusManager->getUserStatuses([$userId]);
+
+		if (isset($statuses[$userId])) {
+			if ($statuses[$userId]->getStatus() === IUserStatus::INVISIBLE) {
+				// If the user is invisible we do not overwrite the status
+				// with "in a call" which would be visible to any user on the
+				// instance opposed to users in the conversation the call is happening
+				return;
+			}
+
+			if ($statuses[$userId]->getStatus() === IUserStatus::DND) {
+				$status = IUserStatus::DND;
+			}
+		}
+
+		$this->statusManager->setUserStatus(
+			$userId,
+			'call',
+			$status,
+			true
+		);
+	}
+
+	protected function revertUserStatusOnLeaveCall(BeforeParticipantModifiedEvent $event): void {
+		$this->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
+	}
+
+	protected function revertUserStatusOnEndCallForEveryone(CallEndedForEveryoneEvent $event): void {
 		$userIds = $event->getUserIds();
 		if (!empty($userIds)) {
-			/** @var self $listener */
-			$listener = Server::get(self::class);
-			$listener->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
+			$this->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
 		}
 	}
 }

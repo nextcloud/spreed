@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,42 +25,47 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
-use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
-use OCP\Server;
 
-class RestrictStartingCalls {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class RestrictStartingCalls implements IEventListener {
 
 	public function __construct(
-		protected IConfig $config,
+		protected IConfig $serverConfig,
 		protected ParticipantService $participantService,
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, [self::class, 'checkStartCallPermissions'], 1000);
-	}
-
 	/**
-	 * @param ModifyParticipantEvent $event
 	 * @throws ForbiddenException
 	 */
-	public static function checkStartCallPermissions(ModifyParticipantEvent $event): void {
-		$listener = Server::get(self::class);
-		$room = $event->getRoom();
-		$participant = $event->getParticipant();
+	public function handle(Event $event): void {
+		if (!$event instanceof BeforeParticipantModifiedEvent) {
+			return;
+		}
 
+		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
+			return;
+		}
+
+		$room = $event->getRoom();
 		if ($room->getType() === Room::TYPE_PUBLIC
-			&& $room->getObjectType() === 'share:password') {
+			&& $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			// Always allow guests to start calls in password-request calls
 			return;
 		}
 
-		if (!$participant->canStartCall($listener->config) && !$listener->participantService->hasActiveSessionsInCall($room)) {
+		if (!$event->getParticipant()->canStartCall($this->serverConfig)
+			&& !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
 		}
 	}

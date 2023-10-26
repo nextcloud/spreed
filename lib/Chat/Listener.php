@@ -1,8 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -23,36 +24,24 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Chat\Changelog;
+namespace OCA\Talk\Chat;
 
-use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCA\Talk\Events\RoomDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected Manager $manager,
-		protected IConfig $serverConfig,
+		protected ChatManager $chatManager,
 	) {
 	}
 
 	public function handle(Event $event): void {
-		if (!$event instanceof BeforeRoomsFetchEvent) {
-			return;
+		if ($event instanceof RoomDeletedEvent) {
+			$this->chatManager->deleteMessages($event->getRoom());
 		}
-
-		if ($this->serverConfig->getAppValue('spreed', 'changelog', 'yes') !== 'yes') {
-			return;
-		}
-
-		if (!$this->manager->userHasNewChangelog($event->getUserId())) {
-			return;
-		}
-
-		$this->manager->updateChangelog($event->getUserId());
 	}
 }

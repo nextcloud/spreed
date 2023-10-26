@@ -50,6 +50,10 @@ abstract class AParticipantModifiedEvent extends RoomEvent {
 		parent::__construct($room);
 	}
 
+	public function getParticipant(): Participant {
+		return $this->participant;
+	}
+
 	public function getProperty(): string {
 		return $this->property;
 	}

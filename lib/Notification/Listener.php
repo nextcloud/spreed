@@ -25,9 +25,9 @@ namespace OCA\Talk\Notification;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
-use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Events\SilentModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
@@ -289,7 +289,7 @@ class Listener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		if ($event instanceof SendCallNotificationEvent) {
+		if ($event instanceof CallNotificationSendEvent) {
 			$this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee());
 		}
 	}
