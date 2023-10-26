@@ -1,6 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.2 – 2023-10-27
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(chat): Allow joining a conversation via search when a filter is active
+  [#10781](https://github.com/nextcloud/spreed/issues/10781)
+- fix(chat): Fix re-rendering of conversation data when scrolling (hover, user status, more)
+  [#10779](https://github.com/nextcloud/spreed/issues/10779)
+- fix(chat): Clear deleted messages from replies
+  [#10713](https://github.com/nextcloud/spreed/issues/10713)
+- fix(chat): Fix mentions when forwarding messages
+  [#10673](https://github.com/nextcloud/spreed/issues/10673)
+- fix(call): Increase the avatar size in calls when the video is disabled
+  [#10628](https://github.com/nextcloud/spreed/issues/10628)
+- fix(call): Fix "silent" parameter not sent again when reconnecting
+  [#10776](https://github.com/nextcloud/spreed/issues/10776)
+- fix(chat): Fix message grouping for all locales
+  [#10695](https://github.com/nextcloud/spreed/issues/10695)
+- fix(RightSidebar) update active tab on mount and conversation change
+  [#10564](https://github.com/nextcloud/spreed/issues/10564)
+- fix(sip): Fix saving the secret of the SIP bridge in the admin UI
+  [#10718](https://github.com/nextcloud/spreed/issues/10718)
+
+## 16.0.7 – 2023-10-27
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(call): Fix "silent" parameter not sent again when reconnecting
+  [#10777](https://github.com/nextcloud/spreed/issues/10777)
+- fix(chat): Fix message grouping for all locales
+  [#10696](https://github.com/nextcloud/spreed/issues/10696)
+- fix(RightSidebar) update active tab on mount and conversation change
+  [#10564](https://github.com/nextcloud/spreed/issues/10564)
+- fix(sip): Fix saving the secret of the SIP bridge in the admin UI
+  [#10719](https://github.com/nextcloud/spreed/issues/10719)
+
 ## 17.1.1 – 2023-09-21
 ### Added
 - feat(chat): Add copy function to code blocks
