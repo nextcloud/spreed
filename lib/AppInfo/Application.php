@@ -171,6 +171,7 @@ class Application extends App implements IBootstrap {
 		// Call listeners
 		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
 		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, RestrictStartingCallsListener::class, 1000);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
 
@@ -215,7 +216,6 @@ class Application extends App implements IBootstrap {
 		PublicShareAuthListener::register($dispatcher);
 		FilesListener::register($dispatcher);
 		FilesTemplateLoader::register($dispatcher);
-		RestrictStartingCallsListener::register($dispatcher);
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);

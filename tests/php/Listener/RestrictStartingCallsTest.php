@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Listener;
 
-use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Listener\RestrictStartingCalls;
 use OCA\Talk\Participant;
@@ -54,7 +54,7 @@ class RestrictStartingCallsTest extends TestCase {
 		return [
 			'default blocked' => [Room::TYPE_PUBLIC, '', false, false, true],
 
-			'allowed password request' => [Room::TYPE_PUBLIC, 'share:password', false, false, false],
+			'allowed password request' => [Room::TYPE_PUBLIC, Room::OBJECT_TYPE_VIDEO_VERIFICATION, false, false, false],
 			'call active already' => [Room::TYPE_PUBLIC, '', false, true, false],
 			'user has permissions' => [Room::TYPE_PUBLIC, '', true, false, false],
 			'user has permissions & call' => [Room::TYPE_PUBLIC, '', true, true, false],
@@ -85,11 +85,12 @@ class RestrictStartingCallsTest extends TestCase {
 		$this->participantService->method('hasActiveSessionsInCall')
 			->willReturn($hasParticipants);
 
-		$event = new ModifyParticipantEvent(
+		$event = new BeforeParticipantModifiedEvent(
 			$room,
 			$participant,
 			'inCall',
-			Participant::FLAG_IN_CALL
+			Participant::FLAG_IN_CALL,
+			Participant::FLAG_DISCONNECTED
 		);
 
 		if ($throws) {
@@ -97,7 +98,7 @@ class RestrictStartingCallsTest extends TestCase {
 		}
 
 		$this->overwriteService(RestrictStartingCalls::class, $this->listener);
-		$this->listener->checkStartCallPermissions($event);
+		$this->listener->handle($event);
 		$this->restoreService(RestrictStartingCalls::class);
 
 		if (!$throws) {
