@@ -67,6 +67,13 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		/**
+		 * Conversations list reference for handling click trigger
+		 */
+		 list: {
+			type: HTMLElement,
+			default: null,
+		},
 	},
 
 	expose: ['focus'],
@@ -136,16 +143,22 @@ export default {
 		},
 
 		handleBlur(event) {
+			// Blur triggered by clicking on the trailing button
 			if (event.relatedTarget?.classList.contains('input-field__clear-button')) {
 				event.preventDefault()
 				this.getTrailingButton()?.addEventListener('blur', (trailingEvent) => {
 					this.handleBlur(trailingEvent)
 				})
-			} else {
-				this.$emit('blur', event)
-				if (this.value === '') {
-					this.$emit('update:is-focused', false)
-				}
+				return
+			}
+			// Blur triggered by clicking on a conversation item
+			if (this.list?.contains(event.relatedTarget)) {
+				return
+			}
+			 // Blur in other cases
+			this.$emit('blur', event)
+			if (this.value === '') {
+				this.$emit('update:is-focused', false)
 			}
 		},
 

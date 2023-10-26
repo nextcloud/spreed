@@ -28,6 +28,7 @@
 				<SearchBox ref="searchBox"
 					:value.sync="searchText"
 					:is-focused.sync="isFocused"
+					:list="container"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
 			</div>
@@ -312,6 +313,7 @@ export default {
 	setup() {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
+		const container = ref(null)
 
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
 
@@ -320,6 +322,7 @@ export default {
 			resetNavigation,
 			leftSidebar,
 			searchBox,
+			container,
 		}
 	},
 
@@ -791,6 +794,7 @@ export default {
 				}
 			}
 			if (to.name === 'conversation') {
+				this.abortSearch()
 				this.$store.dispatch('joinConversation', { token: to.params.token })
 				this.scrollToConversation(to.params.token)
 			}
