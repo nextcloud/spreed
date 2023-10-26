@@ -5,9 +5,6 @@
       <code>BeforeTemplateRenderedEvent</code>
       <code>BeforeTemplateRenderedEvent</code>
     </UndefinedClass>
-    <UndefinedInterfaceMethod>
-      <code>getSettingsManager</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
     <UndefinedClass>
