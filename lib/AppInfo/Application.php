@@ -53,10 +53,10 @@ use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
+use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
-use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -169,10 +169,9 @@ class Application extends App implements IBootstrap {
 
 		// Call listeners
 		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
-		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
+		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
-
 
 		// Recording listeners
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
@@ -182,6 +181,7 @@ class Application extends App implements IBootstrap {
 		// Signaling listeners
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
+		// Register other integrations of Talk
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
 		$context->registerSearchProvider(MessageSearch::class);
