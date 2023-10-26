@@ -104,6 +104,12 @@ class RecordingController extends AEnvironmentAwareController {
 				],
 			]);
 
+			if ($response->getHeader(\OCA\Talk\Signaling\Manager::FEATURE_HEADER)) {
+				return new DataResponse([
+					'error' => 'IS_SIGNALING_SERVER',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+
 			$body = $response->getBody();
 			$data = json_decode($body, true);
 
