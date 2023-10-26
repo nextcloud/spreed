@@ -94,11 +94,11 @@ use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
+use OCP\App\IAppManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\AppFramework\IAppContainer;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -109,10 +109,14 @@ use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IConfig;
-use OCP\IServerContainer;
+use OCP\INavigationManager;
+use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
+use OCP\Server;
 use OCP\Settings\IManager;
 use OCP\SpeechToText\Events\TranscriptionFailedEvent;
 use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
@@ -202,9 +206,10 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$server = $context->getServerContainer();
 
-		$this->registerCollaborationResourceProvider($server);
-		$this->registerClientLinks($server);
-		$this->registerNavigationLink($server);
+		$context->injectFn([$this, 'registerCollaborationResourceProvider']);
+		$context->injectFn([$this, 'registerClientLinks']);
+		$context->injectFn([$this, 'registerNavigationLink']);
+		$context->injectFn([$this, 'registerCloudFederationProviderManager']);
 
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->get(IEventDispatcher::class);
@@ -224,46 +229,43 @@ class Application extends App implements IBootstrap {
 		ReferenceInvalidationListener::register($dispatcher);
 		ShareListener::register($dispatcher);
 
-		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
 	}
 
-	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
-		/** @var IProviderManager $resourceManager */
-		$resourceManager = $server->get(IProviderManager::class);
+	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
-		$server->get(IEventDispatcher::class)->addListener(LoadAdditionalScriptsEvent::class, static function () {
+		$dispatcher->addListener(LoadAdditionalScriptsEvent::class, static function (): void {
 			Util::addScript(self::APP_ID, 'talk-collections');
 		});
 	}
 
-	protected function registerClientLinks(IServerContainer $server): void {
-		if ($server->getAppManager()->isEnabledForUser('firstrunwizard')) {
-			/** @var IManager $settingManager */
-			$settingManager = $server->getSettingsManager();
+	public function registerClientLinks(IAppManager $appManager, IManager $settingManager): void {
+		if ($appManager->isEnabledForUser('firstrunwizard')) {
 			$settingManager->registerSetting('personal', Personal::class);
 		}
 	}
 
-	protected function registerNavigationLink(IServerContainer $server): void {
-		$server->getNavigationManager()->add(static function () use ($server) {
-			/** @var Config $config */
-			$config = $server->get(Config::class);
-			$user = $server->getUserSession()->getUser();
+	public function registerNavigationLink(INavigationManager $navigationManager): void {
+		$navigationManager->add(static function () {
+			$config = Server::get(Config::class);
+			$userSession = Server::get(IUserSession::class);
+			$urlGenerator = Server::get(IURLGenerator::class);
+			$l = Server::get(IFactory::class)->get(self::APP_ID);
+			$user = $userSession->getUser();
 			return [
 				'id' => self::APP_ID,
-				'name' => $server->getL10N(self::APP_ID)->t('Talk'),
-				'href' => $server->getURLGenerator()->linkToRouteAbsolute('spreed.Page.index'),
-				'icon' => $server->getURLGenerator()->imagePath(self::APP_ID, 'app.svg'),
+				'name' => $l->t('Talk'),
+				'href' => $urlGenerator->linkToRouteAbsolute('spreed.Page.index'),
+				'icon' => $urlGenerator->imagePath(self::APP_ID, 'app.svg'),
 				'order' => 3,
 				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
 			];
 		});
 	}
 
-	protected function registerCloudFederationProviderManager(
+	public function registerCloudFederationProviderManager(
 		IConfig $config,
 		ICloudFederationProviderManager $manager,
-		IAppContainer $appContainer): void {
+	): void {
 		if ($config->getAppValue('spreed', 'federation_enabled', 'no') !== 'yes') {
 			return;
 		}
@@ -271,9 +273,7 @@ class Application extends App implements IBootstrap {
 		$manager->addCloudFederationProvider(
 			'talk-room',
 			'Talk Federation',
-			static function () use ($appContainer): ICloudFederationProvider {
-				return $appContainer->get(CloudFederationProviderTalk::class);
-			}
+			static fn (): ICloudFederationProvider => Server::get(CloudFederationProviderTalk::class)
 		);
 	}
 }
