@@ -169,6 +169,8 @@ export default {
 
 				if (error === 'CAN_NOT_CONNECT') {
 					this.errorMessage = t('spreed', 'Error: Cannot connect to server')
+				} else if (error === 'IS_SIGNALING_SERVER') {
+					this.errorMessage = t('spreed', 'Error: Server seems to be a Signaling server')
 				} else if (error === 'JSON_INVALID') {
 					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
 				} else if (error === 'CERTIFICATE_EXPIRED') {
