@@ -34,8 +34,8 @@ use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Command\Listener as CommandListener;
+use OCA\Talk\Chat\Listener as ChatListener;
 use OCA\Talk\Chat\Parser\Listener as ParserListener;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
@@ -55,7 +55,6 @@ use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
@@ -86,7 +85,6 @@ use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
 use OCA\Talk\Recording\Listener as RecordingListener;
-use OCA\Talk\Room;
 use OCA\Talk\Search\ConversationSearch;
 use OCA\Talk\Search\CurrentMessageSearch;
 use OCA\Talk\Search\MessageSearch;
@@ -153,6 +151,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
 
 		// Chat listeners
+		$context->registerEventListener(RoomDeletedEvent::class, ChatListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
@@ -227,7 +226,6 @@ class Application extends App implements IBootstrap {
 		}
 		ShareListener::register($dispatcher);
 
-		$this->registerChatHooks($dispatcher);
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
 	}
 
@@ -267,15 +265,6 @@ class Application extends App implements IBootstrap {
 				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
 			];
 		});
-	}
-
-	protected function registerChatHooks(IEventDispatcher $dispatcher): void {
-		$listener = function (RoomEvent $event): void {
-			/** @var ChatManager $chatManager */
-			$chatManager = $this->getContainer()->query(ChatManager::class);
-			$chatManager->deleteMessages($event->getRoom());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 	}
 
 	protected function registerCloudFederationProviderManager(
