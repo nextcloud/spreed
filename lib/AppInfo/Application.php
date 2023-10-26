@@ -136,9 +136,15 @@ class Application extends App implements IBootstrap {
 		$context->registerMiddleWare(InjectionMiddleware::class);
 		$context->registerCapability(Capabilities::class);
 
+		// Listeners to load the UI and integrate it into other apps
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
-		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, MapsPluginLoader::class);
+		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 
 		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
@@ -146,36 +152,36 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(ChatMessageSentEvent::class, BotListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
 
+		// Chat listeners
+		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
+		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+
+		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
 		$context->registerEventListener(GroupChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
 		$context->registerEventListener(UserChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserAddedEvent::class, GroupMembershipListener::class);
 		$context->registerEventListener(UserRemovedEvent::class, GroupMembershipListener::class);
-		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
-		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
-		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
-		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
-		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
-		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, MapsPluginLoader::class);
-		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
-		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
-		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
-		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
-
-		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
-		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
-
-		// Talk internal listeners
-		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
-
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
+		// Call listeners
+		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
+		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
+
+
+		// Recording listeners
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
+
+		// Signaling listeners
+		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
