@@ -188,6 +188,8 @@ class Application extends App implements IBootstrap {
 
 		$context->registerDashboardWidget(TalkWidget::class);
 
+		$context->registerNotifierService(Notifier::class);
+
 		$context->registerProfileLinkAction(TalkAction::class);
 
 		$context->registerReferenceProvider(TalkReferenceProvider::class);
@@ -198,7 +200,6 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$server = $context->getServerContainer();
 
-		$this->registerNotifier($server);
 		$this->registerCollaborationResourceProvider($server);
 		$this->registerClientLinks($server);
 		$this->registerNavigationLink($server);
@@ -227,11 +228,6 @@ class Application extends App implements IBootstrap {
 		ShareListener::register($dispatcher);
 
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
-	}
-
-	protected function registerNotifier(IServerContainer $server): void {
-		$manager = $server->getNotificationManager();
-		$manager->registerNotifierService(Notifier::class);
 	}
 
 	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
