@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.7 – 2023-10-27
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(call): Fix "silent" parameter not sent again when reconnecting
+  [#10777](https://github.com/nextcloud/spreed/issues/10777)
+- fix(chat): Fix message grouping for all locales
+  [#10696](https://github.com/nextcloud/spreed/issues/10696)
+- fix(RightSidebar) update active tab on mount and conversation change
+  [#10564](https://github.com/nextcloud/spreed/issues/10564)
+- fix(sip): Fix saving the secret of the SIP bridge in the admin UI
+  [#10719](https://github.com/nextcloud/spreed/issues/10719)
+
 ## 16.0.6 – 2023-09-21
 ### Changed
 - Update dependencies
