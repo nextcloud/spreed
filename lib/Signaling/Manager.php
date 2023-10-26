@@ -55,6 +55,16 @@ class Manager {
 			&& in_array('switchto', $features, true);
 	}
 
+	public function getSignalingServerMissingFeatures(IResponse $response): array {
+		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
+		$features = explode(',', $featureHeader);
+		$features = array_map('trim', $features);
+
+		return array_values(array_diff([
+			'dialout',
+		], $features));
+	}
+
 	public function getSignalingServerLinkForConversation(?Room $room): string {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return '';
