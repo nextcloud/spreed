@@ -1194,9 +1194,12 @@ class ParticipantService {
 			$this->sessionMapper->update($session);
 		}
 
+		$attendee = $participant->getAttendee();
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$attendee = $participant->getAttendee();
 			$attendee->setLastJoinedCall($this->timeFactory->getTime());
+			$this->attendeeMapper->update($attendee);
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_PHONES) {
+			$attendee->setCallId('');
 			$this->attendeeMapper->update($attendee);
 		}
 
