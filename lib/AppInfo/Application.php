@@ -30,6 +30,7 @@ namespace OCA\Talk\AppInfo;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
+use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
@@ -151,6 +152,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
+		$context->registerEventListener(LoadSidebar::class, FilesTemplateLoader::class);
 
 		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
@@ -246,7 +248,6 @@ class Application extends App implements IBootstrap {
 		ParserListener::register($dispatcher);
 		PublicShareAuthListener::register($dispatcher);
 		FilesListener::register($dispatcher);
-		FilesTemplateLoader::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}
