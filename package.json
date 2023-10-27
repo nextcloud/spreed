@@ -49,7 +49,7 @@
 		"pinia": "^2.1.7",
 		"ua-parser-js": "^1.0.36",
 		"util": "^0.12.5",
-		"vue": "^2.7.14",
+		"vue": "^2.7.15",
 		"vue-cropperjs": "^4.2.0",
 		"vue-frag": "^1.4.3",
 		"vue-material-design-icons": "^5.2.0",
@@ -85,7 +85,7 @@
 		"jest-mock-console": "^2.0.0",
 		"jest-transform-stub": "^2.0.0",
 		"regenerator-runtime": "^0.13.11",
-		"vue-template-compiler": "^2.7.14",
+		"vue-template-compiler": "^2.7.15",
 		"wasm-check": "^2.1.2",
 		"worker-loader": "^3.0.8"
 	},
