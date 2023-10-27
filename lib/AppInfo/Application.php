@@ -50,8 +50,10 @@ use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
+use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
@@ -170,6 +172,10 @@ class Application extends App implements IBootstrap {
 		// Command listener
 		$context->registerEventListener(BeforeChatMessageSentEvent::class, CommandListener::class);
 
+		// Files integration listeners
+		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, FilesListener::class);
+		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, FilesListener::class);
+
 		// Reference listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, ReferenceInvalidationListener::class);
@@ -247,7 +253,6 @@ class Application extends App implements IBootstrap {
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
 		PublicShareAuthListener::register($dispatcher);
-		FilesListener::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}
