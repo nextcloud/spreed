@@ -52,6 +52,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\TooManyRequestsResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
@@ -64,9 +65,14 @@ use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Profile\IProfileManager;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\RateLimiting\ILimiter;
+use OCP\Security\RateLimiting\IRateLimitExceededException;
 use Psr\Log\LoggerInterface;
 
 #[IgnoreOpenAPI]
@@ -95,6 +101,10 @@ class PageController extends Controller {
 		Config $talkConfig,
 		IConfig $serverConfig,
 		IGroupManager $groupManager,
+		protected IUserManager $userManager,
+		protected IProfileManager $profileManager,
+		protected ILimiter $limiter,
+		protected IFactory $l10nFactory,
 	) {
 		parent::__construct($appName, $request);
 		$this->initialState = $initialState;
@@ -148,7 +158,7 @@ class PageController extends Controller {
 	/**
 	 * @param string $token
 	 * @param string $callUser
-	 * @return TemplateResponse|RedirectResponse
+	 * @return TemplateResponse|RedirectResponse|TooManyRequestsResponse
 	 * @throws HintException
 	 */
 	#[NoCSRFRequired]
@@ -163,16 +173,65 @@ class PageController extends Controller {
 	}
 
 	/**
+	 * @throws \InvalidArgumentException
+	 */
+	protected function createContactRequestRoom(string $targetUserId): Room {
+		$user = $this->userManager->get($targetUserId);
+		if (!$user instanceof IUser) {
+			throw new \InvalidArgumentException('user');
+		}
+
+		if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
+			throw new \InvalidArgumentException('config');
+		}
+
+		if (!$this->profileManager->isProfileFieldVisible('talk', $user, null)) {
+			throw new \InvalidArgumentException('profile');
+		}
+
+		$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
+
+		return $this->roomService->createConversation(
+			Room::TYPE_PUBLIC,
+			$l->t('Contact request'),
+			$user,
+		);
+	}
+
+	/**
 	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
-	 * @return TemplateResponse|RedirectResponse
+	 * @return TemplateResponse|RedirectResponse|TooManyRequestsResponse
 	 * @throws HintException
 	 */
 	protected function pageHandler(string $token = '', string $callUser = '', string $password = ''): Response {
 		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
+			if ($token === '') {
+				try {
+					$this->limiter->registerAnonRequest(
+						'create-anonymous-conversation',
+						5, // Five conversations
+						60 * 60, // Per hour
+						$this->request->getRemoteAddress(),
+					);
+				} catch (IRateLimitExceededException) {
+					return new TooManyRequestsResponse();
+				}
+
+				try {
+					$room = $this->createContactRequestRoom($callUser);
+				} catch (\InvalidArgumentException) {
+					$response = new TemplateResponse('core', '404-profile', [], TemplateResponse::RENDER_AS_GUEST);
+					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
+					return $response;
+				}
+
+				return $this->redirectToConversation($room->getToken());
+			}
+
 			return $this->guestEnterRoom($token, $password);
 		}
 

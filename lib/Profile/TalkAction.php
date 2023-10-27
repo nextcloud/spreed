@@ -63,9 +63,10 @@ class TalkAction implements ILinkAction {
 
 	public function getTitle(): string {
 		$visitingUser = $this->userSession->getUser();
-		if (!$visitingUser || $visitingUser === $this->targetUser) {
+		if ($visitingUser === $this->targetUser) {
 			return $this->l->t('Open Talk');
 		}
+
 		return $this->l->t('Talk to %s', [$this->targetUser->getDisplayName()]);
 	}
 
@@ -78,17 +79,23 @@ class TalkAction implements ILinkAction {
 	}
 
 	public function getTarget(): ?string {
-		$visitingUser = $this->userSession->getUser();
-		if (
-			!$visitingUser
-			|| $this->config->isDisabledForUser($this->targetUser)
-			|| $this->config->isDisabledForUser($visitingUser)
-		) {
+		if ($this->config->isDisabledForUser($this->targetUser)) {
 			return null;
 		}
+
+		$visitingUser = $this->userSession->getUser();
 		if ($visitingUser === $this->targetUser) {
 			return $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index');
 		}
+
+		if ($visitingUser && $this->config->isDisabledForUser($visitingUser)) {
+			return null;
+		}
+
+		if (!$visitingUser && $this->config->isNotAllowedToCreateConversations($this->targetUser)) {
+			return null;
+		}
+
 		return $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $this->targetUser->getUID();
 	}
 }
