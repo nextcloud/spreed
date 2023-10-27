@@ -475,7 +475,7 @@ export default {
 		},
 
 		isDeleteable() {
-			if (this.isConversationReadOnly) {
+			if (this.isConversationReadOnly || this.participant.participantType === PARTICIPANT.TYPE.GUEST) {
 				return false
 			}
 
