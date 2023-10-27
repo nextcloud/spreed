@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,100 +23,39 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Collaboration\Resources;
 
-use OCA\Talk\Events\AddParticipantsEvent;
-use OCA\Talk\Events\RemoveParticipantEvent;
-use OCA\Talk\Events\RemoveUserEvent;
-use OCA\Talk\Events\RoomEvent;
-use OCA\Talk\GuestManager;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Room;
+use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\EmailInvitationSentEvent;
+use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCP\Collaboration\Resources\IManager;
 use OCP\Collaboration\Resources\ResourceException;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IUserManager;
-use OCP\Server;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
-class Listener {
-	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (RoomEvent $event): void {
-			$room = $event->getRoom();
-			$resourceManager = Server::get(IManager::class);
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
+	public function __construct(
+		protected IManager $resourceManager,
+	) {
+	}
 
+	public function handle(Event $event): void {
+		if ($event instanceof AttendeesAddedEvent
+			|| $event instanceof AttendeesRemovedEvent
+			|| $event instanceof RoomDeletedEvent
+			|| $event instanceof EmailInvitationSentEvent
+			|| ($event instanceof RoomModifiedEvent
+				&& $event->getProperty() === ARoomModifiedEvent::PROPERTY_TYPE)) {
 			try {
-				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
-			} catch (ResourceException $e) {
+				$resource = $this->resourceManager->getResourceForUser('room', $event->getRoom()->getToken(), null);
+			} catch (ResourceException) {
 				return;
 			}
-			$resourceManager->invalidateAccessCacheForResource($resource);
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
-
-		$listener = static function (AddParticipantsEvent $event): void {
-			$room = $event->getRoom();
-			$resourceManager = Server::get(IManager::class);
-			$userManager = Server::get(IUserManager::class);
-			try {
-				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
-			} catch (ResourceException $e) {
-				return;
-			}
-
-			$participants = $event->getParticipants();
-			foreach ($participants as $participant) {
-				$user = null;
-				if ($participant['actorType'] === Attendee::ACTOR_USERS) {
-					$user = $userManager->get($participant['actorId']);
-				}
-
-				$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
-			}
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
-
-		$listener = static function (RemoveUserEvent $event): void {
-			$room = $event->getRoom();
-			$resourceManager = Server::get(IManager::class);
-			try {
-				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
-			} catch (ResourceException $e) {
-				return;
-			}
-
-			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $event->getUser());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
-
-		$listener = static function (RemoveParticipantEvent $event): void {
-			$room = $event->getRoom();
-			$resourceManager = Server::get(IManager::class);
-			$userManager = Server::get(IUserManager::class);
-			try {
-				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
-			} catch (ResourceException $e) {
-				return;
-			}
-
-			$participant = $event->getParticipant();
-			$user = null;
-			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-				$user = $userManager->get($participant->getAttendee()->getActorId());
-			}
-			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
-
-		$listener = static function (RoomEvent $event): void {
-			$room = $event->getRoom();
-			$resourceManager = Server::get(IManager::class);
-
-			try {
-				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
-			} catch (ResourceException $e) {
-				return;
-			}
-			$resourceManager->invalidateAccessCacheForResourceByUser($resource, null);
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, $listener);
-		$dispatcher->addListener(GuestManager::EVENT_AFTER_EMAIL_INVITE, $listener);
+			$this->resourceManager->invalidateAccessCacheForResource($resource);
+		}
 	}
 }

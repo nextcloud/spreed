@@ -55,6 +55,7 @@ use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\EmailInvitationSentEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -171,6 +172,13 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RoomDeletedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, ReferenceInvalidationListener::class);
 
+		// Resources listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, ResourceListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, ResourceListener::class);
+		$context->registerEventListener(EmailInvitationSentEvent::class, ResourceListener::class);
+		$context->registerEventListener(RoomDeletedEvent::class, ResourceListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, ResourceListener::class);
+
 		// Sharing listeners
 		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
 		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
@@ -239,7 +247,6 @@ class Application extends App implements IBootstrap {
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
-		ResourceListener::register($dispatcher);
 	}
 
 	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {
