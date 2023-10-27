@@ -118,6 +118,8 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Server;
 use OCP\Settings\IManager;
+use OCP\Share\Events\BeforeShareCreatedEvent;
+use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\SpeechToText\Events\TranscriptionFailedEvent;
 use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
@@ -160,6 +162,10 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+
+		// Sharing listeners
+		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
+		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
 
 		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
@@ -227,8 +233,6 @@ class Application extends App implements IBootstrap {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
-		ShareListener::register($dispatcher);
-
 	}
 
 	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {
