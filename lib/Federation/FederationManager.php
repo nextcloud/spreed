@@ -39,6 +39,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Notification\IManager;
+use SensitiveParameter;
 
 /**
  * Class FederationManager
@@ -76,7 +77,16 @@ class FederationManager {
 		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', 'no') === 'yes';
 	}
 
-	public function addRemoteRoom(IUser $user, int $remoteAttendeeId, int $roomType, string $roomName, string $remoteToken, string $remoteServerUrl, string $sharedSecret): Invitation {
+	public function addRemoteRoom(
+		IUser $user,
+		int $remoteAttendeeId,
+		int $roomType,
+		string $roomName,
+		string $remoteToken,
+		string $remoteServerUrl,
+		#[SensitiveParameter]
+		string $sharedSecret,
+	): Invitation {
 		try {
 			$room = $this->manager->getRoomByToken($remoteToken, null, $remoteServerUrl);
 		} catch (RoomNotFoundException) {
@@ -85,6 +95,7 @@ class FederationManager {
 
 		$invitation = new Invitation();
 		$invitation->setUserId($user->getUID());
+		$invitation->setState(Invitation::STATE_PENDING);
 		$invitation->setLocalRoomId($room->getId());
 		$invitation->setAccessToken($sharedSecret);
 		$invitation->setRemoteServerUrl($remoteServerUrl);
@@ -133,7 +144,8 @@ class FederationManager {
 		];
 		$this->participantService->addUsers($room, $participant, $user);
 
-		$this->invitationMapper->delete($invitation);
+		$invitation->setState(Invitation::STATE_ACCEPTED);
+		$this->invitationMapper->update($invitation);
 
 		$this->markNotificationProcessed($user->getUID(), $shareId);
 	}

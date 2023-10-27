@@ -31,6 +31,7 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use SensitiveParameter;
 
 /**
  * Class InvitationMapper
@@ -63,29 +64,21 @@ class InvitationMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function getByRemoteIdAndToken(int $remoteId, string $accessToken): Invitation {
+	public function getByRemoteAndAccessToken(
+		string $remoteServerUrl,
+		int $remoteAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+	): Invitation {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('remote_id', $qb->createNamedParameter($remoteId, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->eq('remote_server_url', $qb->createNamedParameter($remoteServerUrl)))
+			->andWhere($qb->expr()->eq('remote_attendee_id', $qb->createNamedParameter($remoteAttendeeId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('access_token', $qb->createNamedParameter($accessToken)));
 
 		return $this->findEntity($qb);
-	}
-
-	/**
-	 * @param Room $room
-	 * @return Invitation[]
-	 */
-	public function getInvitationsForRoom(Room $room): array {
-		$qb = $this->db->getQueryBuilder();
-
-		$qb->select('*')
-			->from($this->getTableName())
-			->where($qb->expr()->eq('room_id', $qb->createNamedParameter($room->getId())));
-
-		return $this->findEntities($qb);
 	}
 
 	/**

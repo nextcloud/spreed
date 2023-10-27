@@ -31,6 +31,8 @@ use OCP\AppFramework\Db\Entity;
 /**
  * @method void setUserId(string $userId)
  * @method string getUserId()
+ * @method void setState(int $state)
+ * @method int getState()
  * @method void setLocalRoomId(int $roomLocalId)
  * @method int getLocalRoomId()
  * @method void setAccessToken(string $accessToken)
@@ -43,7 +45,11 @@ use OCP\AppFramework\Db\Entity;
  * @method int getRemoteAttendeeId()
  */
 class Invitation extends Entity implements \JsonSerializable {
+	public const STATE_PENDING = 0;
+	public const STATE_ACCEPTED = 1;
+
 	protected string $userId = '';
+	protected int $state = self::STATE_PENDING;
 	protected int $localRoomId = 0;
 	protected string $accessToken = '';
 	protected string $remoteServerUrl = '';
@@ -52,6 +58,7 @@ class Invitation extends Entity implements \JsonSerializable {
 
 	public function __construct() {
 		$this->addType('userId', 'string');
+		$this->addType('state', 'int');
 		$this->addType('localRoomId', 'int');
 		$this->addType('accessToken', 'string');
 		$this->addType('remoteServerUrl', 'string');
@@ -60,12 +67,13 @@ class Invitation extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return array{access_token: string, id: int, local_room_id: int, remote_attendee_id: int, remote_server_url: string, remote_token: string, user_id: string}
+	 * @return array{access_token: string, id: int, local_room_id: int, remote_attendee_id: int, remote_server_url: string, remote_token: string, state: int, user_id: string}
 	 */
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
 			'user_id' => $this->getUserId(),
+			'state' => $this->getState(),
 			'local_room_id' => $this->getLocalRoomId(),
 			'access_token' => $this->getAccessToken(),
 			'remote_server_url' => $this->getRemoteServerUrl(),

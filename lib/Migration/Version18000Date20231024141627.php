@@ -56,6 +56,10 @@ class Version18000Date20231024141627 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 255,
 			]);
+			$table->addColumn('state', Types::SMALLINT, [
+				'default' => 0,
+				'unsigned' => true,
+			]);
 			$table->addColumn('local_room_id', Types::BIGINT, [
 				'notnull' => true,
 				'unsigned' => true,

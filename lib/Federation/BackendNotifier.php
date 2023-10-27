@@ -37,6 +37,7 @@ use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\HintException;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
@@ -51,6 +52,7 @@ class BackendNotifier {
 		private ICloudFederationProviderManager $federationProviderManager,
 		private IJobList $jobList,
 		private IUserManager $userManager,
+		private IURLGenerator $url,
 	) {
 	}
 
@@ -139,6 +141,7 @@ class BackendNotifier {
 			FederationManager::TALK_ROOM_RESOURCE,
 			(string) $remoteAttendeeId,
 			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'message' => 'Recipient accepted the share',
 			]);
@@ -166,6 +169,7 @@ class BackendNotifier {
 			FederationManager::TALK_ROOM_RESOURCE,
 			(string) $remoteAttendeeId,
 			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'message' => 'Recipient declined the share',
 			]
@@ -190,6 +194,7 @@ class BackendNotifier {
 			FederationManager::TALK_ROOM_RESOURCE,
 			(string) $localAttendeeId,
 			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'message' => 'This room has been unshared',
 			]
@@ -220,6 +225,7 @@ class BackendNotifier {
 			FederationManager::TALK_ROOM_RESOURCE,
 			(string) $localAttendeeId,
 			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'remoteToken' => $localToken,
 				'changedProperty' => $changedProperty,
@@ -267,5 +273,18 @@ class BackendNotifier {
 			return 'https://' . $remote;
 		}
 		return $remote;
+	}
+
+	protected function getServerRemoteUrl(): string {
+		$server = rtrim($this->url->getAbsoluteURL('/'), '/');
+		if (str_ends_with($server, '/index.php')) {
+			$server = substr($server, 0, -10);
+		}
+
+		if (str_starts_with($server, 'https://')) {
+			return substr($server, strlen('https://'));
+		}
+
+		return $server;
 	}
 }

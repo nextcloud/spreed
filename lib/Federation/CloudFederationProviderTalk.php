@@ -32,6 +32,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -53,12 +54,12 @@ use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
 use OCP\HintException;
 use OCP\ISession;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 class CloudFederationProviderTalk implements ICloudFederationProvider {
 
@@ -68,7 +69,6 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private FederationManager $federationManager,
 		private Config $config,
 		private INotificationManager $notificationManager,
-		private IURLGenerator $urlGenerator,
 		private ParticipantService $participantService,
 		private RoomService $roomService,
 		private AttendeeMapper $attendeeMapper,
@@ -172,7 +172,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 * @throws AuthenticationFailedException
 	 */
 	private function shareAccepted(int $id, array $notification): array {
-		$attendee = $this->getAttendeeAndValidate($id, $notification['sharedSecret']);
+		$attendee = $this->getLocalAttendeeAndValidate($id, $notification['sharedSecret']);
 
 		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
 		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
@@ -195,7 +195,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 * @throws AuthenticationFailedException
 	 */
 	private function shareDeclined(int $id, array $notification): array {
-		$attendee = $this->getAttendeeAndValidate($id, $notification['sharedSecret']);
+		$attendee = $this->getLocalAttendeeAndValidate($id, $notification['sharedSecret']);
 
 		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
 		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
@@ -216,13 +216,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 * @throws ShareNotFound
 	 * @throws AuthenticationFailedException
 	 */
-	private function shareUnshared(int $id, array $notification): array {
-		$attendee = $this->getRemoteAttendeeAndValidate($id, $notification['sharedSecret']);
-
-		if ($attendee instanceof Attendee) {
-			$room = $this->manager->getRoomById($attendee->getRoomId());
-		} else {
-			$room = $this->manager->getRoomById($attendee->getLocalRoomId());
+	private function shareUnshared(int $remoteAttendeeId, array $notification): array {
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound();
 		}
 
 		// Sanity check to make sure the room is a remote room
@@ -230,27 +229,25 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			throw new ShareNotFound();
 		}
 
-		$participant = new Participant($room, $attendee, null);
-		$this->participantService->removeAttendee($room, $participant,  AAttendeeRemovedEvent::REASON_REMOVED);
+		$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $invite->getUserId());
+		$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 		return [];
 	}
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
 	 * @throws ShareNotFound
-	 * @throws \OCA\Talk\Exceptions\RoomNotFoundException
 	 */
 	private function roomModified(int $remoteAttendeeId, array $notification): array {
-		$attendee = $this->getRemoteAttendeeAndValidate($remoteAttendeeId, $notification['sharedSecret']);
-
-		if ($attendee instanceof Attendee) {
-			$room = $this->manager->getRoomById($attendee->getRoomId());
-		} else {
-			$room = $this->manager->getRoomById($attendee->getLocalRoomId());
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound();
 		}
 
 		// Sanity check to make sure the room is a remote room
@@ -280,14 +277,18 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 * @throws ActionNotSupportedException
 	 * @throws ShareNotFound
 	 */
-	private function getAttendeeAndValidate(int $id, string $sharedSecret): Attendee {
+	private function getLocalAttendeeAndValidate(
+		int $attendeeId,
+		#[SensitiveParameter]
+		string $sharedSecret,
+	): Attendee {
 		if (!$this->config->isFederationEnabled()) {
 			throw new ActionNotSupportedException('Server does not support Talk federation');
 		}
 
 		try {
-			$attendee = $this->attendeeMapper->getById($id);
-		} catch (Exception $ex) {
+			$attendee = $this->attendeeMapper->getById($attendeeId);
+		} catch (Exception) {
 			throw new ShareNotFound();
 		}
 		if ($attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
@@ -300,14 +301,19 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	}
 
 	/**
-	 * @param int $id
+	 * @param int $remoteAttendeeId
 	 * @param string $sharedSecret
-	 * @return Attendee|Invitation
+	 * @return Invitation
 	 * @throws ActionNotSupportedException
 	 * @throws ShareNotFound
 	 * @throws AuthenticationFailedException
 	 */
-	private function getRemoteAttendeeAndValidate(int $id, string $sharedSecret): Attendee|Invitation {
+	private function getByRemoteAttendeeAndValidate(
+		string $remoteServerUrl,
+		int $remoteAttendeeId,
+		#[SensitiveParameter]
+		string $sharedSecret,
+	): Invitation {
 		if (!$this->config->isFederationEnabled()) {
 			throw new ActionNotSupportedException('Server does not support Talk federation');
 		}
@@ -317,14 +323,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		try {
-			return $this->attendeeMapper->getByRemoteIdAndToken($id, $sharedSecret);
+			return $this->invitationMapper->getByRemoteAndAccessToken($remoteServerUrl, $remoteAttendeeId, $sharedSecret);
 		} catch (DoesNotExistException) {
-			try {
-				return $this->invitationMapper->getByRemoteIdAndToken($id, $sharedSecret);
-			} catch (DoesNotExistException $e) {
-				throw new ShareNotFound();
-			}
-		} catch (Exception) {
 			throw new ShareNotFound();
 		}
 	}
