@@ -94,7 +94,6 @@ use OCA\Talk\Search\MessageSearch;
 use OCA\Talk\Search\UnifiedSearchCSSLoader;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\Listener as ShareListener;
-use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
 use OCP\App\IAppManager;
@@ -186,6 +185,7 @@ class Application extends App implements IBootstrap {
 		// Sharing listeners
 		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
 		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
+		$context->registerEventListener(RoomDeletedEvent::class, ShareListener::class);
 
 		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
@@ -247,7 +247,6 @@ class Application extends App implements IBootstrap {
 		PublicShareAuthListener::register($dispatcher);
 		FilesListener::register($dispatcher);
 		FilesTemplateLoader::register($dispatcher);
-		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +27,7 @@ namespace OCA\Talk\Share;
 
 use OC\Files\Filesystem;
 use OCA\Talk\Config;
+use OCA\Talk\Events\RoomDeletedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Share\Events\BeforeShareCreatedEvent;
@@ -38,6 +41,7 @@ class Listener implements IEventListener {
 
 	public function __construct(
 		protected Config $config,
+		protected RoomShareProvider $roomShareProvider,
 	) {
 	}
 
@@ -45,6 +49,7 @@ class Listener implements IEventListener {
 		match (get_class($event)) {
 			BeforeShareCreatedEvent::class => $this->overwriteShareTarget($event),
 			VerifyMountPointEvent::class => $this->overwriteMountPoint($event),
+			RoomDeletedEvent::class => $this->roomDeletedEvent($event),
 		};
 	}
 
@@ -93,5 +98,9 @@ class Listener implements IEventListener {
 				$event->getView()->mkdir($parent);
 			}
 		}
+	}
+
+	protected function roomDeletedEvent(RoomDeletedEvent $event): void {
+		$this->roomShareProvider->deleteInRoom($event->getRoom()->getToken());
 	}
 }
