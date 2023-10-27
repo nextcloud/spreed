@@ -48,6 +48,7 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
@@ -165,6 +166,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
 
+		// Command listener
+		$context->registerEventListener(BeforeChatMessageSentEvent::class, CommandListener::class);
+
 		// Reference listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, ReferenceInvalidationListener::class);
@@ -245,7 +249,6 @@ class Application extends App implements IBootstrap {
 		FilesTemplateLoader::register($dispatcher);
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
-		CommandListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}
 
