@@ -353,7 +353,7 @@ class SignalingController extends OCSController {
 	 * Get signaling messages
 	 *
 	 * @param string $token Token of the room
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND|Http::STATUS_CONFLICT, array{type: string, data: TalkSignalingSession[]}[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND|Http::STATUS_CONFLICT, list<array{type: string, data: TalkSignalingSession[]|string}>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, string, array{}>
 	 *
 	 * 200: Signaling messages returned
 	 * 400: Getting signaling messages is not possible
@@ -395,10 +395,11 @@ class SignalingController extends OCSController {
 				return $message['data'] !== 'refresh-participant-list';
 			});
 
+			// Make sure the array is a json array not a json object,
+			// because the index list has a gap
+			$data = array_values($data);
+
 			if ($messageCount !== count($data)) {
-				// Make sure the array is a json array not a json object,
-				// because the index list has a gap
-				$data = array_values($data);
 				// Participant list changed, bail out and deliver the info to the user
 				break;
 			}
