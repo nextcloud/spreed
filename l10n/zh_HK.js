@@ -751,6 +751,7 @@ OC.L10N.register(
     "Status: Checking connection" : "狀態：正在檢查連接",
     "OK: Running version: {version}" : "OK：運行版本：{version}",
     "Error: Cannot connect to server" : "錯誤：無法連接到伺服器",
+    "Error: Server seems to be a Signaling server" : "錯誤：伺服器似乎是 Signaling 伺服器",
     "Error: Server did not respond with proper JSON" : "錯誤：伺服器未使用正確的 JSON 回應",
     "Error: Certificate expired" : "錯誤︰證書已過期",
     "Error: Server responded with: {error}" : "錯誤：伺服器回應：{error}",

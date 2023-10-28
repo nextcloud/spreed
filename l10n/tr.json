@@ -749,6 +749,7 @@
     "Status: Checking connection" : "Durum: Bağlantı denetleniyor",
     "OK: Running version: {version}" : "Tamam: Çalışan sürüm: {version}",
     "Error: Cannot connect to server" : "Hata: Sunucu ile bağlantı kurulamadı",
+    "Error: Server seems to be a Signaling server" : "Hata: Sunucu bir signaling sunucusu gibi görünüyor",
     "Error: Server did not respond with proper JSON" : "Hata: Sunucunun JSON yanıtı geçersiz",
     "Error: Certificate expired" : "Hata: Sertifikanın geçerlilik süresi dolmuş",
     "Error: Server responded with: {error}" : "Hata: Sunucu yanıtı: {error}",
