@@ -310,7 +310,7 @@ class SignalingController extends OCSController {
 	 * 400: Sending signaling message is not possible
 	 */
 	#[PublicPage]
-	public function signaling(string $token, string $messages): DataResponse {
+	public function sendMessages(string $token, string $messages): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}

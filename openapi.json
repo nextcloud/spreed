@@ -16159,7 +16159,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
             "post": {
-                "operationId": "signaling-signaling",
+                "operationId": "signaling-send-messages",
                 "summary": "Send signaling messages",
                 "tags": [
                     "signaling"
