@@ -751,6 +751,7 @@ OC.L10N.register(
     "Status: Checking connection" : "Status: Checking connection",
     "OK: Running version: {version}" : "OK: Running version: {version}",
     "Error: Cannot connect to server" : "Error: Cannot connect to server",
+    "Error: Server seems to be a Signaling server" : "Error: Server seems to be a Signaling server",
     "Error: Server did not respond with proper JSON" : "Error: Server did not respond with proper JSON",
     "Error: Certificate expired" : "Error: Certificate expired",
     "Error: Server responded with: {error}" : "Error: Server responded with: {error}",

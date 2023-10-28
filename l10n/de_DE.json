@@ -749,6 +749,7 @@
     "Status: Checking connection" : "Status: Prüfe die Verbindung",
     "OK: Running version: {version}" : "OK: Laufende Version: {version}",
     "Error: Cannot connect to server" : "Fehler: Kann nicht zum Server verbinden",
+    "Error: Server seems to be a Signaling server" : "Fehler: Der Server scheint ein Signalisierungsserver zu sein",
     "Error: Server did not respond with proper JSON" : "Fehler: Der Server hat nicht mit korrektem JSON geantwortet",
     "Error: Certificate expired" : "Fehler: Zertifikat ist abgelaufen",
     "Error: Server responded with: {error}" : "Fehler: Der Server antwortete mit: {error}",
