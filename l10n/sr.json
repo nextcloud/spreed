@@ -749,6 +749,7 @@
     "Status: Checking connection" : "Статус: проверава се веза",
     "OK: Running version: {version}" : "OK: Верзија која се извршава: {version}",
     "Error: Cannot connect to server" : "Грешка: не може да се успостави веза са сервером",
+    "Error: Server seems to be a Signaling server" : "Грешка: изгледа да је сервер Сервер за сигнализирање",
     "Error: Server did not respond with proper JSON" : "Error: сервер није одговорио са исправним JSON",
     "Error: Certificate expired" : "Грешка: важење сертификата је истекло",
     "Error: Server responded with: {error}" : "Error: сервер је одговорио са: {error}",

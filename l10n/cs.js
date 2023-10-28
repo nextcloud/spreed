@@ -751,6 +751,7 @@ OC.L10N.register(
     "Status: Checking connection" : "Stav: Kontrola připojení",
     "OK: Running version: {version}" : "OK: Spuštěná verze: {version}",
     "Error: Cannot connect to server" : "Chyba: K serveru se nedaří připojit",
+    "Error: Server seems to be a Signaling server" : "Chyba: zdá se, že server je signalizujícím serverem",
     "Error: Server did not respond with proper JSON" : "Chyba: Odpověď ze serveru nemá platný JSON formát",
     "Error: Certificate expired" : "Chyba: platnost certifikátu skončila",
     "Error: Server responded with: {error}" : "Chyba: Odpověď ze serveru: {error}",
