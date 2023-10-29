@@ -749,6 +749,7 @@
     "Status: Checking connection" : "الحالة: فحص الاتصال",
     "OK: Running version: {version}" : "ممتاز: الاصدار التشغيلي: {version}",
     "Error: Cannot connect to server" : "خطأ: لا يمكن الاتصال بالخادم",
+    "Error: Server seems to be a Signaling server" : "خطأ: يبدو أن الخادوم هو خادوم إشارة Signaling server",
     "Error: Server did not respond with proper JSON" : "خطأ: الخادم لم يجب جيدا JSON",
     "Error: Certificate expired" : "خطأ: انتهت صلاحية الشهادة",
     "Error: Server responded with: {error}" : "خطأ: الخادم اجاب بـ: {error}",
