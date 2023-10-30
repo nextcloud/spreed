@@ -112,7 +112,7 @@ class Messages {
 	 * "new" message.
 	 *
 	 * @param string $sessionId
-	 * @return array
+	 * @return list<array{type: string, data: string}>
 	 */
 	public function getAndDeleteMessages(string $sessionId): array {
 		$messages = [];

@@ -16374,10 +16374,17 @@
                                                                 "type": "string"
                                                             },
                                                             "data": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/SignalingSession"
-                                                                }
+                                                                "oneOf": [
+                                                                    {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "$ref": "#/components/schemas/SignalingSession"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "type": "string"
+                                                                    }
+                                                                ]
                                                             }
                                                         }
                                                     }
@@ -16422,10 +16429,17 @@
                                                                 "type": "string"
                                                             },
                                                             "data": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/SignalingSession"
-                                                                }
+                                                                "oneOf": [
+                                                                    {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "$ref": "#/components/schemas/SignalingSession"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "type": "string"
+                                                                    }
+                                                                ]
                                                             }
                                                         }
                                                     }
@@ -16470,10 +16484,17 @@
                                                                 "type": "string"
                                                             },
                                                             "data": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/components/schemas/SignalingSession"
-                                                                }
+                                                                "oneOf": [
+                                                                    {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "$ref": "#/components/schemas/SignalingSession"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "type": "string"
+                                                                    }
+                                                                ]
                                                             }
                                                         }
                                                     }
