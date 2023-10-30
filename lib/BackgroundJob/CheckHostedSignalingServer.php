@@ -112,7 +112,7 @@ class CheckHostedSignalingServer extends TimedJob {
 				];
 			}
 
-			// only credentials have changed
+		// only credentials have changed
 		} elseif ($newStatus === 'active' && (
 			$oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url'] ||
 			$oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret'])
