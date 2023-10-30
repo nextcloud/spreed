@@ -1324,7 +1324,9 @@ Signaling.Standalone.prototype.processTransientEvent = function(data) {
 		// ignore event
 		break
 	case 'initial':
-		// ignore event
+		if (data.transient.data) {
+			store.dispatch('addPhonesStates', { phoneStates: data.transient.data })
+		}
 		break
 	default:
 		console.error('Unsupported event type', data)

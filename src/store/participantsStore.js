@@ -962,6 +962,15 @@ const actions = {
 		}
 	},
 
+	addPhonesStates(context, { phoneStates }) {
+		Object.values(phoneStates).forEach(phoneState => {
+			context.commit('setPhoneState', {
+				callid: phoneState.callid,
+				value: phoneState
+			})
+		})
+	},
+
 	deletePhoneState(context, { callid }) {
 		context.commit('deletePhoneState', callid)
 	},
