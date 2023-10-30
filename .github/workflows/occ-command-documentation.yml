@@ -14,12 +14,6 @@ on:
       - 'composer.json'
       - 'composer.lock'
 
-  push:
-    branches:
-      - main
-      - master
-      - stable*
-
 permissions:
   contents: read
 

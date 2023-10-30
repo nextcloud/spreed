@@ -10,12 +10,8 @@ on:
     paths:
       # Only running on PR for this file to save CI time (otherwise pgsql only)
       - '.github/workflows/integration-sqlite.yml'
-
-  push:
-    branches:
-      - main
-      - master
-      - stable*
+  schedule:
+    - cron: "5 2 * * *"
 
 permissions:
   contents: read
