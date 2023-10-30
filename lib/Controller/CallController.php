@@ -29,6 +29,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -207,7 +208,7 @@ class CallController extends AEnvironmentAwareController {
 	 * Call a SIP dial-out attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to call
-	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error?: string, message?: string}, array{}>
 	 *
 	 * 201: Dial-out initiated successfully
 	 * 400: SIP dial-out not possible
@@ -231,6 +232,11 @@ class CallController extends AEnvironmentAwareController {
 			$this->participantService->startDialOutRequest($this->dialOutService, $this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (DialOutFailedException $e) {
+			return new DataResponse([
+				'error' => $e->getMessage(),
+				'message' => $e->getReadableError(),
+			], Http::STATUS_NOT_IMPLEMENTED);
 		} catch (\InvalidArgumentException) {
 			return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 		}

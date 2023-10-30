@@ -235,7 +235,7 @@ export default {
 		},
 
 		isBreakoutRoom() {
-			return this.conversation.objectType === 'room'
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 		},
 
 		hasBotV1API() {

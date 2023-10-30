@@ -804,6 +804,12 @@ Signaling.Standalone.prototype.connect = function() {
 			message.from = data.control.sender.sessionid
 			this._trigger('message', [message])
 			break
+		case 'dialout':
+			this.processDialOutEvent(data)
+			break
+		case 'transient':
+			this.processTransientEvent(data)
+			break
 		case 'error':
 			switch (data.error.code) {
 			case 'processing_failed':
@@ -1295,6 +1301,35 @@ Signaling.Standalone.prototype.processEvent = function(data) {
 		break
 	default:
 		console.error('Unsupported event target', data)
+		break
+	}
+}
+
+Signaling.Standalone.prototype.processDialOutEvent = function(data) {
+	if (data.dialout.callid) {
+		store.dispatch('processDialOutAnswer', { callid: data.dialout.callid })
+	} else if (data.dialout.error) {
+		console.debug(data.dialout.error)
+	}
+}
+
+Signaling.Standalone.prototype.processTransientEvent = function(data) {
+	switch (data.transient.type) {
+	case 'set':
+		if (data.transient.key.startsWith('callstatus_')) {
+			store.dispatch('processTransientCallStatus', { value: data.transient.value })
+		}
+		break
+	case 'remove':
+		// ignore event
+		break
+	case 'initial':
+		if (data.transient.data) {
+			store.dispatch('addPhonesStates', { phoneStates: data.transient.data })
+		}
+		break
+	default:
+		console.error('Unsupported event type', data)
 		break
 	}
 }

@@ -703,18 +703,18 @@ export default {
 
 			// Parent to breakout
 			if (oldConversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
-				&& newConversation.objectType === 'room') {
+				&& newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM) {
 				return true
 			}
 
 			// Breakout to parent
-			if (oldConversation.objectType === 'room'
+			if (oldConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 				&& newConversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED) {
 				return true
 			}
 
 			// Breakout to breakout
-			return oldConversation.objectType === 'room' && newConversation.objectType === 'room'
+			return oldConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM && newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 		}
 	},
 }

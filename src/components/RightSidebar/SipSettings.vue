@@ -20,26 +20,25 @@
 -->
 
 <template>
-	<div>
+	<div class="sip-settings">
 		<h3>{{ t('spreed', 'Dial-in information') }}</h3>
-
 		<p>{{ dialInInfo }}</p>
-		<p>{{ meetingIdLabel }}</p>
-		<p>{{ attendeePinLabel }}</p>
+
+		<h3>{{ t('spreed', 'Meeting ID') }}</h3>
+		<p>{{ readableNumber(meetingId) }}</p>
+
+		<h3>{{ t('spreed', 'Your PIN') }}</h3>
+		<p>{{ readableNumber(attendeePin) }}</p>
 	</div>
 </template>
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
 
-import readableNumber from '../../mixins/readableNumber.js'
+import { readableNumber } from '../../utils/readableNumber.js'
 
 export default {
 	name: 'SipSettings',
-
-	mixins: [
-		readableNumber,
-	],
 
 	props: {
 		attendeePin: {
@@ -58,17 +57,21 @@ export default {
 		}
 	},
 
-	computed: {
-		meetingIdLabel() {
-			return t('spreed', 'Meeting ID: {meetingId}', {
-				meetingId: this.readableNumber(this.meetingId),
-			})
-		},
-		attendeePinLabel() {
-			return t('spreed', 'Your PIN: {attendeePin}', {
-				attendeePin: this.readableNumber(this.attendeePin),
-			})
-		},
-	},
+	methods: {
+		readableNumber,
+	}
 }
 </script>
+
+<style lang="scss" scoped>
+.sip-settings {
+	h3 {
+		margin-bottom: 6px;
+		font-weight: bold;
+	}
+
+	p {
+		white-space: pre-line;
+	}
+}
+</style>

@@ -126,6 +126,9 @@ export default {
 			if (this.source === 'emails') {
 				return 'icon-mail'
 			}
+			if (this.source === 'phones') {
+				return 'icon-phone'
+			}
 			if (this.source === 'bots' && this.id === 'changelog') {
 				return 'icon-changelog'
 			}
@@ -196,6 +199,7 @@ export default {
 
 		&.icon {
 			background-color: var(--color-background-darker);
+			background-size: calc(var(--avatar-size) / 2);
 		}
 
 		&.bot {

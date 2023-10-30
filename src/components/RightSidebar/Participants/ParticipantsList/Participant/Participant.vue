@@ -76,28 +76,54 @@
 			</div>
 		</div>
 
+		<!-- Phone participant dial action -->
+		<div v-if="isInCall && canBeModerated && isPhoneActor"
+			id="participantNavigationId"
+			class="participant-row__dial-actions">
+			<NcButton v-if="!participant.inCall"
+				type="success"
+				:aria-label="t('spreed', 'Dial out phone')"
+				:title="t('spreed', 'Dial out phone')"
+				:disabled="disabled"
+				@click="dialOutPhoneNumber">
+				<template #icon>
+					<Phone :size="20" />
+				</template>
+			</NcButton>
+			<template v-else>
+				<NcButton type="error"
+					:aria-label="t('spreed', 'Hang up phone')"
+					:title="t('spreed', 'Hang up phone')"
+					:disabled="disabled"
+					@click="hangupPhoneNumber">
+					<template #icon>
+						<PhoneHangup :size="20" />
+					</template>
+				</NcButton>
+				<DialpadPanel :disabled="disabled"
+					container="#tab-participants"
+					dialing
+					@dial:type="dialType" />
+			</template>
+		</div>
+
 		<!-- Call state icon -->
-		<div v-if="callIcon"
+		<div v-else-if="callIcon"
 			v-tooltip.auto="callIconTooltip"
 			class="participant-row__callstate-icon">
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
-			<Microphone v-if="callIcon === 'audio'"
-				:size="20" />
-			<Phone v-if="callIcon === 'phone'"
-				:size="20" />
-			<VideoIcon v-if="callIcon === 'video'"
-				:size="20" />
-			<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-			<HandBackLeft v-if="callIcon === 'hand'"
-				:size="18" />
+			<Microphone v-if="callIcon === 'audio'" :size="20" />
+			<Phone v-if="callIcon === 'phone'" :size="20" />
+			<VideoIcon v-if="callIcon === 'video'" :size="20" />
+			<!-- Icon is visually bigger, so we reduce its size -->
+			<HandBackLeft v-if="callIcon === 'hand'" :size="18" />
 		</div>
 
 		<!-- Participant's actions menu -->
 		<NcActions v-if="(canBeModerated || canSendCallNotification) && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
-			:force-menu="true"
+			force-menu
 			placement="bottom-end"
 			class="participant-row__actions">
 			<template #icon>
@@ -110,21 +136,24 @@
 				<DotsHorizontal v-else
 					:size="20" />
 			</template>
-			<NcActionText v-if="attendeePin"
-				:title="t('spreed', 'Dial-in PIN')"
-				icon="icon-password">
+
+			<!-- Information and rights -->
+			<NcActionText v-if="attendeePin" :name="t('spreed', 'Dial-in PIN')">
+				<template #icon>
+					<Lock :size="20" />
+				</template>
 				{{ attendeePin }}
 			</NcActionText>
 			<NcActionButton v-if="canBeDemoted"
-				:close-after-click="true"
+				close-after-click
 				@click="demoteFromModerator">
 				<template #icon>
 					<Account :size="20" />
-					{{ t('spreed', 'Demote from moderator') }}
 				</template>
+				{{ t('spreed', 'Demote from moderator') }}
 			</NcActionButton>
-			<NcActionButton v-if="canBePromoted"
-				:close-after-click="true"
+			<NcActionButton v-else-if="canBePromoted"
+				close-after-click
 				@click="promoteToModerator">
 				<template #icon>
 					<Crown :size="20" />
@@ -132,46 +161,100 @@
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
 			<NcActionButton v-if="canBeModerated && isEmailActor"
-				icon="icon-mail"
-				:close-after-click="true"
+				close-after-click
 				@click="resendInvitation">
+				<template #icon>
+					<Email :size="20" />
+				</template>
 				{{ t('spreed', 'Resend invitation') }}
 			</NcActionButton>
 			<NcActionButton v-if="canSendCallNotification"
-				:close-after-click="true"
+				close-after-click
 				@click="sendCallNotification">
 				<template #icon>
 					<Bell :size="20" />
 				</template>
 				{{ t('spreed', 'Send call notification') }}
 			</NcActionButton>
+			<template v-if="canBeModerated && isPhoneActor">
+				<NcActionButton v-if="!conversation.hasCall && !isInCall && !participant.callId"
+					close-after-click
+					@click="dialOutPhoneNumber">
+					<template #icon>
+						<Phone :size="20" />
+					</template>
+					{{ t('spreed', 'Dial out phone number') }}
+				</NcActionButton>
+				<template v-else-if="isInCall && participant.callId">
+					<NcActionButton v-if="phoneMuteState === 'hold'"
+						close-after-click
+						@click="unmutePhoneNumber">
+						<template #icon>
+							<PhoneInTalk :size="20" />
+						</template>
+						{{ t('spreed', 'Resume call for phone number') }}
+					</NcActionButton>
+					<template v-else>
+						<NcActionButton close-after-click
+							@click="holdPhoneNumber">
+							<template #icon>
+								<PhonePaused :size="20" />
+							</template>
+							{{ t('spreed', 'Put phone number on hold') }}
+						</NcActionButton>
+						<NcActionButton v-if="phoneMuteState === 'muted'"
+							close-after-click
+							@click="unmutePhoneNumber">
+							<template #icon>
+								<Microphone :size="20" />
+							</template>
+							{{ t('spreed', 'Unmute phone number') }}
+						</NcActionButton>
+						<NcActionButton v-else
+							close-after-click
+							@click="mutePhoneNumber">
+							<template #icon>
+								<MicrophoneOff :size="20" />
+							</template>
+							{{ t('spreed', 'Mute phone number') }}
+						</NcActionButton>
+					</template>
+				</template>
+				<NcActionButton close-after-click
+					@click="copyPhoneNumber">
+					<template #icon>
+						<ContentCopy :size="20" />
+					</template>
+					{{ t('spreed', 'Copy phone number') }}
+				</NcActionButton>
+			</template>
 
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
 				<NcActionSeparator />
 				<NcActionButton v-if="hasNonDefaultPermissions"
-					:close-after-click="true"
+					close-after-click
 					@click="applyDefaultPermissions">
 					<template #icon>
 						<LockReset :size="20" />
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</NcActionButton>
-				<NcActionButton :close-after-click="true"
+				<NcActionButton close-after-click
 					@click="grantAllPermissions">
 					<template #icon>
 						<LockOpenVariant :size="20" />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</NcActionButton>
-				<NcActionButton :close-after-click="true"
+				<NcActionButton close-after-click
 					@click="removeAllPermissions">
 					<template #icon>
 						<Lock :size="20" />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</NcActionButton>
-				<NcActionButton :close-after-click="true"
+				<NcActionButton close-after-click
 					@click="showPermissionsEditor">
 					<template #icon>
 						<Pencil :size="20" />
@@ -183,23 +266,22 @@
 			<!-- Remove -->
 			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
 			<NcActionButton v-if="canBeModerated"
-				icon="icon-delete"
-				:close-after-click="true"
+				close-after-click
 				@click="removeParticipant">
-				<template v-if="isGroup">
-					{{ t('spreed', 'Remove group and members') }}
+				<template #icon>
+					<Delete :size="20" />
 				</template>
-				<template v-else>
-					{{ t('spreed', 'Remove participant') }}
-				</template>
+				{{ isGroup ? t('spreed', 'Remove group and members') : t('spreed', 'Remove participant') }}
 			</NcActionButton>
 		</NcActions>
+
 		<ParticipantPermissionsEditor v-if="permissionsEditor"
 			:actor-id="participant.actorId"
-			:close-after-click="true"
+			close-after-click
 			:participant="participant"
 			:token="token"
 			@close="hidePermissionsEditor" />
+
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</component>
@@ -211,32 +293,50 @@ import isEqual from 'lodash/isEqual.js'
 
 import Account from 'vue-material-design-icons/Account.vue'
 import Bell from 'vue-material-design-icons/Bell.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Crown from 'vue-material-design-icons/Crown.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Email from 'vue-material-design-icons/Email.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
 import LockReset from 'vue-material-design-icons/LockReset.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
+import PhoneInTalk from 'vue-material-design-icons/PhoneInTalk.vue'
+import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
+import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import DialpadPanel from '../../../../DialpadPanel.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
-import readableNumber from '../../../../../mixins/readableNumber.js'
+import {
+	callSIPDialOut,
+	callSIPHangupPhone,
+	callSIPHoldPhone,
+	callSIPMutePhone,
+	callSIPUnmutePhone,
+	callSIPSendDTMF,
+} from '../../../../../services/callsService.js'
+import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
 import { getStatusMessage } from '../../../../../utils/userStatus.js'
 
@@ -244,36 +344,40 @@ export default {
 	name: 'Participant',
 
 	components: {
+		AvatarWrapper,
+		DialpadPanel,
 		NcActions,
 		NcActionButton,
 		NcActionText,
 		NcActionSeparator,
-		AvatarWrapper,
+		NcButton,
 		ParticipantPermissionsEditor,
-
-		// Material design icons
-		Bell,
-		DotsHorizontal,
-		Microphone,
-		Phone,
-		VideoIcon,
-		HandBackLeft,
-		Crown,
+		// Icons
 		Account,
+		Bell,
+		ContentCopy,
+		Crown,
+		Delete,
+		DotsHorizontal,
+		Email,
+		HandBackLeft,
 		Lock,
 		LockOpenVariant,
-		Pencil,
-		Tune,
 		LockReset,
+		Microphone,
+		MicrophoneOff,
+		Pencil,
+		Phone,
+		PhoneInTalk,
+		PhoneHangup,
+		PhonePaused,
+		Tune,
+		VideoIcon,
 	},
 
 	directives: {
 		tooltip: Tooltip,
 	},
-
-	mixins: [
-		readableNumber,
-	],
 
 	props: {
 		tag: {
@@ -318,6 +422,7 @@ export default {
 			permissionsEditor: false,
 			speakingInterval: null,
 			timeSpeaking: null,
+			disabled: false,
 		}
 	},
 
@@ -367,14 +472,55 @@ export default {
 			return this.isInCall && !!this.participant.inCall && !!this.timeSpeaking
 		},
 
+		phoneCallStatus() {
+			if (!this.isPhoneActor || !this.participant.callId) {
+				return undefined
+			}
+			return this.$store.getters.getPhoneStatus(this.participant.callId)
+		},
+
+		phoneMuteState() {
+			if (!this.isPhoneActor || !this.participant.callId) {
+				return undefined
+			}
+			switch (this.$store.getters.getPhoneMute(this.participant.callId)) {
+			case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
+				return 'muted'
+			}
+			case PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE: {
+				return 'hold'
+			}
+			case PARTICIPANT.SIP_DIALOUT_FLAG.NONE:
+			default: {
+				return undefined
+			}
+			}
+		},
+
 		statusMessage() {
+			if (this.isInCall && this.phoneCallStatus) {
+				switch (this.phoneCallStatus) {
+				case 'ringing':
+					return '📞 ' + t('spreed', 'Ringing …')
+				case 'rejected':
+					return '⚠️ ' + t('spreed', 'Call rejected')
+				case 'accepted':
+				case 'cleared':
+					return ''
+				case 'connected':
+				default:
+					// Fall through to show the talking time
+					break
+				}
+			}
+
 			if (this.isSpeakingStatusAvailable) {
 				return this.isParticipantSpeaking
 					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
 					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
-			} else {
-				return getStatusMessage(this.participant)
 			}
+
+			return getStatusMessage(this.participant)
 		},
 
 		statusMessageTooltip() {
@@ -419,8 +565,16 @@ export default {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS
 		},
 
+		isPhoneActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES
+		},
+
 		isUserActor() {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+		},
+
+		isGuestActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
 
 		canSendCallNotification() {
@@ -529,7 +683,7 @@ export default {
 		},
 
 		attendeePin() {
-			return this.canBeModerated && this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
+			return this.canBeModerated && this.participant.attendeePin ? readableNumber(this.participant.attendeePin) : ''
 		},
 
 		token() {
@@ -569,7 +723,7 @@ export default {
 		 * return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
 		 */
 		isOffline() {
-			return !this.sessionIds.length && !this.isSearched
+			return !this.sessionIds.length && !this.isSearched && (this.isUserActor || this.isGuestActor)
 		},
 
 		isGuest() {
@@ -674,6 +828,12 @@ export default {
 				this.speakingInterval = null
 			}
 		},
+
+		phoneCallStatus(value) {
+			if (!value || !(value === 'ringing' || value === 'accepted')) {
+				this.disabled = false
+			}
+		}
 	},
 
 	methods: {
@@ -796,6 +956,97 @@ export default {
 				this.timeSpeaking = Date.now() - lastTimestamp + totalCountedTime
 			}
 		},
+
+		async dialOutPhoneNumber() {
+			try {
+				this.disabled = true
+				if (!this.isInCall) {
+					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+					flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+
+					// Close navigation
+					emit('toggle-navigation', { open: false })
+					console.info('Joining call')
+					await this.$store.dispatch('joinCall', {
+						token: this.token,
+						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+						flags,
+						silent: false,
+						recordingConsent: true,
+					})
+				}
+				await callSIPDialOut(this.token, this.participant.attendeeId)
+			} catch (error) {
+				this.disabled = false
+				if (error?.response?.data?.ocs?.data?.message) {
+					showError(t('spreed', 'Phone number could not be called: {error}', {
+						error: error?.response?.data?.ocs?.data?.message
+					}))
+				} else {
+					console.error(error)
+					showError(t('spreed', 'Phone number could not be called'))
+				}
+			}
+		},
+
+		async hangupPhoneNumber() {
+			try {
+				this.disabled = true
+				await callSIPHangupPhone(this.sessionIds[0])
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be hanged up'))
+				this.disabled = false
+			}
+		},
+		async holdPhoneNumber() {
+			try {
+				await callSIPHoldPhone(this.sessionIds[0])
+				this.$store.dispatch('setPhoneMute', {
+					callid: this.participant.callId,
+					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER,
+				})
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be putted on hold'))
+			}
+		},
+		async mutePhoneNumber() {
+			try {
+				await callSIPMutePhone(this.sessionIds[0])
+				this.$store.dispatch('setPhoneMute', {
+					callid: this.participant.callId,
+					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE,
+				})
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be muted'))
+			}
+		},
+		async unmutePhoneNumber() {
+			try {
+				await callSIPUnmutePhone(this.sessionIds[0])
+				this.$store.dispatch('setPhoneMute', {
+					callid: this.participant.callId,
+					value: PARTICIPANT.SIP_DIALOUT_FLAG.NONE,
+				})
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be unmuted'))
+			}
+		},
+		async dialType(value) {
+			try {
+				await callSIPSendDTMF(this.sessionIds[0], value)
+			} catch (error) {
+				showError(t('spreed', 'DTMF message could not be sent'))
+			}
+		},
+
+		async copyPhoneNumber() {
+			try {
+				await navigator.clipboard.writeText(this.participant.phoneNumber)
+				showSuccess(t('spreed', 'Phone number copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'Phone number could not be copied'))
+			}
+		},
 	},
 }
 </script>
@@ -878,6 +1129,11 @@ export default {
 		opacity: .4;
 		display: flex;
 		align-items: center;
+	}
+
+	&__dial-actions {
+		display: flex;
+		gap: 4px;
 	}
 
 	&:focus,

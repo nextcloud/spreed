@@ -459,6 +459,16 @@ function signalingKill() {
 }
 
 /**
+ * Send a message through signaling
+ *
+ * @param {object} data message payload
+ * @return {Promise<void>}
+ */
+async function signalingSendCallMessage(data) {
+	await signaling.sendCallMessage(data)
+}
+
+/**
  * Sets whether the current participant is typing.
  *
  * @param {boolean} typing whether the current participant is typing.
@@ -483,6 +493,6 @@ export {
 	signalingLeaveCall,
 	signalingLeaveConversation,
 	signalingKill,
-
+	signalingSendCallMessage,
 	signalingSetTyping,
 }

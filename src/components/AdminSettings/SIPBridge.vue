@@ -24,16 +24,26 @@
 	<div id="sip-bridge" class="section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<p v-if="!showForm" class="settings-hint">
+		<NcNoteCard v-if="!showForm" type="warning">
 			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
-		</p>
+		</NcNoteCard>
+
 		<template v-else>
+			<NcCheckboxRadioSwitch type="switch"
+				:checked.sync="dialOutEnabled"
+				:disabled="loading || !dialOutSupported">
+				{{ t('spreed', 'Enable SIP Dial-out option') }}
+			</NcCheckboxRadioSwitch>
+			<NcNoteCard v-if="!dialOutSupported" type="warning">
+				{{ t('spreed', 'Signaling server needs to be updated to supported SIP Dial-out feature.') }}
+			</NcNoteCard>
+
 			<label for="sip-group-enabled" class="form__label">
 				{{ t('spreed', 'Restrict SIP configuration') }}
 			</label>
 			<NcSelect v-model="sipGroups"
 				input-id="sip-group-enabled"
-				class="form__select"
+				class="form form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
 				:disabled="loading"
@@ -51,13 +61,15 @@
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
 
-			<NcTextField :value.sync="sharedSecret"
-				name="shared-secret"
-				class="form__textfield additional-top-margin"
+			<label for="sip-shared-secret" class="form__label additional-top-margin">
+				{{ t('spreed', 'Shared secret') }}
+			</label>
+			<NcTextField id="sip-shared-secret"
+				:value.sync="sharedSecret"
+				class="form"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
-				:label="t('spreed', 'Shared secret')"
-				label-visible />
+				label-outside />
 
 			<label for="dial-in-info" class="form__label additional-top-margin">
 				{{ t('spreed', 'Dial-in information') }}
@@ -65,7 +77,7 @@
 			<textarea id="dial-in-info"
 				v-model="dialInInfo"
 				name="message"
-				class="form__textfield"
+				class="form form__textarea"
 				rows="4"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Phone number (Country)')" />
@@ -74,7 +86,8 @@
 			</p>
 
 			<NcButton type="primary"
-				:disabled="loading"
+				class="additional-top-margin"
+				:disabled="loading || !isEdited"
 				@click="saveSIPSettings">
 				{{ t('spreed', 'Save changes') }}
 			</NcButton>
@@ -91,16 +104,21 @@ import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setSIPSettings } from '../../services/settingsService.js'
+import { getWelcomeMessage } from '../../services/signalingService.js'
 
 export default {
 	name: 'SIPBridge',
 
 	components: {
+		NcCheckboxRadioSwitch,
 		NcButton,
+		NcNoteCard,
 		NcSelect,
 		NcTextField,
 	},
@@ -114,6 +132,18 @@ export default {
 			sipGroups: [],
 			dialInInfo: '',
 			sharedSecret: '',
+			dialOutEnabled: false,
+			currentSetup: {},
+			dialOutSupported: false,
+		}
+	},
+
+	computed: {
+		isEdited() {
+			return this.currentSetup.sharedSecret !== this.sharedSecret
+					|| this.currentSetup.dialInInfo !== this.dialInInfo
+					|| this.currentSetup.dialOutEnabled !== this.dialOutEnabled
+					|| this.currentSetup.sipGroups !== this.sipGroups.map(group => group.id).join('_')
 		}
 	},
 
@@ -124,12 +154,14 @@ export default {
 		})
 		this.sipGroups = this.groups
 		this.dialInInfo = loadState('spreed', 'sip_bridge_dialin_info')
+		this.dialOutEnabled = loadState('spreed', 'sip_bridge_dialout')
 		this.sharedSecret = loadState('spreed', 'sip_bridge_shared_secret')
 		this.searchGroup('')
 		this.loading = false
-
+		this.saveCurrentSetup()
 		const signaling = loadState('spreed', 'signaling_servers')
 		this.showForm = signaling.servers.length > 0
+		this.isDialoutSupported()
 	},
 
 	methods: {
@@ -151,6 +183,15 @@ export default {
 			}
 		}, 500),
 
+		saveCurrentSetup() {
+			this.currentSetup = {
+				sharedSecret: this.sharedSecret,
+				dialInInfo: this.dialInInfo,
+				dialOutEnabled: this.dialOutEnabled,
+				sipGroups: this.sipGroups.map(group => group.id).join('_')
+			}
+		},
+
 		async saveSIPSettings() {
 			this.loading = true
 			this.saveLabel = t('spreed', 'Saving …')
@@ -160,9 +201,30 @@ export default {
 			})
 
 			await setSIPSettings(groups, this.sharedSecret, this.dialInInfo)
+			if (this.currentSetup.dialOutEnabled !== this.dialOutEnabled) {
+				await OCP.AppConfig.setValue('spreed', 'sip_dialout', this.dialOutEnabled ? 'yes' : 'no')
+			}
 
 			this.loading = false
+			this.saveCurrentSetup()
 			showSuccess(t('spreed', 'SIP configuration saved!'))
+		},
+
+		async isDialoutSupported() {
+			const servers = loadState('spreed', 'signaling_servers').servers
+			for (let index = 0; index < servers.length; index++) {
+				try {
+					const response = await getWelcomeMessage(index)
+					const data = response.data.ocs.data
+					// At least one server has the dialout feature
+					if (!data.warning || (data.warning === 'UPDATE_OPTIONAL' && !(data.features?.includes('dialout')))) {
+						this.dialOutSupported = true
+						break
+					}
+				} catch (exception) {
+					this.dialOutSupported = false
+				}
+			}
 		},
 	},
 }
@@ -175,13 +237,14 @@ h3 {
 }
 
 .form {
-	&__textfield {
-		width: 300px;
+	width: 300px;
+
+	&__textarea {
+		margin-bottom: 6px;
 	}
 
 	&__select {
-		width: 300px;
-		margin-bottom: 9px;
+		margin-bottom: 12px;
 	}
 
 	&__label {

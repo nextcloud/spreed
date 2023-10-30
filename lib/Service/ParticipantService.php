@@ -65,6 +65,7 @@ use OCA\Talk\Events\SilentModifyParticipantEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -1193,9 +1194,12 @@ class ParticipantService {
 			$this->sessionMapper->update($session);
 		}
 
+		$attendee = $participant->getAttendee();
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$attendee = $participant->getAttendee();
 			$attendee->setLastJoinedCall($this->timeFactory->getTime());
+			$this->attendeeMapper->update($attendee);
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_PHONES) {
+			$attendee->setCallId('');
 			$this->attendeeMapper->update($attendee);
 		}
 
@@ -1237,6 +1241,7 @@ class ParticipantService {
 
 	/**
 	 * @throws \InvalidArgumentException
+	 * @throws DialOutFailedException
 	 * @throws ParticipantNotFoundException
 	 */
 	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId): void {
@@ -1258,6 +1263,13 @@ class ParticipantService {
 
 		if (!$dialOutResponse) {
 			throw new \InvalidArgumentException('backend');
+		}
+
+		if ($dialOutResponse->dialOut->error->message) {
+			throw new DialOutFailedException(
+				$dialOutResponse->dialOut->error->code,
+				$dialOutResponse->dialOut->error->message,
+			);
 		}
 
 		$attendee->setCallId($dialOutResponse->dialOut->callId);

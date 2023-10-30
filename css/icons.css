@@ -27,6 +27,16 @@
 	background-image: url(../img/icon-contacts-white.svg);
 }
 
+.app-talk .icon-phone,
+.talk-modal .icon-phone,
+.sidebar-callview .icon-phone,
+#talk-panel .icon-phone,
+#talk-sidebar .icon-phone,
+#call-container .icon-phone,
+.talkChatTab .icon-phone {
+	background-image: url(../img/icon-phone-white.svg);
+}
+
 .app-talk .icon-password,
 .talk-modal .icon-password,
 .sidebar-callview .icon-password,

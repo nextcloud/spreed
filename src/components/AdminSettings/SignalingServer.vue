@@ -48,8 +48,9 @@
 
 		<span v-if="server" class="test-connection">
 			<NcLoadingIcon v-if="!checked" :size="20" />
-			<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
-			<Check v-else :size="20" :fill-color="'#46BA61'" />
+			<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#D91812'" />
+			<AlertCircleOutline v-else-if="warningMessage" :size="20" :fill-color="'#C28900'" />
+			<Check v-else :size="20" :fill-color="'#2D7B41'" />
 			{{ connectionState }}
 		</span>
 	</li>
@@ -57,6 +58,7 @@
 
 <script>
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
@@ -72,6 +74,7 @@ export default {
 
 	components: {
 		AlertCircle,
+		AlertCircleOutline,
 		Check,
 		Delete,
 		NcButton,
@@ -108,6 +111,7 @@ export default {
 		return {
 			checked: false,
 			errorMessage: '',
+			warningMessage: '',
 			versionFound: '',
 		}
 	},
@@ -119,6 +123,9 @@ export default {
 			}
 			if (this.errorMessage) {
 				return this.errorMessage
+			}
+			if (this.warningMessage) {
+				return this.warningMessage
 			}
 			return t('spreed', 'OK: Running version: {version}', {
 				version: this.versionFound,
@@ -155,12 +162,20 @@ export default {
 			this.checked = false
 
 			this.errorMessage = ''
+			this.warningMessage = ''
 			this.versionFound = ''
 
 			try {
 				const response = await getWelcomeMessage(this.index)
 				this.checked = true
-				this.versionFound = response.data.ocs.data.version
+				const data = response.data.ocs.data
+				this.versionFound = data.version
+				if (data.warning === 'UPDATE_OPTIONAL') {
+					this.warningMessage = t('spreed', 'Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}', {
+						version: this.versionFound,
+						features: data.features.join(', '),
+					})
+				}
 			} catch (exception) {
 				this.checked = true
 				const data = exception.response.data.ocs.data

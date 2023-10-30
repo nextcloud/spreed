@@ -107,6 +107,15 @@
 						</template>
 						{{ t('spreed', 'Join open conversations') }}
 					</NcActionButton>
+
+					<NcActionButton v-if="canModerateSipDialOut"
+						close-after-click
+						@click="showModalCallPhoneDialog">
+						<template #icon>
+							<Phone :size="20" />
+						</template>
+						{{ t('spreed', 'Call a phone number') }}
+					</NcActionButton>
 				</NcActions>
 			</TransitionWrapper>
 
@@ -114,7 +123,10 @@
 			<OpenConversationsList ref="openConversationsList" />
 
 			<!-- New Conversation dialog-->
-			<NewGroupConversation ref="newGroupConversation" />
+			<NewGroupConversation ref="newGroupConversation" :can-moderate-sip-dial-out="canModerateSipDialOut" />
+
+			<!-- New Conversation dialog-->
+			<CallPhoneDialog ref="callPhoneDialog" />
 		</div>
 
 		<template #list>
@@ -266,9 +278,11 @@ import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import List from 'vue-material-design-icons/FormatListBulleted.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
+import Phone from 'vue-material-design-icons/Phone.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -285,6 +299,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
 import TransitionWrapper from '../TransitionWrapper.vue'
+import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsListVirtual from './ConversationsListVirtual.vue'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
@@ -306,11 +321,16 @@ import CancelableRequest from '../../utils/cancelableRequest.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 import { filterFunction } from '../../utils/conversation.js'
 
-export default {
+const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
+	&& getCapabilities()?.spreed?.config.call['sip-enabled']
+	&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
+	&& getCapabilities()?.spreed?.config.call['can-enable-sip']
 
+export default {
 	name: 'LeftSidebar',
 
 	components: {
+		CallPhoneDialog,
 		NcAppNavigation,
 		NcAppNavigationCaption,
 		NcButton,
@@ -331,6 +351,7 @@ export default {
 		MessageOutline,
 		FilterIcon,
 		FilterRemoveIcon,
+		Phone,
 		Plus,
 		ChatPlus,
 		List,
@@ -356,6 +377,7 @@ export default {
 			leftSidebar,
 			searchBox,
 			list,
+			canModerateSipDialOut,
 		}
 	},
 
@@ -579,6 +601,10 @@ export default {
 
 		showModalListConversations() {
 			this.$refs.openConversationsList.showModal()
+		},
+
+		showModalCallPhoneDialog() {
+			this.$refs.callPhoneDialog.showModal()
 		},
 
 		handleFilter(filter) {

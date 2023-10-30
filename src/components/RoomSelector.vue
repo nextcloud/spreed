@@ -139,8 +139,8 @@ export default {
 				return room.type !== CONVERSATION.TYPE.CHANGELOG
 					&& (!this.currentRoom || this.currentRoom !== room.token)
 					&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
-					&& room.objectType !== 'file'
-					&& room.objectType !== 'share:password'
+					&& room.objectType !== CONVERSATION.OBJECT_TYPE.FILE
+					&& room.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
 			})
 			if (!this.searchText) {
 				return roomsTemp

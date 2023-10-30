@@ -291,6 +291,15 @@ class SignalingController extends OCSController {
 				], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 
+			$missingFeatures = $this->signalingManager->getSignalingServerMissingFeatures($response);
+			if (!empty($missingFeatures)) {
+				return new DataResponse([
+					'warning' => 'UPDATE_OPTIONAL',
+					'features' => $missingFeatures,
+					'version' => $data['version'] ?? '',
+				]);
+			}
+
 			return new DataResponse($data);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);

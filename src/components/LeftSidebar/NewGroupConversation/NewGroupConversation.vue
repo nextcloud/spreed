@@ -82,6 +82,7 @@
 				<!-- Second page -->
 				<SetContacts v-if="page === 1"
 					class="new-group-conversation__content"
+					:can-moderate-sip-dial-out="canModerateSipDialOut"
 					:conversation-name="conversationNameTrimmed" />
 			</div>
 
@@ -221,6 +222,13 @@ export default {
 	},
 
 	mixins: [participant],
+
+	props: {
+		canModerateSipDialOut: {
+			type: Boolean,
+			default: false,
+		},
+	},
 
 	setup() {
 		const isInCall = useIsInCall()

@@ -58,6 +58,8 @@ const state = {
 	},
 	peers: {
 	},
+	phones: {
+	},
 	inCall: {
 	},
 	connecting: {
@@ -249,6 +251,14 @@ const getters = {
 		return {}
 	},
 
+	getPhoneStatus: (state) => (callId) => {
+		return state.phones[callId]?.state?.status
+	},
+
+	getPhoneMute: (state) => (callId) => {
+		return state.phones[callId]?.mute
+	},
+
 	participantsInCall: (state) => (token) => {
 		if (state.attendees[token]) {
 			return Object.values(state.attendees[token]).filter(attendee => attendee.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED).length
@@ -429,6 +439,24 @@ const mutations = {
 
 	setCancelFetchParticipants(state, cancelFunction) {
 		state.cancelFetchParticipants = cancelFunction
+	},
+
+	setPhoneState(state, { callid, value = {} }) {
+		if (!state.phones[callid]) {
+			Vue.set(state.phones, callid, { state: null, mute: 0 })
+		}
+		Vue.set(state.phones[callid], 'state', value)
+	},
+
+	setPhoneMute(state, { callid, value }) {
+		if (!state.phones[callid]) {
+			Vue.set(state.phones, callid, { state: null, mute: 0 })
+		}
+		Vue.set(state.phones[callid], 'mute', value)
+	},
+
+	deletePhoneState(state, callid) {
+		Vue.delete(state.phones, callid)
 	},
 }
 
@@ -918,6 +946,37 @@ const actions = {
 
 	purgeSpeakingStore(context, { token }) {
 		context.commit('purgeSpeakingStore', { token })
+	},
+
+	processDialOutAnswer(context, { callid }) {
+		context.commit('setPhoneState', { callid })
+	},
+
+	processTransientCallStatus(context, { value }) {
+		context.commit('setPhoneState', { callid: value.callid, value })
+
+		if (value.status === 'cleared' || value.status === 'rejected') {
+			setTimeout(() => {
+				context.commit('deletePhoneState', value.callid)
+			}, 5000)
+		}
+	},
+
+	addPhonesStates(context, { phoneStates }) {
+		Object.values(phoneStates).forEach(phoneState => {
+			context.commit('setPhoneState', {
+				callid: phoneState.callid,
+				value: phoneState
+			})
+		})
+	},
+
+	deletePhoneState(context, { callid }) {
+		context.commit('deletePhoneState', callid)
+	},
+
+	setPhoneMute(context, { callid, value }) {
+		context.commit('setPhoneMute', { callid, value })
 	},
 }
 

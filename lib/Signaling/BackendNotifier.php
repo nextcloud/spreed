@@ -27,6 +27,7 @@ namespace OCA\Talk\Signaling;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
+use OC\Http\Client\Response;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
@@ -77,13 +78,24 @@ class BackendNotifier {
 			}
 
 			return $response;
-		} catch (ServerException | ConnectException $e) {
+		} catch (ConnectException $e) {
 			if ($retries > 1) {
 				$this->logger->error('Failed to send message to signaling server, ' . $retries . ' retries left!', ['exception' => $e]);
 				return $this->doRequest($url, $params, $retries - 1);
 			}
 
 			$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
+			throw $e;
+		} catch (ServerException $e) {
+			if ($retries > 1) {
+				$this->logger->error('Failed to send message to signaling server, ' . $retries . ' retries left!', ['exception' => $e]);
+				return $this->doRequest($url, $params, $retries - 1);
+			}
+
+			$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
+			if ($e->hasResponse()) {
+				return new Response($e->getResponse());
+			}
 			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);

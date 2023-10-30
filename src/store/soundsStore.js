@@ -205,6 +205,9 @@ const actions = {
 	 * @param {object} context default store context
 	 */
 	pauseWaitAudio(context) {
+		// Make sure the audio objects are really created before pausing it
+		context.dispatch('createAudioObjects')
+
 		const audio = context.state.waitAudioObject
 		audio.pause()
 	},
