@@ -44,9 +44,23 @@
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
 				<NcButton type="error"
-					@click="deleteConversation">
+					@click="toggleShowDeleteConversationDialog">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
+				<NcDialog class="danger-zone__dialog"
+					:open.sync="isDeleteConversationDialogOpen"
+					:name="t('spreed','Delete Conversation')"
+					:message="deleteConversationDialogMessage"
+					:container="container">
+					<template #actions>
+						<NcButton type="tertiary" @click="toggleShowDeleteConversationDialog">
+							{{ t('spreed', 'No') }}
+						</NcButton>
+						<NcButton type="error" @click="deleteConversation">
+							{{ t('spreed', 'Yes') }}
+						</NcButton>
+					</template>
+				</NcDialog>
 			</div>
 			<div v-if="canDeleteConversation" class="app-settings-subsection">
 				<h4 class="app-settings-section__subtitle">
@@ -56,9 +70,23 @@
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
 				<NcButton type="error"
-					@click="clearChatHistory">
+					@click="toggleShowDeleteChatDialog">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
+				<NcDialog class="danger-zone__dialog"
+					:open.sync="isDeleteChatDialogOpen"
+					:name="t('spreed','Delete all chat messages')"
+					:message="deleteChatDialogMessage"
+					:container="container">
+					<template #actions>
+						<NcButton type="tertiary" @click="toggleShowDeleteChatDialog">
+							{{ t('spreed', 'No') }}
+						</NcButton>
+						<NcButton type="error" @click="clearChatHistory">
+							{{ t('spreed', 'Yes') }}
+						</NcButton>
+					</template>
+				</NcDialog>
 			</div>
 			<div />
 		</div>
@@ -70,6 +98,7 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 export default {
@@ -77,7 +106,9 @@ export default {
 	components: {
 		NcButton,
 		NcNoteCard,
+		NcDialog,
 	},
+
 	props: {
 		conversation: {
 			type: Object,
@@ -95,10 +126,35 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			isDeleteConversationDialogOpen: false,
+			isDeleteChatDialogOpen: false,
+		}
+	},
+
 	computed: {
+		container() {
+			return '#conversation-settings-container'
+		},
+
 		token() {
 			return this.conversation.token
 		},
+
+		deleteConversationDialogMessage() {
+			return t('spreed', 'Do you really want to delete "{displayName}"?', this.conversation, undefined, {
+				escape: false,
+				sanitize: false,
+			})
+		},
+
+		deleteChatDialogMessage() {
+			return t('spreed', 'Do you really want to delete all messages in "{displayName}"?', this.conversation, undefined, {
+				escape: false,
+				sanitize: false,
+			})
+		}
 	},
 
 	methods: {
@@ -126,59 +182,44 @@ export default {
 		 * Deletes the conversation.
 		 */
 		async deleteConversation() {
-			OC.dialogs.confirm(
-				t('spreed', 'Do you really want to delete "{displayName}"?', this.conversation, undefined, {
-					escape: false,
-					sanitize: false,
-				}),
-				t('spreed', 'Delete conversation'),
-				async function(decision) {
-					if (!decision) {
-						return
-					}
+			this.isDeleteConversationDialogOpen = false
 
-					if (this.token === this.$store.getters.getToken()) {
-						this.$router.push({ name: 'root' })
-						this.$store.dispatch('updateToken', '')
-					}
+			if (this.token === this.$store.getters.getToken()) {
+				this.$router.push({ name: 'root' })
+				this.$store.dispatch('updateToken', '')
+			}
 
-					try {
-						await this.$store.dispatch('deleteConversationFromServer', { token: this.token })
-						// Close the settings
-						this.hideConversationSettings()
-					} catch (error) {
-						console.debug(`error while deleting conversation ${error}`)
-						showError(t('spreed', 'Error while deleting conversation'))
-					}
-				}.bind(this)
-			)
+			try {
+				await this.$store.dispatch('deleteConversationFromServer', { token: this.token })
+				// Close the settings
+				this.hideConversationSettings()
+			} catch (error) {
+				console.debug(`error while deleting conversation ${error}`)
+				showError(t('spreed', 'Error while deleting conversation'))
+			}
 		},
 
 		/**
 		 * Clears the chat history
 		 */
 		async clearChatHistory() {
-			OC.dialogs.confirm(
-				t('spreed', 'Do you really want to delete all messages in "{displayName}"?', this.conversation, undefined, {
-					escape: false,
-					sanitize: false,
-				}),
-				t('spreed', 'Delete all chat messages'),
-				async function(decision) {
-					if (!decision) {
-						return
-					}
+			try {
+				await this.$store.dispatch('clearConversationHistory', { token: this.token })
+				this.isDeleteChatDialogOpen = false
+				// Close the settings
+				this.hideConversationSettings()
+			} catch (error) {
+				console.debug(`error while clearing chat history ${error}`)
+				showError(t('spreed', 'Error while clearing chat history'))
+			}
+		},
 
-					try {
-						await this.$store.dispatch('clearConversationHistory', { token: this.token })
-						// Close the settings
-						this.hideConversationSettings()
-					} catch (error) {
-						console.debug(`error while clearing chat history ${error}`)
-						showError(t('spreed', 'Error while clearing chat history'))
-					}
-				}.bind(this)
-			)
+		toggleShowDeleteConversationDialog() {
+			this.isDeleteConversationDialogOpen = !this.isDeleteConversationDialogOpen
+		},
+
+		toggleShowDeleteChatDialog() {
+			this.isDeleteChatDialogOpen = !this.isDeleteChatDialogOpen
 		},
 	},
 }
@@ -192,6 +233,12 @@ h4 {
 .danger-zone {
 	&__hint {
 		color: var(--color-text-maxcontrast);
+	}
+	&__dialog {
+		:deep(.modal-container) {
+			padding-block: 4px 8px;
+			padding-inline: 12px 8px;
+		}
 	}
 }
 

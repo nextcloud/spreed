@@ -8,6 +8,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 
 import Conversation from './Conversation.vue'
 
@@ -400,48 +402,96 @@ describe('Conversation.vue', () => {
 
 		describe('deleting conversation', () => {
 			test('deletes conversation when confirmed', async () => {
+				// Arrange
 				const actionHandler = jest.fn().mockResolvedValueOnce()
 				const updateTokenAction = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
 				testStoreConfig.modules.tokenStore.getters.getToken = jest.fn().mockReturnValue(() => 'another-token')
 				testStoreConfig.modules.tokenStore.actions.updateToken = updateTokenAction
 
-				OC.dialogs.confirm = jest.fn()
+				const wrapper = shallowMount(Conversation, {
+					localVue,
+					store: new Vuex.Store(testStoreConfig),
+					mocks: {
+						$router,
+					},
+					stubs: {
+						NcActionButton,
+						NcDialog,
+						NcButton,
+					},
+					propsData: {
+						isSearchResult: false,
+						item,
+					},
+				})
+				const el = wrapper.findComponent({ name: 'NcListItem' })
 
-				const action = shallowMountAndGetAction('Delete conversation')
+				const action = findNcActionButton(el, 'Delete conversation')
 				expect(action.exists()).toBe(true)
 
+				// Act 1 : click on the button from the menu
 				await action.find('button').trigger('click')
 
-				expect(OC.dialogs.confirm).toHaveBeenCalled()
+				// Assert 1
+				const dialog = wrapper.findComponent({ name: 'NcDialog' })
+				expect(dialog.exists).toBeTruthy()
+				const buttons = dialog.findAllComponents({ name: 'NcButton' })
+				expect(buttons.exists()).toBeTruthy()
+				expect(buttons).toHaveLength(2)
 
-				// call callback directly
-				OC.dialogs.confirm.mock.calls[0][2](true)
+				// Act 2 : click on the confirm button
+				await buttons.at(1).find('button').trigger('click')
 
+				// Assert 2
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				expect($router.push).not.toHaveBeenCalled()
 				expect(updateTokenAction).not.toHaveBeenCalled()
 			})
 
 			test('does not delete conversation when not confirmed', async () => {
+				// Arrange
 				const actionHandler = jest.fn().mockResolvedValueOnce()
 				const updateTokenAction = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
 				testStoreConfig.modules.tokenStore.getters.getToken = jest.fn().mockReturnValue(() => 'another-token')
 				testStoreConfig.modules.tokenStore.actions.updateToken = updateTokenAction
 
-				OC.dialogs.confirm = jest.fn()
+				const wrapper = shallowMount(Conversation, {
+					localVue,
+					store: new Vuex.Store(testStoreConfig),
+					mocks: {
+						$router,
+					},
+					stubs: {
+						NcActionButton,
+						NcDialog,
+						NcButton,
+					},
+					propsData: {
+						isSearchResult: false,
+						item,
+					},
+				})
+				const el = wrapper.findComponent({ name: 'NcListItem' })
 
-				const action = shallowMountAndGetAction('Delete conversation')
+				const action = findNcActionButton(el, 'Delete conversation')
 				expect(action.exists()).toBe(true)
 
+				// Act 1 : click on the button from the menu
 				await action.find('button').trigger('click')
 
-				expect(OC.dialogs.confirm).toHaveBeenCalled()
+				// Assert 1
+				const dialog = wrapper.findComponent({ name: 'NcDialog' })
+				expect(dialog.exists).toBeTruthy()
+				const buttons = dialog.findAllComponents({ name: 'NcButton' })
+				expect(buttons.exists()).toBeTruthy()
+				expect(buttons).toHaveLength(2)
 
-				// call callback directly
-				OC.dialogs.confirm.mock.calls[0][2](false)
+				// Act 2 : click on the confirm button
+				await buttons.at(0).find('button').trigger('click')
 
+				// Assert 2
 				expect(actionHandler).not.toHaveBeenCalled()
 				expect($router.push).not.toHaveBeenCalled()
 				expect(updateTokenAction).not.toHaveBeenCalled()
