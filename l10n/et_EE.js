@@ -73,6 +73,7 @@ OC.L10N.register(
     "Today" : "Täna",
     "Yesterday" : "Eile",
     "Group" : "Grupp",
+    "Upload from device" : "Laadi üles seadmest",
     "Create new poll" : "Loo uus küsitlus",
     "New file" : "Uus fail",
     "Blank" : "Tühi",
