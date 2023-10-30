@@ -40,6 +40,7 @@ use OCP\HintException;
 use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 class BackendNotifier {
 
@@ -192,6 +193,42 @@ class BackendNotifier {
 		$this->sendUpdateToRemote($remote, $notification);
 	}
 
+	public function sendRoomModifiedUpdate(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		string $changedProperty,
+		string|int|bool|null $newValue,
+		string|int|bool|null $oldValue,
+	): void {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_ROOM_MODIFIED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'changedProperty' => $changedProperty,
+				'newValue' => $newValue,
+				'oldValue' => $oldValue,
+			],
+		);
+
+		$this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
+	 * @internal Used to send retries in background jobs
+	 * @param string $remote
+	 * @param array $data
+	 * @param int $try
+	 * @return void
+	 */
 	public function sendUpdateDataToRemote(string $remote, array $data = [], int $try = 0): void {
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
@@ -203,7 +240,7 @@ class BackendNotifier {
 		$this->sendUpdateToRemote($remote, $notification, $try);
 	}
 
-	public function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0): void {
+	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0): void {
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
 		if (!is_array($response)) {
 			$this->jobList->add(RetryJob::class,
@@ -216,7 +253,7 @@ class BackendNotifier {
 		}
 	}
 
-	private function prepareRemoteUrl(string $remote): string {
+	protected function prepareRemoteUrl(string $remote): string {
 		if (!$this->addressHandler->urlContainProtocol($remote)) {
 			return 'https://' . $remote;
 		}

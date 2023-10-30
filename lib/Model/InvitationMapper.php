@@ -61,6 +61,20 @@ class InvitationMapper extends QBMapper {
 	}
 
 	/**
+	 * @throws DoesNotExistException
+	 */
+	public function getByRemoteIdAndToken(int $remoteId, string $accessToken): Invitation {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('remote_id', $qb->createNamedParameter($remoteId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('access_token', $qb->createNamedParameter($accessToken)));
+
+		return $this->findEntity($qb);
+	}
+
+	/**
 	 * @param Room $room
 	 * @return Invitation[]
 	 */

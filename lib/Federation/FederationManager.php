@@ -53,6 +53,7 @@ class FederationManager {
 	public const NOTIFICATION_SHARE_ACCEPTED = 'SHARE_ACCEPTED';
 	public const NOTIFICATION_SHARE_DECLINED = 'SHARE_DECLINED';
 	public const NOTIFICATION_SHARE_UNSHARED = 'SHARE_UNSHARED';
+	public const NOTIFICATION_ROOM_MODIFIED = 'ROOM_MODIFIED';
 	public const TOKEN_LENGTH = 64;
 
 	public function __construct(

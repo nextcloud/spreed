@@ -112,3 +112,22 @@ Feature: federation/invite
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room |federated_users | participant2@http://localhost:8180 | participant2@http://localhost:8180 | Message 1   | []                |               |
+
+  Scenario: Federate conversation meta data
+    Given the following "spreed" app config is set
+      | federation_enabled | yes |
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds remote "participant2" to room "room" with 200 (v4)
+    And user "participant2" has the following invitations (v1)
+      | remote_server | remote_token |
+      | LOCAL         | room         |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | name | type |
+      | room | room | 2    |
+    And user "participant1" renames room "room" to "Federated room" with 200 (v4)
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | name           | type |
+      | room | Federated room | 2    |
