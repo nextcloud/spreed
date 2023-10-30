@@ -7,11 +7,8 @@ name: PHPUnit pgsql
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
-      - master
-      - stable*
+  schedule:
+    - cron: "5 2 * * *"
 
 permissions:
   contents: read

@@ -5,13 +5,7 @@
 
 name: Static analysis
 
-on:
-  pull_request:
-  push:
-    branches:
-      - master
-      - main
-      - stable*
+on: pull_request
 
 concurrency:
   group: psalm-${{ github.head_ref || github.run_id }}

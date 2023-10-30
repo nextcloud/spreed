@@ -1,11 +1,6 @@
 name: OpenAPI
 
-on:
-  pull_request:
-  push:
-    branches:
-      - master
-      - stable*
+on: pull_request
 
 permissions:
   contents: read
