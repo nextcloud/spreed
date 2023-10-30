@@ -31,7 +31,6 @@ namespace OCA\Talk\Share;
 use OC\Files\Cache\Cache;
 use OCA\Talk\Events\AlreadySharedEvent;
 use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -49,7 +48,6 @@ use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
-use OCP\Server;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
@@ -98,16 +96,6 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	private function cleanSharesByIdCache(): void {
 		$this->sharesByIdCache = new CappedMemoryCache();
-	}
-
-	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (RoomEvent $event): void {
-			$room = $event->getRoom();
-
-			$roomShareProvider = Server::get(self::class);
-			$roomShareProvider->deleteInRoom($room->getToken());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 	}
 
 	/**

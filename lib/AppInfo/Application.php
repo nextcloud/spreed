@@ -30,6 +30,7 @@ namespace OCA\Talk\AppInfo;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
+use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
@@ -48,13 +49,18 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeChatMessageSentEvent;
+use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\EmailInvitationSentEvent;
+use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
@@ -91,7 +97,6 @@ use OCA\Talk\Search\MessageSearch;
 use OCA\Talk\Search\UnifiedSearchCSSLoader;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\Listener as ShareListener;
-use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
 use OCP\App\IAppManager;
@@ -118,6 +123,8 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Server;
 use OCP\Settings\IManager;
+use OCP\Share\Events\BeforeShareCreatedEvent;
+use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\SpeechToText\Events\TranscriptionFailedEvent;
 use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
@@ -147,6 +154,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareTemplateLoader::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
+		$context->registerEventListener(LoadSidebar::class, FilesTemplateLoader::class);
 
 		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
@@ -160,6 +168,32 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+
+		// Command listener
+		$context->registerEventListener(BeforeChatMessageSentEvent::class, CommandListener::class);
+
+		// Files integration listeners
+		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, FilesListener::class);
+		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, FilesListener::class);
+
+		// Reference listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, ReferenceInvalidationListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, ReferenceInvalidationListener::class);
+		$context->registerEventListener(LobbyModifiedEvent::class, ReferenceInvalidationListener::class);
+		$context->registerEventListener(RoomDeletedEvent::class, ReferenceInvalidationListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, ReferenceInvalidationListener::class);
+
+		// Resources listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, ResourceListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, ResourceListener::class);
+		$context->registerEventListener(EmailInvitationSentEvent::class, ResourceListener::class);
+		$context->registerEventListener(RoomDeletedEvent::class, ResourceListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, ResourceListener::class);
+
+		// Sharing listeners
+		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
+		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
+		$context->registerEventListener(RoomDeletedEvent::class, ShareListener::class);
 
 		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
@@ -219,16 +253,8 @@ class Application extends App implements IBootstrap {
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
 		PublicShareAuthListener::register($dispatcher);
-		FilesListener::register($dispatcher);
-		FilesTemplateLoader::register($dispatcher);
-		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
-		CommandListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
-		ResourceListener::register($dispatcher);
-		ReferenceInvalidationListener::register($dispatcher);
-		ShareListener::register($dispatcher);
-
 	}
 
 	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {

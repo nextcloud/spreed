@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,30 +25,32 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Collaboration\Reference;
 
-use OCA\Talk\Events\RoomEvent;
-use OCA\Talk\Room;
+use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCP\Collaboration\Reference\IReferenceManager;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Server;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
-class ReferenceInvalidationListener {
-	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (RoomEvent $event): void {
-			$room = $event->getRoom();
-			$referenceManager = Server::get(IReferenceManager::class);
+/**
+ * @template-implements IEventListener<Event>
+ */
+class ReferenceInvalidationListener implements IEventListener {
 
-			$referenceManager->invalidateCache($room->getToken());
-		};
+	public function __construct(
+		protected IReferenceManager $referenceManager,
+	) {
+	}
 
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $listener);
+	public function handle(Event $event): void {
+		if ($event instanceof AttendeesAddedEvent
+			|| $event instanceof AttendeesRemovedEvent
+			|| $event instanceof LobbyModifiedEvent
+			|| $event instanceof RoomDeletedEvent
+			|| $event instanceof RoomModifiedEvent) {
+			$this->referenceManager->invalidateCache($event->getRoom()->getToken());
+		}
 	}
 }

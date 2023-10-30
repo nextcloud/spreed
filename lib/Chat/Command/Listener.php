@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,16 +25,18 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Command;
 
-use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Events\ChatEvent;
-use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Model\Command;
+use OCA\Talk\Participant;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Server;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
-class Listener {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
 
 	public function __construct(
 		protected CommandService $commandService,
@@ -40,51 +44,45 @@ class Listener {
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, [self::class, 'executeCommand']);
+	public function handle(Event $event): void {
+		if ($event instanceof BeforeChatMessageSentEvent) {
+			$this->executeCommand($event);
+		}
 	}
 
-	public static function executeCommand(ChatEvent $event): void {
-		if (!$event instanceof ChatParticipantEvent) {
+	public function executeCommand(BeforeChatMessageSentEvent $event): void {
+		$participant = $event->getParticipant();
+		if (!$participant instanceof Participant) {
 			// No commands for bots 🚓
 			return;
 		}
 
 		$message = $event->getComment();
-		$participant = $event->getParticipant();
-
-		/**
-		 * @var Listener $listener
-		 */
-		$listener = Server::get(self::class);
-
 		if (str_starts_with($message->getMessage(), '//')) {
 			return;
 		}
 
 		try {
-			/** @var Command $command */
-			/** @var string $arguments */
-			[$command, $arguments] = $listener->getCommand($message->getMessage());
-			$command = $listener->commandService->resolveAlias($command);
-		} catch (DoesNotExistException $e) {
+			[$command, $arguments] = $this->getCommand($message->getMessage());
+			$command = $this->commandService->resolveAlias($command);
+		} catch (DoesNotExistException) {
 			return;
 		}
 
-		if (!$listener->executor->isCommandAvailableForParticipant($command, $participant)) {
-			$command = $listener->commandService->find('', 'help');
+		if (!$this->executor->isCommandAvailableForParticipant($command, $participant)) {
+			$command = $this->commandService->find('', 'help');
 			$arguments = trim($message->getMessage());
 		}
 
-		$listener->executor->exec($event->getRoom(), $message, $command, $arguments, $participant);
+		$this->executor->exec($event->getRoom(), $message, $command, $arguments, $participant);
 	}
 
 	/**
 	 * @param string $message
-	 * @return array [Command, string]
+	 * @return array{0: Command, 1: string}
 	 * @throws DoesNotExistException
 	 */
-	public function getCommand(string $message): array {
+	protected function getCommand(string $message): array {
 		[$app, $cmd, $arguments] = $this->matchesCommand($message);
 
 		if ($app === '') {
@@ -93,12 +91,12 @@ class Listener {
 
 		try {
 			return [$this->commandService->find($app, $cmd), trim($arguments)];
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 		}
 
 		try {
 			return [$this->commandService->find('', $app), trim($cmd . ' ' . $arguments)];
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 		}
 
 		return [$this->commandService->find('', 'help'), trim($message)];

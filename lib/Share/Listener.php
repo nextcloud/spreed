@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,37 +27,33 @@ namespace OCA\Talk\Share;
 
 use OC\Files\Filesystem;
 use OCA\Talk\Config;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Server;
+use OCA\Talk\Events\RoomDeletedEvent;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Share\Events\BeforeShareCreatedEvent;
 use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\Share\IShare;
 
-class Listener {
-	public static function register(IEventDispatcher $dispatcher): void {
-		/**
-		 * @psalm-suppress UndefinedClass
-		 */
-		$dispatcher->addListener(BeforeShareCreatedEvent::class, [self::class, 'listenPreShare'], 1000);
-		$dispatcher->addListener(VerifyMountPointEvent::class, [self::class, 'listenVerifyMountPointEvent'], 1000);
-	}
-
-	public static function listenPreShare(BeforeShareCreatedEvent $event): void {
-		$listener = Server::get(self::class);
-		$listener->overwriteShareTarget($event);
-	}
-
-	public static function listenVerifyMountPointEvent(VerifyMountPointEvent $event): void {
-		$listener = Server::get(self::class);
-		$listener->overwriteMountPoint($event);
-	}
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
 
 	public function __construct(
 		protected Config $config,
+		protected RoomShareProvider $roomShareProvider,
 	) {
 	}
 
-	public function overwriteShareTarget(BeforeShareCreatedEvent $event): void {
+	public function handle(Event $event): void {
+		match (get_class($event)) {
+			BeforeShareCreatedEvent::class => $this->overwriteShareTarget($event),
+			VerifyMountPointEvent::class => $this->overwriteMountPoint($event),
+			RoomDeletedEvent::class => $this->roomDeletedEvent($event),
+		};
+	}
+
+	protected function overwriteShareTarget(BeforeShareCreatedEvent $event): void {
 		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM
@@ -68,7 +66,7 @@ class Listener {
 		$share->setTarget($target);
 	}
 
-	public function overwriteMountPoint(VerifyMountPointEvent $event): void {
+	protected function overwriteMountPoint(VerifyMountPointEvent $event): void {
 		$share = $event->getShare();
 		$view = $event->getView();
 
@@ -83,12 +81,12 @@ class Listener {
 			} catch (\Exception $e) {
 				// If we fail to get the owner of the view from the cache,
 				// e.g. because the user never logged in but a cron job runs
-				// We fallback to calculating the owner from the root of the view:
+				// We fall back to calculating the owner from the root of the view:
 				if (substr_count($view->getRoot(), '/') >= 2) {
 					// /37c09aa0-1b92-4cf6-8c66-86d8cac8c1d0/files
 					[, $userId, ] = explode('/', $view->getRoot(), 3);
 				} else {
-					// Something weird is going on, we can't fallback more
+					// Something weird is going on, we can't fall back more
 					// so for now we don't overwrite the share path ¯\_(ツ)_/¯
 					return;
 				}
@@ -100,5 +98,9 @@ class Listener {
 				$event->getView()->mkdir($parent);
 			}
 		}
+	}
+
+	protected function roomDeletedEvent(RoomDeletedEvent $event): void {
+		$this->roomShareProvider->deleteInRoom($event->getRoom()->getToken());
 	}
 }

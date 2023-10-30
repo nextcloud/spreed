@@ -41,12 +41,6 @@
       <code>Filesystem</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Files/TemplateLoader.php">
-    <UndefinedClass>
-      <code>LoadSidebar</code>
-      <code>LoadSidebar</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Files/Util.php">
     <InvalidArgument>
       <code>$fileId</code>

@@ -24,17 +24,17 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Files;
 
-use OCA\Talk\Events\JoinRoomGuestEvent;
-use OCA\Talk\Events\JoinRoomUserEvent;
+use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
+use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
-use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\IUserManager;
-use OCP\Server;
 
 /**
  * Custom behaviour for rooms for files.
@@ -51,8 +51,10 @@ use OCP\Server;
  * These rooms are associated to a "file" object, and their custom behaviour is
  * provided by calling the methods of this class as a response to different room
  * events.
+ *
+ * @template-implements IEventListener<Event>
  */
-class Listener {
+class Listener implements IEventListener {
 
 	public function __construct(
 		protected Util $util,
@@ -62,29 +64,28 @@ class Listener {
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (JoinRoomUserEvent $event): void {
-			$listener = Server::get(self::class);
-
-			try {
-				$listener->preventUsersWithoutAccessToTheFileFromJoining($event->getRoom(), $event->getUser()->getUID());
-				$listener->addUserAsPersistentParticipant($event->getRoom(), $event->getUser()->getUID());
-			} catch (UnauthorizedException $e) {
-				$event->setCancelJoin(true);
-			}
+	public function handle(Event $event): void {
+		match (get_class($event)) {
+			BeforeUserJoinedRoomEvent::class => $this->beforeUserJoinedRoomEvent($event),
+			BeforeGuestJoinedRoomEvent::class => $this->beforeGuestJoinedRoomEvent($event),
 		};
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
+	}
 
-		$listener = static function (JoinRoomGuestEvent $event): void {
-			$listener = Server::get(self::class);
+	protected function beforeUserJoinedRoomEvent(BeforeUserJoinedRoomEvent $event): void {
+		try {
+			$this->preventUsersWithoutAccessToTheFileFromJoining($event->getRoom(), $event->getUser()->getUID());
+			$this->addUserAsPersistentParticipant($event->getRoom(), $event->getUser()->getUID());
+		} catch (UnauthorizedException) {
+			$event->setCancelJoin(true);
+		}
+	}
 
-			try {
-				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($event->getRoom());
-			} catch (UnauthorizedException $e) {
-				$event->setCancelJoin(true);
-			}
-		};
-		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
+	protected function beforeGuestJoinedRoomEvent(BeforeGuestJoinedRoomEvent $event): void {
+		try {
+			$this->preventGuestsFromJoiningIfNotPubliclyAccessible($event->getRoom());
+		} catch (UnauthorizedException) {
+			$event->setCancelJoin(true);
+		}
 	}
 
 	/**
@@ -103,7 +104,7 @@ class Listener {
 	 * @param string $userId
 	 * @throws UnauthorizedException
 	 */
-	public function preventUsersWithoutAccessToTheFileFromJoining(Room $room, string $userId): void {
+	protected function preventUsersWithoutAccessToTheFileFromJoining(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}
@@ -132,7 +133,7 @@ class Listener {
 	 * @param Room $room
 	 * @param string $userId
 	 */
-	public function addUserAsPersistentParticipant(Room $room, string $userId): void {
+	protected function addUserAsPersistentParticipant(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}
