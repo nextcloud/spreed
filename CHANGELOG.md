@@ -2874,7 +2874,7 @@ All notable changes to this project will be documented in this file.
 
 ## 6.0.0 – 2019-04-25
 ### Added
-- Administrators can now define commands which can be used in the chat. See [commands.md](https://github.com/nextcloud/spreed/blob/master/docs/commands.md) for more information. You can install some sample commands via the console.
+- Administrators can now define commands which can be used in the chat. See [the commands documentation](https://nextcloud-talk.readthedocs.io/en/latest/commands/) for more information. You can install some sample commands via the console.
   [#1453](https://github.com/nextcloud/spreed/pull/1453)
   [#1662](https://github.com/nextcloud/spreed/pull/1662)
 - There is now a "Talk updates" conversation which will help the user to discover some features

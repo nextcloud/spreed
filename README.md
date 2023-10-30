@@ -9,7 +9,7 @@
 | [🚧 Development Setup](#-development-setup)           |
 
 
-![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.jpg)
+![](https://raw.githubusercontent.com/nextcloud/spreed/main/docs/call-in-action.jpg)
 
 ## ✨ Why is this so awesome?
 
@@ -98,4 +98,4 @@ You can always pick a task of any milestone, and we will help you to get it into
 
 ### 💙 Contribution Guidelines
 
-For more information please see the [guidelines for contributing](https://github.com/nextcloud/spreed/blob/master/.github/contributing.md) to this repository.
+For more information please see the [guidelines for contributing](https://github.com/nextcloud/spreed/blob/main/.github/contributing.md) to this repository.

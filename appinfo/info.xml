@@ -45,11 +45,11 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 	<repository>https://github.com/nextcloud/spreed.git</repository>
 
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.jpg</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/chat.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/file-darg-and-drop.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/screensharing.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/video-verfication.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/call-in-action.jpg</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/chat.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/file-darg-and-drop.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/screensharing.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/video-verfication.png</screenshot>
 
 	<dependencies>
 		<nextcloud min-version="28" max-version="28" />

@@ -2,7 +2,7 @@
 
 If you want to write your own bot or webhook, please see the
 [Bots and Webhooks developer documentation](bots.md). Afterwards send a pull
-request against the [docs/bot-list.md](https://github.com/nextcloud/spreed/blob/master/docs/bot-list.md)
+request against the [docs/bot-list.md](https://github.com/nextcloud/spreed/blob/main/docs/bot-list.md)
 to add your bot to the list, using the following template:
 
 ```markdown
