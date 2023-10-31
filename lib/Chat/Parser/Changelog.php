@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,21 +25,33 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Model\Message;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
-class Changelog {
-	/**
-	 * @param Message $chatMessage
-	 * @throws \OutOfBoundsException
-	 */
-	public function parseMessage(Message $chatMessage): void {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Changelog implements IEventListener {
+	public function handle(Event $event): void {
+		if (!$event instanceof MessageParseEvent) {
+			return;
+		}
+
+		$chatMessage = $event->getMessage();
+		if ($chatMessage->getMessageType() !== ChatManager::VERB_MESSAGE) {
+			return;
+		}
+
 		if ($chatMessage->getActorType() !== Attendee::ACTOR_GUESTS ||
 			$chatMessage->getActorId() !== Attendee::ACTOR_ID_CHANGELOG) {
-			throw new \OutOfBoundsException('Not a changelog');
+			return;
 		}
 
 		$l = $chatMessage->getL10n();
 		$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::ACTOR_ID_CHANGELOG, $l->t('Talk updates ✅'));
+		$event->stopPropagation();
 	}
 }

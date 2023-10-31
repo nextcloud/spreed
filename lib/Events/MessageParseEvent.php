@@ -33,4 +33,8 @@ class MessageParseEvent extends RoomEvent {
 	) {
 		parent::__construct($room);
 	}
+
+	public function getMessage(): Message {
+		return $this->message;
+	}
 }

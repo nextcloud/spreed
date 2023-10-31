@@ -3,7 +3,10 @@
 declare(strict_types=1);
 /**
  *
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -24,6 +27,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -32,6 +37,8 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\ICommentsManager;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -39,8 +46,9 @@ use OCP\IUserManager;
 
 /**
  * Helper class to get a rich message from a plain text message.
+ * @template-implements IEventListener<Event>
  */
-class UserMention {
+class UserMention implements IEventListener {
 
 	public function __construct(
 		protected ICommentsManager $commentsManager,
@@ -51,6 +59,19 @@ class UserMention {
 		protected ParticipantService $participantService,
 		protected IL10N $l,
 	) {
+	}
+
+	public function handle(Event $event): void {
+		if (!$event instanceof MessageParseEvent) {
+			return;
+		}
+
+		$message = $event->getMessage();
+		if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
+			return;
+		}
+
+		$this->parseMessage($message);
 	}
 
 	/**
@@ -66,7 +87,7 @@ class UserMention {
 	 *
 	 * @param Message $chatMessage
 	 */
-	public function parseMessage(Message $chatMessage): void {
+	protected function parseMessage(Message $chatMessage): void {
 		$comment = $chatMessage->getComment();
 		$message = $chatMessage->getMessage();
 		$messageParameters = $chatMessage->getMessageParameters();

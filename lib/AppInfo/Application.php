@@ -37,7 +37,11 @@ use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
 use OCA\Talk\Chat\Command\Listener as CommandListener;
 use OCA\Talk\Chat\Listener as ChatListener;
-use OCA\Talk\Chat\Parser\Listener as ParserListener;
+use OCA\Talk\Chat\Parser\Changelog;
+use OCA\Talk\Chat\Parser\Command;
+use OCA\Talk\Chat\Parser\ReactionParser;
+use OCA\Talk\Chat\Parser\SystemMessage;
+use OCA\Talk\Chat\Parser\UserMention;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
 use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
@@ -65,6 +69,7 @@ use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -184,6 +189,14 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
 
+		// Chat parser
+		$context->registerEventListener(MessageParseEvent::class, Changelog::class, -75);
+		$context->registerEventListener(MessageParseEvent::class, Command::class);
+		$context->registerEventListener(MessageParseEvent::class, ReactionParser::class);
+		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class);
+		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class, 9999);
+		$context->registerEventListener(MessageParseEvent::class, UserMention::class, -100);
+
 		// Command listener
 		$context->registerEventListener(BeforeChatMessageSentEvent::class, CommandListener::class);
 
@@ -281,7 +294,6 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $server->get(IEventDispatcher::class);
 
 		SystemMessageListener::register($dispatcher);
-		ParserListener::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}
