@@ -319,6 +319,7 @@ OC.L10N.register(
     "Nickname" : "Pseudonim",
     "Client ID" : "ID client",
     "Notifications" : "Notificări",
+    "Select a region" : "Selectează o regiune",
     "Mark as read" : "Marchează ca citit",
     "Mark as unread" : "Marchează ca necitit",
     "Remove from favorites" : "Șterge din favorite",

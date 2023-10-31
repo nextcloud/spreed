@@ -440,6 +440,7 @@ OC.L10N.register(
     "Nickname" : "Stuttnefni",
     "Client ID" : "Biðlaraauðkenni",
     "Notifications" : "Tilkynningar",
+    "Select a region" : "Veldu svæði",
     "Enter your name" : "Settu inn nafnið þitt",
     "Mark as read" : "Merkja sem lesið",
     "Mark as unread" : "Merkja allt sem ólesið",
