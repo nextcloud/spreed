@@ -785,6 +785,7 @@ async function initPublishers() {
 			signaling = new Signaling(user, signalingSettings)
 		} catch (exception) {
 			console.error('Publisher ' + i + ' init error: ' + exception)
+
 			continue
 		}
 
@@ -843,6 +844,7 @@ async function initSubscribers() {
 			signaling = new Signaling(user, signalingSettings)
 		} catch (exception) {
 			console.error('Subscriber ' + i + ' init error: ' + exception)
+
 			continue
 		}
 
@@ -1126,6 +1128,7 @@ const startVirtualParticipant = async function() {
 		signaling = new Signaling(user, signalingSettings)
 	} catch (exception) {
 		console.error('Virtual participant init error: ' + exception)
+
 		return
 	}
 
