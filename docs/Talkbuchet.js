@@ -549,6 +549,7 @@ class Signaling extends EventTarget {
 			method: 'POST',
 			body: new URLSearchParams({
 				flags,
+				recordingConsent: true,
 			}),
 		}
 
