@@ -895,7 +895,7 @@ class RealParticipant():
         try:
             # If the device selector is shown click on the "Join call" button
             # in the dialog to actually join the call.
-            callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button'))
+            callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button, .media-settings #call_button'))
             callButton.click()
         except TimeoutException:
             pass
