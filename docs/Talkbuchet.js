@@ -272,6 +272,22 @@ let connectionWarningTimeout = 5000
  * End of configuration section
  */
 
+/**
+ * Helper function to fetch a URL and fail in case of 40X or 50X error.
+ *
+ * By default fetch() only fails in case of network error, but not if the URL
+ * could be fetch but returned an error code.
+ */
+async function fetchOrFail(resource, options) {
+	const response = await fetch(resource, options)
+
+	if (!response.ok) {
+		throw new Error(response.status + ' ' + response.statusText + ': ' + JSON.stringify(await response.json()))
+	}
+
+	return response
+}
+
 // To run the script the current page in the browser must be a page of the
 // target Nextcloud instance, as cross-doman requests are not allowed, so the
 // host is directly got from the current location.
@@ -287,7 +303,7 @@ async function getCapabilities() {
 		},
 	}
 
-	const capabilitiesResponse = await fetch(capabitiliesUrl, fetchOptions)
+	const capabilitiesResponse = await fetchOrFail(capabitiliesUrl, fetchOptions)
 	const capabilities = await capabilitiesResponse.json()
 
 	return capabilities.ocs.data
@@ -347,7 +363,7 @@ async function getSignalingSettings(user, appToken, token) {
 		fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 	}
 
-	const signalingSettingsResponse = await fetch(signalingSettingsUrl + '?token=' + token, fetchOptions)
+	const signalingSettingsResponse = await fetchOrFail(signalingSettingsUrl + '?token=' + token, fetchOptions)
 	const signalingSettings = await signalingSettingsResponse.json()
 
 	return signalingSettings.ocs.data
@@ -511,7 +527,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		const joinRoomResponse = await fetch(joinLeaveRoomUrl, fetchOptions)
+		const joinRoomResponse = await fetchOrFail(joinLeaveRoomUrl, fetchOptions)
 		const joinRoomResult = await joinRoomResponse.json()
 		const nextcloudSessionId = joinRoomResult.ocs.data.sessionId
 
@@ -540,7 +556,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		await fetch(joinLeaveCallUrl, fetchOptions)
+		await fetchOrFail(joinLeaveCallUrl, fetchOptions)
 	}
 
 	async leaveCall() {
@@ -556,7 +572,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		await fetch(joinLeaveCallUrl, fetchOptions)
+		await fetchOrFail(joinLeaveCallUrl, fetchOptions)
 	}
 
 	async leaveRoom() {
@@ -572,7 +588,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		await fetch(joinLeaveRoomUrl, fetchOptions)
+		await fetchOrFail(joinLeaveRoomUrl, fetchOptions)
 
         this.send({
 			'type': 'room',
