@@ -293,7 +293,14 @@ async function getCapabilities() {
 	return capabilities.ocs.data
 }
 
-const capabilities = await getCapabilities()
+let capabilities = null
+try {
+	capabilities = await getCapabilities()
+} catch (exception) {
+	console.error('Capabilities could not be got: ' + exception)
+
+	throw Error('Talkbuchet could not be initialized, is the current page a working Nextcloud instance?')
+}
 
 function extractFeatureVersion(feature) {
 	const talkFeatures = capabilities?.capabilities?.spreed?.features
