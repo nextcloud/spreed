@@ -51,6 +51,7 @@ use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeesAddedEvent;
+use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -163,6 +164,13 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 		$context->registerEventListener(LoadSidebar::class, FilesTemplateLoader::class);
 
+		// Activity listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, ActivityListener::class);
+		$context->registerEventListener(BeforeCallEndedForEveryoneEvent::class, ActivityListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, ActivityListener::class, -100);
+		$context->registerEventListener(SessionLeftRoomEvent::class, ActivityListener::class, -100);
+
 		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
@@ -272,7 +280,6 @@ class Application extends App implements IBootstrap {
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->get(IEventDispatcher::class);
 
-		ActivityListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
 		SignalingListener::register($dispatcher);
