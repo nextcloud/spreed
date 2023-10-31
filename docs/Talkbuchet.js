@@ -779,7 +779,15 @@ function listenToPublisherConnectionChanges() {
 
 async function initPublishers() {
 	for (let i = 0; i < publishersCount; i++) {
-		const signalingSettings = await getSignalingSettings(user, appToken, token)
+		let signalingSettings = null
+		try {
+			signalingSettings = await getSignalingSettings(user, appToken, token)
+		} catch (exception) {
+			console.error('Publisher ' + i + ' get signaling settings error: ' + exception)
+
+			continue
+		}
+
 		let signaling = null
 		try {
 			signaling = new Signaling(user, signalingSettings)
@@ -838,7 +846,15 @@ async function initSubscribers() {
 	for (let i = 0; i < subscribersPerPublisherCount; i++) {
 		// The same signaling session can be shared between subscribers to
 		// different publishers.
-		const signalingSettings = await getSignalingSettings(user, appToken, token)
+		let signalingSettings = null
+		try {
+			signalingSettings = await getSignalingSettings(user, appToken, token)
+		} catch (exception) {
+			console.error('Subscriber ' + i + ' get signaling settings error: ' + exception)
+
+			continue
+		}
+
 		let signaling = null
 		try {
 			signaling = new Signaling(user, signalingSettings)
@@ -1122,7 +1138,15 @@ const startVirtualParticipant = async function() {
 		return
 	}
 
-	const signalingSettings = await getSignalingSettings(user, appToken, token)
+	let signalingSettings
+	try {
+		signalingSettings = await getSignalingSettings(user, appToken, token)
+	} catch (exception) {
+		console.error('Virtual participant get signaling settings error: ' + exception)
+
+		return
+	}
+
 	let signaling = null
 	try {
 		signaling = new Signaling(user, signalingSettings)
@@ -1151,8 +1175,21 @@ const startVirtualParticipant = async function() {
 		await signaling.getSessionId()
 	}
 
-	await signaling.joinRoom()
-	await signaling.joinCall(flags)
+	try {
+		await signaling.joinRoom()
+	} catch (exception) {
+		console.error('Virtual participant join room error: ' + exception)
+
+		return
+	}
+
+	try {
+		await signaling.joinCall(flags)
+	} catch (exception) {
+		console.error('Virtual participant join call error: ' + exception)
+
+		return
+	}
 
 	virtualParticipant = {
 		signaling
@@ -1183,8 +1220,21 @@ const stopVirtualParticipant = async function() {
 		delete publishers[virtualParticipant.publisherSessionId]
 	}
 
-	await virtualParticipant.signaling.leaveCall()
-	virtualParticipant.signaling.leaveRoom()
+	try {
+		await virtualParticipant.signaling.leaveCall()
+	} catch (exception) {
+		console.error('Virtual participant leave call error: ' + exception)
+
+		return
+	}
+
+	try {
+		virtualParticipant.signaling.leaveRoom()
+	} catch (exception) {
+		console.error('Virtual participant leave room error: ' + exception)
+
+		return
+	}
 
 	virtualParticipant = null
 }
