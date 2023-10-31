@@ -47,8 +47,10 @@ use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
+use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeesAddedEvent;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -60,9 +62,11 @@ use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
+use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\Listener as FederationListener;
@@ -225,6 +229,14 @@ class Application extends App implements IBootstrap {
 		// Signaling listeners
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
+		// Video verification
+		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(BeforeAttendeesAddedEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(SessionLeftRoomEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(GuestsCleanedUpEvent::class, PublicShareAuthListener::class);
+
 		// Register other integrations of Talk
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
@@ -256,7 +268,6 @@ class Application extends App implements IBootstrap {
 		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
-		PublicShareAuthListener::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}

@@ -3,7 +3,11 @@
 declare(strict_types=1);
 /**
  *
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
+ *
+ * @author Daniel Calviño Sánchez (danxuliu@gmail.com)
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -24,18 +28,21 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShareAuth;
 
-use OCA\Talk\Events\AddParticipantsEvent;
-use OCA\Talk\Events\JoinRoomGuestEvent;
-use OCA\Talk\Events\JoinRoomUserEvent;
-use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\AttendeeRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeesAddedEvent;
+use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
+use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
+use OCA\Talk\Events\GuestsCleanedUpEvent;
+use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Server;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
 /**
  * Custom behaviour for rooms to request the password for a share.
@@ -49,31 +56,25 @@ use OCP\Server;
  * These rooms are associated to a "share:password" object, and their custom
  * behaviour is provided by calling the methods of this class as a response to
  * different room events.
+ *
+ * @template-implements IEventListener<Event>
  */
-class Listener {
-	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (JoinRoomUserEvent $event): void {
-			self::preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID());
-		};
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
+class Listener implements IEventListener {
+	public function __construct(
+		protected ParticipantService $participantService,
+		protected RoomService $roomService,
+	) {
+	}
 
-		$listener = static function (JoinRoomGuestEvent $event): void {
-			self::preventExtraGuestsFromJoining($event->getRoom());
+	public function handle(Event $event): void {
+		match (get_class($event)) {
+			BeforeUserJoinedRoomEvent::class => $this->preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID()),
+			BeforeGuestJoinedRoomEvent::class => $this->preventExtraGuestsFromJoining($event->getRoom()),
+			BeforeAttendeesAddedEvent::class => $this->preventExtraUsersFromBeingAdded($event->getRoom(), $event->getAttendees()),
+			AttendeeRemovedEvent::class,
+			SessionLeftRoomEvent::class,
+			GuestsCleanedUpEvent::class => $this->destroyRoomOnParticipantLeave($event->getRoom()),
 		};
-		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
-
-		$listener = static function (AddParticipantsEvent $event): void {
-			self::preventExtraUsersFromBeingAdded($event->getRoom(), $event->getParticipants());
-		};
-		$dispatcher->addListener(Room::EVENT_BEFORE_USERS_ADD, $listener);
-
-		$listener = static function (RoomEvent $event): void {
-			self::destroyRoomOnParticipantLeave($event->getRoom());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
-		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, $listener);
 	}
 
 	/**
@@ -86,21 +87,20 @@ class Listener {
 	 * @param string $userId
 	 * @throws RoomNotFoundException
 	 */
-	public static function preventExtraUsersFromJoining(Room $room, string $userId): void {
+	protected function preventExtraUsersFromJoining(Room $room, string $userId): void {
 		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
-		$participantService = Server::get(ParticipantService::class);
 		try {
-			$participant = $participantService->getParticipant($room, $userId, false);
+			$participant = $this->participantService->getParticipant($room, $userId, false);
 			if ($participant->getAttendee()->getParticipantType() === Participant::OWNER) {
 				return;
 			}
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 		}
 
-		if ($participantService->getNumberOfActors($room) > 1) {
+		if ($this->participantService->getNumberOfActors($room) > 1) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -114,13 +114,12 @@ class Listener {
 	 * @param Room $room
 	 * @throws RoomNotFoundException
 	 */
-	public static function preventExtraGuestsFromJoining(Room $room): void {
+	protected function preventExtraGuestsFromJoining(Room $room): void {
 		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
-		$participantService = Server::get(ParticipantService::class);
-		if ($participantService->getNumberOfActors($room) > 1) {
+		if ($this->participantService->getNumberOfActors($room) > 1) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -132,27 +131,27 @@ class Listener {
 	 * This method should be called before a user is added to a room.
 	 *
 	 * @param Room $room
-	 * @param array[] $participants
+	 * @param Attendee[] $attendees
 	 * @throws RoomNotFoundException
 	 */
-	public static function preventExtraUsersFromBeingAdded(Room $room, array $participants): void {
+	protected function preventExtraUsersFromBeingAdded(Room $room, array $attendees): void {
 		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
-		if (empty($participants)) {
+		if (empty($attendees)) {
 			return;
 		}
 
 		// Events with more than one participant can be directly aborted, as
 		// when the owner is added during room creation or a user self-joins the
 		// event will always have just one participant.
-		if (count($participants) > 1) {
+		if (count($attendees) > 1) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 
-		$participant = $participants[0];
-		if ($participant['participantType'] !== Participant::OWNER && $participant['participantType'] !== Participant::USER_SELF_JOINED) {
+		$attendee = $attendees[0];
+		if ($attendee->getParticipantType() !== Participant::OWNER && $attendee->getParticipantType() !== Participant::USER_SELF_JOINED) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -167,13 +166,11 @@ class Listener {
 	 *
 	 * @param Room $room
 	 */
-	public static function destroyRoomOnParticipantLeave(Room $room): void {
+	protected function destroyRoomOnParticipantLeave(Room $room): void {
 		if ($room->getObjectType() !== Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
 			return;
 		}
 
-		$roomService = Server::get(RoomService::class);
-
-		$roomService->deleteRoom($room);
+		$this->roomService->deleteRoom($room);
 	}
 }
