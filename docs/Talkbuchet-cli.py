@@ -109,6 +109,7 @@ import websocket
 from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -894,8 +895,15 @@ class RealParticipant():
 
         try:
             # If the device selector is shown click on the "Join call" button
-            # in the dialog to actually join the call.
+            # in the dialog to actually join the call. Recording consent is
+            # granted first if needed.
             callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button, .media-settings #call_button'))
+
+            try:
+                self.seleniumHelper.driver.find_element(By.XPATH, '//label[contains(., "Give consent to the recording of this call")]').click()
+            except NoSuchElementException:
+                pass
+
             callButton.click()
         except TimeoutException:
             pass
