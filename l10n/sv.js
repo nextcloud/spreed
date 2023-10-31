@@ -793,6 +793,7 @@ OC.L10N.register(
     "Jabber ID" : "Jabber-id",
     "Bridge saved" : "Brygga sparad",
     "Notifications" : "Aviseringar",
+    "Select a region" : "Välj en region",
     "Enter your name" : "Ange ditt namn",
     "Mark as read" : "Markera som läst",
     "Mark as unread" : "Markera som oläst",

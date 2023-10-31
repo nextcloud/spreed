@@ -274,6 +274,7 @@ OC.L10N.register(
     "Nickname" : "Alcunha",
     "Client ID" : "Id. do Cliente",
     "Notifications" : "Notificações",
+    "Select a region" : "Selecione uma região",
     "Remove from favorites" : "Remover de favoritos",
     "Add to favorites" : "Adicionar aos favoritos",
     "Groups" : "Grupos",
