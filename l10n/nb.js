@@ -487,6 +487,7 @@ OC.L10N.register(
     "Nickname" : "Kallenavn",
     "Client ID" : "Klient-ID",
     "Notifications" : "Varsler",
+    "Select a region" : "Velg region",
     "Mark as read" : "Merk som lest",
     "Mark as unread" : "Merk som ulest",
     "Remove from favorites" : "Fjern fra favoritter",
