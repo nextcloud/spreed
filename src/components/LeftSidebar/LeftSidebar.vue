@@ -1025,13 +1025,8 @@ export default {
 	padding: 0 !important;
 }
 
-// FIXME upstream https://github.com/nextcloud-libraries/nextcloud-vue/issues/4625
-:deep(.list-item__wrapper--active) {
-	.list-item:hover,
-	.list-item:focus,
-	.list-item:focus-visible,
-	.list-item:active {
-		background-color: var(--color-primary-element-hover);
-	}
+:deep(.list-item) {
+	overflow: hidden;
+	outline-offset: -2px;
 }
 </style>
