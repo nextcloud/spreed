@@ -47,8 +47,11 @@ use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
+use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeesAddedEvent;
+use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -60,10 +63,14 @@ use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
+use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
+use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\Listener as FederationListener;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -157,6 +164,13 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 		$context->registerEventListener(LoadSidebar::class, FilesTemplateLoader::class);
 
+		// Activity listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, ActivityListener::class);
+		$context->registerEventListener(BeforeCallEndedForEveryoneEvent::class, ActivityListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, ActivityListener::class, -100);
+		$context->registerEventListener(SessionLeftRoomEvent::class, ActivityListener::class, -100);
+
 		// Bot listeners
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
@@ -207,9 +221,15 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
+		// Notification listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, NotificationListener::class);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, NotificationListener::class);
+		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, NotificationListener::class);
+		$context->registerEventListener(UserJoinedRoomEvent::class, NotificationListener::class);
+
 		// Call listeners
 		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
-		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, RestrictStartingCallsListener::class, 1000);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
@@ -224,6 +244,14 @@ class Application extends App implements IBootstrap {
 
 		// Signaling listeners
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
+
+		// Video verification
+		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(BeforeAttendeesAddedEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(SessionLeftRoomEvent::class, PublicShareAuthListener::class);
+		$context->registerEventListener(GuestsCleanedUpEvent::class, PublicShareAuthListener::class);
 
 		// Register other integrations of Talk
 		$context->registerSearchProvider(ConversationSearch::class);
@@ -252,11 +280,8 @@ class Application extends App implements IBootstrap {
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->get(IEventDispatcher::class);
 
-		ActivityListener::register($dispatcher);
-		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
-		PublicShareAuthListener::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}
