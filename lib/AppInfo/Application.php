@@ -64,10 +64,12 @@ use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
+use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\Listener as FederationListener;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -211,9 +213,15 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
+		// Notification listeners
+		$context->registerEventListener(AttendeesAddedEvent::class, NotificationListener::class);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, NotificationListener::class);
+		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, NotificationListener::class);
+		$context->registerEventListener(UserJoinedRoomEvent::class, NotificationListener::class);
+
 		// Call listeners
 		$context->registerEventListener(BeforeUserLoggedOutEvent::class, BeforeUserLoggedOutListener::class);
-		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, RestrictStartingCallsListener::class, 1000);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, StatusListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
@@ -265,7 +273,6 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $server->get(IEventDispatcher::class);
 
 		ActivityListener::register($dispatcher);
-		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
 		ParserListener::register($dispatcher);
 		SignalingListener::register($dispatcher);

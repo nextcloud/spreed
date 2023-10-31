@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,12 +26,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Notification;
 
 use OCA\Talk\AppInfo\Application;
-use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
-use OCA\Talk\Events\JoinRoomUserEvent;
-use OCA\Talk\Events\RoomEvent;
-use OCA\Talk\Events\SilentModifyParticipantEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -40,7 +44,6 @@ use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager;
-use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -61,52 +64,27 @@ class Listener implements IEventListener {
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (AddParticipantsEvent $event): void {
-			$room = $event->getRoom();
-
-			if ($room->getObjectType() === 'file') {
-				return;
-			}
-
-			$listener = Server::get(self::class);
-			$listener->generateInvitation($room, $event->getParticipants());
+	public function handle(Event $event): void {
+		match (get_class($event)) {
+			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee()),
+			AttendeesAddedEvent::class => $this->generateInvitation($event->getRoom(), $event->getAttendees()),
+			UserJoinedRoomEvent::class => $this->markInvitationRead($event->getRoom()),
+			BeforeParticipantModifiedEvent::class => $this->checkCallNotifications($event),
+			ParticipantModifiedEvent::class => $this->afterParticipantJoinedCall($event),
 		};
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
-
-		$listener = static function (JoinRoomUserEvent $event): void {
-			$listener = Server::get(self::class);
-			$listener->markInvitationRead($event->getRoom());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, $listener);
-
-		$listener = static function (RoomEvent $event): void {
-			$listener = Server::get(self::class);
-			$silent = $event instanceof SilentModifyParticipantEvent;
-			$listener->checkCallNotifications($event->getRoom(), $silent);
-		};
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $listener);
-
-		$listener = static function (RoomEvent $event): void {
-			$listener = Server::get(self::class);
-			$listener->sendCallNotifications($event->getRoom());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
-
-		$listener = static function (RoomEvent $event): void {
-			$listener = Server::get(self::class);
-			$listener->markCallNotificationsRead($event->getRoom());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 	}
 
 	/**
 	 * Room invitation: "{actor} invited you to {call}"
 	 *
 	 * @param Room $room
-	 * @param array[] $participants
+	 * @param Attendee[] $attendees
 	 */
-	public function generateInvitation(Room $room, array $participants): void {
+	protected function generateInvitation(Room $room, array $attendees): void {
+		if ($room->getObjectType() === Room::OBJECT_TYPE_FILE) {
+			return;
+		}
+
 		$actor = $this->userSession->getUser();
 		if (!$actor instanceof IUser) {
 			return;
@@ -131,19 +109,19 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		foreach ($participants as $participant) {
-			if ($participant['actorType'] !== Attendee::ACTOR_USERS) {
+		foreach ($attendees as $attendee) {
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
 				// No user => no activity
 				continue;
 			}
 
-			if ($actorId === $participant['actorId']) {
+			if ($actorId === $attendee->getActorId()) {
 				// No activity for self-joining and the creator
 				continue;
 			}
 
 			try {
-				$notification->setUser($participant['actorId']);
+				$notification->setUser($attendee->getActorId());
 				$this->notificationManager->notify($notification);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
@@ -160,7 +138,7 @@ class Listener implements IEventListener {
 	 *
 	 * @param Room $room
 	 */
-	public function markInvitationRead(Room $room): void {
+	protected function markInvitationRead(Room $room): void {
 		$currentUser = $this->userSession->getUser();
 		if (!$currentUser instanceof IUser) {
 			return;
@@ -182,18 +160,29 @@ class Listener implements IEventListener {
 	/**
 	 * Call notification: "{user} wants to talk with you"
 	 */
-	public function checkCallNotifications(Room $room, bool $silent = false): void {
-		if ($silent) {
+	protected function checkCallNotifications(BeforeParticipantModifiedEvent $event): void {
+		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
+			return;
+		}
+
+		if ($event->getOldValue() !== Participant::FLAG_DISCONNECTED
+			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
+			return;
+		}
+
+		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT)) {
 			$this->shouldSendCallNotification = false;
 			return;
 		}
+
+		$room = $event->getRoom();
 		if ($room->getActiveSince() instanceof \DateTime) {
 			// Call already active => No new notifications
 			$this->shouldSendCallNotification = false;
 			return;
 		}
 
-		if ($room->getObjectType() === 'file') {
+		if ($room->getObjectType() === Room::OBJECT_TYPE_FILE) {
 			$this->shouldSendCallNotification = false;
 			return;
 		}
@@ -201,16 +190,52 @@ class Listener implements IEventListener {
 		$this->shouldSendCallNotification = true;
 	}
 
+	protected function afterParticipantJoinedCall(ParticipantModifiedEvent $event): void {
+		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
+			return;
+		}
+
+		if ($event->getOldValue() !== Participant::FLAG_DISCONNECTED
+			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
+			return;
+		}
+
+		$this->markCallNotificationsRead($event->getRoom());
+		if ($this->shouldSendCallNotification) {
+			$this->sendCallNotifications($event->getRoom());
+		}
+	}
+
 	/**
 	 * Call notification: "{user} wants to talk with you"
 	 *
 	 * @param Room $room
 	 */
-	public function sendCallNotifications(Room $room): void {
-		if (!$this->shouldSendCallNotification) {
+	protected function markCallNotificationsRead(Room $room): void {
+		$currentUser = $this->userSession->getUser();
+		if (!$currentUser instanceof IUser) {
 			return;
 		}
 
+		$notification = $this->notificationManager->createNotification();
+		try {
+			$notification->setApp(Application::APP_ID)
+				->setUser($currentUser->getUID())
+				->setObject('call', $room->getToken())
+				->setSubject('call');
+			$this->notificationManager->markProcessed($notification);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			return;
+		}
+	}
+
+	/**
+	 * Call notification: "{user} wants to talk with you"
+	 *
+	 * @param Room $room
+	 */
+	protected function sendCallNotifications(Room $room): void {
 		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
@@ -265,36 +290,9 @@ class Listener implements IEventListener {
 	}
 
 	/**
-	 * Call notification: "{user} wants to talk with you"
-	 *
-	 * @param Room $room
+	 * Forced call notification when ringing a single participant again
 	 */
-	public function markCallNotificationsRead(Room $room): void {
-		$currentUser = $this->userSession->getUser();
-		if (!$currentUser instanceof IUser) {
-			return;
-		}
-
-		$notification = $this->notificationManager->createNotification();
-		try {
-			$notification->setApp(Application::APP_ID)
-				->setUser($currentUser->getUID())
-				->setObject('call', $room->getToken())
-				->setSubject('call');
-			$this->notificationManager->markProcessed($notification);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			return;
-		}
-	}
-
-	public function handle(Event $event): void {
-		if ($event instanceof CallNotificationSendEvent) {
-			$this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee());
-		}
-	}
-
-	public function sendCallNotification(Room $room, Attendee $actor, Attendee $target): void {
+	protected function sendCallNotification(Room $room, Attendee $actor, Attendee $target): void {
 		try {
 			// Remove previous call notifications
 			$notification = $this->notificationManager->createNotification();
