@@ -23,12 +23,16 @@ namespace OCA\Talk\Tests\php\Chat\SystemMessage;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\SystemMessage\Listener;
-use OCA\Talk\Events\AddParticipantsEvent;
-use OCA\Talk\Events\ModifyParticipantEvent;
-use OCA\Talk\Events\ModifyRoomEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -63,6 +67,10 @@ class ListenerTest extends TestCase {
 	protected $timeFactory;
 	/** @var IEventDispatcher|MockObject */
 	protected $eventDispatcher;
+	/** @var Manager|MockObject */
+	protected $manager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	protected ?array $handlers = null;
 	protected ?\DateTime $dummyTime = null;
 
@@ -84,6 +92,8 @@ class ListenerTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->timeFactory->method('getDateTime')->willReturn($this->dummyTime);
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
+		$this->manager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 
 		$this->handlers = [];
 
@@ -99,18 +109,10 @@ class ListenerTest extends TestCase {
 			$this->talkSession,
 			$this->session,
 			$this->userSession,
-			$this->timeFactory
+			$this->timeFactory,
+			$this->manager,
+			$this->participantService,
 		);
-
-		$this->overwriteService(Listener::class, $this->listener);
-		$this->listener->register($this->eventDispatcher);
-	}
-
-	public function tearDown(): void {
-		$this->restoreService(Listener::class);
-		$this->logout();
-
-		parent::tearDown();
 	}
 
 	private function dispatch($eventName, $event) {
@@ -141,12 +143,13 @@ class ListenerTest extends TestCase {
 			'actorId' => 'alice_actor',
 			'participantType' => Participant::USER,
 		]];
-		$event = new AddParticipantsEvent($room, $participants);
+		$attendees = array_map(static fn (array $participant) => Attendee::fromParams($participant), $participants);
+		$event = new AttendeesAddedEvent($room, $attendees);
 
 		$this->chatManager->expects($this->never())
 			->method('addSystemMessage');
 
-		$this->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+		self::invokePrivate($this->listener, 'handle', [$event]);
 	}
 
 	public static function dataRoomTypes(): array {
@@ -224,8 +227,10 @@ class ListenerTest extends TestCase {
 		$room->method('getType')->willReturn($roomType);
 		$room->method('getObjectType')->willReturn($objectType);
 
+		$attendees = array_map(static fn (array $participant) => Attendee::fromParams($participant), $participants);
+
 		// TODO: add all cases
-		$event = new AddParticipantsEvent($room, $participants);
+		$event = new AttendeesAddedEvent($room, $attendees);
 
 		$consecutive = [];
 		foreach ($expectedMessages as $expectedMessage) {
@@ -251,9 +256,12 @@ class ListenerTest extends TestCase {
 					$i++;
 					return $this->createMock(IComment::class);
 				});
+		} else {
+			$this->chatManager->expects($this->never())
+				->method('addSystemMessage');
 		}
 
-		$this->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+		self::invokePrivate($this->listener, 'handle', [$event]);
 	}
 
 	public static function dataParticipantTypeChange(): array {
@@ -313,7 +321,7 @@ class ListenerTest extends TestCase {
 		$participant = $this->createMock(Participant::class);
 		$participant->method('getAttendee')->willReturn($attendee);
 
-		$event = new ModifyParticipantEvent($room, $participant, '', $newParticipantType, $oldParticipantType);
+		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_TYPE, $newParticipantType, $oldParticipantType);
 
 		foreach ($expectedMessages as $expectedMessage) {
 			$consecutive[] = [
@@ -338,9 +346,12 @@ class ListenerTest extends TestCase {
 					$i++;
 					return $this->createMock(IComment::class);
 				});
+		} else {
+			$this->chatManager->expects($this->never())
+				->method('addSystemMessage');
 		}
 
-		$this->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
+		self::invokePrivate($this->listener, 'handle', [$event]);
 	}
 
 	public static function dataCallRecordingChange(): array {
@@ -600,7 +611,7 @@ class ListenerTest extends TestCase {
 			$expectedActorId = 'logged_in_user';
 		}
 
-		$event = new ModifyRoomEvent($room, 'callRecording', $newStatus, $oldStatus, $participant);
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_CALL_RECORDING, $newStatus, $oldStatus, $participant);
 
 		if ($expectedMessage !== null) {
 			$this->chatManager->expects($this->once())
@@ -621,6 +632,6 @@ class ListenerTest extends TestCase {
 				->method('addSystemMessage');
 		}
 
-		$this->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
+		self::invokePrivate($this->listener, 'handle', [$event]);
 	}
 }

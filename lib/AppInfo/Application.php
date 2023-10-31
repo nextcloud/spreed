@@ -57,6 +57,7 @@ use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeesAddedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
+use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
@@ -71,6 +72,7 @@ use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
@@ -137,6 +139,7 @@ use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Server;
 use OCP\Settings\IManager;
 use OCP\Share\Events\BeforeShareCreatedEvent;
+use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\SpeechToText\Events\TranscriptionFailedEvent;
 use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
@@ -187,7 +190,16 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RoomDeletedEvent::class, ChatListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(BeforeDuplicateShareSentEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(BeforeParticipantModifiedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(BeforeShareCreatedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(LobbyModifiedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(RoomCreatedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(ShareCreatedEvent::class, SystemMessageListener::class);
 
 		// Chat parser
 		$context->registerEventListener(MessageParseEvent::class, Changelog::class, -75);
@@ -293,7 +305,6 @@ class Application extends App implements IBootstrap {
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->get(IEventDispatcher::class);
 
-		SystemMessageListener::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 	}
