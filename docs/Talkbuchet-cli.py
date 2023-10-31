@@ -109,6 +109,7 @@ import websocket
 from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from shutil import disk_usage
@@ -896,7 +897,7 @@ class RealParticipant():
             # in the dialog to actually join the call.
             callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button'))
             callButton.click()
-        except:
+        except TimeoutException:
             pass
 
     def leaveCall(self):
