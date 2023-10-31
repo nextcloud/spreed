@@ -839,6 +839,8 @@ class RealParticipant():
             the local server is used by default.
         """
 
+        self.loggedIn = False
+
         self.nextcloudUrl = nextcloudUrl
 
         self.seleniumHelper = SeleniumHelper()
@@ -873,6 +875,8 @@ class RealParticipant():
             await fetch(\'''' + self.nextcloudUrl + '''\', fetchOptions)
         ''')
 
+        self.loggedIn = True
+
     def joinRoom(self, token):
         """
         Joins the room with the given token.
@@ -883,6 +887,21 @@ class RealParticipant():
         """
 
         self.seleniumHelper.driver.get(self.nextcloudUrl + '/call/' + token)
+
+        if self.loggedIn:
+            return
+
+        # Starting with Talk 18 guests need to set their name after joining a
+        # room. If the dialog is not shown it is assumed that an older version
+        # is being used.
+        try:
+            submitNameButton = WebDriverWait(self.seleniumHelper.driver, timeout=10).until(lambda driver: driver.find_element(By.XPATH, '//button[contains(., "Submit name and join")]'))
+
+            submitNameButton.find_element(By.XPATH, '..//input[@type="text"]').send_keys('Talkbuchet')
+
+            submitNameButton.click()
+        except TimeoutException:
+            pass
 
     def joinCall(self):
         """
