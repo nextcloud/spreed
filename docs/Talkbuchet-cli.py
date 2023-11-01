@@ -355,7 +355,8 @@ class SeleniumHelper:
 
         # Headless mode uses a little less memory on each instance, so it is
         # specially useful when there are several virtual participants.
-        options.headless = headless
+        if headless:
+            options.add_argument('--headless')
 
         if remoteSeleniumUrl:
             self.driver = webdriver.Remote(
