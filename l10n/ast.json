@@ -236,6 +236,8 @@
     "Error" : "Error",
     "Beta" : "Beta",
     "An error occurred while installing the Matterbridge app" : "Prodúxose un error mentanto s'instalaba l'aplicación Matterbridge",
+    "Back" : "Atrás",
+    "Cancel" : "Encaboxar",
     "Connecting …" : "Conectando…",
     "You" : "Tu",
     "This conversation is read-only" : "Esta conversación ye namás de llectura",
@@ -247,6 +249,8 @@
     "_%n day_::_%n days_" : ["%n día","%n díes"],
     "_%n week_::_%n weeks_" : ["%n selmana","%n selmanes"],
     "Error occurred when locking the conversation" : "Prodúxose un error mentanto se bloquiaba la conversación",
+    "Save" : "Guardar",
+    "Edit" : "Editar",
     "Delete" : "Desaniciar",
     "Password" : "Contraseña",
     "Nickname" : "Nomatu",
@@ -268,6 +272,7 @@
     "Details" : "Detalles",
     "Privacy" : "Privacidá",
     "Keyboard shortcuts" : "Atayos del tecláu",
+    "Open sidebar" : "Abrir la barra llateral",
     "Audio" : "Audiu",
     "An error occurred while requesting assistance" : "Prodúxose un error mentanto se solicitaba l'asistencia"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

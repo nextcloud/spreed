@@ -1030,6 +1030,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "El marcatge SIP ara està desactivat",
     "Error occurred when enabling SIP dial-in" : "S'ha produït un error en activar el telèfon d'entrada SIP",
     "Error occurred when disabling SIP dial-in" : "S'ha produït un error en desactivar el telèfon d'entrada SIP",
+    "Select a region" : "Selecciona una regió",
     "Enter your name" : "Introdueix el teu nom",
     "Conversation actions" : "Accions de conversa",
     "Mark as read" : "Marca com a llegit",
