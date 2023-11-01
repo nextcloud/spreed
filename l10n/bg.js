@@ -974,6 +974,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "SIP набирането вече е деактивирано",
     "Error occurred when enabling SIP dial-in" : "Възникна грешка при активиране на SIP набиране",
     "Error occurred when disabling SIP dial-in" : "Възникна грешка при деактивиране на SIP набиране",
+    "Select a region" : "Изберете регион",
     "Enter your name" : "Въведете вашето име",
     "Conversation actions" : "Действия при разговор",
     "Mark as read" : "Маркирай като прочетено",
