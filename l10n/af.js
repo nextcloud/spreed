@@ -286,6 +286,7 @@ OC.L10N.register(
     "Nickname" : "Bynaam",
     "Client ID" : "Kliënt-ID",
     "Notifications" : "Kennisgewings",
+    "Select a region" : "Kies ’n streek",
     "Remove from favorites" : "Verwyder uit gunstelinge",
     "Add to favorites" : "Voeg by gunstelinge",
     "Groups" : "Groepe",

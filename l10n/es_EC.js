@@ -998,6 +998,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "El acceso telefónico SIP ahora está deshabilitado",
     "Error occurred when enabling SIP dial-in" : "Se produjo un error al habilitar el acceso telefónico SIP",
     "Error occurred when disabling SIP dial-in" : "Se produjo un error al deshabilitar el acceso telefónico SIP",
+    "Select a region" : "Selecciona una región",
     "Conversation actions" : "Acciones de la conversación",
     "Mark as read" : "Marcar como leído",
     "Mark as unread" : "Marcar como no leído",

@@ -993,6 +993,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "Die SIP-Einwahl ist jetzt deaktiviert",
     "Error occurred when enabling SIP dial-in" : "Beim Aktivieren der SIP-Einwahl ist ein Fehler aufgetreten",
     "Error occurred when disabling SIP dial-in" : "Beim Deaktivieren der SIP-Einwahl ist ein Fehler aufgetreten",
+    "Select a region" : "Eine Region auswählen",
     "Enter your name" : "Gib deinen Namen ein",
     "Submit name and join" : "Namen übermitteln und beitreten",
     "Conversation actions" : "Unterhaltungs-Aktionen",
