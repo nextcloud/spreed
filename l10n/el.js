@@ -738,6 +738,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "Το SIP dial-in είναι πλέον απενεργοποιημένο",
     "Error occurred when enabling SIP dial-in" : "Παρουσιάστηκε σφάλμα κατά την ενεργοποίηση του SIP dial-in",
     "Error occurred when disabling SIP dial-in" : "Παρουσιάστηκε σφάλμα κατά την απενεργοποίηση του SIP dial-in",
+    "Select a region" : "Επιλογή περιοχής",
     "Enter your name" : "Προσθέστε το όνομά σας",
     "Conversation actions" : "Δράσεις συνομιλιών",
     "Mark as read" : "Σήμανση ως αναγνωσμένο",

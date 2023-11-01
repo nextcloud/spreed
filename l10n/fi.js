@@ -791,6 +791,7 @@ OC.L10N.register(
     "SIP dial-in is now possible without PIN requirement" : "SIP-sisäänsoitto on nyt mahdollista ilman PIN-koodin vaatimusta",
     "SIP dial-in is now enabled" : "SIP-sisäänsoitto on nyt käytössä",
     "SIP dial-in is now disabled" : "SIP-sisäänsoitto on nyt pois käytöstä",
+    "Select a region" : "Valitse alue",
     "Enter your name" : "Kirjoita nimesi",
     "Conversation actions" : "Keskustelun toiminnot",
     "Mark as read" : "Merkitse luetuksi",

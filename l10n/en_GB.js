@@ -1078,6 +1078,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "SIP dial-in is now disabled",
     "Error occurred when enabling SIP dial-in" : "Error occurred when enabling SIP dial-in",
     "Error occurred when disabling SIP dial-in" : "Error occurred when disabling SIP dial-in",
+    "Select a region" : "Select a region",
     "Enter your name" : "Enter your name",
     "Submit name and join" : "Submit name and join",
     "Creating the conversation …" : "Creating the conversation …",

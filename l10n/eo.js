@@ -295,6 +295,7 @@ OC.L10N.register(
     "Nickname" : "Kromnomo",
     "Client ID" : "Klientidentigilo",
     "Notifications" : "Sciigoj",
+    "Select a region" : "Elekti regionon",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
     "Groups" : "Grupoj",

@@ -984,6 +984,7 @@ OC.L10N.register(
     "SIP dial-in is now disabled" : "SIP markatzea desgaituta dago",
     "Error occurred when enabling SIP dial-in" : "Errorea gertatu da SIP markatzea gaitzean",
     "Error occurred when disabling SIP dial-in" : "Errorea gertatu da SIP markatzea desgaitzean",
+    "Select a region" : "Hautatu eskualde bat",
     "Enter your name" : "Sartu zure izena",
     "Submit name and join" : "Bidali izena eta sartu",
     "Conversation actions" : "Elkarrizketa ekintzak",

@@ -468,6 +468,7 @@ OC.L10N.register(
     "unknown state" : "מצב לא ידוע",
     "Bridge saved" : "הגישור נשמר",
     "Notifications" : "התראות",
+    "Select a region" : "נא לבחור איזור",
     "Enter your name" : "נא למלא את שמך",
     "Mark as read" : "סימון כנקרא",
     "Mark as unread" : "סימון כלא נקרא",
