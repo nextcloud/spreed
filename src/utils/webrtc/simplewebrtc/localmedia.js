@@ -318,6 +318,8 @@ LocalMedia.prototype.startScreenShare = function(mode, constraints, cb) {
 
 			self.emit('localScreen', stream)
 		} else {
+			console.error('Error when starting screen share: ', err)
+
 			self.emit('localScreenRequestFailed')
 		}
 
