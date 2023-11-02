@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat\Parser;
 use OCA\Circles\CirclesManager;
 use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -35,6 +36,8 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Federation\ICloudIdManager;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -50,7 +53,10 @@ use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use Sabre\VObject\Reader;
 
-class SystemMessage {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class SystemMessage implements IEventListener {
 	protected ?IL10N $l = null;
 
 	/**
@@ -82,11 +88,33 @@ class SystemMessage {
 	) {
 	}
 
+	public function handle(Event $event): void {
+		if (!$event instanceof MessageParseEvent) {
+			return;
+		}
+
+		if ($event->getMessage()->getMessageType() === ChatManager::VERB_SYSTEM) {
+			try {
+				$this->parseMessage($event->getMessage());
+				// Disabled so we can parse mentions in captions: $event->stopPropagation();
+			} catch (\OutOfBoundsException $e) {
+				// Unknown message, ignore
+			}
+		} elseif ($event->getMessage()->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
+			try {
+				$this->parseDeletedMessage($event->getMessage());
+				$event->stopPropagation();
+			} catch (\OutOfBoundsException) {
+				// Unknown message, ignore
+			}
+		}
+	}
+
 	/**
 	 * @param Message $chatMessage
 	 * @throws \OutOfBoundsException
 	 */
-	public function parseMessage(Message $chatMessage): void {
+	protected function parseMessage(Message $chatMessage): void {
 		$this->l = $chatMessage->getL10n();
 		$comment = $chatMessage->getComment();
 		$room = $chatMessage->getRoom();
@@ -577,7 +605,7 @@ class SystemMessage {
 	 * @param Message $chatMessage
 	 * @throws \OutOfBoundsException
 	 */
-	public function parseDeletedMessage(Message $chatMessage): void {
+	protected function parseDeletedMessage(Message $chatMessage): void {
 		$this->l = $chatMessage->getL10n();
 		$data = json_decode($chatMessage->getMessage(), true);
 		if (!\is_array($data)) {

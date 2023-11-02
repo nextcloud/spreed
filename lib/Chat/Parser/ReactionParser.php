@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 /**
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2021 Vitor Mattos <vitor@php.rio>
  *
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Vitor Mattos <vitor@php.rio>
  *
  * @license GNU AGPL version 3 or any later version
@@ -26,25 +28,33 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat\Parser;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Model\Message;
-use OCP\IL10N;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
-class ReactionParser {
-	private ?IL10N $l = null;
-	/**
-	 * @param Message $message
-	 * @throws \OutOfBoundsException
-	 */
-	public function parseMessage(Message $message): void {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class ReactionParser implements IEventListener {
+	public function handle(Event $event): void {
+		if (!$event instanceof MessageParseEvent) {
+			return;
+		}
+		$message = $event->getMessage();
+		if ($message->getMessageType() !== ChatManager::VERB_REACTION && $message->getMessageType() !== ChatManager::VERB_REACTION_DELETED) {
+			return;
+		}
+
 		$comment = $message->getComment();
 		if (!in_array($comment->getVerb(), [ChatManager::VERB_REACTION, ChatManager::VERB_REACTION_DELETED], true)) {
-			throw new \OutOfBoundsException('Not a reaction');
+			return;
 		}
-		$this->l = $message->getL10n();
+
 		$message->setMessageType(ChatManager::VERB_SYSTEM);
 		if ($comment->getVerb() === ChatManager::VERB_REACTION_DELETED) {
 			// This message is necessary to make compatible with old clients
-			$message->setMessage($this->l->t('Reaction deleted by author'), [], $comment->getVerb());
+			$message->setMessage($message->getL10n()->t('Reaction deleted by author'), [], $comment->getVerb());
 		} else {
 			$message->setMessage($message->getMessage(), [], $comment->getVerb());
 		}

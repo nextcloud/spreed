@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -25,16 +27,18 @@ namespace OCA\Talk\Chat\SystemMessage;
 
 use DateInterval;
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Events\AddParticipantsEvent;
-use OCA\Talk\Events\AlreadySharedEvent;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
-use OCA\Talk\Events\ModifyEveryoneEvent;
-use OCA\Talk\Events\ModifyLobbyEvent;
-use OCA\Talk\Events\ModifyParticipantEvent;
-use OCA\Talk\Events\ModifyRoomEvent;
-use OCA\Talk\Events\RemoveUserEvent;
-use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
+use OCA\Talk\Events\BeforeParticipantModifiedEvent;
+use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\RoomCreatedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -42,19 +46,16 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Server;
 use OCP\Share\Events\BeforeShareCreatedEvent;
 use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\IShare;
@@ -71,45 +72,68 @@ class Listener implements IEventListener {
 		protected ISession $session,
 		protected IUserSession $userSession,
 		protected ITimeFactory $timeFactory,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, self::class . '::sendSystemMessageAboutBeginOfCall');
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, self::class . '::sendSystemMessageAboutCallLeft');
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CREATE, self::class . '::sendSystemMessageAboutConversationCreated');
-		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, self::class . '::sendSystemMessageAboutConversationRenamed');
-		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, self::class . '::sendSystemMessageAboutRoomDescriptionChanges');
-		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, self::class . '::sendSystemMessageAboutRoomPassword');
-		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, self::class . '::sendSystemGuestPermissionsMessage');
-		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, self::class . '::sendSystemReadOnlyMessage');
-		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, self::class . '::sendSystemListableMessage');
-		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, self::class . '::sendSystemLobbyMessage');
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, self::class . '::addSystemMessageUserAdded');
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, self::class . '::sendSystemMessageUserRemoved');
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, self::class . '::sendSystemMessageAboutPromoteOrDemoteModerator');
-		$dispatcher->addListener(BeforeShareCreatedEvent::class, self::class . '::setShareExpiration');
-		$dispatcher->addListener(ShareCreatedEvent::class, self::class . '::fixMimeTypeOfVoiceMessage');
-		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, self::class . '::setCallRecording');
-		$dispatcher->addListener(Room::EVENT_AFTER_AVATAR_SET, self::class . '::avatarChanged');
-	}
-
-	public static function sendSystemMessageAboutBeginOfCall(ModifyParticipantEvent $event): void {
-		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-		$participantService = Server::get(ParticipantService::class);
-
-		if ($participantService->hasActiveSessionsInCall($room)) {
-			$listener->sendSystemMessage($room, 'call_joined', [], $event->getParticipant());
-		} else {
-			$listener->sendSystemMessage($room, 'call_started', [], $event->getParticipant());
+	public function handle(Event $event): void {
+		if ($event instanceof AttendeesAddedEvent) {
+			$this->attendeesAddedEvent($event);
+		} elseif ($event instanceof AttendeeRemovedEvent) {
+			$this->sendSystemMessageUserRemoved($event);
+		} elseif ($event instanceof AttendeesRemovedEvent) {
+			$this->attendeesRemovedEvent($event);
+		} elseif ($event instanceof RoomCreatedEvent) {
+			$this->sendSystemMessageAboutConversationCreated($event);
+		} elseif ($event instanceof LobbyModifiedEvent) {
+			$this->sendSystemLobbyMessage($event);
+		} elseif ($event instanceof RoomModifiedEvent) {
+			match ($event->getProperty()) {
+				ARoomModifiedEvent::PROPERTY_AVATAR => $this->avatarChanged($event),
+				ARoomModifiedEvent::PROPERTY_CALL_RECORDING => $this->setCallRecording($event),
+				ARoomModifiedEvent::PROPERTY_DESCRIPTION => $this->sendSystemMessageAboutRoomDescriptionChanges($event),
+				ARoomModifiedEvent::PROPERTY_LISTABLE => $this->sendSystemListableMessage($event),
+				ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->afterSetMessageExpiration($event),
+				ARoomModifiedEvent::PROPERTY_NAME => $this->sendSystemMessageAboutConversationRenamed($event),
+				ARoomModifiedEvent::PROPERTY_PASSWORD => $this->sendSystemMessageAboutRoomPassword($event),
+				ARoomModifiedEvent::PROPERTY_READ_ONLY => $this->sendSystemReadOnlyMessage($event),
+				ARoomModifiedEvent::PROPERTY_TYPE => $this->sendSystemGuestPermissionsMessage($event),
+				default => null,
+			};
+		} elseif ($event instanceof BeforeParticipantModifiedEvent) {
+			match ($event->getProperty()) {
+				AParticipantModifiedEvent::PROPERTY_IN_CALL => $this->sendSystemMessageAboutBeginOfCall($event),
+				default => null,
+			};
+		} elseif ($event instanceof ParticipantModifiedEvent) {
+			match ($event->getProperty()) {
+				AParticipantModifiedEvent::PROPERTY_TYPE => $this->sendSystemMessageAboutPromoteOrDemoteModerator($event),
+				AParticipantModifiedEvent::PROPERTY_IN_CALL => $this->sendSystemMessageAboutCallLeft($event),
+				default => null,
+			};
+		} elseif ($event instanceof BeforeShareCreatedEvent) {
+			$this->setShareExpiration($event);
+		} elseif ($event instanceof BeforeDuplicateShareSentEvent || $event instanceof ShareCreatedEvent) {
+			$this->fixMimeTypeOfVoiceMessage($event);
 		}
 	}
 
-	public static function sendSystemMessageAboutCallLeft(ModifyParticipantEvent $event): void {
-		if ($event instanceof ModifyEveryoneEvent) {
+	protected function sendSystemMessageAboutBeginOfCall(BeforeParticipantModifiedEvent $event): void {
+		if ($event->getOldValue() !== Participant::FLAG_DISCONNECTED
+			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
+			return;
+		}
+
+		if ($this->participantService->hasActiveSessionsInCall($event->getRoom())) {
+			$this->sendSystemMessage($event->getRoom(), 'call_joined', [], $event->getParticipant());
+		} else {
+			$this->sendSystemMessage($event->getRoom(), 'call_started', [], $event->getParticipant());
+		}
+	}
+
+	protected function sendSystemMessageAboutCallLeft(ParticipantModifiedEvent $event): void {
+		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_END_FOR_EVERYONE)) {
 			// No individual system message if the call is ended for everyone
 			return;
 		}
@@ -118,7 +142,10 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		$room = $event->getRoom();
+		if ($event->getOldValue() === Participant::FLAG_DISCONNECTED
+			|| $event->getNewValue() !== Participant::FLAG_DISCONNECTED) {
+			return;
+		}
 
 		$session = $event->getParticipant()->getSession();
 		if (!$session instanceof Session) {
@@ -126,185 +153,149 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		$listener = Server::get(self::class);
-
-		$listener->sendSystemMessage($room, 'call_left', [], $event->getParticipant());
+		$this->sendSystemMessage($event->getRoom(), 'call_left', [], $event->getParticipant());
 	}
 
-	public static function sendSystemMessageAboutConversationCreated(RoomEvent $event): void {
-		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-
-		$listener->sendSystemMessage($room, 'conversation_created');
+	protected function sendSystemMessageAboutConversationCreated(RoomCreatedEvent $event): void {
+		$this->sendSystemMessage($event->getRoom(), 'conversation_created');
 	}
 
-	public static function sendSystemMessageAboutConversationRenamed(ModifyRoomEvent $event): void {
+	protected function sendSystemMessageAboutConversationRenamed(RoomModifiedEvent $event): void {
 		if ($event->getOldValue() === '' ||
 			$event->getNewValue() === '') {
 			return;
 		}
 
-		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-
-		$listener->sendSystemMessage($room, 'conversation_renamed', [
+		$this->sendSystemMessage($event->getRoom(), 'conversation_renamed', [
 			'newName' => $event->getNewValue(),
 			'oldName' => $event->getOldValue(),
 		]);
 	}
 
-	public static function sendSystemMessageAboutRoomDescriptionChanges(ModifyRoomEvent $event): void {
-		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-
+	protected function sendSystemMessageAboutRoomDescriptionChanges(RoomModifiedEvent $event): void {
 		if ($event->getNewValue() !== '') {
-			$listener->sendSystemMessage($room, 'description_set', [
+			$this->sendSystemMessage($event->getRoom(), 'description_set', [
 				'newDescription' => $event->getNewValue(),
 			]);
 		} else {
-			$listener->sendSystemMessage($room, 'description_removed');
+			$this->sendSystemMessage($event->getRoom(), 'description_removed');
 		}
 	}
 
-	public static function sendSystemMessageAboutRoomPassword(ModifyRoomEvent $event): void {
-		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-
+	protected function sendSystemMessageAboutRoomPassword(RoomModifiedEvent $event): void {
 		if ($event->getNewValue() !== '') {
-			$listener->sendSystemMessage($room, 'password_set');
+			$this->sendSystemMessage($event->getRoom(), 'password_set');
 		} else {
-			$listener->sendSystemMessage($room, 'password_removed');
+			$this->sendSystemMessage($event->getRoom(), 'password_removed');
 		}
 	}
 
-	public static function sendSystemGuestPermissionsMessage(ModifyRoomEvent $event): void {
-		$room = $event->getRoom();
-
+	protected function sendSystemGuestPermissionsMessage(RoomModifiedEvent $event): void {
 		if ($event->getOldValue() === Room::TYPE_ONE_TO_ONE) {
 			return;
 		}
 
 		if ($event->getNewValue() === Room::TYPE_PUBLIC) {
-			$listener = Server::get(self::class);
-			$listener->sendSystemMessage($room, 'guests_allowed');
+			$this->sendSystemMessage($event->getRoom(), 'guests_allowed');
 		} elseif ($event->getNewValue() === Room::TYPE_GROUP) {
-			$listener = Server::get(self::class);
-			$listener->sendSystemMessage($room, 'guests_disallowed');
+			$this->sendSystemMessage($event->getRoom(), 'guests_disallowed');
 		}
 	}
 
-	public static function sendSystemReadOnlyMessage(ModifyRoomEvent $event): void {
+	protected function sendSystemReadOnlyMessage(RoomModifiedEvent $event): void {
 		$room = $event->getRoom();
 
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return;
 		}
 
-		$listener = Server::get(self::class);
-
 		if ($event->getNewValue() === Room::READ_ONLY) {
-			$listener->sendSystemMessage($room, 'read_only');
+			$this->sendSystemMessage($room, 'read_only');
 		} elseif ($event->getNewValue() === Room::READ_WRITE) {
-			$listener->sendSystemMessage($room, 'read_only_off');
+			$this->sendSystemMessage($room, 'read_only_off');
 		}
 	}
 
-	public static function sendSystemListableMessage(ModifyRoomEvent $event): void {
-		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-
+	protected function sendSystemListableMessage(RoomModifiedEvent $event): void {
 		if ($event->getNewValue() === Room::LISTABLE_NONE) {
-			$listener->sendSystemMessage($room, 'listable_none');
+			$this->sendSystemMessage($event->getRoom(), 'listable_none');
 		} elseif ($event->getNewValue() === Room::LISTABLE_USERS) {
-			$listener->sendSystemMessage($room, 'listable_users');
+			$this->sendSystemMessage($event->getRoom(), 'listable_users');
 		} elseif ($event->getNewValue() === Room::LISTABLE_ALL) {
-			$listener->sendSystemMessage($room, 'listable_all');
+			$this->sendSystemMessage($event->getRoom(), 'listable_all');
 		}
 	}
 
-	public static function sendSystemLobbyMessage(ModifyLobbyEvent $event): void {
+	protected function sendSystemLobbyMessage(LobbyModifiedEvent $event): void {
 		if ($event->getNewValue() === $event->getOldValue()) {
 			return;
 		}
 
 		$room = $event->getRoom();
-		$listener = Server::get(self::class);
-
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			if ($event->getNewValue() === Webinary::LOBBY_NONE) {
-				$listener->sendSystemMessage($room, 'breakout_rooms_started');
+				$this->sendSystemMessage($room, 'breakout_rooms_started');
 			} else {
-				$listener->sendSystemMessage($room, 'breakout_rooms_stopped');
+				$this->sendSystemMessage($room, 'breakout_rooms_stopped');
 			}
 		} elseif ($event->isTimerReached()) {
-			$listener->sendSystemMessage($room, 'lobby_timer_reached');
+			$this->sendSystemMessage($room, 'lobby_timer_reached');
 		} elseif ($event->getNewValue() === Webinary::LOBBY_NONE) {
-			$listener->sendSystemMessage($room, 'lobby_none');
+			$this->sendSystemMessage($room, 'lobby_none');
 		} elseif ($event->getNewValue() === Webinary::LOBBY_NON_MODERATORS) {
-			$listener->sendSystemMessage($room, 'lobby_non_moderators');
+			$this->sendSystemMessage($room, 'lobby_non_moderators');
 		}
 	}
 
-	public static function addSystemMessageUserAdded(AddParticipantsEvent $event): void {
+	protected function addSystemMessageUserAdded(AttendeesAddedEvent $event, Attendee $attendee): void {
 		$room = $event->getRoom();
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return;
 		}
 
-		$listener = Server::get(self::class);
-		$participants = $event->getParticipants();
+		$userJoinedFileRoom = $room->getObjectType() === Room::OBJECT_TYPE_FILE && $attendee->getParticipantType() !== Participant::USER_SELF_JOINED;
 
-		foreach ($participants as $participant) {
-			if ($participant['actorType'] !== 'users') {
-				continue;
-			}
+		// add a message "X joined the conversation", whenever user $userId:
+		if (
+			// - has joined a file room but not through a public link
+			$userJoinedFileRoom
+			// - has been added by another user (and not when creating a conversation)
+			|| $this->getUserId() !== $attendee->getActorId()
+			// - has joined a listable room on their own
+			|| $attendee->getParticipantType() === Participant::USER) {
+			$comment = $this->sendSystemMessage(
+				$room,
+				'user_added',
+				['user' => $attendee->getActorId()],
+				null,
+				$event->shouldSkipLastMessageUpdate()
+			);
 
-			$participantType = null;
-			if (isset($participant['participantType'])) {
-				$participantType = $participant['participantType'];
-			}
-
-			$userJoinedFileRoom = $room->getObjectType() === 'file' && $participantType !== Participant::USER_SELF_JOINED;
-
-			// add a message "X joined the conversation", whenever user $userId:
-			if (
-				// - has joined a file room but not through a public link
-				$userJoinedFileRoom
-				// - has been added by another user (and not when creating a conversation)
-				|| $listener->getUserId() !== $participant['actorId']
-				// - has joined a listable room on their own
-				|| $participantType === Participant::USER) {
-				$comment = $listener->sendSystemMessage(
-					$room,
-					'user_added',
-					['user' => $participant['actorId']],
-					null,
-					$event->shouldSkipLastMessageUpdate()
-				);
-
-				$event->setLastMessage($comment);
-			}
+			$event->setLastMessage($comment);
 		}
 	}
 
-	public static function sendSystemMessageUserRemoved(RemoveUserEvent $event): void {
+	protected function sendSystemMessageUserRemoved(AttendeeRemovedEvent $event): void {
 		$room = $event->getRoom();
+
+		if ($event->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
+			return;
+		}
 
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return;
 		}
 
-		if ($event->getReason() === Room::PARTICIPANT_LEFT
-			&& $event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+		if ($event->getReason() === AAttendeeRemovedEvent::REASON_LEFT
+			&& $event->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 			// Self-joined user closes the tab/window or leaves via the menu
 			return;
 		}
 
-		$listener = Server::get(self::class);
-		$listener->sendSystemMessage($room, 'user_removed', ['user' => $event->getUser()->getUID()]);
+		$this->sendSystemMessage($room, 'user_removed', ['user' => $event->getAttendee()->getActorId()]);
 	}
 
-	public static function sendSystemMessageAboutPromoteOrDemoteModerator(ModifyParticipantEvent $event): void {
+	public function sendSystemMessageAboutPromoteOrDemoteModerator(ParticipantModifiedEvent $event): void {
 		$room = $event->getRoom();
 		$attendee = $event->getParticipant()->getAttendee();
 
@@ -313,63 +304,51 @@ class Listener implements IEventListener {
 		}
 
 		if ($event->getNewValue() === Participant::MODERATOR) {
-			$listener = Server::get(self::class);
-			$listener->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
+			$this->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
 		} elseif ($event->getNewValue() === Participant::USER) {
 			if ($event->getOldValue() === Participant::USER_SELF_JOINED) {
-				$listener = Server::get(self::class);
-				$listener->sendSystemMessage($room, 'user_added', ['user' => $attendee->getActorId()]);
+				$this->sendSystemMessage($room, 'user_added', ['user' => $attendee->getActorId()]);
 			} else {
-				$listener = Server::get(self::class);
-				$listener->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
+				$this->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
 			}
 		} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
-			$listener = Server::get(self::class);
-			$listener->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $attendee->getActorId()]);
+			$this->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $attendee->getActorId()]);
 		} elseif ($event->getNewValue() === Participant::GUEST) {
-			$listener = Server::get(self::class);
-			$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
+			$this->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
 		}
 	}
 
-	public static function setShareExpiration(BeforeShareCreatedEvent $event): void {
+	protected function setShareExpiration(BeforeShareCreatedEvent $event): void {
 		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM) {
 			return;
 		}
 
-		$listener = Server::get(self::class);
-		$manager = Server::get(Manager::class);
-
-		$room = $manager->getRoomByToken($share->getSharedWith());
+		$room = $this->manager->getRoomByToken($share->getSharedWith());
 
 		$messageExpiration = $room->getMessageExpiration();
 		if (!$messageExpiration) {
 			return;
 		}
 
-		$dateTime = $listener->timeFactory->getDateTime();
+		$dateTime = $this->timeFactory->getDateTime();
 		$dateTime->add(DateInterval::createFromDateString($messageExpiration . ' seconds'));
 		$share->setExpirationDate($dateTime);
 	}
 
-	public static function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|AlreadySharedEvent $event): void {
+	protected function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|BeforeDuplicateShareSentEvent $event): void {
 		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM) {
 			return;
 		}
 
-		$listener = Server::get(self::class);
-		$manager = Server::get(Manager::class);
-
-		$request = Server::get(IRequest::class);
-		if ($request->getParam('_route') === 'ocs.spreed.Recording.shareToChat') {
+		if ($this->request->getParam('_route') === 'ocs.spreed.Recording.shareToChat') {
 			return;
 		}
-		$room = $manager->getRoomByToken($share->getSharedWith());
-		$metaData = Server::get(IRequest::class)->getParam('talkMetaData') ?? '';
+		$room = $this->manager->getRoomByToken($share->getSharedWith());
+		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);
 		$metaData = is_array($metaData) ? $metaData : [];
 
@@ -389,15 +368,7 @@ class Listener implements IEventListener {
 			}
 		}
 
-		$listener->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData]);
-	}
-
-	public function handle(Event $event): void {
-		if ($event instanceof AttendeesAddedEvent) {
-			$this->attendeesAddedEvent($event);
-		} elseif ($event instanceof AttendeesRemovedEvent) {
-			$this->attendeesRemovedEvent($event);
-		}
+		$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData]);
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
@@ -410,6 +381,8 @@ class Listener implements IEventListener {
 				$this->sendSystemMessage($event->getRoom(), 'federated_user_added', ['federated_user' => $attendee->getActorId()]);
 			} elseif ($attendee->getActorType() === Attendee::ACTOR_PHONES) {
 				$this->sendSystemMessage($event->getRoom(), 'phone_added', ['phone' => $attendee->getActorId(), 'name' => $attendee->getDisplayName()]);
+			} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+				$this->addSystemMessageUserAdded($event, $attendee);
 			}
 		}
 	}
@@ -475,7 +448,7 @@ class Listener implements IEventListener {
 		return $user instanceof IUser ? $user->getUID() : null;
 	}
 
-	public static function afterSetMessageExpiration(ModifyRoomEvent $event): void {
+	protected function afterSetMessageExpiration(RoomModifiedEvent $event): void {
 		$seconds = $event->getNewValue();
 
 		if ($seconds > 0) {
@@ -484,8 +457,7 @@ class Listener implements IEventListener {
 			$message = 'message_expiration_disabled';
 		}
 
-		$listener = Server::get(self::class);
-		$listener->sendSystemMessage(
+		$this->sendSystemMessage(
 			$event->getRoom(),
 			$message,
 			[
@@ -494,12 +466,12 @@ class Listener implements IEventListener {
 		);
 	}
 
-	public static function setCallRecording(ModifyRoomEvent $event): void {
-		$recordingHasStarted = in_array($event->getOldValue(), [Room::RECORDING_NONE, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING, Room::RECORDING_FAILED])
-			&& in_array($event->getNewValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO]);
-		$recordingHasStopped = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO])
+	protected function setCallRecording(RoomModifiedEvent $event): void {
+		$recordingHasStarted = in_array($event->getOldValue(), [Room::RECORDING_NONE, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING, Room::RECORDING_FAILED], true)
+			&& in_array($event->getNewValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO], true);
+		$recordingHasStopped = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO], true)
 			&& $event->getNewValue() === Room::RECORDING_NONE;
-		$recordingHasFailed = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO])
+		$recordingHasFailed = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO], true)
 			&& $event->getNewValue() === Room::RECORDING_FAILED;
 
 		if (!$recordingHasStarted && !$recordingHasStopped && !$recordingHasFailed) {
@@ -513,21 +485,20 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		$prefix = self::getCallRecordingPrefix($event);
-		$suffix = self::getCallRecordingSuffix($event);
+		$prefix = $this->getCallRecordingPrefix($event);
+		$suffix = $this->getCallRecordingSuffix($event);
 		$systemMessage = $prefix . 'recording_' . $suffix;
 
-		$listener = Server::get(self::class);
-		$listener->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor);
+		$this->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor);
 	}
 
-	private static function getCallRecordingSuffix(ModifyRoomEvent $event): string {
+	protected function getCallRecordingSuffix(RoomModifiedEvent $event): string {
 		$newStatus = $event->getNewValue();
 		$startStatus = [
 			Room::RECORDING_VIDEO,
 			Room::RECORDING_AUDIO,
 		];
-		if (in_array($newStatus, $startStatus)) {
+		if (in_array($newStatus, $startStatus, true)) {
 			return 'started';
 		}
 		if ($newStatus === Room::RECORDING_FAILED) {
@@ -536,7 +507,7 @@ class Listener implements IEventListener {
 		return 'stopped';
 	}
 
-	private static function getCallRecordingPrefix(ModifyRoomEvent $event): string {
+	protected function getCallRecordingPrefix(RoomModifiedEvent $event): string {
 		$newValue = $event->getNewValue();
 		$oldValue = $event->getOldValue();
 		$isAudioStatus = $newValue === Room::RECORDING_AUDIO
@@ -544,14 +515,13 @@ class Listener implements IEventListener {
 		return $isAudioStatus ? 'audio_' : '';
 	}
 
-	public static function avatarChanged(ModifyRoomEvent $event): void {
+	protected function avatarChanged(RoomModifiedEvent $event): void {
 		if ($event->getNewValue()) {
 			$message = 'avatar_set';
 		} else {
 			$message = 'avatar_removed';
 		}
 
-		$listener = Server::get(self::class);
-		$listener->sendSystemMessage($event->getRoom(), $message);
+		$this->sendSystemMessage($event->getRoom(), $message);
 	}
 }

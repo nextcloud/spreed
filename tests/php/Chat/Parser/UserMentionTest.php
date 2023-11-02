@@ -104,7 +104,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Message without enrichable references', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$this->assertEquals('Message without enrichable references', $chatMessage->getMessage());
 		$this->assertEquals([], $chatMessage->getMessageParameters());
@@ -135,7 +135,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -174,7 +174,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser and @testUser again', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -242,7 +242,7 @@ class UserMentionTest extends TestCase {
 			$chatMessage->setMessage('Mention to @' . $baseId . ' and @' . $longerId, []);
 		}
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -294,7 +294,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser1, @testUser2, @testUser1 again and @testUser3', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -346,7 +346,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention @me to @testUser', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -384,7 +384,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -426,7 +426,7 @@ class UserMentionTest extends TestCase {
 			->with($room)
 			->willReturn('getAvatarUrl');
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-call1' => [
@@ -467,7 +467,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/123456"', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-guest1' => [
@@ -506,7 +506,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/123456", and again @"guest/123456"', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-guest1' => [
@@ -553,7 +553,7 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/abcdef", and again @"guest/abcdef"', []);
 
-		$this->parser->parseMessage($chatMessage);
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
 
 		$expectedMessageParameters = [
 			'mention-guest1' => [

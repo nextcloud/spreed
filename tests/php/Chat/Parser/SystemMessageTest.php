@@ -92,17 +92,15 @@ class SystemMessageTest extends TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->l = $this->createMock(IL10N::class);
-		$this->l->expects($this->any())
-			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
+		$this->l->method('t')
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
-		$this->l->expects($this->any())
-			->method('n')
-			->will($this->returnCallback(function ($singular, $plural, $count, $parameters = []) {
+			});
+		$this->l->method('n')
+			->willReturnCallback(function ($singular, $plural, $count, $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
 				return vsprintf(str_replace('%n', $count, $text), $parameters);
-			}));
+			});
 	}
 
 	/**
@@ -565,7 +563,7 @@ class SystemMessageTest extends TestCase {
 			'parameters' => $parameters,
 		]), [], $message);
 
-		$parser->parseMessage($chatMessage);
+		self::invokePrivate($parser, 'parseMessage', [$chatMessage]);
 
 		$this->assertSame($expectedMessage, $chatMessage->getMessage());
 		$this->assertSame($expectedParameters, $chatMessage->getMessageParameters());
@@ -606,7 +604,7 @@ class SystemMessageTest extends TestCase {
 		$chatMessage->setMessage($return, []);
 
 		$this->expectException(\OutOfBoundsException::class);
-		$parser->parseMessage($chatMessage);
+		self::invokePrivate($parser, 'parseMessage', [$chatMessage]);
 	}
 
 	public function testGetFileFromShareForGuest() {

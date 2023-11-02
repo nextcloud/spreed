@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,20 +25,34 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Model\Message;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 
-class Command {
-	/**
-	 * @param Message $message
-	 * @throws \OutOfBoundsException
-	 */
-	public function parseMessage(Message $message): void {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Command implements IEventListener {
+	public function handle(Event $event): void {
+		if (!$event instanceof MessageParseEvent) {
+			return;
+		}
+
+		$message = $event->getMessage();
+
+		if ($message->getMessageType() !== ChatManager::VERB_COMMAND) {
+			return;
+		}
+
 		$comment = $message->getComment();
 		$data = json_decode($comment->getMessage(), true);
 		if (!\is_array($data)) {
-			throw new \OutOfBoundsException('Invalid message');
+			return;
 		}
+
+		$event->stopPropagation();
 
 		if ($data['visibility'] === \OCA\Talk\Model\Command::RESPONSE_NONE) {
 			$message->setVisibility(false);
