@@ -490,8 +490,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertInvites($invites, $formData);
 
 		foreach ($invites as $data) {
-			self::$remoteToInviteId[$this->translateRemoteServer($data['remote_server']) . '::' . self::$tokenToIdentifier[$data['remote_token']]] = $data['id'];
-			self::$inviteIdToRemote[$data['id']] = $this->translateRemoteServer($data['remote_server']) . '::' . self::$tokenToIdentifier[$data['remote_token']];
+			self::$remoteToInviteId[$this->translateRemoteServer($data['remote_server_url']) . '::' . self::$tokenToIdentifier[$data['remote_token']]] = $data['id'];
+			self::$inviteIdToRemote[$data['id']] = $this->translateRemoteServer($data['remote_server_url']) . '::' . self::$tokenToIdentifier[$data['remote_token']];
 		}
 	}
 
@@ -533,8 +533,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedInvite['remote_token'])) {
 				$data['remote_token'] = self::$tokenToIdentifier[$invite['remote_token']] ?? 'unknown-token';
 			}
-			if (isset($expectedInvite['remote_server'])) {
-				$data['remote_server'] = $this->translateRemoteServer($invite['remote_server']);
+			if (isset($expectedInvite['remote_server_url'])) {
+				$data['remote_server_url'] = $this->translateRemoteServer($invite['remote_server_url']);
+			}
+			if (isset($expectedInvite['state'])) {
+				$data['state'] = (int) $invite['state'];
 			}
 
 			return $data;

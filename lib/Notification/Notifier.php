@@ -403,8 +403,8 @@ class Notifier implements INotifier {
 			if ($invite->getUserId() !== $notification->getUser()) {
 				throw new AlreadyProcessedException();
 			}
-			$room = $this->manager->getRoomById($invite->getRoomId());
-		} catch (RoomNotFoundException $e) {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
 			// Room does not exist
 			throw new AlreadyProcessedException();
 		}

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 /**
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2021 Gary Kim <gary@garykim.dev>
  *
  * @author Gary Kim <gary@garykim.dev>
@@ -28,46 +29,56 @@ namespace OCA\Talk\Model;
 use OCP\AppFramework\Db\Entity;
 
 /**
- * Class Invitation
- *
- * @package OCA\Talk\Model
- *
- * @method void setRoomId(int $roomId)
- * @method int getRoomId()
  * @method void setUserId(string $userId)
  * @method string getUserId()
+ * @method void setState(int $state)
+ * @method int getState()
+ * @method void setLocalRoomId(int $roomLocalId)
+ * @method int getLocalRoomId()
  * @method void setAccessToken(string $accessToken)
  * @method string getAccessToken()
- * @method void setRemoteId(string $remoteId)
- * @method string getRemoteId()
+ * @method void setRemoteServerUrl(string $remoteServerUrl)
+ * @method string getRemoteServerUrl()
+ * @method void setRemoteToken(string $remoteToken)
+ * @method string getRemoteToken()
+ * @method void setRemoteAttendeeId(int $remoteAttendeeId)
+ * @method int getRemoteAttendeeId()
  */
-class Invitation extends Entity {
-	/** @var int */
-	protected $roomId;
+class Invitation extends Entity implements \JsonSerializable {
+	public const STATE_PENDING = 0;
+	public const STATE_ACCEPTED = 1;
 
-	/** @var string */
-	protected $userId;
-
-	/** @var string */
-	protected $accessToken;
-
-	/** @var string */
-	protected $remoteId;
+	protected string $userId = '';
+	protected int $state = self::STATE_PENDING;
+	protected int $localRoomId = 0;
+	protected string $accessToken = '';
+	protected string $remoteServerUrl = '';
+	protected string $remoteToken = '';
+	protected int $remoteAttendeeId = 0;
 
 	public function __construct() {
-		$this->addType('roomId', 'int');
 		$this->addType('userId', 'string');
+		$this->addType('state', 'int');
+		$this->addType('localRoomId', 'int');
 		$this->addType('accessToken', 'string');
-		$this->addType('remoteId', 'string');
+		$this->addType('remoteServerUrl', 'string');
+		$this->addType('remoteToken', 'string');
+		$this->addType('remoteAttendeeId', 'int');
 	}
 
-	public function asArray(): array {
+	/**
+	 * @return array{access_token: string, id: int, local_room_id: int, remote_attendee_id: int, remote_server_url: string, remote_token: string, state: int, user_id: string}
+	 */
+	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
-			'room_id' => $this->getRoomId(),
 			'user_id' => $this->getUserId(),
+			'state' => $this->getState(),
+			'local_room_id' => $this->getLocalRoomId(),
 			'access_token' => $this->getAccessToken(),
-			'remote_id' => $this->getRemoteId(),
+			'remote_server_url' => $this->getRemoteServerUrl(),
+			'remote_token' => $this->getRemoteToken(),
+			'remote_attendee_id' => $this->getRemoteAttendeeId(),
 		];
 	}
 }

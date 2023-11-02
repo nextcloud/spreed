@@ -31,6 +31,7 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use SensitiveParameter;
 
 /**
  * Class InvitationMapper
@@ -63,29 +64,21 @@ class InvitationMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function getByRemoteIdAndToken(int $remoteId, string $accessToken): Invitation {
+	public function getByRemoteAndAccessToken(
+		string $remoteServerUrl,
+		int $remoteAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+	): Invitation {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('remote_id', $qb->createNamedParameter($remoteId, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->eq('remote_server_url', $qb->createNamedParameter($remoteServerUrl)))
+			->andWhere($qb->expr()->eq('remote_attendee_id', $qb->createNamedParameter($remoteAttendeeId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('access_token', $qb->createNamedParameter($accessToken)));
 
 		return $this->findEntity($qb);
-	}
-
-	/**
-	 * @param Room $room
-	 * @return Invitation[]
-	 */
-	public function getInvitationsForRoom(Room $room): array {
-		$qb = $this->db->getQueryBuilder();
-
-		$qb->select('*')
-			->from($this->getTableName())
-			->where($qb->expr()->eq('room_id', $qb->createNamedParameter($room->getId())));
-
-		return $this->findEntities($qb);
 	}
 
 	/**
@@ -102,27 +95,17 @@ class InvitationMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-	public function countInvitationsForRoom(Room $room): int {
+	public function countInvitationsForLocalRoom(Room $room): int {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select($qb->func()->count('*', 'num_invitations'))
 			->from($this->getTableName())
-			->where($qb->expr()->eq('room_id', $qb->createNamedParameter($room->getId())));
+			->where($qb->expr()->eq('local_room_id', $qb->createNamedParameter($room->getId())));
 
 		$result = $qb->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
 		return (int) ($row['num_invitations'] ?? 0);
-	}
-
-	public function createInvitationFromRow(array $row): Invitation {
-		return $this->mapRowToEntity([
-			'id' => $row['id'],
-			'room_id' => (int) $row['room_id'],
-			'user_id' => (string) $row['user_id'],
-			'access_token' => (string) $row['access_token'],
-			'remote_id' => (string) $row['remote_id'],
-		]);
 	}
 }

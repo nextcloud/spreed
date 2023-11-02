@@ -97,10 +97,10 @@ namespace OCA\Talk;
  * @psalm-type TalkFederationInvite = array{
  *     access_token: string,
  *     id: int,
- *     remote_id: string,
- *     remote_server: string,
+ *     local_room_id: int,
+ *     remote_attendee_id: string,
+ *     remote_server_url: string,
  *     remote_token: string,
- *     room_id: int,
  *     user_id: string,
  * }
  *

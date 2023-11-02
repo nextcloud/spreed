@@ -31,6 +31,7 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -75,6 +76,9 @@ class FederationTest extends TestCase {
 	/** @var IUserManager|MockObject */
 	protected $userManager;
 
+	/** @var IURLGenerator|MockObject */
+	protected $url;
+
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
 
@@ -91,6 +95,7 @@ class FederationTest extends TestCase {
 		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 		$this->config = $this->createMock(Config::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->url = $this->createMock(IURLGenerator::class);
 
 		$this->backendNotifier = new BackendNotifier(
 			$this->cloudFederationFactory,
@@ -99,6 +104,7 @@ class FederationTest extends TestCase {
 			$this->cloudFederationProviderManager,
 			$this->createMock(IJobList::class),
 			$this->userManager,
+			$this->url,
 		);
 
 		$this->federationManager = $this->createMock(FederationManager::class);
@@ -110,7 +116,6 @@ class FederationTest extends TestCase {
 			$this->federationManager,
 			$this->config,
 			$this->notificationManager,
-			$this->createMock(IURLGenerator::class),
 			$this->createMock(ParticipantService::class),
 			$this->createMock(RoomService::class),
 			$this->attendeeMapper,
@@ -240,11 +245,13 @@ class FederationTest extends TestCase {
 			],
 		]);
 
+		$invite = Invitation::fromRow(['id' => 20]);
+
 		// Test receiving federation expectations
 		$this->federationManager->expects($this->once())
 			->method('addRemoteRoom')
 			->with($shareWithUser, $providerId, $roomType, $roomName, $name, $remote, $token)
-			->willReturn(20);
+			->willReturn($invite);
 
 		$this->config->method('isFederationEnabled')
 			->willReturn(true);
@@ -311,7 +318,7 @@ class FederationTest extends TestCase {
 
 	public function testSendAcceptNotification() {
 		$remote = 'https://remote.test.local';
-		$id = '50';
+		$id = 50;
 		$token = 'abcdefghijklmno';
 
 		$notification = $this->createMock(ICloudFederationNotification::class);
@@ -324,6 +331,7 @@ class FederationTest extends TestCase {
 				[
 					'sharedSecret' => $token,
 					'message' => 'Recipient accepted the share',
+					'remoteServerUrl' => 'http://example.tld',
 				]
 			);
 
@@ -341,6 +349,10 @@ class FederationTest extends TestCase {
 			->with($remote)
 			->willReturn(true);
 
+		$this->url->method('getAbsoluteURL')
+			->with('/')
+			->willReturn('http://example.tld/index.php/');
+
 		$success = $this->backendNotifier->sendShareAccepted($remote, $id, $token);
 
 		$this->assertEquals(true, $success);
@@ -348,7 +360,7 @@ class FederationTest extends TestCase {
 
 	public function testSendRejectNotification() {
 		$remote = 'https://remote.test.local';
-		$id = '50';
+		$id = 50;
 		$token = 'abcdefghijklmno';
 
 		$notification = $this->createMock(ICloudFederationNotification::class);
@@ -361,6 +373,7 @@ class FederationTest extends TestCase {
 				[
 					'sharedSecret' => $token,
 					'message' => 'Recipient declined the share',
+					'remoteServerUrl' => 'example.tld',
 				]
 			);
 
@@ -377,6 +390,10 @@ class FederationTest extends TestCase {
 		$this->addressHandler->method('urlContainProtocol')
 			->with($remote)
 			->willReturn(true);
+
+		$this->url->method('getAbsoluteURL')
+			->with('/')
+			->willReturn('https://example.tld/index.php/');
 
 		$success = $this->backendNotifier->sendShareDeclined($remote, $id, $token);
 

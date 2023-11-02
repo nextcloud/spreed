@@ -305,10 +305,10 @@
                 "required": [
                     "access_token",
                     "id",
-                    "remote_id",
-                    "remote_server",
+                    "local_room_id",
+                    "remote_attendee_id",
+                    "remote_server_url",
                     "remote_token",
-                    "room_id",
                     "user_id"
                 ],
                 "properties": {
@@ -319,18 +319,18 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "remote_id": {
+                    "local_room_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "remote_attendee_id": {
                         "type": "string"
                     },
-                    "remote_server": {
+                    "remote_server_url": {
                         "type": "string"
                     },
                     "remote_token": {
                         "type": "string"
-                    },
-                    "room_id": {
-                        "type": "integer",
-                        "format": "int64"
                     },
                     "user_id": {
                         "type": "string"

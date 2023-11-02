@@ -42,13 +42,15 @@ Feature: federation/invite
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
-      | remote_server | remote_token |
-      | LOCAL         | room         |
+      | remote_server_url | remote_token | state |
+      | LOCAL             | room         | 0     |
     Then user "participant2" has the following notifications
       | app    | object_type       | object_id              | subject                                                                      |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on http://localhost:8080 with you |
     And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
     And user "participant2" has the following invitations (v1)
+      | remote_server_url | remote_token | state |
+      | LOCAL             | room         | 1     |
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId      | participantType |
       | users           | participant1 | 1               |
@@ -75,8 +77,8 @@ Feature: federation/invite
       | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And user "participant2" has the following invitations (v1)
-      | remote_server | remote_token |
-      | LOCAL         | room         |
+      | remote_server_url | remote_token | state |
+      | LOCAL             | room         | 0     |
     Then user "participant2" has the following notifications
       | app    | object_type       | object_id              | subject                                                                      |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on http://localhost:8080 with you |
@@ -99,10 +101,12 @@ Feature: federation/invite
       | roomName | room |
     And user "participant1" adds remote "participant2" to room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
-      | remote_server | remote_token |
-      | LOCAL         | room         |
+      | remote_server_url | remote_token | state |
+      | LOCAL             | room         | 0     |
     And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
     And user "participant2" has the following invitations (v1)
+      | remote_server_url | remote_token | state |
+      | LOCAL             | room         | 1     |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type |
       | room | 2    |
@@ -121,8 +125,8 @@ Feature: federation/invite
       | roomName | room |
     And user "participant1" adds remote "participant2" to room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
-      | remote_server | remote_token |
-      | LOCAL         | room         |
+      | remote_server_url | remote_token | state |
+      | LOCAL             | room         | 0     |
     And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
     Then user "participant2" is participant of the following rooms (v4)
       | id   | name | type |
