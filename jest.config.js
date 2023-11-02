@@ -25,6 +25,7 @@ const { resolve } = require('node:path')
 // Listed packages will be transformed with babel-jest
 // TODO: find a way to consolidate this in one place, with webpack.common.js
 const ignorePatterns = [
+	'@mdi/svg',
 	'bail',
 	'comma-separated-tokens',
 	'decode-named-character-reference',
@@ -76,6 +77,7 @@ module.exports = {
 
 	moduleNameMapper: {
 		'\\.(css|scss)$': 'jest-transform-stub',
+		'^.+\\.svg(\\?raw)?$': '<rootDir>/src/__mocks__/svg.js',
 		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
 	},
 
