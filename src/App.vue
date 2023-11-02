@@ -67,9 +67,6 @@ import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
-// Styles
-import '@nextcloud/dialogs/dist/index.css'
-
 export default {
 	name: 'App',
 	components: {

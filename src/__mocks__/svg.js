@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 John Molakvoæ <skjnldsv@protonmail.com>
  *
- * @author Joas Schilling <coding@schilljs.com>
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @license AGPL-3.0-or-later
  *
@@ -19,18 +19,4 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-import Vue from 'vue'
-
-import AdminSettings from './views/AdminSettings.vue'
-
-Vue.prototype.t = t
-Vue.prototype.n = n
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-Vue.prototype.OCP = OCP
-
-export default new Vue({
-	el: '#admin_settings',
-	render: h => h(AdminSettings),
-})
+export default '<svg>SvgMock</svg>'

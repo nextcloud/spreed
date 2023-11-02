@@ -42,9 +42,6 @@ import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 
-// Styles
-import '@nextcloud/dialogs/dist/index.css'
-
 export default {
 
 	name: 'FilesSidebarCallViewApp',

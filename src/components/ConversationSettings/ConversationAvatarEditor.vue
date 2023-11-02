@@ -142,7 +142,6 @@ const VALID_MIME_TYPES = ['image/png', 'image/jpeg']
 const picker = getFilePickerBuilder(t('spreed', 'Choose your conversation picture'))
 	.setMultiSelect(false)
 	.setMimeTypeFilter(VALID_MIME_TYPES)
-	.setModal(true)
 	.setType(1)
 	.allowDirectories(false)
 	.build()

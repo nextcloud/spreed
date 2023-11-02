@@ -272,7 +272,6 @@ export default {
 		selectAttachmentFolder() {
 			const picker = getFilePickerBuilder(t('spreed', 'Select location for attachments'))
 				.setMultiSelect(false)
-				.setModal(true)
 				.setType(1)
 				.addMimeTypeFilter('httpd/unix-directory')
 				.allowDirectories()

@@ -183,7 +183,6 @@ import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
-	.setModal(true)
 	.setType(1)
 	.allowDirectories()
 	.build()
