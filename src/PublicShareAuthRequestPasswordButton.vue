@@ -44,9 +44,6 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import browserCheck from './mixins/browserCheck.js'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
 
-// Styles
-import '@nextcloud/dialogs/dist/index.css'
-
 export default {
 
 	name: 'PublicShareAuthRequestPasswordButton',

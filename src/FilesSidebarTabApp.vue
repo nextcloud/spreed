@@ -62,9 +62,6 @@ import {
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
-// Styles
-import '@nextcloud/dialogs/dist/index.css'
-
 export default {
 
 	name: 'FilesSidebarTabApp',

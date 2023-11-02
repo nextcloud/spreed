@@ -183,7 +183,6 @@ export default {
 			// Create picker
 			picker = getFilePickerBuilder(t('spreed', 'File to share'))
 				.setMultiSelect(false)
-				.setModal(true)
 				.startAt(relativeBackgroundsFolderPath)
 				.setType(1)
 				.allowDirectories(false)

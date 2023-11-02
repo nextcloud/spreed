@@ -49,7 +49,6 @@ import {
 	signalingKill,
 } from './utils/webrtc/index.js'
 
-import '@nextcloud/dialogs/dist/index.css'
 // Leaflet icon patch
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
 import 'leaflet/dist/leaflet.css'

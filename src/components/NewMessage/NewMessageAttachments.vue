@@ -85,7 +85,6 @@ import { shareFile } from '../../services/filesSharingServices.js'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
-	.setModal(true)
 	.setType(1)
 	.allowDirectories()
 	.build()
