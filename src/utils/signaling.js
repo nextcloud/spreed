@@ -478,6 +478,10 @@ Signaling.Internal.prototype._doLeaveRoom = function(token) {
 }
 
 Signaling.Internal.prototype.sendCallMessage = function(data) {
+	if (OC.debug) {
+		console.debug('Sending', data)
+	}
+
 	if (data.type === 'answer') {
 		console.debug('ANSWER', data)
 	} else if (data.type === 'offer') {
@@ -517,6 +521,10 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 
 			result.data.ocs.data.forEach(message => {
 				let localParticipant
+
+				if (OC.debug) {
+					console.debug('Received', message)
+				}
 
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
