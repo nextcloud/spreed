@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0-beta.1 – 2023-11-02
+### Added
+- 🗒️ Note to self
+  [#2196](https://github.com/nextcloud/spreed/issues/2196)
+- 🎙️ Show speaker while screensharing
+  [#4478](https://github.com/nextcloud/spreed/issues/4478)
+- 🏷️ Add a caption to your file before sharing it into the chat
+  [#5354](https://github.com/nextcloud/spreed/issues/5354)
+- 👤 Ask Guest to enter a name when connecting
+  [#855](https://github.com/nextcloud/spreed/issues/855)
+- 🤩 Animated call reactions
+  [#10561](https://github.com/nextcloud/spreed/issues/10561)
+- 🖋️ Optionally require consent before joining a recorded call
+  [#10348](https://github.com/nextcloud/spreed/issues/10348)
+- 📲 Allow calling phone numbers from within Talk using SIP dialout
+  [#10346](https://github.com/nextcloud/spreed/issues/10346)
+
+### Changed
+- Requires Nextcloud 28
+- Update several dependencies
+
 ## 17.1.2 – 2023-10-27
 ### Changed
 - Update dependencies
