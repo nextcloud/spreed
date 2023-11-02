@@ -141,7 +141,8 @@ class ChatManager {
 		bool $sendNotifications,
 		?string $referenceId = null,
 		?int $parentId = null,
-		bool $shouldSkipLastMessageUpdate = false
+		bool $shouldSkipLastMessageUpdate = false,
+		bool $silent = false,
 	): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
@@ -167,9 +168,9 @@ class ChatManager {
 
 		$this->setMessageExpiration($chat, $comment);
 
-		$event = new BeforeSystemMessageSentEvent($chat, $comment, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
+		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatchTyped($event);
-		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate);
+		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate, $silent);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
@@ -181,7 +182,7 @@ class ChatManager {
 			}
 
 			if ($sendNotifications) {
-				$this->notifier->notifyOtherParticipant($chat, $comment, [], false);
+				$this->notifier->notifyOtherParticipant($chat, $comment, [], $silent);
 			}
 
 			if (!$shouldSkipLastMessageUpdate && $sendNotifications) {
@@ -196,7 +197,7 @@ class ChatManager {
 			}
 
 			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
-			$event = new SystemMessageSentEvent($chat, $comment, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
+			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
 		}

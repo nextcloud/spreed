@@ -244,6 +244,7 @@ class ListenerTest extends TestCase {
 				self::DUMMY_REFERENCE_ID,
 				null,
 				false,
+				false,
 			];
 		}
 		if (!empty($consecutive)) {
@@ -333,6 +334,7 @@ class ListenerTest extends TestCase {
 				false,
 				self::DUMMY_REFERENCE_ID,
 				null,
+				false,
 				false,
 			];
 		}

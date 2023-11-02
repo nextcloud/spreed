@@ -368,7 +368,13 @@ class Listener implements IEventListener {
 			}
 		}
 
-		$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData]);
+		if (isset($metaData['silent'])) {
+			$silent = (bool) $metaData['silent'];
+		} else {
+			$silent = false;
+		}
+
+		$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData], silent: $silent);
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
@@ -401,7 +407,7 @@ class Listener implements IEventListener {
 		}
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null, bool $shouldSkipLastMessageUpdate = false): IComment {
+	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null, bool $shouldSkipLastMessageUpdate = false, bool $silent = false): IComment {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->getAttendee()->getActorType();
 			$actorId = $participant->getAttendee()->getActorId();
@@ -439,7 +445,8 @@ class Listener implements IEventListener {
 			$this->timeFactory->getDateTime(), $message === 'file_shared',
 			$referenceId,
 			null,
-			$shouldSkipLastMessageUpdate
+			$shouldSkipLastMessageUpdate,
+			$silent,
 		);
 	}
 
