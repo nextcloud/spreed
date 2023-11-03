@@ -70,7 +70,12 @@
 						:container="container"
 						@close="closeLogModal">
 						<div class="modal__content">
-							<textarea v-model="processLog" class="log-content" />
+							<NcTextArea :value="processLog"
+								class="log-content"
+								:label="t('spreed', 'Log content')"
+								rows="29"
+								readonly
+								resize="vertical" />
 						</div>
 					</NcModal>
 				</div>
@@ -104,6 +109,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import BridgePart from './BridgePart.vue'
@@ -125,6 +131,7 @@ export default {
 		BridgePart,
 		Message,
 		NcModal,
+		NcTextArea,
 		Plus,
 	},
 
@@ -739,7 +746,10 @@ export default {
 }
 
 .log-content {
-	width: 600px;
-	height: 400px;
+	width: 590px;
+}
+
+:deep(.modal-container__content) {
+	padding: 5px;
 }
 </style>
