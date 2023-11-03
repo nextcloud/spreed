@@ -15,6 +15,7 @@ OC.L10N.register(
     "Other activities" : "Andere Aktivitäten",
     "Talk" : "Talk",
     "Guest" : "Gast",
+    "## Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "## Willkommen bei Nextcloud Talk!\nIn dieser Unterhaltung werden Sie über neue Funktionen in Nextcloud Talk informiert.",
     "## New in Talk %s" : "## Neu in Talk %s",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge und Safari können jetzt zur Teilnahme an Audio- und Videoanrufen verwendet werden",
     "- One-to-one conversations are now persistent and cannot be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Eins-zu-Eins-Unterhaltungen sind jetzt dauerhaft und können nicht mehr versehentlich in eine Gruppenunterhaltung gewandelt werden. Wenn ein Teilnehmer eine Unterhaltung verlässt, so wird die Unterhaltung jetzt nicht mehr automatisch gelöscht. Nur wenn beide Teilnehmer gehen, so wird die Unterhaltung vom Server gelöscht",
