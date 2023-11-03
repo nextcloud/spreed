@@ -880,7 +880,6 @@ class ChatController extends AEnvironmentAwareController {
 			Attachment::TYPE_VOICE,
 		];
 
-		$messages = [];
 		$messageIdsByType = [];
 		// Get all attachments
 		foreach ($objectTypes as $objectType) {

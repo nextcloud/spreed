@@ -64,6 +64,7 @@ Feature: chat-2/rich-object-share
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
+    Then user "participant1" sees the following shared summarized overview in room "public room" with 200
     When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"name":"Another room","call-type":"group"}' to room "public room" with 201 (v1)
     Then user "participant1" sees the following shared other in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
