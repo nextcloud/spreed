@@ -94,7 +94,14 @@ class UserMention implements IEventListener {
 
 		$mentionTypeCount = [];
 
+		// Set the current message as comment content, so that the message finds
+		// mentions which are now part of the message, but were not on the original
+		// comment, e.g. mentions at the beginning of captions
+		$originalCommentMessage = $comment->getMessage();
+		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH + 10000);
 		$mentions = $comment->getMentions();
+		$comment->setMessage($originalCommentMessage, ChatManager::MAX_CHAT_LENGTH);
+
 		// TODO This can be removed once getMentions() returns sorted results (Nextcloud 21+)
 		usort($mentions, static function (array $m1, array $m2) {
 			return mb_strlen($m2['id']) <=> mb_strlen($m1['id']);
