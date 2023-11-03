@@ -132,7 +132,7 @@ class ChatController extends AEnvironmentAwareController {
 			}
 			return [Attendee::ACTOR_GUESTS, $this->participant->getAttendee()->getActorId()];
 		}
-		
+
 		if ($this->userId === MatterbridgeManager::BRIDGE_BOT_USERID && $actorDisplayName) {
 			return [Attendee::ACTOR_BRIDGED, str_replace(['/', '"'], '', $actorDisplayName)];
 		}
@@ -936,7 +936,6 @@ class ChatController extends AEnvironmentAwareController {
 			Attachment::TYPE_VOICE,
 		];
 
-		$messages = [];
 		$messageIdsByType = [];
 		// Get all attachments
 		foreach ($objectTypes as $objectType) {

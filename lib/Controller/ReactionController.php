@@ -59,7 +59,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param string $reaction Emoji to add
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, TalkReaction[]>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reaction already existed
 	 * 201: Reaction added successfully
@@ -89,7 +89,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
-		return new DataResponse($reactions, $status);
+		return new DataResponse($this->formatReactions($reactions), $status);
 	}
 
 	/**
@@ -97,7 +97,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param string $reaction Emoji to remove
-	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reaction deleted successfully
 	 * 400: Deleting reaction is not possible
@@ -124,7 +124,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($reactions, Http::STATUS_OK);
+		return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
 	}
 
 	/**
@@ -132,7 +132,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @param string|null $reaction Emoji to filter
-	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reactions returned
 	 * 404: Message or reaction not found
@@ -150,6 +150,21 @@ class ReactionController extends AEnvironmentAwareController {
 
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
 
-		return new DataResponse($reactions, Http::STATUS_OK);
+		return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
+	}
+
+
+	/**
+	 * @param array<string, TalkReaction[]> $reactions
+	 * @return array<string, TalkReaction[]>|\stdClass
+	 */
+	public function formatReactions(array $reactions): array|\stdClass {
+		if ($this->getResponseFormat() === 'json' && empty($reactions)) {
+			// Cheating here to make sure the reactions array is always a
+			// JSON object on the API, even when there is no reaction at all.
+			return new \stdClass();
+		}
+
+		return $reactions;
 	}
 }

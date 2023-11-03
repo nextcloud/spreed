@@ -2391,12 +2391,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share/overview');
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$overview = $this->getDataFromResponse($this->response);
-		$expected = $formData->getRowsHash();
-		$summarized = array_map(function ($type) {
-			return (string) count($type);
-		}, $overview);
-		Assert::assertEquals($expected, $summarized);
+		$contents = $this->response->getBody()->getContents();
+		$this->assertEmptyArrayIsNotAListButADictionary($formData, $contents);
+		$overview = $this->getDataFromResponseBody($contents);
+
+		if ($formData instanceof TableNode) {
+			$expected = $formData->getRowsHash();
+			$summarized = array_map(function ($type) {
+				return (string) count($type);
+			}, $overview);
+			Assert::assertEquals($expected, $summarized);
+		}
 	}
 
 	/**
@@ -2985,7 +2990,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @return array
 	 */
 	protected function getDataFromResponse(ResponseInterface $response) {
-		$jsonBody = json_decode($response->getBody()->getContents(), true);
+		return $this->getDataFromResponseBody($response->getBody()->getContents());
+	}
+
+	/**
+	 * Parses the JSON answer to get the array of users returned.
+	 * @param string $response
+	 * @return array
+	 */
+	protected function getDataFromResponseBody(string $response) {
+		$jsonBody = json_decode($response, true);
 		return $jsonBody['ocs']['data'];
 	}
 
@@ -3465,7 +3479,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'reaction' => $reaction
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
-		$this->assertReactionList($formData);
+		if ($statusCode === 200 || $statusCode === 201) {
+			$this->assertReactionList($formData);
+		}
 	}
 
 	/**
@@ -3483,10 +3499,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function assertReactionList(?TableNode $formData): void {
+		$contents = $this->response->getBody()->getContents();
+		$this->assertEmptyArrayIsNotAListButADictionary($formData, $contents);
+		$reactions = $this->getDataFromResponseBody($contents);
+
 		$expected = [];
 		if (!$formData instanceof TableNode) {
 			return;
 		}
+
 		foreach ($formData->getHash() as $row) {
 			$reaction = $row['reaction'];
 			unset($row['reaction']);
@@ -3501,8 +3522,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected[$reaction][] = $row;
 		}
 
-		$result = $this->getDataFromResponse($this->response);
-		$result = array_map(static function ($reaction, $list) use ($expected): array {
+		$actual = array_map(static function ($reaction, $list) use ($expected): array {
 			$list = array_map(function ($reaction) {
 				unset($reaction['timestamp']);
 				$reaction['actorId'] = ($reaction['actorType'] === 'guests') ? self::$sessionIdToUser[$reaction['actorId']] : (string) $reaction['actorId'];
@@ -3515,8 +3535,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			usort($list, [self::class, 'sortAttendees']);
 			Assert::assertEquals($expected[$reaction], $list, 'Reaction list by type does not match');
 			return $list;
-		}, array_keys($result), array_values($result));
-		Assert::assertCount(count($expected), $result, 'Reaction count does not match');
+		}, array_keys($reactions), array_values($reactions));
+		Assert::assertCount(count($expected), $actual, 'Reaction count does not match');
 	}
 
 	/**
@@ -3986,6 +4006,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'USER_AGENT' => $userAgent,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	protected function assertEmptyArrayIsNotAListButADictionary(?TableNode $formData, string $content) {
+		if (!$formData instanceof TableNode || empty($formData->getHash())) {
+			$data = json_decode($content);
+			Assert::assertIsNotArray($data->ocs->data, 'Response ocs.data should be an "object" to represent a JSON dictionary, not a list-array');
+		}
 	}
 
 	/**
