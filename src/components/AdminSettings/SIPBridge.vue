@@ -74,8 +74,8 @@
 			<label for="dial-in-info" class="form__label additional-top-margin">
 				{{ t('spreed', 'Dial-in information') }}
 			</label>
-			<textarea id="dial-in-info"
-				v-model="dialInInfo"
+			<NcTextArea id="dial-in-info"
+				:value.sync="dialInInfo"
 				name="message"
 				class="form form__textarea"
 				rows="4"
@@ -107,6 +107,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setSIPSettings } from '../../services/settingsService.js'
@@ -120,6 +121,7 @@ export default {
 		NcButton,
 		NcNoteCard,
 		NcSelect,
+		NcTextArea,
 		NcTextField,
 	},
 
