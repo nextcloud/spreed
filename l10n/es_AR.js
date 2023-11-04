@@ -64,6 +64,7 @@ OC.L10N.register(
     "Edit" : "Editar",
     "More information" : "Más información",
     "Delete" : "Eliminar",
+    "Log content" : "Contenido del registro",
     "Password" : "Contraseña",
     "API token" : "Ficha del API",
     "Login" : "Inicio de sesión",

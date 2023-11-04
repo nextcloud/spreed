@@ -654,6 +654,7 @@ OC.L10N.register(
     "Edit" : "Уреди",
     "More information" : "Повеќе информации",
     "Delete" : "Избриши",
+    "Log content" : "Содржина на записот",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud корисник",
     "User password" : "Лозинка на корисник",

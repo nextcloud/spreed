@@ -972,6 +972,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Més informació sobre Matterbridge",
     "Enable bridge" : "Habilita el pont",
     "Show Matterbridge log" : "Mostra el registre de Matterbridge",
+    "Log content" : "Contingut del registre",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Usuari Nextcloud",
     "User password" : "Contrasenya d'usuari",

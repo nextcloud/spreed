@@ -199,6 +199,7 @@ OC.L10N.register(
     "Save" : "Ruaj",
     "Edit" : "Përpuno",
     "Delete" : "Fshij",
+    "Log content" : "Përmbajtja e hyrjes",
     "Password" : "Fjalëkalim",
     "API token" : "Çelës identifikues i API-t ",
     "Login" : "Hyrje",

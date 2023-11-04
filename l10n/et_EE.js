@@ -50,6 +50,7 @@ OC.L10N.register(
     "Save" : "Salvesta",
     "Edit" : "Redigeeri",
     "Delete" : "Kustuta",
+    "Log content" : "Logi sisu",
     "Password" : "Parool",
     "API token" : "API kood",
     "Login" : "Logi sisse",
