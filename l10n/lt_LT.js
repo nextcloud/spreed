@@ -539,6 +539,7 @@ OC.L10N.register(
     "Edit" : "Taisyti",
     "More information" : "Daugiau informacijos",
     "Delete" : "Ištrinti",
+    "Log content" : "Žurnalo turinys",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud naudotojas",
     "User password" : "Naudotojo slaptažodis",

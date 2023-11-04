@@ -289,6 +289,7 @@ OC.L10N.register(
     "Save" : "Konservi",
     "Edit" : "Modifi",
     "Delete" : "Forigi",
+    "Log content" : "Protokolenhavo",
     "Password" : "Pasvorto",
     "API token" : "API-ĵetono",
     "Login" : "Login",

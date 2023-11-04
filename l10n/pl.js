@@ -906,6 +906,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Więcej informacji o Matterbridge",
     "Enable bridge" : "Włącz mostkowanie",
     "Show Matterbridge log" : "Pokaż dziennik Matterbridge",
+    "Log content" : "Zawiera",
     "Nextcloud URL" : "Adres URL Nextcloud",
     "Nextcloud user" : "Użytkownik Nextcloud",
     "User password" : "Hasło użytkownika",

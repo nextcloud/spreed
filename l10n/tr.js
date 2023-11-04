@@ -1017,6 +1017,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Matterbridge hakkında ayrıntılı bilgiler",
     "Enable bridge" : "Köprü kullanılsın",
     "Show Matterbridge log" : "Matterbridge günlüğünü görüntüle",
+    "Log content" : "Günlük içeriği",
     "Nextcloud URL" : "Nextcloud adresi",
     "Nextcloud user" : "Nextcloud kullanıcısı",
     "User password" : "Kullanıcı parolası",
