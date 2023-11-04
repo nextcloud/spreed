@@ -877,6 +877,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Viac informácií o Matterbridge",
     "Enable bridge" : "Povoliť most",
     "Show Matterbridge log" : "Zobraziť záznam udalostí Matterbridge",
+    "Log content" : "Obsah logov",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Používateľ Nextcloud",
     "User password" : "Heslo používateľa",

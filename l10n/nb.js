@@ -480,6 +480,7 @@ OC.L10N.register(
     "Edit" : "Rediger",
     "More information" : "Mer informasjon",
     "Delete" : "Slett",
+    "Log content" : "Loggfør innhold",
     "Talk conversation" : "Talk-samtale",
     "Password" : "Passord",
     "API token" : "API-symbol",

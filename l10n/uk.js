@@ -818,6 +818,7 @@ OC.L10N.register(
     "More information" : "Докладно",
     "Delete" : "Вилучити",
     "You can bridge channels from various instant messaging systems with Matterbridge." : "За допомогою Matterbridge ви можете об'єднати канали з різних систем обміну повідомленнями.",
+    "Log content" : "Вміст журналу",
     "Talk conversation" : "Розмова Talk",
     "User name or email address" : "Ім'я користувача або адреса ел. пошти",
     "Password" : "Пароль",

@@ -775,6 +775,7 @@ OC.L10N.register(
     "Edit" : "Ändra",
     "More information" : "Mer information",
     "Delete" : "Radera",
+    "Log content" : "Logginnehåll",
     "Nextcloud URL" : "Nextcloud-URL",
     "Nextcloud user" : "Nextcloud-användare",
     "Talk conversation" : "Talk-konversation",

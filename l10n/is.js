@@ -434,6 +434,7 @@ OC.L10N.register(
     "Edit" : "Breyta",
     "More information" : "Nánari upplýsingar",
     "Delete" : "Eyða",
+    "Log content" : "Efni atvikaskrár",
     "Password" : "Lykilorð",
     "API token" : "API-teikn",
     "Login" : "Innskráning",
