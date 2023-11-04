@@ -969,6 +969,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Več podrobnosti o Matterbridge",
     "Enable bridge" : "Omogoči premoščanje",
     "Show Matterbridge log" : "Pokaži dnevnik Matterbridge",
+    "Log content" : "Vsebina dnevnika",
     "Nextcloud URL" : "Naslov URL Nextcloud",
     "Nextcloud user" : "Uporabnik Nextcloud",
     "User password" : "Uporabniško geslo",

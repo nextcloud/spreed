@@ -1017,6 +1017,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "更多關於 Matterbridge 的資訊",
     "Enable bridge" : "啟用橋接",
     "Show Matterbridge log" : "顯示 Matterbridge 紀錄檔",
+    "Log content" : "記錄內容",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud 使用者",
     "User password" : "使用者密碼",

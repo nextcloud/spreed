@@ -76,6 +76,7 @@ OC.L10N.register(
     "Save" : "შენახვა",
     "Edit" : "შეცვლა",
     "Delete" : "წაშლა",
+    "Log content" : "ლოგის მოცულობა",
     "Password" : "პაროლი",
     "API token" : "API ტოკენი",
     "Login" : "ავტორიზაცია",

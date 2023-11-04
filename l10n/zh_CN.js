@@ -940,6 +940,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "更多关于Matterbridge的信息",
     "Enable bridge" : "启用桥接",
     "Show Matterbridge log" : "显示 Matterbridge 日志",
+    "Log content" : "日志内容",
     "Nextcloud URL" : "Nextcloud URL ",
     "Nextcloud user" : "Nextcloud 用户",
     "User password" : "使用密码",

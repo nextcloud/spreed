@@ -743,6 +743,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Lisätietoa Matterbridgestä",
     "Enable bridge" : "Ota silta käyttöön",
     "Show Matterbridge log" : "Näytä Matterbridge-loki",
+    "Log content" : "Lokin sisältö",
     "Nextcloud URL" : "Nextcloudin URL-osoite",
     "Nextcloud user" : "Nextcloud-käyttäjä",
     "User password" : "Käyttäjän salasana",

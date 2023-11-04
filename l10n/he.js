@@ -434,6 +434,7 @@ OC.L10N.register(
     "Edit" : "עריכה",
     "More information" : "מידע נוסף",
     "Delete" : "מחיקה",
+    "Log content" : "תוכן הרישום",
     "Nextcloud URL" : "כתובת Nextcloud",
     "Nextcloud user" : "משתמש Nextcloud",
     "User password" : "ססמת משתמש",

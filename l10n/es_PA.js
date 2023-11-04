@@ -75,6 +75,7 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Borrar",
+    "Log content" : "Contenido de bitácoras",
     "Password" : "Contraseña",
     "API token" : "Ficha del API",
     "Login" : "Iniciar sesión",

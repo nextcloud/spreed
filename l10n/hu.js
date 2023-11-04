@@ -996,6 +996,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Bővebben a Matterbridge-ről",
     "Enable bridge" : "Híd engedélyezése",
     "Show Matterbridge log" : "Matterbridge napló megjelenítése",
+    "Log content" : "Naplótartalom",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud-felhasználó",
     "User password" : "Felhasználói jelszó",

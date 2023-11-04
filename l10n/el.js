@@ -685,6 +685,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "Περισσότερες πληροφορίες για το Matterbridge",
     "Enable bridge" : "Ενεργοποίηση γέφυρας",
     "Show Matterbridge log" : "Εμφάνιση αρχείου καταγραφής Matterbridge",
+    "Log content" : "Περιεχόμενα αρχείου καταγραφής",
     "Nextcloud URL" : "Διεύθυνση URL του Nextcloud",
     "Nextcloud user" : "Χρήστης του Nextcloud",
     "User password" : "Συνθηματικό χρήστη",
