@@ -83,7 +83,8 @@
 						</template>
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
-					<NcActionButton close-after-click
+					<NcActionButton v-if="!isFileShareOnly"
+						close-after-click
 						@click.stop="handleCopyMessageText">
 						<template #icon>
 							<ContentCopy :size="20" />
@@ -523,6 +524,10 @@ export default {
 
 		isFileShare() {
 			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
+		},
+
+		isFileShareOnly() {
+			return this.isFileShare && this.message === '{file}'
 		},
 
 		isCurrentGuest() {
