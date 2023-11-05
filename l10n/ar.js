@@ -1017,6 +1017,7 @@ OC.L10N.register(
     "More info on Matterbridge" : "مزيد من المعلومات حول Matterbridge.",
     "Enable bridge" : "غير متاح ",
     "Show Matterbridge log" : "إظهار سجل Matterbridge",
+    "Log content" : "محتوى سجل الحركات",
     "Nextcloud URL" : "رابط الخادم السحابي نكست كلاود",
     "Nextcloud user" : "عضو نكست كلاود",
     "User password" : "كلمة مرور المستخدم",
