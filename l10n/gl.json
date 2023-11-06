@@ -47,7 +47,7 @@
     "- Start calls without notifying others in big conversations. You can send individual call notifications once the call has started." : "– Inicie chamadas sen notificar aos demais en grandes conversas. Pode enviar notificacións de chamadas individuais unha vez iniciada a chamada.",
     "- Send chat messages without notifying the recipients in case it is not urgent" : "– Envíe mensaxes de parola sen avisar aos destinatarios por se non é urxente",
     "- Emojis can now be autocompleted by typing a \":\"" : "– Agora os «emojis» pódense completar automaticamente escribindo «:»",
-    "- Link various items using the new smart-picker by typing a \"/\"" : "– Vincular varios elementos usando o novo selector intelixente escribindo unha «/»",
+    "- Link various items using the new smart-picker by typing a \"/\"" : "– Ligar varios elementos usando o novo selector intelixente escribindo unha «/»",
     "- Moderators can now create breakout rooms (requires the external signaling server)" : "– Os moderadores agora poden crear salas parciais (precisa o servidor de sinalización externo)",
     "- Calls can now be recorded (requires the external signaling server)" : "– Agora pódense gravar as chamadas (precisa o servidor de sinalización externo)",
     "- Conversations can now have an avatar or emoji as icon" : "– Agora as conversas poden ter un avatar ou un «emoji» como icona",
