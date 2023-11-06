@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 /**
+ * @copyright Copyright (c) 2016 Joachim Bauch <mail@joachim-bauch.de>
+ *
  * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -33,14 +36,16 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
-use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
-use OCP\Collaboration\AutoComplete\IManager;
-use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Collaboration\AutoComplete\AutoCompleteFilterEvent;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Server;
 
-class Listener {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Listener implements IEventListener {
 	/** @var string[] */
 	protected array $allowedGroupIds = [];
 	protected string $roomToken;
@@ -56,22 +61,20 @@ class Listener {
 	) {
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(IManager::class . '::filterResults', [self::class, 'filterNonListableMesssages']);
-	}
-
-	public static function filterNonListableMesssages(AutoCompleteEvent $event): void {
-		$listener = Server::get(self::class);
+	public function handle(Event $event): void {
+		if (!$event instanceof AutoCompleteFilterEvent) {
+			return;
+		}
 
 		if ($event->getItemType() !== 'call') {
 			return;
 		}
 
-		$event->setResults($listener->filterUsersAndGroupsWithoutTalk($event->getResults()));
+		$event->setResults($this->filterUsersAndGroupsWithoutTalk($event->getResults()));
 
-		$event->setResults($listener->filterBridgeBot($event->getResults()));
+		$event->setResults($this->filterBridgeBot($event->getResults()));
 		if ($event->getItemId() !== 'new') {
-			$event->setResults($listener->filterExistingParticipants($event->getItemId(), $event->getResults()));
+			$event->setResults($this->filterExistingParticipants($event->getItemId(), $event->getResults()));
 		}
 	}
 

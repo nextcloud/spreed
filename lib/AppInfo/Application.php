@@ -119,6 +119,7 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Collaboration\AutoComplete\AutoCompleteFilterEvent;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -216,6 +217,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, FilesListener::class);
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, FilesListener::class);
 
+		// Collaborators / Auto complete listeners
+		$context->registerEventListener(AutoCompleteFilterEvent::class, CollaboratorsListener::class);
+
 		// Reference listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, ReferenceInvalidationListener::class);
@@ -306,7 +310,6 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $server->get(IEventDispatcher::class);
 
 		SignalingListener::register($dispatcher);
-		CollaboratorsListener::register($dispatcher);
 	}
 
 	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {
