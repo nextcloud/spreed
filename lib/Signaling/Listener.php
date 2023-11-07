@@ -26,9 +26,11 @@ namespace OCA\Talk\Signaling;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
+use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -53,16 +55,28 @@ use OCP\Server;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
+	public function __construct(
+		protected Config $talkConfig,
+		protected Messages $internalSignaling,
+		protected BackendNotifier $externalSignaling,
+	) {
+	}
 
 	public function handle(Event $event): void {
 		if ($event instanceof RoomModifiedEvent) {
-			self::notifyAfterRoomSettingsChanged($event);
+			$this->notifyAfterRoomSettingsChanged($event);
+		} elseif ($event instanceof LobbyModifiedEvent) {
+			$this->notifyAfterRoomSettingsChanged($event);
 		}
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		self::registerInternalSignaling($dispatcher);
 		self::registerExternalSignaling($dispatcher);
+	}
+
+	protected function isInternalSignaling(): bool {
+		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL;
 	}
 
 	protected static function isUsingInternalSignaling(): bool {
@@ -88,17 +102,6 @@ class Listener implements IEventListener {
 
 	protected static function registerExternalSignaling(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, [self::class, 'notifyAfterUsersAdd']);
-		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SIP_ENABLED_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_MODE, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, [self::class, 'notifyAfterRoomSettingsChanged']);
 		// TODO remove handler with "roomModified" in favour of handler with
 		// "participantsModified" once the clients no longer expect a
 		// "roomModified" message for participant type changes.
@@ -151,14 +154,28 @@ class Listener implements IEventListener {
 		$notifier->roomInvited($event->getRoom(), $event->getParticipants());
 	}
 
-	public static function notifyAfterRoomSettingsChanged(RoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
+	public function notifyAfterRoomSettingsChanged(ARoomModifiedEvent $event): void {
+		if ($this->isInternalSignaling()) {
 			return;
 		}
 
-		$notifier = Server::get(BackendNotifier::class);
+		if (!in_array($event->getProperty(), [
+			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE,
+			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS,
+			ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
+			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
+			ARoomModifiedEvent::PROPERTY_LISTABLE,
+			ARoomModifiedEvent::PROPERTY_LOBBY,
+			ARoomModifiedEvent::PROPERTY_NAME,
+			ARoomModifiedEvent::PROPERTY_PASSWORD,
+			ARoomModifiedEvent::PROPERTY_READ_ONLY,
+			ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
+			ARoomModifiedEvent::PROPERTY_TYPE,
+			], true)) {
+			return;
+		}
 
-		$notifier->roomModified($event->getRoom());
+		$this->externalSignaling->roomModified($event->getRoom());
 	}
 
 	public static function notifyAfterParticipantTypeAndPermissionsSet(ModifyParticipantEvent $event): void {

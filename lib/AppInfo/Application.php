@@ -272,6 +272,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RoomModifiedEvent::class, FederationListener::class);
 
 		// Signaling listeners
+		$context->registerEventListener(LobbyModifiedEvent::class, SignalingListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
 		// Video verification
