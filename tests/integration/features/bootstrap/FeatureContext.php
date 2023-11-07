@@ -133,6 +133,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$userToAttendeeId[$identifier]['phones'][self::$phoneNumberToActorId[$phoneNumber]];
 	}
 
+	public static function getSessionIdForUser(string $user): string {
+		return self::$userToSessionId[$user];
+	}
+
 	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
 		if (!isset(self::$userToAttendeeId[$room][$type][$id])) {
 			if ($user !== null) {
@@ -1087,6 +1091,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|null $formData
 	 */
 	public function userJoinsRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+		$this->userJoinsRoomWithNamedSession($user, $identifier, $statusCode, $apiVersion, '', $formData);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+) \((v4)\) session name "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
@@ -1106,6 +1123,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
 			self::$userToSessionId[$user] = $response['sessionId'];
+			if ($sessionName) {
+				self::$userToSessionId[$user . '#' . $sessionName] = $response['sessionId'];
+			}
 			if (!isset(self::$userToAttendeeId[$identifier][$response['actorType']])) {
 				self::$userToAttendeeId[$identifier][$response['actorType']] = [];
 			}

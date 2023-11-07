@@ -7,14 +7,25 @@ Feature: conversation/lobby
     Given user "participant4" exists
 
   Scenario: set lobby state in group room
+    Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" promotes "participant2" in room "room" with 200 (v4)
     And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And reset signaling server requests
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room  | {"type":"update","update":{"userids":["participant1","participant2","participant3"],"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+    And reset signaling server requests
     And user "participant1" sets lobby state for room "room" to "no lobby" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room  | {"type":"update","update":{"userids":["participant1","participant2","participant3"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
     And user "participant2" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant2" sets lobby state for room "room" to "no lobby" with 200 (v4)
     And user "participant3" sets lobby state for room "room" to "non moderators" with 403 (v4)

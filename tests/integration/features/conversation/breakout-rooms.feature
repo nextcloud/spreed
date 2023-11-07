@@ -7,6 +7,7 @@ Feature: conversation/breakout-rooms
     Given group "group1" exists
 
   Scenario: Teacher creates manual breakout rooms
+    Given signaling server is started
     Given user "participant1" creates room "class room" (v4)
       | roomType | 2 |
       | roomName | class room |
@@ -63,6 +64,40 @@ Feature: conversation/breakout-rooms
       | class room | users      | participant4 | 3               |
       | Room 1     | users      | participant1 | 1               |
       | Room 1     | users      | participant2 | 3               |
+    And user "participant2" joins room "class room" with 200 (v4)
+    And user "participant3" joins room "class room" with 200 (v4)
+    And user "participant4" joins room "class room" with 200 (v4)
+    And reset signaling server requests
+    And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
+    Then signaling server received the following requests
+      | token | data |
+      | Room 1 | {"type":"update","update":{"userids":["participant1","participant2"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | Room 2 | {"type":"update","update":{"userids":["participant1","participant3"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | Room 3 | {"type":"update","update":{"userids":["participant1","participant4"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | class room | {"type":"switchto","switchto":{"roomid":"ROOM(Room 1)","sessions":["SESSION(participant2)"]}} |
+      | class room | {"type":"switchto","switchto":{"roomid":"ROOM(Room 2)","sessions":["SESSION(participant3)"]}} |
+      | class room | {"type":"switchto","switchto":{"roomid":"ROOM(Room 3)","sessions":["SESSION(participant4)"]}} |
+      | class room | {"type":"update","update":{"userids":["participant1","participant2","participant3","participant4"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+    And user "participant2" leaves room "class room" with 200 (v4)
+    And user "participant3" leaves room "class room" with 200 (v4)
+    And user "participant4" leaves room "class room" with 200 (v4)
+    And user "participant2" joins room "Room 1" with 200 (v4)
+    And user "participant3" joins room "Room 2" with 200 (v4)
+    And user "participant4" joins room "Room 3" with 200 (v4)
+    And reset signaling server requests
+    And user "participant1" stops breakout rooms in room "class room" with 200 (v1)
+    Then signaling server received the following requests
+      | token | data |
+      | Room 1 | {"type":"switchto","switchto":{"roomid":"ROOM(class room)","sessions":["SESSION(participant2)"]}} |
+      | Room 2 | {"type":"switchto","switchto":{"roomid":"ROOM(class room)","sessions":["SESSION(participant3)"]}} |
+      | Room 3 | {"type":"switchto","switchto":{"roomid":"ROOM(class room)","sessions":["SESSION(participant4)"]}} |
+      | class room | {"type":"update","update":{"userids":["participant1","participant2","participant3","participant4"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | Room 1 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | Room 1 | {"type":"update","update":{"userids":["participant1","participant2"],"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | Room 2 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | Room 2 | {"type":"update","update":{"userids":["participant1","participant3"],"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | Room 3 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | Room 3 | {"type":"update","update":{"userids":["participant1","participant4"],"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
 
   Scenario: Teacher creates automatic breakout rooms
     Given user "participant1" creates room "class room" (v4)

@@ -5,6 +5,7 @@ Feature: conversation-2/promotion-demotion
     Given user "participant3" exists
 
   Scenario: Owner promotes/demotes moderator
+    Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -13,7 +14,16 @@ Feature: conversation-2/promotion-demotion
       | id   | type | participantType |
       | room | 3    | 3               |
     And user "participant1" loads attendees attendee ids in room "room" (v4)
+    And reset signaling server requests
     When user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+    # TODO remove handler with "roomModified" in favour of handler with
+    # "participantsModified" once the clients no longer expect a
+    # "roomModified" message for participant type changes.
+      | room  | {"type":"update","update":{"userids":["participant1","participant2"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"participants","participants":{"changed":[],"users":[{"inCall":0,"lastPing":0,"sessionId":"0","participantType":1,"participantPermissions":1,"displayName":"participant1-displayname","userId":"participant1"},{"inCall":0,"lastPing":0,"sessionId":"0","participantType":2,"participantPermissions":1,"displayName":"participant2-displayname","userId":"participant2"}]}} |
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 2               |

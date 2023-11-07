@@ -63,6 +63,7 @@ Feature: command/user-remove
       | users      | participant1 | 1               |
 
   Scenario: Remove a user after there was a missed call
+    Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
@@ -70,8 +71,19 @@ Feature: command/user-remove
     Then user "participant1" joins call "room" with 200 (v4)
     Then user "participant1" leaves call "room" with 200 (v4)
     Then user "participant1" leaves room "room" with 200 (v4)
+    And reset signaling server requests
     And invoking occ with "talk:user:remove --user participant2"
-    And the command output contains the text "Users successfully removed from all rooms"
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"disinvite","disinvite":{"userids":["participant2"],"alluserids":["participant1"],"properties":{"name":"Private conversation","type":1,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
+      # Type changed
+      | room  | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      # Name changed
+      | room  | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      # Read only changed
+      | room  | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":1,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+   And the command output contains the text "Users successfully removed from all rooms"
     Then the command was successful
     And user "participant2" is participant of the following rooms (v4)
     And user "participant1" is participant of the following rooms (v4)

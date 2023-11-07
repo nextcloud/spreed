@@ -323,9 +323,21 @@ trait RecordingTrait {
 			return;
 		}
 
-		$expected = array_map(static function (array $request) {
+		$count = count($formData->getHash());
+		Assert::assertCount($count, $requests, 'Request count does not match' . "\n" . json_encode($requests));
+
+		$expected = array_map(static function (array $request, $actual) {
 			$identifier = $request['token'];
 			$request['token'] = FeatureContext::getTokenForIdentifier($identifier);
+
+			$matched = preg_match('/ROOM\(([^)]+)\)/', $request['data'], $matches);
+			if ($matched) {
+				$request['data'] = str_replace(
+					'ROOM(' . $matches[1] . ')',
+					FeatureContext::getTokenForIdentifier($matches[1]),
+					$request['data']
+				);
+			}
 
 			$matched = preg_match('/PHONE\((\+\d+)\)/', $request['data'], $matches);
 			if ($matched) {
@@ -345,11 +357,40 @@ trait RecordingTrait {
 				);
 			}
 
-			return $request;
-		}, $formData->getHash());
+			$matched = preg_match('/SESSION\(([^)]+)\)/', $request['data'], $matches);
+			if ($matched) {
+				$request['data'] = str_replace(
+					'SESSION(' . $matches[1] . ')',
+					str_replace('/', '\/', FeatureContext::getSessionIdForUser($matches[1])),
+					$request['data']
+				);
+			}
 
-		$count = count($expected);
-		Assert::assertCount($count, $requests, 'Request count does not match');
+			$matched = preg_match('/"lastPing":LAST_PING\(\)/', $request['data'], $matches);
+			if ($matched) {
+				$matched = preg_match('/"lastPing":(\d+)/', $actual['data'], $matches);
+				if ($matched) {
+					$request['data'] = str_replace(
+						'"lastPing":LAST_PING()',
+						$matches[0],
+						$request['data']
+					);
+				}
+			}
+			$matched = preg_match('/"active-since":\{"date":"ACTIVE_SINCE\(\)","timezone_type":3,"timezone":"UTC"}/', $request['data'], $matches);
+			if ($matched) {
+				$matched = preg_match('/"active-since":\{"date":"([\d\- :.]+)","timezone_type":3,"timezone":"UTC"}/', $actual['data'], $matches);
+				if ($matched) {
+					$request['data'] = str_replace(
+						'ACTIVE_SINCE()',
+						$matches[1],
+						$request['data']
+					);
+				}
+			}
+
+			return $request;
+		}, $formData->getHash(), $requests);
 
 		Assert::assertEquals($expected, $requests);
 	}
