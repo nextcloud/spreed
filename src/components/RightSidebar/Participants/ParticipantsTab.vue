@@ -83,6 +83,7 @@ import ParticipantsListVirtual from './ParticipantsList/ParticipantsListVirtual.
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
 
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
+import { useIsInCall } from '../../../composables/useIsInCall.js'
 import getParticipants from '../../../mixins/getParticipants.js'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
@@ -122,9 +123,11 @@ export default {
 
 	setup() {
 		const { sortParticipants } = useSortParticipants()
+		const isInCall = useIsInCall()
 
 		return {
 			sortParticipants,
+			isInCall,
 		}
 	},
 
@@ -185,6 +188,12 @@ export default {
 	watch: {
 		searchText(value) {
 			this.isFocused = !!value
+		},
+
+		isActive(value) {
+			if (value && this.pendingChanges) {
+				this.debounceUpdateParticipants()
+			}
 		}
 	},
 
