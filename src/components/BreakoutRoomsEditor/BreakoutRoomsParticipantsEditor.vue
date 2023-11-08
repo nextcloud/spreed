@@ -48,7 +48,7 @@
 				:title="deleteButtonLabel"
 				:aria-label="deleteButtonLabel"
 				type="error"
-				@click="deleteBreakoutRooms">
+				@click="toggleShowDialog">
 				<template #icon>
 					<Delete :size="20" />
 				</template>
@@ -88,6 +88,19 @@
 				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
+		<NcDialog :open.sync="showDialog"
+			:name="t('spreed','Delete breakout rooms')"
+			:message="dialogMessage"
+			:container="container">
+			<template #actions>
+				<NcButton type="tertiary" @click="toggleShowDialog">
+					{{ t('spreed', 'Cancel') }}
+				</NcButton>
+				<NcButton type="error" @click="deleteBreakoutRooms">
+					{{ t('spreed', 'Delete breakout rooms') }}
+				</NcButton>
+			</template>
+		</NcDialog>
 	</div>
 </template>
 
@@ -100,6 +113,7 @@ import Reload from 'vue-material-design-icons/Reload.vue'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
 import SelectableParticipant from './SelectableParticipant.vue'
@@ -119,6 +133,7 @@ export default {
 		NcButton,
 		ArrowLeft,
 		Delete,
+		NcDialog,
 	},
 
 	props: {
@@ -144,6 +159,7 @@ export default {
 		return {
 			selectedParticipants: [],
 			assignments: [],
+			showDialog: false,
 		}
 	},
 
@@ -216,6 +232,10 @@ export default {
 
 		deleteButtonLabel() {
 			return t('spreed', 'Delete breakout rooms')
+		},
+
+		dialogMessage() {
+			return t('spreed', 'Current breakout rooms and settings will be lost')
 		},
 	},
 
@@ -313,25 +333,14 @@ export default {
 			this.$emit('close')
 		},
 
+		toggleShowDialog() {
+			this.showDialog = !this.showDialog
+		},
+
 		deleteBreakoutRooms() {
-			OC.dialogs.confirmDestructive(
-				t('spreed', 'Current breakout rooms and settings will be lost'),
-				t('spreed', 'Delete breakout rooms'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('spreed', 'Delete breakout rooms'),
-					confirmClasses: 'error',
-					cancel: t('spreed', 'Cancel'),
-				},
-				(decision) => {
-					if (!decision) {
-						return
-					}
-					this.$store.dispatch('deleteBreakoutRoomsAction', {
-						token: this.token,
-					})
-				}
-			)
+			this.$store.dispatch('deleteBreakoutRoomsAction', {
+				token: this.token,
+			})
 		},
 	},
 }
@@ -366,6 +375,11 @@ export default {
 :deep(.icon-collapse) {
 	position: absolute !important;
 	left: 0;
+}
+
+:deep(.dialog) {
+	padding-block: 0px 8px;
+	padding-inline: 12px 8px;
 }
 
 .delete {
