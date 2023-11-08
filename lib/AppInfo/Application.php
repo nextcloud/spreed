@@ -54,13 +54,16 @@ use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeesAddedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
 use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
@@ -68,6 +71,7 @@ use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
+use OCA\Talk\Events\GuestJoinedRoomEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\MessageParseEvent;
@@ -77,6 +81,7 @@ use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
+use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\Listener as FederationListener;
@@ -271,8 +276,30 @@ class Application extends App implements IBootstrap {
 		// Federation listeners
 		$context->registerEventListener(RoomModifiedEvent::class, FederationListener::class);
 
-		// Signaling listeners
+		// Signaling listeners (External)
+		$context->registerEventListener(AttendeesAddedEvent::class, SignalingListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, SignalingListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, SignalingListener::class);
+		$context->registerEventListener(SessionLeftRoomEvent::class, SignalingListener::class);
+
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, SignalingListener::class);
+		$context->registerEventListener(GuestsCleanedUpEvent::class, SignalingListener::class);
+		$context->registerEventListener(LobbyModifiedEvent::class, SignalingListener::class);
+
+		$context->registerEventListener(ChatMessageSentEvent::class, SignalingListener::class);
+		$context->registerEventListener(SystemMessageSentEvent::class, SignalingListener::class);
+		$context->registerEventListener(SystemMessagesMultipleSentEvent::class, SignalingListener::class);
+
+		// Signaling listeners (Both)
+		$context->registerEventListener(BeforeRoomDeletedEvent::class, SignalingListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, SignalingListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
+
+		// Signaling listeners (Internal)
+		$context->registerEventListener(BeforeSessionLeftRoomEvent::class, SignalingListener::class);
+		$context->registerEventListener(BeforeAttendeeRemovedEvent::class, SignalingListener::class);
+		$context->registerEventListener(GuestJoinedRoomEvent::class, SignalingListener::class);
+		$context->registerEventListener(UserJoinedRoomEvent::class, SignalingListener::class);
 
 		// Video verification
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, PublicShareAuthListener::class);
@@ -299,17 +326,10 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
-		$server = $context->getServerContainer();
-
 		$context->injectFn([$this, 'registerCollaborationResourceProvider']);
 		$context->injectFn([$this, 'registerClientLinks']);
 		$context->injectFn([$this, 'registerNavigationLink']);
 		$context->injectFn([$this, 'registerCloudFederationProviderManager']);
-
-		/** @var IEventDispatcher $dispatcher */
-		$dispatcher = $server->get(IEventDispatcher::class);
-
-		SignalingListener::register($dispatcher);
 	}
 
 	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {

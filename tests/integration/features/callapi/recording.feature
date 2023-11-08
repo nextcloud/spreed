@@ -5,15 +5,21 @@ Feature: callapi/recording
 
   Scenario: Start and stop video recording
     Given recording server is started
+    Given signaling server is started
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" joins room "room1" with 200 (v4)
     And user "participant1" joins call "room1" with 200 (v4)
+    And reset signaling server requests
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data                                                         |
       | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    Then signaling server received the following requests
+      | token | data |
+      | room1 | {"type":"message","message":{"data":{"type":"recording","recording":{"status":3}}}} |
+      | room1 | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 3             |
@@ -26,14 +32,23 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 1             |
+    And reset signaling server requests
     When user "participant1" stops recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data             |
       | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    Then signaling server received the following requests
+      # Nothing changes until the recording backend confirms the stop
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 1             |
+    And reset signaling server requests
     And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    Then signaling server received the following requests
+      | token | data |
+      | room1 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room1 | {"type":"message","message":{"data":{"type":"recording","recording":{"status":0}}}} |
+      | room1 | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_stopped    |

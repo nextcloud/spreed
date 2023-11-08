@@ -6,6 +6,7 @@ Feature: callapi/update-call-flags
     And user "not invited but joined user" exists
 
   Scenario: all participants can update their call flags when in a call
+    Given signaling server is started
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -20,13 +21,22 @@ Feature: callapi/update-call-flags
     And user "moderator" joins room "public room" with 200 (v4)
     And user "invited user" joins room "public room" with 200 (v4)
     And user "not invited but joined user" joins room "public room" with 200 (v4)
+    And reset signaling server requests
     And user "owner" joins call "public room" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | public room | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | public room | {"type":"incall","incall":{"incall":7,"changed":[{"inCall":7,"lastPing":LAST_PING(),"sessionId":"SESSION(owner)","nextcloudSessionId":"SESSION(owner)","participantType":1,"participantPermissions":254,"userId":"owner"}],"users":[{"inCall":7,"lastPing":LAST_PING(),"sessionId":"SESSION(owner)","nextcloudSessionId":"SESSION(owner)","participantType":1,"participantPermissions":254,"userId":"owner"}]}} |
+    And reset signaling server requests
+    When user "owner" updates call flags in room "public room" to "1" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | public room | {"type":"incall","incall":{"incall":1,"changed":[{"inCall":1,"lastPing":LAST_PING(),"sessionId":"SESSION(owner)","nextcloudSessionId":"SESSION(owner)","participantType":1,"participantPermissions":254,"userId":"owner"}],"users":[{"inCall":1,"lastPing":LAST_PING(),"sessionId":"SESSION(owner)","nextcloudSessionId":"SESSION(owner)","participantType":1,"participantPermissions":254,"userId":"owner"}]}} |
     And user "moderator" joins call "public room" with 200 (v4)
     And user "invited user" joins call "public room" with 200 (v4)
     And user "not invited but joined user" joins call "public room" with 200 (v4)
     And user "guest moderator" joins call "public room" with 200 (v4)
     And user "guest" joins call "public room" with 200 (v4)
-    When user "owner" updates call flags in room "public room" to "1" with 200 (v4)
     And user "moderator" updates call flags in room "public room" to "1" with 200 (v4)
     And user "invited user" updates call flags in room "public room" to "1" with 200 (v4)
     And user "not invited but joined user" updates call flags in room "public room" to "1" with 200 (v4)

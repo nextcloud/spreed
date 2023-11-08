@@ -24,6 +24,7 @@ Feature: conversation-2/set-listable
     Then user "creator" allows listing room "room" for "5" with 400 (v4)
 
   Scenario: Only moderators and owners can change listable attribute
+    Given signaling server is started
     Given user "creator" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -32,11 +33,21 @@ Feature: conversation-2/set-listable
     And user "user-guest@example.com" is a guest account user
     And user "creator" adds user "regular-user" to room "room" with 200 (v4)
     And user "creator" adds user "moderator" to room "room" with 200 (v4)
+    And reset signaling server requests
     And user "creator" allows listing room "room" for "all" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room  | {"type":"update","update":{"userids":["creator","moderator","regular-user"],"properties":{"name":"room","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":2,"active-since":null,"sip-enabled":0,"description":""}}} |
     When user "creator" promotes "moderator" in room "room" with 200 (v4)
     And user "user-guest@example.com" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
+    And reset signaling server requests
     Then user "moderator" allows listing room "room" for "none" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room  | {"type":"update","update":{"userids":["creator","moderator","regular-user","user-guest@example.com"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
     And user "regular-user" allows listing room "room" for "users" with 403 (v4)
     And user "user-guest@example.com" allows listing room "room" for "users" with 403 (v4)
     And user "guest" allows listing room "room" for "users" with 401 (v4)

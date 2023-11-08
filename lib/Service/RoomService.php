@@ -860,6 +860,7 @@ class RoomService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, $event);
 		$oldStatus = $room->getBreakoutRoomStatus();
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS, $status, $oldStatus);
+		$this->dispatcher->dispatchTyped($event);
 
 		return true;
 	}

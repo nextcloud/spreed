@@ -155,14 +155,14 @@ class BackendNotifier {
 	 * The given users are now invited to a room.
 	 *
 	 * @param Room $room
-	 * @param array[] $users
+	 * @param Attendee[] $attendees
 	 * @throws \Exception
 	 */
-	public function roomInvited(Room $room, array $users): void {
+	public function roomInvited(Room $room, array $attendees): void {
 		$userIds = [];
-		foreach ($users as $user) {
-			if ($user['actorType'] === Attendee::ACTOR_USERS) {
-				$userIds[] = $user['actorId'];
+		foreach ($attendees as $attendee) {
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+				$userIds[] = $attendee->getActorId();
 			}
 		}
 		$start = microtime(true);
@@ -179,7 +179,7 @@ class BackendNotifier {
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Now invited to {token}: {users} ({duration})', [
 			'token' => $room->getToken(),
-			'users' => print_r($users, true),
+			'users' => print_r($userIds, true),
 			'duration' => sprintf('%.2f', $duration),
 			'app' => 'spreed-hpb',
 		]);
@@ -189,10 +189,16 @@ class BackendNotifier {
 	 * The given users are no longer invited to a room.
 	 *
 	 * @param Room $room
-	 * @param string[] $userIds
+	 * @param Attendee[] $attendees
 	 * @throws \Exception
 	 */
-	public function roomsDisinvited(Room $room, array $userIds): void {
+	public function roomsDisinvited(Room $room, array $attendees): void {
+		$userIds = [];
+		foreach ($attendees as $attendee) {
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+				$userIds[] = $attendee->getActorId();
+			}
+		}
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'disinvite',

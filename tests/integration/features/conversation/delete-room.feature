@@ -5,6 +5,7 @@ Feature: conversation/delete-room
     Given user "participant3" exists
 
   Scenario: Owner deletes
+    Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -13,7 +14,11 @@ Feature: conversation/delete-room
       | room | 3    | 1               |
     And user "participant2" is not participant of room "room" (v4)
     And user "participant3" is not participant of room "room" (v4)
+    And reset signaling server requests
     When user "participant1" deletes room "room" with 200 (v4)
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"delete","delete":{"userids":["participant1"]}} |
     Then user "participant1" is not participant of room "room" (v4)
 
   Scenario: Moderator deletes

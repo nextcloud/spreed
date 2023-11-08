@@ -23,21 +23,30 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
-use OCA\Talk\Events\AddParticipantsEvent;
-use OCA\Talk\Events\ChatEvent;
-use OCA\Talk\Events\DuplicatedParticipantEvent;
-use OCA\Talk\Events\EndCallForEveryoneEvent;
-use OCA\Talk\Events\ModifyEveryoneEvent;
-use OCA\Talk\Events\ModifyParticipantEvent;
-use OCA\Talk\Events\ModifyRoomEvent;
+use OCA\Talk\Events\AMessageSentEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\ASystemMessageSentEvent;
+use OCA\Talk\Events\AttendeeRemovedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
+use OCA\Talk\Events\BeforeRoomDeletedEvent;
+use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
+use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\GuestJoinedRoomEvent;
+use OCA\Talk\Events\GuestsCleanedUpEvent;
+use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantEvent;
-use OCA\Talk\Events\RemoveParticipantEvent;
-use OCA\Talk\Events\RemoveUserEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
-use OCA\Talk\GuestManager;
+use OCA\Talk\Events\SessionLeftRoomEvent;
+use OCA\Talk\Events\SystemMessageSentEvent;
+use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
+use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
@@ -45,7 +54,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
 
@@ -53,142 +61,216 @@ use OCP\Server;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
+	public function __construct(
+		protected Config $talkConfig,
+		protected Messages $internalSignaling,
+		protected BackendNotifier $externalSignaling,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
+		protected SessionService $sessionService,
+	) {
+	}
 
 	public function handle(Event $event): void {
-		if ($event instanceof RoomModifiedEvent) {
-			self::notifyAfterRoomSettingsChanged($event);
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			$this->handleInternalSignaling($event);
+		} else {
+			$this->handleExternalSignaling($event);
 		}
 	}
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		self::registerInternalSignaling($dispatcher);
-		self::registerExternalSignaling($dispatcher);
+	protected function handleInternalSignaling(Event $event): void {
+		match (get_class($event)) {
+			BeforeSessionLeftRoomEvent::class,
+			BeforeAttendeeRemovedEvent::class,
+			GuestJoinedRoomEvent::class,
+			BeforeRoomDeletedEvent::class,
+			UserJoinedRoomEvent::class => $this->refreshParticipantList($event->getRoom()),
+			ParticipantModifiedEvent::class => $this->refreshParticipantListParticipantModified($event), // in_call, name, permissions
+			RoomModifiedEvent::class => $this->refreshParticipantListRoomModified($event), // *_permissions
+			default => null, // Ignoring events subscribed by the external signaling
+		};
 	}
 
-	protected static function isUsingInternalSignaling(): bool {
-		$config = Server::get(Config::class);
-		return $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
+	protected function refreshParticipantList(Room $room): void {
+		$this->internalSignaling->addMessageForAllParticipants($room, 'refresh-participant-list');
 	}
 
-	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_GUEST_CONNECT, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PERMISSIONS_SET, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, [self::class, 'refreshParticipantListUsingRoomEvent']);
-
-		$dispatcher->addListener(Room::EVENT_BEFORE_USER_REMOVE, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DISCONNECT, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-	}
-
-	protected static function registerExternalSignaling(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, [self::class, 'notifyAfterUsersAdd']);
-		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_DESCRIPTION_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SIP_ENABLED_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_MODE, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, [self::class, 'notifyAfterRoomSettingsChanged']);
-		// TODO remove handler with "roomModified" in favour of handler with
-		// "participantsModified" once the clients no longer expect a
-		// "roomModified" message for participant type changes.
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, [self::class, 'notifyAfterParticipantTypeAndPermissionsSet']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, [self::class, 'notifyAfterParticipantTypeAndPermissionsSet']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PERMISSIONS_SET, [self::class, 'notifyAfterPermissionSet']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, [self::class, 'notifyBeforeRoomDeleted']);
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, [self::class, 'notifyAfterUserRemoved']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, [self::class, 'notifyAfterParticipantRemoved']);
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, [self::class, 'notifyAfterRoomDisconected']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, [self::class, 'notifyAfterJoinUpdateAndLeave']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, [self::class, 'notifyAfterJoinUpdateAndLeave']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'notifyAfterJoinUpdateAndLeave']);
-		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'sendEndCallForEveryone']);
-		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, [self::class, 'notifyParticipantsAfterGuestClean']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'sendSignalingMessageWhenToggleRecording']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, [self::class, 'notifyParticipantsAfterSetBreakoutRoomStatus']);
-		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, [self::class, 'notifyParticipantsAfterNameUpdated']);
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
-	}
-
-	public static function refreshParticipantListUsingRoomEvent(RoomEvent $event): void {
-		if (!self::isUsingInternalSignaling()) {
+	protected function refreshParticipantListParticipantModified(ParticipantModifiedEvent $event): void {
+		if (!in_array($event->getProperty(), [
+			AParticipantModifiedEvent::PROPERTY_IN_CALL,
+			AParticipantModifiedEvent::PROPERTY_NAME,
+			AParticipantModifiedEvent::PROPERTY_PERMISSIONS,
+		], true)) {
 			return;
 		}
 
+		$this->refreshParticipantList($event->getRoom());
+	}
+
+	protected function refreshParticipantListRoomModified(RoomModifiedEvent $event): void {
+		if (!in_array($event->getProperty(), [
+			ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
+			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
+		], true)) {
+			return;
+		}
+
+		$this->refreshParticipantList($event->getRoom());
+	}
+
+	protected function handleExternalSignaling(Event $event): void {
+		match (get_class($event)) {
+			RoomModifiedEvent::class,
+			LobbyModifiedEvent::class => $this->notifyRoomModified($event),
+			BeforeRoomDeletedEvent::class => $this->notifyBeforeRoomDeleted($event),
+			CallEndedForEveryoneEvent::class => $this->notifyCallEndedForEveryone($event),
+			GuestsCleanedUpEvent::class => $this->notifyGuestsCleanedUp($event),
+			AttendeesAddedEvent::class => $this->notifyAttendeesAdded($event),
+			AttendeeRemovedEvent::class => $this->notifyAttendeeRemoved($event),
+			AttendeesRemovedEvent::class => $this->notifyAttendeesRemoved($event),
+			ParticipantModifiedEvent::class => $this->notifyParticipantModified($event),
+			SessionLeftRoomEvent::class => $this->notifySessionLeftRoom($event),
+			ChatMessageSentEvent::class,
+			SystemMessageSentEvent::class,
+			SystemMessagesMultipleSentEvent::class => $this->notifyMessageSent($event),
+			default => null, // Ignoring events subscribed by the internal signaling
+		};
+	}
+
+	public static function refreshParticipantListUsingRoomEvent(RoomEvent $event): void {
 		$messages = Server::get(Messages::class);
 		$messages->addMessageForAllParticipants($event->getRoom(), 'refresh-participant-list');
 	}
 
 	public static function refreshParticipantListUsingParticipantEvent(ParticipantEvent $event): void {
-		if (!self::isUsingInternalSignaling()) {
-			return;
-		}
-
 		$messages = Server::get(Messages::class);
 		$messages->addMessageForAllParticipants($event->getRoom(), 'refresh-participant-list');
 	}
 
-	public static function notifyAfterUsersAdd(AddParticipantsEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
+	protected function notifyRoomModified(ARoomModifiedEvent $event): void {
+		if (!in_array($event->getProperty(), [
+			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE,
+			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS,
+			ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
+			ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
+			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
+			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
+			ARoomModifiedEvent::PROPERTY_LISTABLE,
+			ARoomModifiedEvent::PROPERTY_LOBBY,
+			ARoomModifiedEvent::PROPERTY_NAME,
+			ARoomModifiedEvent::PROPERTY_PASSWORD,
+			ARoomModifiedEvent::PROPERTY_READ_ONLY,
+			ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
+			ARoomModifiedEvent::PROPERTY_TYPE,
+		], true)) {
 			return;
 		}
 
-		$notifier = Server::get(BackendNotifier::class);
+		if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS
+			|| $event->getProperty() === ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS) {
+			$this->notifyRoomPermissionsModified($event);
+			// The room permission itself does not need a signaling message anymore
+			return;
+		}
 
-		$notifier->roomInvited($event->getRoom(), $event->getParticipants());
+		if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_CALL_RECORDING) {
+			$this->notifyRoomRecordingModified($event);
+		}
+		if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS) {
+			$this->notifyBreakoutRoomStatusModified($event);
+		}
+		$this->externalSignaling->roomModified($event->getRoom());
 	}
 
-	public static function notifyAfterRoomSettingsChanged(RoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
+	protected function notifyRoomRecordingModified(ARoomModifiedEvent $event): void {
+		$room = $event->getRoom();
+		$message = [
+			'type' => 'recording',
+			'recording' => [
+				'status' => $event->getNewValue(),
+			],
+		];
 
-		$notifier = Server::get(BackendNotifier::class);
-
-		$notifier->roomModified($event->getRoom());
+		$this->externalSignaling->sendRoomMessage($room, $message);
 	}
 
-	public static function notifyAfterParticipantTypeAndPermissionsSet(ModifyParticipantEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
+	protected function notifyCallEndedForEveryone(CallEndedForEveryoneEvent $event): void {
+		$sessionIds = $event->getSessionIds();
+
+		if (empty($sessionIds)) {
 			return;
 		}
 
-		$notifier = Server::get(BackendNotifier::class);
+		$this->externalSignaling->roomInCallChanged(
+			$event->getRoom(),
+			$event->getNewValue(),
+			[],
+			true
+		);
+	}
 
+	protected function notifyBeforeRoomDeleted(BeforeRoomDeletedEvent $event): void {
+		$room = $event->getRoom();
+		$this->externalSignaling->roomDeleted($room, $this->participantService->getParticipantUserIds($room));
+	}
+
+	protected function notifyGuestsCleanedUp(GuestsCleanedUpEvent $event): void {
+		// TODO: The list of removed session ids should be passed through the event
+		// so the signaling server can optimize forwarding the message.
 		$sessionIds = [];
-		// If the participant is not active in the room the "participants"
-		// request will be sent anyway, although with an empty "changed"
-		// property.
+		$this->externalSignaling->participantsModified($event->getRoom(), $sessionIds);
+	}
 
-		$sessionService = Server::get(SessionService::class);
-		$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+	protected function notifyParticipantModified(AParticipantModifiedEvent $event): void {
+		if ($event->getProperty() === AParticipantModifiedEvent::PROPERTY_TYPE) {
+			// TODO remove handler with "roomModified" in favour of handler with
+			// "participantsModified" once the clients no longer expect a
+			// "roomModified" message for participant type changes.
+			$this->externalSignaling->roomModified($event->getRoom());
+		}
+
+		if ($event->getProperty() === AParticipantModifiedEvent::PROPERTY_NAME) {
+			$this->notifyParticipantNameModified($event);
+		}
+
+		if ($event->getProperty() === AParticipantModifiedEvent::PROPERTY_IN_CALL) {
+			$this->notifyParticipantInCallModified($event);
+		}
+
+		if ($event->getProperty() === AParticipantModifiedEvent::PROPERTY_TYPE
+			|| $event->getProperty() === AParticipantModifiedEvent::PROPERTY_PERMISSIONS) {
+			$this->notifyParticipantTypeOrPermissionsModified($event);
+		}
+	}
+
+	protected function notifyParticipantNameModified(AParticipantModifiedEvent $event): void {
+		$sessionIds = [];
+		$sessions = $this->sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
 		foreach ($sessions as $session) {
 			$sessionIds[] = $session->getSessionId();
 		}
 
-		$notifier->participantsModified($event->getRoom(), $sessionIds);
+		if (!empty($sessionIds)) {
+			$this->externalSignaling->participantsModified($event->getRoom(), $sessionIds);
+		}
 	}
 
-	public static function notifyAfterPermissionSet(RoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
+	protected function notifyParticipantTypeOrPermissionsModified(AParticipantModifiedEvent $event): void {
+		$sessionIds = [];
+
+		// If the participant is not active in the room the "participants"
+		// request will be sent anyway, although with an empty "changed"
+		// property.
+		$sessions = $this->sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+		foreach ($sessions as $session) {
+			$sessionIds[] = $session->getSessionId();
 		}
 
-		$notifier = Server::get(BackendNotifier::class);
+		$this->externalSignaling->participantsModified($event->getRoom(), $sessionIds);
+	}
 
+	protected function notifyRoomPermissionsModified(ARoomModifiedEvent $event): void {
 		$sessionIds = [];
 
 		// Setting the room permissions resets the permissions of all
@@ -201,9 +283,7 @@ class Listener implements IEventListener {
 		// to be set on all participants can not be sent either, as the
 		// general permissions could be overriden by custom attendee
 		// permissions in specific participants.
-
-		$participantService = Server::get(ParticipantService::class);
-		$participants = $participantService->getSessionsAndParticipantsForRoom($event->getRoom());
+		$participants = $this->participantService->getSessionsAndParticipantsForRoom($event->getRoom());
 		foreach ($participants as $participant) {
 			$session = $participant->getSession();
 			if ($session) {
@@ -211,38 +291,18 @@ class Listener implements IEventListener {
 			}
 		}
 
-		$notifier->participantsModified($event->getRoom(), $sessionIds);
+		$this->externalSignaling->participantsModified($event->getRoom(), $sessionIds);
 	}
 
-	public static function notifyBeforeRoomDeleted(RoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
-		$participantService = Server::get(ParticipantService::class);
-
-		$room = $event->getRoom();
-		$notifier->roomDeleted($room, $participantService->getParticipantUserIds($room));
+	protected function notifyAttendeesAdded(AttendeesAddedEvent $event): void {
+		$this->externalSignaling->roomInvited($event->getRoom(), $event->getAttendees());
 	}
 
-	public static function notifyAfterUserRemoved(RemoveUserEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
-
-		$notifier->roomsDisinvited($event->getRoom(), [$event->getUser()->getUID()]);
+	protected function notifyAttendeesRemoved(AttendeesRemovedEvent $event): void {
+		$this->externalSignaling->roomsDisinvited($event->getRoom(), $event->getAttendees());
 	}
 
-	public static function notifyAfterParticipantRemoved(RemoveParticipantEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
-
+	protected function notifyAttendeeRemoved(AttendeeRemovedEvent $event): void {
 		$sessionIds = [];
 
 		$sessions = $event->getSessions();
@@ -251,46 +311,34 @@ class Listener implements IEventListener {
 		}
 
 		if (!empty($sessionIds)) {
-			$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
+			$this->externalSignaling->roomSessionsRemoved($event->getRoom(), $sessionIds);
 		}
 	}
 
-	public static function notifyAfterRoomDisconected(ParticipantEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
-
+	protected function notifySessionLeftRoom(SessionLeftRoomEvent $event): void {
 		$sessionIds = [];
 		if ($event->getParticipant()->getSession()) {
 			// If a previous duplicated session is being removed it must be
-			// notified to the external signaling server. Otherwise only for
+			// notified to the external signaling server. Otherwise, only for
 			// guests disconnecting is "leaving" and therefor should trigger a
 			// disinvite.
 			$attendeeParticipantType = $event->getParticipant()->getAttendee()->getParticipantType();
-			if ($event instanceof DuplicatedParticipantEvent
+			if ($event->isRejoining()
 				|| $attendeeParticipantType === Participant::GUEST
 				|| $attendeeParticipantType === Participant::GUEST_MODERATOR) {
 				$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
-				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
+				$this->externalSignaling->roomSessionsRemoved($event->getRoom(), $sessionIds);
 			}
 		}
 	}
 
-	public static function notifyAfterJoinUpdateAndLeave(ModifyParticipantEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		if ($event instanceof ModifyEveryoneEvent) {
+	protected function notifyParticipantInCallModified(AParticipantModifiedEvent $event): void {
+		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_END_FOR_EVERYONE)) {
 			// If everyone is disconnected, we will not do O(n) requests.
-			// Instead, the listener of Room::EVENT_AFTER_END_CALL_FOR_EVERYONE
+			// Instead, the listener of CallEndedForEveryoneEvent
 			// will send all sessions to the HPB with 1 request.
 			return;
 		}
-
-		$notifier = Server::get(BackendNotifier::class);
 
 		$sessionIds = [];
 		if ($event->getParticipant()->getSession()) {
@@ -298,7 +346,7 @@ class Listener implements IEventListener {
 		}
 
 		if (!empty($sessionIds)) {
-			$notifier->roomInCallChanged(
+			$this->externalSignaling->roomInCallChanged(
 				$event->getRoom(),
 				$event->getNewValue(),
 				$sessionIds
@@ -306,87 +354,48 @@ class Listener implements IEventListener {
 		}
 	}
 
-	public static function sendEndCallForEveryone(EndCallForEveryoneEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		$sessionIds = $event->getSessionIds();
-
-		if (empty($sessionIds)) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
-
-		$notifier->roomInCallChanged(
-			$event->getRoom(),
-			$event->getNewValue(),
-			[],
-			true
-		);
-	}
-
-	public static function notifyParticipantsAfterGuestClean(RoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
-
-		// TODO: The list of removed session ids should be passed through the event
-		// so the signaling server can optimize forwarding the message.
-		$sessionIds = [];
-		$notifier->participantsModified($event->getRoom(), $sessionIds);
-	}
-
-	public static function notifyParticipantsAfterSetBreakoutRoomStatus(RoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
+	protected function notifyBreakoutRoomStatusModified(ARoomModifiedEvent $event): void {
 		$room = $event->getRoom();
 		if ($room->getBreakoutRoomStatus() === BreakoutRoom::STATUS_STARTED) {
-			self::notifyParticipantsAfterBreakoutRoomStarted($room);
+			$this->notifyBreakoutRoomStarted($room);
 		} else {
-			self::notifyParticipantsAfterBreakoutRoomStopped($room);
+			$this->notifyBreakoutRoomStopped($room);
 		}
 	}
 
-	private static function notifyParticipantsAfterBreakoutRoomStarted(Room $room): void {
-		$manager = Server::get(Manager::class);
-		$breakoutRooms = $manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+	protected function notifyBreakoutRoomStarted(Room $room): void {
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
 
-		$switchToData = [];
-
-		$participantService = Server::get(ParticipantService::class);
-		$parentRoomParticipants = $participantService->getSessionsAndParticipantsForRoom($room);
-
-		$notifier = Server::get(BackendNotifier::class);
+		$parentRoomParticipants = $this->participantService->getSessionsAndParticipantsForRoom($room);
 
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$sessionIds = [];
 
-			$breakoutRoomParticipants = $participantService->getParticipantsForRoom($breakoutRoom);
+			$breakoutRoomParticipants = $this->participantService->getParticipantsForRoom($breakoutRoom);
 			foreach ($breakoutRoomParticipants as $breakoutRoomParticipant) {
-				foreach (self::getSessionIdsForNonModeratorsMatchingParticipant($breakoutRoomParticipant, $parentRoomParticipants) as $sessionId) {
+				foreach ($this->getSessionIdsForNonModeratorsMatchingParticipant($breakoutRoomParticipant, $parentRoomParticipants) as $sessionId) {
 					$sessionIds[] = $sessionId;
 				}
 			}
 
 			if (!empty($sessionIds)) {
-				$notifier->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
+				$this->externalSignaling->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
 			}
 		}
 	}
 
-	private static function getSessionIdsForNonModeratorsMatchingParticipant(Participant $targetParticipant, array $participants) {
+	/**
+	 * @param Participant $targetParticipant
+	 * @param Participant[] $participants
+	 * @return string[]
+	 */
+	protected function getSessionIdsForNonModeratorsMatchingParticipant(Participant $targetParticipant, array $participants): array {
 		$sessionIds = [];
 
 		foreach ($participants as $participant) {
-			if ($participant->getAttendee()->getActorType() === $targetParticipant->getAttendee()->getActorType() &&
-					$participant->getAttendee()->getActorId() === $targetParticipant->getAttendee()->getActorId() &&
-					!$participant->hasModeratorPermissions()) {
+			if ($participant->getAttendee()->getActorType() === $targetParticipant->getAttendee()->getActorType()
+				&& $participant->getAttendee()->getActorId() === $targetParticipant->getAttendee()->getActorId()
+				&& !$participant->hasModeratorPermissions()) {
 				$session = $participant->getSession();
 				if ($session) {
 					$sessionIds[] = $session->getSessionId();
@@ -397,18 +406,13 @@ class Listener implements IEventListener {
 		return $sessionIds;
 	}
 
-	private static function notifyParticipantsAfterBreakoutRoomStopped(Room $room): void {
-		$manager = Server::get(Manager::class);
-		$breakoutRooms = $manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
-
-		$participantService = Server::get(ParticipantService::class);
-
-		$notifier = Server::get(BackendNotifier::class);
+	protected function notifyBreakoutRoomStopped(Room $room): void {
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
 
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$sessionIds = [];
 
-			$participants = $participantService->getSessionsAndParticipantsForRoom($breakoutRoom);
+			$participants = $this->participantService->getSessionsAndParticipantsForRoom($breakoutRoom);
 			foreach ($participants as $participant) {
 				$session = $participant->getSession();
 				if ($session) {
@@ -417,41 +421,15 @@ class Listener implements IEventListener {
 			}
 
 			if (!empty($sessionIds)) {
-				$notifier->switchToRoom($breakoutRoom, $room->getToken(), $sessionIds);
+				$this->externalSignaling->switchToRoom($breakoutRoom, $room->getToken(), $sessionIds);
 			}
 		}
 	}
 
-	public static function notifyParticipantsAfterNameUpdated(ModifyParticipantEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
+	protected function notifyMessageSent(AMessageSentEvent $event): void {
+		if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
 			return;
 		}
-
-		$notifier = Server::get(BackendNotifier::class);
-
-		$sessionIds = [];
-
-		$sessionService = Server::get(SessionService::class);
-		$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
-		foreach ($sessions as $session) {
-			$sessionIds[] = $session->getSessionId();
-		}
-
-		if (!empty($sessionIds)) {
-			$notifier->participantsModified($event->getRoom(), $sessionIds);
-		}
-	}
-
-	public static function notifyUsersViaExternalSignalingToRefreshTheChat(ChatEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-
-		if ($event->shouldSkipLastActivityUpdate()) {
-			return;
-		}
-
-		$notifier = Server::get(BackendNotifier::class);
 
 		$room = $event->getRoom();
 		$message = [
@@ -460,26 +438,6 @@ class Listener implements IEventListener {
 				'refresh' => true,
 			],
 		];
-		$notifier->sendRoomMessage($room, $message);
-	}
-
-	public static function sendSignalingMessageWhenToggleRecording(ModifyRoomEvent $event): void {
-		if (self::isUsingInternalSignaling()) {
-			return;
-		}
-		if ($event->getParameter() !== 'callRecording') {
-			return;
-		}
-
-		$room = $event->getRoom();
-		$message = [
-			'type' => 'recording',
-			'recording' => [
-				'status' => $event->getNewValue(),
-			],
-		];
-
-		$notifier = Server::get(BackendNotifier::class);
-		$notifier->sendRoomMessage($room, $message);
+		$this->externalSignaling->sendRoomMessage($room, $message);
 	}
 }
