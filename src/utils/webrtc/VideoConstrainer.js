@@ -197,6 +197,7 @@ VideoConstrainer.prototype = {
 					ideal: 30,
 					min: 20,
 				},
+				resizeMode: 'none',
 			}
 		}
 
@@ -217,6 +218,7 @@ VideoConstrainer.prototype = {
 					ideal: 24,
 					min: 15,
 				},
+				resizeMode: 'none',
 			}
 		}
 
@@ -237,6 +239,7 @@ VideoConstrainer.prototype = {
 					ideal: 15,
 					min: 8,
 				},
+				resizeMode: 'none',
 			}
 		}
 
@@ -251,6 +254,7 @@ VideoConstrainer.prototype = {
 				frameRate: {
 					max: 8,
 				},
+				resizeMode: 'none',
 			}
 		}
 
@@ -264,6 +268,7 @@ VideoConstrainer.prototype = {
 			frameRate: {
 				max: 1,
 			},
+			resizeMode: 'none',
 		}
 	},
 
