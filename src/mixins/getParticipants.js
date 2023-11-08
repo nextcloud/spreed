@@ -34,6 +34,7 @@ const getParticipants = {
 		return {
 			participantsInitialised: false,
 			fetchingParticipants: false,
+			pendingChanges: false,
 		}
 	},
 
@@ -79,7 +80,9 @@ const getParticipants = {
 		},
 
 		debounceUpdateParticipants() {
-			if (!this.isActive) {
+			if (!this.isActive && !this.isInCall) {
+				// Update is ignored but there is a flag to force the participants update
+				this.pendingChanges = true
 				return
 			}
 
@@ -88,7 +91,7 @@ const getParticipants = {
 			} else {
 				this.debounceSlowUpdateParticipants()
 			}
-
+			this.pendingChanges = false
 		},
 
 		debounceSlowUpdateParticipants: debounce(function() {
