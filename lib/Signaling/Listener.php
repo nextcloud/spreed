@@ -31,9 +31,12 @@ use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
+use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\GuestJoinedRoomEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantEvent;
@@ -43,7 +46,7 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
-use OCA\Talk\GuestManager;
+use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
@@ -51,7 +54,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
 
@@ -70,6 +72,54 @@ class Listener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
+		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+			$this->handleInternalSignaling($event);
+		} else {
+			$this->handleExternalSignaling($event);
+		}
+	}
+
+	protected function handleInternalSignaling(Event $event): void {
+		match (get_class($event)) {
+			BeforeSessionLeftRoomEvent::class,
+			BeforeAttendeeRemovedEvent::class,
+			GuestJoinedRoomEvent::class,
+			BeforeRoomDeletedEvent::class,
+			UserJoinedRoomEvent::class => $this->refreshParticipantList($event->getRoom()),
+			ParticipantModifiedEvent::class => $this->refreshParticipantListParticipantModified($event), // in_call, name, permissions
+			RoomModifiedEvent::class => $this->refreshParticipantListRoomModified($event), // *_permissions
+			default => null, // Ignoring events subscribed by the external signaling
+		};
+	}
+
+	protected function refreshParticipantList(Room $room): void {
+		$this->internalSignaling->addMessageForAllParticipants($room, 'refresh-participant-list');
+	}
+
+	protected function refreshParticipantListParticipantModified(ParticipantModifiedEvent $event): void {
+		if (!in_array($event->getProperty(), [
+			AParticipantModifiedEvent::PROPERTY_IN_CALL,
+			AParticipantModifiedEvent::PROPERTY_NAME,
+			AParticipantModifiedEvent::PROPERTY_PERMISSIONS,
+		], true)) {
+			return;
+		}
+
+		$this->refreshParticipantList($event->getRoom());
+	}
+
+	protected function refreshParticipantListRoomModified(RoomModifiedEvent $event): void {
+		if (!in_array($event->getProperty(), [
+			ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
+			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
+		], true)) {
+			return;
+		}
+
+		$this->refreshParticipantList($event->getRoom());
+	}
+
+	protected function handleExternalSignaling(Event $event): void {
 		match (get_class($event)) {
 			RoomModifiedEvent::class,
 			LobbyModifiedEvent::class => $this->notifyRoomModified($event),
@@ -84,36 +134,8 @@ class Listener implements IEventListener {
 			ChatMessageSentEvent::class,
 			SystemMessageSentEvent::class,
 			SystemMessagesMultipleSentEvent::class => $this->notifyMessageSent($event),
+			default => null, // Ignoring events subscribed by the internal signaling
 		};
-	}
-
-	public static function register(IEventDispatcher $dispatcher): void {
-		$config = Server::get(Config::class);
-		if ($config->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
-			return;
-		}
-
-		self::registerInternalSignaling($dispatcher);
-	}
-
-	protected function isUsingInternalSignaling(): bool {
-		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL;
-	}
-
-	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_GUEST_CONNECT, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PERMISSIONS_SET, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, [self::class, 'refreshParticipantListUsingRoomEvent']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, [self::class, 'refreshParticipantListUsingRoomEvent']);
-
-		$dispatcher->addListener(Room::EVENT_BEFORE_USER_REMOVE, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_PARTICIPANT_REMOVE, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DISCONNECT, [self::class, 'refreshParticipantListUsingParticipantEvent']);
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, [self::class, 'refreshParticipantListUsingParticipantEvent']);
 	}
 
 	public static function refreshParticipantListUsingRoomEvent(RoomEvent $event): void {
@@ -127,10 +149,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyRoomModified(ARoomModifiedEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		if (!in_array($event->getProperty(), [
 			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE,
 			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS,
@@ -178,10 +196,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyCallEndedForEveryone(CallEndedForEveryoneEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		$sessionIds = $event->getSessionIds();
 
 		if (empty($sessionIds)) {
@@ -197,19 +211,11 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyBeforeRoomDeleted(BeforeRoomDeletedEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		$room = $event->getRoom();
 		$this->externalSignaling->roomDeleted($room, $this->participantService->getParticipantUserIds($room));
 	}
 
 	protected function notifyGuestsCleanedUp(GuestsCleanedUpEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		// TODO: The list of removed session ids should be passed through the event
 		// so the signaling server can optimize forwarding the message.
 		$sessionIds = [];
@@ -217,10 +223,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyParticipantModified(AParticipantModifiedEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		if ($event->getProperty() === AParticipantModifiedEvent::PROPERTY_TYPE) {
 			// TODO remove handler with "roomModified" in favour of handler with
 			// "participantsModified" once the clients no longer expect a
@@ -293,26 +295,14 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyAttendeesAdded(AttendeesAddedEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		$this->externalSignaling->roomInvited($event->getRoom(), $event->getAttendees());
 	}
 
 	protected function notifyAttendeesRemoved(AttendeesRemovedEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		$this->externalSignaling->roomsDisinvited($event->getRoom(), $event->getAttendees());
 	}
 
 	protected function notifyAttendeeRemoved(AttendeeRemovedEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		$sessionIds = [];
 
 		$sessions = $event->getSessions();
@@ -326,10 +316,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifySessionLeftRoom(SessionLeftRoomEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		$sessionIds = [];
 		if ($event->getParticipant()->getSession()) {
 			// If a previous duplicated session is being removed it must be
@@ -441,10 +427,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyMessageSent(AMessageSentEvent $event): void {
-		if ($this->isUsingInternalSignaling()) {
-			return;
-		}
-
 		if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
 			return;
 		}
