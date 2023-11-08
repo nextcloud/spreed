@@ -326,7 +326,28 @@ trait RecordingTrait {
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $requests, 'Request count does not match' . "\n" . json_encode($requests));
 
-		$expected = array_map(static function (array $request, $actual) {
+		$requests = array_map(static function (array $actual) {
+			$actualDataJson = json_decode($actual['data'], true);
+			$write = false;
+
+			// Fix sorting of postgres
+			if (isset($actualDataJson['update']['userids'])) {
+				sort($actualDataJson['update']['userids']);
+				$write = true;
+			}
+			if (isset($actualDataJson['participants']['users'])) {
+				usort($actualDataJson['participants']['users'], static fn (array $u1, array $u2) => $u1['userId'] <=> $u2['userId']);
+				$write = true;
+			}
+
+			if ($write) {
+				$actual['data'] = json_encode($actualDataJson);
+			}
+
+			return $actual;
+		}, $requests);
+
+		$expected = array_map(static function (array $request, array $actual) {
 			$identifier = $request['token'];
 			$request['token'] = FeatureContext::getTokenForIdentifier($identifier);
 
@@ -377,6 +398,7 @@ trait RecordingTrait {
 					);
 				}
 			}
+
 			$matched = preg_match('/"active-since":\{"date":"ACTIVE_SINCE\(\)","timezone_type":3,"timezone":"UTC"}/', $request['data'], $matches);
 			if ($matched) {
 				$matched = preg_match('/"active-since":\{"date":"([\d\- :.]+)","timezone_type":3,"timezone":"UTC"}/', $actual['data'], $matches);
