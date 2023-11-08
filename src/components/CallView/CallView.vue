@@ -25,7 +25,9 @@
 		<ViewerOverlayCallView v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
-			:shared-data="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]" />
+			:shared-data="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]"
+			:screens="screens"
+			:local-shared-data="localSharedData" />
 
 		<template v-else>
 			<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
