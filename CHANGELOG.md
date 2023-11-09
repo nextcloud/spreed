@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0-beta.2 – 2023-11-09
+### Changed
+- Replace various confirmation screens with the NcDialog component
+  [#10812](https://github.com/nextcloud/spreed/issues/10812)
+- Update several dependencies
+
+### Fixed
+- Fix mentions at the beginning of the text in captions
+  [#10831](https://github.com/nextcloud/spreed/issues/10831)
+- Fix not breaking the JSON response when removing the last reaction of a message
+  [#10832](https://github.com/nextcloud/spreed/issues/10832)
+- Remove previous style adjustments from left sidebar
+  [#10818](https://github.com/nextcloud/spreed/issues/10818)
+- Migrate the last set of event listeners to be service listeners
+
 ## 18.0.0-beta.1 – 2023-11-02
 ### Added
 - 🗒️ Note to self
