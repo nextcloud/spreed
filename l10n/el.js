@@ -652,6 +652,8 @@ OC.L10N.register(
     "Leave conversation" : "Εγκατάλειψη συνομιλίας",
     "Delete conversation" : "Διαγραφή συνομιλίας",
     "Permanently delete this conversation." : "Οριστική διαγραφή αυτής της συνομιλίας.",
+    "No" : "Όχι",
+    "Yes" : "Ναι",
     "Permanently delete all the messages in this conversation." : "Οριστική διαγραφή όλων των μηνυμάτων σε αυτήν τη συνομιλία.",
     "Do you really want to delete \"{displayName}\"?" : "Θέλετε σίγουρα να διαγράψετε το  \"{displayName}\"?",
     "Do you really want to delete all messages in \"{displayName}\"?" : "Θέλετε πραγματικά να διαγράψετε όλα τα μηνύματα στο \"{displayName}\"?",

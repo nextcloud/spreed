@@ -565,6 +565,7 @@ OC.L10N.register(
     "Personal" : "Personel",
     "Leave conversation" : "Kuitaat an diviz",
     "Delete conversation" : "Lemel an diviz",
+    "No" : "Nann",
     "Do you really want to delete \"{displayName}\"?" : "Sur oc'h da lemel  \"{displayName}\" ?",
     "Submit" : "Kinnig",
     "Password protection" : "Gwareziñ gant ur ger-tremen",

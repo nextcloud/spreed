@@ -696,6 +696,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Kun olet kerran poistunut suljetusta keskustelusta, tarvitset kutsun liittyäksesi uudelleen siihen. Avoimeen keskusteluun on mahdollista liittyä milloin hyvänsä.",
     "Delete conversation" : "Poista keskustelu",
     "Permanently delete this conversation." : "Poista tämä keskustelu pysyvästi.",
+    "No" : "Ei",
+    "Yes" : "Kyllä",
     "Delete chat messages" : "Poista keskustelun viestit",
     "Permanently delete all the messages in this conversation." : "Poista pysyvästi kaikki tämän keskustelun viestit.",
     "Delete all chat messages" : "Poista kaikki keskustelun viestit",

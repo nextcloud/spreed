@@ -76,6 +76,7 @@ OC.L10N.register(
     "Permissions" : "Permisos",
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Borrar conversación",
+    "Yes" : "Si",
     "Submit" : "Enviar",
     "Password protection" : "Protección con contraseña",
     "Save" : "Guardar",

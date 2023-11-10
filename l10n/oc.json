@@ -644,6 +644,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Un còp quitada, per tornar a un conversacion tampada, cal un convit. Una conversacion dubèrta es totjorn accessibla.",
     "Delete conversation" : "Suprimir la conversacion",
     "Permanently delete this conversation." : "Suprimir permanent aquesta conversacion",
+    "No" : "Non",
+    "Yes" : "Òc",
     "Delete chat messages" : "Suprimir los messatges del chat",
     "Permanently delete all the messages in this conversation." : "Suprimir per totjorn totes los messatges d’aquesta conversacion.",
     "Delete all chat messages" : "Suprimir totes los messatges del chat",

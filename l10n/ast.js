@@ -246,6 +246,8 @@ OC.L10N.register(
     "Picture" : "Semeya",
     "The file must be a PNG or JPG" : "El ficheru a ser PNG o JPG",
     "Permissions" : "Permisos",
+    "No" : "Non",
+    "Yes" : "Sí",
     "Submit" : "Unviar",
     "_%n hour_::_%n hours_" : ["%n hora","%n hores"],
     "_%n day_::_%n days_" : ["%n día","%n díes"],
