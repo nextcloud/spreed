@@ -408,6 +408,7 @@
     "Be careful, these actions cannot be undone." : "Hãy cẩn thận, không thể hoàn tác những hành động này.",
     "Leave conversation" : "Rời khỏi cuộc đàm thoại",
     "Delete conversation" : "Xóa cuộc trò chuyện",
+    "Yes" : "Có",
     "Do you really want to delete \"{displayName}\"?" : "Bạn có thực sự muốn xóa \"{displayName}\" không?",
     "Error while deleting conversation" : "Lỗi khi xóa cuộc trò chuyện",
     "Submit" : "Gửi đi",

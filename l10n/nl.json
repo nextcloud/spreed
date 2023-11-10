@@ -757,6 +757,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Zodra een gesprek verlaten is, is een uitnodiging nodig om opnieuw deel te nemen aan het gesprek. Een open gesprek kan te allen tijde hervat worden.",
     "Delete conversation" : "Verwijder gesprek",
     "Permanently delete this conversation." : "Verwijder dit gesprek permanent.",
+    "No" : "Nee",
+    "Yes" : "Ja",
     "Delete chat messages" : "Alle chats verwijderen",
     "Permanently delete all the messages in this conversation." : "Verwijder alle berichten in dit gesprek permanent.",
     "Delete all chat messages" : "Alle chats verwijderen",

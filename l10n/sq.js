@@ -194,6 +194,7 @@ OC.L10N.register(
     "Permissions" : "Lejet",
     "Leave conversation" : "Largohuni nga biseda",
     "Delete conversation" : "Fshijeni bisedën",
+    "Yes" : "Po",
     "Submit" : "Dërgo",
     "Password protection" : "Password protection",
     "Save" : "Ruaj",

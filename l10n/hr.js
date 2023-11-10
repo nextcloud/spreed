@@ -703,6 +703,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Nakon izlaska iz razgovora za ponovni pristup zatvorenom razgovoru potreban je poziv. Otvorenom razgovoru možete se ponovno pridružiti u bilo kojem trenutku.",
     "Delete conversation" : "Izbriši razgovor",
     "Permanently delete this conversation." : "Trajno izbrišite ovaj razgovor.",
+    "No" : "Ne",
+    "Yes" : "Da",
     "Delete chat messages" : "Izbriši razmijenjene poruke",
     "Permanently delete all the messages in this conversation." : "Trajno izbrišite sve poruke u ovom razgovoru.",
     "Delete all chat messages" : "Izbriši sve razmijenjene poruke",

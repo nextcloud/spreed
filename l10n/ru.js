@@ -922,6 +922,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Для повторного входа в завершённое обсуждение требуется приглашение. Повторный вход в открытые обсуждения возможен без такого ограничения.",
     "Delete conversation" : "Удаление обсуждения",
     "Permanently delete this conversation." : "Удалить это обсуждение безвозвратно.",
+    "No" : "Нет",
+    "Yes" : "Да",
     "Delete chat messages" : "Удалить сообщения",
     "Permanently delete all the messages in this conversation." : "Безвозвратно удалить все сообщения в этом обсуждении.",
     "Delete all chat messages" : "Удалить все сообщения",

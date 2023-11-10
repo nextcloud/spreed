@@ -946,6 +946,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.",
     "Delete conversation" : "Delete conversation",
     "Permanently delete this conversation." : "Permanently delete this conversation.",
+    "No" : "No",
+    "Yes" : "Yes",
     "Delete chat messages" : "Delete chat messages",
     "Permanently delete all the messages in this conversation." : "Permanently delete all the messages in this conversation.",
     "Delete all chat messages" : "Delete all chat messages",

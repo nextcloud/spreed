@@ -819,6 +819,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Keď je konverzácia opustená, na opätovné zapojenie do uzavretej konverzácie je potrebné pozvánka. K otvorenej konverzácii sa môžete pripojiť kedykoľvek.",
     "Delete conversation" : "Odstrániť konverzáciu",
     "Permanently delete this conversation." : "Natrvalo odstrániť túto konverzáciu.",
+    "No" : "Nie",
+    "Yes" : "Áno",
     "Delete chat messages" : "Vymazať správy z rozhovoru",
     "Permanently delete all the messages in this conversation." : "Natrvalo odstrániť všetky správy v tejto konverzácii.",
     "Delete all chat messages" : "Vymazať všetky správy v rozhovore",
