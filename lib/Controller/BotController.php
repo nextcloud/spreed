@@ -48,6 +48,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -140,6 +141,7 @@ class BotController extends AEnvironmentAwareController {
 	 * 413: Message too long
 	 */
 	#[BruteForceProtection(action: 'bot')]
+	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
 	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
 		if (trim($message) === '') {
@@ -202,6 +204,7 @@ class BotController extends AEnvironmentAwareController {
 	 * 404: Reaction not found
 	 */
 	#[BruteForceProtection(action: 'bot')]
+	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
 	public function react(string $token, int $messageId, string $reaction): DataResponse {
 		try {
@@ -254,6 +257,7 @@ class BotController extends AEnvironmentAwareController {
 	 * 404: Reaction not found
 	 */
 	#[BruteForceProtection(action: 'bot')]
+	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
 	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
 		try {
@@ -297,6 +301,7 @@ class BotController extends AEnvironmentAwareController {
 	 *
 	 * 200: Bot list returned
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
 	public function adminListBots(): DataResponse {
 		$data = [];
 		$bots = $this->botServerMapper->getAllBots();

@@ -29,6 +29,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -71,6 +72,7 @@ class PublicShareAuthController extends OCSController {
 	 * 404: Share not found
 	 */
 	#[PublicPage]
+	#[OpenAPI(tags: ['files_integration'])]
 	public function createRoom(string $shareToken): DataResponse {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);

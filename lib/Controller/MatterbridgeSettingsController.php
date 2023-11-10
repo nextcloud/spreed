@@ -30,6 +30,7 @@ use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
@@ -52,6 +53,7 @@ class MatterbridgeSettingsController extends OCSController {
 	 * 200: Bridge version returned
 	 * 400: Getting bridge version is not possible
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['matterbridge'])]
 	public function getMatterbridgeVersion(): DataResponse {
 		try {
 			$version = $this->bridgeManager->getCurrentVersionFromBinary();
@@ -79,6 +81,7 @@ class MatterbridgeSettingsController extends OCSController {
 	 * 200: All bridges stopped successfully
 	 * 406: Stopping all bridges is not possible
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['matterbridge'])]
 	public function stopAllBridges(): DataResponse {
 		try {
 			$success = $this->bridgeManager->stopAllBridges();

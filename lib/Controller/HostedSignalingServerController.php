@@ -32,7 +32,7 @@ use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -64,7 +64,7 @@ class HostedSignalingServerController extends OCSController {
 	 * 200: Authentication credentials returned
 	 * 412: Getting authentication credentials is not possible
 	 */
-	#[IgnoreOpenAPI]
+	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[PublicPage]
 	public function auth(): DataResponse {
 		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');

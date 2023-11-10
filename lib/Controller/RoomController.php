@@ -66,8 +66,8 @@ use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
-use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -311,6 +311,8 @@ class RoomController extends AEnvironmentAwareController {
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI]
+	#[OpenAPI(scope: 'backend-sipbridge')]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
@@ -1528,9 +1530,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * 404: Participant not found
 	 * 501: SIP dial-in is not configured
 	 */
-	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function verifyDialInPin(string $pin): DataResponse {
 		try {
@@ -1568,11 +1570,12 @@ class RoomController extends AEnvironmentAwareController {
 	 *  200: Participant created successfully
 	 *  400: Phone number and details could not be confirmed
 	 *  401: SIP request invalid
+	 *  404: Phone number is not invited as a participant
 	 *  501: SIP dial-out is not configured
 	 */
-	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
 		try {
@@ -1617,9 +1620,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * 400: SIP not enabled
 	 * 401: SIP request invalid
 	 */
-	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function createGuestByDialIn(): DataResponse {
 		try {
@@ -1656,9 +1659,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * 404: Participant was not found
 	 * 501: SIP dial-out is not configured
 	 */
-	#[IgnoreOpenAPI]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
 		try {

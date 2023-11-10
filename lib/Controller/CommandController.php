@@ -28,7 +28,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Model\Command;
 use OCA\Talk\Service\CommandService;
-use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
@@ -46,7 +46,7 @@ class CommandController extends OCSController {
 	/**
 	 * @deprecated Commands are deprecated in favor of Bots
 	 */
-	#[IgnoreOpenAPI]
+	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	public function index(): DataResponse {
 		$commands = $this->commandService->findAll();
 
