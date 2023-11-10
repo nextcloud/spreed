@@ -787,6 +787,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "会話から退出したら、クローズな会話に再び参加するには、招待が必要です。オープンな会話はいつでも再参加できます。",
     "Delete conversation" : "会話を削除",
     "Permanently delete this conversation." : "この会話を完全に削除する",
+    "No" : "いいえ",
+    "Yes" : "はい",
     "Delete chat messages" : "メッセージを削除する",
     "Permanently delete all the messages in this conversation." : "この会話のすべてのメッセージを完全に削除する",
     "Delete all chat messages" : "チャットメッセージをすべて削除",

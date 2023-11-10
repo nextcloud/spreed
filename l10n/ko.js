@@ -915,6 +915,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "대화를 떠난 후 비공개 대화에 다시 참가하려면 초대가 필요합니다. 공개 대화는 언제든지 다시 참가할 수 있습니다.",
     "Delete conversation" : "대화 삭제",
     "Permanently delete this conversation." : "이 대화를 영구적으로 삭제합니다.",
+    "No" : "아니오",
+    "Yes" : "예",
     "Delete chat messages" : "채팅 메시지 삭제",
     "Permanently delete all the messages in this conversation." : "이 대화의 모든 메시지를 영구적으로 삭제합니다.",
     "Delete all chat messages" : "모든 채팅 메시지 삭제",

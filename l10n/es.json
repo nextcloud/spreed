@@ -935,6 +935,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Una vez que se abandona una conversación, para reincorporarse a una conversación cerrada se necesita una invitación. Una conversación abierta puede reanudarse en cualquier momento.",
     "Delete conversation" : "Borrar conversación",
     "Permanently delete this conversation." : "Eliminar permanentemente esta conversación.",
+    "No" : "No",
+    "Yes" : "Sí",
     "Delete chat messages" : "Eliminar los mensajes del chat",
     "Permanently delete all the messages in this conversation." : "Eliminar permanentemente todos los mensajes de esta conversación.",
     "Delete all chat messages" : "Eliminar todos los mensajes del chat",

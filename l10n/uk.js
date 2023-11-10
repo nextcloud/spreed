@@ -793,6 +793,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Якщо ви вийшли з бесіди, щоб знову приєднатися до закритої бесіди, потрібно буде отримати запрошення. До відкритої бесіди можна приєднатися в будь-який час.",
     "Delete conversation" : "Вилучити розмову",
     "Permanently delete this conversation." : "Назавжди видалити цю розмову.",
+    "No" : "Ні",
+    "Yes" : "Так",
     "Delete chat messages" : "Видалити повідомлення чату",
     "Permanently delete all the messages in this conversation." : "Назавжди видалити всі повідомлення в цій розмові.",
     "Delete all chat messages" : "Видалити всі повідомлення чату",

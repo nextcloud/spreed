@@ -284,6 +284,8 @@ OC.L10N.register(
     "Enable" : "Ŝalti",
     "Restricted" : "Limigita",
     "Personal" : "Persona",
+    "No" : "Ne",
+    "Yes" : "Jes",
     "Submit" : "Sendi",
     "Password protection" : "Protektita per pasvorto",
     "Save" : "Konservi",

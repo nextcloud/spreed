@@ -515,6 +515,8 @@
     "Be careful, these actions cannot be undone." : "Būkite atsargūs, šių veiksmų nebegalėsite atšaukti.",
     "Leave conversation" : "Išeiti iš pokalbio",
     "Delete conversation" : "Ištrinti pokalbį",
+    "No" : "Ne",
+    "Yes" : "Taip",
     "Do you really want to delete \"{displayName}\"?" : "Ar tikrai norite ištrinti \"{displayName}\"?",
     "Error while deleting conversation" : "Klaida ištrinant pokalbį",
     "Error while clearing chat history" : "Klaida išvalant pokalbio istoriją",

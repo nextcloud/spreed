@@ -678,6 +678,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Lassada una resonada, pro torrare a intrare in una resonada serrada, tocat de tènnere s'invitu. Si podet semper torrare a intrare in una resonada aberta.",
     "Delete conversation" : "Cantzella sa resonada",
     "Permanently delete this conversation." : "Cantzella in manera definitiva custa resonada.",
+    "No" : "No",
+    "Yes" : "Si",
     "Delete chat messages" : "Cantzella is messàgios de is tzarradas",
     "Permanently delete all the messages in this conversation." : "Cantzella in manera definitiva totu is messàgios in custa resonada.",
     "Delete all chat messages" : "Cantzella totu is messàgios de is tzarradas",
