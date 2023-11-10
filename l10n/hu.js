@@ -929,6 +929,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Ha elhagyott egy beszélgetést, akkor a zárt beszélgetésekhez visszacsatlakozáshoz meghívóra lesz szüksége. A nyílt beszélgetésekhez bármikor visszacsatlakozhat.",
     "Delete conversation" : "Beszélgetés törlése",
     "Permanently delete this conversation." : "Beszélgetés végleges törlése",
+    "No" : "Nem",
+    "Yes" : "Igen",
     "Delete chat messages" : "Csevegési üzenetek törlése",
     "Permanently delete all the messages in this conversation." : "A beszélgetés összes üzenetének végleges törlése.",
     "Delete all chat messages" : "Összes csevegési üzenet törlése",

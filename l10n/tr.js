@@ -950,6 +950,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Bir görüşmeden çıktıktan sonra, kapalı bir sohbete yeniden katılmak için çağrı gerekir. Açık bir sohbete herhangi bir zamanda yeniden katılabilirsiniz.",
     "Delete conversation" : "Görüşmeyi sil",
     "Permanently delete this conversation." : "Bu görüşmeyi kalıcı olarak sil.",
+    "No" : "Hayır",
+    "Yes" : "Evet",
     "Delete chat messages" : "Sohbet iletilerini sil",
     "Permanently delete all the messages in this conversation." : "Bu görüşmedeki tüm iletileri sil.",
     "Delete all chat messages" : "Tüm sohbet iletilerini sil",

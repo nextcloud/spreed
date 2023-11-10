@@ -881,6 +881,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "一旦离开对话，要重新加入已关闭的谈话，需要一个邀请。公开对话可以在任何时候重新加入。",
     "Delete conversation" : "删除对话",
     "Permanently delete this conversation." : "永久删除此对话。",
+    "No" : "否",
+    "Yes" : "是",
     "Delete chat messages" : "删除聊天消息",
     "Permanently delete all the messages in this conversation." : "永久删除此对话中的所有消息",
     "Delete all chat messages" : "删除所有聊天消息",

@@ -71,6 +71,7 @@ OC.L10N.register(
     "Restricted" : "აკრძალული",
     "Personal" : "პირადი",
     "Permissions" : "უფლებები",
+    "Yes" : "დიახ",
     "Submit" : "გაგზავნა",
     "Password protection" : "პაროლით თავდაცვა",
     "Save" : "შენახვა",

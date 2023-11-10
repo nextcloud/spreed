@@ -850,6 +850,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Po opuszczeniu rozmowy, aby ponownie dołączyć do zamkniętej rozmowy, potrzebne będzie zaproszenie. Do otwartej rozmowy będzie można dołączyć w dowolnym momencie.",
     "Delete conversation" : "Usuń rozmowę",
     "Permanently delete this conversation." : "Usuń trwale rozmowę.",
+    "No" : "Nie",
+    "Yes" : "Tak",
     "Delete chat messages" : "Usuń wiadomości czatu",
     "Permanently delete all the messages in this conversation." : "Usuń trwale wszystkie wiadomości w tej rozmowie.",
     "Delete all chat messages" : "Usuń wszystkie wiadomości czatu",

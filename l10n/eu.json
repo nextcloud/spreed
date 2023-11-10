@@ -867,6 +867,8 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Elkarrizketa uzten denean, elkarrizketa itxi batera berriro sartzeko, gonbidapen bat behar da. Elkarrizketa ireki batean edozein unetan sar daiteke berriro.",
     "Delete conversation" : "Ezabatu elkarrizketa",
     "Permanently delete this conversation." : "Betirako ezabatu elkarrizketa hau.",
+    "No" : "Ez",
+    "Yes" : "Bai",
     "Delete chat messages" : "Ezabatu txateko mezuak",
     "Permanently delete all the messages in this conversation." : "Ezabatu betirako elkarrizketa honen mezu guztiak.",
     "Delete all chat messages" : "Ezabatu txateko mezu guztiak",

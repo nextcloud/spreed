@@ -308,6 +308,7 @@ OC.L10N.register(
     "Disable" : "Dezactivează",
     "Enable" : "Activare",
     "Personal" : "Personal",
+    "Yes" : "Da",
     "Submit" : "Trimite",
     "Password protection" : "Password protection",
     "Save" : "Salvează",

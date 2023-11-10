@@ -764,6 +764,8 @@ OC.L10N.register(
     "Danger zone" : "Riskzon",
     "Leave conversation" : "Lämna konversationen",
     "Delete conversation" : "Ta bort konversationen",
+    "No" : "Nej",
+    "Yes" : "Ja",
     "Do you really want to delete \"{displayName}\"?" : "Vill du verkligen radera \"{displayName}\"?",
     "Submit" : "Skicka",
     "Password protection" : "Lösenordsskydd",

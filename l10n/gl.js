@@ -920,6 +920,8 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Unha vez que se sae dunha conversación, para unirse de novo a unha conversa pechada, é necesario un convite. Pódese volver a unir a unha conversa aberta en calquera momento.",
     "Delete conversation" : "Eliminar a conversa",
     "Permanently delete this conversation." : "Eliminar definitivamente esta conversa.",
+    "No" : "Non",
+    "Yes" : "Si",
     "Delete chat messages" : "Eliminar as mensaxes das parolas",
     "Permanently delete all the messages in this conversation." : "Eliminar definitivamente todas as mensaxes desta conversa.",
     "Delete all chat messages" : "Eliminar todas as mensaxes da parola",

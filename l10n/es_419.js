@@ -69,6 +69,7 @@ OC.L10N.register(
     "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Permissions" : "Permisos",
+    "Yes" : "Si",
     "Submit" : "Enviar",
     "Password protection" : "Protección con contraseña",
     "Save" : "Guardar",

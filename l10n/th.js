@@ -41,6 +41,8 @@ OC.L10N.register(
     "Disable" : "ปิดใช้งาน",
     "Restricted" : "ถูกจำกัด",
     "Personal" : "ส่วนตัว",
+    "No" : "ไม่ตกลง",
+    "Yes" : "ใช่",
     "Submit" : "ส่ง",
     "Password protection" : "ป้องกันด้วยรหัสผ่าน",
     "Save" : "บันทึก",
