@@ -62,7 +62,7 @@ class SettingsController extends OCSController {
 	/**
 	 * Update user setting
 	 *
-	 * @param string $key Key to update
+	 * @param 'attachment_folder'|'read_status_privacy'|'typing_privacy'|'play_sounds' $key Key to update
 	 * @param string|int|null $value New value for the key
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *

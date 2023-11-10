@@ -71,7 +71,9 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param string $question Question of the poll
 	 * @param string[] $options Options of the poll
-	 * @param int $resultMode Mode how the results will be shown
+	 * @psalm-param list<string> $options
+	 * @param 0|1 $resultMode Mode how the results will be shown
+	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @return DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
@@ -132,6 +134,7 @@ class PollController extends AEnvironmentAwareController {
 	 * Get a poll
 	 *
 	 * @param int $pollId ID of the poll
+	 * @psalm-param non-negative-int $pollId
 	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Poll returned
@@ -160,6 +163,7 @@ class PollController extends AEnvironmentAwareController {
 	 * Vote on a poll
 	 *
 	 * @param int $pollId ID of the poll
+	 * @psalm-param non-negative-int $pollId
 	 * @param int[] $optionIds IDs of the selected options
 	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
@@ -213,6 +217,7 @@ class PollController extends AEnvironmentAwareController {
 	 * Close a poll
 	 *
 	 * @param int $pollId ID of the poll
+	 * @psalm-param non-negative-int $pollId
 	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
 	 *
 	 * 200: Poll closed successfully

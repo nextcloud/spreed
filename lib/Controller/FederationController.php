@@ -61,6 +61,7 @@ class FederationController extends OCSController {
 	 * Accept a federation invites
 	 *
 	 * @param int $id ID of the share
+	 * @psalm-param non-negative-int $id
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException
@@ -82,6 +83,7 @@ class FederationController extends OCSController {
 	 * Decline a federation invites
 	 *
 	 * @param int $id ID of the share
+	 * @psalm-param non-negative-int $id
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException

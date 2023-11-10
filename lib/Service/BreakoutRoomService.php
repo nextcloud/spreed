@@ -103,8 +103,8 @@ class BreakoutRoomService {
 
 	/**
 	 * @param Room $parent
-	 * @param int $mode
-	 * @psalm-param 0|1|2|3 $mode
+	 * @param 0|1|2|3 $mode
+	 * @psalm-param BreakoutRoom::MODE_* $mode
 	 * @param int $amount
 	 * @param string $attendeeMap
 	 * @return Room[]

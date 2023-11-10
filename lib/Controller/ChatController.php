@@ -177,6 +177,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param string $actorDisplayName for guests
 	 * @param string $referenceId for the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
+	 * @psalm-param non-negative-int $replyTo
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
 	 *
@@ -361,18 +362,21 @@ class ChatController extends AEnvironmentAwareController {
 	 * returned, but it should be used nevertheless as the $lastKnownMessageId
 	 * for the follow-up query.
 	 *
-	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
+	 * @param 0|1 $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
 	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
+	 * @psalm-param non-negative-int $lastKnownMessageId
 	 * @param int $lastCommonReadId The last known common read message
 	 *                              (so the response is 200 instead of 304 when
 	 *                              it changes even when there are no messages)
-	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
-	 * @param int $setReadMarker Automatically set the last read marker when 1,
+	 * @psalm-param non-negative-int $lastCommonReadId
+	 * @param 0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30 $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
+	 * @psalm-param int<0, 30> $timeout
+	 * @param 0|1 $setReadMarker Automatically set the last read marker when 1,
 	 *                           if your client does this itself via chat/{token}/read set to 0
-	 * @param int $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
-	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
-	 * @param int $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
+	 * @param 0|1 $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
+	 * @param 0|1 $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
+	 * @param 0|1 $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
 	 *
 	 * 200: Messages returned
@@ -581,7 +585,9 @@ class ChatController extends AEnvironmentAwareController {
 	 * Get the context of a message
 	 *
 	 * @param int $messageId The focused message which should be in the "middle" of the returned context
-	 * @param int $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
+	 * @psalm-param non-negative-int $messageId
+	 * @param 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100 $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
+	 * @psalm-param int<1, 100> $limit
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: string}>
 	 *
 	 * 200: Message context returned
@@ -651,6 +657,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * Delete a chat message
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 *
 	 * 200: Message deleted successfully
@@ -732,7 +739,9 @@ class ChatController extends AEnvironmentAwareController {
 	 * Set a reminder for a chat message
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @param int $timestamp Timestamp of the reminder
+	 * @psalm-param non-negative-int $timestamp
 	 * @return DataResponse<Http::STATUS_CREATED, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 201: Reminder created successfully
@@ -763,6 +772,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * Get the reminder for a chat message
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @return DataResponse<Http::STATUS_OK, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reminder returned
@@ -794,6 +804,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * Delete a chat reminder
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Reminder deleted successfully
@@ -864,6 +875,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * Set the read marker to a specific message
 	 *
 	 * @param int $lastReadMessage ID if the last read message
+	 * @psalm-param non-negative-int $lastReadMessage
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
 	 * 200: Read marker set successfully
@@ -913,7 +925,8 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * Get objects that are shared in the room overview
 	 *
-	 * @param int $limit Maximum number of objects
+	 * @param 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20 $limit Maximum number of objects
+	 * @psalm-param int<1, 20> $limit
 	 * @return DataResponse<Http::STATUS_OK, array<string, TalkChatMessage[]>, array{}>
 	 *
 	 * 200: List of shared objects messages of each type returned
@@ -965,7 +978,9 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param string $objectType Type of the objects
 	 * @param int $lastKnownMessageId ID of the last known message
-	 * @param int $limit Maximum number of objects
+	 * @psalm-param non-negative-int $lastKnownMessageId
+	 * @param 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100|101|102|103|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|119|120|121|122|123|124|125|126|127|128|129|130|131|132|133|134|135|136|137|138|139|140|141|142|143|144|145|146|147|148|149|150|151|152|153|154|155|156|157|158|159|160|161|162|163|164|165|166|167|168|169|170|171|172|173|174|175|176|177|178|179|180|181|182|183|184|185|186|187|188|189|190|191|192|193|194|195|196|197|198|199|200 $limit Maximum number of objects
+	 * @psalm-param int<1, 200> $limit
 	 * @return DataResponse<Http::STATUS_OK, TalkChatMessage[], array{X-Chat-Last-Given?: string}>
 	 *
 	 * 200: List of shared objects messages returned

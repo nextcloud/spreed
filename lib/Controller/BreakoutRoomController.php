@@ -30,6 +30,7 @@ use InvalidArgumentException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
@@ -58,8 +59,10 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * Configure the breakout rooms
 	 *
-	 * @param int $mode Mode of the breakout rooms
-	 * @param int $amount Number of breakout rooms
+	 * @param 0|1|2|3 $mode Mode of the breakout rooms
+	 * @psalm-param BreakoutRoom::MODE_* $mode
+	 * @param 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20 $amount Number of breakout rooms
+	 * @psalm-param int<1, 20> $amount Constants {@see BreakoutRoom::MINIMUM_ROOM_AMOUNT} and {@see BreakoutRoom::MAXIMUM_ROOM_AMOUNT}
 	 * @param string $attendeeMap Mapping of the attendees to breakout rooms
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *

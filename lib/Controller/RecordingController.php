@@ -71,6 +71,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 * Get the welcome message of a recording server
 	 *
 	 * @param int $serverId ID of the server
+	 * @psalm-param non-negative-int $serverId
 	 * @return DataResponse<Http::STATUS_OK, array{version: float}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string}, array{}>
 	 *
 	 * 200: Welcome message returned
@@ -317,6 +318,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 * Start the recording
 	 *
 	 * @param int $status Type of the recording
+	 * @psalm-param Room::RECORDING_* $status
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Recording started successfully
@@ -392,6 +394,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 * Dismiss the store call recording notification
 	 *
 	 * @param int $timestamp Timestamp of the notification to be dismissed
+	 * @psalm-param non-negative-int $timestamp
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Notification dismissed successfully
@@ -416,7 +419,9 @@ class RecordingController extends AEnvironmentAwareController {
 	 * Share the recorded file to the chat
 	 *
 	 * @param int $fileId ID of the file
+	 * @psalm-param non-negative-int $fileId
 	 * @param int $timestamp Timestamp of the notification to be dismissed
+	 * @psalm-param non-negative-int $timestamp
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Recording shared to chat successfully

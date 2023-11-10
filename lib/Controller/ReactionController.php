@@ -58,6 +58,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 * Add a reaction to a message
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @param string $reaction Emoji to add
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
@@ -96,6 +97,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 * Delete a reaction from a message
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @param string $reaction Emoji to remove
 	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
@@ -131,6 +133,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 * Get a list of reactions for a message
 	 *
 	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
 	 * @param string|null $reaction Emoji to filter
 	 * @return DataResponse<Http::STATUS_OK, array<string, TalkReaction[]>|\stdClass, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *

@@ -227,6 +227,7 @@ class SignalingController extends OCSController {
 	 * right now.
 	 *
 	 * @param int $serverId ID of the signaling server
+	 * @psalm-param non-negative-int $serverId
 	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{error: string, version?: string}, array{}>
 	 *
 	 * 200: Welcome message returned
