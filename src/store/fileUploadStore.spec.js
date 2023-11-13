@@ -5,14 +5,14 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
-import client from '../services/DavClient.js'
+import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
 import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
 
 jest.mock('../services/DavClient', () => ({
-	putFileContents: jest.fn(),
+	getDavClient: jest.fn(),
 }))
 jest.mock('../utils/fileUpload', () => ({
 	findUniquePath: jest.fn(),
@@ -79,11 +79,15 @@ describe('fileUploadStore', () => {
 
 	describe('uploading', () => {
 		let restoreConsole
+		const client = {
+			putFileContents: jest.fn(),
+		}
 
 		beforeEach(() => {
 			storeConfig.getters.getAttachmentFolder = jest.fn().mockReturnValue(() => '/Talk')
 			store = new Vuex.Store(storeConfig)
 			restoreConsole = mockConsole(['error', 'debug'])
+			getDavClient.mockReturnValue(client)
 		})
 
 		afterEach(() => {
@@ -153,7 +157,6 @@ describe('fileUploadStore', () => {
 
 			const uniqueFileName = '/Talk/' + file.name + 'uniq'
 			findUniquePath.mockResolvedValueOnce(uniqueFileName)
-			client.putFileContents.mockResolvedValue()
 			shareFile.mockResolvedValue()
 
 			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption' })
@@ -201,7 +204,6 @@ describe('fileUploadStore', () => {
 			findUniquePath
 				.mockResolvedValueOnce('/Talk/' + files[0].name + 'uniq')
 				.mockResolvedValueOnce('/Talk/' + files[1].name + 'uniq')
-			client.putFileContents.mockResolvedValue()
 			shareFile
 				.mockResolvedValueOnce({ data: { ocs: { data: { id: '1' } } } })
 				.mockResolvedValueOnce({ data: { ocs: { data: { id: '2' } } } })
@@ -280,7 +282,6 @@ describe('fileUploadStore', () => {
 
 			findUniquePath
 				.mockResolvedValueOnce('/Talk/' + files[0].name + 'uniq')
-			client.putFileContents.mockResolvedValue()
 			shareFile.mockRejectedValueOnce({
 				response: {
 					status: 403,
