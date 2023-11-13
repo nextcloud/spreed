@@ -26,8 +26,8 @@ import { getRequestToken } from '@nextcloud/auth'
 import { generateRemoteUrl } from '@nextcloud/router'
 
 // init webdav client on default dav endpoint
-const client = createClient(generateRemoteUrl('dav'),
-	{ headers: { requesttoken: getRequestToken() || '' } },
-)
-
-export default client
+export const getDavClient = () => {
+	return createClient(generateRemoteUrl('dav'),
+		{ headers: { requesttoken: getRequestToken() || '' } },
+	)
+}

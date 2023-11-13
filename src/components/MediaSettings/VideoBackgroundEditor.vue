@@ -92,7 +92,7 @@ import { imagePath, generateUrl } from '@nextcloud/router'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import client from '../../services/DavClient.js'
+import { getDavClient } from '../../services/DavClient.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
 const canUploadBackgrounds = getCapabilities()?.spreed?.config?.call?.['can-upload-background']
@@ -176,6 +176,7 @@ export default {
 
 		try {
 			// Create the backgrounds folder if it doesn't exist
+			const client = getDavClient()
 			if (await client.exists(absoluteBackgroundsFolderPath) === false) {
 				await client.createDirectory(absoluteBackgroundsFolderPath)
 			}
@@ -220,6 +221,7 @@ export default {
 
 			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + file.name
 
+			const client = getDavClient()
 			// Get a unique relative path based on the previous path variable
 			const uniquePath = await findUniquePath(client, userRoot, filePath)
 
