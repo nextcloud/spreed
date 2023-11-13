@@ -67,7 +67,15 @@
 				<AudioPlayer :name="voiceMessageName"
 					:local-url="voiceMessageLocalURL" />
 			</template>
-			<NewMessage v-if="modalContainerId"
+			<div v-if="!supportMediaCaption" class="upload-editor__actions">
+				<NcButton type="tertiary" @click="handleDismiss">
+					{{ t('spreed', 'Dismiss') }}
+				</NcButton>
+				<NcButton type="primary" @click="handleUpload(null)">
+					{{ t('spreed', 'Send') }}
+				</NcButton>
+			</div>
+			<NewMessage v-else-if="modalContainerId"
 				ref="newMessage"
 				role="region"
 				upload
@@ -81,8 +89,9 @@
 </template>
 
 <script>
-
 import Plus from 'vue-material-design-icons/Plus.vue'
+
+import { getCapabilities } from '@nextcloud/capabilities'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -91,6 +100,8 @@ import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/Audio
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import NewMessage from './NewMessage.vue'
 import TransitionWrapper from '../TransitionWrapper.vue'
+
+const supportMediaCaption = getCapabilities()?.spreed?.features?.includes('media-caption')
 
 export default {
 	name: 'NewMessageUploadEditor',
@@ -103,6 +114,12 @@ export default {
 		NcButton,
 		NewMessage,
 		TransitionWrapper,
+	},
+
+	setup() {
+		return {
+			supportMediaCaption,
+		}
 	},
 
 	data() {
@@ -166,7 +183,7 @@ export default {
 
 	watch: {
 		async showModal(show) {
-			if (show) {
+			if (show && this.supportMediaCaption) {
 				await this.getContainerId()
 				this.$nextTick(() => {
 					this.$refs.newMessage?.focusInput()
@@ -251,6 +268,12 @@ export default {
 			outline: 3px dashed var(--color-primary-element);
 			border-radius: var(--border-radius-large);
 		}
+	}
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 4px;
+		padding: 12px 0;
 	}
 }
 
