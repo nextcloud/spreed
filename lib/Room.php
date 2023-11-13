@@ -238,6 +238,7 @@ class Room {
 	protected ?Participant $participant = null;
 
 	/**
+	 * @psalm-param Room::TYPE_* $type
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
 	 */
 	public function __construct(
@@ -282,10 +283,18 @@ class Room {
 		return $this->id;
 	}
 
+	/**
+	 * @return int
+	 * @psalm-return Room::TYPE_*
+	 */
 	public function getType(): int {
 		return $this->type;
 	}
 
+	/**
+	 * @param int $type
+	 * @psalm-param Room::TYPE_* $type
+	 */
 	public function setType(int $type): void {
 		$this->type = $type;
 	}

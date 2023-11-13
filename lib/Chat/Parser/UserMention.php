@@ -214,6 +214,7 @@ class UserMention implements IEventListener {
 		switch ($room->getType()) {
 			case Room::TYPE_ONE_TO_ONE:
 			case Room::TYPE_ONE_TO_ONE_FORMER:
+			case Room::TYPE_NOTE_TO_SELF:
 				return 'one2one';
 			case Room::TYPE_GROUP:
 				return 'group';
