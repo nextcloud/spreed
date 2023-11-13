@@ -1691,17 +1691,22 @@ class RoomController extends AEnvironmentAwareController {
 	 * Set active state for a session
 	 *
 	 * @param int $state of the room
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Session state set successfully
 	 * 400: The provided new state was invalid
+	 * 404: The participant did not have a session
 	 */
 	#[PublicPage]
 	#[RequireParticipant]
 	public function setSessionState(int $state): DataResponse {
+		if (!$this->participant->getSession() instanceof Session) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		try {
 			$this->sessionService->updateSessionState($this->participant->getSession(), $state);
-		} catch (\InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
