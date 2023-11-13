@@ -896,6 +896,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates note-to-self \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 */
+	public function userCreatesNoteToSelf(string $user, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/note-to-self');
+		$this->assertStatusCode($this->response, 200);
+
+		$response = $this->getDataFromResponse($this->response);
+		self::$identifierToToken[$user . '-note-to-self'] = $response['token'];
+		self::$identifierToId[$user . '-note-to-self'] = $response['id'];
+		self::$tokenToIdentifier[$response['token']] = $user . '-note-to-self';
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" creates room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
