@@ -26,7 +26,7 @@ import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
 
-import client from '../services/DavClient.js'
+import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
 import {
 	getFileTemplates,
@@ -312,6 +312,7 @@ const actions = {
 			const fileName = (currentFile.newName || currentFile.name)
 			// Candidate rest of the path
 			const path = getters.getAttachmentFolder() + '/' + fileName
+			const client = getDavClient()
 			// Get a unique relative path based on the previous path variable
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
