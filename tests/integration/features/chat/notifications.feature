@@ -10,6 +10,7 @@ Feature: chat/notifications
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant1" sets session state to 2 in room "one-to-one room" with 404 (v4)
     Given user "participant2" joins room "one-to-one room" with 200 (v4)
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
