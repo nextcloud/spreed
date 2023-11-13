@@ -143,13 +143,18 @@ class SystemMessage implements IEventListener {
 				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		}
 		$cliIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-			'guest/cli' === $parsedParameters['actor']['id'];
+			'guest/' . Attendee::ACTOR_ID_CLI === $parsedParameters['actor']['id'];
 
 		if ($message === 'conversation_created') {
+			$systemIsActor = $parsedParameters['actor']['type'] === 'guest' &&
+				'guest/' . Attendee::ACTOR_ID_SYSTEM === $parsedParameters['actor']['id'];
+
 			$parsedMessage = $this->l->t('{actor} created the conversation');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You created the conversation');
-			} elseif ($cliIsActor) {
+			} elseif ($systemIsActor) {
+				$parsedMessage = $this->l->t('System created the conversation');
+			}if ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator created the conversation');
 			}
 		} elseif ($message === 'conversation_renamed') {

@@ -45,6 +45,7 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -157,7 +158,11 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutConversationCreated(RoomCreatedEvent $event): void {
-		$this->sendSystemMessage($event->getRoom(), 'conversation_created');
+		if ($event->getRoom()->getType() === Room::TYPE_CHANGELOG || $this->isCreatingNoteToSelfAutomatically($event)) {
+			$this->sendSystemMessage($event->getRoom(), 'conversation_created', forceSystemAsActor: true);
+		} else {
+			$this->sendSystemMessage($event->getRoom(), 'conversation_created');
+		}
 	}
 
 	protected function sendSystemMessageAboutConversationRenamed(RoomModifiedEvent $event): void {
@@ -174,6 +179,10 @@ class Listener implements IEventListener {
 
 	protected function sendSystemMessageAboutRoomDescriptionChanges(RoomModifiedEvent $event): void {
 		if ($event->getNewValue() !== '') {
+			if ($this->isCreatingNoteToSelf($event)) {
+				return;
+			}
+
 			$this->sendSystemMessage($event->getRoom(), 'description_set', [
 				'newDescription' => $event->getNewValue(),
 			]);
@@ -250,6 +259,10 @@ class Listener implements IEventListener {
 	protected function addSystemMessageUserAdded(AttendeesAddedEvent $event, Attendee $attendee): void {
 		$room = $event->getRoom();
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return;
+		}
+
+		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return;
 		}
 
@@ -407,10 +420,13 @@ class Listener implements IEventListener {
 		}
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null, bool $shouldSkipLastMessageUpdate = false, bool $silent = false): IComment {
+	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null, bool $shouldSkipLastMessageUpdate = false, bool $silent = false, bool $forceSystemAsActor = false): IComment {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->getAttendee()->getActorType();
 			$actorId = $participant->getAttendee()->getActorId();
+		} elseif ($forceSystemAsActor) {
+			$actorType = Attendee::ACTOR_GUESTS;
+			$actorId = Attendee::ACTOR_ID_SYSTEM;
 		} else {
 			$user = $this->userSession->getUser();
 			if ($user instanceof IUser) {
@@ -524,11 +540,55 @@ class Listener implements IEventListener {
 
 	protected function avatarChanged(RoomModifiedEvent $event): void {
 		if ($event->getNewValue()) {
+			if ($this->isCreatingNoteToSelf($event)) {
+				return;
+			}
+
 			$message = 'avatar_set';
 		} else {
 			$message = 'avatar_removed';
 		}
 
 		$this->sendSystemMessage($event->getRoom(), $message);
+	}
+
+	protected function isCreatingNoteToSelf(RoomModifiedEvent $event): bool {
+		if ($event->getRoom()->getType() !== Room::TYPE_NOTE_TO_SELF) {
+			return false;
+		}
+
+		$exception = new \Exception();
+		$trace = $exception->getTrace();
+
+		foreach ($trace as $step) {
+			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
+				isset($step['function']) && $step['function'] === 'initialCreateNoteToSelfForUser') {
+				return true;
+			}
+			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
+				isset($step['function']) && $step['function'] === 'ensureNoteToSelfExistsForUser') {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected function isCreatingNoteToSelfAutomatically(RoomCreatedEvent $event): bool {
+		if ($event->getRoom()->getType() !== Room::TYPE_NOTE_TO_SELF) {
+			return false;
+		}
+
+		$exception = new \Exception();
+		$trace = $exception->getTrace();
+
+		foreach ($trace as $step) {
+			if (isset($step['class']) && $step['class'] === NoteToSelfService::class &&
+				isset($step['function']) && $step['function'] === 'initialCreateNoteToSelfForUser') {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
