@@ -1582,7 +1582,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN usase como proxy no tráfico de participantes detrás dunha devasa.",
     "Signaling servers" : "Servidores de sinalización",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente pode empregarse un servidor de sinalización externo para instalacións maiores. Deixeo baleiro para usar o servidor de sinalización interno.",
-    "%s Talk on your mobile devices" : "%s Fale nos seus dispositivos móbiles",
+    "%s Talk on your mobile devices" : "%s Talk nos seus dispositivos móbiles",
     "Join conversations at any time, anywhere, on any device." : "Únase a conversas en calquera momento, en calquera lugar, con calquera dispositivo.",
     "Android app" : "Aplicación de Android",
     "iOS app" : "Aplicación de iOS",
