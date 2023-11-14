@@ -73,7 +73,8 @@ export function useActiveSession() {
 	})
 
 	const setSessionAsActive = async () => {
-		if (currentState.value === SESSION.STATE.ACTIVE) {
+		if (currentState.value === SESSION.STATE.ACTIVE
+			|| !token.value) {
 			return
 		}
 		clearTimeout(inactiveTimer.value)
@@ -89,7 +90,8 @@ export function useActiveSession() {
 	}
 
 	const setSessionAsInactive = async () => {
-		if (currentState.value === SESSION.STATE.INACTIVE) {
+		if (currentState.value === SESSION.STATE.INACTIVE
+			|| !token.value) {
 			return
 		}
 		clearTimeout(inactiveTimer.value)
