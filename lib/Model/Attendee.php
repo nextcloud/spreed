@@ -79,6 +79,7 @@ class Attendee extends Entity {
 	// Special actor IDs
 	public const ACTOR_BOT_PREFIX = 'bot-';
 	public const ACTOR_ID_CLI = 'cli';
+	public const ACTOR_ID_SYSTEM = 'system';
 	public const ACTOR_ID_CHANGELOG = 'changelog';
 
 	public const PERMISSIONS_DEFAULT = 0;

@@ -171,6 +171,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [
 			'cli' => 'cli',
+			'system' => 'system',
 			'failed-to-get-session' => 'failed-to-get-session',
 		];
 		self::$userToSessionId = [];
@@ -283,24 +284,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" is participant of the following (unordered )?rooms \((v4)\)$/
+	 * @Then /^user "([^"]*)" is participant of the following (unordered )?(note-to-self )?rooms \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $shouldOrder
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $apiVersion, TableNode $formData = null): void {
+	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $shouldFilter, string $apiVersion, TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
 		$this->assertStatusCode($this->response, 200);
 
 		$rooms = $this->getDataFromResponse($this->response);
 
-		$rooms = array_filter($rooms, function ($room) {
-			// Filter out "Talk updates" and "Note to self" conversations
-			return $room['type'] !== 4 && $room['type'] !== 6;
-		});
+		if ($shouldFilter === '') {
+			$rooms = array_filter($rooms, function ($room) {
+				// Filter out "Talk updates" and "Note to self" conversations
+				return $room['type'] !== 4 && $room['type'] !== 6;
+			});
+		} elseif ($shouldFilter === 'note-to-self ') {
+			$rooms = array_filter($rooms, function ($room) {
+				// Filter out "Talk updates" conversations
+				return $room['type'] !== 4;
+			});
+		}
 
 		if ($formData === null) {
 			Assert::assertEmpty($rooms);
@@ -910,6 +918,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$identifierToToken[$user . '-note-to-self'] = $response['token'];
 		self::$identifierToId[$user . '-note-to-self'] = $response['id'];
 		self::$tokenToIdentifier[$response['token']] = $user . '-note-to-self';
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" reset note-to-self preference$/
+	 *
+	 * @param string $user
+	 */
+	public function userResetNoteToSelfPreference(string $user): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/users/spreed/note_to_self');
+		$this->assertStatusCode($this->response, 200);
 	}
 
 	/**
