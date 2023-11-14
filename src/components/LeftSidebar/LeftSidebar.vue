@@ -749,6 +749,11 @@ export default {
 			this.isScrolledToTop = this.$refs.scroller.$el.scrollTop === 0
 		},
 
+		hasUnreadMentions(conversation) {
+			return conversation.unreadMention || conversation.unreadMentionDirect || (conversation.unreadMessages > 0
+				&& (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
+		},
+
 		/**
 		 * Find position of the last unread conversation below viewport
 		 */
@@ -758,7 +763,7 @@ export default {
 			this.lastUnreadMentionBelowViewportIndex = null
 			const lastConversationInViewport = this.$refs.scroller.getLastItemInViewportIndex()
 			for (let i = this.filteredConversationsList.length - 1; i > lastConversationInViewport; i--) {
-				if (this.filteredConversationsList[i].unreadMention) {
+				if (this.hasUnreadMentions(this.filteredConversationsList[i])) {
 					this.lastUnreadMentionBelowViewportIndex = i
 					return
 				}
