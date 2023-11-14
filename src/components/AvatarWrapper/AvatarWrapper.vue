@@ -200,6 +200,9 @@ export default {
 		&.icon {
 			background-color: var(--color-background-darker);
 			background-size: calc(var(--avatar-size) / 2);
+			&.icon-changelog {
+				background-size: cover !important;
+			}
 		}
 
 		&.bot {
