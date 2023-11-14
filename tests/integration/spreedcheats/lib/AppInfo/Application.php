@@ -23,12 +23,14 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\AppInfo;
 
+use OCA\SpreedCheats\PreferenceListener;
 use OCA\SpreedCheats\SpeechToText\LoremIpsumSpeechToTextProvider;
 use OCA\SpreedCheats\Translation\LoremIpsumTranslationProvider;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Config\BeforePreferenceDeletedEvent;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'spreedcheats';
@@ -40,6 +42,7 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerSpeechToTextProvider(LoremIpsumSpeechToTextProvider::class);
 		$context->registerTranslationProvider(LoremIpsumTranslationProvider::class);
+		$context->registerEventListener(BeforePreferenceDeletedEvent::class, PreferenceListener::class);
 	}
 
 	public function boot(IBootContext $context): void {
