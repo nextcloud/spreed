@@ -318,7 +318,7 @@ import { EventBus } from '../../services/EventBus.js'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
-import { filterFunction } from '../../utils/conversation.js'
+import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
 
 const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
 	&& getCapabilities()?.spreed?.config.call['sip-enabled']
@@ -866,7 +866,7 @@ export default {
 			this.lastUnreadMentionBelowViewportIndex = null
 			const lastConversationInViewport = this.$refs.scroller.getLastItemInViewportIndex()
 			for (let i = this.filteredConversationsList.length - 1; i > lastConversationInViewport; i--) {
-				if (this.filteredConversationsList[i].unreadMention) {
+				if (hasUnreadMentions(this.filteredConversationsList[i])) {
 					this.lastUnreadMentionBelowViewportIndex = i
 					return
 				}
