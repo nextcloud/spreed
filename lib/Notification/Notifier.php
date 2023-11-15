@@ -529,9 +529,11 @@ class Notifier implements INotifier {
 
 		if (!$this->notificationManager->isPreparingPushNotification()
 			&& $notification->getObjectType() === 'chat'
-			// FIXME Need to solve the same bug for reactions as well,
-			// but the notification only contains the message id of the target
-			// not the one of the reaction, so we can't determine if it was read.
+			/**
+			 * Notification only contains the message id of the target comment
+			 * not the one of the reaction, so we can't determine if it was read.
+			 * @see Listener::markReactionNotificationsRead()
+			 */
 			&& $notification->getSubject() !== 'reaction'
 			&& ((int) $messageParameters['commentId']) <= $participant->getAttendee()->getLastReadMessage()) {
 			// Mark notifications of messages that are read as processed
