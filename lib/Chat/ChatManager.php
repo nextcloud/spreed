@@ -773,6 +773,20 @@ class ChatManager {
 		return $this->commentsManager->searchForObjects($search, 'chat', $objectIds, $verb, $offset, $limit);
 	}
 
+	/**
+	 * Search for comments on one or more objects with a given content
+	 *
+	 * @param string $search content to search for
+	 * @param string[] $objectIds Limit the search by object ids
+	 * @param string $verb Limit the verb of the comment
+	 * @param int $offset
+	 * @param int $limit
+	 * @return list<IComment>
+	 */
+	public function searchForObjectsWithFilters(string $search, array $objectIds, string $verb, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50): array {
+		return $this->commentsManager->searchForObjectsWithFilters($search, 'chat', $objectIds, $verb, $since, $until, $actorType, $actorId, $offset, $limit);
+	}
+
 	public function addConversationNotify(array $results, string $search, Room $room, Participant $participant): array {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return $results;

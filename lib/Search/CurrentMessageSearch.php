@@ -23,12 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Search;
 
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Webinary;
 use OCP\IUser;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
@@ -45,7 +41,7 @@ class CurrentMessageSearch extends MessageSearch {
 	 * @inheritDoc
 	 */
 	public function getName(): string {
-		return $this->l->t('Messages');
+		return $this->l->t('Messages in current conversation');
 	}
 
 	/**
@@ -69,12 +65,10 @@ class CurrentMessageSearch extends MessageSearch {
 	 * @inheritDoc
 	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
+		$title = $this->l->t('Messages');
 		$currentToken = $this->getCurrentConversationToken($query);
 		if ($currentToken === '') {
-			return SearchResult::complete(
-				$this->l->t('Messages'),
-				[]
-			);
+			return SearchResult::complete($title, []);
 		}
 
 		try {
@@ -82,56 +76,16 @@ class CurrentMessageSearch extends MessageSearch {
 				$currentToken,
 				$user->getUID()
 			);
-		} catch (RoomNotFoundException $e) {
-			return SearchResult::complete(
-				$this->l->t('Messages'),
-				[]
-			);
+		} catch (RoomNotFoundException) {
+			return SearchResult::complete($title, []);
 		}
 
 		try {
-			$participant = $this->participantService->getParticipant($room, $user->getUID(), false);
-		} catch (ParticipantNotFoundException $e) {
-			return SearchResult::complete(
-				$this->l->t('Messages'),
-				[]
-			);
+			$this->participantService->getParticipant($room, $user->getUID(), false);
+		} catch (ParticipantNotFoundException) {
+			return SearchResult::complete($title, []);
 		}
 
-		if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
-			!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
-			return SearchResult::complete(
-				$this->l->t('Messages'),
-				[]
-			);
-		}
-
-		$offset = (int) $query->getCursor();
-		$comments = $this->chatManager->searchForObjects(
-			$query->getTerm(),
-			[(string) $room->getId()],
-			ChatManager::VERB_MESSAGE,
-			$offset,
-			$query->getLimit()
-		);
-
-		$result = [];
-		foreach ($comments as $comment) {
-			try {
-				$result[] = $this->commentToSearchResultEntry($room, $user, $comment, $query);
-			} catch (UnauthorizedException $e) {
-			} catch (ParticipantNotFoundException $e) {
-			}
-		}
-
-		return SearchResult::paginated(
-			str_replace(
-				'{conversation}',
-				$room->getDisplayName($user->getUID()),
-				$this->l->t('Messages in {conversation}')
-			),
-			$result,
-			$offset + $query->getLimit()
-		);
+		return $this->performSearch($user, $query, $this->l->t('Messages'), [$room], true);
 	}
 }
