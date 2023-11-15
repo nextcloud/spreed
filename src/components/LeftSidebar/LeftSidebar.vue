@@ -80,7 +80,7 @@
 					class="actions"
 					:class="{'hidden-visually': isFocused}">
 					<template #icon>
-						<DotsVertical :size="20" />
+						<ChatPlus :size="20" />
 					</template>
 					<NcActionButton v-if="canStartConversations"
 						close-after-click
@@ -235,7 +235,6 @@ import { ref } from 'vue'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
 import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
-import DotsVertical from 'vue-material-design-icons/DotsVertical.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import List from 'vue-material-design-icons/FormatListBulleted.vue'
@@ -303,7 +302,6 @@ export default {
 		Plus,
 		ChatPlus,
 		List,
-		DotsVertical,
 	},
 
 	mixins: [
