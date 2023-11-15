@@ -19,8 +19,7 @@
  *
  */
 
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
-
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
 export const ConnectionState = {

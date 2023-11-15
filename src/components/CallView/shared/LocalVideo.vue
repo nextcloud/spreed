@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
@@ -82,6 +81,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import VideoBackground from './VideoBackground.vue'
 
 import video from '../../../mixins/video.js'
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {

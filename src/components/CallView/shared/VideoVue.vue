@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
@@ -103,14 +102,15 @@ import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
-import TransitionWrapper from '../../TransitionWrapper.vue'
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
+import TransitionWrapper from '../../TransitionWrapper.vue'
 
 import { ATTENDEE } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
