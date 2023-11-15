@@ -1,9 +1,9 @@
 /*
- * @copyright Copyright (c) 2022 Grigorii Shartsev <grigorii.shartsev@nextcloud.com>
+ * @copyright Copyright (c) 2022 Grigorii Shartsev <me@shgk.me>
  *
- * @author Grigorii Shartsev <grigorii.shartsev@nextcloud.com>
+ * @author Grigorii Shartsev <me@shgk.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -42,27 +42,6 @@ module.exports = {
 			// Reuse @nextcloud/webpack-vue-config/rules
 			...Object.values(nextcloudWebpackRules),
 
-			{
-				/**
-				 * webrtc-adapter main module does no longer provide
-				 * "module.exports", which is expected by some elements using it
-				 * (like "attachmediastream"), so it needs to be added back with
-				 * a plugin.
-				 */
-				test: /node_modules[\\/]webrtc-adapter[\\/].*\.js$/,
-				loader: 'babel-loader',
-				options: {
-					plugins: ['add-module-exports'],
-					presets: [
-						/**
-						 * From "add-module-exports" documentation:
-						 * "webpack doesn't perform commonjs transformation for
-						 * codesplitting. Need to set commonjs conversion."
-						 */
-						['@babel/env', { modules: 'commonjs' }],
-					],
-				},
-			},
 			{
 				test: /\.wasm$/i,
 				type: 'asset/resource',
