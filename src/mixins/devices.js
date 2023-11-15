@@ -20,7 +20,7 @@
  *
  */
 
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
+import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
 
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'

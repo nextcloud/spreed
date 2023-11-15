@@ -1,8 +1,10 @@
-import util from 'util'
+/* global module */
 
-import adapter from 'webrtc-adapter'
-import webrtcSupport from 'webrtcsupport'
-import WildEmitter from 'wildemitter'
+const util = require('util')
+
+const adapter = require('webrtc-adapter')
+const webrtcSupport = require('webrtcsupport')
+const WildEmitter = require('wildemitter')
 
 /**
  * @param {object} stream the stream object.
@@ -951,4 +953,4 @@ Peer.prototype.handleDataChannelAdded = function(event) {
 	this._observeDataChannel(channel)
 }
 
-export default Peer
+module.exports = Peer

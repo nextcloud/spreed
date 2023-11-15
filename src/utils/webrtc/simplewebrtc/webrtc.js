@@ -6,7 +6,7 @@ const mockconsole = require('mockconsole')
 const webrtcSupport = require('webrtcsupport')
 
 const localMedia = require('./localmedia.js')
-const Peer = require('./peer.js').default
+const Peer = require('./peer.js')
 
 /**
  * @param {object} opts the options object.
