@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream'
+import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
