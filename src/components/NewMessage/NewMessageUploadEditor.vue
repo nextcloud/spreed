@@ -26,7 +26,10 @@
 		class="upload-editor"
 		:container="container"
 		@close="handleDismiss">
-		<div class="upload-editor">
+		<div class="upload-editor"
+			@dragover.prevent="handleDragOver"
+			@dragleave.prevent="handleDragLeave"
+			@drop.prevent="handleDropFiles">
 			<template v-if="!isVoiceMessage">
 				<!--native file picker, hidden -->
 				<input id="file-upload"
@@ -36,6 +39,7 @@
 					class="hidden-visually"
 					@change="handleFileInput">
 				<TransitionWrapper class="upload-editor__previews"
+					:class="{'dragging-over': isDraggingOver}"
 					name="fade"
 					tag="div"
 					group>
@@ -104,6 +108,7 @@ export default {
 	data() {
 		return {
 			modalContainerId: null,
+			isDraggingOver: false,
 		}
 	},
 
@@ -201,6 +206,29 @@ export default {
 		handleRemoveFileFromSelection(id) {
 			this.$store.dispatch('removeFileFromSelection', id)
 		},
+
+		handleDragOver(event) {
+			if (event.dataTransfer.types.includes('Files')) {
+				this.isDraggingOver = true
+			}
+		},
+
+		handleDragLeave(event) {
+			if (!event.currentTarget.contains(event.relatedTarget)) {
+				this.isDraggingOver = false
+			}
+		},
+
+		handleDropFiles(event) {
+			if (!this.isDraggingOver) {
+				return
+			}
+
+			this.isDraggingOver = false
+
+			const files = Object.values(event.dataTransfer.files)
+			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId: this.currentUploadId })
+		},
 	},
 }
 </script>
@@ -218,6 +246,11 @@ export default {
 		position: relative;
 		overflow: auto;
 		flex-wrap: wrap;
+
+		&.dragging-over {
+			outline: 3px dashed var(--color-primary-element);
+			border-radius: var(--border-radius-large);
+		}
 	}
 }
 
