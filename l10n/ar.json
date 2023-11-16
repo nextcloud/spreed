@@ -68,6 +68,7 @@
     "Reaction deleted by author" : "تم حذف تفاعل من قبل الكاتب",
     "{actor} created the conversation" : "{actor} قام بإنشاء محادثة",
     "You created the conversation" : "أنشأتَ المحادثة",
+    "System created the conversation" : "System created the conversation",
     "An administrator created the conversation" : "المسؤول انشئ محادثة",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} اعاد تسمية المحادثة من \"%1$s\" إلى \"%2$s\"",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "قمت بإعادة تسمية المحادثة من \"%1$s\" إلى \"%2$s\"",
