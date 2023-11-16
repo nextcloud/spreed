@@ -295,7 +295,7 @@ const actions = {
 			// Store the previously created temporary message
 			const temporaryMessage = {
 				...uploadedFile.temporaryMessage,
-				message: index === lastIndex ? caption : '{file}',
+				message: index === lastIndex && caption ? caption : '{file}',
 			}
 			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', temporaryMessage)
