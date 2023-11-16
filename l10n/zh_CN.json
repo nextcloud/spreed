@@ -67,6 +67,7 @@
     "Reaction deleted by author" : "回应被作者删除",
     "{actor} created the conversation" : "{actor}创建了对话",
     "You created the conversation" : "您创建了对话",
+    "System created the conversation" : "系统创建了对话",
     "An administrator created the conversation" : "管理员创建了这个对话",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor}将对话“%1$s”重命名为了“%2$s”",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "您将对话 \"%1$s\" 重命名为 \"%2$s\"",
@@ -1705,7 +1706,7 @@
     "{actor} removed the conversation avatar" : "{actor}移除了对话头像",
     "You removed the conversation avatar" : "您移除了对话头像",
     "The PHP settings 'upload_max_filesize' or 'post_max_size' only will allow to upload files up to {maxUpload}." : "PHP设置“upload_max_filesize”或“post_max_size”仅允许上传最大{maxUpload}的文件。",
-    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "在此对话中加入通话之前，一律显示此对答。通话录制时将一律显示该对答。",
+    "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "在此对话中加入通话之前，一律显示此对话框。通话录制时将一律显示该对话框。",
     "Setup summary" : "设置概览"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -68,6 +68,7 @@
     "Reaction deleted by author" : "Reakce smazána autorem",
     "{actor} created the conversation" : "{actor} vytvořil(a) konverzaci",
     "You created the conversation" : "Vytvořili jste konverzaci",
+    "System created the conversation" : "Systém vytvořil kovnerzaci",
     "An administrator created the conversation" : "Správce vytvořil konverzaci",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} přejmenoval(a) konverzaci z „%1$s“ na „%2$s“",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "Přejmenovali jste konverzaci z „%1$s“ na „%2$s“",
