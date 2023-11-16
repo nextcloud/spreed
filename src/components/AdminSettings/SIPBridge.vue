@@ -57,7 +57,7 @@
 				label="displayname"
 				no-wrap
 				@search-change="searchGroup" />
-			<p class="settings-hint">
+			<p class="settings-hint settings-hint--after-select">
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
 
@@ -253,6 +253,10 @@ h3 {
 		display: block;
 		padding: 4px 0;
 	}
+}
+
+.settings-hint--after-select {
+	margin-top: 0;
 }
 
 .additional-top-margin {
