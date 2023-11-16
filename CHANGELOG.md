@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0-beta.3 – 2023-11-16
+### Added
+- Allow drag'n'drop of files onto the caption dialog
+  [#10898](https://github.com/nextcloud/spreed/issues/10898)
+- Add support for "person" and "modified" filter options of the global search
+  [#10909](https://github.com/nextcloud/spreed/issues/10909)
+
+### Changed
+- Update several dependencies
+
+### Fixed
+- Fix Safari browser not receiving any stream in a call
+  [#10912](https://github.com/nextcloud/spreed/issues/10912)
+- Try to fix Safari unmute after being muted for a longer time
+  [#10913](https://github.com/nextcloud/spreed/issues/10913)
+- Mark notifications about read chat messages as resolved
+  [#10889](https://github.com/nextcloud/spreed/issues/10889)
+- Fix uploading files after multiple hours without a page reload
+  [#10877](https://github.com/nextcloud/spreed/issues/10877)
+- Don't throw an unhandled exception when mentioning `at-all` in "Note to self"
+  [#10881](https://github.com/nextcloud/spreed/issues/10881)
+- Fix SIP dialout not working after resolving license issue
+  [#10914](https://github.com/nextcloud/spreed/issues/10914)
+- Fix issues with the session active state
+  [#10876](https://github.com/nextcloud/spreed/issues/10876)
+- Clarify that "Note to self" and "Talk Updates" are system generated
+  [#10884](https://github.com/nextcloud/spreed/issues/10884)
+
 ## 18.0.0-beta.2 – 2023-11-09
 ### Changed
 - Replace various confirmation screens with the NcDialog component
