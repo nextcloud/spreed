@@ -64,7 +64,6 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
@@ -77,6 +76,7 @@ import VideoBackground from './VideoBackground.vue'
 
 import { AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
