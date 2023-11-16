@@ -70,6 +70,7 @@ OC.L10N.register(
     "Reaction deleted by author" : "回應被作者刪除",
     "{actor} created the conversation" : "{actor} 建立了對話",
     "You created the conversation" : "您建立了對話",
+    "System created the conversation" : "系統建立了對話",
     "An administrator created the conversation" : "管理員建立了對話",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} 將對話從「%1$s」重新命名為「%2$s」",
     "You renamed the conversation from \"%1$s\" to \"%2$s\"" : "您將對話從「%1$s」重新命名為「%2$s」",
