@@ -428,12 +428,16 @@ export default {
 			this.adjustSimulcastQuality()
 		},
 
-		speakers() {
-			this._setPromotedParticipant()
+		speakers(value) {
+			if (value) {
+				this._setPromotedParticipant()
+			}
 		},
 
-		screenSharingActive() {
-			this._setPromotedParticipant()
+		shownRemoteScreenPeerId(value) {
+			if (value) {
+				this._setPromotedParticipant()
+			}
 		},
 
 		screens() {
@@ -658,6 +662,8 @@ export default {
 
 			if (!this.screenSharingActive && this.speakers.length) {
 				this.sharedDatas[this.speakers[0].id].promoted = true
+			} else if (this.shownRemoteScreenPeerId) {
+				this.sharedDatas[this.shownRemoteScreenPeerId].promoted = true
 			}
 
 			this.adjustSimulcastQuality()

@@ -67,7 +67,18 @@
 							</NcButton>
 						</div>
 
-						<VideoVue v-if="model"
+						<!-- local screen -->
+						<Screen v-if="showLocalScreen"
+							:token="token"
+							:local-media-model="localModel"
+							:shared-data="localSharedData" />
+						<!-- remote screen -->
+						<Screen v-else-if="screens[model.attributes.peerId]"
+							:token="token"
+							:call-participant-model="model"
+							:shared-data="sharedData" />
+
+						<VideoVue v-else-if="model"
 							class="viewer-overlay__video"
 							:token="token"
 							:model="model"
@@ -78,12 +89,6 @@
 							@click-video="maximize">
 							<template #bottom-bar />
 						</VideoVue>
-
-						<!-- local screen -->
-						<Screen v-else-if="showLocalScreen"
-							:token="token"
-							:local-media-model="localModel"
-							:shared-data="localSharedData" />
 
 						<EmptyCallView v-else is-small />
 
@@ -164,6 +169,7 @@ export default {
 			required: true,
 		},
 
+		// Promoted participant model
 		model: {
 			type: Object,
 			required: false,
