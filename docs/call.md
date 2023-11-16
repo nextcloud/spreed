@@ -73,6 +73,7 @@
         + `400 Bad Request` When the actor is not in the call
         + `403 Forbidden` When the current user is not a moderator
         + `404 Not Found` When the conversation could not be found for the participant
+        + `404 Not Found` When the attendee could not be found in the conversation
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
 ## Update call flags
