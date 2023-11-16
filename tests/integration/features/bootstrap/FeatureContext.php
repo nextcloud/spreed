@@ -1627,7 +1627,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" pings (user|guest) "([^"]*)" to join call "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" pings (user|guest) "([^"]*)"( attendeeIdPlusOne)? to join call "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $actorType
@@ -1636,9 +1636,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userPingsAttendeeInRoomTo(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion): void {
+	public function userPingsAttendeeInRoomTo(string $user, string $actorType, string $actorId, ?string $offset, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/ring/' . self::$userToAttendeeId[$identifier][$actorType . 's'][$actorId]);
+
+		$attendeeId = self::$userToAttendeeId[$identifier][$actorType . 's'][$actorId];
+		if ($offset) {
+			$attendeeId++;
+		}
+
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/ring/' . $attendeeId);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
