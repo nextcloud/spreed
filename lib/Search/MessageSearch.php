@@ -38,6 +38,7 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\Search\IFilter;
 use OCP\Search\IFilteringProvider;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
@@ -140,19 +141,19 @@ class MessageSearch implements IProvider, IFilteringProvider {
 
 		// Apply filters when available
 		$lowerTimeBoundary = $upperTimeBoundary = $actorType = $actorId = null;
-		if ($since = $query->getFilter('since')?->get()) {
+		if ($since = $query->getFilter(IFilter::BUILTIN_SINCE)?->get()) {
 			if ($since instanceof \DateTimeImmutable) {
 				$lowerTimeBoundary = $since;
 			}
 		}
 
-		if ($until = $query->getFilter('until')?->get()) {
+		if ($until = $query->getFilter(IFilter::BUILTIN_UNTIL)?->get()) {
 			if ($until instanceof \DateTimeImmutable) {
 				$upperTimeBoundary = $until;
 			}
 		}
 
-		if ($person = $query->getFilter('person')?->get()) {
+		if ($person = $query->getFilter(IFilter::BUILTIN_PERSON)?->get()) {
 			if ($person instanceof IUser) {
 				$actorType = Attendee::ACTOR_USERS;
 				$actorId = $person->getUID();
@@ -271,10 +272,10 @@ class MessageSearch implements IProvider, IFilteringProvider {
 
 	public function getSupportedFilters(): array {
 		return [
-			'term',
-			'since',
-			'until',
-			'person',
+			IFilter::BUILTIN_TERM,
+			IFilter::BUILTIN_SINCE,
+			IFilter::BUILTIN_UNTIL,
+			IFilter::BUILTIN_PERSON,
 		];
 	}
 
