@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Notification;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Controller\ChatController;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -68,7 +69,7 @@ class Listener implements IEventListener {
 		match (get_class($event)) {
 			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee()),
 			AttendeesAddedEvent::class => $this->generateInvitation($event->getRoom(), $event->getAttendees()),
-			UserJoinedRoomEvent::class => $this->markInvitationRead($event->getRoom()),
+			UserJoinedRoomEvent::class => $this->handleUserJoinedRoomEvent($event),
 			BeforeParticipantModifiedEvent::class => $this->checkCallNotifications($event),
 			ParticipantModifiedEvent::class => $this->afterParticipantJoinedCall($event),
 		};
@@ -133,23 +134,49 @@ class Listener implements IEventListener {
 		}
 	}
 
+	protected function handleUserJoinedRoomEvent(UserJoinedRoomEvent $event): void {
+		$this->markInvitationRead($event->getRoom(), $event->getUser());
+		$this->markReactionNotificationsRead($event->getRoom(), $event->getUser());
+	}
+
 	/**
 	 * Room invitation: "{actor} invited you to {call}"
-	 *
-	 * @param Room $room
 	 */
-	protected function markInvitationRead(Room $room): void {
-		$currentUser = $this->userSession->getUser();
-		if (!$currentUser instanceof IUser) {
-			return;
-		}
-
+	protected function markInvitationRead(Room $room, IUser $user): void {
 		$notification = $this->notificationManager->createNotification();
 		try {
 			$notification->setApp(Application::APP_ID)
-				->setUser($currentUser->getUID())
+				->setUser($user->getUID())
 				->setObject('room', $room->getToken())
 				->setSubject('invitation');
+			$this->notificationManager->markProcessed($notification);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			return;
+		}
+	}
+
+	/**
+	 * Reaction: "{user} reacted with {reaction} in {call}"
+	 *
+	 * We should not mark reactions read based on the read-status of the comment
+	 * they apply to, but the point in time when the reaction as done.
+	 * However, these messages are not visible and don't update the read marker,
+	 * so we purge them on joining the conversation.
+	 * This already happened before on the initial loading of a chat with
+	 * {@see ChatController::getMessageContext()}, but not on follow-up visits
+	 * (when the room history was not empty in the browser storage) this does
+	 * not trigger, so it was possible to end a session with all messages read,
+	 * but still having notifications about reactions.
+	 * For normal chat messages this happens in {@see Notifier::parseChatMessage()}
+	 */
+	protected function markReactionNotificationsRead(Room $room, IUser $user): void {
+		$notification = $this->notificationManager->createNotification();
+		try {
+			$notification->setApp(Application::APP_ID)
+				->setUser($user->getUID())
+				->setObject('chat', $room->getToken())
+				->setSubject('reaction');
 			$this->notificationManager->markProcessed($notification);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);

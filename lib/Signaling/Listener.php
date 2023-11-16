@@ -364,7 +364,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyBreakoutRoomStarted(Room $room): void {
-		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken(), true);
 
 		$parentRoomParticipants = $this->participantService->getSessionsAndParticipantsForRoom($room);
 

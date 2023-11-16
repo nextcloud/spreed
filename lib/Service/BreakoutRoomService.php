@@ -413,7 +413,7 @@ class BreakoutRoomService {
 			throw new \InvalidArgumentException('mode');
 		}
 
-		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken(), true);
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NONE, null);
 		}
