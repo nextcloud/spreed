@@ -33,6 +33,8 @@ import RoomSelector from './components/RoomSelector.vue'
 import { fetchConversation } from './services/conversationsService.js'
 import { postRichObjectToConversation } from './services/messagesService.js'
 
+import '@nextcloud/dialogs/style.css'
+
 (function(OC, OCA, t, n) {
 	/**
 	 * @param {object} card The card object given by the deck app

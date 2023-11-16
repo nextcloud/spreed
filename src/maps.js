@@ -31,6 +31,8 @@ import RoomSelector from './components/RoomSelector.vue'
 
 import { postRichObjectToConversation } from './services/messagesService.js'
 
+import '@nextcloud/dialogs/style.css'
+
 (function(OC, OCA, t, n) {
 	/**
 	 * @param {object} location Geo location object

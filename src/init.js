@@ -30,6 +30,8 @@ import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import store from './store/index.js'
 
+import '@nextcloud/dialogs/style.css'
+
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
 }
