@@ -1265,7 +1265,7 @@ class ParticipantService {
 			throw new \InvalidArgumentException('backend');
 		}
 
-		if ($dialOutResponse->dialOut->error->message) {
+		if ($dialOutResponse->dialOut->error?->code) {
 			throw new DialOutFailedException(
 				$dialOutResponse->dialOut->error->code,
 				$dialOutResponse->dialOut->error->message,
