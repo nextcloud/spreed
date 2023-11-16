@@ -145,7 +145,6 @@ class CommentsManager extends Manager {
 			$query->setFirstResult($offset);
 		}
 
-		\OC::$server->getLogger()->error($query->getSQL());
 		$comments = [];
 		$result = $query->executeQuery();
 		while ($data = $result->fetch()) {
