@@ -35,12 +35,12 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
 import VideoBottomBar from './VideoBottomBar.vue'
 
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {

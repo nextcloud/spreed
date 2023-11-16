@@ -86,7 +86,6 @@
 </template>
 
 <script>
-import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
@@ -103,6 +102,7 @@ import { ATTENDEE, AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
