@@ -38,12 +38,13 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\Search\IFilteringProvider;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
 use OCP\Search\SearchResultEntry;
 
-class MessageSearch implements IProvider {
+class MessageSearch implements IProvider, IFilteringProvider {
 
 	public function __construct(
 		protected RoomManager $roomManager,
@@ -103,14 +104,22 @@ class MessageSearch implements IProvider {
 		}
 
 		$rooms = $this->roomManager->getRoomsForUser($user->getUID());
+		return $this->performSearch($user, $query, $title, $rooms);
+	}
 
+	/**
+	 * @param Room[] $rooms
+	 */
+	public function performSearch(IUser $user, ISearchQuery $query, string $title, array $rooms, bool $isCurrentMessageSearch = false): SearchResult {
 		$roomMap = [];
 		foreach ($rooms as $room) {
-			if ($room->getType() === Room::TYPE_CHANGELOG) {
+			if (!$isCurrentMessageSearch &&
+				$room->getType() === Room::TYPE_CHANGELOG) {
 				continue;
 			}
 
-			if ($this->getCurrentConversationToken($query) === $room->getToken()) {
+			if (!$isCurrentMessageSearch &&
+				$this->getCurrentConversationToken($query) === $room->getToken()) {
 				// No search result from current conversation
 				continue;
 			}
@@ -126,17 +135,39 @@ class MessageSearch implements IProvider {
 		}
 
 		if (empty($roomMap)) {
-			return SearchResult::complete(
-				$this->l->t('Messages'),
-				[]
-			);
+			return SearchResult::complete($title, []);
+		}
+
+		// Apply filters when available
+		$lowerTimeBoundary = $upperTimeBoundary = $actorType = $actorId = null;
+		if ($since = $query->getFilter('since')?->get()) {
+			if ($since instanceof \DateTimeImmutable) {
+				$lowerTimeBoundary = $since;
+			}
+		}
+
+		if ($until = $query->getFilter('until')?->get()) {
+			if ($until instanceof \DateTimeImmutable) {
+				$upperTimeBoundary = $until;
+			}
+		}
+
+		if ($person = $query->getFilter('person')?->get()) {
+			if ($person instanceof IUser) {
+				$actorType = Attendee::ACTOR_USERS;
+				$actorId = $person->getUID();
+			}
 		}
 
 		$offset = (int) $query->getCursor();
-		$comments = $this->chatManager->searchForObjects(
+		$comments = $this->chatManager->searchForObjectsWithFilters(
 			$query->getTerm(),
 			array_keys($roomMap),
 			ChatManager::VERB_MESSAGE,
+			$lowerTimeBoundary,
+			$upperTimeBoundary,
+			$actorType,
+			$actorId,
 			$offset,
 			$query->getLimit()
 		);
@@ -236,5 +267,22 @@ class MessageSearch implements IProvider {
 		$entry->addAttribute('timestamp', '' . $comment->getCreationDateTime()->getTimestamp());
 
 		return $entry;
+	}
+
+	public function getSupportedFilters(): array {
+		return [
+			'term',
+			'since',
+			'until',
+			'person',
+		];
+	}
+
+	public function getAlternateIds(): array {
+		return ['talk-message'];
+	}
+
+	public function getCustomFilters(): array {
+		return [];
 	}
 }
