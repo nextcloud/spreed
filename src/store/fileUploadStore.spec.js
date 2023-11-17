@@ -17,6 +17,8 @@ jest.mock('../services/DavClient', () => ({
 jest.mock('../utils/fileUpload', () => ({
 	findUniquePath: jest.fn(),
 	getFileExtension: jest.fn(),
+	hasDuplicateUploadNames: jest.fn(),
+	separateDuplicateUploads: jest.fn(),
 }))
 jest.mock('../services/filesSharingServices', () => ({
 	shareFile: jest.fn(),
