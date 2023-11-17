@@ -35,6 +35,7 @@ use OCA\Talk\Model\Invitation;
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -44,8 +45,11 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 /**
+ * Ignored from OpenAPI until the implementation is finished and the API stable
+ *
  * @psalm-import-type TalkFederationInvite from ResponseDefinitions
  */
+#[IgnoreOpenAPI]
 class FederationController extends OCSController {
 
 	public function __construct(
@@ -61,6 +65,7 @@ class FederationController extends OCSController {
 	 * Accept a federation invites
 	 *
 	 * @param int $id ID of the share
+	 * @psalm-param non-negative-int $id
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException
@@ -82,6 +87,7 @@ class FederationController extends OCSController {
 	 * Decline a federation invites
 	 *
 	 * @param int $id ID of the share
+	 * @psalm-param non-negative-int $id
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException

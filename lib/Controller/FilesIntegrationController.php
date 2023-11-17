@@ -135,7 +135,7 @@ class FilesIntegrationController extends OCSController {
 	}
 
 	/**
-	 * Returns the token of the room associated to the file id of the given
+	 * Returns the token of the room associated to the file of the given
 	 * share token
 	 *
 	 * This is the counterpart of self::getRoomByFileId() for share tokens

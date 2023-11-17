@@ -51,7 +51,7 @@ class TempAvatarController extends OCSController {
 	}
 
 	/**
-	 * Upload a temporary avatar
+	 * Upload your avatar as a user
 	 *
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
@@ -125,7 +125,7 @@ class TempAvatarController extends OCSController {
 	}
 
 	/**
-	 * Delete a temporary avatar
+	 * Delete your avatar as a user
 	 *
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
