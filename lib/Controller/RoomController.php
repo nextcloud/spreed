@@ -268,7 +268,9 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Get all (for moderators and in case of "free selection") or the assigned breakout room
+	 * Get breakout rooms
+	 *
+	 * All for moderators and in case of "free selection", or the assigned breakout room for other participants
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *

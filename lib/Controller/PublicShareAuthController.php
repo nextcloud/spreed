@@ -54,7 +54,7 @@ class PublicShareAuthController extends OCSController {
 	}
 
 	/**
-	 * Creates a new room for requesting the password of a share
+	 * Creates a new room for video verification (requesting the password of a share)
 	 *
 	 * The new room is a public room associated with a "share:password" object
 	 * with the ID of the share token. Unlike normal rooms in which the owner is

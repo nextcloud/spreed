@@ -120,7 +120,7 @@ class SettingsController extends OCSController {
 	}
 
 	/**
-	 * Update SIP settings
+	 * Update SIP bridge settings
 	 *
 	 * @param string[] $sipGroups New SIP groups
 	 * @param string $dialInInfo New dial info
