@@ -20,6 +20,9 @@
  *
  */
 
+const extensionRegex = /\.[0-9a-z]+$/i
+const suffixRegex = / \(\d+\)$/
+
 /**
  * Returns the file extension for the given path
  *
@@ -27,7 +30,21 @@
  * @return {string} file extension including the dot
  */
 const getFileExtension = function(path) {
-	return path.match(/\.[0-9a-z]+$/i) ? path.match(/\.[0-9a-z]+$/i)[0] : ''
+	return path.match(extensionRegex) ? path.match(extensionRegex)[0] : ''
+}
+
+/**
+ * Returns the file name without extension and digit suffix
+ *
+ * @param {string} path path
+ * @return {string} extracted file name
+ */
+const extractFileName = function(path) {
+	return path
+		// If there is a file extension, remove it from the path string
+		.replace(extensionRegex, '')
+		// If a filename ends with suffix ` (n)`, remove it from the path string
+		.replace(suffixRegex, '')
 }
 
 /**
@@ -45,31 +62,21 @@ const findUniquePath = async function(client, userRoot, path) {
 	if (await client.exists(userRoot + path) === false) {
 		return path
 	}
-	// Get the file extension (if any)
+
 	const fileExtension = getFileExtension(path)
-	// If there's a file extention, remove it from the path string
-	if (fileExtension !== '') {
-		path = path.substring(0, path.length - fileExtension.length)
-	}
-	// Check if the path ends with ` (n)`
-	const suffix = path.match(/ \((\d+)\)$/) ? path.match(/ \((\d+)\)$/) : ''
-	// Initialise a pathwithout suffix variable
-	let pathWithoutSuffix = path
-	if (suffix !== '') {
-		// remove the suffix if any
-		pathWithoutSuffix = path.substring(0, path.length - suffix.length)
-	}
+	const fileName = extractFileName(path)
+
 	// Loop until a unique path is found
 	for (let number = 2; true; number++) {
-		const uniquePath = pathWithoutSuffix + ` (${number})` + (fileExtension)
+		const uniquePath = fileName + ` (${number})` + fileExtension
 		if (await client.exists(userRoot + uniquePath) === false) {
 			return uniquePath
 		}
-
 	}
 }
 
 export {
 	findUniquePath,
+	extractFileName,
 	getFileExtension,
 }
