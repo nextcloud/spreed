@@ -467,6 +467,7 @@ OC.L10N.register(
     "Blank" : "Tom",
     "Settings" : "Indstillinger",
     "Create poll" : "Opret afstemning",
+    "Send" : "Send",
     "Join" : "Deltag",
     "moderator" : "moderator",
     "guest" : "Gæst",
@@ -586,7 +587,6 @@ OC.L10N.register(
     "Conversation name" : "Samtalenavn",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
     "Rename conversation" : "Omdøb samtale",
-    "Send" : "Send",
     "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"
 },
 "nplurals=2; plural=(n != 1);");
