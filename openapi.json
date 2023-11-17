@@ -6999,262 +6999,6 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
-            "post": {
-                "operationId": "federation-accept-share",
-                "summary": "Accept a federation invites",
-                "tags": [
-                    "federation"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the share",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Invite accepted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "operationId": "federation-reject-share",
-                "summary": "Decline a federation invites",
-                "tags": [
-                    "federation"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the share",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Invite declined successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
-            "get": {
-                "operationId": "federation-get-shares",
-                "summary": "Get a list of federation invites",
-                "tags": [
-                    "federation"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Get list of received federation invites successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/FederationInvite"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
             "get": {
                 "operationId": "files_integration-get-room-by-file-id",
@@ -7388,7 +7132,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshare/{shareToken}": {
             "get": {
                 "operationId": "files_integration-get-room-by-share-token",
-                "summary": "Returns the token of the room associated to the file id of the given share token",
+                "summary": "Returns the token of the room associated to the file of the given share token",
                 "description": "This is the counterpart of self::getRoomByFileId() for share tokens instead of file ids, although both return the same room token if the given file id and share token refer to the same file.\nIf there is no room associated to the file id of the given share token a new room is created; the new room is a public room associated with a \"file\" object with the file id of the given share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms without owner (although self joined users with direct access to the file become persistent participants automatically when they join until they explicitly leave or no longer have access to the file).\nIn any case, to create or even get the token of the room, the file must be publicly shared (like a link share, for example); an error is returned otherwise.\nBesides the token of the room this also returns the current user ID and display name, if any; this is needed by the Talk sidebar to know the actual current user, as the public share page uses the incognito mode and thus logged-in users as seen as guests.",
                 "tags": [
                     "files_integration"
@@ -9322,7 +9066,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
             "post": {
                 "operationId": "public_share_auth-create-room",
-                "summary": "Creates a new room for requesting the password of a share",
+                "summary": "Creates a new room for video verification (requesting the password of a share)",
                 "description": "The new room is a public room associated with a \"share:password\" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.\nThe share must have \"send password by Talk\" enabled; an error is returned otherwise.",
                 "tags": [
                     "public_share_auth"
@@ -11701,7 +11445,8 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/breakout-rooms": {
             "get": {
                 "operationId": "room-get-breakout-rooms",
-                "summary": "Get all (for moderators and in case of \"free selection\") or the assigned breakout room",
+                "summary": "Get breakout rooms",
+                "description": "All for moderators and in case of \"free selection\", or the assigned breakout room for other participants",
                 "tags": [
                     "room"
                 ],
@@ -12597,6 +12342,10 @@
                         "required": true,
                         "schema": {
                             "type": "string",
+                            "enum": [
+                                "call",
+                                "default"
+                            ],
                             "pattern": "^(call|default)$"
                         }
                     },
@@ -12832,7 +12581,15 @@
                         "description": "Source of the participant",
                         "schema": {
                             "type": "string",
-                            "default": "users"
+                            "default": "users",
+                            "enum": [
+                                "users",
+                                "groups",
+                                "circles",
+                                "emails",
+                                "remotes",
+                                "phones"
+                            ]
                         }
                     },
                     {
@@ -13521,7 +13278,12 @@
                         "description": "Method of updating permissions ('set', 'remove', 'add')",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "set",
+                                "remove",
+                                "add"
+                            ]
                         }
                     },
                     {
@@ -13705,7 +13467,12 @@
                         "description": "Method of updating permissions ('set', 'remove', 'add')",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "set",
+                                "remove",
+                                "add"
+                            ]
                         }
                     },
                     {
@@ -15728,7 +15495,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/sip": {
             "post": {
                 "operationId": "settings-setsip-settings",
-                "summary": "Update SIP settings",
+                "summary": "Update SIP bridge settings",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "settings"
@@ -15849,7 +15616,13 @@
                         "description": "Key to update",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "attachment_folder",
+                                "read_status_privacy",
+                                "typing_privacy",
+                                "play_sounds"
+                            ]
                         }
                     },
                     {
@@ -16610,7 +16383,7 @@
         "/ocs/v2.php/apps/spreed/temp-user-avatar": {
             "post": {
                 "operationId": "temp_avatar-post-avatar",
-                "summary": "Upload a temporary avatar",
+                "summary": "Upload your avatar as a user",
                 "tags": [
                     "temp_avatar"
                 ],
@@ -16705,7 +16478,7 @@
             },
             "delete": {
                 "operationId": "temp_avatar-delete-avatar",
-                "summary": "Delete a temporary avatar",
+                "summary": "Delete your avatar as a user",
                 "tags": [
                     "temp_avatar"
                 ],
