@@ -306,6 +306,7 @@ OC.L10N.register(
     "Yesterday" : "Gister",
     "Group" : "Groep",
     "Settings" : "Instellings",
+    "Send" : "Stuur",
     "Join" : "Sluit aan",
     "guest" : "gas",
     "Promote to moderator" : "Bevorder na moderator",
@@ -324,7 +325,6 @@ OC.L10N.register(
     "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
-    "iOS app" : "iOS-toep",
-    "Send" : "Stuur"
+    "iOS app" : "iOS-toep"
 },
 "nplurals=2; plural=(n != 1);");

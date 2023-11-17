@@ -313,6 +313,7 @@ OC.L10N.register(
     "New file" : "File baru",
     "Blank" : "Kosong",
     "Settings" : "Setelan",
+    "Send" : "Kirim",
     "Join" : "Gabung",
     "guest" : "pengunjung",
     "No results" : "Tidak ada hasil",
@@ -347,7 +348,6 @@ OC.L10N.register(
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Selamat datang di Nextcloud Talk!\nDalam percakapan ini Anda akan diberitahu tentang fitur baru yang tersedia di Nextcloud Talk.",
     "New in Talk %s" : "Terbaru di Talk %s",
     "Conversation name" : "Nama percakapan",
-    "Rename conversation" : "Ganti nama percakapan",
-    "Send" : "Kirim"
+    "Rename conversation" : "Ganti nama percakapan"
 },
 "nplurals=1; plural=0;");

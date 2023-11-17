@@ -197,6 +197,7 @@ OC.L10N.register(
     "Blank" : "Vacío",
     "Settings" : "Configuraciones ",
     "Create poll" : "Crear encuesta",
+    "Send" : "Enviar",
     "moderator" : "moderador",
     "guest" : "invitado",
     "Demote from moderator" : "Degradar de moderador",
@@ -248,7 +249,6 @@ OC.L10N.register(
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bienvenido a Nextcloud Talk!\nEn esta conversación se te informará sobre nuevas características disponibles en Nextcloud Talk.",
     "More actions" : "Más acciones",
     "Conversation name" : "Nombre de la conversación",
-    "Rename conversation" : "Renombrar conversación",
-    "Send" : "Enviar"
+    "Rename conversation" : "Renombrar conversación"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

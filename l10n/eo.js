@@ -318,6 +318,7 @@ OC.L10N.register(
     "Group" : "Grupo",
     "Create new poll" : "Krei novan enketon",
     "Settings" : "Agordoj",
+    "Send" : "Sendi",
     "Join" : "Aliĝi",
     "guest" : "gasto",
     "No results" : "Neniu rezulto",
@@ -337,7 +338,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "More actions" : "Pliaj agoj",
-    "Send" : "Sendi"
+    "More actions" : "Pliaj agoj"
 },
 "nplurals=2; plural=(n != 1);");
