@@ -33,7 +33,12 @@ import {
 	shareFile,
 } from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
-import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
+import {
+	hasDuplicateUploadNames,
+	findUniquePath,
+	getFileExtension,
+	separateDuplicateUploads,
+} from '../utils/fileUpload.js'
 
 const state = {
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
@@ -304,16 +309,13 @@ const actions = {
 			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
 
-		// Iterate again and perform the uploads
-		await Promise.allSettled(getters.getUploadsArray(uploadId).map(async ([index, uploadedFile]) => {
+		const performUpload = async ([index, uploadedFile]) => {
 			// currentFile to be uploaded
 			const currentFile = uploadedFile.file
 			// userRoot path
-			const userRoot = '/files/' + getters.getUserId()
 			const fileName = (currentFile.newName || currentFile.name)
 			// Candidate rest of the path
 			const path = getters.getAttachmentFolder() + '/' + fileName
-			const client = getDavClient()
 			// Get a unique relative path based on the previous path variable
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
@@ -349,10 +351,9 @@ const actions = {
 				commit('markFileAsFailedUpload', { uploadId, index })
 				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, reason })
 			}
-		}))
+		}
 
-		// Share the files, that have successfully been uploaded from the store, to the conversation
-		await Promise.all(getters.getShareableFiles(uploadId).map(async ([index, shareableFile]) => {
+		const performShare = async ([index, shareableFile]) => {
 			const path = shareableFile.sharePath
 			const temporaryMessage = shareableFile.temporaryMessage
 			const metadata = (caption && index === lastIndex)
@@ -372,7 +373,41 @@ const actions = {
 				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)
 			}
-		}))
+		}
+
+		const client = getDavClient()
+		const userRoot = '/files/' + getters.getUserId()
+
+		const uploads = getters.getUploadsArray(uploadId)
+		// Check for duplicate names in the uploads array
+		if (hasDuplicateUploadNames(uploads)) {
+			const { uniques, duplicates } = separateDuplicateUploads(uploads)
+			await Promise.all(uniques.map(upload => performUpload(upload)))
+			// Search for uniquePath and upload files one by one to avoid 423 (Locked)
+			for (const upload of duplicates) {
+				await performUpload(upload)
+			}
+		} else {
+			// All original names are unique, upload files in parallel
+			await Promise.all(uploads.map(upload => performUpload(upload)))
+		}
+
+		const shares = getters.getShareableFiles(uploadId)
+		// Check if caption message for share was provided
+		if (caption) {
+			const captionShareIndex = shares.findIndex(([index]) => index === lastIndex)
+
+			// Share all files in parallel, except for last one
+			const parallelShares = shares.slice(0, captionShareIndex).concat(shares.slice(captionShareIndex + 1))
+			await Promise.all(parallelShares.map(share => performShare(share)))
+
+			// Share a last file, where caption is attached
+			await performShare(shares.at(captionShareIndex))
+		} else {
+			// Share all files in parallel
+			await Promise.all(shares.map(share => performShare(share)))
+		}
+
 		EventBus.$emit('upload-finished')
 	},
 	/**

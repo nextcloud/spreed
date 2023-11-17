@@ -41,10 +41,20 @@ const getFileExtension = function(path) {
  */
 const extractFileName = function(path) {
 	return path
-		// If there is a file extension, remove it from the path string
+	// If there is a file extension, remove it from the path string
 		.replace(extensionRegex, '')
-		// If a filename ends with suffix ` (n)`, remove it from the path string
+	// If a filename ends with suffix ` (n)`, remove it from the path string
 		.replace(suffixRegex, '')
+}
+
+/**
+ * Returns the file name prompt for the given path
+ *
+ * @param {string} path path
+ * @return {string} file name prompt
+ */
+const getFileNamePrompt = function(path) {
+	return extractFileName(path) + getFileExtension(path)
 }
 
 /**
@@ -75,8 +85,52 @@ const findUniquePath = async function(client, userRoot, path) {
 	}
 }
 
+/**
+ * Checks the existence of duplicated file names in provided array of uploads.
+ *
+ * @param {Array} uploads The array of uploads to share
+ * @return {boolean} Whether array includes duplicates or not
+ */
+const hasDuplicateUploadNames = function(uploads) {
+	const uploadNames = uploads.map(([_index, { file }]) => {
+		return getFileNamePrompt(file.newName || file.name)
+	})
+	const uploadNamesSet = new Set(uploadNames)
+
+	return uploadNames.length !== uploadNamesSet.size
+}
+
+/**
+ * Process array of upload and returns separated array with unique filenames and duplicates
+ *
+ * @param {Array} uploads The array of uploads to share
+ * @return {object} separated unique and duplicate uploads
+ */
+function separateDuplicateUploads(uploads) {
+	const nameCount = new Set()
+	const uniques = []
+	const duplicates = []
+
+	// Count the occurrences of each name
+	for (const upload of uploads) {
+		const name = getFileNamePrompt(upload.at(1).file.newName || upload.at(1).file.name)
+
+		if (nameCount.has(name)) {
+			duplicates.push(upload)
+		} else {
+			uniques.push(upload)
+			nameCount.add(name)
+		}
+	}
+
+	return { uniques, duplicates }
+}
+
 export {
 	findUniquePath,
 	extractFileName,
 	getFileExtension,
+	getFileNamePrompt,
+	hasDuplicateUploadNames,
+	separateDuplicateUploads,
 }
