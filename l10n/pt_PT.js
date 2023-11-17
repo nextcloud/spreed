@@ -296,6 +296,7 @@ OC.L10N.register(
     "Group" : "Grupo",
     "New file" : "Ficheiro novo",
     "Settings" : "Definições",
+    "Send" : "Enviar",
     "Join" : "Aderir",
     "moderator" : "moderador",
     "guest" : "convidado",
@@ -340,7 +341,6 @@ OC.L10N.register(
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bem-vindo ao Nextcloud Talk!\nNesta conversa será informado sobre novas funcionalidades disponíveis no Nextcloud Talk.",
     "More actions" : "Mais acções",
     "Conversation name" : "Nome da conversação",
-    "Rename conversation" : "Renomear conversação",
-    "Send" : "Enviar"
+    "Rename conversation" : "Renomear conversação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

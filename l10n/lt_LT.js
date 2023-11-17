@@ -185,8 +185,8 @@ OC.L10N.register(
     "Open settings" : "Atverti nustatymus",
     "Open Talk" : "Atverti pokalbius",
     "Conversations" : "Pokalbiai",
-    "Messages" : "Žinutės",
     "{user}" : "{user}",
+    "Messages" : "Žinutės",
     "Avatar image is not square" : "Avataro paveikslas nėra kvadratinis",
     "Something unexpected happened." : "Nutiko kažkas netikėto.",
     "The URL is invalid." : "URL yra neteisingas.",
@@ -664,6 +664,7 @@ OC.L10N.register(
     "Settings" : "Nustatymai",
     "Private poll" : "Privati apklausa",
     "Create poll" : "Sukurti apklausą",
+    "Send" : "Siųsti",
     "Add more files" : "Pridėti daugiau failų",
     "Enable the microphone" : "Įjungti mikrofoną",
     "Enable the camera" : "Įjungti kamerą",
@@ -817,7 +818,6 @@ OC.L10N.register(
     "Rename conversation" : "Pervadinti pokalbį",
     "Exit fullscreen (F)" : "Išeiti iš viso ekrano (F)",
     "Fullscreen (F)" : "Visas ekranas (F)",
-    "Send" : "Siųsti",
     "Sending signaling message has failed." : "Nepavyko išsiųsti signalinės žinutės."
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

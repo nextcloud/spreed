@@ -90,8 +90,8 @@ OC.L10N.register(
     "A group call has started in {call}" : "החלה שיחה קבוצתית תחת {call}",
     "Open settings" : "פתיחת הגדרות",
     "Conversations" : "דיונים",
-    "Messages" : "הודעות",
     "{user}" : "{user}",
+    "Messages" : "הודעות",
     "Messages in other conversations" : "הודעות בדיונים אחרים",
     "Avatar image is not square" : "התמונה המייצגת אינה מרובעת",
     "The email address is invalid." : "כתובת הדוא״ל שגויה.",
@@ -518,6 +518,7 @@ OC.L10N.register(
     "New file" : "קובץ חדש",
     "Settings" : "הגדרות",
     "Create poll" : "יצירת סקר",
+    "Send" : "שליחה",
     "Add more files" : "הוספת קבצים נוספים",
     "Join" : "הצטרף",
     "moderator" : "מפקח/ת",
@@ -604,7 +605,6 @@ OC.L10N.register(
     "Link copied to the clipboard!" : "הקישור הועתק ללוח הגזירים!",
     "Conversation name" : "שם דיון",
     "Rename conversation" : "שינוי שם הדיון",
-    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
-    "Send" : "שליחה"
+    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

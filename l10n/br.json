@@ -156,9 +156,8 @@
     "The hosted signaling server was removed and will not be used anymore." : "Lamet eo bet ar servijour kemenn ostet ha ne vo ket implijet kenn.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Ar servijour kemenn ostet en deus cheñchet eus \"{oldstatus}\" da \"{newstatus}\".",
     "Conversations" : "Diviz",
-    "Messages" : "Kemenadennoù",
     "{user}" : "{user}",
-    "Messages in {conversation}" : "Kemenadennoù e {conversation}",
+    "Messages" : "Kemenadennoù",
     "{user} in {conversation}" : "{user} e {conversation}",
     "Messages in other conversations" : "Kemenadennoù e divizoù all",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "C'hwitet eo bet goulenn an arnodenn, abalamour ne vez ket tizet ar servijour anodañ. klaskit en dro diwezatoc'h.",
@@ -624,6 +623,7 @@
     "Share files to the conversation" : "Rannañ restroù d'an diviz",
     "New file" : "Restr nevez",
     "Settings" : "Arventennoù",
+    "Send" : "Kas",
     "Add more files" : "Ouzhpennañ muioc'h a restroù",
     "Join" : "Kejañ",
     "moderator" : "habaskaer",
@@ -742,6 +742,7 @@
     "Android app" : "Meziant Android",
     "iOS app" : "Meziant iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Donemat war Nextcloud Talk !\nEn diviz-mañ e voc'h kemenet diwar-benn perzhioù nevez a kavoc'h e Nextcloud Talk.",
+    "Messages in {conversation}" : "Kemenadennoù e {conversation}",
     "Name of the user requesting the trial" : "Anv an implijet a goulenn an amprouadenn",
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Notennit c''hell an implijourien, evit kemenadennoù gant muioc'h eget 4 implijer gant ur servijour arhent diavaez, kaout kudennoù kenstagadeur ha lakaat kargoù bras var ardivinkoù an impklijour.",
     "Conversation link copied to clipboard." : "Liamm diviz eilet er golver",
@@ -753,7 +754,6 @@
     "Conversation name" : "Anv diviz",
     "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Rename conversation" : "Adenvel an diviz",
-    "Send" : "Kas",
     "Sending signaling message has failed." : "Kasadenn ar gemenadenn arhentañ a zo c'hwitet."
 },"pluralForm" :"nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);"
 }
