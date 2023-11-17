@@ -13,6 +13,9 @@ class Manager implements \OCP\Comments\ICommentsManager {
 	protected function normalizeDatabaseData(array $data): array {
 	}
 
+	protected function cache(IComment $comment): void {
+	}
+
 	public function get($id) {
 		// TODO: Implement get() method.
 	}
