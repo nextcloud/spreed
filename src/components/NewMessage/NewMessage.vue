@@ -831,7 +831,7 @@ export default {
 
 	// Override NcRichContenteditable styles
 	& &__richContenteditable {
-		border: 1px solid var(--color-border-dark);
+		border: 2px solid var(--color-border-dark);
 		border-radius: calc(var(--default-clickable-area) / 2);
 		padding: 8px 16px 8px 44px;
 		max-height: 180px;
@@ -839,7 +839,7 @@ export default {
 		&:hover,
 		&:focus,
 		&:active {
-			border: 1px solid var(--color-primary-element);
+			border: 2px solid var(--color-main-text);
 		}
 	}
 
