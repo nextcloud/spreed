@@ -1214,16 +1214,24 @@ class ParticipantService {
 		return true;
 	}
 
-	public function sendCallNotificationForAttendee(Room $room, Participant $currentParticipant, int $targetAttendeeId): bool {
+	/**
+	 * @throws \InvalidArgumentException
+	 * @throws DoesNotExistException
+	 */
+	public function sendCallNotificationForAttendee(Room $room, Participant $currentParticipant, int $targetAttendeeId): void {
 		$attendee = $this->attendeeMapper->getById($targetAttendeeId);
 		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
-			return false;
+			throw new \InvalidArgumentException('actor-type');
+		}
+
+		if ($attendee->getRoomId() !== $room->getId()) {
+			throw new DoesNotExistException('Room mismatch');
 		}
 
 		$sessions = $this->sessionMapper->findByAttendeeId($targetAttendeeId);
 		foreach ($sessions as $session) {
 			if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
-				return false;
+				return;
 			}
 		}
 
@@ -1235,8 +1243,6 @@ class ParticipantService {
 		));
 		$event = new CallNotificationSendEvent($room, $currentParticipant, $target);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**

@@ -45,6 +45,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SIPDialOutService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -181,10 +182,11 @@ class CallController extends AEnvironmentAwareController {
 	 * Ring an attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to ring
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 *
 	 * 200: Attendee rang successfully
 	 * 400: Ringing attendee is not possible
+	 * 404: Attendee could not be found
 	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
@@ -199,8 +201,12 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$this->participantService->sendCallNotificationForAttendee($this->room, $this->participant, $attendeeId)) {
+		try {
+			$this->participantService->sendCallNotificationForAttendee($this->room, $this->participant, $attendeeId);
+		} catch (\InvalidArgumentException) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (DoesNotExistException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		return new DataResponse();
