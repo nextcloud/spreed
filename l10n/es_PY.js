@@ -102,6 +102,7 @@ OC.L10N.register(
     "Create new poll" : "Crear nueva encuesta",
     "Settings" : "Configuraciones ",
     "Create poll" : "Crear encuesta",
+    "Send" : "Enviar",
     "moderator" : "moderador",
     "Demote from moderator" : "Degradar de moderador",
     "Promote to moderator" : "Promover a moderador",
@@ -141,7 +142,6 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
-    "More actions" : "Más acciones",
-    "Send" : "Enviar"
+    "More actions" : "Más acciones"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

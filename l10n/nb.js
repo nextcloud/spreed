@@ -105,9 +105,8 @@ OC.L10N.register(
     "A group call has started in {call}" : "En gruppesamtale har startet i {call}",
     "Open settings" : "Åpne innstillinger",
     "Conversations" : "Samtaler",
-    "Messages" : "Meldinger",
     "{user}" : "{bruker}",
-    "Messages in {conversation}" : "Meldinger i {conversation}",
+    "Messages" : "Meldinger",
     "{user} in {conversation}" : "{user} i {conversation}",
     "Messages in other conversations" : "Meldinger i andre samtaler",
     "Avatar image is not square" : "Avatarbilde er ikke firkantet",
@@ -555,6 +554,7 @@ OC.L10N.register(
     "Blank" : "Blank",
     "Settings" : "Innstillinger",
     "Create poll" : "Opprett avstemning",
+    "Send" : "Send",
     "Join" : "Bli med",
     "moderator" : "moderator",
     "guest" : "gjest",
@@ -620,11 +620,11 @@ OC.L10N.register(
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkommen til Nextcloud Talk!\nI denne samtalen vil vi informere deg om Nextcloud Talks nye funksjoner.",
+    "Messages in {conversation}" : "Meldinger i {conversation}",
     "More actions" : "Flere handlinger",
     "No matches" : "Ingen treff",
     "Creating your conversation" : "Opprett din samtale",
     "Conversation name" : "Samtalenavn",
-    "Rename conversation" : "Endre navn på samtale",
-    "Send" : "Send"
+    "Rename conversation" : "Endre navn på samtale"
 },
 "nplurals=2; plural=(n != 1);");
