@@ -22,9 +22,11 @@
 <template>
 	<NcTextField ref="searchConversations"
 		:value="value"
-		:label="placeholderText"
+		:aria-label="placeholderText"
+		:placeholder="placeholderText"
 		:show-trailing-button="isFocused"
 		class="search-box"
+		label-outside
 		pill
 		@focus="handleFocus"
 		@blur="handleBlur"
@@ -179,4 +181,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box {
+	:deep(.input-field__input) {
+		&:focus, &:hover {
+			box-shadow: unset !important; // Remove the outer white border which is unnecessary here
+		}
+	}
+}
+
 </style>
