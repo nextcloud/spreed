@@ -353,6 +353,7 @@
     "Contact via Talk" : "透過 Talk 連結",
     "Open Talk" : "開啟 Talk",
     "Conversations" : "對話",
+    "Messages in current conversation" : "目前對話中的訊息",
     "{user}" : "{user}",
     "Messages" : "訊息",
     "{user} in {conversation}" : "{conversation} 中的 {user}",
