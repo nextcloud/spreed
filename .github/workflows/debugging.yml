@@ -13,9 +13,26 @@ jobs:
 
     steps:
       - uses: mdecoleman/pr-branch-name@2.0.0
-        id: vars
+        id: branchname
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+        if: contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+        run: echo 'contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true'
+
+      - name: Test contains(fromJSON('["/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+        if: contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+        run: echo 'contains(fromJSON('["/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true'
+
+      - name: Test contains(fromJSON('["/nextcloud/vue-"'), steps.branchname.outputs.branch) != true
+        if: contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+        run: echo 'contains(fromJSON('["/nextcloud/vue-"'), steps.branchname.outputs.branch) != true'
+
+      - name: Test contains('/nextcloud/vue-', steps.branchname.outputs.branch) != true
+        if: contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+        run: echo 'contains('/nextcloud/vue-', steps.branchname.outputs.branch) != true'
+
       - run: echo ${{ steps.vars.outputs.branch }}
       - name: Test ${{ github.ref }}
         continue-on-error: true
