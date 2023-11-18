@@ -28,7 +28,7 @@ jobs:
         run: echo '"/webrtc-adapter-"'
 
       - name: Test contains(fromJSON('["/nextcloud/vue-"'), steps.branchname.outputs.branch) != true
-        if: contains(fromJSON('["/nextcloud/vue-"'), steps.branchname.outputs.branch) != true
+        if: contains(fromJSON('["/nextcloud/vue-"]'), steps.branchname.outputs.branch) != true
         continue-on-error: true
         run: echo '"/nextcloud/vue-"'
 
