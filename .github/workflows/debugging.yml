@@ -17,35 +17,16 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
-        if: contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
-        continue-on-error: true
-        run: echo '"/nextcloud/vue-", "/webrtc-adapter-"'
-
-      - name: Test contains(fromJSON('["/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
-        if: contains(fromJSON('["/webrtc-adapter-"]'), steps.branchname.outputs.branch) != true
+      - name: Test contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true
+        if: contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true
         continue-on-error: true
         run: echo '"/webrtc-adapter-"'
 
-      - name: Test contains(fromJSON('["/nextcloud/vue-"'), steps.branchname.outputs.branch) != true
-        if: contains(fromJSON('["/nextcloud/vue-"]'), steps.branchname.outputs.branch) != true
+      - name: Test contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
+        if: contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
         continue-on-error: true
         run: echo '"/nextcloud/vue-"'
 
-      - name: Test contains('/nextcloud/vue-', steps.branchname.outputs.branch) != true
-        if: contains('/nextcloud/vue-', steps.branchname.outputs.branch) != true
-        continue-on-error: true
-        run: echo '/nextcloud/vue-'
-
-      - name: Test contains('/webrtc-adapter-', steps.branchname.outputs.branch) != true
-        if: contains('/webrtc-adapter-', steps.branchname.outputs.branch) != true
-        continue-on-error: true
-        run: echo '/webrtc-adapter-'
-
-      - name: Test contains('/webrtc-adapter-', steps.branchname.outputs.branch) != contains('/nextcloud/vue-', steps.branchname.outputs.branch)
-        if: contains('/webrtc-adapter-', steps.branchname.outputs.branch) != contains('/nextcloud/vue-', steps.branchname.outputs.branch)
-        continue-on-error: true
-        run: echo '/nextcloud/vue- != /webrtc-adapter-'
 
       - run: echo ${{ steps.vars.outputs.branch }}
       - name: Test ${{ github.ref }}
