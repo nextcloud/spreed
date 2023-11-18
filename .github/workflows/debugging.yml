@@ -13,15 +13,23 @@ jobs:
 
     steps:
       - name: Test ${{ github.ref }}
+        continue-on-error: true
         run: echo '${{ github.ref }}'
+      - name: Test ${{ github.ref_name }}
+        continue-on-error: true
+        run: echo '${{ github.ref_name }}'
       - name: Test contains('/nextcloud/vue-', github.ref)
+        continue-on-error: true
         run: echo contains('/nextcloud/vue-', github.ref)
       - name: Test contains('/webrtc-adapter-', github.ref)
+        continue-on-error: true
         run: echo contains('/webrtc-adapter-', github.ref)
       - name: Test contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), github.ref)
+        continue-on-error: true
         run: echo contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), github.ref)
 
       - name: JS
+        continue-on-error: true
         uses: actions/github-script@v5
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
