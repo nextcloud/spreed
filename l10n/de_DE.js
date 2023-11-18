@@ -355,6 +355,7 @@ OC.L10N.register(
     "Contact via Talk" : "Über Talk kontaktieren",
     "Open Talk" : "Talk öffnen",
     "Conversations" : "Unterhaltungen",
+    "Messages in current conversation" : "Nachrichten in der aktuellen Unterhaltung",
     "{user}" : "{user}",
     "Messages" : "Nachrichten",
     "{user} in {conversation}" : "{user} in {conversation}",
