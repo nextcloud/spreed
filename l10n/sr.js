@@ -355,6 +355,7 @@ OC.L10N.register(
     "Contact via Talk" : "Контактирај преко Talk",
     "Open Talk" : "Отвори Talk",
     "Conversations" : "Разговори",
+    "Messages in current conversation" : "Поруке у текућем разговору",
     "{user}" : "{user}",
     "Messages" : "Поруке",
     "{user} in {conversation}" : "{user} у {conversation}",
