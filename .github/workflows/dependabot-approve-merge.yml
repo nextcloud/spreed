@@ -12,25 +12,26 @@ on:
       - master
       - stable*
 
-permissions:
-  contents: read
-
-concurrency:
-  group: dependabot-approve-merge-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
   auto-approve-merge:
     runs-on: ubuntu-latest
-    permissions:
-      # for hmarr/auto-approve-action to approve PRs
-      pull-requests: write
 
     steps:
-      # GitHub actions bot approve
-      - run: |
-        echo '${{ github.ref }}'
-        echo github.ref
-        echo contains('/nextcloud/vue-', github.ref)
-        echo contains('/webrtc-adapter-', github.ref)
-        echo contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), github.ref)
+      - name: Test ${{ github.ref }}
+        run: echo '${{ github.ref }}'
+      - name: Test contains('/nextcloud/vue-', github.ref)
+        run: echo contains('/nextcloud/vue-', github.ref)
+      - name: Test contains('/webrtc-adapter-', github.ref)
+        run: echo contains('/webrtc-adapter-', github.ref)
+      - name: Test contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), github.ref)
+        run: echo contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), github.ref)
+
+      - name: JS
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            console.log(github.ref)
+            console.log(contains('/nextcloud/vue-', github.ref))
+            console.log(contains('/webrtc-adapter-', github.ref))
+            console.log(contains(fromJSON('["/nextcloud/vue-", "/webrtc-adapter-"]'), github.ref))
