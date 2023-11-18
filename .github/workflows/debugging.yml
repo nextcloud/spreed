@@ -3,17 +3,12 @@
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
 
-name: Dependabot
+name: debugging
 
-on:
-  pull_request_target:
-    branches:
-      - main
-      - master
-      - stable*
+on: pull_request
 
 jobs:
-  auto-approve-merge:
+  debugging:
     runs-on: ubuntu-latest
 
     steps:
