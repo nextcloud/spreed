@@ -12,10 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: mdecoleman/pr-branch-name2.0.0
+        id: vars
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo ${{ steps.vars.outputs.branch }}
       - name: Test ${{ github.ref }}
         continue-on-error: true
         run: echo '${{ github.ref }}'
-      - name: Test ${{ github.ref_name }}
+      - name: Test ${{ github.event.pull_request }}
         continue-on-error: true
         run: echo '${{ github.ref_name }}'
       - name: Test contains('/nextcloud/vue-', github.ref)
