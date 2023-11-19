@@ -355,6 +355,7 @@ OC.L10N.register(
     "Contact via Talk" : "تواصل عبر تطبيق Talk",
     "Open Talk" : "تطبيق مؤتمرات الفيديو OpenTalk ",
     "Conversations" : "المحادثات",
+    "Messages in current conversation" : "رسائل في المحادثة الحالية",
     "{user}" : "{user}",
     "Messages" : "الرسائل",
     "{user} in {conversation}" : "{user} في {conversation}",
