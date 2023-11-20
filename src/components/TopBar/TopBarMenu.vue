@@ -407,13 +407,6 @@ export default {
 			})
 		},
 
-		fullScreenChanged() {
-			this.$store.dispatch(
-				'setIsFullscreen',
-				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
-			)
-		},
-
 		toggleFullscreen() {
 			if (this.isFullscreen) {
 				this.disableFullscreen()
