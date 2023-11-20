@@ -1,0 +1,47 @@
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+
+name: Auto approve nextcloud/ocp
+
+on:
+  pull_request_target:
+    branches:
+      - main
+      - master
+      - stable*
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-nextcloud-ocp-approve-merge-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  auto-approve-merge:
+    if: github.actor == 'nextcloud-command'
+    runs-on: ubuntu-latest
+    permissions:
+      # for hmarr/auto-approve-action to approve PRs
+      pull-requests: write
+
+    steps:
+      - uses: mdecoleman/pr-branch-name@bab4c71506bcd299fb350af63bb8e53f2940a599 # v2.0.0
+        id: branchname
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # GitHub actions bot approve
+      - uses: hmarr/auto-approve-action@b40d6c9ed2fa10c9a2749eca7eb004418a705501 # v2
+        if: startsWith(steps.branchname.outputs.branch, 'automated/noid/') && endsWith(steps.branchname.outputs.branch, 'update-nextcloud-ocp')
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Nextcloud bot approve and merge request
+      - name: Auto merge
+        uses: pascalgn/automerge-action@22948e0bc22f0aa673800da838595a3e7347e584 # v0.15.6
+        if: startsWith(steps.branchname.outputs.branch, 'automated/noid/') && endsWith(steps.branchname.outputs.branch, 'update-nextcloud-ocp')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
