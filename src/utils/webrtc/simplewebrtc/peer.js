@@ -41,7 +41,6 @@ function Peer(options) {
 	this._pendingReplaceTracksQueue = []
 	this._processPendingReplaceTracksPromise = null
 	this._initialStreamSetup = false
-	this._localSenders = []
 	this.sid = options.sid || Date.now().toString()
 	this.pc = new RTCPeerConnection(this.parent.config.peerConnectionConfig)
 	this.pc.addEventListener('icecandidate', this.onIceCandidate.bind(this))
@@ -675,7 +674,6 @@ Peer.prototype.end = function() {
 	}
 	this.pc.close()
 	this.handleStreamRemoved()
-	this._localSenders = []
 	this.parent.off('sentTrackReplaced', this.handleSentTrackReplacedBound)
 	this.parent.off('sentTrackEnabledChanged', this.handleSentTrackEnabledChangedBound)
 
@@ -772,10 +770,7 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	// is used to be on the safe side.
 	const replaceTrackPromises = []
 
-	for (const sender of this.pc.getSenders()) {
-		// Keep reference, so that safari does not remove the tracks
-		this._localSenders.push(sender)
-
+	this.pc.getSenders().forEach(sender => {
 		if (sender.track !== oldTrack && sender.trackDisabled !== oldTrack) {
 			return
 		}
@@ -854,7 +849,7 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 		})
 
 		replaceTrackPromises.push(replaceTrackPromise)
-	}
+	})
 
 	// If the call started when the audio or video device was not active there
 	// will be no sender for that type. In that case the track needs to be added
