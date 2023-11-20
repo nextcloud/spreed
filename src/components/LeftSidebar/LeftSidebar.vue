@@ -169,7 +169,7 @@
 					<!-- Search results -->
 					<template v-else-if="isSearching">
 						<!-- Create a new conversation -->
-						<NcListItem v-if="searchResultsConversationList.length === 0 && canStartConversations"
+						<NcListItem v-if="canStartConversations"
 							:name="t('spreed', 'Create a new conversation')"
 							data-nav-id="conversation_create_new"
 							@click="createConversation(searchText)">
