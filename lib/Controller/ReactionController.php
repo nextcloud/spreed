@@ -74,7 +74,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
-		return new DataResponse($reactions, $status);
+		return new DataResponse($this->formatReactions($reactions), $status);
 	}
 
 	#[PublicPage]
@@ -98,7 +98,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($reactions, Http::STATUS_OK);
+		return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
 	}
 
 	#[PublicPage]
@@ -114,6 +114,21 @@ class ReactionController extends AEnvironmentAwareController {
 
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
 
-		return new DataResponse($reactions, Http::STATUS_OK);
+		return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
+	}
+
+
+	/**
+	 * @param array<string, array[]> $reactions
+	 * @return array<string, array[]>|\stdClass
+	 */
+	public function formatReactions(array $reactions): array|\stdClass {
+		if ($this->getResponseFormat() === 'json' && empty($reactions)) {
+			// Cheating here to make sure the reactions array is always a
+			// JSON object on the API, even when there is no reaction at all.
+			return new \stdClass();
+		}
+
+		return $reactions;
 	}
 }
