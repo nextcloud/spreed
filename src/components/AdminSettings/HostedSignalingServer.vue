@@ -33,7 +33,7 @@
 		</p>
 
 		<template v-if="!trialAccount.status">
-			<NcTextField v-model="hostedHPBNextcloudUrl"
+			<NcTextField :value.sync="hostedHPBNextcloudUrl"
 				class="form__textfield"
 				name="hosted_hpb_nextcloud_url"
 				placeholder="https://cloud.example.org/"
@@ -41,7 +41,7 @@
 				:label="t('spreed', 'URL of this Nextcloud instance')"
 				label-visible />
 
-			<NcTextField v-model="hostedHPBFullName"
+			<NcTextField :value.sync="hostedHPBFullName"
 				class="form__textfield"
 				name="full_name"
 				placeholder="Jane Doe"
@@ -49,7 +49,7 @@
 				:label="t('spreed', 'Full name of the user requesting the trial')"
 				label-visible />
 
-			<NcTextField v-model="hostedHPBEmail"
+			<NcTextField :value.sync="hostedHPBEmail"
 				class="form__textfield"
 				name="hosted_hpb_email"
 				placeholder="jane@example.org"
