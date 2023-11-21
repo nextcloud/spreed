@@ -48,7 +48,7 @@
 				<p v-if="recordingConsentRequired">
 					{{ t('spreed', 'The consent to be recorded will be required for each participant before joining every call.') }}
 				</p>
-				<NotificationsSettings :conversation="conversation" />
+				<NotificationsSettings v-if="!isGuest" :conversation="conversation" />
 			</NcAppSettingsSection>
 
 			<NcAppSettingsSection id="conversation-settings"
