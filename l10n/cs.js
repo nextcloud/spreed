@@ -355,6 +355,7 @@ OC.L10N.register(
     "Contact via Talk" : "Kontakt přes Talk",
     "Open Talk" : "Otevřít Talk",
     "Conversations" : "Konverzace",
+    "Messages in current conversation" : "Zprávy ve stávající konverzaci",
     "{user}" : "{user}",
     "Messages" : "Zprávy",
     "{user} in {conversation}" : "{user} v {conversation}",
