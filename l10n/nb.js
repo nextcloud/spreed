@@ -69,6 +69,7 @@ OC.L10N.register(
     "An administrator promoted you to moderator" : "En administrator forfremmet deg til moderator",
     "An administrator promoted {user} to moderator" : "En administrator forfremmet {user} til moderator",
     "You shared a file which is no longer available" : "Du delte en fil som ikke lenger er tilgjengelig",
+    "Message deleted by author" : "Melding slettet av forfatteren",
     "%s (guest)" : "%s (gjest)",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Samtale med %n gjest (Varighet {duration})","Samtale med %n gjester (Varighet {duration})"],
     "Talk conversations" : "Talk-samtaler",

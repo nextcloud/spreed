@@ -355,6 +355,7 @@ OC.L10N.register(
     "Contact via Talk" : "Talk ile görüşün",
     "Open Talk" : "Talk uygulamasını aç",
     "Conversations" : "Görüşmeler",
+    "Messages in current conversation" : "Geçerli görüşmedeki iletiler",
     "{user}" : "{user}",
     "Messages" : "İletiler",
     "{user} in {conversation}" : "{user}, {conversation} görüşmesinde",
