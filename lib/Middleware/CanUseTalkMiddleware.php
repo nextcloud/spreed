@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Config;
+use OCA\Talk\Controller\HostedSignalingServerController;
 use OCA\Talk\Controller\RecordingController;
 use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Exceptions\ForbiddenException;
@@ -69,6 +70,11 @@ class CanUseTalkMiddleware extends Middleware {
 			if ($methodName === 'getWelcomeMessage'
 				&& ($controller instanceof SignalingController
 					|| $controller instanceof RecordingController)
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
+			if ($controller instanceof HostedSignalingServerController
 				&& $this->groupManager->isAdmin($user->getUID())) {
 				return;
 			}
