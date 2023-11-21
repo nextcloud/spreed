@@ -394,6 +394,13 @@ export default {
 			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
 
+		fullScreenChanged() {
+			this.$store.dispatch(
+				'setIsFullscreen',
+				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
+			)
+		},
+
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
 		},
