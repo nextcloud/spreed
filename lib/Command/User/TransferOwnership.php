@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\User;
 
 use OC\Core\Command\Base;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -136,7 +137,7 @@ class TransferOwnership extends Base {
 			}
 
 			if ($removeSourceUser) {
-				$this->participantService->removeAttendee($room, $sourceParticipant, Room::PARTICIPANT_REMOVED);
+				$this->participantService->removeAttendee($room, $sourceParticipant, AAttendeeRemovedEvent::REASON_REMOVED);
 			}
 		}
 

@@ -30,6 +30,7 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
@@ -1253,7 +1254,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->participantService->removeUser($room, $currentUser, Room::PARTICIPANT_LEFT);
+		$this->participantService->removeUser($room, $currentUser, AAttendeeRemovedEvent::REASON_LEFT);
 
 		return new DataResponse();
 	}
@@ -1296,7 +1297,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->participantService->removeAttendee($this->room, $targetParticipant, Room::PARTICIPANT_REMOVED);
+		$this->participantService->removeAttendee($this->room, $targetParticipant, AAttendeeRemovedEvent::REASON_REMOVED);
 		return new DataResponse([]);
 	}
 

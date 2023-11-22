@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Room;
 
 use InvalidArgumentException;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -298,7 +299,7 @@ trait TRoomCommand {
 		}
 
 		foreach ($users as $user) {
-			$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
+			$this->participantService->removeUser($room, $user, AAttendeeRemovedEvent::REASON_REMOVED);
 		}
 	}
 

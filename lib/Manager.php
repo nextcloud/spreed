@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Chat\CommentsManager;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -416,7 +417,7 @@ class Manager {
 			if ($this->participantService->getNumberOfUsers($room) === 1) {
 				Server::get(RoomService::class)->deleteRoom($room);
 			} else {
-				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED_ALL);
+				$this->participantService->removeUser($room, $user, AAttendeeRemovedEvent::REASON_REMOVED_ALL);
 			}
 		}
 

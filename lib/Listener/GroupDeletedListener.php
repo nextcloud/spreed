@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -60,7 +60,7 @@ class GroupDeletedListener implements IEventListener {
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $gid);
 		foreach ($rooms as $room) {
 			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_GROUPS, $gid);
-			$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_REMOVED);
+			$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 		}
 	}
 

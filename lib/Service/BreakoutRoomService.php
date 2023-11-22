@@ -28,6 +28,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -238,7 +239,7 @@ class BreakoutRoomService {
 		}
 
 		foreach ($removals as $removal) {
-			$this->participantService->removeAttendee($removal['room'], $removal['participant'], Room::PARTICIPANT_REMOVED);
+			$this->participantService->removeAttendee($removal['room'], $removal['participant'], AAttendeeRemovedEvent::REASON_REMOVED);
 		}
 
 		$map = [];
@@ -489,7 +490,7 @@ class BreakoutRoomService {
 					$this->participantService->removeAttendee(
 						$breakoutRoom,
 						$removeParticipant,
-						Room::PARTICIPANT_LEFT
+						AAttendeeRemovedEvent::REASON_LEFT
 					);
 				}
 			} catch (ParticipantNotFoundException $e) {
@@ -572,7 +573,7 @@ class BreakoutRoomService {
 					throw new \InvalidArgumentException('moderator');
 				}
 
-				$this->participantService->removeAttendee($breakoutRoom, $participant, Room::PARTICIPANT_REMOVED);
+				$this->participantService->removeAttendee($breakoutRoom, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 			} catch (ParticipantNotFoundException $e) {
 				// Skip this room
 			}
