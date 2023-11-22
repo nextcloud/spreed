@@ -30,7 +30,6 @@ use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
-use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -69,9 +68,6 @@ use Psr\Log\LoggerInterface;
 class SignalingController extends OCSController {
 	/** @var int */
 	private const PULL_MESSAGES_TIMEOUT = 30;
-
-	/** @deprecated */
-	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
 	public function __construct(
 		string $appName,
@@ -798,12 +794,7 @@ class SignalingController extends OCSController {
 			$permissions[] = 'control';
 		}
 
-		$legacyEvent = new SignalingEvent($room, $participant, $action);
-		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $legacyEvent);
 		$event = new BeforeSignalingResponseSentEvent($room, $participant, $action);
-		if (is_array($legacyEvent->getSession())) {
-			$event->setSession($legacyEvent->getSession());
-		}
 		$this->dispatcher->dispatchTyped($event);
 
 		$response = [

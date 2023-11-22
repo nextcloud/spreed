@@ -26,15 +26,19 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-class BeforeSignalingResponseSentEvent extends ParticipantEvent {
+class BeforeSignalingResponseSentEvent extends ARoomEvent {
 	protected array $session = [];
 
 	public function __construct(
 		Room $room,
-		Participant $participant,
+		protected Participant $participant,
 		protected string $action,
 	) {
-		parent::__construct($room, $participant);
+		parent::__construct($room);
+	}
+
+	public function getParticipant(): Participant {
+		return $this->participant;
 	}
 
 	public function getAction(): string {

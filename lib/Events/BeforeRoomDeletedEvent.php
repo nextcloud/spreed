@@ -25,5 +25,5 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-class BeforeRoomDeletedEvent extends RoomEvent {
+class BeforeRoomDeletedEvent extends ARoomEvent {
 }

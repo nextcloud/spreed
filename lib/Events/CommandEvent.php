@@ -30,16 +30,28 @@ use OCP\Comments\IComment;
 /**
  * @deprecated
  */
-class CommandEvent extends ChatEvent {
+class CommandEvent extends ARoomEvent {
 	protected string $output = '';
 
 	public function __construct(
 		Room $room,
-		IComment $message,
+		protected IComment $message,
 		protected Command $command,
 		protected string $arguments,
 	) {
-		parent::__construct($room, $message);
+		parent::__construct($room);
+	}
+
+	public function getComment(): IComment {
+		return $this->message;
+	}
+
+	public function shouldSkipLastActivityUpdate(): bool {
+		return false;
+	}
+
+	public function isSilentMessage(): bool {
+		return false;
 	}
 
 	public function getCommand(): Command {

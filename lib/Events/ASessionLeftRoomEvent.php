@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-abstract class ASessionLeftRoomEvent extends RoomEvent {
+abstract class ASessionLeftRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected Participant $participant,

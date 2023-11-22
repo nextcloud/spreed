@@ -26,7 +26,6 @@ namespace OCA\Talk;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -55,8 +54,6 @@ use OCP\Security\ISecureRandom;
 use OCP\Server;
 
 class Manager {
-	/** @deprecated */
-	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
 	protected ICommentsManager $commentsManager;
 
@@ -1064,8 +1061,6 @@ class Manager {
 			'object_id' => $objectId,
 		]);
 
-		$event = new RoomEvent($room);
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
 		$event = new RoomCreatedEvent($room);
 		$this->dispatcher->dispatchTyped($event);
 

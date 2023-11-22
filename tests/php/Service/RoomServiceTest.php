@@ -26,7 +26,7 @@ namespace OCA\Talk\Tests\php\Service;
 use InvalidArgumentException;
 use OC\EventDispatcher\EventDispatcher;
 use OCA\Talk\Config;
-use OCA\Talk\Events\VerifyRoomPasswordEvent;
+use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -341,7 +341,7 @@ class RoomServiceTest extends TestCase {
 			\OC::$server,
 			$this->createMock(LoggerInterface::class)
 		);
-		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function (VerifyRoomPasswordEvent $event) {
+		$dispatcher->addListener(RoomPasswordVerifyEvent::class, static function (RoomPasswordVerifyEvent $event) {
 			$password = $event->getPassword();
 
 			if ($password === '1234') {

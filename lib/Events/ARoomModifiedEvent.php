@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-abstract class ARoomModifiedEvent extends RoomEvent {
+abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_AVATAR = 'avatar';
 	public const PROPERTY_BREAKOUT_ROOM_MODE = 'breakoutRoomMode';
 	public const PROPERTY_BREAKOUT_ROOM_STATUS = 'breakoutRoomStatus';

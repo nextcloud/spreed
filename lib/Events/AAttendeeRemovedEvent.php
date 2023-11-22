@@ -27,7 +27,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Room;
 
-abstract class AAttendeeRemovedEvent extends RoomEvent {
+abstract class AAttendeeRemovedEvent extends ARoomEvent {
 	public const REASON_REMOVED = 'remove';
 	public const REASON_REMOVED_ALL = 'remove_all';
 	public const REASON_LEFT = 'leave';

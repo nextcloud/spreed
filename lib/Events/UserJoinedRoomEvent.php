@@ -27,7 +27,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IUser;
 
-class UserJoinedRoomEvent extends RoomEvent {
+class UserJoinedRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected IUser $user,

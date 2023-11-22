@@ -25,5 +25,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-class BeforeRoomsFetchEvent extends UserEvent {
+use OCP\EventDispatcher\Event;
+
+class BeforeRoomsFetchEvent extends Event {
+	public function __construct(
+		protected string $userId,
+	) {
+		parent::__construct();
+	}
+
+	public function getUserId(): string {
+		return $this->userId;
+	}
 }

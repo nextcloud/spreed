@@ -27,7 +27,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
-abstract class AMessageSentEvent extends RoomEvent {
+abstract class AMessageSentEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected IComment $comment,

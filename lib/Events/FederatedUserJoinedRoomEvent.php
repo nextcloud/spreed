@@ -25,7 +25,7 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
-class FederatedUserJoinedRoomEvent extends RoomEvent {
+class FederatedUserJoinedRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected string $cloudId,

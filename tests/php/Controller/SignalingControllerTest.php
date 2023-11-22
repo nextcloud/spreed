@@ -25,7 +25,7 @@ namespace OCA\Talk\Tests\php\Controller;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
-use OCA\Talk\Events\SignalingEvent;
+use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -812,7 +812,7 @@ class SignalingControllerTest extends TestCase {
 	}
 
 	public function testBackendRoomSessionFromEvent() {
-		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function (SignalingEvent $event) {
+		$this->dispatcher->addListener(BeforeSignalingResponseSentEvent::class, static function (BeforeSignalingResponseSentEvent $event) {
 			$room = $event->getRoom();
 			$event->setSession([
 				'foo' => 'bar',

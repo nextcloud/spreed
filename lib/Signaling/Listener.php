@@ -39,9 +39,7 @@ use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\GuestJoinedRoomEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
-use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
@@ -136,16 +134,6 @@ class Listener implements IEventListener {
 			SystemMessagesMultipleSentEvent::class => $this->notifyMessageSent($event),
 			default => null, // Ignoring events subscribed by the internal signaling
 		};
-	}
-
-	public static function refreshParticipantListUsingRoomEvent(RoomEvent $event): void {
-		$messages = Server::get(Messages::class);
-		$messages->addMessageForAllParticipants($event->getRoom(), 'refresh-participant-list');
-	}
-
-	public static function refreshParticipantListUsingParticipantEvent(ParticipantEvent $event): void {
-		$messages = Server::get(Messages::class);
-		$messages->addMessageForAllParticipants($event->getRoom(), 'refresh-participant-list');
 	}
 
 	protected function notifyRoomModified(ARoomModifiedEvent $event): void {
