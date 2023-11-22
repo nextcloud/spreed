@@ -25,6 +25,7 @@ namespace OCA\Talk\Listener;
 
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Member;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -61,7 +62,7 @@ abstract class AMembershipListener implements IEventListener {
 				$participant = $room->getParticipant($user->getUID());
 				$participantType = $participant->getAttendee()->getParticipantType();
 				if ($participantType === Participant::USER) {
-					$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
+					$this->participantService->removeUser($room, $user, AAttendeeRemovedEvent::REASON_REMOVED);
 				}
 			} catch (ParticipantNotFoundException $e) {
 			}

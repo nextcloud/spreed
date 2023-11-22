@@ -28,6 +28,7 @@ namespace OCA\Talk;
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
 use OC\Authentication\Token\IToken;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -278,7 +279,7 @@ class MatterbridgeManager {
 		try {
 			$this->participantService->getParticipant($room, self::BRIDGE_BOT_USERID, false);
 			if (!$isBridgeEnabled) {
-				$this->participantService->removeUser($room, $botUser, Room::PARTICIPANT_REMOVED);
+				$this->participantService->removeUser($room, $botUser, AAttendeeRemovedEvent::REASON_REMOVED);
 			}
 		} catch (ParticipantNotFoundException $e) {
 			if ($isBridgeEnabled) {

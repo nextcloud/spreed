@@ -28,6 +28,7 @@ use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
@@ -177,7 +178,7 @@ class ParticipantService {
 
 					if ($demotedFromModerator) {
 						// Remove participant from all breakout rooms
-						$this->removeAttendee($breakoutRoom, $breakoutRoomParticipant, Room::PARTICIPANT_REMOVED);
+						$this->removeAttendee($breakoutRoom, $breakoutRoomParticipant, AAttendeeRemovedEvent::REASON_REMOVED);
 					} elseif (!$breakoutRoomParticipant->hasModeratorPermissions()) {
 						if ($breakoutRoomParticipant->getAttendee()->getParticipantType() === Participant::USER
 							|| $breakoutRoomParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
@@ -327,7 +328,7 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_CONNECT, $legacyEvent);
 
 		if ($legacyEvent->getCancelJoin() === true) {
-			$this->removeUser($room, $user, Room::PARTICIPANT_LEFT);
+			$this->removeUser($room, $user, AAttendeeRemovedEvent::REASON_LEFT);
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
 
@@ -855,10 +856,13 @@ class ParticipantService {
 			&& empty($this->sessionMapper->findByAttendeeId($participant->getAttendee()->getId()))) {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
 
-			$this->removeUser($room, $user, Room::PARTICIPANT_LEFT);
+			$this->removeUser($room, $user, AAttendeeRemovedEvent::REASON_LEFT);
 		}
 	}
 
+	/**
+	 * @psalm-param AAttendeeRemovedEvent::REASON_* $reason
+	 */
 	public function removeAttendee(Room $room, Participant $participant, string $reason, bool $attendeeEventIsTriggeredAlready = false): void {
 		$isUser = $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
 
@@ -1006,6 +1010,9 @@ class ParticipantService {
 		$this->dispatcher->dispatchTyped($attendeeEvent);
 	}
 
+	/**
+	 * @psalm-param AAttendeeRemovedEvent::REASON_* $reason
+	 */
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
 			$participant = $this->getParticipant($room, $user->getUID(), false);
@@ -1016,7 +1023,7 @@ class ParticipantService {
 		$attendee = $participant->getAttendee();
 		$sessions = $this->sessionService->getAllSessionsForAttendee($attendee);
 
-		if ($reason !== Room::PARTICIPANT_REMOVED_ALL && $room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+		if ($reason !== AAttendeeRemovedEvent::REASON_REMOVED_ALL && $room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
 			/** @var BreakoutRoomService $breakoutRoomService */
 			$breakoutRoomService = Server::get(BreakoutRoomService::class);
 			$breakoutRoomService->removeAttendeeFromBreakoutRoom(
@@ -1025,8 +1032,8 @@ class ParticipantService {
 				$attendee->getActorId(),
 				false
 			);
-		} elseif ($reason === Room::PARTICIPANT_REMOVED_ALL) {
-			$reason = Room::PARTICIPANT_REMOVED;
+		} elseif ($reason === AAttendeeRemovedEvent::REASON_REMOVED_ALL) {
+			$reason = AAttendeeRemovedEvent::REASON_REMOVED;
 		}
 
 		$attendeeEvent = new BeforeAttendeeRemovedEvent($room, $attendee, $reason, $sessions);

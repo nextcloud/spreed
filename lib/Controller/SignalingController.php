@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -769,7 +770,7 @@ class SignalingController extends OCSController {
 			// Emails are retained as their PIN needs to remain and stay
 			// valid.
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
-				$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
+				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_LEFT);
 			} else {
 				$this->participantService->leaveRoomAsSession($room, $participant);
 			}
