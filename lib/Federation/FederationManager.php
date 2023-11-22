@@ -67,16 +67,6 @@ class FederationManager {
 	) {
 	}
 
-	/**
-	 * Determine if Talk federation is enabled on this instance
-	 * @return bool
-	 * @deprecated use \OCA\Talk\Config::isFederationEnabled()
-	 */
-	public function isEnabled(): bool {
-		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue(Application::APP_ID, 'federation_enabled', 'no') === 'yes';
-	}
-
 	public function addRemoteRoom(
 		IUser $user,
 		int $remoteAttendeeId,
