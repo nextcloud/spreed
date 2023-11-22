@@ -27,7 +27,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -71,16 +70,6 @@ class Room {
 	public const RECORDING_AUDIO_STARTING = 4;
 	public const RECORDING_FAILED = 5;
 
-	/** @deprecated Use self::TYPE_UNKNOWN */
-	public const UNKNOWN_CALL = self::TYPE_UNKNOWN;
-	/** @deprecated Use self::TYPE_ONE_TO_ONE */
-	public const ONE_TO_ONE_CALL = self::TYPE_ONE_TO_ONE;
-	/** @deprecated Use self::TYPE_GROUP */
-	public const GROUP_CALL = self::TYPE_GROUP;
-	/** @deprecated Use self::TYPE_PUBLIC */
-	public const PUBLIC_CALL = self::TYPE_PUBLIC;
-	/** @deprecated Use self::TYPE_CHANGELOG */
-	public const CHANGELOG_CONVERSATION = self::TYPE_CHANGELOG;
 
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;
@@ -104,14 +93,6 @@ class Room {
 	public const START_CALL_USERS = 1;
 	public const START_CALL_MODERATORS = 2;
 	public const START_CALL_NOONE = 3;
-
-	/** @deprecated Use {@see AAttendeeRemovedEvent::REASON_REMOVED} instead */
-	public const PARTICIPANT_REMOVED = 'remove';
-	/** @deprecated Use {@see AAttendeeRemovedEvent::REASON_REMOVED_ALL} instead */
-	public const PARTICIPANT_REMOVED_ALL = 'remove_all';
-	/** @deprecated Use {@see AAttendeeRemovedEvent::REASON_LEFT} instead */
-	public const PARTICIPANT_LEFT = 'leave';
-
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
