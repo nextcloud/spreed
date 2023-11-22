@@ -46,26 +46,13 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
-	/**
-	 * Talk Desktop user agent but with a regex match for the version
-	 * @see IRequest::USER_AGENT_TALK_DESKTOP
-	 */
-	public const USER_AGENT_TALK_DESKTOP = '/^Mozilla\/5\.0 \((?!Android|iOS)[A-Za-z ]+\) Nextcloud-Talk v([^ ]*).*$/';
 	public const TALK_DESKTOP_MIN_VERSION = '0.6.0';
-
-	/**
-	 * Talk Android user agent but with a regex match for the version
-	 * @see IRequest::USER_AGENT_TALK_ANDROID
-	 */
-	public const USER_AGENT_TALK_ANDROID = '/^Mozilla\/5\.0 \(Android\) Nextcloud\-Talk v([^ ]*).*$/';
+	public const TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT = '0.16.0';
 	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
+	public const TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
 
-	/**
-	 * Talk iOS user agent but with a regex match for the version
-	 * @see IRequest::USER_AGENT_TALK_IOS
-	 */
-	public const USER_AGENT_TALK_IOS = '/^Mozilla\/5\.0 \(iOS\) Nextcloud\-Talk v([^ ]*).*$/';
 	public const TALK_IOS_MIN_VERSION = '15.0.0';
+	public const TALK_IOS_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
 
 
 	public function __construct(
@@ -159,14 +146,26 @@ class CanUseTalkMiddleware extends Middleware {
 		$configMinVersion = $this->serverConfig->getAppValue('spreed', 'minimum.supported.' . $client . '.version');
 
 		if ($client === 'desktop') {
-			$versionRegex = self::USER_AGENT_TALK_DESKTOP;
+			$versionRegex = IRequest::USER_AGENT_TALK_DESKTOP;
 			$minVersion = self::TALK_DESKTOP_MIN_VERSION;
+
+			if ($this->talkConfig->recordingConsentRequired()) {
+				$minVersion = self::TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT;
+			}
 		} elseif ($client === 'android') {
-			$versionRegex = self::USER_AGENT_TALK_ANDROID;
+			$versionRegex = IRequest::USER_AGENT_TALK_ANDROID;
 			$minVersion = self::TALK_ANDROID_MIN_VERSION;
+
+			if ($this->talkConfig->recordingConsentRequired()) {
+				$minVersion = self::TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT;
+			}
 		} elseif ($client === 'ios') {
-			$versionRegex = self::USER_AGENT_TALK_IOS;
+			$versionRegex = IRequest::USER_AGENT_TALK_IOS;
 			$minVersion = self::TALK_IOS_MIN_VERSION;
+
+			if ($this->talkConfig->recordingConsentRequired()) {
+				$minVersion = self::TALK_IOS_MIN_VERSION_RECORDING_CONSENT;
+			}
 		} else {
 			return;
 		}
