@@ -1483,7 +1483,7 @@ OC.L10N.register(
     "Blur background" : "Esvaer o fondo",
     "You are not allowed to enable screensharing" : "Non ten permiso para activar o uso compartido de pantalla",
     "No screensharing" : "Non hai uso compartido de pantalla",
-    "Screensharing options" : "Opcións de Screensharing",
+    "Screensharing options" : "Opcións para compartir pantalla",
     "Enable screensharing" : "Activar a compartición da pantalla",
     "Bad sent video and screen quality." : "Mala calidade de vídeo e pantalla enviados.",
     "Bad sent screen quality." : "Mala calidade de pantalla enviada.",
