@@ -25,8 +25,8 @@
 		:label="placeholderText"
 		:show-trailing-button="isFocused"
 		class="search-box"
-		trailing-button-icon="close"
-		v-on="listeners"
+		@focus="handleFocus"
+		@blur="handleBlur"
 		@update:value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
@@ -81,11 +81,8 @@ export default {
 	emits: ['update:value', 'update:is-focused', 'input', 'abort-search', 'blur', 'focus'],
 
 	computed: {
-		listeners() {
-			return Object.assign({}, this.$listeners, {
-				focus: this.handleFocus,
-				blur: this.handleBlur,
-			})
+		isSearching() {
+			return this.value !== ''
 		},
 
 		cancelSearchLabel() {
@@ -98,10 +95,15 @@ export default {
 			if (value) {
 				this.$nextTick(() => {
 					this.getTrailingButton()?.addEventListener('keydown', this.handleTrailingKeyDown)
+					this.setTrailingTabIndex()
 				})
 			} else {
 				this.getTrailingButton()?.removeEventListener('keydown', this.handleTrailingKeyDown)
 			}
+		},
+
+		isSearching() {
+			this.setTrailingTabIndex()
 		},
 	},
 
@@ -110,13 +112,16 @@ export default {
 			this.$emit('update:value', value)
 			this.$emit('input', value)
 		},
-		// Focuses the input.
+
+		/**
+		 * Focuses the input
+		 */
 		focus() {
 			this.$refs.searchConversations.focus()
 		},
 
 		getTrailingButton() {
-			return this.$refs.searchConversations.$el.querySelector('.input-field__clear-button')
+			return this.$refs.searchConversations.$el.querySelector('.input-field__trailing-button')
 		},
 
 		handleTrailingKeyDown(event) {
@@ -133,8 +138,6 @@ export default {
 			this.updateValue('')
 			this.$emit('update:is-focused', false)
 			this.$emit('abort-search')
-
-			document.activeElement.blur()
 		},
 
 		handleFocus(event) {
@@ -144,9 +147,9 @@ export default {
 
 		handleBlur(event) {
 			// Blur triggered by clicking on the trailing button
-			if (event.relatedTarget?.classList.contains('input-field__clear-button')) {
+			if (event.relatedTarget === this.getTrailingButton()) {
 				event.preventDefault()
-				this.getTrailingButton()?.addEventListener('blur', (trailingEvent) => {
+				event.relatedTarget.addEventListener('blur', (trailingEvent) => {
 					this.handleBlur(trailingEvent)
 				})
 				return
@@ -157,24 +160,33 @@ export default {
 			}
 			 // Blur in other cases
 			this.$emit('blur', event)
-			if (this.value === '') {
+			if (!this.isSearching) {
 				this.$emit('update:is-focused', false)
 			}
 		},
+
+		setTrailingTabIndex() {
+			if (this.isSearching) {
+				this.getTrailingButton()?.removeAttribute('tabindex')
+			} else {
+				this.getTrailingButton()?.setAttribute('tabindex', '-1')
+			}
+		}
 
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+// TODO remove styles after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4876 is merged
 .search-box {
 	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
 
-  :deep(.input-field__clear-button) {
-    border-radius: var(--border-radius-pill) !important;
-  }
+	:deep(.input-field__trailing-button) {
+		border-radius: var(--border-radius-pill) !important;
+	}
 }
 
 </style>
