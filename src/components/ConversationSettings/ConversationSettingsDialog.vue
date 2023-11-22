@@ -49,7 +49,7 @@
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
 
-				<NotificationsSettings :conversation="conversation" />
+				<NotificationsSettings v-if="!isGuest" :conversation="conversation" />
 			</NcAppSettingsSection>
 
 			<NcAppSettingsSection id="conversation-settings"
@@ -167,6 +167,10 @@ export default {
 
 		canUserEnableSIP() {
 			return this.conversation.canEnableSIP
+		},
+
+		isGuest() {
+			return this.$store.getters.getActorType() === 'guests'
 		},
 
 		token() {
