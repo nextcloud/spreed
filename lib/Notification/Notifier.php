@@ -1133,31 +1133,58 @@ class Notifier implements INotifier {
 			->setLink($notification->getLink(), IAction::TYPE_WEB)
 			->setPrimary(true);
 
+		$parsedParameters = [];
+		$icon = '';
 		switch ($notification->getSubject()) {
 			case 'added':
-				$subject = $l->t('The hosted signaling server is now configured and will be used.');
+				$subject = $l->t('Hosted signaling server added');
+				$message = $l->t('The hosted signaling server is now configured and will be used.');
+				$icon = $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/video.svg'));
 				break;
 			case 'removed':
-				$subject = $l->t('The hosted signaling server was removed and will not be used anymore.');
+				$subject = $l->t('Hosted signaling server removed');
+				$message = $l->t('The hosted signaling server was removed and will not be used anymore.');
+				$icon = $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/video-off.svg'));
 				break;
 			case 'changed-status':
-				$subject = $l->t('The hosted signaling server account has changed the status from "{oldstatus}" to "{newstatus}".');
+				$subject = $l->t('Hosted signaling server changed');
+				$message = $l->t('The hosted signaling server account has changed the status from "{oldstatus}" to "{newstatus}".');
+				$icon = $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/video-switch.svg'));
 
 				$parameters = $notification->getSubjectParameters();
-				$subject = str_replace(
-					['{oldstatus}', '{newstatus}'],
-					[$parameters['oldstatus'], $parameters['newstatus']],
-					$subject
-				);
+				$parsedParameters = [
+					'oldstatus' => $this->createHPBParameter($parameters['oldstatus'], $l),
+					'newstatus' => $this->createHPBParameter($parameters['newstatus'], $l),
+				];
 				break;
 			default:
 				throw new \InvalidArgumentException('Unknown subject');
 		}
 
 		return $notification
-			->setParsedSubject($subject)
-			->setIcon($notification->getIcon())
+			->setRichSubject($subject)
+			->setRichMessage($message, $parsedParameters)
+			->setIcon($icon)
 			->addParsedAction($action);
+	}
+
+	protected function hostedHPBStatusToLabel(string $status, IL10N $l): string {
+		return match ($status) {
+			'pending' => $l->t('pending'),
+			'active' => $l->t('active'),
+			'expired' => $l->t('expired'),
+			'blocked' => $l->t('blocked'),
+			'error' => $l->t('error'),
+			default => $status,
+		};
+	}
+
+	protected function createHPBParameter(string $status, IL10N $l): array {
+		return [
+			'type' => 'highlight',
+			'id' => $status,
+			'name' => $this->hostedHPBStatusToLabel($status, $l),
+		];
 	}
 
 	protected function parseCertificateExpiration(INotification $notification, IL10N $l): INotification {
