@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>18.0.0-beta.3</version>
+	<version>19.0.0-dev.0</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -52,7 +52,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/video-verfication.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="28" max-version="28" />
+		<nextcloud min-version="29" max-version="29" />
 	</dependencies>
 
 	<background-jobs>
