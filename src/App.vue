@@ -24,7 +24,7 @@
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
 		@shortkey.native="handleAppSearch">
-		<LeftSidebar v-if="getUserId && !isFullscreen" />
+		<LeftSidebar v-if="getUserId && !isFullscreen" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
@@ -679,7 +679,9 @@ export default {
 			emit('toggle-navigation', {
 				open: true,
 			})
-			document.querySelector('.conversations-search input').focus()
+			this.$nextTick(() => {
+				this.$refs.leftSidebar.$refs.searchBox.focus()
+			})
 		},
 
 		/**
