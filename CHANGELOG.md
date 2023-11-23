@@ -1,6 +1,67 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0-rc.1 – 2023-11-23
+### Added
+- Allow drag'n'drop of files onto the caption dialog
+  [#10898](https://github.com/nextcloud/spreed/issues/10898)
+- Add support for "person" and "modified" filter options of the global search
+  [#10909](https://github.com/nextcloud/spreed/issues/10909)
+
+### Changed
+- Update several dependencies
+- Improve documentation by adding magic strings and values to parameters
+  [#10857](https://github.com/nextcloud/spreed/issues/10857)
+- Require compatible clients when recording consent is enabled
+  [#10969](https://github.com/nextcloud/spreed/issues/10969)
+- Revert: Try to fix Safari unmute after being muted for a longer time
+  [#10954](https://github.com/nextcloud/spreed/issues/10954)
+- Move away from deprecated constants and functions
+  [#10975](https://github.com/nextcloud/spreed/issues/10975)
+
+### Fixed
+- fix(settings): Remove non-working notification settings for guests
+  [#10960](https://github.com/nextcloud/spreed/issues/10960)
+- fix(settings): Fix option to request an HPB trial
+  [#10962](https://github.com/nextcloud/spreed/issues/10962)
+  [#10970](https://github.com/nextcloud/spreed/issues/10970)
+- fix(chat): Fix sorting of system messages
+  [#10963](https://github.com/nextcloud/spreed/issues/10963)
+- fix(settings): Fix style in the admin settings after vue library update
+  [#10984](https://github.com/nextcloud/spreed/issues/10984)
+
+## 17.1.3 – 2023-11-23
+### Fixed
+- fix(settings): Remove non-working notification settings for guests
+  [#10974](https://github.com/nextcloud/spreed/issues/10974)
+- fix(chat): Fix uploading files after some time of being online
+  [#10891](https://github.com/nextcloud/spreed/issues/10891)
+- fix(participants): Update participants list more regularly
+  [#10843](https://github.com/nextcloud/spreed/issues/10843)
+- fix(settings): Fix option to request an HPB trial
+  [#10965](https://github.com/nextcloud/spreed/issues/10965)
+- fix(settings): Fail recording server test when an HPB was given as recording backend
+  [#10948](https://github.com/nextcloud/spreed/issues/10948)
+- fix(chat): Hide delete option for guests
+  [#10806](https://github.com/nextcloud/spreed/issues/10806)
+- fix(chat): Fix sorting of system messages
+  [#10964](https://github.com/nextcloud/spreed/issues/10964)
+- fix(chat): Fix not breaking the JSON response when removing the last reaction of a message
+  [#10949](https://github.com/nextcloud/spreed/issues/10949)
+- fix(call): Log error message when starting a screenshot fails
+  [#10827](https://github.com/nextcloud/spreed/issues/10827)
+
+## 16.0.8 – 2023-11-23
+### Fixed
+- fix(settings): Remove non-working notification settings for guests
+  [#10976](https://github.com/nextcloud/spreed/issues/10976)
+- fix(settings): Fix option to request an HPB trial
+  [#10967](https://github.com/nextcloud/spreed/issues/10967)
+- fix(settings): Fail recording server test when an HPB was given as recording backend
+  [#10950](https://github.com/nextcloud/spreed/issues/10950)
+- fix(chat): Hide delete option for guests
+  [#10807](https://github.com/nextcloud/spreed/issues/10807)
+
 ## 18.0.0-beta.3 – 2023-11-16
 ### Added
 - Allow drag'n'drop of files onto the caption dialog
