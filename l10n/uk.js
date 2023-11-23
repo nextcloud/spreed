@@ -310,6 +310,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Групову розмову розпочато у {call}",
     "You missed a group call in {call}" : "Ви пропустили груповий виклик у {call}",
     "Open settings" : "Відкрити налаштування",
+    "error" : "помилка",
     "Contact via Talk" : "Зв'яжіться з нами через Talk",
     "Open Talk" : "Відкрити Talk",
     "Conversations" : "Розмови",

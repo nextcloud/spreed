@@ -91,6 +91,7 @@ OC.L10N.register(
     "{user} invited you to a group conversation: {call}" : "{user} uzaicināja jūs uz grupas sarunu: {call}",
     "A group call has started in {call}" : "Grupas zvans ir sācies {call}",
     "Open settings" : "Atveriet iestatījumus",
+    "error" : "kļūda",
     "Avatar image is not square" : "Avatar attēls nav kvadrāts",
     "Invalid date, date format must be YYYY-MM-DD" : "Nederīgs datums, datuma formātam jābūt YYYY-MM-DD",
     "Conversation not found" : "Saruna nav atrasta",

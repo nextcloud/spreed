@@ -349,6 +349,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "托管的信令服务器现已配置并将被使用。",
     "The hosted signaling server was removed and will not be used anymore." : "托管的信令服务器已被移除且无法再使用。",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "托管信令服务器将账户状态从 \"{oldstatus}\" 更改为 \"{newstatus}\"",
+    "error" : "错误",
     "The certificate of {host} expires in {days} days" : "{host}的证书将在{days}天后过期",
     "The certificate of {host} expired" : "{host}的证书已过期",
     "Contact via Talk" : "通过通话应用联系",

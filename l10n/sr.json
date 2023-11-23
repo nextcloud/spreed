@@ -348,6 +348,8 @@
     "The hosted signaling server is now configured and will be used." : "Хостовани сервер за синализирање је сада подешен и користиће се.",
     "The hosted signaling server was removed and will not be used anymore." : "Хостовани сервер за синализирање је уклоњен и више се неће користити.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Налог хостованог сервера за сигнализирање је променио статус са „{oldstatus}” на „{newstatus}”.",
+    "pending" : "на чекању",
+    "error" : "грешка",
     "The certificate of {host} expires in {days} days" : "Важење сертификата за {host} истиче за {days} дана",
     "The certificate of {host} expired" : "Важење сертификата за {host} истекло",
     "Contact via Talk" : "Контактирај преко Talk",

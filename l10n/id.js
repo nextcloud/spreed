@@ -29,6 +29,7 @@ OC.L10N.register(
     "Dismiss notification" : "Abaikan notifikasi",
     "Accept" : "Terima",
     "Decline" : "Tolak",
+    "error" : "galat",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Uni Emirat Arab",
     "Afghanistan" : "Afganistan",

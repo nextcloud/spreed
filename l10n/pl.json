@@ -348,6 +348,7 @@
     "The hosted signaling server is now configured and will be used." : "Hostowany serwer sygnalizacyjny jest teraz skonfigurowany i gotowy do użycia.",
     "The hosted signaling server was removed and will not be used anymore." : "Hostowany serwer sygnalizacyjny został usunięty i nie będzie już używany.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Konto hostowanego serwera sygnalizacyjnego zmieniło status z \"{oldstatus}\" na \"{newstatus}\".",
+    "error" : "błąd",
     "The certificate of {host} expires in {days} days" : "Certyfikat {host} wygasa za {days} dni",
     "The certificate of {host} expired" : "Certyfikat {host} wygasł",
     "Contact via Talk" : "Kontakt przez Talk",

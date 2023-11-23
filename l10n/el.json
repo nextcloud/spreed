@@ -184,6 +184,7 @@
     "The hosted signaling server is now configured and will be used." : "Ο φιλοξενούμενος διακομιστής σηματοδότησης έχει πλέον ρυθμιστεί και θα χρησιμοποιηθεί.",
     "The hosted signaling server was removed and will not be used anymore." : "Ο φιλοξενούμενος διακομιστής σηματοδότησης καταργήθηκε και δεν θα χρησιμοποιείται πλέον.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Ο λογαριασμός του φιλοξενούμενου διακομιστή σηματοδότησης άλλαξε την κατάσταση από \"{oldstatus}\" σε \"{newstatus}\".",
+    "error" : "σφάλμα ",
     "Open Talk" : "Άνοιγμα του Talk",
     "Conversations" : "Συνομιλίες",
     "{user}" : "{user}",

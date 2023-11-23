@@ -348,6 +348,8 @@
     "The hosted signaling server is now configured and will be used." : "已設定好架設的訊號伺服器並將被使用。",
     "The hosted signaling server was removed and will not be used anymore." : "架設的訊號伺服器已被移除且無法再使用。",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "架設的訊號伺服器帳號已將狀態從「{oldstatus}」變更為「{newstatus}」。",
+    "pending" : "擱置中",
+    "error" : "錯誤",
     "The certificate of {host} expires in {days} days" : "{host} 的憑證將在 {days} 天後過期",
     "The certificate of {host} expired" : "{host} 的憑證已過期",
     "Contact via Talk" : "透過 Talk 連結",

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Unknown filetype" : "Tundmatu failitüüp",
     "Accept" : "Nõustu",
     "Decline" : "Keeldu",
+    "error" : "viga",
     "Avatar image is not square" : "Avatari pilt pole ruut",
     "Invalid date, date format must be YYYY-MM-DD" : "Vigane kuupäev, formaat peab olema YYYY-MM-DD",
     "Limit to groups" : "Luba gruppidele",
