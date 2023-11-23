@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 
-class BeforeEmailInvitationSentEvent extends RoomEvent {
+class BeforeEmailInvitationSentEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,

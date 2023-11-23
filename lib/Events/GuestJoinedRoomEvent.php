@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-class GuestJoinedRoomEvent extends RoomEvent {
+class GuestJoinedRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected Participant $participant,

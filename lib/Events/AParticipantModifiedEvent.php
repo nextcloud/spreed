@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-abstract class AParticipantModifiedEvent extends RoomEvent {
+abstract class AParticipantModifiedEvent extends ARoomEvent {
 	public const PROPERTY_IN_CALL = 'inCall';
 	public const PROPERTY_NAME = 'name';
 	public const PROPERTY_PERMISSIONS = 'permissions';

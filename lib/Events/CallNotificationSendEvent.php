@@ -29,7 +29,7 @@ use OCA\Talk\Room;
 /**
  * @internal This event is not part of the public API and you should not rely on it.
  */
-class CallNotificationSendEvent extends RoomEvent {
+class CallNotificationSendEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,

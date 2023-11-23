@@ -27,9 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent;
-use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\SelectHelper;
@@ -72,16 +70,6 @@ class Room {
 	public const RECORDING_AUDIO_STARTING = 4;
 	public const RECORDING_FAILED = 5;
 
-	/** @deprecated Use self::TYPE_UNKNOWN */
-	public const UNKNOWN_CALL = self::TYPE_UNKNOWN;
-	/** @deprecated Use self::TYPE_ONE_TO_ONE */
-	public const ONE_TO_ONE_CALL = self::TYPE_ONE_TO_ONE;
-	/** @deprecated Use self::TYPE_GROUP */
-	public const GROUP_CALL = self::TYPE_GROUP;
-	/** @deprecated Use self::TYPE_PUBLIC */
-	public const PUBLIC_CALL = self::TYPE_PUBLIC;
-	/** @deprecated Use self::TYPE_CHANGELOG */
-	public const CHANGELOG_CONVERSATION = self::TYPE_CHANGELOG;
 
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;
@@ -105,132 +93,6 @@ class Room {
 	public const START_CALL_USERS = 1;
 	public const START_CALL_MODERATORS = 2;
 	public const START_CALL_NOONE = 3;
-
-	/** @deprecated Use {@see AAttendeeRemovedEvent::REASON_REMOVED} instead */
-	public const PARTICIPANT_REMOVED = 'remove';
-	/** @deprecated Use {@see AAttendeeRemovedEvent::REASON_REMOVED_ALL} instead */
-	public const PARTICIPANT_REMOVED_ALL = 'remove_all';
-	/** @deprecated Use {@see AAttendeeRemovedEvent::REASON_LEFT} instead */
-	public const PARTICIPANT_LEFT = 'leave';
-
-	/** @deprecated */
-	public const EVENT_AFTER_ROOM_CREATE = self::class . '::createdRoom';
-	/** @deprecated */
-	public const EVENT_BEFORE_ROOM_DELETE = self::class . '::preDeleteRoom';
-	/** @deprecated */
-	public const EVENT_AFTER_ROOM_DELETE = self::class . '::postDeleteRoom';
-	/** @deprecated */
-	public const EVENT_BEFORE_NAME_SET = self::class . '::preSetName';
-	/** @deprecated */
-	public const EVENT_AFTER_NAME_SET = self::class . '::postSetName';
-	/** @deprecated */
-	public const EVENT_BEFORE_DESCRIPTION_SET = self::class . '::preSetDescription';
-	/** @deprecated */
-	public const EVENT_AFTER_DESCRIPTION_SET = self::class . '::postSetDescription';
-	/** @deprecated */
-	public const EVENT_BEFORE_PASSWORD_SET = self::class . '::preSetPassword';
-	/** @deprecated */
-	public const EVENT_AFTER_PASSWORD_SET = self::class . '::postSetPassword';
-	/** @deprecated */
-	public const EVENT_BEFORE_TYPE_SET = self::class . '::preSetType';
-	/** @deprecated */
-	public const EVENT_AFTER_TYPE_SET = self::class . '::postSetType';
-	/** @deprecated */
-	public const EVENT_BEFORE_READONLY_SET = self::class . '::preSetReadOnly';
-	/** @deprecated */
-	public const EVENT_AFTER_READONLY_SET = self::class . '::postSetReadOnly';
-	/** @deprecated */
-	public const EVENT_BEFORE_LISTABLE_SET = self::class . '::preSetListable';
-	/** @deprecated */
-	public const EVENT_AFTER_LISTABLE_SET = self::class . '::postSetListable';
-	/** @deprecated */
-	public const EVENT_BEFORE_LOBBY_STATE_SET = self::class . '::preSetLobbyState';
-	/** @deprecated */
-	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
-	/** @deprecated */
-	public const EVENT_BEFORE_END_CALL_FOR_EVERYONE = self::class . '::preEndCallForEveryone';
-	/** @deprecated */
-	public const EVENT_AFTER_END_CALL_FOR_EVERYONE = self::class . '::postEndCallForEveryone';
-	/** @deprecated */
-	public const EVENT_BEFORE_SIP_ENABLED_SET = self::class . '::preSetSIPEnabled';
-	/** @deprecated */
-	public const EVENT_AFTER_SIP_ENABLED_SET = self::class . '::postSetSIPEnabled';
-	/** @deprecated */
-	public const EVENT_BEFORE_PERMISSIONS_SET = self::class . '::preSetPermissions';
-	/** @deprecated */
-	public const EVENT_AFTER_PERMISSIONS_SET = self::class . '::postSetPermissions';
-	/** @deprecated */
-	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
-	/** @deprecated */
-	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
-	/** @deprecated */
-	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
-	/** @deprecated */
-	public const EVENT_AFTER_PARTICIPANT_TYPE_SET = self::class . '::postSetParticipantType';
-	/** @deprecated */
-	public const EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET = self::class . '::preSetParticipantPermissions';
-	/** @deprecated */
-	public const EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET = self::class . '::postSetParticipantPermissions';
-	/** @deprecated */
-	public const EVENT_BEFORE_USER_REMOVE = self::class . '::preRemoveUser';
-	/** @deprecated */
-	public const EVENT_AFTER_USER_REMOVE = self::class . '::postRemoveUser';
-	/** @deprecated */
-	public const EVENT_BEFORE_PARTICIPANT_REMOVE = self::class . '::preRemoveBySession';
-	/** @deprecated */
-	public const EVENT_AFTER_PARTICIPANT_REMOVE = self::class . '::postRemoveBySession';
-	/** @deprecated */
-	public const EVENT_BEFORE_ROOM_CONNECT = self::class . '::preJoinRoom';
-	/** @deprecated */
-	public const EVENT_AFTER_ROOM_CONNECT = self::class . '::postJoinRoom';
-	/** @deprecated */
-	public const EVENT_BEFORE_ROOM_DISCONNECT = self::class . '::preUserDisconnectRoom';
-	/** @deprecated */
-	public const EVENT_AFTER_ROOM_DISCONNECT = self::class . '::postUserDisconnectRoom';
-	/** @deprecated  */
-	public const EVENT_BEFORE_GUEST_CONNECT = self::class . '::preJoinRoomGuest';
-	/** @deprecated  */
-	public const EVENT_AFTER_GUEST_CONNECT = self::class . '::postJoinRoomGuest';
-	/** @deprecated  */
-	public const EVENT_PASSWORD_VERIFY = self::class . '::verifyPassword';
-	/** @deprecated  */
-	public const EVENT_BEFORE_GUESTS_CLEAN = self::class . '::preCleanGuests';
-	/** @deprecated  */
-	public const EVENT_AFTER_GUESTS_CLEAN = self::class . '::postCleanGuests';
-	/** @deprecated */
-	public const EVENT_BEFORE_SESSION_JOIN_CALL = self::class . '::preSessionJoinCall';
-	/** @deprecated */
-	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
-	/** @deprecated */
-	public const EVENT_BEFORE_SESSION_UPDATE_CALL_FLAGS = self::class . '::preSessionUpdateCallFlags';
-	/** @deprecated */
-	public const EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS = self::class . '::postSessionUpdateCallFlags';
-	/** @deprecated */
-	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
-	/** @deprecated */
-	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
-	/** @deprecated */
-	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
-	/** @deprecated  */
-	public const EVENT_BEFORE_SET_MESSAGE_EXPIRATION = self::class . '::beforeSetMessageExpiration';
-	/** @deprecated  */
-	public const EVENT_AFTER_SET_MESSAGE_EXPIRATION = self::class . '::afterSetMessageExpiration';
-	/** @deprecated  */
-	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_MODE = self::class . '::beforeSetBreakoutRoomMode';
-	/** @deprecated  */
-	public const EVENT_AFTER_SET_BREAKOUT_ROOM_MODE = self::class . '::afterSetBreakoutRoomMode';
-	/** @deprecated  */
-	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS = self::class . '::beforeSetBreakoutRoomStatus';
-	/** @deprecated  */
-	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
-	/** @deprecated  */
-	public const EVENT_BEFORE_SET_CALL_RECORDING = self::class . '::beforeSetCallRecording';
-	/** @deprecated  */
-	public const EVENT_AFTER_SET_CALL_RECORDING = self::class . '::afterSetCallRecording';
-	/** @deprecated  */
-	public const EVENT_BEFORE_AVATAR_SET = self::class . '::preSetAvatar';
-	/** @deprecated  */
-	public const EVENT_AFTER_AVATAR_SET = self::class . '::postSetAvatar';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -443,14 +305,6 @@ class Room {
 		$this->description = $description;
 	}
 
-	/**
-	 * @deprecated Use ParticipantService::getGuestCount() instead
-	 * @return int
-	 */
-	public function getActiveGuests(): int {
-		return $this->activeGuests;
-	}
-
 	public function resetActiveSince(): void {
 		$this->activeGuests = 0;
 		$this->activeSince = null;
@@ -575,9 +429,7 @@ class Room {
 			$properties['participant-list'] = 'refresh';
 		}
 
-		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIGNALING_PROPERTIES, $event);
-		$event = new BeforeSignalingRoomPropertiesSentEvent($this, $userId, $event->getProperties());
+		$event = new BeforeSignalingRoomPropertiesSentEvent($this, $userId, $properties);
 		$this->dispatcher->dispatchTyped($event);
 		return $event->getProperties();
 	}

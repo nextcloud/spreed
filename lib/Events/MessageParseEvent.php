@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
 
-class MessageParseEvent extends RoomEvent {
+class MessageParseEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected Message $message,

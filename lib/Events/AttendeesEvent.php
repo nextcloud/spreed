@@ -26,7 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 
-abstract class AttendeesEvent extends RoomEvent {
+abstract class AttendeesEvent extends ARoomEvent {
 	/**
 	 * @param Attendee[] $attendees
 	 */

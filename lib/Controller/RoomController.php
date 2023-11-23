@@ -32,7 +32,6 @@ use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
-use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
@@ -93,9 +92,6 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class RoomController extends AEnvironmentAwareController {
-	/** @deprecated */
-	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
-
 	protected array $commonReadMessages = [];
 
 	public function __construct(
@@ -177,8 +173,6 @@ class RoomController extends AEnvironmentAwareController {
 	public function getRooms(int $noStatusUpdate = 0, bool $includeStatus = false, int $modifiedSince = 0): DataResponse {
 		$nextModifiedSince = $this->timeFactory->getTime();
 
-		$event = new UserEvent($this->userId);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
 		$event = new BeforeRoomsFetchEvent($this->userId);
 		$this->dispatcher->dispatchTyped($event);
 

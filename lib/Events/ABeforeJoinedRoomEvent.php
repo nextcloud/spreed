@@ -25,7 +25,7 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
-abstract class ABeforeJoinedRoomEvent extends RoomEvent {
+abstract class ABeforeJoinedRoomEvent extends ARoomEvent {
 	protected bool $cancelJoin = false;
 
 	public function __construct(

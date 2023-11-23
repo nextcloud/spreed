@@ -23,42 +23,19 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\EventDispatcher\Event;
 
-/**
- * @deprecated
- */
-class ModifyParticipantEvent extends ParticipantEvent {
+abstract class ARoomEvent extends Event {
+
 
 	public function __construct(
-		Room $room,
-		Participant $participant,
-		protected string $parameter,
-		protected $newValue,
-		protected $oldValue = null,
+		protected Room $room,
 	) {
-		parent::__construct($room, $participant);
+		parent::__construct();
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getParameter(): string {
-		return $this->parameter;
-	}
-
-	/**
-	 * @return int|string|bool
-	 */
-	public function getNewValue() {
-		return $this->newValue;
-	}
-
-	/**
-	 * @return int|string|bool|null
-	 */
-	public function getOldValue() {
-		return $this->oldValue;
+	public function getRoom(): Room {
+		return $this->room;
 	}
 }

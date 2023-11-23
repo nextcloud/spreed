@@ -21,7 +21,7 @@
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
-use OCA\Talk\Events\GetTurnServersEvent;
+use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCA\Talk\Vendor\Firebase\JWT\Key;
@@ -252,7 +252,7 @@ class ConfigTest extends TestCase {
 			],
 		];
 
-		$dispatcher->addServiceListener(GetTurnServersEvent::class, GetTurnServerListener::class);
+		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
 		$helper = new Config($config, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 

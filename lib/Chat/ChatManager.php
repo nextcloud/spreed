@@ -29,9 +29,7 @@ use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeSystemMessageSentEvent;
-use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
-use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -69,17 +67,6 @@ use OCP\Share\IShare;
  * pending notifications are removed if the messages are deleted.
  */
 class ChatManager {
-	/** @deprecated */
-	public const EVENT_BEFORE_SYSTEM_MESSAGE_SEND = self::class . '::preSendSystemMessage';
-	/** @deprecated */
-	public const EVENT_AFTER_SYSTEM_MESSAGE_SEND = self::class . '::postSendSystemMessage';
-	/** @deprecated */
-	public const EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND = self::class . '::postSendMultipleSystemMessage';
-	/** @deprecated */
-	public const EVENT_BEFORE_MESSAGE_SEND = self::class . '::preSendMessage';
-	/** @deprecated */
-	public const EVENT_AFTER_MESSAGE_SEND = self::class . '::postSendMessage';
-
 	public const MAX_CHAT_LENGTH = 32000;
 
 	public const GEO_LOCATION_VALIDATOR = '/^geo:-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?(,-?\d+(\.\d+)?)?(;crs=wgs84)?(;u=\d+(\.\d+)?)?$/i';
@@ -170,8 +157,6 @@ class ChatManager {
 
 		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatchTyped($event);
-		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate, $silent);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
 
@@ -196,7 +181,6 @@ class ChatManager {
 				}
 			}
 
-			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
@@ -226,8 +210,6 @@ class ChatManager {
 
 		$event = new BeforeSystemMessageSentEvent($chat, $comment);
 		$this->dispatcher->dispatchTyped($event);
-		$event = new ChatEvent($chat, $comment);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
 
@@ -235,7 +217,6 @@ class ChatManager {
 			$this->roomService->setLastMessage($chat, $comment);
 			$this->unreadCountCache->clear($chat->getId() . '-');
 
-			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
@@ -278,12 +259,6 @@ class ChatManager {
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent);
 		$this->dispatcher->dispatchTyped($event);
-		if ($participant instanceof Participant) {
-			$event = new ChatParticipantEvent($chat, $comment, $participant, $silent);
-		} else {
-			$event = new ChatEvent($chat, $comment, false, $silent);
-		}
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
 
 		$shouldFlush = $this->notificationManager->defer();
 		try {
@@ -321,7 +296,6 @@ class ChatManager {
 			// User was not mentioned, send a normal notification
 			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers, $silent);
 
-			$this->dispatcher->dispatch(self::EVENT_AFTER_MESSAGE_SEND, $event);
 			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
