@@ -56,10 +56,10 @@ jobs:
       matrix:
         test-suite: ['callapi', 'chat', 'chat-2', 'command', 'conversation', 'conversation-2', 'federation', 'integration', 'sharing', 'sharing-2']
         php-versions: ['8.2']
-        server-versions: ['master']
+        server-versions: ['stable28']
         guests-versions: ['master']
         call-summary-bot-versions: ['main']
-        notifications-versions: ['master']
+        notifications-versions: ['stable28']
 
     steps:
       - name: Set app env

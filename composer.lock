@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f83bdae2520edeac90dc4a51229840fc",
+    "content-hash": "51f5afa89eee13dd99fa09403bbc0eab",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -254,30 +254,29 @@
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "dev-master",
+            "version": "dev-stable28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "488e4ad136853e5b24efa745e941c785cf41c51e"
+                "reference": "2ac04202af2904a000d3e4090f7def301a4cecfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/488e4ad136853e5b24efa745e941c785cf41c51e",
-                "reference": "488e4ad136853e5b24efa745e941c785cf41c51e",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/2ac04202af2904a000d3e4090f7def301a4cecfe",
+                "reference": "2ac04202af2904a000d3e4090f7def301a4cecfe",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.0 || ~8.1 || ~8.2",
+                "php": "~8.0 || ~8.1 || ~8.2 || ~8.3",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^1.1.4"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "28.0.0-dev"
+                    "dev-stable28": "28.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -293,9 +292,9 @@
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable28"
             },
-            "time": "2023-11-18T00:32:35+00:00"
+            "time": "2023-11-23T10:57:48+00:00"
         },
         {
             "name": "psr/clock",
