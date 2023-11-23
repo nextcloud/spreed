@@ -23,7 +23,7 @@
 <template>
 	<section v-if="showForm"
 		id="hosted_signaling_server"
-		class="videocalls section">
+		class="hosted-signaling section">
 		<h2>
 			{{ t('spreed', 'Hosted high-performance backend') }}
 		</h2>
@@ -273,15 +273,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form {
-	&__textfield,
-	&__select {
-		width: 300px;
-	}
+.hosted-signaling {
+	.form {
+		&__textfield {
+			width: 300px;
+			margin-top: 12px;
+		}
 
-	&__label {
-		display: block;
-		padding: 4px 0;
+		&__select {
+			width: 300px;
+		}
+
+		&__label {
+			display: block;
+			padding: 4px 0;
+		}
 	}
 }
 

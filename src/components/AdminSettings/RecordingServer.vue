@@ -191,8 +191,9 @@ export default {
 	display: flex;
 	align-items: center;
 
-	&__textfield {
+	& &__textfield {
 		width: 300px;
+		flex-shrink: 0;
 	}
 
 	&__checkbox {
