@@ -37,6 +37,7 @@ import {
 	hasDuplicateUploadNames,
 	findUniquePath,
 	getFileExtension,
+	getFileNamePrompt,
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
 
@@ -309,6 +310,9 @@ const actions = {
 			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
 
+		// Store propfind attempts within one action to reduce amount of requests for duplicates
+		const knownPaths = {}
+
 		const performUpload = async ([index, uploadedFile]) => {
 			// currentFile to be uploaded
 			const currentFile = uploadedFile.file
@@ -316,8 +320,14 @@ const actions = {
 			const fileName = (currentFile.newName || currentFile.name)
 			// Candidate rest of the path
 			const path = getters.getAttachmentFolder() + '/' + fileName
+
+			// Check if previous propfind attempt was stored
+			const promptPath = getFileNamePrompt(path)
+			const knownSuffix = knownPaths[promptPath]
 			// Get a unique relative path based on the previous path variable
-			const uniquePath = await findUniquePath(client, userRoot, path)
+			const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
+			knownPaths[promptPath] = suffix
+
 			try {
 				// Upload the file
 				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
