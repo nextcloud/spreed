@@ -122,3 +122,20 @@ Feature: callapi/one-to-one
     And user "participant1" sees 1 peers in call "room" with 200 (v4)
     And user "participant2" sees 1 peers in call "room" with 200 (v4)
 
+  Scenario: Can not join a call in former one-to-one
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 1    | 1               |
+    When user "participant2" is deleted
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 5    | 1               |
+    When user "participant1" joins room "room" with 200 (v4)
+    And user "participant1" joins call "room" with 403 (v4)
+    Then user "participant1" is participant of room "room" (v4)
+    And user "participant1" sees 0 peers in call "room" with 403 (v4)

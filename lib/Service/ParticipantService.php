@@ -1155,7 +1155,9 @@ class ParticipantService {
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): bool {
-		if ($room->getType() === Room::TYPE_CHANGELOG || $room->getType() === Room::TYPE_NOTE_TO_SELF) {
+		if ($room->getType() === Room::TYPE_CHANGELOG
+			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
 
