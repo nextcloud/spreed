@@ -283,6 +283,7 @@
     "The hosted signaling server is now configured and will be used." : "Teraz je nastavený hosťovaný signalizačný server a bude sa používať.",
     "The hosted signaling server was removed and will not be used anymore." : "Hosťovaný signalizačný server bol odstránený a už sa nebude používať.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Účet hosťovaného signalizačného servera zmenil stav z \"{oldstatus}\" na \"{newstatus}\".",
+    "error" : "chyba",
     "The certificate of {host} expires in {days} days" : "Certifikát pre {host} vyprší o {days} dní",
     "Contact via Talk" : "Rozhovor kontakt",
     "Open Talk" : "Začať Rozhovor",

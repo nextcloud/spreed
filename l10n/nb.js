@@ -105,6 +105,7 @@ OC.L10N.register(
     "Call back" : "Ring tilbake",
     "A group call has started in {call}" : "En gruppesamtale har startet i {call}",
     "Open settings" : "Åpne innstillinger",
+    "error" : "feil",
     "Conversations" : "Samtaler",
     "{user}" : "{bruker}",
     "Messages" : "Meldinger",

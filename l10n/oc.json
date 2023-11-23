@@ -216,6 +216,7 @@
     "Someone tried to request the password to access {file}" : "Qualqu’un ensagèt de demandar lo senhal per accedir a {file}",
     "Open settings" : "Dobrir los paramètres",
     "The hosted signaling server is now configured and will be used." : "Lo servidor de senhalament albergat es ara configurat e serà utilizat.",
+    "error" : "error",
     "Contact via Talk" : "Contactar via Talk",
     "Open Talk" : "Dobrir la conversacion",
     "Conversations" : "Discussions",

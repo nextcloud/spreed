@@ -231,6 +231,7 @@ OC.L10N.register(
     "{email} tried to request the password to access {file}" : "{email} yritti pyytää salasanaa päästäkseen tiedostoon {file}",
     "Someone is requesting the password to access {file}" : "Joku pyytää salasanaa päästäkseen tiedostoon {file}",
     "Open settings" : "Avaa asetukset",
+    "error" : "virhe",
     "The certificate of {host} expires in {days} days" : "Palvelimen {host} varmenne vanhenee {days} päivän kuluttua",
     "The certificate of {host} expired" : "Palvelimen {host} varmenne vanheni",
     "Open Talk" : "Avaa Talk",

@@ -320,6 +320,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Gostiteljski signalni strežnik je nastavljen in bo v uporabi.",
     "The hosted signaling server was removed and will not be used anymore." : "Gostiteljski signalni strežnik je bil odstranjen in ne bo več v uporabi.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Račun gostiteljskega signalnega strežnika je spremenjen iz stanja  »{oldstatus}« v »{newstatus}«.",
+    "error" : "napaka",
     "The certificate of {host} expired" : "Potrdilo gostitelja {host} je poteklo",
     "Contact via Talk" : "Stopi v stik s Talk",
     "Open Talk" : "Odpri Talk",

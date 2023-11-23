@@ -25,6 +25,7 @@ OC.L10N.register(
     "Join call" : "Unirse a la llamada",
     "A group call has started in {call}" : "Una llamada en grupo ha iniciado en {call}",
     "Open settings" : "Abrir configuraciones",
+    "error" : "error",
     "Conversations" : "Conversaciones",
     "Avatar image is not square" : "La imagen del avatar no es un cuadrado",
     "Invalid date, date format must be YYYY-MM-DD" : "La fecha es inválida, por favor sigue el formato AAAA-MM-DD",

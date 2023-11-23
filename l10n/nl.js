@@ -252,6 +252,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "De gehoste signaleringsserver is nu geconfigureerd en zal worden gebruikt.",
     "The hosted signaling server was removed and will not be used anymore." : "De gehoste signaleringsserver is verwijderd en zal niet meer worden gebruikt.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Het account van gehoste signaleringsserver heeft de status gewijzigd van \"{oldstatus}\" naar \"{newstatus}\".",
+    "error" : "fout",
     "Contact via Talk" : "Contacteer via Talk",
     "Open Talk" : "Open Talk",
     "Conversations" : "Gesprekken",

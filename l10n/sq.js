@@ -11,6 +11,7 @@ OC.L10N.register(
     "Accept" : "Prano",
     "Decline" : "Refuzo",
     "Open settings" : "Hap rregullimet",
+    "error" : "gabim",
     "Conversations" : "Bisedat",
     "Avatar image is not square" : "Imazhi avatar nuk është katror",
     "Andorra" : "Andorra",

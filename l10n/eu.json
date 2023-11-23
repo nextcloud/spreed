@@ -299,6 +299,7 @@
     "The hosted signaling server is now configured and will be used." : "Ostataturiko seinalizazio zerbitzaria konfiguratu da eta erabili egingo da.",
     "The hosted signaling server was removed and will not be used anymore." : "Ostataturiko seinalizazio zerbitzaria kendu egin da eta ez da gehiago erabiliko.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Ostataturiko seinalizazio zerbitzariaren kontua aldatu egin da \"{oldstatus}\" izatetik \"{newstatus}\" izatera.",
+    "error" : "errorea",
     "Contact via Talk" : "Jarri harremanetan Talk bidez",
     "Open Talk" : "Ireki Talk",
     "Conversations" : "Elkarrizketak",

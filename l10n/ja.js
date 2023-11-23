@@ -280,6 +280,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "ホストされたシグナリングサーバーが設定され、使用されるようになります。",
     "The hosted signaling server was removed and will not be used anymore." : "ホストされたシグナリングサーバーが削除され、使用できないようになります。",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "ホストされたシグナリングサーバーのアカウントのステータスが\"{oldstatus}\"から\"{newstatus}\"に変更されました。",
+    "error" : "エラー",
     "Contact via Talk" : "Talk経由で連絡",
     "Open Talk" : "公開トーク",
     "Conversations" : "会話",

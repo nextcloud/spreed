@@ -330,6 +330,7 @@
     "The hosted signaling server is now configured and will be used." : "이제 호스트된 시그널링 서버가 구성되었으며 사용됩니다.",
     "The hosted signaling server was removed and will not be used anymore." : "호스트된 시그널링 서버가 제거되었으며 더 이상 사용되지 않습니다.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "호스트된 신호 서버 계정 상태를 \"{oldstatus}\" 에서  \"{newstatus}\" 로 변경했습니다.",
+    "error" : "오류",
     "The certificate of {host} expires in {days} days" : "{host}의 인증서가 {days}일 후 만료됩니다.",
     "The certificate of {host} expired" : "{host}의 인증서가 만료되었습니다.",
     "Contact via Talk" : "토크로 연락",

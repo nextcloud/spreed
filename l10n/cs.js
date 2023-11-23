@@ -350,6 +350,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Nyní je nastavený hostovaný signalizační server a bude použit.",
     "The hosted signaling server was removed and will not be used anymore." : "Hostovaný signální server byl odebrán a už nebude používán.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Stav účtu na hostovaném signalizačním serveru se změnil z „{oldstatus}“ na „{newstatus}“.",
+    "pending" : "čeká",
     "The certificate of {host} expires in {days} days" : "Certifikátu {host} skončí platnost za {days} dny/ů",
     "The certificate of {host} expired" : "Platnost certifikátu {host} skončila",
     "Contact via Talk" : "Kontakt přes Talk",

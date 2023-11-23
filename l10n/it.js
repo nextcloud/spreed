@@ -237,6 +237,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Il server di segnalazione ospitato è ora configurato e sarà utilizzato.",
     "The hosted signaling server was removed and will not be used anymore." : "Il server di segnalazione ospitato è stato rimosso e non sarà più utilizzato.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "L'account del server di segnalazione ospitato ha modificato lo stato da \"{oldstatus}\" a \"{newstatus}\".",
+    "error" : "errore",
     "Contact via Talk" : "Contatto tramite Talk",
     "Open Talk" : "Apri Talk",
     "Conversations" : "Conversazioni",
