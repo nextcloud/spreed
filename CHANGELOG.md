@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.8 – 2023-11-23
+### Fixed
+- fix(settings): Remove non-working notification settings for guests
+  [#10976](https://github.com/nextcloud/spreed/issues/10976)
+- fix(settings): Fix option to request an HPB trial
+  [#10967](https://github.com/nextcloud/spreed/issues/10967)
+- fix(settings): Fail recording server test when an HPB was given as recording backend
+  [#10950](https://github.com/nextcloud/spreed/issues/10950)
+- fix(chat): Hide delete option for guests
+  [#10807](https://github.com/nextcloud/spreed/issues/10807)
+
 ## 16.0.7 – 2023-10-27
 ### Changed
 - Update dependencies
