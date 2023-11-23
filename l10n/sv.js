@@ -339,6 +339,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Hosted signaling server är nu konfigurerad och kommer att användas.",
     "The hosted signaling server was removed and will not be used anymore." : "Hosted signaling server blev borttagen och kommer inte användas längre",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Kontot för Hosted signaling server ändrades med status från \"{oldstatus}\" till \"{newstatus}\".",
+    "error" : "fel",
     "The certificate of {host} expires in {days} days" : "Certifikatet till {host} går ut om {days} dagar",
     "The certificate of {host} expired" : "Certifikatet till {host} har gått ut",
     "Contact via Talk" : "Kontakt via Talk",

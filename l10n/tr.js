@@ -350,6 +350,8 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Barındırılan signaling sunucusu yapılandırıldı ve kullanılmaya hazır.",
     "The hosted signaling server was removed and will not be used anymore." : "Barındırılan signaling sunucusu silindi ve kullanımdan kaldırıldı.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Barındırılan signaling sunucu hesabının \"{oldstatus}\" olan durumu \"{newstatus}\" olarak değiştirildi.",
+    "pending" : "Bekliyor",
+    "error" : "sorun",
     "The certificate of {host} expires in {days} days" : "{host} sertifikasının geçerlilik süresi {days} gün içinde dolacak",
     "The certificate of {host} expired" : "{host} sertifikasının geçerlilik süresi doldu",
     "Contact via Talk" : "Talk ile görüşün",

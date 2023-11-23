@@ -89,6 +89,7 @@ OC.L10N.register(
     "Call back" : "להתקשר בחזרה",
     "A group call has started in {call}" : "החלה שיחה קבוצתית תחת {call}",
     "Open settings" : "פתיחת הגדרות",
+    "error" : "שגיאה",
     "Conversations" : "דיונים",
     "{user}" : "{user}",
     "Messages" : "הודעות",

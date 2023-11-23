@@ -335,6 +335,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Выделенный сервер сигнализации настроен и готов к использованию.",
     "The hosted signaling server was removed and will not be used anymore." : "Конфигурация выделенного сервера сигнализации удалена и не будет использоваться более.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Состояние учётной записи выделенного сервера сигнализации изменено с «{oldstatus}» на «{newstatus}».",
+    "error" : "ошибка",
     "The certificate of {host} expires in {days} days" : "Сертификат {host} истечет через {days} дней",
     "The certificate of {host} expired" : "Сертификат {host} истёк",
     "Contact via Talk" : "Связаться через Конференции",

@@ -215,6 +215,7 @@ OC.L10N.register(
     "Open settings" : "Отвори параметри",
     "The hosted signaling server is now configured and will be used." : "Signaling сервер е конфигуриран и сега ќе се користи.",
     "The hosted signaling server was removed and will not be used anymore." : "Signaling серверот е избришан и нема да се користи повеќе.",
+    "error" : "грешка",
     "Contact via Talk" : "Разговор",
     "Open Talk" : "Започни разговор",
     "Conversations" : "Разговори",

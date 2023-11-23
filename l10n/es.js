@@ -342,6 +342,8 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "El servidor de señalización gestionado ya está configurado y en uso.",
     "The hosted signaling server was removed and will not be used anymore." : "El servidor de señalización gestionado se ha eliminado y ya no se usará.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "La cuenta del servidor de señalización gestionado ha cambiado el estado de «{oldstatus}» a «{newstatus}».",
+    "pending" : "pendiente",
+    "error" : "error",
     "The certificate of {host} expires in {days} days" : "El certificado de {host} expira en {days} días",
     "The certificate of {host} expired" : "El certificado de {host} expiró",
     "Contact via Talk" : "Contacta vía Talk",

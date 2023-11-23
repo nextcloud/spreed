@@ -210,6 +210,7 @@
     "The hosted signaling server is now configured and will be used." : "Su serbidore de signalatzione retzidu immoe est cunfiguradu e podet èssere impreadu.",
     "The hosted signaling server was removed and will not be used anymore." : "Si nch'at bogadu su serbidore de signalatzione retzidu e non s'at a podère impreare prus.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Su contu de su  serbidore de signalatzione retzidu at cambiadu s'istadu dae \"{oldstatus}\" a \"{newstatus}\".",
+    "error" : "errore",
     "Conversations" : "Cunversatziones",
     "{user}" : "{user}",
     "Messages" : "Messàgios",
