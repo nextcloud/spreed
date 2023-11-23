@@ -22,7 +22,7 @@
  -->
 
 <template>
-	<section id="recording_server" class="videocalls section">
+	<section id="recording_server" class="recording-servers section">
 		<h2>
 			{{ t('spreed', 'Recording backend') }}
 		</h2>
@@ -235,8 +235,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form__textfield {
-	width: 300px;
+.recording-servers {
+	.form__textfield {
+		width: 300px;
+	}
 }
 
 .additional-top-margin {

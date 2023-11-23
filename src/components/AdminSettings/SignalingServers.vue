@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<section id="signaling_server" class="videocalls section">
+	<section id="signaling_server" class="signaling-servers section">
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
 		</h2>
@@ -196,8 +196,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form__textfield {
-	width: 300px;
+.signaling-servers {
+	.form__textfield {
+		width: 300px;
+	}
 }
 
 .additional-top-margin {
