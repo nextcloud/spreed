@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<div id="sip-bridge" class="section">
+	<div id="sip-bridge" class="sip-bridge section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
 		<NcNoteCard v-if="!showForm" type="warning">
@@ -233,25 +233,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h3 {
-	margin-top: 24px;
-	font-weight: 600;
-}
-
-.form {
-	width: 300px;
-
-	&__textarea {
-		margin-bottom: 6px;
+.sip-bridge {
+	h3 {
+		margin-top: 24px;
+		font-weight: 600;
 	}
 
-	&__select {
-		margin-bottom: 12px;
-	}
+	.form {
+		width: 300px;
 
-	&__label {
-		display: block;
-		padding: 4px 0;
+		&__textarea {
+			margin-bottom: 6px;
+		}
+
+		&__select {
+			margin-bottom: 12px;
+		}
+
+		&__label {
+			display: block;
+			padding: 4px 0;
+		}
 	}
 }
 
