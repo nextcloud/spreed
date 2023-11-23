@@ -208,6 +208,7 @@
     "The hosted signaling server is now configured and will be used." : "Máy chủ báo hiệu hiện đã được định cấu hình và sẽ được sử dụng",
     "The hosted signaling server was removed and will not be used anymore." : "Máy chủ báo hiệu đã bị xóa và sẽ không được sử dụng nữa.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Tài khoản máy chủ báo hiệu đã thay đổi trạng thái từ \"{oldstatus}\" thành \"{newstatus}\".",
+    "error" : "Lỗi",
     "Conversations" : "Đàm thoại",
     "{user}" : "{user}",
     "Messages" : "Thông điệp",

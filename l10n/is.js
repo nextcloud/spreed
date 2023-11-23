@@ -98,6 +98,7 @@ OC.L10N.register(
     "Call back" : "Hringja til baka",
     "A group call has started in {call}" : "Hópsímtal er byrjað í {call}",
     "Open settings" : "Opna stillingar",
+    "error" : "villa",
     "Conversations" : "Samtöl",
     "Messages" : "Skilaboð",
     "Avatar image is not square" : "Auðkennismynd er ekki ferningslaga",

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Accept" : "ยอมรับ",
     "Decline" : "ปฏิเสธ",
     "Open settings" : "เปิดการตั้งค่า",
+    "error" : "ข้อผิดพลาด",
     "Invalid date, date format must be YYYY-MM-DD" : "วันที่ไม่ถูกต้อง รูปแบบวันที่จะต้องเป็น ปปปป-ดด-วว",
     "Conversation not found" : "ไม่พบการสนทนา",
     "Everyone" : "ทุกคน",

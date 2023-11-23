@@ -12,6 +12,7 @@ OC.L10N.register(
     "Accept" : "Aceptar",
     "Decline" : "Declinar",
     "Open settings" : "Abrir opciones",
+    "error" : "error",
     "Messages" : "Mensajes",
     "Avatar image is not square" : "La imagen del avatar no es un cuadrado",
     "Invalid date, date format must be YYYY-MM-DD" : "La fecha es inválida, favor de seguir el formato AAAA-MM-DD",

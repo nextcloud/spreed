@@ -330,6 +330,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "The hosted signaling server is now configured and will be used.",
     "The hosted signaling server was removed and will not be used anymore." : "The hosted signaling server was removed and will not be used anymore.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\".",
+    "error" : "خطا",
     "The certificate of {host} expires in {days} days" : "The certificate of {host} expires in {days} days",
     "The certificate of {host} expired" : "The certificate of {host} expired",
     "Contact via Talk" : "Contact via Talk",

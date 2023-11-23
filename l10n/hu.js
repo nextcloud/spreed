@@ -335,6 +335,8 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "A külső jelzőkiszolgáló beállításra került, és az lesz használva.",
     "The hosted signaling server was removed and will not be used anymore." : "A külső jelzőkiszolgáló beállításra került, és az lesz használva.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "A külső jelzőkiszolgáló fiókja „{oldstatus}” állapotról erre változott: „{newstatus}”.",
+    "pending" : "függőben",
+    "error" : "hiba",
     "The certificate of {host} expires in {days} days" : "A(z) {host} tanúsítványa {days} nap múlva lejárt",
     "The certificate of {host} expired" : "A(z) {host} tanúsítványa lejárt",
     "Contact via Talk" : "Beszélgetés",

@@ -224,6 +224,7 @@
     "The hosted signaling server is now configured and will be used." : "Signalni poslužitelj je konfiguriran i spreman za upotrebu.",
     "The hosted signaling server was removed and will not be used anymore." : "Signalni poslužitelj je uklonjen i neće se upotrebljavati.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Račun signalnog poslužitelja je promijenio status iz „{oldstatus}” u „{newstatus}”.",
+    "error" : "pogreška",
     "Contact via Talk" : "Kontaktirajte putem aplikacije Talk",
     "Open Talk" : "Otvori Talk",
     "Conversations" : "Razgovori",
