@@ -91,7 +91,7 @@ describe('fileUpload', () => {
 			const result = await findUniquePath(client, userRoot, path)
 
 			// Assert
-			expect(result).toBe(path)
+			expect(result).toStrictEqual({ uniquePath: path, suffix: 1 })
 			expect(client.exists).toHaveBeenCalledWith(userRoot + path)
 		})
 
@@ -108,7 +108,7 @@ describe('fileUpload', () => {
 			const result = await findUniquePath(client, userRoot, path)
 
 			// Assert
-			expect(result).toBe(uniquePath)
+			expect(result).toStrictEqual({ uniquePath, suffix: 3 })
 			expect(client.exists).toHaveBeenNthCalledWith(1, userRoot + path)
 			expect(client.exists).toHaveBeenNthCalledWith(2, userRoot + existingPath)
 			expect(client.exists).toHaveBeenNthCalledWith(3, userRoot + uniquePath)
@@ -128,7 +128,7 @@ describe('fileUpload', () => {
 			const result = await findUniquePath(client, userRoot, givenPath)
 
 			// Assert
-			expect(result).toBe(uniquePath)
+			expect(result).toStrictEqual({ uniquePath, suffix: 6 })
 			expect(client.exists).toHaveBeenNthCalledWith(1, userRoot + givenPath)
 			expect(client.exists).toHaveBeenNthCalledWith(2, userRoot + existingPath)
 			expect(client.exists).toHaveBeenNthCalledWith(3, userRoot + uniquePath)

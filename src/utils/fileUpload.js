@@ -30,7 +30,18 @@ const suffixRegex = / \(\d+\)$/
  * @return {string} file extension including the dot
  */
 const getFileExtension = function(path) {
-	return path.match(extensionRegex) ? path.match(extensionRegex)[0] : ''
+	return path.match(extensionRegex)?.[0] ?? ''
+}
+
+/**
+ * Returns the file suffix for the given path
+ *
+ * @param {string} path path
+ * @return {number} file suffix excluding the parenthesis
+ */
+const getFileSuffix = function(path) {
+	return parseInt(path.replace(extensionRegex, '')
+		.match(suffixRegex)?.[0]?.match(/\d+/)?.[0] ?? 1)
 }
 
 /**
@@ -65,22 +76,23 @@ const getFileNamePrompt = function(path) {
  * @param {string} userRoot user root path
  * @param {string} path The path whose existence in the destination is to
  * be checked
- * @return {string} The unique path
+ * @param {number} knownSuffix The suffix to start looking from
+ * @return {object} The unique path and suffix
  */
-const findUniquePath = async function(client, userRoot, path) {
+const findUniquePath = async function(client, userRoot, path, knownSuffix) {
 	// Return the input path if it doesn't exist in the destination folder
-	if (await client.exists(userRoot + path) === false) {
-		return path
+	if (!knownSuffix && await client.exists(userRoot + path) === false) {
+		return { uniquePath: path, suffix: getFileSuffix(path) }
 	}
 
 	const fileExtension = getFileExtension(path)
 	const fileName = extractFileName(path)
 
 	// Loop until a unique path is found
-	for (let number = 2; true; number++) {
-		const uniquePath = fileName + ` (${number})` + fileExtension
+	for (let suffix = knownSuffix + 1 || getFileSuffix(path) + 1; true; suffix++) {
+		const uniquePath = fileName + ` (${suffix})` + fileExtension
 		if (await client.exists(userRoot + uniquePath) === false) {
-			return uniquePath
+			return { uniquePath, suffix }
 		}
 	}
 }
@@ -130,6 +142,7 @@ export {
 	findUniquePath,
 	extractFileName,
 	getFileExtension,
+	getFileSuffix,
 	getFileNamePrompt,
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
