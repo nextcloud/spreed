@@ -392,19 +392,14 @@ export default {
 	grid-column-gap: 4px;
 	margin-bottom: 4px;
 
-	&__textfield {
-		height: 48px;
-
-		& :deep(.input-field__input) {
-			height: 48px !important;
-		}
-
+	& &__textfield {
 		&.error :deep(.input-field__input) {
 			border: 2px solid var(--color-error);
 		}
 	}
 
-	&__select {
+	& &__select {
+		margin-block-start: 6px;
 		min-width: unset;
 	}
 }
