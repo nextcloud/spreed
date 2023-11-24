@@ -253,7 +253,6 @@
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Esiet sveicināts Nextcloud Talk!\nŠajā sarunā jūs tiksit informēts par jaunām Nextcloud Talk iespējām.",
-    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Zvani, kuros ir vairāk nekā 4 dalībnieki bez ārējā paraksta servera, var saskarties ar savienojamības problēmām un radīt lielu slodzi iesaistītajām ierīcēm.",
     "Conversation name" : "Sarunas nosaukums"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }

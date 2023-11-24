@@ -338,7 +338,6 @@ OC.L10N.register(
     "Default" : "Defaŭlta",
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
-    "iOS app" : "iOS-aplikaĵo",
-    "More actions" : "Pliaj agoj"
+    "iOS app" : "iOS-aplikaĵo"
 },
 "nplurals=2; plural=(n != 1);");

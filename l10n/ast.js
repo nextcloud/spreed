@@ -16,6 +16,7 @@ OC.L10N.register(
     "Accept" : "Aceptar",
     "Decline" : "Refugar",
     "{user} invited you to a private conversation" : "{user} convidóte a una conversación privada",
+    "error" : "error",
     "Conversations" : "Conversaciones",
     "{user}" : "{user}",
     "The language is invalid." : "La llingua ye inválida.",
