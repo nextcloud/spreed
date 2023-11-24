@@ -8,6 +8,7 @@ OC.L10N.register(
     "Unknown filetype" : "Onbekende lêertipe",
     "Accept" : "Aanvaar",
     "Open settings" : "Open instellings",
+    "error" : "fout",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Verenigde Arabiese Emirate",
     "Afghanistan" : "Afghanistan",

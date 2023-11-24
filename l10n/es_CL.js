@@ -152,7 +152,6 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
-    "More actions" : "Más acciones",
     "Conversation name" : "Nombre de la conversación",
     "Rename conversation" : "Renombrar conversación"
 },
