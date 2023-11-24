@@ -256,7 +256,7 @@ export default {
 		},
 	},
 
-	emits: ['sent', 'failure'],
+	emits: ['sent', 'failure', 'upload'],
 
 	expose: ['focusInput'],
 
@@ -399,7 +399,8 @@ export default {
 
 	mounted() {
 		EventBus.$on('focus-chat-input', this.focusInput)
-		EventBus.$on('upload-start', this.handleUploadStart)
+		EventBus.$on('upload-start', this.handleUploadSideEffects)
+		EventBus.$on('upload-discard', this.handleUploadSideEffects)
 		EventBus.$on('retry-message', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token)
 
@@ -410,7 +411,8 @@ export default {
 
 	beforeDestroy() {
 		EventBus.$off('focus-chat-input', this.focusInput)
-		EventBus.$off('upload-start', this.handleUploadStart)
+		EventBus.$off('upload-start', this.handleUploadSideEffects)
+		EventBus.$off('upload-discard', this.handleUploadSideEffects)
 		EventBus.$off('retry-message', this.handleRetryMessage)
 	},
 
@@ -452,14 +454,14 @@ export default {
 			}
 		},
 
-		handleUploadStart() {
+		handleUploadSideEffects() {
 			if (this.upload) {
 				return
 			}
 			this.$nextTick(() => {
-				// reset main input in chat view after upload file with caption
+				// reset or fill main input in chat view from the store
 				this.text = this.$store.getters.currentMessageInput(this.token)
-				// refocus on upload start as the user might want to type again while the upload is running
+				// refocus input as the user might want to type further
 				this.focusInput()
 			})
 		},
@@ -481,9 +483,17 @@ export default {
 			}
 
 			if (this.upload) {
-				this.$emit('sent', this.text)
+				// Clear input content from store
 				this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: '' })
-				return
+
+				if (this.$store.getters.getInitialisedUploads(this.$store.getters.currentUploadId).length) {
+					// If dialog contains files to upload, delegate sending
+					this.$emit('upload', this.text)
+					return
+				} else {
+					// Dismiss dialog, process as normal message sending otherwise
+					this.$emit('sent')
+				}
 			}
 
 			if (this.hasText) {

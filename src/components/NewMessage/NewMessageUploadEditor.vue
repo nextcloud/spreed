@@ -82,7 +82,8 @@
 				:token="token"
 				:container="modalContainerId"
 				:aria-label="t('spreed', 'Post message')"
-				@sent="handleUpload"
+				@upload="handleUpload"
+				@sent="handleDismiss"
 				@failure="handleDismiss" />
 		</div>
 	</NcModal>
