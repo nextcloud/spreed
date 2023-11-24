@@ -549,8 +549,6 @@ OC.L10N.register(
     "Android app" : "Android-forrit",
     "iOS app" : "iOS-forrit",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkomin í Nextcloud Talk-spjallforritið!\nÍ þessum spjallþræði verður þú upplýst/ur um nýja eigileika sem tiltækir eru í Nextcloud Talk.",
-    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Athugaðu að samtöl með fleiri en 4 þátttakendum og án merkjasendingaþjóns geta orðið fyrir truflunum í tengingum ásamt því að valda miklu álagi á tengdum tækjum.",
-    "More actions" : "Fleiri aðgerðir",
     "Conversation name" : "Heiti samtals",
     "Rename conversation" : "Endurnefna samtal"
 },
