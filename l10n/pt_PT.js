@@ -340,7 +340,6 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bem-vindo ao Nextcloud Talk!\nNesta conversa será informado sobre novas funcionalidades disponíveis no Nextcloud Talk.",
-    "More actions" : "Mais acções",
     "Conversation name" : "Nome da conversação",
     "Rename conversation" : "Renomear conversação"
 },

@@ -600,10 +600,8 @@ OC.L10N.register(
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "ברוך בואך ל־Talk מבית Nextcloud!\nבדיון הזה נעדכן אותך בנוגע לתכונות החדשות שזמינות ב־Talk מבית Nextcloud.",
-    "More actions" : "פעולות נוספות",
     "Creating your conversation" : "הדיון שלך נוצר",
     "All set" : "הכול מוכן",
-    "Link copied to the clipboard!" : "הקישור הועתק ללוח הגזירים!",
     "Conversation name" : "שם דיון",
     "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
