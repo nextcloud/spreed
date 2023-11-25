@@ -61,6 +61,7 @@
     "- **Markdown** can now be used in _chat_ messages" : "- La syntaxe **Markdown** peut maintenant être utilisée dans la messagerie instantanée",
     "- Webhooks are now available to implement bots. See the documentation for more information https://nextcloud-talk.readthedocs.io/en/latest/bot-list/" : "- Les Webhooks sont maintenant disponibles pour créer des robots conversationnels. Voir la documentation pour plus d'informations : https://nextcloud-talk.readthedocs.io/en/latest/bot-list/",
     "- Set a reminder on a chat message to be notified later again" : "- Définir un rappel sur un message pour être notifié à nouveau plus tard",
+    "- Captions allow to send a message with a file at the same time" : "- Légendes permet d'envoyer un message avec un fichier en même temps",
     "There are currently no commands available." : "Aucune commande n'est disponible actuellement.",
     "The command does not exist" : "Cette commande n'existe pas.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Une erreur s'est produite lors de l'exécution de la commande. Veuillez demander à un administrateur de vérifier les logs.",
