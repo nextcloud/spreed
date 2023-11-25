@@ -3,6 +3,7 @@ import util from 'util'
 import adapter from 'webrtc-adapter'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
+import { isSafari } from '../../../utils/browserCheck.js'
 
 /**
  * @param {object} stream the stream object.
@@ -831,7 +832,10 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 			return
 		}
 
-		if (sender.track && newTrack && !newTrack.enabled) {
+		// When replacing with a null track on Safari the reference to the track is
+		// lost (setting trackDisabled is not enough). Therefore we keep the track
+		// intact and don't replace it with a null track.
+		if (sender.track && newTrack && !newTrack.enabled && !isSafari) {
 			// Replace with a null track to stop the sender.
 			newTrack = null
 		}
@@ -871,6 +875,8 @@ Peer.prototype.handleSentTrackEnabledChanged = function(track, stream) {
 		this.handleSentTrackReplacedBound(track, track, stream)
 	} else if (!track.enabled && sender) {
 		this.handleSentTrackReplacedBound(track, track, stream)
+	} else if (!sender && !stoppedSender) {
+		console.error('No sender found to handle localTrackEnabledChanged', track, stream)
 	}
 }
 
