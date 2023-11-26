@@ -768,6 +768,8 @@ OC.L10N.register(
     "Yes" : "Ja",
     "Do you really want to delete \"{displayName}\"?" : "Vill du verkligen radera \"{displayName}\"?",
     "Submit" : "Skicka",
+    "_%n day_::_%n days_" : ["%n dag","%n dagar"],
+    "_%n week_::_%n weeks_" : ["%n vecka","%n veckor"],
     "Password protection" : "Lösenordsskydd",
     "Enter new password" : "Ange nytt lösenord",
     "Copy conversation link" : "Kopiera konversationslänk",

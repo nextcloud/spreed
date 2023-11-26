@@ -993,6 +993,7 @@ OC.L10N.register(
     "Go to conversation" : "会話へ行く",
     "Choose a conversation to forward the selected message." : "会話を選択して、選択したメッセージを転送します。",
     "Error while forwarding message" : "メッセージの転送中にエラーが発生しました",
+    "Translate from" : "翻訳元の言語",
     "Your browser does not support playing audio files" : "このブラウザーはオーディオファイルの再生をサポートしていません。",
     "Contact" : "連絡先",
     "{stack} in {board}" : "{board} 内の {stack}",
