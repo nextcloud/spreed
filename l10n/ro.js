@@ -653,6 +653,7 @@ OC.L10N.register(
     "Search …" : "Caută ...",
     "The meeting will start soon" : "Întâlnirea va începe în curând",
     "Devices" : "Dispozitive",
+    "Blur" : "Blurează",
     "Upload" : "Încărcare",
     "Files" : "Fișiere",
     "File to share" : "Fișier de partajat",
