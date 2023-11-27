@@ -41,8 +41,8 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import browserCheck from './mixins/browserCheck.js'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
+import { checkBrowser } from './utils/browserCheck.js'
 
 export default {
 
@@ -51,10 +51,6 @@ export default {
 	components: {
 		NcButton,
 	},
-
-	mixins: [
-		browserCheck,
-	],
 
 	props: {
 		shareToken: {
@@ -89,8 +85,7 @@ export default {
 
 	methods: {
 		async requestPassword() {
-			// see browserCheck mixin
-			this.checkBrowser()
+			checkBrowser()
 
 			this.hasRequestFailed = false
 			this.isRequestLoading = true
