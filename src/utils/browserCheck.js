@@ -29,21 +29,9 @@ import { translate as t } from '@nextcloud/l10n'
 const parser = new UAParser()
 const browser = parser.getBrowser()
 
-const getBrowserVersion = () => {
-	if (browser.version) {
-		return browser.version
-	}
-
-	if (browser.name === 'Safari') {
-		// Workaround for https://github.com/faisalman/ua-parser-js/issues/599
-		const match = parser.getUA().match(' Version/([0-9.,]+) ')
-		if (match) {
-			return match[1]
-		}
-	}
-
-	return undefined
-}
+/**
+ * Per-browser flags and a major version
+ */
 
 export const isFirefox = browser.name === 'Firefox'
 export const isChrome = browser.name === 'Chrome' || browser.name === 'Chromium'
@@ -54,8 +42,7 @@ export const isBrave = browser.name === 'Brave'
 export const isIE = browser.name === 'IE' || browser.name === 'IEMobile'
 export const isYandex = browser.name === 'Yandex'
 
-export const browserVersion = getBrowserVersion()
-export const majorVersion = browserVersion ? parseInt(browserVersion.split('.')[0], 10) : 0
+export const majorVersion = browser.version ? parseInt(browser.version.split('.')[0], 10) : 0
 
 /**
  * Is the browser fully supported by Talk
@@ -86,7 +73,7 @@ export const unsupportedWarning = t('spreed', "The browser you're using is not f
  * Show an error toast if the browser is not fully supported
  */
 export function checkBrowser() {
-	console.info('Detected browser ' + browser.name + ' ' + majorVersion + ' (' + browserVersion + ')')
+	console.info('Detected browser ' + browser.name + ' ' + majorVersion + ' (' + browser.version + ')')
 	if (!isFullySupported) {
 		showError(unsupportedWarning, { timeout: TOAST_PERMANENT_TIMEOUT })
 	}
