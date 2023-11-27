@@ -263,6 +263,7 @@ const actions = {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
 		}
+		EventBus.$emit('upload-discard')
 
 		commit('discardUpload', { uploadId })
 	},
