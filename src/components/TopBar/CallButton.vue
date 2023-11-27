@@ -30,7 +30,7 @@
 				autoHide: false,
 				html: true
 			}"
-			:disabled="startCallButtonDisabled || loading || blockCalls"
+			:disabled="startCallButtonDisabled || loading"
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
@@ -238,6 +238,7 @@ export default {
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
 				|| !this.currentConversationIsJoined
+				|| blockCalls
 		},
 
 		leaveCallLabel() {
