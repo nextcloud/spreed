@@ -52,13 +52,13 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import LoadingComponent from './components/LoadingComponent.vue'
 
-import browserCheck from './mixins/browserCheck.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import { EventBus } from './services/EventBus.js'
 import { getFileConversation } from './services/filesIntegrationServices.js'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
+import { checkBrowser } from './utils/browserCheck.js'
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -77,7 +77,6 @@ export default {
 	},
 
 	mixins: [
-		browserCheck,
 		sessionIssueHandler,
 	],
 
@@ -171,8 +170,7 @@ export default {
 
 	methods: {
 		async joinConversation() {
-			// see browserCheck mixin
-			this.checkBrowser()
+			checkBrowser()
 
 			try {
 				await this.getFileConversation()
