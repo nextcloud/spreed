@@ -96,11 +96,11 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
-import browserCheck from '../../mixins/browserCheck.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import participant from '../../mixins/participant.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.js'
+import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
 
 export default {
 	name: 'CallButton',
@@ -120,7 +120,6 @@ export default {
 	},
 
 	mixins: [
-		browserCheck,
 		isInLobby,
 		participant,
 	],
@@ -269,6 +268,16 @@ export default {
 
 		isBreakoutRoom() {
 			return this.conversation.objectType === 'room'
+		},
+
+		callButtonTooltipText() {
+			if (blockCalls) {
+				return unsupportedWarning
+			} else {
+				// Passing a falsy value into the content of the tooltip
+				// is the only way to disable it conditionally.
+				return false
+			}
 		},
 	},
 
