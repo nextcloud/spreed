@@ -313,7 +313,8 @@ export default {
 			} else if (!this.currentConversationIsJoined) {
 				return t('spreed', 'Joining conversation …')
 			} else {
-				return t('spreed', 'Write message, @ to mention someone …')
+				// Use the default placeholder
+				return undefined
 			}
 		},
 
