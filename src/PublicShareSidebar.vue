@@ -68,7 +68,6 @@ import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
-import browserCheck from './mixins/browserCheck.js'
 import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
@@ -77,6 +76,7 @@ import { getPublicShareConversationData } from './services/filesIntegrationServi
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
+import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
@@ -95,7 +95,6 @@ export default {
 	},
 
 	mixins: [
-		browserCheck,
 		sessionIssueHandler,
 		participant,
 		talkHashCheck,
@@ -160,8 +159,7 @@ export default {
 	methods: {
 
 		async joinConversation() {
-			// see browserCheck mixin
-			this.checkBrowser()
+			checkBrowser()
 
 			this.joiningConversation = true
 

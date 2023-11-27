@@ -57,7 +57,6 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
-import browserCheck from './mixins/browserCheck.js'
 import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
@@ -65,6 +64,7 @@ import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
+import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
@@ -81,7 +81,6 @@ export default {
 	},
 
 	mixins: [
-		browserCheck,
 		talkHashCheck,
 		sessionIssueHandler,
 		participant,
@@ -474,8 +473,7 @@ export default {
 
 	async mounted() {
 		if (!IS_DESKTOP) {
-			// see browserCheck mixin
-			this.checkBrowser()
+			checkBrowser()
 		}
 		// Check sidebar status in previous sessions
 		if (BrowserStorage.getItem('sidebarOpen') === 'false') {
