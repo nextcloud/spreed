@@ -510,7 +510,6 @@
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Add emoji" : "הוספת אמוג׳י",
     "Send message" : "שליחת הודעה",
-    "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Group" : "קבוצה",
     "Share files to the conversation" : "שיתוף קבצים לדיון",
     "Create new poll" : "יצירת סקר חדש",
@@ -601,6 +600,7 @@
     "Creating your conversation" : "הדיון שלך נוצר",
     "All set" : "הכול מוכן",
     "Conversation name" : "שם דיון",
+    "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"

@@ -459,7 +459,6 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Add emoji" : "Tilføj emoji",
     "Send message" : "Send besked",
-    "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Group" : "Gruppe",
     "Upload from device" : "Upload fra enhed",
     "Create new poll" : "Opret ny afstemning",
@@ -581,6 +580,7 @@ OC.L10N.register(
     "Creating your conversation" : "Opret din samtale",
     "All set" : "Samtalen er klar",
     "Conversation name" : "Samtalenavn",
+    "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
     "Rename conversation" : "Omdøb samtale",
     "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"
