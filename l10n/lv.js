@@ -197,7 +197,6 @@ OC.L10N.register(
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
     "Group" : "Grupa",
     "New file" : "Jauns fails",
     "Settings" : "Iestatījumi",
@@ -255,6 +254,7 @@ OC.L10N.register(
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Esiet sveicināts Nextcloud Talk!\nŠajā sarunā jūs tiksit informēts par jaunām Nextcloud Talk iespējām.",
-    "Conversation name" : "Sarunas nosaukums"
+    "Conversation name" : "Sarunas nosaukums",
+    "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
