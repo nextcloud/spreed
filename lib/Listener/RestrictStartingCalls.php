@@ -28,6 +28,7 @@ namespace OCA\Talk\Listener;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
@@ -54,6 +55,11 @@ class RestrictStartingCalls implements IEventListener {
 		}
 
 		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
+			return;
+		}
+
+		if ($event->getNewValue() === Participant::FLAG_DISCONNECTED
+			|| $event->getOldValue() !== Participant::FLAG_DISCONNECTED) {
 			return;
 		}
 
