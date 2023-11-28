@@ -512,7 +512,6 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Add emoji" : "הוספת אמוג׳י",
     "Send message" : "שליחת הודעה",
-    "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Group" : "קבוצה",
     "Share files to the conversation" : "שיתוף קבצים לדיון",
     "Create new poll" : "יצירת סקר חדש",
@@ -603,6 +602,7 @@ OC.L10N.register(
     "Creating your conversation" : "הדיון שלך נוצר",
     "All set" : "הכול מוכן",
     "Conversation name" : "שם דיון",
+    "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
 },

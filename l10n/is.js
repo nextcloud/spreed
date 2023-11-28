@@ -487,7 +487,6 @@ OC.L10N.register(
     "Yesterday" : "Í gær",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "Senda skilaboð",
-    "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
     "Group" : "Hópur",
     "Upload from device" : "Senda inn frá tæki",
     "Create new poll" : "Búa til nýja könnun",
@@ -561,6 +560,7 @@ OC.L10N.register(
     "iOS app" : "iOS-forrit",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkomin í Nextcloud Talk-spjallforritið!\nÍ þessum spjallþræði verður þú upplýst/ur um nýja eigileika sem tiltækir eru í Nextcloud Talk.",
     "Conversation name" : "Heiti samtals",
+    "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
     "Rename conversation" : "Endurnefna samtal"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

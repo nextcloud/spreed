@@ -621,7 +621,6 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Add emoji" : "Ouzhpennañ un emoji",
     "Send message" : "Kas ur gemenadenn",
-    "Write message, @ to mention someone …" : "Skrivañ ur gemenadenn, @ evit menegiñ unan bennak ...",
     "Group" : "Stollad",
     "Share files to the conversation" : "Rannañ restroù d'an diviz",
     "New file" : "Restr nevez",
@@ -750,6 +749,7 @@ OC.L10N.register(
     "Creating your conversation" : "Krouiñ ho diviz",
     "All set" : "Staliet pep tra",
     "Conversation name" : "Anv diviz",
+    "Write message, @ to mention someone …" : "Skrivañ ur gemenadenn, @ evit menegiñ unan bennak ...",
     "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Rename conversation" : "Adenvel an diviz",
     "Sending signaling message has failed." : "Kasadenn ar gemenadenn arhentañ a zo c'hwitet."
