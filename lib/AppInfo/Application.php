@@ -103,6 +103,7 @@ use OCA\Talk\Listener\UserDeletedListener;
 use OCA\Talk\Maps\MapsPluginLoader;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
+use OCA\Talk\Middleware\ParameterOutOfRangeMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\OCP\TalkBackend;
@@ -165,6 +166,7 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerMiddleWare(CanUseTalkMiddleware::class);
 		$context->registerMiddleWare(InjectionMiddleware::class);
+		$context->registerMiddleWare(ParameterOutOfRangeMiddleware::class);
 		$context->registerCapability(Capabilities::class);
 
 		// Listeners to load the UI and integrate it into other apps
