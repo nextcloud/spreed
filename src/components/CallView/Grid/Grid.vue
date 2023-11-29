@@ -680,7 +680,7 @@ export default {
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
-			debounce(this.makeGrid(), 200)
+			debounce(this.makeGrid, 200)
 		},
 
 		// Find the right size if the grid in rows and columns (we already know
