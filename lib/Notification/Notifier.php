@@ -224,6 +224,7 @@ class Notifier implements INotifier {
 			// we just looped over the participants to create the notification,
 			// they can not be removed between these 2 steps, but we can save
 			// n queries.
+			$participant = null;
 		} else {
 			try {
 				$participant = $this->getParticipant($room, $userId);
@@ -248,8 +249,8 @@ class Notifier implements INotifier {
 			return $this->parseInvitation($notification, $room, $l);
 		}
 		if ($subject === 'call') {
-			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
-				$participant instanceof Participant &&
+			if ($participant instanceof Participant &&
+				$room->getLobbyState() !== Webinary::LOBBY_NONE &&
 				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 				// User is blocked by the lobby, remove notification
 				throw new AlreadyProcessedException();
@@ -261,8 +262,8 @@ class Notifier implements INotifier {
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction' || $subject === 'reminder') {
-			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
-				$participant instanceof Participant &&
+			if ($participant instanceof Participant &&
+				$room->getLobbyState() !== Webinary::LOBBY_NONE &&
 				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 				// User is blocked by the lobby, remove notification
 				throw new AlreadyProcessedException();
