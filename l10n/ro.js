@@ -533,6 +533,7 @@ OC.L10N.register(
     "Expand" : "Extinde",
     "Conversation messages" : "Mesajele conversației",
     "Scroll to bottom" : "Derulează la sfârșit",
+    "You need to be logged in to upload files" : "Trebuie să fiți autentificat pentru a încărca fișiere",
     "This conversation is read-only" : "Această conversație este read-only",
     "Drop your files to upload" : "Trageți fișierele pentru încărcare",
     "Favorite" : "Favorite",
