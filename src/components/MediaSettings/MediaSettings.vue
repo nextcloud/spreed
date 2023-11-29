@@ -163,7 +163,7 @@
 					<template v-if="!silentCall">
 						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
-							:title="t('spreed', 'Call without notification')"
+							:name="t('spreed', 'Call without notification')"
 							@click="silentCall= true">
 							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
 							<template #icon>
@@ -174,7 +174,7 @@
 					<template v-else>
 						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
-							:title="t('spreed', 'Normal call')"
+							:name="t('spreed', 'Normal call')"
 							@click="silentCall= false">
 							{{ t('spreed', 'The conversation participants will be notified about this call') }}
 							<template #icon>
