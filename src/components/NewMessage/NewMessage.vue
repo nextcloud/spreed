@@ -54,6 +54,10 @@
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
+				<NewMessageAbsenceInfo v-if="userAbsence"
+					:user-absence="userAbsence"
+					:display-name="conversation.displayName" />
+
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker v-if="!disabled"
 						:container="container"
@@ -167,6 +171,7 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 
 import Quote from '../Quote.vue'
+import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
@@ -202,6 +207,7 @@ export default {
 		NcButton,
 		NcEmojiPicker,
 		NcRichContenteditable,
+		NewMessageAbsenceInfo,
 		NewMessageAttachments,
 		NewMessageAudioRecorder,
 		NewMessageNewFileDialog,
@@ -380,9 +386,14 @@ export default {
 		showAudioRecorder() {
 			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
 		},
+
 		showTypingStatus() {
 			return this.hasTypingIndicator && this.supportTypingStatus
 				&& this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
+		},
+
+		userAbsence() {
+			return this.chatExtrasStore.absence[this.token]
 		},
 	},
 
@@ -887,7 +898,7 @@ export default {
 	}
 
 	&__quote {
-		margin: 0 16px 12px 24px;
+		margin: 0 16px 12px;
 		background-color: var(--color-background-hover);
 		padding: 8px;
 		border-radius: var(--border-radius-large);
