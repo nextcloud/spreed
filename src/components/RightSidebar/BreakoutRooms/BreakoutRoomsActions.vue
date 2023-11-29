@@ -65,7 +65,7 @@
 				class="right"
 				:container="container">
 				<NcActionButton v-if="canModerate && isInBreakoutRoom"
-					:title="sendMessageLabel"
+					:name="sendMessageLabel"
 					:aria-label="sendMessageLabel"
 					@click="openSendMessageDialog">
 					<template #icon>
@@ -74,7 +74,7 @@
 					{{ sendMessageLabel }}
 				</NcActionButton>
 				<NcActionButton v-if="canModerate"
-					:title="manageBreakoutRoomsTitle"
+					:name="manageBreakoutRoomsTitle"
 					:aria-label="manageBreakoutRoomsTitle"
 					@click="openParticipantsEditor">
 					<template #icon>
