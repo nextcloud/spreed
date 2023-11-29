@@ -410,7 +410,6 @@ export default {
 
 <style lang="scss" scoped>
 .top-bar {
-	right: 12px; /* needed so we can still use the scrollbar */
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;

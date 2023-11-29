@@ -817,7 +817,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-	padding: 12px 0;
+	padding: 12px 12px 12px 0;
 	min-height: 69px;
 }
 
