@@ -75,7 +75,7 @@ const getParticipants = {
 		 */
 		onJoinedConversation() {
 			this.$nextTick(() => {
-				this.cancelableGetParticipants()
+				this.debounceUpdateParticipants()
 			})
 		},
 
@@ -86,7 +86,9 @@ const getParticipants = {
 				return
 			}
 
-			if (this.$store.getters.windowIsVisible()) {
+			// this.conversation is provided by component, where mixin is used
+			if (this.$store.getters.windowIsVisible()
+				&& (this.isInCall || !this.conversation?.hasCall)) {
 				this.debounceFastUpdateParticipants()
 			} else {
 				this.debounceSlowUpdateParticipants()
