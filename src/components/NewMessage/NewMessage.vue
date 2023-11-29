@@ -115,7 +115,7 @@
 					<!-- Silent send -->
 					<NcActionButton :close-after-click="true"
 						icon="icon-upload"
-						:title="t('spreed', 'Send without notification')"
+						:name="t('spreed', 'Send without notification')"
 						@click="handleSubmit({ silent: true })">
 						{{ silentSendInfo }}
 						<template #icon>
