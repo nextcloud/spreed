@@ -11018,7 +11018,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/note-to-self": {
             "get": {
                 "operationId": "room-get-note-to-self-conversation",
-                "summary": "Get the \"Note to self\" conversation for the user",
+                "summary": "Get the \"Personal notes\" conversation for the user",
                 "description": "It will be automatically created when it is currently missing",
                 "tags": [
                     "room"

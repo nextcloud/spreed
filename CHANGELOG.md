@@ -81,13 +81,13 @@ All notable changes to this project will be documented in this file.
   [#10889](https://github.com/nextcloud/spreed/issues/10889)
 - Fix uploading files after multiple hours without a page reload
   [#10877](https://github.com/nextcloud/spreed/issues/10877)
-- Don't throw an unhandled exception when mentioning `at-all` in "Note to self"
+- Don't throw an unhandled exception when mentioning `at-all` in "Personal notes"
   [#10881](https://github.com/nextcloud/spreed/issues/10881)
 - Fix SIP dialout not working after resolving license issue
   [#10914](https://github.com/nextcloud/spreed/issues/10914)
 - Fix issues with the session active state
   [#10876](https://github.com/nextcloud/spreed/issues/10876)
-- Clarify that "Note to self" and "Talk Updates" are system generated
+- Clarify that "Personal notes" and "Talk Updates" are system generated
   [#10884](https://github.com/nextcloud/spreed/issues/10884)
 
 ## 18.0.0-beta.2 – 2023-11-09
@@ -107,7 +107,7 @@ All notable changes to this project will be documented in this file.
 
 ## 18.0.0-beta.1 – 2023-11-02
 ### Added
-- 🗒️ Note to self
+- 🗒️ Personal notes
   [#2196](https://github.com/nextcloud/spreed/issues/2196)
 - 🎙️ Show speaker while screensharing
   [#4478](https://github.com/nextcloud/spreed/issues/4478)

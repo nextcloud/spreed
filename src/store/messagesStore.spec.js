@@ -1817,7 +1817,7 @@ describe('messagesStore', () => {
 				{
 					token: 'token-self',
 					type: 6,
-					displayName: 'Note to self',
+					displayName: 'Personal notes',
 				},
 				{
 					token: 'token-2',
@@ -1840,7 +1840,7 @@ describe('messagesStore', () => {
 			// Assert
 			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
-		test('forwards a message to Note to self when no token is given ', () => {
+		test('forwards a message to "Personal notes" when no token is given ', () => {
 			// Arrange
 			targetToken = 'token-self'
 			messageToBeForwarded = message1
@@ -1856,7 +1856,7 @@ describe('messagesStore', () => {
 			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 
-		test('generates Note to self when it does not exist ', async () => {
+		test('generates "Personal notes" when it does not exist ', async () => {
 			// Arrange
 			messageToBeForwarded = message1
 			messageExpected = cloneDeep(message1)

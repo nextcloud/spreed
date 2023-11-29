@@ -138,7 +138,7 @@ class Manager {
 			. $this->l->t('- Webhooks are now available to implement bots. See the documentation for more information https://nextcloud-talk.readthedocs.io/en/latest/bot-list/') . "\n"
 			. $this->l->t('- Set a reminder on a chat message to be notified later again'),
 			$this->l->t('## New in Talk %s', ['18']) . "\n"
-			. $this->l->t('- Use the **Note to self** conversation to take notes and share information between your devices') . "\n"
+			. $this->l->t('- Use the **Personal notes** conversation to take notes and share information between your devices') . "\n"
 			. $this->l->t('- Captions allow to send a message with a file at the same time') . "\n"
 			. $this->l->t('- Video of the speaker is now visible while sharing the screen and call reactions are animated'),
 		];

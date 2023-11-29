@@ -1272,7 +1272,7 @@ const actions = {
 	},
 
 	/**
-	 * Forwards message to a conversation. By default , the message is forwarded to Note to self.
+	 * Forwards message to a conversation. By default , the message is forwarded to "Personal notes".
 	 *
 	 * @param {object} context default store context;
 	 * will be forwarded;
@@ -1283,10 +1283,10 @@ const actions = {
 	async forwardMessage(context, { targetToken, messageToBeForwarded }) {
 		const message = cloneDeep(messageToBeForwarded)
 
-		// when there is no token provided, the message will be forwarded to the Note to self conversation
+		// when there is no token provided, the message will be forwarded to the "Personal notes" conversation
 		if (!targetToken) {
 			let noteToSelf = context.getters.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
-			// If Note to self doesn't exist, it will be regenerated
+			// If "Personal notes" doesn't exist, it will be regenerated
 			if (!noteToSelf) {
 				const response = await fetchNoteToSelfConversation()
 				noteToSelf = response.data.ocs.data

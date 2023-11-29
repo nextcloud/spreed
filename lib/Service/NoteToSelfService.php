@@ -87,7 +87,7 @@ class NoteToSelfService {
 	protected function createNoteToSelfConversation(IUser $user, string|int $previousValue): Room {
 		$room = $this->roomService->createConversation(
 			Room::TYPE_NOTE_TO_SELF,
-			$this->l->t('Note to self'),
+			$this->l->t('Personal notes'),
 			$user,
 			'note_to_self',
 			$user->getUID()

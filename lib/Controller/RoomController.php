@@ -391,7 +391,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * Get the "Note to self" conversation for the user
+	 * Get the "Personal notes" conversation for the user
 	 *
 	 * It will be automatically created when it is currently missing
 	 *

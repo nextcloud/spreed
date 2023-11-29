@@ -97,7 +97,7 @@
 						<template #icon>
 							<Note :size="20" />
 						</template>
-						{{ t('spreed', 'New personal note') }}
+						{{ t('spreed', 'Add personal notes') }}
 					</NcActionButton>
 
 					<NcActionButton close-after-click

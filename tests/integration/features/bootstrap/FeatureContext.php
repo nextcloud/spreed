@@ -300,7 +300,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($shouldFilter === '') {
 			$rooms = array_filter($rooms, function ($room) {
-				// Filter out "Talk updates" and "Note to self" conversations
+				// Filter out "Talk updates" and "Personal notes" conversations
 				return $room['type'] !== 4 && $room['type'] !== 6;
 			});
 		} elseif ($shouldFilter === 'note-to-self ') {
@@ -340,7 +340,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$rooms = $this->getDataFromResponse($this->response);
 
 		$rooms = array_filter($rooms, function ($room) {
-			// Filter out "Talk updates" and "Note to self" conversations
+			// Filter out "Talk updates" and "Personal notes" conversations
 			return $room['type'] !== 4 && $room['type'] !== 6;
 		});
 
@@ -592,7 +592,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$rooms = $this->getDataFromResponse($this->response);
 
 		$rooms = array_filter($rooms, function ($room) {
-			// Filter out "Talk updates" and "Note to self" conversations
+			// Filter out "Talk updates" and "Personal notes" conversations
 			return $room['type'] !== 4 && $room['type'] !== 6;
 		});
 

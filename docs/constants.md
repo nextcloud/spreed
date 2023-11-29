@@ -8,7 +8,7 @@
 * `3` Public
 * `4` Changelog
 * `5` Former "One to one" (When a user is deleted from the server or removed from all their conversations, `1` "One to one" rooms are converted to this type)
-* `6` Note to self 
+* `6` Personal notes
 
 ### Object types
 

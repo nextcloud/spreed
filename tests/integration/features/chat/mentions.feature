@@ -628,8 +628,8 @@ Feature: chat/mentions
     And user "participant1" creates note-to-self (v4)
     And user "participant1" sends message "Test @all" to room "participant1-note-to-self" with 201
     And user "participant1" is participant of the following note-to-self rooms (v4)
-      | id                        | type | name          |
-      | participant1-note-to-self | 6    | Note to self  |
+      | id                        | type | name           |
+      | participant1-note-to-self | 6    | Personal notes |
     Then user "participant1" sees the following messages in room "participant1-note-to-self" with 200
       | room                      | actorType | actorId      | actorDisplayName         | message                | messageParameters |
       | participant1-note-to-self | users     | participant1 | participant1-displayname | Test {mention-call1}   | "IGNORE"          |
