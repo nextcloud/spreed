@@ -1,6 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0-rc.2 – 2023-11-30
+### Added
+- feat(chat): Show the "Out of office" message in one-to-one conversations
+  [#11049](https://github.com/nextcloud/spreed/issues/11049)
+
+### Changed
+- Update several dependencies
+- Update translations
+
+### Fixed
+- fix(call): Try to fix Safari unmute after being muted for a longer time
+  [#11032](https://github.com/nextcloud/spreed/issues/11032)
+- fix(call): Reduce participant list update speed when you are not joining a call
+  [#11047](https://github.com/nextcloud/spreed/issues/11047)
+- fix(call): Remove O(n) queries when ending a call for everyone
+  [#11020](https://github.com/nextcloud/spreed/issues/11020)
+- fix(UI): Fix several missing headlines after nextcloud/vue update
+  [#11031](https://github.com/nextcloud/spreed/issues/11031)
+- fix(chat): Allow submitting the caption upload form without a file
+  [#11013](https://github.com/nextcloud/spreed/issues/11013)
+- fix(call): Fix undefined variable $participant when calling a conversation with lobby
+  [#11027](https://github.com/nextcloud/spreed/issues/11027)
+- fix(chat): Hide "Messages in current conversation" search filter when not in a chat
+  [#11054](https://github.com/nextcloud/spreed/issues/11054)
+
 ## 18.0.0-rc.1 – 2023-11-23
 ### Added
 - Allow drag'n'drop of files onto the caption dialog
