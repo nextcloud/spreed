@@ -25,6 +25,7 @@ import Vue from 'vue'
 
 import { setGuestUserName } from '../services/participantsService.js'
 import store from '../store/index.js'
+import { emit } from '@nextcloud/event-bus'
 
 export const useGuestNameStore = defineStore('guestName', {
 	state: () => ({
@@ -112,6 +113,7 @@ export const useGuestNameStore = defineStore('guestName', {
 				} else {
 					localStorage.removeItem('nick')
 				}
+				emit('talk:guest-name:added')
 
 			} catch (error) {
 				store.dispatch('setDisplayName', previousName)
