@@ -54,6 +54,10 @@
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
+				<NewMessageAbsenceInfo v-if="userAbsence"
+					:user-absence="userAbsence"
+					:display-name="conversation.displayName" />
+
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker v-if="!disabled"
 						:container="container"
@@ -167,6 +171,7 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 
 import Quote from '../Quote.vue'
+import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
@@ -177,6 +182,7 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
+import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
@@ -201,6 +207,7 @@ export default {
 		NcButton,
 		NcEmojiPicker,
 		NcRichContenteditable,
+		NewMessageAbsenceInfo,
 		NewMessageAttachments,
 		NewMessageAudioRecorder,
 		NewMessageNewFileDialog,
@@ -261,9 +268,11 @@ export default {
 	expose: ['focusInput'],
 
 	setup() {
+		const chatExtrasStore = useChatExtrasStore()
 		const settingsStore = useSettingsStore()
 
 		return {
+			chatExtrasStore,
 			settingsStore,
 			supportTypingStatus,
 		}
@@ -295,6 +304,10 @@ export default {
 
 		isReadOnly() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+		},
+
+		isOneToOneConversation() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
 		noChatPermission() {
@@ -373,9 +386,14 @@ export default {
 		showAudioRecorder() {
 			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
 		},
+
 		showTypingStatus() {
 			return this.hasTypingIndicator && this.supportTypingStatus
 				&& this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
+		},
+
+		userAbsence() {
+			return this.chatExtrasStore.absence[this.token]
 		},
 	},
 
@@ -388,13 +406,18 @@ export default {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
 		},
 
-		token(token) {
-			if (token) {
-				this.text = this.$store.getters.currentMessageInput(token)
-			} else {
-				this.text = ''
+		token: {
+			immediate: true,
+			handler(token) {
+				if (token) {
+					this.text = this.$store.getters.currentMessageInput(token)
+				} else {
+					this.text = ''
+				}
+				this.clearTypingInterval()
+
+				this.checkAbsenceStatus()
 			}
-			this.clearTypingInterval()
 		},
 	},
 
@@ -797,6 +820,26 @@ export default {
 		isMobile() {
 			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
+
+		async checkAbsenceStatus() {
+			if (!this.isOneToOneConversation) {
+				return
+			}
+
+			// TODO replace with status message id 'vacationing'
+			if (this.conversation.status === 'dnd') {
+				// Fetch actual absence status from server
+				await this.chatExtrasStore.getUserAbsence({
+					token: this.token,
+					userId: this.conversation.name,
+				})
+			} else {
+				// Remove stored absence status
+				this.chatExtrasStore.resetUserAbsence({
+					token: this.token,
+				})
+			}
+		}
 	},
 }
 </script>
@@ -817,7 +860,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-	padding: 12px 0;
+	padding: 12px 12px 12px 0;
 	min-height: 69px;
 }
 
@@ -855,7 +898,7 @@ export default {
 	}
 
 	&__quote {
-		margin: 0 16px 12px 24px;
+		margin: 0 16px 12px;
 		background-color: var(--color-background-hover);
 		padding: 8px;
 		border-radius: var(--border-radius-large);
