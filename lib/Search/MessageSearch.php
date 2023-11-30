@@ -75,7 +75,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	/**
 	 * @inheritDoc
 	 */
-	public function getOrder(string $route, array $routeParameters): int {
+	public function getOrder(string $route, array $routeParameters): ?int {
 		if (strpos($route, Application::APP_ID . '.') === 0) {
 			// Active app, prefer Talk results
 			return -2;
