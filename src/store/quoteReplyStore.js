@@ -77,7 +77,13 @@ const mutations = {
 	 */
 	setCurrentMessageInput(state, { token, text = null }) {
 		if (text !== null) {
-			Vue.set(state.currentMessageInput, token, text)
+			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
+			const temp = document.createElement('textarea')
+			temp.innerHTML = text?.replace(/&/gmi, '&amp;') || ''
+			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
+				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+
+			Vue.set(state.currentMessageInput, token, parsedText)
 		} else {
 			Vue.delete(state.currentMessageInput, token)
 		}
