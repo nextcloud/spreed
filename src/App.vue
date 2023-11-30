@@ -765,6 +765,11 @@ export default {
 			height: 100vh !important;
 		}
 	}
+
+	// TODO remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4760 regression is fixed
+	:deep(.checkbox-radio-switch__text) {
+		flex-shrink: 1;
+	}
 }
 
 </style>
