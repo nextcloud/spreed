@@ -47,14 +47,14 @@ class CurrentMessageSearch extends MessageSearch {
 	/**
 	 * @inheritDoc
 	 */
-	public function getOrder(string $route, array $routeParameters): int {
+	public function getOrder(string $route, array $routeParameters): ?int {
 		if ($route === 'spreed.Page.showCall') {
 			// In conversation, prefer this search results
 			return -3;
 		}
 
 		// We are not returning something anyway.
-		return 999;
+		return null;
 	}
 
 	protected function getSublineTemplate(): string {
