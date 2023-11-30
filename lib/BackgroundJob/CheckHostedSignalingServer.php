@@ -28,6 +28,7 @@ namespace OCA\Talk\BackgroundJob;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Service\HostedSignalingServerService;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -79,9 +80,17 @@ class CheckHostedSignalingServer extends TimedJob {
 		$accountId = new AccountId($accountId);
 		try {
 			$accountInfo = $this->hostedSignalingServerService->fetchAccountInfo($accountId);
-		} catch (HostedSignalingServerAPIException $e) { // API or connection issues
-			// do nothing and just try again later
-			return;
+		} catch (HostedSignalingServerAPIException $e) {
+			if ($e->getCode() === Http::STATUS_NOT_FOUND) {
+				// Account was deleted, so remove the information locally
+				$accountInfo = ['status' => 'deleted'];
+			} elseif ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
+				// Account is expired and deletion is pending unless it's reactivated.
+				$accountInfo = ['status' => 'expired'];
+			} else {
+				// API or connection issues - do nothing and just try again later
+				return;
+			}
 		}
 
 		$oldStatus = $oldAccountInfo['status'] ?? '';
@@ -92,15 +101,13 @@ class CheckHostedSignalingServer extends TimedJob {
 
 		// the status has changed
 		if ($oldStatus !== $newStatus) {
-			if ($oldStatus === 'active') {
+			if ($newStatus === 'deleted') {
 				// remove signaling servers if account is not active anymore
 				$this->config->deleteAppValue('spreed', 'signaling_mode');
 				$this->config->deleteAppValue('spreed', 'signaling_servers');
 
 				$notificationSubject = 'removed';
-			}
-
-			if ($newStatus === 'active') {
+			} elseif ($newStatus === 'active') {
 				// add signaling servers if account got active
 				$this->config->deleteAppValue('spreed', 'signaling_mode');
 				$this->config->setAppValue('spreed', 'signaling_servers', json_encode([

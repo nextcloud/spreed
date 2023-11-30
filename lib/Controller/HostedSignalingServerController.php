@@ -111,19 +111,25 @@ class HostedSignalingServerController extends OCSController {
 
 		try {
 			$this->hostedSignalingServerService->deleteAccount(new AccountId($accountId));
-
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account');
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-id');
-
-			// remove signaling servers if account is not active anymore
-			$this->config->deleteAppValue('spreed', 'signaling_mode');
-			$this->config->deleteAppValue('spreed', 'signaling_servers');
-
-			$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId);
-		} catch (HostedSignalingServerAPIException $e) { // API or connection issues
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (HostedSignalingServerAPIException $e) {
+			if ($e->getCode() === Http::STATUS_NOT_FOUND) {
+				// Account was deleted, so remove the information locally
+			} elseif ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
+				// Account is expired and deletion is pending unless it's reactivated.
+			} else {
+				// API or connection issues - do nothing and just try again later
+				return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
 		}
 
+		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account');
+		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-id');
+
+		// remove signaling servers if account is not active anymore
+		$this->config->deleteAppValue('spreed', 'signaling_mode');
+		$this->config->deleteAppValue('spreed', 'signaling_servers');
+
+		$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId);
 
 		return new DataResponse([], Http::STATUS_NO_CONTENT);
 	}
