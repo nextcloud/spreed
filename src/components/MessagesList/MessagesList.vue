@@ -1155,7 +1155,7 @@ export default {
 	position: relative;
 	flex: 1 0;
 	padding-top: 20px;
-	overflow-y: auto;
+	overflow-y: scroll;
 	overflow-x: hidden;
 	border-bottom: 1px solid var(--color-border);
 	transition: $transition;
