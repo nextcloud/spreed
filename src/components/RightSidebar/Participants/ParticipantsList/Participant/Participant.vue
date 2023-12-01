@@ -994,7 +994,7 @@ export default {
 				this.disabled = true
 				await callSIPHangupPhone(this.sessionIds[0])
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be hanged up'))
+				showError(t('spreed', 'Phone number could not be hung up'))
 				this.disabled = false
 			}
 		},
@@ -1006,7 +1006,7 @@ export default {
 					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER,
 				})
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be putted on hold'))
+				showError(t('spreed', 'Phone number could not be put on hold'))
 			}
 		},
 		async mutePhoneNumber() {
