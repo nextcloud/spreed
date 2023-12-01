@@ -981,7 +981,6 @@ export default {
 }
 
 .conversations-search {
-	padding: 3px 0;
 	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
