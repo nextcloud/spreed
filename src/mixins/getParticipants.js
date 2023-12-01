@@ -35,6 +35,8 @@ const getParticipants = {
 			participantsInitialised: false,
 			fetchingParticipants: false,
 			pendingChanges: false,
+			debounceFastUpdateParticipants: null,
+			debounceSlowUpdateParticipants: null,
 		}
 	},
 
@@ -43,6 +45,16 @@ const getParticipants = {
 			type: Boolean,
 			default: true,
 		},
+	},
+
+	created() {
+		this.debounceFastUpdateParticipants = debounce(function() {
+			this.cancelableGetParticipants()
+		}, 3000)
+
+		this.debounceSlowUpdateParticipants = debounce(function() {
+			this.cancelableGetParticipants()
+		}, 15000)
 	},
 
 	methods: {
@@ -96,24 +108,16 @@ const getParticipants = {
 			this.pendingChanges = false
 		},
 
-		debounceSlowUpdateParticipants: debounce(function() {
-			if (!this.fetchingParticipants) {
-				this.cancelableGetParticipants()
-			}
-		}, 15000),
-
-		debounceFastUpdateParticipants: debounce(function() {
-			if (!this.fetchingParticipants) {
-				this.cancelableGetParticipants()
-			}
-		}, 3000),
-
 		async cancelableGetParticipants() {
-			if (this.token === '' || this.isInLobby || !this.isModeratorOrUser) {
+			if (this.fetchingParticipants || this.token === '' || this.isInLobby || !this.isModeratorOrUser) {
 				return
 			}
 
 			this.fetchingParticipants = true
+
+			// Clear previously requested updates
+			this.debounceFastUpdateParticipants.clear()
+			this.debounceSlowUpdateParticipants.clear()
 
 			const response = await this.$store.dispatch('fetchParticipants', { token: this.token })
 			if (response) {
