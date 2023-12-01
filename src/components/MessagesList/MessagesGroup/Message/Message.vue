@@ -1087,7 +1087,7 @@ export default {
 		padding: 0 7px 0 7px;
 		text-align: center;
 		white-space: nowrap;
-
+		color: var(--color-text-light);
 		border-radius: var(--border-radius);
 		background-color: var(--color-main-background);
 	}
