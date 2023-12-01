@@ -136,7 +136,6 @@ class SignalingControllerTest extends TestCase {
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->clientService = $this->createMock(IClientService::class);
-		$this->throttler = $this->createMock(IThrottler::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->recreateSignalingController();
 	}
@@ -145,7 +144,6 @@ class SignalingControllerTest extends TestCase {
 		$this->controller = new CustomInputSignalingController(
 			'spreed',
 			$this->createMock(IRequest::class),
-			$this->serverConfig,
 			$this->config,
 			$this->signalingManager,
 			$this->session,
@@ -159,7 +157,6 @@ class SignalingControllerTest extends TestCase {
 			$this->dispatcher,
 			$this->timeFactory,
 			$this->clientService,
-			$this->throttler,
 			$this->logger,
 			$this->userId
 		);

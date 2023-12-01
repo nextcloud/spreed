@@ -57,6 +57,7 @@ use OCP\AppFramework\OCSController;
 use OCP\Federation\ICloudIdManager;
 use OCP\IRequest;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\Bruteforce\MaxDelayReached;
 
 class InjectionMiddleware extends Middleware {
 	protected bool $isTalkFederation = false;
@@ -316,7 +317,11 @@ class InjectionMiddleware extends Middleware {
 						$action = $protection->getAction();
 
 						if ('talkRoomToken' === $action) {
-							$this->throttler->sleepDelay($this->request->getRemoteAddress(), $action);
+							try {
+								$this->throttler->sleepDelayOrThrowOnMax($this->request->getRemoteAddress(), $action);
+							} catch (MaxDelayReached $e) {
+								throw new OCSException($e->getMessage(), Http::STATUS_TOO_MANY_REQUESTS);
+							}
 							$this->throttler->registerAttempt($action, $this->request->getRemoteAddress(), [
 								'token' => $this->request->getParam('token') ?? '',
 							]);
