@@ -71,6 +71,7 @@ export function useCombinedSystemMessage() {
 	 */
 	function createCombinedSystemMessage({ id, messages, type, collapsed }) {
 		const combinedMessage = cloneDeep(messages[0])
+		combinedMessage.id = messages[0].id + '_combined'
 
 		// Handle cases when users reconnected to the call
 		if (type === 'call_reconnected') {
