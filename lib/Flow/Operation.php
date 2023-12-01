@@ -126,9 +126,7 @@ class Operation implements IOperation {
 					$participant->getAttendee()->getActorId(),
 					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
-					null,
-					'',
-					false
+					rateLimitGuestMentions: false,
 				);
 			} catch (UnexpectedValueException|ParticipantNotFoundException|RoomNotFoundException) {
 				continue;
