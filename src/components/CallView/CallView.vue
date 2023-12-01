@@ -25,7 +25,9 @@
 		<ViewerOverlayCallView v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
-			:shared-data="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]" />
+			:shared-data="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]"
+			:screens="screens"
+			:local-shared-data="localSharedData" />
 
 		<template v-else>
 			<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
@@ -426,12 +428,16 @@ export default {
 			this.adjustSimulcastQuality()
 		},
 
-		speakers() {
-			this._setPromotedParticipant()
+		speakers(value) {
+			if (value) {
+				this._setPromotedParticipant()
+			}
 		},
 
-		screenSharingActive() {
-			this._setPromotedParticipant()
+		shownRemoteScreenPeerId(value) {
+			if (value) {
+				this._setPromotedParticipant()
+			}
 		},
 
 		screens() {
@@ -656,6 +662,8 @@ export default {
 
 			if (!this.screenSharingActive && this.speakers.length) {
 				this.sharedDatas[this.speakers[0].id].promoted = true
+			} else if (this.shownRemoteScreenPeerId) {
+				this.sharedDatas[this.shownRemoteScreenPeerId].promoted = true
 			}
 
 			this.adjustSimulcastQuality()

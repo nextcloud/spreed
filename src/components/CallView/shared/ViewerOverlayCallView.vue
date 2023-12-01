@@ -67,7 +67,18 @@
 							</NcButton>
 						</div>
 
-						<VideoVue v-if="model"
+						<!-- local screen -->
+						<Screen v-if="showLocalScreen"
+							:token="token"
+							:local-media-model="localModel"
+							:shared-data="localSharedData" />
+						<!-- remote screen -->
+						<Screen v-else-if="screens[model.attributes.peerId]"
+							:token="token"
+							:call-participant-model="model"
+							:shared-data="sharedData" />
+
+						<VideoVue v-else-if="model"
 							class="viewer-overlay__video"
 							:token="token"
 							:model="model"
@@ -92,11 +103,13 @@
 
 						<div class="viewer-overlay__bottom-bar">
 							<LocalAudioControlButton class="viewer-overlay__button"
+								:token="token"
 								:conversation="conversation"
 								:model="localModel"
 								nc-button-type="secondary"
 								disable-keyboard-shortcuts />
 							<LocalVideoControlButton class="viewer-overlay__button"
+								:token="token"
 								:conversation="conversation"
 								:model="localModel"
 								nc-button-type="secondary"
@@ -124,6 +137,7 @@ import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
 import VideoVue from './VideoVue.vue'
+import Screen from './Screen.vue'
 
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 
@@ -135,6 +149,7 @@ export default {
 		LocalAudioControlButton,
 		LocalVideoControlButton,
 		Portal,
+		Screen,
 		LocalVideo,
 		ChevronUp,
 		ChevronDown,
@@ -154,6 +169,7 @@ export default {
 			required: true,
 		},
 
+		// Promoted participant model
 		model: {
 			type: Object,
 			required: false,
@@ -177,6 +193,18 @@ export default {
 			required: false,
 			default: () => localCallParticipantModel,
 		},
+
+		localSharedData: {
+			type: Object,
+			required: true,
+			default: () => {}
+		},
+
+		screens: {
+			type: Array,
+			required: false,
+			default: () => [],
+		}
 	},
 
 	data() {
@@ -197,6 +225,14 @@ export default {
 
 		portalSelector() {
 			return this.$store.getters.isFullscreen() ? '#content-vue' : 'body'
+		},
+
+		hasLocalScreen() {
+			return !!this.localModel.attributes.localScreen
+		},
+
+		showLocalScreen() {
+			return this.hasLocalScreen && this.screens[0] === localCallParticipantModel.attributes.peerId
 		},
 	},
 
@@ -309,5 +345,9 @@ export default {
 .viewer-overlay__video {
 	position: relative;
 	height: 100%;
+}
+
+:deep(.screen) {
+	border-radius: calc(var(--default-clickable-area) / 4);
 }
 </style>
