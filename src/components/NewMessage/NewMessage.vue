@@ -393,7 +393,15 @@ export default {
 		},
 
 		userAbsence() {
-			return this.chatExtrasStore.absence[this.token]
+			const absence = this.chatExtrasStore.absence[this.token]
+			if (!absence) {
+				return null
+			}
+
+			const now = new Date()
+			const firstDay = new Date(absence.firstDay)
+			const lastDay = new Date(absence.lastDay)
+			return (now > firstDay && now < lastDay) ? absence : null
 		},
 	},
 
