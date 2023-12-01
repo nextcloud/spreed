@@ -248,7 +248,7 @@ const setTyping = (typing) => {
  * @param {string} userId user id
  */
 const getUserAbsence = async (userId) => {
-	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}', { userId }))
+	return axios.get(generateOcsUrl('/apps/dav/api/v1/outOfOffice/{userId}/now', { userId }))
 }
 
 export {
