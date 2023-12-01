@@ -25,6 +25,7 @@
 		:label="placeholderText"
 		:show-trailing-button="isFocused"
 		class="search-box"
+		pill
 		@focus="handleFocus"
 		@blur="handleBlur"
 		@update:value="updateValue"
@@ -178,15 +179,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// TODO remove styles after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4876 is merged
-.search-box {
-	:deep(.input-field__input) {
-		border-radius: var(--border-radius-pill);
-	}
-
-	:deep(.input-field__trailing-button) {
-		border-radius: var(--border-radius-pill) !important;
-	}
-}
-
 </style>
