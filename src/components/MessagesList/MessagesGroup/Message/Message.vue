@@ -239,10 +239,9 @@ the main body of the message as well as a quote.
 			@close="isTranslateDialogOpen = false" />
 
 		<div v-if="isLastReadMessage"
-			v-observe-visibility="lastReadMessageVisibilityChanged">
-			<div class="new-message-marker">
-				<span>{{ t('spreed', 'Unread messages') }}</span>
-			</div>
+			v-observe-visibility="lastReadMessageVisibilityChanged"
+			class="new-message-marker">
+			<span>{{ t('spreed', 'Unread messages') }}</span>
 		</div>
 	</li>
 </template>
@@ -1077,7 +1076,7 @@ export default {
 
 .new-message-marker {
 	position: relative;
-	margin: 20px 15px 20px -45px;
+	margin: 20px 15px;
 	border-top: 1px solid var(--color-border);
 
 	span {

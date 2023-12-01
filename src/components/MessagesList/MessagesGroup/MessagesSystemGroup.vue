@@ -104,6 +104,12 @@ export default {
 		}
 	},
 
+	computed: {
+		lastReadMessageId() {
+			return this.$store.getters.conversation(this.token)?.lastReadMessage
+		}
+	},
+
 	watch: {
 		messages: {
 			deep: true,
@@ -186,24 +192,28 @@ export default {
 			let lastMessage = null
 			let forceNextGroup = false
 			for (const message of messages) {
+				const isLastRead = message.id === this.lastReadMessageId
 				const groupingType = this.messagesShouldBeGrouped(message, lastMessage)
 				if (!groupingType || forceNextGroup) {
-					groups.push({ id: message.id, messages: [message], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
+					groups.push({ id: message.id, messages: [message], type: '', collapsed: this.groupIsCollapsed[message.id] ?? !isLastRead })
 					forceNextGroup = false
 				} else {
 					if (groupingType === 'call_reconnected') {
-						groups.push({ id: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
+						groups.push({ id: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: this.groupIsCollapsed[message.id] ?? !isLastRead })
 						forceNextGroup = true
 					}
 					groups.at(-1).messages.push(message)
 					groups.at(-1).type = groupingType
+					if (isLastRead) {
+						groups.at(-1).collapsed = false
+					}
 				}
 				lastMessage = message
 			}
 
 			groups.forEach(group => {
 				if (this.groupIsCollapsed[group.id] === undefined) {
-					this.groupIsCollapsed[group.id] = true
+					this.groupIsCollapsed[group.id] = group.collapsed
 				}
 			})
 			return groups
