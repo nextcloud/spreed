@@ -1287,6 +1287,7 @@ OC.L10N.register(
     "The participant will not be notified about this message" : "參與者不會收到有關此訊息的通知",
     "The participants will not be notified about this message" : "參與者不會收到有關此訊息的通知",
     "Group" : "群組",
+    "{user} is out of office and might not respond." : "{user} 不在辦公室，可能不會回覆。",
     "Share files to the conversation" : "在對話中分享文件",
     "Upload from device" : "從裝置上傳",
     "Create new poll" : "創建新民意調查",
@@ -1391,8 +1392,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "無法更改 {displayName} 的權限",
     "Permissions removed for {displayName}" : "移除了 {displayName} 的權限",
     "Permissions set to default for {displayName}" : "{displayName} 的權限設置為默認值",
-    "Phone number could not be hanged up" : "無法掛斷電話",
-    "Phone number could not be putted on hold" : "無法暫停電話通話",
     "Phone number could not be muted" : "無法將電話靜音",
     "Phone number could not be unmuted" : "無法取消電話靜音",
     "DTMF message could not be sent" : "無法傳送 DTMF 訊息",
@@ -1731,6 +1730,8 @@ OC.L10N.register(
     "Post to conversation" : "發佈到對話",
     "Sending signaling message has failed." : "發送信令訊息失敗。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "配置的信令伺服器需要更新才能兼容此版本的 Talk。 請聯絡您的管理員。",
-    "Setup summary" : "設定摘要"
+    "Setup summary" : "設定摘要",
+    "Phone number could not be hanged up" : "無法掛斷電話",
+    "Phone number could not be putted on hold" : "無法暫停電話通話"
 },
 "nplurals=1; plural=0;");
