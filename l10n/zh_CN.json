@@ -1379,8 +1379,6 @@
     "Could not modify permissions for {displayName}" : "无法更改 {displayName} 的权限",
     "Permissions removed for {displayName}" : "移除了 {displayName} 的权限",
     "Permissions set to default for {displayName}" : "{displayName} 权限已设为默认值",
-    "Phone number could not be hanged up" : "电话挂断失败",
-    "Phone number could not be putted on hold" : "设置呼叫保持失败",
     "Phone number could not be muted" : "对电话号码静音失败",
     "Phone number could not be unmuted" : "取消电话号码静音失败",
     "DTMF message could not be sent" : "无法发送 DTMF 消息",
@@ -1718,6 +1716,8 @@
     "Post to conversation" : "发布到对话中",
     "Sending signaling message has failed." : "发送信令消息失败。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "需要更新配置的信令服务器，使其与该版本的通话应用兼容。请与管理员联系。",
-    "Setup summary" : "设置概览"
+    "Setup summary" : "设置概览",
+    "Phone number could not be hanged up" : "电话挂断失败",
+    "Phone number could not be putted on hold" : "设置呼叫保持失败"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

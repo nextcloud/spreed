@@ -1287,6 +1287,7 @@ OC.L10N.register(
     "The participant will not be notified about this message" : "Учесник неће бити обавештен о овој поруци",
     "The participants will not be notified about this message" : "Учесници неће бити обавештени о овој поруци",
     "Group" : "Група",
+    "{user} is out of office and might not respond." : "{user} је ван канцеларије у можда неће одговорити.",
     "Share files to the conversation" : "Дели фајлове у разговор",
     "Upload from device" : "Отпреми са уређаја",
     "Create new poll" : "Направи ново гласање",
@@ -1391,8 +1392,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "Нису могле да се измене дозволе за {displayName}",
     "Permissions removed for {displayName}" : "Укинуте су дозволе за {displayName}",
     "Permissions set to default for {displayName}" : "Дозволе за {displayName} су постављене на подразумеване вредности",
-    "Phone number could not be hanged up" : "Није успело прекидање везе са бројем телефона",
-    "Phone number could not be putted on hold" : "Број телефона није могао да се постави на чекање",
     "Phone number could not be muted" : "Није успело искључивање микрофона за број телефона",
     "Phone number could not be unmuted" : "Није успело укључивање микрофона за број телефона",
     "DTMF message could not be sent" : "Није могла да се пошаље DTMF порука",
@@ -1731,6 +1730,8 @@ OC.L10N.register(
     "Post to conversation" : "Објави у разговор",
     "Sending signaling message has failed." : "Није успело слање поруке сигнализирања.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Подешени сервер за сигнализирање мора да се ажурира како би био компатибилан са овом верзијом апликације Talk. Молимо вас да се обратите свом администратору.",
-    "Setup summary" : "Резиме подешавања"
+    "Setup summary" : "Резиме подешавања",
+    "Phone number could not be hanged up" : "Није успело прекидање везе са бројем телефона",
+    "Phone number could not be putted on hold" : "Број телефона није могао да се постави на чекање"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

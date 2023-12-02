@@ -1287,6 +1287,7 @@ OC.L10N.register(
     "The participant will not be notified about this message" : "لن يتم إعلام المشارك بشأن هذه الرسالة",
     "The participants will not be notified about this message" : "لن يتم إعلام المشاركين بشأن هذه الرسالة",
     "Group" : "المجموعة",
+    "{user} is out of office and might not respond." : "{user} خارج المكتب الآن، و يمكن ألّا يستجيب",
     "Share files to the conversation" : "مشاركة ملفات في المحادثة",
     "Upload from device" : "إرفع من جهاز",
     "Create new poll" : "إنشاء استطلاع جديد",
@@ -1391,8 +1392,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "تعذر تعديل الأذونات لـ {displayName}",
     "Permissions removed for {displayName}" : "تمت إزالة الأذونات لـ {displayName}",
     "Permissions set to default for {displayName}" : "تم تعيين الأذونات على الإعداد الافتراضي لـ {displayName}",
-    "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
-    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار",
     "Phone number could not be muted" : "رقم الهاتف لا يمكن كتمه",
     "Phone number could not be unmuted" : "رقم الهاتف لا يمكن إلغاء كتمه",
     "DTMF message could not be sent" : "تعذّر إرسال رسالة DTMF - النغمة المزدوجة متعددة الترددات-",
@@ -1731,6 +1730,8 @@ OC.L10N.register(
     "Post to conversation" : "انشر في محادثة ",
     "Sending signaling message has failed." : "فشل إرسال رسالة التشوير ",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. الرجاء الاتصال بالمسؤول الخاص بك.",
-    "Setup summary" : "ملخص الإعداد"
+    "Setup summary" : "ملخص الإعداد",
+    "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
+    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

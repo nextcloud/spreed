@@ -1287,6 +1287,7 @@ OC.L10N.register(
     "The participant will not be notified about this message" : "Der Teilnehmer wird über diese Nachricht nicht benachrichtigt",
     "The participants will not be notified about this message" : "Die Teilnehmer werden über diese Nachricht nicht benachrichtigt",
     "Group" : "Gruppe",
+    "{user} is out of office and might not respond." : "{user} ist nicht im Büro und antwortet möglicherweise nicht.",
     "Share files to the conversation" : "Dateien mit der Unterhaltung teilen",
     "Upload from device" : "Von Gerät hochladen",
     "Create new poll" : "Neue Umfrage erstellen",
@@ -1391,8 +1392,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "Für {displayName} konnten die Berechtigungen nicht geändert werden",
     "Permissions removed for {displayName}" : "Berechtigungen für {displayName} entzogen",
     "Permissions set to default for {displayName}" : "Berechtigungen für {displayName} auf Standard gesetzt",
-    "Phone number could not be hanged up" : "Telefonnummer konnte nicht aufgelegt werden",
-    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden",
     "Phone number could not be muted" : "Telefonnummer konnte nicht stummgeschaltet werden",
     "Phone number could not be unmuted" : "Stummschaltung für Telefonnummer konnte nicht aufgehoben werden",
     "DTMF message could not be sent" : "MFW-Nachricht konnte nicht gesendet werden",
@@ -1731,6 +1730,8 @@ OC.L10N.register(
     "Post to conversation" : "An Unterhaltung posten",
     "Sending signaling message has failed." : "Das Senden der Signaling-Nachricht ist fehlgeschlagen.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Der eingerichtete Signalisierungsserver muss aktualisiert werden, damit er mit dieser Version von Talk kompatibel ist. Bitte wenden Sie sich an Ihre Administration.",
-    "Setup summary" : "Einstellungszusammenfassung"
+    "Setup summary" : "Einstellungszusammenfassung",
+    "Phone number could not be hanged up" : "Telefonnummer konnte nicht aufgelegt werden",
+    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden"
 },
 "nplurals=2; plural=(n != 1);");

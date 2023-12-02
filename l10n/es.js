@@ -1388,8 +1388,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "No se ha podido modificar los permisos para {displayName}",
     "Permissions removed for {displayName}" : "Permisos borrados para {displayName}",
     "Permissions set to default for {displayName}" : "Permisos restaurados a por defecto para {displayName}",
-    "Phone number could not be hanged up" : "No se pudo colgar el número de teléfono",
-    "Phone number could not be putted on hold" : "No se pudo poner el número de teléfono en espera",
     "Phone number could not be muted" : "No se pudo silenciar el número de teléfono",
     "Phone number could not be unmuted" : "No se pudo de-silenciar el número de teléfono",
     "DTMF message could not be sent" : "No se pudo enviar el mensaje DTMF",
@@ -1728,6 +1726,8 @@ OC.L10N.register(
     "Post to conversation" : "Publicar en la conversación",
     "Sending signaling message has failed." : "Fallo al enviar el mensaje de señalización.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "El servidor de señalización configurado necesita actualizarse para ser compatible con esta versión de Talk. Por favor, contacta con tu administrador.",
-    "Setup summary" : "Resumen de la Configuración"
+    "Setup summary" : "Resumen de la Configuración",
+    "Phone number could not be hanged up" : "No se pudo colgar el número de teléfono",
+    "Phone number could not be putted on hold" : "No se pudo poner el número de teléfono en espera"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
