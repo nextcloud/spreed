@@ -1285,6 +1285,7 @@
     "The participant will not be notified about this message" : "參與者不會收到關於此訊息的通知",
     "The participants will not be notified about this message" : "參與者不會收到關於此訊息的通知",
     "Group" : "群組",
+    "{user} is out of office and might not respond." : "{user} 不在辦公室，可能不會回覆。",
     "Share files to the conversation" : "分享檔案至對話",
     "Upload from device" : "從裝置上傳",
     "Create new poll" : "新增一項調查",
@@ -1389,8 +1390,6 @@
     "Could not modify permissions for {displayName}" : "無法修改 {displayName} 的權限",
     "Permissions removed for {displayName}" : "移除了 {displayName} 的權限",
     "Permissions set to default for {displayName}" : "{displayName} 的權限已設定為預設值",
-    "Phone number could not be hanged up" : "無法掛斷電話號碼",
-    "Phone number could not be putted on hold" : "無法保留電話號碼",
     "Phone number could not be muted" : "無法靜音電話號碼",
     "Phone number could not be unmuted" : "無法取消靜音電話號碼",
     "DTMF message could not be sent" : "無法傳送 DTMF 訊息",
@@ -1729,6 +1728,8 @@
     "Post to conversation" : "發佈到對話",
     "Sending signaling message has failed." : "傳送訊號訊息失敗。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "需要更新設定好的訊號伺服器，使其與此版本的 Talk 相容。請聯絡您的管理員。",
-    "Setup summary" : "設定摘要"
+    "Setup summary" : "設定摘要",
+    "Phone number could not be hanged up" : "無法掛斷電話號碼",
+    "Phone number could not be putted on hold" : "無法保留電話號碼"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
