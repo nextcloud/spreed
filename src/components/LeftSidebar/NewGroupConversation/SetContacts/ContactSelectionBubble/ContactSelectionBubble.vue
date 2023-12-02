@@ -96,6 +96,7 @@ $bubble-height: 24px;
 	background-color: var(--color-primary-light);
 	border-radius: $bubble-height;
 	height: $bubble-height;
+	overflow: hidden;
 	&__avatar {
 		margin-right: 4px;
 	}
