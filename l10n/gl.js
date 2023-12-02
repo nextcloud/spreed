@@ -1287,6 +1287,7 @@ OC.L10N.register(
     "The participant will not be notified about this message" : "O participante non será notificado sobre esta mensaxe",
     "The participants will not be notified about this message" : "Os participantes non serán notificados sobre esta mensaxe",
     "Group" : "Grupo",
+    "{user} is out of office and might not respond." : "{usuario} está fóra da oficina e é posíbel que non responda.",
     "Share files to the conversation" : "Compartir ficheiros na conversa",
     "Upload from device" : "Enviar dende o dispositivo",
     "Create new poll" : "Crear unha enquisa nova",
@@ -1391,8 +1392,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "Non foi posíbel modificar os permisos de {displayName}",
     "Permissions removed for {displayName}" : "Retiráronse os permisos de {displayName}",
     "Permissions set to default for {displayName}" : "Permisos estabelecidos como predeterminados para {displayName}",
-    "Phone number could not be hanged up" : "Non foi posíbel colgar o número de teléfono",
-    "Phone number could not be putted on hold" : "Non foi posíbel por en espera o número de teléfono",
     "Phone number could not be muted" : "Non foi posíbel silenciar o número de teléfono",
     "Phone number could not be unmuted" : "Non foi posíbel devolver o son do número de teléfono",
     "DTMF message could not be sent" : "Non foi posíbel enviar a mensaxe DTMF",
@@ -1731,6 +1730,8 @@ OC.L10N.register(
     "Post to conversation" : "Publicar na conversa",
     "Sending signaling message has failed." : "Produciuse un fallo no envío da mensaxe de sinalización.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "O servidor Signaling configurado debe ser actualizado para ser compatíbel con esta versión de Talk. Póñase en contacto coa administración desta instancia.",
-    "Setup summary" : "Resumo da configuración"
+    "Setup summary" : "Resumo da configuración",
+    "Phone number could not be hanged up" : "Non foi posíbel colgar o número de teléfono",
+    "Phone number could not be putted on hold" : "Non foi posíbel por en espera o número de teléfono"
 },
 "nplurals=2; plural=(n != 1);");

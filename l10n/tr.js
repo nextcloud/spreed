@@ -1391,8 +1391,6 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "{displayName} için izinler değiştirilemedi",
     "Permissions removed for {displayName}" : "{displayName} için izinler kaldırıldı",
     "Permissions set to default for {displayName}" : "{displayName} için izinler varsayılanlara sıfırlandı",
-    "Phone number could not be hanged up" : "Telefon numarası kapatılamadı",
-    "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı",
     "Phone number could not be muted" : "Telefon numarasının sesi kısılamadı",
     "Phone number could not be unmuted" : "Telefon numarasının sesi açılamadı",
     "DTMF message could not be sent" : "Arama tonu iletisi gönderilemedi",
@@ -1731,6 +1729,8 @@ OC.L10N.register(
     "Post to conversation" : "Görüşmeye gönder",
     "Sending signaling message has failed." : "Signaling iletisi gönderilemedi.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Bu Talk sürümü ile uyumlu olması için yapılandırılmış signalling sunucusunun güncellenmesi gerekiyor. Lütfen BT yöneticiniz ile görüşün.",
-    "Setup summary" : "Kurulum özeti"
+    "Setup summary" : "Kurulum özeti",
+    "Phone number could not be hanged up" : "Telefon numarası kapatılamadı",
+    "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı"
 },
 "nplurals=2; plural=(n > 1);");
