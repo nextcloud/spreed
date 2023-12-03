@@ -1392,6 +1392,8 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "Could not modify permissions for {displayName}",
     "Permissions removed for {displayName}" : "Permissions removed for {displayName}",
     "Permissions set to default for {displayName}" : "Permissions set to default for {displayName}",
+    "Phone number could not be hung up" : "Phone number could not be hung up",
+    "Phone number could not be put on hold" : "Phone number could not be put on hold",
     "Phone number could not be muted" : "Phone number could not be muted",
     "Phone number could not be unmuted" : "Phone number could not be unmuted",
     "DTMF message could not be sent" : "DTMF message could not be sent",

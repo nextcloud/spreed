@@ -1390,6 +1390,8 @@
     "Could not modify permissions for {displayName}" : "تعذر تعديل الأذونات لـ {displayName}",
     "Permissions removed for {displayName}" : "تمت إزالة الأذونات لـ {displayName}",
     "Permissions set to default for {displayName}" : "تم تعيين الأذونات على الإعداد الافتراضي لـ {displayName}",
+    "Phone number could not be hung up" : "رقم الهاتف لا يمكن قفله",
+    "Phone number could not be put on hold" : "رقم الهاتف لا يمكن تعليقه",
     "Phone number could not be muted" : "رقم الهاتف لا يمكن كتمه",
     "Phone number could not be unmuted" : "رقم الهاتف لا يمكن إلغاء كتمه",
     "DTMF message could not be sent" : "تعذّر إرسال رسالة DTMF - النغمة المزدوجة متعددة الترددات-",

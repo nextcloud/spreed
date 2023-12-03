@@ -1390,6 +1390,8 @@
     "Could not modify permissions for {displayName}" : "Nedaří se upravit oprávnění uživateli {displayName}",
     "Permissions removed for {displayName}" : "Oprávnění odebrána uživateli {displayName}",
     "Permissions set to default for {displayName}" : "Oprávnění pro uživatele {displayName} nastavena na výchozí hodnoty",
+    "Phone number could not be hung up" : "Hovor na telefonní číslo se nepodařilo zavěsit",
+    "Phone number could not be put on hold" : "Hovor na telefonní číslo se nepodařilo pozastavit",
     "Phone number could not be muted" : "Hovor na telefonní číslo se nepodařilo ztlumit",
     "Phone number could not be unmuted" : "Nepodařilo se zrušit ztlumení hovoru na telefonní číslo",
     "DTMF message could not be sent" : "DTMF zprávu se nepodařilo odeslat",
