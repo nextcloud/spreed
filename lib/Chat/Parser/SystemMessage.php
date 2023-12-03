@@ -43,6 +43,8 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -85,6 +87,7 @@ class SystemMessage implements IEventListener {
 		protected IRootFolder $rootFolder,
 		protected ICloudIdManager $cloudIdManager,
 		protected IURLGenerator $url,
+		protected IFilesMetadataManager $metadataManager,
 	) {
 	}
 
@@ -719,9 +722,12 @@ class SystemMessage implements IEventListener {
 			]);
 		}
 
+		$fileId = $node->getId();
+		$isPreviewAvailable = $this->previewManager->isAvailable($node);
+
 		$data = [
 			'type' => 'file',
-			'id' => (string) $node->getId(),
+			'id' => (string) $fileId,
 			'name' => $name,
 			'size' => $size,
 			'path' => $path,
@@ -729,8 +735,25 @@ class SystemMessage implements IEventListener {
 			'etag' => $node->getEtag(),
 			'permissions' => $node->getPermissions(),
 			'mimetype' => $node->getMimeType(),
-			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
 		];
+
+		// If a preview is available, check if we can get the dimensions of the file from the metadata API
+		if ($isPreviewAvailable) {
+			try {
+				$metadata = $this->metadataManager->getMetaData($fileId, false);
+
+				if ($metadata->hasKey('photos-size')) {
+					$sizeMetadata = $metadata->getArray('photos-size');
+	
+					if (isset($sizeMetadata['width']) && isset($sizeMetadata['height'])) {
+						$data['width'] = $sizeMetadata['width'];
+						$data['height'] = $sizeMetadata['height'];
+					}
+				}
+			} catch (FilesMetadataNotFoundException $e) {
+			}
+		}
 
 		if ($node->getMimeType() === 'text/vcard') {
 			$vCard = $node->getContent();
