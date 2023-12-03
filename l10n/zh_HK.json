@@ -1390,6 +1390,8 @@
     "Could not modify permissions for {displayName}" : "無法更改 {displayName} 的權限",
     "Permissions removed for {displayName}" : "移除了 {displayName} 的權限",
     "Permissions set to default for {displayName}" : "{displayName} 的權限設置為默認值",
+    "Phone number could not be hung up" : "無法掛斷電話",
+    "Phone number could not be put on hold" : "無法暫停電話通話",
     "Phone number could not be muted" : "無法將電話靜音",
     "Phone number could not be unmuted" : "無法取消電話靜音",
     "DTMF message could not be sent" : "無法傳送 DTMF 訊息",
