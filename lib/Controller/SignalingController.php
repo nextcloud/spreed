@@ -53,12 +53,10 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\Bruteforce\IThrottler;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -72,7 +70,6 @@ class SignalingController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IConfig $serverConfig,
 		private Config $talkConfig,
 		private \OCA\Talk\Signaling\Manager $signalingManager,
 		private TalkSession $session,
@@ -86,7 +83,6 @@ class SignalingController extends OCSController {
 		private IEventDispatcher $dispatcher,
 		private ITimeFactory $timeFactory,
 		private IClientService $clientService,
-		IThrottler $throttler,
 		private LoggerInterface $logger,
 		private ?string $userId,
 	) {
