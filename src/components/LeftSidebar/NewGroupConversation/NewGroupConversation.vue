@@ -90,7 +90,7 @@
 				placement are rendered depending on the current page -->
 			<div class="new-group-conversation__footer">
 				<!-- First page -->
-				<NcButton v-if="page===0 && isPublic"
+				<NcButton v-if="page===0 && conversationName"
 					:disabled="disabled"
 					type="tertiary"
 					@click="handleCreateConversation">
