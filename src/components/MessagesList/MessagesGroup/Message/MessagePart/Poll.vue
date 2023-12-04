@@ -53,110 +53,83 @@
 			:container="container"
 			@close="dismissModal">
 			<div class="poll__modal">
-				<!-- First screen, displayed while voting-->
-				<template v-if="modalPage === 'voting'">
-					<!-- Title -->
-					<div class="poll__header">
-						<PollIcon :size="20" />
-						<h2 class="poll__modal-title">
-							{{ pollName }}
-						</h2>
-					</div>
-					<div class="poll__summary">
-						{{ pollSummaryText }}
-					</div>
+				<!-- Title -->
+				<div class="poll__header">
+					<PollIcon :size="20" />
+					<h2 class="poll__modal-title">
+						{{ pollName }}
+					</h2>
+				</div>
+				<p class="poll__summary">
+					{{ pollSummaryText }}
+				</p>
 
-					<!-- options -->
-					<div class="poll__modal-options">
-						<template v-if="checkboxRadioSwitchType === 'radio'">
-							<NcCheckboxRadioSwitch v-for="(option, index) in options"
-								:key="'radio' + index"
-								:checked.sync="vote"
-								class="poll__option"
-								:value="index.toString()"
-								:type="checkboxRadioSwitchType"
-								name="answerType">
-								{{ option }}
-							</NcCheckboxRadioSwitch>
-						</template>
-						<template v-else>
-							<NcCheckboxRadioSwitch v-for="(option, index) in options"
-								:key="'checkbox' + index"
-								:checked.sync="vote"
-								:value="index.toString()"
-								:type="checkboxRadioSwitchType"
-								name="answerType">
-								{{ option }}
-							</NcCheckboxRadioSwitch>
-						</template>
-					</div>
+				<!-- options -->
+				<div v-if="modalPage === 'voting'" class="poll__modal-options">
+					<template v-if="checkboxRadioSwitchType">
+						<NcCheckboxRadioSwitch v-for="(option, index) in options"
+							:key="checkboxRadioSwitchType + index"
+							:checked.sync="vote"
+							class="poll__option"
+							:value="index.toString()"
+							:type="checkboxRadioSwitchType"
+							name="answerType">
+							{{ option }}
+						</NcCheckboxRadioSwitch>
+					</template>
+				</div>
 
-					<div class="poll__modal-actions">
-						<!-- Submit vote button-->
-						<NcButton type="primary" :disabled="!canSubmitVote" @click="submitVote">
-							{{ t('spreed', 'Submit vote') }}
-						</NcButton>
-						<!-- End poll button-->
-						<NcButton v-if="canEndPoll"
-							type="error"
-							@click="endPoll">
-							{{ t('spreed', 'End poll') }}
-						</NcButton>
-					</div>
-				</template>
-
-				<!-- Results page -->
-				<template v-else-if="modalPage === 'results'">
-					<!-- Title -->
-					<div class="poll__header">
-						<PollIcon :size="20" />
-						<h2 class="poll__modal-title">
-							{{ pollName }}
-						</h2>
-					</div>
-					<div class="poll__summary">
-						{{ pollSummaryText }}
-					</div>
-					<div class="results__options">
-						<div v-for="(option, index) in options"
-							:key="index"
-							class="results__option">
-							<div class="results__option-title">
-								<p>
-									{{ option }}
-								</p>
-								<p class="percentage">
-									{{ getVotePercentage(index) + '%' }}
-								</p>
-							</div>
-							<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
-								class="results__option__details">
-								<PollVotersDetails v-if="details"
-									:details="getFilteredDetails(index)" />
-								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-									{{ t('spreed', 'You voted for this option') }}
-								</p>
-							</div>
-							<NcProgressBar class="results__option-progress"
-								:value="getVotePercentage(index)"
-								size="medium" />
+				<!-- results -->
+				<div v-else-if="modalPage === 'results'" class="results__options">
+					<div v-for="(option, index) in options"
+						:key="index"
+						class="results__option">
+						<div class="results__option-title">
+							<p>{{ option }}</p>
+							<p class="percentage">
+								{{ getVotePercentage(index) + '%' }}
+							</p>
 						</div>
+						<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
+							class="results__option__details">
+							<PollVotersDetails v-if="details"
+								:details="getFilteredDetails(index)" />
+							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+								{{ t('spreed', 'You voted for this option') }}
+							</p>
+						</div>
+						<NcProgressBar class="results__option-progress"
+							:value="getVotePercentage(index)"
+							size="medium" />
 					</div>
-					<div v-if="isPollOpen"
-						class="poll__modal-actions">
-						<!-- Vote again-->
-						<NcButton type="secondary"
-							@click="modalPage = 'voting'">
-							{{ t('spreed', 'Change your vote') }}
-						</NcButton>
-						<!-- End poll button-->
-						<NcButton v-if="canEndPoll"
-							type="error"
-							@click="endPoll">
+				</div>
+
+				<div v-if="isPollOpen" class="poll__modal-actions">
+					<!-- Submit vote button-->
+					<NcButton v-if="modalPage === 'voting'"
+						type="primary"
+						:disabled="!canSubmitVote"
+						@click="submitVote">
+						{{ t('spreed', 'Submit vote') }}
+					</NcButton>
+					<!-- Vote again-->
+					<NcButton v-else
+						type="secondary"
+						@click="modalPage = 'voting'">
+						{{ t('spreed', 'Change your vote') }}
+					</NcButton>
+					<!-- End poll button-->
+					<NcActions v-if="canEndPoll"
+						force-menu
+						:container="container">
+						<NcActionButton class="critical" @click="endPoll">
 							{{ t('spreed', 'End poll') }}
-						</NcButton>
-					</div>
-				</template>
+							<template #icon>
+								<FileLock :size="20" />
+							</template>
+						</NcActionButton>
+					</NcActions>
+				</div>
 			</div>
 		</NcModal>
 	</div>
@@ -164,8 +137,11 @@
 
 <script>
 
+import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -180,12 +156,16 @@ export default {
 	name: 'Poll',
 
 	components: {
+		NcActions,
+		NcActionButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
 		NcButton,
-		PollIcon,
 		NcProgressBar,
 		PollVotersDetails,
+		// icons
+		FileLock,
+		PollIcon,
 	},
 
 	props: {
@@ -495,7 +475,7 @@ export default {
 
 	&__modal {
 		position: relative;
-		padding: 20px 20px 0 20px;
+		padding: 20px;
 	}
 
 	&__modal-title {
@@ -515,13 +495,17 @@ export default {
 		display: flex;
 		justify-content: center;
 		gap: 8px;
-		padding: 12px 0 20px;
+		padding: 8px 0 0;
 		background-color: var(--color-main-background);
 	}
 
 	&__summary {
 		color: var(--color-text-maxcontrast);
 		margin-bottom: 16px;
+	}
+
+	&__option {
+		margin-bottom: 4px;
 	}
 }
 
@@ -567,5 +551,11 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin-top: 4px;
+}
+
+.critical {
+	:deep(.action-button) {
+		color: var(--color-error) !important;
+	}
 }
 </style>
