@@ -32,6 +32,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudIdManager;
@@ -40,8 +41,6 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
-use OCP\FilesMetadata\IFilesMetadataManager;
-use OCP\FilesMetadata\Model\IFilesMetadata;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -77,8 +76,8 @@ class SystemMessageTest extends TestCase {
 	protected $url;
 	/** @var ICloudIdManager|MockObject */
 	protected $cloudIdManager;
-	/** @var IFilesMetadataManager|MockObject */
-	protected $metadataManager;
+	/** @var FilesMetadataCache|MockObject */
+	protected $filesMetadataCache;
 	/** @var IL10N|MockObject */
 	protected $l;
 
@@ -95,7 +94,7 @@ class SystemMessageTest extends TestCase {
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
-		$this->metadataManager = $this->createMock(IFilesMetadataManager::class);
+		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
 			->willReturnCallback(function ($text, $parameters = []) {
@@ -126,7 +125,7 @@ class SystemMessageTest extends TestCase {
 					$this->rootFolder,
 					$this->cloudIdManager,
 					$this->url,
-					$this->metadataManager,
+					$this->filesMetadataCache,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -144,7 +143,7 @@ class SystemMessageTest extends TestCase {
 			$this->rootFolder,
 			$this->cloudIdManager,
 			$this->url,
-			$this->metadataManager,
+			$this->filesMetadataCache,
 		);
 	}
 
@@ -624,7 +623,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn('name');
 		$node->expects($this->atLeastOnce())
 			->method('getMimeType')
-			->willReturn('text/plain');
+			->willReturn('image/png');
 		$node->expects($this->once())
 			->method('getSize')
 			->willReturn(65530);
@@ -660,21 +659,10 @@ class SystemMessageTest extends TestCase {
 			->with($node)
 			->willReturn(true);
 
-		$metadata = $this->createMock(IFilesMetadata::class);
-		$metadata->expects($this->once())
-			->method('hasKey')
-			->with('photos-size')
-			->willReturn(true);
-
-		$metadata->expects($this->once())
-			->method('getArray')
-			->with('photos-size')
+		$this->filesMetadataCache->expects($this->once())
+			->method('getMetadataPhotosSizeForFileId')
+			->with(54)
 			->willReturn(['width' => 1234, 'height' => 4567]);
-
-		$this->metadataManager->expects($this->once())
-			->method('getMetaData')
-			->with(54, false)
-			->willReturn($metadata);
 
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->once())
@@ -691,7 +679,7 @@ class SystemMessageTest extends TestCase {
 			'link' => 'absolute-link',
 			'etag' => '1872ade88f3013edeb33decd74a4f947',
 			'permissions' => 27,
-			'mimetype' => 'text/plain',
+			'mimetype' => 'image/png',
 			'preview-available' => 'yes',
 			'width' => 1234,
 			'height' => 4567,
@@ -747,8 +735,8 @@ class SystemMessageTest extends TestCase {
 			])
 			->willReturn('absolute-link-owner');
 
-		$this->metadataManager->expects($this->never())
-			->method('getMetaData');
+		$this->filesMetadataCache->expects($this->never())
+			->method('getMetadataPhotosSizeForFileId');
 
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->once())
@@ -839,8 +827,8 @@ class SystemMessageTest extends TestCase {
 			->with($file)
 			->willReturn(false);
 
-		$this->metadataManager->expects($this->never())
-			->method('getMetaData');
+		$this->filesMetadataCache->expects($this->never())
+			->method('getMetadataPhotosSizeForFileId');
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
