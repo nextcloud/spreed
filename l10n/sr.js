@@ -1392,6 +1392,8 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "Нису могле да се измене дозволе за {displayName}",
     "Permissions removed for {displayName}" : "Укинуте су дозволе за {displayName}",
     "Permissions set to default for {displayName}" : "Дозволе за {displayName} су постављене на подразумеване вредности",
+    "Phone number could not be hung up" : "Није успело прекидање везе са бројем телефона",
+    "Phone number could not be put on hold" : "Број телефона није могао да се постави на чекање",
     "Phone number could not be muted" : "Није успело искључивање микрофона за број телефона",
     "Phone number could not be unmuted" : "Није успело укључивање микрофона за број телефона",
     "DTMF message could not be sent" : "Није могла да се пошаље DTMF порука",
