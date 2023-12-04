@@ -230,6 +230,18 @@ export default {
 				this.recordingConsentGiven = false
 			}
 		},
+
+		isInCall: {
+			immediate: true,
+			handler(value) {
+				const toggle = this.$refs.leftSidebar?.$refs.leftSidebar?.$el.querySelector('button.app-navigation-toggle')
+				if (value) {
+					toggle?.setAttribute('data-theme-dark', true)
+				} else {
+					toggle?.removeAttribute('data-theme-dark')
+				}
+			}
+		}
 	},
 
 	beforeCreate() {
@@ -718,16 +730,9 @@ export default {
 </script>
 
 <style lang="scss">
-
 /* FIXME: remove after https://github.com/nextcloud/nextcloud-vue/issues/2097 is solved */
 .mx-datepicker-main.mx-datepicker-popup {
 	z-index: 10001 !important;
-}
-
-/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4350 regression is solved */
-/* Force modal close button to be above modal content */
-.modal-container__close {
-	z-index: 1;
 }
 </style>
 
@@ -737,23 +742,6 @@ export default {
 	&.in-call {
 		:deep(.app-content) {
 			background-color: transparent;
-		}
-
-		&:hover :deep(.app-navigation-toggle) {
-			background-color: rgba(0, 0, 0, .1) !important;
-
-			&:hover {
-				background-color: rgba(0, 0, 0, .2) !important;
-			}
-		}
-
-		:deep(.app-navigation-toggle) {
-			/* Force white handle when inside a call */
-			color: #D8D8D8;
-
-			&:active {
-				color: #FFFFFF;
-			}
 		}
 	}
 
