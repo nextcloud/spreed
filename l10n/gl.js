@@ -1392,6 +1392,8 @@ OC.L10N.register(
     "Could not modify permissions for {displayName}" : "Non foi posíbel modificar os permisos de {displayName}",
     "Permissions removed for {displayName}" : "Retiráronse os permisos de {displayName}",
     "Permissions set to default for {displayName}" : "Permisos estabelecidos como predeterminados para {displayName}",
+    "Phone number could not be hung up" : "Non foi posíbel colgar o número de teléfono",
+    "Phone number could not be put on hold" : "Non foi posíbel por en espera o número de teléfono",
     "Phone number could not be muted" : "Non foi posíbel silenciar o número de teléfono",
     "Phone number could not be unmuted" : "Non foi posíbel devolver o son do número de teléfono",
     "DTMF message could not be sent" : "Non foi posíbel enviar a mensaxe DTMF",
