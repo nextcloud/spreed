@@ -51,6 +51,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -73,6 +74,7 @@ use OCP\RichObjectStrings\InvalidObjectExeption;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IShare;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -103,6 +105,7 @@ class ChatController extends AEnvironmentAwareController {
 		private GuestManager $guestManager,
 		private MessageParser $messageParser,
 		protected RoomShareProvider $shareProvider,
+		protected FilesMetadataCache $filesMetadataCache,
 		private IManager $autoCompleteManager,
 		private IUserStatusManager $statusManager,
 		protected MatterbridgeManager $matterbridgeManager,
@@ -308,7 +311,8 @@ class ChatController extends AEnvironmentAwareController {
 
 	/*
 	 * Gather share IDs from the comments and preload share definitions
-	 * to avoid separate database query for each individual share.
+	 * and files metadata to avoid separate database query for each
+	 * individual share/node later on.
 	 *
 	 * @param IComment[] $comments
 	 */
@@ -326,10 +330,14 @@ class ChatController extends AEnvironmentAwareController {
 			}
 		}
 		if (!empty($shareIds)) {
-			// Ignore the result for now. Retrieved Share objects will be cached by
+			// Retrieved Share objects will be cached by
 			// the RoomShareProvider and returned from the cache to
 			// the Parser\SystemMessage without additional database queries.
-			$this->shareProvider->getSharesByIds($shareIds);
+			$shares = $this->shareProvider->getSharesByIds($shareIds);
+
+			// Preload files metadata as well
+			$fileIds = array_filter(array_map(static fn (IShare $share) => $share->getNodeId(), $shares));
+			$this->filesMetadataCache->preloadMetadata($fileIds);
 		}
 	}
 
