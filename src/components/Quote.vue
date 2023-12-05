@@ -41,13 +41,13 @@ components.
 					disable-menu />
 				{{ getDisplayName }}
 			</div>
-			<div v-if="isFileShareMessage"
-				class="quote__main__text">
-				<NcRichText :text="message"
-					:arguments="richParameters"
-					:autolink="true" />
-			</div>
-			<blockquote v-else
+			<!-- file preview-->
+			<NcRichText v-if="isFileShareMessage"
+				text="{file}"
+				class="quote__file-preview"
+				:arguments="richParameters" />
+			<!-- text -->
+			<blockquote v-if="!isFileShareWithoutCaption"
 				class="quote__main__text">
 				<p dir="auto">{{ shortenedQuoteMessage }}</p>
 			</blockquote>
@@ -173,6 +173,10 @@ export default {
 
 		isFileShareMessage() {
 			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
+		},
+
+		isFileShareWithoutCaption() {
+			return this.isFileShareMessage && this.message === '{file}'
 		},
 
 		richParameters() {
@@ -323,6 +327,9 @@ export default {
 		padding: 0 8px 0 8px;
 		position: relative;
 		margin: auto;
+	}
+	&__file-preview {
+		line-height: 0.5 !important;
 	}
 }
 
