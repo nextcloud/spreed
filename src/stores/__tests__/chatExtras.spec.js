@@ -64,8 +64,8 @@ describe('chatExtrasStore', () => {
 
 			// Act
 			await chatExtrasStore.getUserAbsence({ token, userId })
-			chatExtrasStore.resetUserAbsence({ token })
-			chatExtrasStore.resetUserAbsence({ token: token2 })
+			chatExtrasStore.removeUserAbsence(token)
+			chatExtrasStore.removeUserAbsence(token2)
 
 			// Assert
 			expect(chatExtrasStore.absence[token]).toEqual(undefined)

@@ -56,11 +56,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		/**
 		 * Drop an absence status from the store
 		 *
-		 * @param {object} payload action payload
-		 * @param {string} payload.token The conversation token
+		 * @param {string} token The conversation token
 		 *
 		 */
-		resetUserAbsence({ token }) {
+		removeUserAbsence(token) {
 			if (this.absence[token]) {
 				Vue.delete(this.absence, token)
 			}
