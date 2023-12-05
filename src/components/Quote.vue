@@ -76,6 +76,7 @@ import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePr
 
 import { AVATAR } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 export default {
 	name: 'Quote',
@@ -143,7 +144,12 @@ export default {
 	},
 
 	setup() {
-		return { AVATAR }
+		const chatExtrasStore = useChatExtrasStore()
+
+		return {
+			AVATAR,
+			chatExtrasStore,
+		}
 	},
 
 	computed: {
@@ -243,12 +249,8 @@ export default {
 		},
 	},
 	methods: {
-		/**
-		 * Stops the quote-reply operation by removing the MessageToBeReplied from
-		 * the quoteReplyStore.
-		 */
 		handleAbortReply() {
-			this.$store.dispatch('removeMessageToBeReplied', this.token)
+			this.chatExtrasStore.removeMessageToBeReplied(this.token)
 			EventBus.$emit('focus-chat-input')
 		},
 

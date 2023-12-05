@@ -65,6 +65,7 @@ import {
 	stopCallRecording,
 } from '../services/recordingService.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -317,10 +318,12 @@ const actions = {
 	 * Delete a conversation from the store.
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} token the token of the conversation to be deleted;
+	 * @param {string} token the token of the conversation to be deleted;
 	 */
 	deleteConversation(context, token) {
 		// FIXME: rename to deleteConversationsFromStore or a better name
+		const chatExtrasStore = useChatExtrasStore()
+		chatExtrasStore.purgeChatExtras(token)
 		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
 	},
@@ -431,6 +434,8 @@ const actions = {
 	async clearConversationHistory(context, { token }) {
 		try {
 			const response = await clearConversationHistory(token)
+			const chatExtrasStore = useChatExtrasStore()
+			chatExtrasStore.removeMessageToBeReplied(token)
 			context.dispatch('deleteMessages', token)
 			return response
 		} catch (error) {

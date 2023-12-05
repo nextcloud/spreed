@@ -25,6 +25,7 @@ import {
 	postNewMessage,
 	postRichObjectToConversation,
 } from '../services/messagesService.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
@@ -318,10 +319,10 @@ describe('messagesStore', () => {
 
 	describe('temporary messages', () => {
 		let mockDate
-		let getMessageToBeRepliedMock
 		let getActorIdMock
 		let getActorTypeMock
 		let getDisplayNameMock
+		let chatExtraStore
 
 		beforeEach(() => {
 			mockDate = new Date('2020-01-01 20:00:00')
@@ -329,12 +330,11 @@ describe('messagesStore', () => {
 				.mockImplementation(() => mockDate)
 
 			testStoreConfig = cloneDeep(messagesStore)
+			chatExtraStore = useChatExtrasStore()
 
-			getMessageToBeRepliedMock = jest.fn().mockReturnValue(() => undefined)
 			getActorIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
 			getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
 			getDisplayNameMock = jest.fn().mockReturnValue(() => 'actor-display-name-1')
-			testStoreConfig.getters.getMessageToBeReplied = getMessageToBeRepliedMock
 			testStoreConfig.getters.getActorId = getActorIdMock
 			testStoreConfig.getters.getActorType = getActorTypeMock
 			testStoreConfig.getters.getDisplayName = getDisplayNameMock
@@ -353,7 +353,6 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			expect(getMessageToBeRepliedMock).toHaveBeenCalled()
 			expect(getActorIdMock).toHaveBeenCalled()
 			expect(getActorTypeMock).toHaveBeenCalled()
 			expect(getDisplayNameMock).toHaveBeenCalled()
@@ -384,9 +383,7 @@ describe('messagesStore', () => {
 			}
 
 			store.dispatch('processMessage', parent)
-
-			getMessageToBeRepliedMock.mockReset()
-			getMessageToBeRepliedMock.mockReturnValue(() => (123))
+			chatExtraStore.addMessageToBeReplied({ token: TOKEN, id: 123 })
 
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',

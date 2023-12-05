@@ -1,6 +1,7 @@
 import { createLocalVue } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import { emit } from '@nextcloud/event-bus'
@@ -82,6 +83,7 @@ describe('conversationsStore', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		testConversation = {
 			token: testToken,

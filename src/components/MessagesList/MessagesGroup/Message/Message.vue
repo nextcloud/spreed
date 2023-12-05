@@ -283,6 +283,7 @@ import { useIsInCall } from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
+import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { useGuestNameStore } from '../../../../stores/guestName.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.js'
 
@@ -467,8 +468,15 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
+		const chatExtrasStore = useChatExtrasStore()
 		const guestNameStore = useGuestNameStore()
-		return { isInCall, isTranslationAvailable, guestNameStore }
+
+		return {
+			isInCall,
+			isTranslationAvailable,
+			chatExtrasStore,
+			guestNameStore
+		}
 	},
 
 	expose: ['highlightMessage'],
@@ -881,7 +889,7 @@ export default {
 		},
 
 		handleReply() {
-			this.$store.dispatch('addMessageToBeReplied', {
+			this.chatExtrasStore.addMessageToBeReplied({
 				token: this.token,
 				id: this.id,
 			})
