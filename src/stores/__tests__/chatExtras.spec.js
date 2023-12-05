@@ -68,9 +68,72 @@ describe('chatExtrasStore', () => {
 			chatExtrasStore.removeUserAbsence(token2)
 
 			// Assert
-			expect(chatExtrasStore.absence[token]).toEqual(undefined)
-			expect(chatExtrasStore.absence[token2]).toEqual(undefined)
+			expect(chatExtrasStore.absence[token]).not.toBeDefined()
+			expect(chatExtrasStore.absence[token2]).not.toBeDefined()
 		})
 
+	})
+
+	describe('reply message', () => {
+		it('adds reply message id to the store', () => {
+			// Act
+			chatExtrasStore.addMessageToBeReplied({ token, id: 101 })
+
+			// Assert
+			expect(chatExtrasStore.getMessageToBeReplied(token)).toBe(101)
+		})
+
+		it('clears reply message', () => {
+			// Arrange
+			chatExtrasStore.addMessageToBeReplied({ token, id: 101 })
+
+			// Act
+			chatExtrasStore.removeMessageToBeReplied(token)
+
+			// Assert
+			expect(chatExtrasStore.getMessageToBeReplied(token)).not.toBeDefined()
+		})
+	})
+
+	describe('current input message', () => {
+		it('sets current input message', () => {
+			// Act
+			chatExtrasStore.setCurrentMessageInput({ token: 'token-1', text: 'message-1' })
+
+			// Assert
+			expect(chatExtrasStore.getCurrentMessageInput('token-1')).toStrictEqual('message-1')
+		})
+
+		it('clears current input message', () => {
+			// Arrange
+			chatExtrasStore.setCurrentMessageInput({ token: 'token-1', text: 'message-1' })
+
+			// Act
+			chatExtrasStore.removeCurrentMessageInput('token-1')
+
+			// Assert
+			expect(chatExtrasStore.currentMessageInput['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.getCurrentMessageInput('token-1')).toBe('')
+		})
+	})
+
+	describe('purge store', () => {
+		it('clears store for provided token', async () => {
+			// Arrange
+			const response = generateOCSResponse({ payload })
+			getUserAbsence.mockResolvedValueOnce(response)
+
+			await chatExtrasStore.getUserAbsence({ token: 'token-1', userId })
+			chatExtrasStore.addMessageToBeReplied({ token: 'token-1', id: 101 })
+			chatExtrasStore.setCurrentMessageInput({ token: 'token-1', text: 'message-1' })
+
+			// Act
+			chatExtrasStore.purgeChatExtras('token-1')
+
+			// Assert
+			expect(chatExtrasStore.absence['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.messagesToBeReplied['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.currentMessageInput['token-1']).not.toBeDefined()
+		})
 	})
 })
