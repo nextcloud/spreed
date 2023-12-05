@@ -159,7 +159,7 @@ OC.L10N.register(
     "{actor} demoted you from moderator" : "{actor} позбавив вас статусу модератора",
     "An administrator demoted you from moderator" : "Адміністратор позбавив вас статусу модератора",
     "An administrator demoted {user} from moderator" : "Адміністратор позбавив {user} статусу модератора",
-    "{actor} shared a file which is no longer available" : "{actor} поділився файлом, який більше не доступний ",
+    "{actor} shared a file which is no longer available" : "{actor} поділив(-ла-)ся файлом, який більше не доступний ",
     "You shared a file which is no longer available" : "Ви поділилися файлом, який більше не доступний",
     "The shared location is malformed" : "Спільне місце розташування сформовано неправильно",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} налаштував Matterbridge для синхронізації цієї розмови з іншими чатами ",
