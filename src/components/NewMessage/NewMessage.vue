@@ -835,9 +835,7 @@ export default {
 				})
 			} else {
 				// Remove stored absence status
-				this.chatExtrasStore.resetUserAbsence({
-					token: this.token,
-				})
+				this.chatExtrasStore.removeUserAbsence(this.token)
 			}
 		}
 	},
