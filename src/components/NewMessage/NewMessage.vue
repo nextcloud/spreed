@@ -506,6 +506,14 @@ export default {
 				}
 			}
 
+			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
+			if (this.hasText) {
+				const temp = document.createElement('textarea')
+				temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
+				this.text = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
+					.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+			}
+
 			if (this.upload) {
 				// Clear input content from store
 				this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: '' })
@@ -521,12 +529,6 @@ export default {
 			}
 
 			if (this.hasText) {
-				// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
-				const temp = document.createElement('textarea')
-				temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
-				this.text = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-					.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
-
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', {
 					text: this.text.trim(),
 					token: this.token,
