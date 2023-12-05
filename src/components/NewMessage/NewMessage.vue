@@ -335,7 +335,7 @@ export default {
 		},
 
 		messageToBeReplied() {
-			const parentId = this.$store.getters.getMessageToBeReplied(this.token)
+			const parentId = this.chatExtrasStore.getMessageToBeReplied(this.token)
 			return parentId && this.$store.getters.message(this.token, parentId)
 		},
 
@@ -414,14 +414,14 @@ export default {
 		},
 
 		text(newValue) {
-			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
+			this.chatExtrasStore.setCurrentMessageInput({ token: this.token, text: newValue })
 		},
 
 		token: {
 			immediate: true,
 			handler(token) {
 				if (token) {
-					this.text = this.$store.getters.currentMessageInput(token)
+					this.text = this.chatExtrasStore.getCurrentMessageInput(token)
 				} else {
 					this.text = ''
 				}
@@ -437,7 +437,7 @@ export default {
 		EventBus.$on('upload-start', this.handleUploadSideEffects)
 		EventBus.$on('upload-discard', this.handleUploadSideEffects)
 		EventBus.$on('retry-message', this.handleRetryMessage)
-		this.text = this.$store.getters.currentMessageInput(this.token)
+		this.text = this.chatExtrasStore.getCurrentMessageInput(this.token)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -495,7 +495,7 @@ export default {
 			}
 			this.$nextTick(() => {
 				// reset or fill main input in chat view from the store
-				this.text = this.$store.getters.currentMessageInput(this.token)
+				this.text = this.chatExtrasStore.getCurrentMessageInput(this.token)
 				// refocus input as the user might want to type further
 				this.focusInput()
 			})
@@ -527,8 +527,8 @@ export default {
 
 			if (this.upload) {
 				// Clear input content from store
-				this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: '' })
-				this.$store.dispatch('removeMessageToBeReplied', this.token)
+				this.chatExtrasStore.setCurrentMessageInput({ token: this.token, text: '' })
+				this.chatExtrasStore.removeMessageToBeReplied(this.token)
 
 				if (this.$store.getters.getInitialisedUploads(this.$store.getters.currentUploadId).length) {
 					// If dialog contains files to upload, delegate sending
@@ -551,7 +551,7 @@ export default {
 				// Scrolls the message list to the last added message
 				EventBus.$emit('smooth-scroll-chat-to-bottom')
 				// Also remove the message to be replied for this conversation
-				await this.$store.dispatch('removeMessageToBeReplied', this.token)
+				this.chatExtrasStore.removeMessageToBeReplied(this.token)
 
 				this.broadcast
 					? await this.broadcastMessage(temporaryMessage, options)
@@ -604,7 +604,7 @@ export default {
 
 					// Restore the parent/quote message
 					if (temporaryMessage.parent) {
-						this.$store.dispatch('addMessageToBeReplied', {
+						this.chatExtrasStore.addMessageToBeReplied({
 							token: this.token,
 							id: temporaryMessage.parent.id,
 						})
