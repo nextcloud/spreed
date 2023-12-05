@@ -285,8 +285,9 @@ const actions = {
 	 * @param {object} data the wrapping object
 	 * @param {string} data.uploadId The unique uploadId
 	 * @param {string} [data.caption] The text caption to the media
+	 * @param {object} data.options The share options
 	 */
-	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, caption }) {
+	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, caption, options }) {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
 		}
@@ -366,9 +367,16 @@ const actions = {
 		const performShare = async ([index, shareableFile]) => {
 			const path = shareableFile.sharePath
 			const temporaryMessage = shareableFile.temporaryMessage
-			const metadata = (caption && index === lastIndex)
-				? JSON.stringify({ messageType: temporaryMessage.messageType, caption })
-				: JSON.stringify({ messageType: temporaryMessage.messageType })
+
+			const rawMetadata = { messageType: temporaryMessage.messageType }
+			if (caption && index === lastIndex) {
+				Object.assign(rawMetadata, { caption })
+			}
+			if (options?.silent) {
+				Object.assign(rawMetadata, { silent: options.silent })
+			}
+			const metadata = JSON.stringify(rawMetadata)
+
 			try {
 				const token = temporaryMessage.token
 				dispatch('markFileAsSharing', { uploadId, index })
