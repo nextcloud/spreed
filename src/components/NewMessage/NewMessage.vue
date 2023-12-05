@@ -679,7 +679,7 @@ export default {
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			// Create a unique id for the upload operation
-			const uploadId = new Date().getTime()
+			const uploadId = this.$store.getters.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files
 			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},
