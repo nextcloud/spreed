@@ -24,6 +24,7 @@ import { showInfo } from '@nextcloud/dialogs'
 
 import { SESSION } from '../constants.js'
 import { setSessionState } from '../services/participantsService.js'
+import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 
 const supportSessionState = getCapabilities()?.spreed?.features?.includes('session-state')
@@ -42,6 +43,7 @@ export function useActiveSession() {
 	}
 
 	const store = useStore()
+	const isInCall = useIsInCall()
 	const token = computed(() => store.getters.getToken())
 	const windowIsVisible = computed(() => store.getters.windowIsVisible())
 
@@ -94,6 +96,9 @@ export function useActiveSession() {
 			|| !token.value) {
 			return
 		}
+		if (isInCall.value) {
+			return
+		}
 		clearTimeout(inactiveTimer.value)
 		inactiveTimer.value = null
 		currentState.value = SESSION.STATE.INACTIVE
@@ -111,13 +116,13 @@ export function useActiveSession() {
 	}
 
 	const handleWindowFocus = ({ type }) => {
+		clearTimeout(inactiveTimer.value)
 		if (type === 'focus') {
 			setSessionAsActive()
 
 			document.removeEventListener('mouseenter', handleMouseMove)
 			document.removeEventListener('mouseleave', handleMouseMove)
 		} else if (type === 'blur') {
-			clearTimeout(inactiveTimer.value)
 			inactiveTimer.value = setTimeout(() => {
 				setSessionAsInactive()
 			}, INACTIVE_TIME_MS)
