@@ -113,11 +113,11 @@
 
 			<!-- Send buttons -->
 			<template v-else>
-				<NcActions v-if="!broadcast && !upload"
+				<NcActions v-if="!broadcast"
 					:container="container"
-					:force-menu="true">
+					force-menu>
 					<!-- Silent send -->
-					<NcActionButton :close-after-click="true"
+					<NcActionButton close-after-click
 						icon="icon-upload"
 						:name="t('spreed', 'Send without notification')"
 						@click="handleSubmit({ silent: true })">
@@ -512,7 +512,7 @@ export default {
 
 				if (this.$store.getters.getInitialisedUploads(this.$store.getters.currentUploadId).length) {
 					// If dialog contains files to upload, delegate sending
-					this.$emit('upload', this.text)
+					this.$emit('upload', { caption: this.text, options })
 					return
 				} else {
 					// Dismiss dialog, process as normal message sending otherwise
@@ -679,7 +679,7 @@ export default {
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			// Create a unique id for the upload operation
-			const uploadId = new Date().getTime()
+			const uploadId = this.$store.getters.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files
 			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},

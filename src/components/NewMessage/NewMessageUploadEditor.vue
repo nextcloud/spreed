@@ -205,8 +205,8 @@ export default {
 			this.$store.dispatch('discardUpload', this.currentUploadId)
 		},
 
-		handleUpload(caption) {
-			this.$store.dispatch('uploadFiles', { uploadId: this.currentUploadId, caption })
+		handleUpload({ caption, options }) {
+			this.$store.dispatch('uploadFiles', { uploadId: this.currentUploadId, caption, options })
 		},
 		/**
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,

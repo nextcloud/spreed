@@ -138,7 +138,7 @@ describe('fileUploadStore', () => {
 			}
 		})
 
-		test('performs upload and sharing of single file', async () => {
+		test('performs silent upload and sharing of single file with caption', async () => {
 			const file = {
 				name: 'pngimage.png',
 				type: 'image/png',
@@ -159,7 +159,7 @@ describe('fileUploadStore', () => {
 			findUniquePath.mockResolvedValueOnce({ uniquePath: uniqueFileName, suffix: 1 })
 			shareFile.mockResolvedValue()
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption' })
+			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption', options: { silent: true } })
 
 			expect(findUniquePath).toHaveBeenCalledTimes(1)
 			expect(findUniquePath).toHaveBeenCalledWith(client, '/files/current-user', '/Talk/' + file.name, undefined)
@@ -168,13 +168,13 @@ describe('fileUploadStore', () => {
 			expect(client.putFileContents).toHaveBeenCalledWith(`/files/current-user${uniqueFileName}`, fileBuffer, expect.anything())
 
 			expect(shareFile).toHaveBeenCalledTimes(1)
-			expect(shareFile).toHaveBeenCalledWith(`/${uniqueFileName}`, 'XXTOKENXX', 'reference-id-1', '{"caption":"text-caption"}')
+			expect(shareFile).toHaveBeenCalledWith(`/${uniqueFileName}`, 'XXTOKENXX', 'reference-id-1', '{"caption":"text-caption","silent":true}')
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
 			expect(store.getters.currentUploadId).not.toBeDefined()
 		})
 
-		test('performs upload and sharing of multiple files', async () => {
+		test('performs upload and sharing of multiple files with caption', async () => {
 			const file1 = {
 				name: 'pngimage.png',
 				type: 'image/png',
@@ -208,7 +208,7 @@ describe('fileUploadStore', () => {
 				.mockResolvedValueOnce({ data: { ocs: { data: { id: '1' } } } })
 				.mockResolvedValueOnce({ data: { ocs: { data: { id: '2' } } } })
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption' })
+			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption', options: { silent: false } })
 
 			expect(findUniquePath).toHaveBeenCalledTimes(2)
 			expect(client.putFileContents).toHaveBeenCalledTimes(2)
@@ -251,7 +251,7 @@ describe('fileUploadStore', () => {
 				},
 			})
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1' })
+			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', options: { silent: false } })
 
 			expect(client.putFileContents).toHaveBeenCalledTimes(1)
 			expect(shareFile).not.toHaveBeenCalled()
@@ -288,7 +288,7 @@ describe('fileUploadStore', () => {
 				},
 			})
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1' })
+			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', options: { silent: false } })
 
 			expect(client.putFileContents).toHaveBeenCalledTimes(1)
 			expect(shareFile).toHaveBeenCalledTimes(1)
