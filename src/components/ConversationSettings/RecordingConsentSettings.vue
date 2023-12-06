@@ -24,6 +24,9 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Recording Consent') }}
 		</h4>
+		<div v-if="disabled && !loading" class="app-settings-section__hint">
+			{{ t('spreed', 'Recording consent cannot be changed once a call or breakout session has started.') }}
+		</div>
 		<NcCheckboxRadioSwitch v-if="canFullModerate && !isGlobalConsent"
 			type="switch"
 			:checked.sync="recordingConsentSelected"
@@ -45,7 +48,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
-import { CALL } from '../../constants.js'
+import { CALL, CONVERSATION } from '../../constants.js'
 import { getCapabilities } from '@nextcloud/capabilities'
 
 const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent']
@@ -85,8 +88,12 @@ export default {
 			return recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
 		},
 
+		isBreakoutRoomStarted() {
+			return this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+		},
+
 		disabled() {
-			return this.loading || this.conversation.hasCall
+			return this.loading || this.conversation.hasCall || this.isBreakoutRoomStarted
 		},
 
 		summaryLabel() {
