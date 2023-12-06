@@ -120,23 +120,27 @@ export function useActiveSession() {
 		if (type === 'focus') {
 			setSessionAsActive()
 
-			document.removeEventListener('mouseenter', handleMouseMove)
-			document.removeEventListener('mouseleave', handleMouseMove)
+			document.body.removeEventListener('mouseenter', handleMouseEnter)
+			document.body.removeEventListener('mouseleave', handleMouseLeave)
 		} else if (type === 'blur') {
 			inactiveTimer.value = setTimeout(() => {
 				setSessionAsInactive()
 			}, INACTIVE_TIME_MS)
 
 			// Listen for mouse events to track activity on tab
-			document.addEventListener('mouseenter', handleMouseMove)
-			document.addEventListener('mouseleave', handleMouseMove)
+			document.body.addEventListener('mouseenter', handleMouseEnter)
+			document.body.addEventListener('mouseleave', handleMouseLeave)
 		}
 	}
 
-	const handleMouseMove = (event) => {
+	const handleMouseEnter = (event) => {
 		setSessionAsActive()
-		// Restart timer, if mouse moves around the tab
 		clearTimeout(inactiveTimer.value)
+		inactiveTimer.value = null
+	}
+
+	const handleMouseLeave = (event) => {
+		// Restart timer, if mouse leaves the tab
 		inactiveTimer.value = setTimeout(() => {
 			setSessionAsInactive()
 		}, INACTIVE_TIME_MS)
