@@ -120,7 +120,8 @@
 				@update-background="handleUpdateVirtualBackground" />
 
 			<!-- "Always show" setting -->
-			<NcCheckboxRadioSwitch class="checkbox"
+			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
+				class="checkbox"
 				:checked="showMediaSettings || showRecordingWarning"
 				:disabled="showRecordingWarning"
 				@update:checked="setShowMediaSettings">
@@ -296,6 +297,7 @@ export default {
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
 			isRecordingFromStart: false,
+			isPublicShareAuthSidebar: false,
 		}
 	},
 
@@ -381,7 +383,7 @@ export default {
 		},
 
 		showSilentCallOption() {
-			return !(this.hasCall && !this.isInLobby)
+			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
 		},
 
 		showDeviceSelection() {
@@ -453,8 +455,11 @@ export default {
 	},
 
 	methods: {
-		showModal() {
+		showModal(page) {
 			this.modal = true
+			if (page === 'video-verification') {
+				this.isPublicShareAuthSidebar = true
+			}
 		},
 
 		closeModal() {
@@ -463,6 +468,7 @@ export default {
 			this.deviceIdChanged = false
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
+			this.isPublicShareAuthSidebar = false
 		},
 
 		toggleAudio() {
@@ -497,7 +503,6 @@ export default {
 			if (this.videoDeviceStateChanged) {
 				emit('local-video-control-button:toggle-video')
 			}
-
 			this.closeModal()
 		},
 
