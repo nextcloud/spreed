@@ -34,6 +34,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
@@ -43,6 +44,7 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -85,6 +87,7 @@ class SystemMessage implements IEventListener {
 		protected IRootFolder $rootFolder,
 		protected ICloudIdManager $cloudIdManager,
 		protected IURLGenerator $url,
+		protected FilesMetadataCache $metadataCache,
 	) {
 	}
 
@@ -719,9 +722,12 @@ class SystemMessage implements IEventListener {
 			]);
 		}
 
+		$fileId = $node->getId();
+		$isPreviewAvailable = $this->previewManager->isAvailable($node);
+
 		$data = [
 			'type' => 'file',
-			'id' => (string) $node->getId(),
+			'id' => (string) $fileId,
 			'name' => $name,
 			'size' => $size,
 			'path' => $path,
@@ -729,8 +735,20 @@ class SystemMessage implements IEventListener {
 			'etag' => $node->getEtag(),
 			'permissions' => $node->getPermissions(),
 			'mimetype' => $node->getMimeType(),
-			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
 		];
+
+		// If a preview is available, check if we can get the dimensions of the file from the metadata API
+		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
+			try {
+				$sizeMetadata = $this->metadataCache->getMetadataPhotosSizeForFileId($fileId);
+				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
+					$data['width'] = $sizeMetadata['width'];
+					$data['height'] = $sizeMetadata['height'];
+				}
+			} catch (FilesMetadataNotFoundException) {
+			}
+		}
 
 		if ($node->getMimeType() === 'text/vcard') {
 			$vCard = $node->getContent();
