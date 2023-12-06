@@ -19,7 +19,7 @@
   -->
 
 <template>
-	<div>
+	<Fragment>
 		<!-- "submit-wrapper" is used to mimic the login button and thus get
 			automatic colouring of the confirm icon by the Theming app. -->
 		<div id="submit-wrapper" class="request-password-wrapper">
@@ -35,10 +35,11 @@
 		<p v-if="hasRequestFailed" class="warning error-message">
 			{{ t('spreed', 'Error requesting the password.') }}
 		</p>
-	</div>
+	</Fragment>
 </template>
 
 <script>
+import { Fragment } from 'vue-frag'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
@@ -50,6 +51,7 @@ export default {
 
 	components: {
 		NcButton,
+		Fragment,
 	},
 
 	props: {
