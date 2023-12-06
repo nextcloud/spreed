@@ -172,7 +172,7 @@ export default {
 				// has been set, which is done once the conversation has been
 				// fetched. MediaSettings are called to set up audio and video devices
 				// and also to give a consent to recording, if set up
-				emit('talk:media-settings:show')
+				emit('talk:media-settings:show', 'video-verification')
 			}
 		},
 
@@ -206,7 +206,7 @@ export default {
 			// Guest needs to add their display name right after joining conversation,
 			// before fetching and showing media settings. Then, this latter will be triggered
 			// by the guest name addition event.
-			emit('talk:media-settings:show')
+			emit('talk:media-settings:show', 'video-verification')
 			unsubscribe('talk:guest-name:added', this.showGuestMediaSettings)
 		}
 	},
