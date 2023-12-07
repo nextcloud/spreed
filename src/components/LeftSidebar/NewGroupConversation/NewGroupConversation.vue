@@ -162,11 +162,11 @@
 </template>
 
 <script>
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/Check.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
-import Check from 'vue-material-design-icons/Check.vue'
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -175,10 +175,10 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import SetContacts from './SetContacts/SetContacts.vue'
 import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
-import SetContacts from './SetContacts/SetContacts.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PRIVACY } from '../../../constants.js'

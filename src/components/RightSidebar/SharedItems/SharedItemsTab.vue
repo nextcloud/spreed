@@ -94,17 +94,17 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 
-import LoadingComponent from '../../LoadingComponent.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
+import LoadingComponent from '../../LoadingComponent.vue'
 
-import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import {
 	sharedItemButtonTitle,
 	sharedItemsOrder,
 	sharedItemsWithPreviewLimit,
 	sharedItemTitle,
 } from './sharedItemsConstants.js'
+import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 
 export default {
 

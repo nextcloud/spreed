@@ -9,7 +9,9 @@
 
 <script>
 import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
+
 import EmptyView from '../components/EmptyView.vue'
+
 import IconTalk from '../../img/app-dark.svg?raw'
 
 export default {

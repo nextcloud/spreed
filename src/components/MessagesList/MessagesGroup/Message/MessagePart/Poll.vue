@@ -140,8 +140,8 @@
 import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'

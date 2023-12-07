@@ -93,8 +93,6 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
-
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import PhoneIcon from 'vue-material-design-icons/Phone.vue'
 import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
@@ -102,6 +100,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
+import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 

@@ -23,8 +23,8 @@ import debounce from 'debounce'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import { EventBus } from '../services/EventBus.js'
 import isInLobby from './isInLobby.js'
+import { EventBus } from '../services/EventBus.js'
 
 const getParticipants = {
 

@@ -92,11 +92,11 @@ import SHA1 from 'crypto-js/sha1.js'
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import TransitionWrapper from '../../TransitionWrapper.vue'
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import TransitionWrapper from '../../TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'

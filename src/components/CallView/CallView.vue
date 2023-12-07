@@ -176,12 +176,14 @@
 <script>
 import debounce from 'debounce'
 
+import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
+
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
-import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
@@ -197,7 +199,6 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 
 export default {

@@ -20,8 +20,8 @@
  *
  */
 
-import Vue from 'vue'
 import { defineStore } from 'pinia'
+import Vue from 'vue'
 
 import { loadState } from '@nextcloud/initial-state'
 
