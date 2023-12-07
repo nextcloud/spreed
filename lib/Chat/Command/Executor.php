@@ -99,9 +99,9 @@ class Executor {
 			return;
 		}
 
-		if ($command->getApp() === '' && $command->getCommand() === 'help') {
+		if (($command->getApp() === '' || $command->getApp() === null) && $command->getCommand() === 'help') {
 			$output = $this->execHelp($room, $message, $arguments, $participant);
-		} elseif ($command->getApp() !== '') {
+		} elseif ($command->getApp() !== '' && $command->getApp() !== null) {
 			$output = $this->execApp($room, $message, $command, $arguments);
 		} else {
 			$output = $this->execShell($room, $message, $command, $arguments);
@@ -126,7 +126,7 @@ class Executor {
 		$commands = $this->commandService->findAll();
 
 		foreach ($commands as $command) {
-			if ($command->getApp() !== '') {
+			if ($command->getApp() !== '' && $command->getApp() !== null) {
 				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
 			} else {
 				if ($command->getCommand() === 'help' || strpos($command->getScript(), 'alias:') !== false ||
