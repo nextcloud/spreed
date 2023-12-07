@@ -16,7 +16,7 @@ echo ''
 echo '#'
 echo '# Starting PHP webserver'
 echo '#'
-php -S localhost:8080 -t ${ROOT_DIR} &
+PHP_CLI_SERVER_WORKERS=3 php -S localhost:8080 -t ${ROOT_DIR} &
 PHPPID1=$!
 echo 'Running on process ID:'
 echo $PHPPID1
