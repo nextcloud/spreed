@@ -1,6 +1,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0-rc.3 – 2023-12-07
+### Added
+- feat(call): Add screensharing support to the viewer-overlay
+  [#11033](https://github.com/nextcloud/spreed/issues/11033)
+- feat(conversations): Always show create conversation button
+  [#11104](https://github.com/nextcloud/spreed/issues/11104)
+- fix(chat): Add metadata to file parameters on API level so clients can calculate aspect ratio of previews
+  [#11131](https://github.com/nextcloud/spreed/issues/11131)
+
+### Changed
+- Update several dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Fix various cases of handling (in)active sessions while chatting and calling
+  [#11125](https://github.com/nextcloud/spreed/issues/11125)
+  [#11140](https://github.com/nextcloud/spreed/issues/11140)
+- fix(chat): Only load current absence not future ones
+  [#11124](https://github.com/nextcloud/spreed/issues/11124)
+- fix(chat): Fix file share with caption quote reply
+  [#11128](https://github.com/nextcloud/spreed/issues/11128)
+- fix(poll): Reorganize component structure and hide "End poll" from first view
+  [#11109](https://github.com/nextcloud/spreed/issues/11109)
+- fix(call): Cancel scheduled participant request when requesting new one
+  [#11097](https://github.com/nextcloud/spreed/issues/11097)
+- fix(chat): Expand system messages group if visual unread marker is set on it
+  [#11067](https://github.com/nextcloud/spreed/issues/11067)
+- fix(chat): Handle silent sending and input paste correctly in media captions
+  [#11123](https://github.com/nextcloud/spreed/issues/11123)
+- fix(conversations): Remove label from talk search input
+  [#11071](https://github.com/nextcloud/spreed/issues/11071)
+- fix(video-verification): Remove unneeded settings from video-verification screen
+  [#11138](https://github.com/nextcloud/spreed/issues/11138)
+
 ## 18.0.0-rc.2 – 2023-11-30
 ### Added
 - feat(chat): Show the "Out of office" message in one-to-one conversations
