@@ -19,8 +19,8 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin.js'
 import { PEER_DIRECTION, PeerConnectionAnalyzer } from './PeerConnectionAnalyzer.js'
+import EmitterMixin from '../../EmitterMixin.js'
 
 /**
  * Analyzer for the quality of the connections of a Participant.

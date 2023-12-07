@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 
 import { emit } from '@nextcloud/event-bus'
 
+import storeConfig from './storeConfig.js'
 import {
 	CONVERSATION,
 	WEBINAR,
@@ -33,7 +34,6 @@ import {
 	setConversationUnread,
 } from '../services/conversationsService.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
-import storeConfig from './storeConfig.js'
 
 jest.mock('../services/conversationsService', () => ({
 	makePublic: jest.fn(),

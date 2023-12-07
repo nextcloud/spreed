@@ -23,12 +23,12 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import { PARTICIPANT } from '../constants.js'
 import {
 	signalingJoinCall,
 	signalingLeaveCall,
 	signalingSendCallMessage,
 } from '../utils/webrtc/index.js'
-import { PARTICIPANT } from '../constants.js'
 
 /**
  * Join a call as participant

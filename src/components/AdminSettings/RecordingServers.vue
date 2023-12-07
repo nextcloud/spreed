@@ -104,8 +104,9 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
-import { CALL } from '../../constants.js'
 import TransitionWrapper from '../TransitionWrapper.vue'
+
+import { CALL } from '../../constants.js'
 
 const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
 const recordingConsentOptions = [

@@ -7,6 +7,9 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
+import storeConfig from './storeConfig.js'
+// eslint-disable-next-line import/order -- required for testing
+import messagesStore from './messagesStore.js'
 import {
 	ATTENDEE, CHAT,
 } from '../constants.js'
@@ -25,8 +28,6 @@ import {
 import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
-import messagesStore from './messagesStore.js'
-import storeConfig from './storeConfig.js'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),

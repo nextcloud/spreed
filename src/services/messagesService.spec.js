@@ -1,7 +1,6 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import { CHAT } from '../constants.js'
 import {
 	fetchMessages,
 	getMessageContext,
@@ -11,6 +10,7 @@ import {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from './messagesService.js'
+import { CHAT } from '../constants.js'
 
 jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),

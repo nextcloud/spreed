@@ -3,6 +3,7 @@ import util from 'util'
 import adapter from 'webrtc-adapter'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
+
 import { isSafari } from '../../../utils/browserCheck.js'
 
 /**

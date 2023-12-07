@@ -10,8 +10,8 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import Participant from './Participant.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
 import { ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
 import storeConfig from '../../../../../store/storeConfig.js'
