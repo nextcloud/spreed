@@ -8,8 +8,9 @@
 </template>
 
 <script>
-import EmptyView from '../components/EmptyView.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
+
+import EmptyView from '../components/EmptyView.vue'
 
 export default {
 	name: 'NotFoundView',

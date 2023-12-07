@@ -53,11 +53,10 @@ import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
-import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
+import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 
-// Constants
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 
 export default {

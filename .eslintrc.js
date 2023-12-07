@@ -15,7 +15,7 @@ module.exports = {
 		'import/newline-after-import': 'warn',
 		'import/no-named-as-default-member': 'off',
 		'import/order': [
-			'off', // TODO disabled with #10622 as it breaks tests and changes many components
+			'warn',
 			{
 				groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index'], 'unknown'],
 				pathGroups: [
@@ -48,8 +48,8 @@ module.exports = {
 						// group project components
 						pattern: '*.vue',
 						patternOptions: { matchBase: true },
-						group: 'external',
-						position: 'after',
+						group: 'parent',
+						position: 'before',
 					},
 				],
 				pathGroupsExcludedImportTypes: ['@nextcloud', 'vue-material-design-icons'],

@@ -40,8 +40,8 @@ import SHA1 from 'crypto-js/sha1.js'
 
 import VideoBottomBar from './VideoBottomBar.vue'
 
-import attachMediaStream from '../../../utils/attachmediastream.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
+import attachMediaStream from '../../../utils/attachmediastream.js'
 
 export default {
 

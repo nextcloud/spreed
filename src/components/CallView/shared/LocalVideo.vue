@@ -71,13 +71,13 @@ import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from './VideoBackground.vue'
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../../constants.js'
 import video from '../../../mixins/video.js'
-import attachMediaStream from '../../../utils/attachmediastream.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
+import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {

@@ -9,8 +9,9 @@
 </template>
 
 <script>
-import EmptyView from '../components/EmptyView.vue'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+
+import EmptyView from '../components/EmptyView.vue'
 
 export default {
 	name: 'SessionConflictView',

@@ -80,9 +80,9 @@ import moment from '@nextcloud/moment'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
-import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
+import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'

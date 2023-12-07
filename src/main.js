@@ -46,8 +46,8 @@ import router from './router/router.js'
 import store from './store/index.js'
 
 // Leaflet icon patch
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
 import 'leaflet/dist/leaflet.css'
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
 
 // eslint-disable-next-line
 import 'leaflet-defaulticon-compatibility'

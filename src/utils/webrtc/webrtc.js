@@ -38,10 +38,10 @@ import {
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 
+import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
 import { Sounds } from '../sounds.js'
-import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
 let webrtc
 const spreedPeerConnectionTable = []

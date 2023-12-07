@@ -23,9 +23,10 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { emit } from '@nextcloud/event-bus'
+
 import { setGuestUserName } from '../services/participantsService.js'
 import store from '../store/index.js'
-import { emit } from '@nextcloud/event-bus'
 
 export const useGuestNameStore = defineStore('guestName', {
 	state: () => ({

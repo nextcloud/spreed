@@ -83,11 +83,11 @@ import { showError } from '@nextcloud/dialogs'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 import DialpadPanel from '../../../DialpadPanel.vue'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
 import SelectPhoneNumber from '../../../SelectPhoneNumber.vue'
 import TransitionWrapper from '../../../TransitionWrapper.vue'
-import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 
 import { useArrowNavigation } from '../../../../composables/useArrowNavigation.js'
 import { searchPossibleConversations } from '../../../../services/conversationsService.js'

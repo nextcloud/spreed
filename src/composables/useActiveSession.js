@@ -21,10 +21,10 @@ import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 
-import { SESSION } from '../constants.js'
-import { setSessionState } from '../services/participantsService.js'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
+import { SESSION } from '../constants.js'
+import { setSessionState } from '../services/participantsService.js'
 
 const supportSessionState = getCapabilities()?.spreed?.features?.includes('session-state')
 const INACTIVE_TIME_MS = 3 * 60 * 1000

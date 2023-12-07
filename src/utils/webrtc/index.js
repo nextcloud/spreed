@@ -22,13 +22,6 @@
 import Axios from '@nextcloud/axios'
 import { getCapabilities } from '@nextcloud/capabilities'
 
-import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
-import { fetchSignalingSettings } from '../../services/signalingService.js'
-import store from '../../store/index.js'
-import CancelableRequest from '../cancelableRequest.js'
-import Signaling from '../signaling.js'
-import SignalingTypingHandler from '../SignalingTypingHandler.js'
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
 import MediaDevicesManager from './MediaDevicesManager.js'
 import CallParticipantCollection from './models/CallParticipantCollection.js'
@@ -39,6 +32,13 @@ import './shims/MediaStream.js'
 import './shims/MediaStreamTrack.js'
 import SpeakingStatusHandler from './SpeakingStatusHandler.js'
 import initWebRtc from './webrtc.js'
+import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
+import { fetchSignalingSettings } from '../../services/signalingService.js'
+import store from '../../store/index.js'
+import CancelableRequest from '../cancelableRequest.js'
+import Signaling from '../signaling.js'
+import SignalingTypingHandler from '../SignalingTypingHandler.js'
 
 let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
