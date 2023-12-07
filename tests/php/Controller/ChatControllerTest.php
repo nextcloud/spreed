@@ -39,6 +39,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -86,6 +87,8 @@ class ChatControllerTest extends TestCase {
 	protected $messageParser;
 	/** @var RoomShareProvider|MockObject */
 	protected $roomShareProvider;
+	/** @var FilesMetadataCache|MockObject */
+	protected $filesMetadataCache;
 	/** @var IManager|MockObject */
 	protected $autoCompleteManager;
 	/** @var IUserStatusManager|MockObject */
@@ -131,6 +134,7 @@ class ChatControllerTest extends TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->roomShareProvider = $this->createMock(RoomShareProvider::class);
+		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->statusManager = $this->createMock(IUserStatusManager::class);
 		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
@@ -171,6 +175,7 @@ class ChatControllerTest extends TestCase {
 			$this->guestManager,
 			$this->messageParser,
 			$this->roomShareProvider,
+			$this->filesMetadataCache,
 			$this->autoCompleteManager,
 			$this->statusManager,
 			$this->matterbridgeManager,
