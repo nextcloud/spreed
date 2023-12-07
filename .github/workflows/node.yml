@@ -47,7 +47,7 @@ jobs:
     name: NPM build
     steps:
       - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Read package.json node and npm engines version
         uses: skjnldsv/read-package-engines-version-actions@8205673bab74a63eb9b8093402fd9e0e018663a1 # v2.2
@@ -57,7 +57,7 @@ jobs:
           fallbackNpm: '^9'
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -67,6 +67,7 @@ jobs:
       - name: Install dependencies & build
         env:
           CYPRESS_INSTALL_BINARY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
         run: |
           npm ci
           npm run build --if-present

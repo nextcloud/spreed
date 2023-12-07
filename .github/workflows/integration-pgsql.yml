@@ -6,9 +6,8 @@
 name: Integration pgsql
 
 on:
+  workflow_dispatch:
   pull_request:
-  schedule:
-    - cron: "5 2 * * *"
 
 permissions:
   contents: read
