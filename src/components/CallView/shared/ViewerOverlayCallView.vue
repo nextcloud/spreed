@@ -131,13 +131,13 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { NcButton, Tooltip } from '@nextcloud/vue'
 
-import TransitionWrapper from '../../TransitionWrapper.vue'
 import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
-import VideoVue from './VideoVue.vue'
 import Screen from './Screen.vue'
+import VideoVue from './VideoVue.vue'
+import TransitionWrapper from '../../TransitionWrapper.vue'
 
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 

@@ -19,8 +19,8 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin.js'
 import TrackSink from './TrackSink.js'
+import EmitterMixin from '../../EmitterMixin.js'
 
 /**
  * Sink node to add one or more tracks to a single stream.

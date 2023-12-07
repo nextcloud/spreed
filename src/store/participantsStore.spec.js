@@ -8,6 +8,8 @@ import Vuex from 'vuex'
 
 import { emit } from '@nextcloud/event-bus'
 
+import participantsStore from './participantsStore.js'
+import storeConfig from './storeConfig.js'
 import { PARTICIPANT } from '../constants.js'
 import {
 	joinCall,
@@ -29,8 +31,6 @@ import {
 } from '../services/participantsService.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
-import participantsStore from './participantsStore.js'
-import storeConfig from './storeConfig.js'
 
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),

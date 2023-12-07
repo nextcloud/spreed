@@ -40,6 +40,7 @@
 
 <script>
 import { Fragment } from 'vue-frag'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'

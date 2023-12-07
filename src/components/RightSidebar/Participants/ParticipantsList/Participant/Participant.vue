@@ -306,8 +306,8 @@ import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
-import PhoneInTalk from 'vue-material-design-icons/PhoneInTalk.vue'
 import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
+import PhoneInTalk from 'vue-material-design-icons/PhoneInTalk.vue'
 import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
@@ -322,9 +322,9 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import DialpadPanel from '../../../../DialpadPanel.vue'
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
@@ -336,8 +336,8 @@ import {
 	callSIPUnmutePhone,
 	callSIPSendDTMF,
 } from '../../../../../services/callsService.js'
-import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
+import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { getStatusMessage } from '../../../../../utils/userStatus.js'
 
 export default {

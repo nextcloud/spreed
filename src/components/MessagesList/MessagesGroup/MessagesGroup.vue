@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import Message from './Message/Message.vue'
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'

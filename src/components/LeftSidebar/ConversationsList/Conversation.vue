@@ -147,9 +147,9 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import ConversationIcon from './../../ConversationIcon.vue'
 

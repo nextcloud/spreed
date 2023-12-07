@@ -51,8 +51,8 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import SharedItems from './SharedItems.vue'
 
-import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import { sharedItemsOrder, sharedItemTitle } from './sharedItemsConstants.js'
+import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 
 export default {
 	name: 'SharedItemsBrowser',

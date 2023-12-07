@@ -44,12 +44,12 @@
 </template>
 
 <script>
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { CALL, CONVERSATION } from '../../constants.js'
-import { getCapabilities } from '@nextcloud/capabilities'
 
 const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent']
 
