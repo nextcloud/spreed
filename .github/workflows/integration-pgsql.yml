@@ -6,24 +6,8 @@
 name: Integration pgsql
 
 on:
+  workflow_dispatch:
   pull_request:
-    paths:
-      - '.github/workflows/**'
-      - 'appinfo/**'
-      - 'lib/**'
-      - 'templates/**'
-      - 'tests/integration/**'
-      - 'vendor/**'
-      - 'vendor-bin/**'
-      - '.php-cs-fixer.dist.php'
-      - 'composer.json'
-      - 'composer.lock'
-
-  push:
-    branches:
-      - main
-      - master
-      - stable*
 
 permissions:
   contents: read
@@ -33,8 +17,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      src: ${{ steps.changes.outputs.src}}
+
+    steps:
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # v2.11.1
+        id: changes
+        continue-on-error: true
+        with:
+          filters: |
+            src:
+              - '.github/workflows/**'
+              - 'appinfo/**'
+              - 'lib/**'
+              - 'templates/**'
+              - 'tests/integration/**'
+              - 'vendor/**'
+              - 'vendor-bin/**'
+              - '.php-cs-fixer.dist.php'
+              - 'composer.json'
+              - 'composer.lock'
+
   integration-pgsql:
     runs-on: ubuntu-latest
+
+    needs: changes
+    if: needs.changes.outputs.src != 'false'
 
     strategy:
       fail-fast: false
@@ -70,6 +81,10 @@ jobs:
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
 
+      - name: Patch version check for nightly PHP
+        if: ${{ matrix.php-versions == '8.4' }}
+        run: echo "<?php" > lib/versioncheck.php
+
       - name: Checkout app
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
@@ -104,8 +119,8 @@ jobs:
           extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
           coverage: none
           ini-file: development
-          ini-values:
-            apc.enable_cli=on
+          # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
+          ini-values: apc.enable_cli=on, disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -144,7 +159,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: integration-pgsql
+    needs: [changes, integration-pgsql]
 
     if: always()
 
@@ -152,4 +167,4 @@ jobs:
 
     steps:
       - name: Summary status
-        run: if ${{ needs.integration-pgsql.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes.outputs.src != 'false' && needs.integration-pgsql.result != 'success' }}; then exit 1; fi

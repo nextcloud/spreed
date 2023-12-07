@@ -6,16 +6,11 @@
 name: Integration oci
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       # Only running on PR for this file to save CI time (otherwise pgsql only)
       - '.github/workflows/integration-oci.yml'
-
-  push:
-    branches:
-      - main
-      - master
-      - stable*
 
 permissions:
   contents: read
@@ -25,8 +20,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      src: ${{ steps.changes.outputs.src}}
+
+    steps:
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # v2.11.1
+        id: changes
+        continue-on-error: true
+        with:
+          filters: |
+            src:
+              - '.github/workflows/**'
+              - 'appinfo/**'
+              - 'lib/**'
+              - 'templates/**'
+              - 'tests/integration/**'
+              - 'vendor/**'
+              - 'vendor-bin/**'
+              - '.php-cs-fixer.dist.php'
+              - 'composer.json'
+              - 'composer.lock'
+
   integration-oci:
     runs-on: ubuntu-22.04
+
+    needs: changes
+    if: needs.changes.outputs.src != 'false'
 
     strategy:
       fail-fast: false
@@ -142,7 +164,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: integration-oci
+    needs: [changes, integration-oci]
 
     if: always()
 
@@ -150,4 +172,4 @@ jobs:
 
     steps:
       - name: Summary status
-        run: if ${{ needs.integration-oci.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes.outputs.src != 'false' && needs.integration-oci.result != 'success' }}; then exit 1; fi
