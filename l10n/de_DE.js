@@ -1084,6 +1084,7 @@ OC.L10N.register(
     "Notifications" : "Benachrichtigungen",
     "Notify about calls in this conversation" : "Über Anrufe in dieser Unterhaltung benachrichtigen",
     "Recording Consent" : "Einwilligung zur Aufzeichnung",
+    "Recording consent cannot be changed once a call or breakout session has started." : "Die Einwilligung zur Aufzeichnung kann nicht mehr geändert werden, sobald ein Unterhaltung oder eine Breakout-Sitzung begonnen hat.",
     "Require recording consent before joining call in this conversation" : "Zur Teilnahme an dieser Unterhaltung ist die Zustimmung zur Aufzeichnung erforderlich.",
     "Recording consent is required for all calls" : "Für alle Unterhaltungen ist eine Einwilligung zur Aufzeichnung erforderlich",
     "Recording consent is required for calls in this conversation" : "Zur Teilnahme an dieser Unterhaltung ist die Einwilligung zur Aufzeichnung erforderlich",
@@ -1562,7 +1563,6 @@ OC.L10N.register(
     "Show all call recordings" : "Alle Anrufaufnahmen ansehen",
     "Show all audio" : "Alle Audios anzeigen",
     "Show all other" : "Alle anderen anzeigen",
-    "Session has been marked as inactive" : "Die Sitzung wurde als inaktiv markiert",
     "You reconnected to the call" : "Sie haben sich wieder mit dem Anruf verbunden",
     "{actor} reconnected to the call" : "{actor} hat sich wieder mit dem Anruf verbunden",
     "You added {user0} and {user1}" : "Sie haben {user0} und {user1} hinzugefügt",
@@ -1734,6 +1734,7 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Der eingerichtete Signalisierungsserver muss aktualisiert werden, damit er mit dieser Version von Talk kompatibel ist. Bitte wenden Sie sich an Ihre Administration.",
     "Setup summary" : "Einstellungszusammenfassung",
     "Phone number could not be hanged up" : "Telefonnummer konnte nicht aufgelegt werden",
-    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden"
+    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden",
+    "Session has been marked as inactive" : "Die Sitzung wurde als inaktiv markiert"
 },
 "nplurals=2; plural=(n != 1);");

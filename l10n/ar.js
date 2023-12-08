@@ -1084,6 +1084,7 @@ OC.L10N.register(
     "Notifications" : "التنبيهات",
     "Notify about calls in this conversation" : "الإخطار حول المكالمات فى هذه المحادثة",
     "Recording Consent" : "الإذن بالتسجيل ",
+    "Recording consent cannot be changed once a call or breakout session has started." : "لا يمكن تغيير الموافقة على التسجيل بعد بدء المكالمة أو الجلسة الجانبية.",
     "Require recording consent before joining call in this conversation" : "أطلُب الإذن بالتسجيل قبل الانضمام لهذه المحادثة",
     "Recording consent is required for all calls" : "الإذن بالتسجيل مطلوبٌ لكل المكالمات",
     "Recording consent is required for calls in this conversation" : "الإذن بالتسجيل مطلوبٌ لكل المكالمات في هذه المحادثة",
@@ -1562,7 +1563,6 @@ OC.L10N.register(
     "Show all call recordings" : "عرض جميع تسجيلات المكالمات",
     "Show all audio" : "عرض كل الأصوات",
     "Show all other" : "عرض كل الآخرين",
-    "Session has been marked as inactive" : "جلسة العمل تمّ تمييزها كـ\"غير نشطة\"",
     "You reconnected to the call" : "تمّت إعادة توصيلك بالمكالمة",
     "{actor} reconnected to the call" : "تمّت إعادة توصيل {actor} بالمكالمة",
     "You added {user0} and {user1}" : "أنت قمت بإضافة {user0} و  {user1}",
@@ -1734,6 +1734,7 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. الرجاء الاتصال بالمسؤول الخاص بك.",
     "Setup summary" : "ملخص الإعداد",
     "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
-    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار"
+    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار",
+    "Session has been marked as inactive" : "جلسة العمل تمّ تمييزها كـ\"غير نشطة\""
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
