@@ -623,7 +623,7 @@ const actions = {
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
 		const chatExtrasStore = useChatExtrasStore()
-		const parentId = chatExtrasStore.getMessageToBeReplied(token)
+		const parentId = chatExtrasStore.getParentIdToReply(token)
 		const parent = parentId && context.getters.message(token, parentId)
 		const date = new Date()
 		let tempId = 'temp-' + date.getTime()

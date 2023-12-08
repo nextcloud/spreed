@@ -437,7 +437,7 @@ const actions = {
 		try {
 			const response = await clearConversationHistory(token)
 			const chatExtrasStore = useChatExtrasStore()
-			chatExtrasStore.removeMessageToBeReplied(token)
+			chatExtrasStore.removeParentIdToReply(token)
 			context.dispatch('deleteMessages', token)
 			return response
 		} catch (error) {

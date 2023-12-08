@@ -250,7 +250,7 @@ export default {
 	},
 	methods: {
 		handleAbortReply() {
-			this.chatExtrasStore.removeMessageToBeReplied(this.token)
+			this.chatExtrasStore.removeParentIdToReply(this.token)
 			EventBus.$emit('focus-chat-input')
 		},
 

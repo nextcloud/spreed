@@ -383,7 +383,7 @@ describe('messagesStore', () => {
 			}
 
 			store.dispatch('processMessage', parent)
-			chatExtraStore.addMessageToBeReplied({ token: TOKEN, id: 123 })
+			chatExtraStore.setParentIdToReply({ token: TOKEN, id: 123 })
 
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
