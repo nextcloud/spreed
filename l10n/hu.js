@@ -1485,7 +1485,6 @@ OC.L10N.register(
     "Show all call recordings" : "Az összes hívásfelvétel megjelenítése",
     "Show all audio" : "Összes hang megjelenítése",
     "Show all other" : "Összes egyéb megtekintése",
-    "Session has been marked as inactive" : "A munkamenet inaktívnak lett jelölve",
     "You reconnected to the call" : "Újracsatlakozott a híváshoz",
     "{actor} reconnected to the call" : "{actor} újracsatlakozott a híváshoz",
     "You added {user0} and {user1}" : "Hozááadta {user0} -t és {user1} -t",
@@ -1631,6 +1630,7 @@ OC.L10N.register(
     "Post to conversation" : "Elküldés egy beszélgetésbe",
     "Sending signaling message has failed." : "A jelző üzenet küldése sikertelen.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Frissíteni kell a beállított jelzőkiszolgálót, hogy kompatibilis legyen a Beszélgetés ezen verziójával. Lépjen kapcsolatba a rendszergazdával.",
-    "Setup summary" : "Telepítés összegzés"
+    "Setup summary" : "Telepítés összegzés",
+    "Session has been marked as inactive" : "A munkamenet inaktívnak lett jelölve"
 },
 "nplurals=2; plural=(n != 1);");

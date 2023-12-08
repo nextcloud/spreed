@@ -1082,6 +1082,7 @@
     "Notifications" : "通知",
     "Notify about calls in this conversation" : "在此對話中有通話時通知",
     "Recording Consent" : "錄製同意",
+    "Recording consent cannot be changed once a call or breakout session has started." : "通話或分組會議開始後，錄製同意就無法更改。",
     "Require recording consent before joining call in this conversation" : "在此對話中，需要在加入通話前給予錄製同意",
     "Recording consent is required for all calls" : "所有通話都需要獲得錄製同意",
     "Recording consent is required for calls in this conversation" : "在此次對話中，需要獲得錄製同意",
@@ -1560,7 +1561,6 @@
     "Show all call recordings" : "顯示所有通話錄音",
     "Show all audio" : "顯示所有音訊",
     "Show all other" : "顯示所有其他東西",
-    "Session has been marked as inactive" : "工作階段已被標記為非作用中",
     "You reconnected to the call" : "您已重新連線至通話",
     "{actor} reconnected to the call" : "{actor} 已重新連線至通話",
     "You added {user0} and {user1}" : "您已新增 {user0} 與 {user1}",
@@ -1732,6 +1732,7 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "需要更新設定好的訊號伺服器，使其與此版本的 Talk 相容。請聯絡您的管理員。",
     "Setup summary" : "設定摘要",
     "Phone number could not be hanged up" : "無法掛斷電話號碼",
-    "Phone number could not be putted on hold" : "無法保留電話號碼"
+    "Phone number could not be putted on hold" : "無法保留電話號碼",
+    "Session has been marked as inactive" : "工作階段已被標記為非作用中"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

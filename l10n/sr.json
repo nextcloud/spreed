@@ -1082,6 +1082,7 @@
     "Notifications" : "Обавештења",
     "Notify about calls in this conversation" : "Обавести о позивима у овом разговору",
     "Recording Consent" : "Сагласност за снимање",
+    "Recording consent cannot be changed once a call or breakout session has started." : "Када се покрене позив или делимична сесија, пристанак на снимање не може да се измени.",
     "Require recording consent before joining call in this conversation" : "Захтевај сагласност за снимање пре приступања позиву у овом разговору",
     "Recording consent is required for all calls" : "Сагласност за снимање се захтева за све позиве",
     "Recording consent is required for calls in this conversation" : "Сагласност за снимање се захтева за позиве у овом разговору",
@@ -1560,7 +1561,6 @@
     "Show all call recordings" : "Прикажи све снимке позива",
     "Show all audio" : "Прикажи сав звук",
     "Show all other" : "Прикажи све остало",
-    "Session has been marked as inactive" : "Сесија је означена као неактивна",
     "You reconnected to the call" : "Поново сте се повезали на позив",
     "{actor} reconnected to the call" : "{actor} се поново придружио позиву",
     "You added {user0} and {user1}" : "Додали сте кориснике {user0} и {user1}",
@@ -1732,6 +1732,7 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Подешени сервер за сигнализирање мора да се ажурира како би био компатибилан са овом верзијом апликације Talk. Молимо вас да се обратите свом администратору.",
     "Setup summary" : "Резиме подешавања",
     "Phone number could not be hanged up" : "Није успело прекидање везе са бројем телефона",
-    "Phone number could not be putted on hold" : "Број телефона није могао да се постави на чекање"
+    "Phone number could not be putted on hold" : "Број телефона није могао да се постави на чекање",
+    "Session has been marked as inactive" : "Сесија је означена као неактивна"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }
