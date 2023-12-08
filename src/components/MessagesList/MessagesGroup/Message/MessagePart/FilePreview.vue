@@ -584,10 +584,7 @@ export default {
 .file-preview {
 	position: relative;
 	min-width: 0;
-	width: 100%;
-	/* The file preview can not be a block; otherwise it would fill the whole
-	width of the container and the loading icon would not be centered on the
-	image. */
+	max-width: 100%;
 	display: inline-block;
 
 	border-radius: 16px;
@@ -615,7 +612,7 @@ export default {
 
 	.loading {
 		display: inline-block;
-		width: 100%;
+		min-width: 32px;
 		background-color: var(--color-background-dark);
 	}
 
@@ -650,7 +647,8 @@ export default {
 	}
 
 	.image-container {
-		display: flex;
+		position: relative;
+		display: inline-flex;
 		height: 100%;
 
 		&.playable {
