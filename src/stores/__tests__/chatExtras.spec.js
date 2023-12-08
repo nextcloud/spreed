@@ -77,43 +77,43 @@ describe('chatExtrasStore', () => {
 	describe('reply message', () => {
 		it('adds reply message id to the store', () => {
 			// Act
-			chatExtrasStore.addMessageToBeReplied({ token, id: 101 })
+			chatExtrasStore.setParentIdToReply({ token, id: 101 })
 
 			// Assert
-			expect(chatExtrasStore.getMessageToBeReplied(token)).toBe(101)
+			expect(chatExtrasStore.getParentIdToReply(token)).toBe(101)
 		})
 
 		it('clears reply message', () => {
 			// Arrange
-			chatExtrasStore.addMessageToBeReplied({ token, id: 101 })
+			chatExtrasStore.setParentIdToReply({ token, id: 101 })
 
 			// Act
-			chatExtrasStore.removeMessageToBeReplied(token)
+			chatExtrasStore.removeParentIdToReply(token)
 
 			// Assert
-			expect(chatExtrasStore.getMessageToBeReplied(token)).not.toBeDefined()
+			expect(chatExtrasStore.getParentIdToReply(token)).not.toBeDefined()
 		})
 	})
 
 	describe('current input message', () => {
 		it('sets current input message', () => {
 			// Act
-			chatExtrasStore.setCurrentMessageInput({ token: 'token-1', text: 'message-1' })
+			chatExtrasStore.setChatInput({ token: 'token-1', text: 'message-1' })
 
 			// Assert
-			expect(chatExtrasStore.getCurrentMessageInput('token-1')).toStrictEqual('message-1')
+			expect(chatExtrasStore.getChatInput('token-1')).toStrictEqual('message-1')
 		})
 
 		it('clears current input message', () => {
 			// Arrange
-			chatExtrasStore.setCurrentMessageInput({ token: 'token-1', text: 'message-1' })
+			chatExtrasStore.setChatInput({ token: 'token-1', text: 'message-1' })
 
 			// Act
-			chatExtrasStore.removeCurrentMessageInput('token-1')
+			chatExtrasStore.removeChatInput('token-1')
 
 			// Assert
-			expect(chatExtrasStore.currentMessageInput['token-1']).not.toBeDefined()
-			expect(chatExtrasStore.getCurrentMessageInput('token-1')).toBe('')
+			expect(chatExtrasStore.chatInput['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.getChatInput('token-1')).toBe('')
 		})
 	})
 
@@ -124,16 +124,16 @@ describe('chatExtrasStore', () => {
 			getUserAbsence.mockResolvedValueOnce(response)
 
 			await chatExtrasStore.getUserAbsence({ token: 'token-1', userId })
-			chatExtrasStore.addMessageToBeReplied({ token: 'token-1', id: 101 })
-			chatExtrasStore.setCurrentMessageInput({ token: 'token-1', text: 'message-1' })
+			chatExtrasStore.setParentIdToReply({ token: 'token-1', id: 101 })
+			chatExtrasStore.setChatInput({ token: 'token-1', text: 'message-1' })
 
 			// Act
 			chatExtrasStore.purgeChatExtras('token-1')
 
 			// Assert
 			expect(chatExtrasStore.absence['token-1']).not.toBeDefined()
-			expect(chatExtrasStore.messagesToBeReplied['token-1']).not.toBeDefined()
-			expect(chatExtrasStore.currentMessageInput['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.parentToReply['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.chatInput['token-1']).not.toBeDefined()
 		})
 	})
 })

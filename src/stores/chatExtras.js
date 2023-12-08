@@ -33,8 +33,8 @@ import { getUserAbsence } from '../services/participantsService.js'
 /**
  * @typedef {object} State
  * @property {{[key: Token]: object}} absence - The absence status per conversation.
- * @property {{[key: Token]: number}} messagesToBeReplied - The parent message id to reply per conversation.
- * @property {{[key: Token]: string}} currentMessageInput -The input value per conversation.
+ * @property {{[key: Token]: number}} parentToReply - The parent message id to reply per conversation.
+ * @property {{[key: Token]: string}} chatInput -The input value per conversation.
  */
 
 /**
@@ -46,19 +46,19 @@ import { getUserAbsence } from '../services/participantsService.js'
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: () => ({
 		absence: {},
-		messagesToBeReplied: {},
-		currentMessageInput: {},
+		parentToReply: {},
+		chatInput: {},
 	}),
 
 	getters: {
-		getMessageToBeReplied: (state) => (token) => {
-			if (state.messagesToBeReplied[token]) {
-				return state.messagesToBeReplied[token]
+		getParentIdToReply: (state) => (token) => {
+			if (state.parentToReply[token]) {
+				return state.parentToReply[token]
 			}
 		},
 
-		getCurrentMessageInput: (state) => (token) => {
-			return state.currentMessageInput[token] ?? ''
+		getChatInput: (state) => (token) => {
+			return state.chatInput[token] ?? ''
 		},
 	},
 
@@ -104,8 +104,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} payload.token The conversation token
 		 * @param {number} payload.id The id of message
 		 */
-		addMessageToBeReplied({ token, id }) {
-			Vue.set(this.messagesToBeReplied, token, id)
+		setParentIdToReply({ token, id }) {
+			Vue.set(this.parentToReply, token, id)
 		},
 
 		/**
@@ -114,8 +114,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 *
 		 * @param {string} token The conversation token
 		 */
-		removeMessageToBeReplied(token) {
-			Vue.delete(this.messagesToBeReplied, token)
+		removeParentIdToReply(token) {
+			Vue.delete(this.parentToReply, token)
 		},
 
 		/**
@@ -125,14 +125,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} payload.token The conversation token
 		 * @param {string} payload.text The string to store
 		 */
-		setCurrentMessageInput({ token, text }) {
+		setChatInput({ token, text }) {
 			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 			const temp = document.createElement('textarea')
 			temp.innerHTML = text.replace(/&/gmi, '&amp;')
 			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
 				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
 
-			Vue.set(this.currentMessageInput, token, parsedText)
+			Vue.set(this.chatInput, token, parsedText)
 		},
 
 		/**
@@ -140,8 +140,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 *
 		 * @param {string} token The conversation token
 		 */
-		removeCurrentMessageInput(token) {
-			Vue.delete(this.currentMessageInput, token)
+		removeChatInput(token) {
+			Vue.delete(this.chatInput, token)
 		},
 
 		/**
@@ -150,9 +150,9 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token the token of the conversation to be deleted
 		 */
 		purgeChatExtras(token) {
-			this.removeMessageToBeReplied(token)
+			this.removeParentIdToReply(token)
 			this.removeUserAbsence(token)
-			this.removeCurrentMessageInput(token)
+			this.removeChatInput(token)
 		},
 	},
 })

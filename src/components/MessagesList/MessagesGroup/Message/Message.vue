@@ -889,7 +889,7 @@ export default {
 		},
 
 		handleReply() {
-			this.chatExtrasStore.addMessageToBeReplied({
+			this.chatExtrasStore.setParentIdToReply({
 				token: this.token,
 				id: this.id,
 			})
