@@ -51,12 +51,12 @@
 				:title="t('spreed', 'Moderation')">
 				<ListableSettings :token="token" />
 				<LinkShareSettings ref="linkShareSettings" />
-				<ExpirationSettings :token="token" can-full-moderate />
+				<ExpirationSettings :token="token" can-moderate />
 			</NcAppSettingsSection>
 			<NcAppSettingsSection v-else
 				id="conversation-settings"
 				:title="t('spreed', 'Setup summary')">
-				<ExpirationSettings :token="token" />
+				<ExpirationSettings :token="token" :can-moderate="selfIsOwnerOrModerator" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->

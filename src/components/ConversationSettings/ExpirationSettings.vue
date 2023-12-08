@@ -28,7 +28,7 @@
 			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
 		</div>
 
-		<template v-if="canFullModerate">
+		<template v-if="canModerate">
 			<label for="moderation_settings_message_expiration" class="app-settings-section__label">
 				{{ t('spreed', 'Set message expiration') }}
 			</label>
@@ -68,7 +68,7 @@ export default {
 			default: null,
 		},
 
-		canFullModerate: {
+		canModerate: {
 			type: Boolean,
 			default: false,
 		},
