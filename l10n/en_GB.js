@@ -1562,7 +1562,6 @@ OC.L10N.register(
     "Show all call recordings" : "Show all call recordings",
     "Show all audio" : "Show all audio",
     "Show all other" : "Show all other",
-    "Session has been marked as inactive" : "Session has been marked as inactive",
     "You reconnected to the call" : "You reconnected to the call",
     "{actor} reconnected to the call" : "{actor} reconnected to the call",
     "You added {user0} and {user1}" : "You added {user0} and {user1}",
@@ -1734,6 +1733,7 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.",
     "Setup summary" : "Setup summary",
     "Phone number could not be hanged up" : "Phone number could not be hanged up",
-    "Phone number could not be putted on hold" : "Phone number could not be putted on hold"
+    "Phone number could not be putted on hold" : "Phone number could not be putted on hold",
+    "Session has been marked as inactive" : "Session has been marked as inactive"
 },
 "nplurals=2; plural=(n != 1);");

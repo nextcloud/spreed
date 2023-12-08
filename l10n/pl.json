@@ -1557,7 +1557,6 @@
     "Show all call recordings" : "Pokaż wszystkie nagrania rozmów",
     "Show all audio" : "Pokaż wszystkie audio",
     "Show all other" : "Pokaż wszystkie inne",
-    "Session has been marked as inactive" : "Sesja została oznaczona jako nieaktywna",
     "You reconnected to the call" : "Ponownie połączyłeś się z połączeniem",
     "{actor} reconnected to the call" : "{actor} ponownie połączył się z połączeniem",
     "You added {user0} and {user1}" : "Dodałeś {user0} i {user1}",
@@ -1729,6 +1728,7 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Skonfigurowany serwer sygnalizacyjny wymaga aktualizacji, aby był kompatybilny z tą wersją Talka. Skontaktuj się z administratorem.",
     "Setup summary" : "Podsumowanie konfiguracji",
     "Phone number could not be hanged up" : "Nie można odłożyć numeru telefonu",
-    "Phone number could not be putted on hold" : "Nie można zawiesić numeru telefonu"
+    "Phone number could not be putted on hold" : "Nie można zawiesić numeru telefonu",
+    "Session has been marked as inactive" : "Sesja została oznaczona jako nieaktywna"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

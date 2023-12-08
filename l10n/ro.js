@@ -841,7 +841,6 @@ OC.L10N.register(
     "Show all locations" : "Arată toate locațiile",
     "Show all audio" : "Arată audio",
     "Show all other" : "Arată celelalte",
-    "Session has been marked as inactive" : "Sesiunea a fost marcată ca inactivă",
     "You reconnected to the call" : "V-ați reconectat",
     "{actor} reconnected to the call" : "{actor} s-a reconectat",
     "You added {user0} and {user1}" : "Ați adăugat pe {user0} și {user1}",
@@ -920,6 +919,7 @@ OC.L10N.register(
     "An error occurred while posting deck card to conversation" : "Eroare la postarea cardului Deck în conversație",
     "Post to a conversation" : "Postare într-o conversație",
     "Post to conversation" : "Postare în conversație",
-    "Setup summary" : "Sumar configurație"
+    "Setup summary" : "Sumar configurație",
+    "Session has been marked as inactive" : "Sesiunea a fost marcată ca inactivă"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

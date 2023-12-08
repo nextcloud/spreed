@@ -1464,7 +1464,6 @@ OC.L10N.register(
     "Show all call recordings" : "Show all call recordings",
     "Show all audio" : "Mostrar todo o áudio",
     "Show all other" : "Mostrar todos os outros",
-    "Session has been marked as inactive" : "A sessão foi marcada como inativa",
     "You reconnected to the call" : "Você se reconectou à chamada",
     "{actor} reconnected to the call" : "{actor} reconectado à chamada",
     "You added {user0} and {user1}" : "Você adicionou {user0} e {user1}",
@@ -1634,6 +1633,7 @@ OC.L10N.register(
     "Post to conversation" : "Enviar para a conversa",
     "Sending signaling message has failed." : "Erro no envio da mensagem de sinalização.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "O servidor de sinalização configurado precisa ser atualizado para ser compatível com esta versão do Bate-Papo. Entre em contato com o seu administrador.",
-    "Setup summary" : "Resumo de Configuração"
+    "Setup summary" : "Resumo de Configuração",
+    "Session has been marked as inactive" : "A sessão foi marcada como inativa"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
