@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.0 – 2023-12-12
+### Added
+- 🗒️ Note to self
+  [#2196](https://github.com/nextcloud/spreed/issues/2196)
+- 🎙️ Show speaker while screensharing
+  [#4478](https://github.com/nextcloud/spreed/issues/4478)
+- 🏷️ Add a caption to your file before sharing it into the chat
+  [#5354](https://github.com/nextcloud/spreed/issues/5354)
+- 👤 Ask Guest to enter a name when connecting
+  [#855](https://github.com/nextcloud/spreed/issues/855)
+- 🤩 Animated call reactions
+  [#10561](https://github.com/nextcloud/spreed/issues/10561)
+- 🖋️ Optionally require consent before joining a recorded call
+  [#10348](https://github.com/nextcloud/spreed/issues/10348)
+- 📲 Allow calling phone numbers from within Talk using SIP dialout
+  [#10346](https://github.com/nextcloud/spreed/issues/10346)
+- 🔎 Add support for "person" and "modified" filter options of the new search
+  [#10909](https://github.com/nextcloud/spreed/issues/10909)
+- 🌴 Show the "Out of office" message in one-to-one conversations
+  [#11049](https://github.com/nextcloud/spreed/issues/11049)
+
+### Changed
+- Requires Nextcloud 28
+- Update translations
+- Update several dependencies
+- Require compatible clients (Talk Android 18.0.0 or later, Talk iOS 18.0.0 or later, Talk Desktop 0.16.0 or later) when recording consent is enabled
+  [#10969](https://github.com/nextcloud/spreed/issues/10969)
+
 ## 18.0.0-rc.3 – 2023-12-07
 ### Added
 - feat(call): Add screensharing support to the viewer-overlay
@@ -61,12 +89,6 @@ All notable changes to this project will be documented in this file.
   [#11054](https://github.com/nextcloud/spreed/issues/11054)
 
 ## 18.0.0-rc.1 – 2023-11-23
-### Added
-- Allow drag'n'drop of files onto the caption dialog
-  [#10898](https://github.com/nextcloud/spreed/issues/10898)
-- Add support for "person" and "modified" filter options of the global search
-  [#10909](https://github.com/nextcloud/spreed/issues/10909)
-
 ### Changed
 - Update several dependencies
 - Improve documentation by adding magic strings and values to parameters
