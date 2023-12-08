@@ -308,6 +308,9 @@ export default {
 		},
 
 		fallbackLocalUrl() {
+			if (!this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')) {
+				return undefined
+			}
 			return this.$store.getters.getLocalUrl(this.referenceId)
 		},
 
