@@ -1138,11 +1138,6 @@ export default {
 	:deep(.rich-text--wrapper) {
 		text-align: start;
 
-		// Hardcode to prevent RTL affecting on user mentions
-		.rich-text--component {
-			direction: ltr;
-		}
-
 		// Overwrite core styles, otherwise h4 is lesser than default font-size
 		h4 {
 			font-size: 100%;
@@ -1186,5 +1181,10 @@ export default {
 			border-inline-start: 4px solid var(--color-border);
 		}
 	}
+}
+
+// Hardcode to prevent RTL affecting on user mentions
+:deep(.rich-text--component) {
+	direction: ltr;
 }
 </style>
