@@ -89,12 +89,6 @@ All notable changes to this project will be documented in this file.
   [#11054](https://github.com/nextcloud/spreed/issues/11054)
 
 ## 18.0.0-rc.1 – 2023-11-23
-### Added
-- Allow drag'n'drop of files onto the caption dialog
-  [#10898](https://github.com/nextcloud/spreed/issues/10898)
-- Add support for "person" and "modified" filter options of the global search
-  [#10909](https://github.com/nextcloud/spreed/issues/10909)
-
 ### Changed
 - Update several dependencies
 - Improve documentation by adding magic strings and values to parameters
