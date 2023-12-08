@@ -27,7 +27,7 @@
 		<div v-if="disabled && !loading" class="app-settings-section__hint">
 			{{ t('spreed', 'Recording consent cannot be changed once a call or breakout session has started.') }}
 		</div>
-		<NcCheckboxRadioSwitch v-if="canFullModerate && !isGlobalConsent"
+		<NcCheckboxRadioSwitch v-if="canModerate && !isGlobalConsent"
 			type="switch"
 			:checked.sync="recordingConsentSelected"
 			:disabled="disabled"
@@ -66,7 +66,7 @@ export default {
 			default: null,
 		},
 
-		canFullModerate: {
+		canModerate: {
 			type: Boolean,
 			default: true,
 		},

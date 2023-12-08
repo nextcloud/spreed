@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div v-if="canFullModerate">
+	<div v-if="canModerate">
 		<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
 			:disabled="isListableLoading"
 			type="switch"
@@ -66,7 +66,7 @@ export default {
 			default: null,
 		},
 
-		canFullModerate: {
+		canModerate: {
 			type: Boolean,
 			default: true,
 		},
