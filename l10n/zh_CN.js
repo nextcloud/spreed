@@ -1548,7 +1548,6 @@ OC.L10N.register(
     "Show all call recordings" : "显示所有通话录制",
     "Show all audio" : "显示所有音频",
     "Show all other" : "显示所有其他",
-    "Session has been marked as inactive" : "会话已被标记为不活动",
     "You reconnected to the call" : "你重新连接到通话",
     "{actor} reconnected to the call" : "{actor} 重新连接到通话",
     "You added {user0} and {user1}" : "你添加了 {user0} 和 {user1}",
@@ -1720,6 +1719,7 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "需要更新配置的信令服务器，使其与该版本的通话应用兼容。请与管理员联系。",
     "Setup summary" : "设置概览",
     "Phone number could not be hanged up" : "电话挂断失败",
-    "Phone number could not be putted on hold" : "设置呼叫保持失败"
+    "Phone number could not be putted on hold" : "设置呼叫保持失败",
+    "Session has been marked as inactive" : "会话已被标记为不活动"
 },
 "nplurals=1; plural=0;");

@@ -1084,6 +1084,7 @@ OC.L10N.register(
     "Notifications" : "Notificacións",
     "Notify about calls in this conversation" : "Notificar sobre as chamadas nesta conversa",
     "Recording Consent" : "Consentimento de gravación",
+    "Recording consent cannot be changed once a call or breakout session has started." : "Non é posíbel cambiar o consentimento de gravación unha vez que se inicia unha chamada ou unha sesión parcial.",
     "Require recording consent before joining call in this conversation" : "Esixir o consentimento de gravación antes de unirse á chamada nesta conversa",
     "Recording consent is required for all calls" : "O consentimento de gravación é necesario para todas as chamadas",
     "Recording consent is required for calls in this conversation" : "É necesario o consentimento de gravación para as chamadas nesta conversa",
@@ -1562,7 +1563,6 @@ OC.L10N.register(
     "Show all call recordings" : "Amosar todas as gravacións de chamadas",
     "Show all audio" : "Amosar todo o son",
     "Show all other" : "Amosar todos os demais",
-    "Session has been marked as inactive" : "A sesión foi marcada coma inactiva",
     "You reconnected to the call" : "Vde. volveu conectarse á chamada",
     "{actor} reconnected to the call" : "{actor} volveu conectarse á chamada",
     "You added {user0} and {user1}" : "Vde. engadiu a {user0} e a {user1}",
@@ -1734,6 +1734,7 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "O servidor Signaling configurado debe ser actualizado para ser compatíbel con esta versión de Talk. Póñase en contacto coa administración desta instancia.",
     "Setup summary" : "Resumo da configuración",
     "Phone number could not be hanged up" : "Non foi posíbel colgar o número de teléfono",
-    "Phone number could not be putted on hold" : "Non foi posíbel por en espera o número de teléfono"
+    "Phone number could not be putted on hold" : "Non foi posíbel por en espera o número de teléfono",
+    "Session has been marked as inactive" : "A sesión foi marcada coma inactiva"
 },
 "nplurals=2; plural=(n != 1);");
