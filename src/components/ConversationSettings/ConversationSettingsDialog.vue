@@ -52,11 +52,11 @@
 			</NcAppSettingsSection>
 
 			<NcAppSettingsSection id="conversation-settings"
-				:name="canFullModerate ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
-				<ListableSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-full-moderate="canFullModerate" />
-				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-full-moderate="canFullModerate" />
-				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-full-moderate="canFullModerate" />
-				<ExpirationSettings :token="token" :can-full-moderate="canFullModerate" />
+				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
+				<ListableSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-moderate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
+				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<ExpirationSettings :token="token" :can-moderate="selfIsOwnerOrModerator" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->

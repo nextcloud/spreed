@@ -25,7 +25,7 @@
 			{{ t('spreed', 'Guest access') }}
 		</h4>
 
-		<template v-if="canFullModerate">
+		<template v-if="canModerate">
 			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
 				:disabled="isSaving"
 				type="switch"
@@ -77,7 +77,7 @@
 				</template>
 				{{ t('spreed', 'Copy conversation link') }}
 			</NcButton>
-			<NcButton v-if="isSharedPublicly && canFullModerate"
+			<NcButton v-if="isSharedPublicly && canModerate"
 				:disabled="isSendingInvitations"
 				@click="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
@@ -123,7 +123,7 @@ export default {
 			default: null,
 		},
 
-		canFullModerate: {
+		canModerate: {
 			type: Boolean,
 			default: true,
 		},
