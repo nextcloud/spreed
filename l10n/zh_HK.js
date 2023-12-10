@@ -1084,6 +1084,7 @@ OC.L10N.register(
     "Notifications" : "通告",
     "Notify about calls in this conversation" : "在此對話中有電話時通知",
     "Recording Consent" : "錄製同意",
+    "Recording consent cannot be changed once a call or breakout session has started." : "通話或分組會議開始後，錄製同意就無法更改。",
     "Require recording consent before joining call in this conversation" : "在此次對話中，需要在加入通話前給予錄製同意",
     "Recording consent is required for all calls" : "所有通話都需要獲得錄製同意",
     "Recording consent is required for calls in this conversation" : "在此次對話中，需要獲得錄製同意",
