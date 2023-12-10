@@ -1005,6 +1005,10 @@ Signaling.Standalone.prototype.doSend = function(msg, callback) {
 	this.socket.send(JSON.stringify(msg))
 }
 
+Signaling.Standalone.prototype._getBackendUrl = function() {
+	return generateOcsUrl('apps/spreed/api/v3/signaling/backend')
+}
+
 Signaling.Standalone.prototype.sendHello = function() {
 	let msg
 	if (this.resumeId) {
@@ -1019,7 +1023,7 @@ Signaling.Standalone.prototype.sendHello = function() {
 	} else {
 		// Already reconnected with a new session.
 		this._forceReconnect = false
-		const url = generateOcsUrl('apps/spreed/api/v3/signaling/backend')
+		const url = this._getBackendUrl()
 		let helloVersion
 		if (this.hasFeature('hello-v2') && this.settings.helloAuthParams['2.0']) {
 			helloVersion = '2.0'
@@ -1073,7 +1077,8 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		}
 
 		// TODO(fancycode): How should this be handled better?
-		console.error('Could not connect to server', data)
+		const url = this._getBackendUrl()
+		console.error('Could not connect to server using backend url ' + url, data)
 		this.reconnect()
 		return
 	}
