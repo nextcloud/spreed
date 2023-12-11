@@ -398,7 +398,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'rocketchat') {
 				// include # in channel
-				if (!preg_match('/^#/', $part['channel'])) {
+				if (!str_starts_with($part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -412,7 +412,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'slack') {
 				// do not include # in channel
-				if (strpos($part['channel'], '#') === 0) {
+				if (str_starts_with($part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -421,7 +421,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'discord') {
 				// do not include # in channel
-				if (strpos($part['channel'], '#') === 0) {
+				if (str_starts_with($part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -442,7 +442,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'irc') {
 				// include # in channel
-				if (!preg_match('/^#/', $part['channel'])) {
+				if (!str_starts_with($part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
