@@ -27,7 +27,6 @@ use OC\Comments\Comment;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -52,8 +51,6 @@ class NotifierTest extends TestCase {
 	protected $groupManager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
-	/** @var Manager|MockObject */
-	protected $manager;
 	/** @var IConfig|MockObject */
 	protected $config;
 	/** @var ITimeFactory|MockObject */
@@ -75,7 +72,6 @@ class NotifierTest extends TestCase {
 		$this->groupManager = $this->createMock(IGroupManager::class);
 
 		$this->participantService = $this->createMock(ParticipantService::class);
-		$this->manager = $this->createMock(Manager::class);
 		$this->config = $this->createMock(IConfig::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->util = $this->createMock(Util::class);
@@ -93,7 +89,6 @@ class NotifierTest extends TestCase {
 					$this->userManager,
 					$this->groupManager,
 					$this->participantService,
-					$this->manager,
 					$this->config,
 					$this->timeFactory,
 					$this->util,
@@ -106,7 +101,6 @@ class NotifierTest extends TestCase {
 			$this->userManager,
 			$this->groupManager,
 			$this->participantService,
-			$this->manager,
 			$this->config,
 			$this->timeFactory,
 			$this->util
@@ -152,9 +146,6 @@ class NotifierTest extends TestCase {
 				return new Participant($room, $attendee, null);
 			});
 
-		$this->manager->expects($this->any())
-			->method('getRoomById')
-			->willReturn($room);
 		return $room;
 	}
 

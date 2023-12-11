@@ -26,7 +26,6 @@ namespace OCA\Talk\Chat;
 
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -50,13 +49,11 @@ use OCP\Notification\INotification;
  * prepares the notifications for display.
  */
 class Notifier {
-
 	public function __construct(
 		private INotificationManager $notificationManager,
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
 		private ParticipantService $participantService,
-		private Manager $manager,
 		private IConfig $config,
 		private ITimeFactory $timeFactory,
 		private Util $util,
