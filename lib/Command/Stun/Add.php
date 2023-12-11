@@ -55,7 +55,7 @@ class Add extends Base {
 		// check input, similar to stun-server.js
 		$host = parse_url($server, PHP_URL_HOST);
 		$port = parse_url($server, PHP_URL_PORT);
-		if (empty($host) || empty($host)) {
+		if (empty($host) || empty($port)) {
 			$output->writeln('<error>Incorrect value. Must be stunserver:port.</error>');
 			return 1;
 		}
@@ -70,7 +70,7 @@ class Add extends Base {
 		$servers[] = "$host:$port";
 
 		$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));
-		$output->writeln('<info>Added ' . $server . '.</info>');
+		$output->writeln('<info>Added ' . "$host:$port" . '.</info>');
 		return 0;
 	}
 }
