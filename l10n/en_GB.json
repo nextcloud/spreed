@@ -1082,6 +1082,7 @@
     "Notifications" : "Notifications",
     "Notify about calls in this conversation" : "Notify about calls in this conversation",
     "Recording Consent" : "Recording Consent",
+    "Recording consent cannot be changed once a call or breakout session has started." : "Recording consent cannot be changed once a call or breakout session has started.",
     "Require recording consent before joining call in this conversation" : "Require recording consent before joining call in this conversation",
     "Recording consent is required for all calls" : "Recording consent is required for all calls",
     "Recording consent is required for calls in this conversation" : "Recording consent is required for calls in this conversation",
