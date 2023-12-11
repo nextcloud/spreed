@@ -474,7 +474,6 @@ class BackendNotifier {
 	/**
 	 * Send dial-out requests to the HPB
 	 *
-	 * @param Room $room
 	 * @throws \Exception
 	 */
 	public function dialOutToAttendee(Room $room, Attendee $attendee): ?string {

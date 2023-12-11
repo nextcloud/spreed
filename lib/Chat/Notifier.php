@@ -72,8 +72,6 @@ class Notifier {
 	 * Not every user mentioned in the message is notified, but only those that
 	 * are able to participate in the room.
 	 *
-	 * @param Room $chat
-	 * @param IComment $comment
 	 * @param array[] $alreadyNotifiedUsers
 	 * @psalm-param array<int, array{id: string, type: string, reason: string}> $alreadyNotifiedUsers
 	 * @return string[] Users that were mentioned
@@ -312,8 +310,6 @@ class Notifier {
 
 	/**
 	 * Removes all the pending notifications for the room with the given ID.
-	 *
-	 * @param Room $chat
 	 */
 	public function removePendingNotificationsForRoom(Room $chat, bool $chatOnly = false): void {
 		$notification = $this->notificationManager->createNotification();
@@ -470,12 +466,6 @@ class Notifier {
 	/**
 	 * Creates a notification for the given chat message comment and mentioned
 	 * user ID.
-	 *
-	 * @param Room $chat
-	 * @param IComment $comment
-	 * @param string $subject
-	 * @param array $subjectData
-	 * @return INotification
 	 */
 	private function createNotification(Room $chat, IComment $comment, string $subject, array $subjectData = [], ?IComment $reaction = null): INotification {
 		$subjectData['userType'] = $reaction ? $reaction->getActorType() : $comment->getActorType();

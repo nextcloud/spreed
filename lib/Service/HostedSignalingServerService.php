@@ -392,8 +392,6 @@ class HostedSignalingServerService {
 
 	/**
 	 * @throws HostedSignalingServerAPIException
-	 *
-	 * @return void
 	 */
 	public function deleteAccount(AccountId $accountId): void {
 		try {
