@@ -36,7 +36,6 @@ use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\IConfig;
 use OCP\IUser;
 use OCP\Notification\IManager;
 use SensitiveParameter;
@@ -58,7 +57,6 @@ class FederationManager {
 	public const TOKEN_LENGTH = 64;
 
 	public function __construct(
-		private IConfig $config,
 		private Manager $manager,
 		private ParticipantService $participantService,
 		private InvitationMapper $invitationMapper,
