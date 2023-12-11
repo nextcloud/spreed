@@ -70,11 +70,12 @@ class FilesMetadataCache {
 			}
 		}
 
-		if ($this->filesSizeData[$fileId] === null) {
+		$data = $this->filesSizeData[$fileId];
+		if ($data === null) {
 			throw new FilesMetadataNotFoundException();
 		}
 
-		return $this->filesSizeData[$fileId];
+		return $data;
 	}
 
 	protected function cachePhotosSize(int $fileId, IFilesMetadata $metadata): void {
