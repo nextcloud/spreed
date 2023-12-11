@@ -406,6 +406,10 @@ export default {
 		userAbsence() {
 			return this.chatExtrasStore.absence[this.token]
 		},
+
+		isMobileDevice() {
+			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+		}
 	},
 
 	watch: {
@@ -797,7 +801,7 @@ export default {
 		},
 
 		focusInput() {
-			if (this.isMobile()) {
+			if (this.isMobileDevice) {
 				return
 			}
 			this.$nextTick().then(() => {
@@ -815,10 +819,6 @@ export default {
 			if (!this.isTributePickerActive) {
 				this.blurInput()
 			}
-		},
-
-		isMobile() {
-			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
 
 		async checkAbsenceStatus() {

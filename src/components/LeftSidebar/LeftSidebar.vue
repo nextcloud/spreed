@@ -293,7 +293,7 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
-import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import Conversation from './ConversationsList/Conversation.vue'
@@ -358,16 +358,13 @@ export default {
 		NcEmptyContent,
 	},
 
-	mixins: [
-		isMobile,
-	],
-
 	setup() {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
 		const list = ref(null)
 
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
+		const isMobile = useIsMobile()
 
 		return {
 			initializeNavigation,
@@ -375,6 +372,7 @@ export default {
 			leftSidebar,
 			searchBox,
 			list,
+			isMobile,
 			canModerateSipDialOut,
 		}
 	},
