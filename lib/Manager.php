@@ -39,7 +39,6 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
-use OCP\DB\Exception as DBException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
@@ -672,11 +671,6 @@ class Manager {
 	}
 
 	/**
-	 * @param string $token
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string|null $sessionId
-	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
 	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null, ?string $serverUrl = null): Room {
@@ -787,9 +781,7 @@ class Manager {
 	}
 
 	/**
-	 * @param string $token
 	 * @param string|null $preloadUserId Load this participant's information if possible
-	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
 	public function getRoomByToken(string $token, ?string $preloadUserId = null, ?string $serverUrl = null): Room {
@@ -860,9 +852,7 @@ class Manager {
 	}
 
 	/**
-	 * @param string $objectType
-	 * @param string $objectId
-	 * @return Room[]
+	 * @return list<Room>
 	 */
 	public function getMultipleRoomsByObject(string $objectType, string $objectId, bool $orderById = false): array {
 		$query = $this->db->getQueryBuilder();
@@ -1067,12 +1057,6 @@ class Manager {
 		return $room;
 	}
 
-	/**
-	 * @param int $type
-	 * @param string $name
-	 * @return Room
-	 * @throws DBException
-	 */
 	public function createRemoteRoom(int $type, string $name, string $remoteToken, string $remoteServer): Room {
 		$token = $this->getNewToken();
 

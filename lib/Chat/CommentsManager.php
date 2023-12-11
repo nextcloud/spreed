@@ -100,8 +100,6 @@ class CommentsManager extends Manager {
 	 * @param string $objectType Limit the search by object type
 	 * @param string[] $objectIds Limit the search by object ids
 	 * @param string $verb Limit the verb of the comment
-	 * @param int $offset
-	 * @param int $limit
 	 * @return list<IComment>
 	 */
 	public function searchForObjectsWithFilters(string $search, string $objectType, array $objectIds, string $verb, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50): array {

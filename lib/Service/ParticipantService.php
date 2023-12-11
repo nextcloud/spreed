@@ -1549,8 +1549,6 @@ class ParticipantService {
 	}
 
 	/**
-	 * @param IQueryBuilder $query
-	 * @return Participant
 	 * @throws ParticipantNotFoundException
 	 */
 	protected function getParticipantFromQuery(IQueryBuilder $query, Room $room): Participant {
@@ -1573,11 +1571,9 @@ class ParticipantService {
 	}
 
 	/**
-	 * @param Room $room
-	 * @param \DateTime|null $maxLastJoined
 	 * @return string[]
 	 */
-	public function getParticipantUserIds(Room $room, \DateTime $maxLastJoined = null): array {
+	public function getParticipantUserIds(Room $room, ?\DateTime $maxLastJoined = null): array {
 		$maxLastJoinedTimestamp = null;
 		if ($maxLastJoined !== null) {
 			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
@@ -1589,12 +1585,7 @@ class ParticipantService {
 		}, $attendees);
 	}
 
-	/**
-	 * @param Room $room
-	 * @param \DateTime|null $maxLastJoined
-	 * @return int
-	 */
-	public function getGuestCount(Room $room, \DateTime $maxLastJoined = null): int {
+	public function getGuestCount(Room $room, ?\DateTime $maxLastJoined = null): int {
 		$maxLastJoinedTimestamp = null;
 		if ($maxLastJoined !== null) {
 			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();

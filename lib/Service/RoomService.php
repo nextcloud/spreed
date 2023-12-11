@@ -334,7 +334,6 @@ class RoomService {
 
 	/**
 	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
-	 * @param string|null $oldName
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setName(Room $room, string $newName, ?string $oldName = null): bool {
@@ -639,7 +638,6 @@ class RoomService {
 	}
 
 	/**
-	 * @param string $description
 	 * @return bool True when the change was valid, false otherwise
 	 * @throws \LengthException when the given description is too long
 	 */
@@ -826,12 +824,6 @@ class RoomService {
 		return (bool) $update->executeStatement();
 	}
 
-	/**
-	 * @param \DateTime $since
-	 * @param int $callFlag
-	 * @param bool $isGuest
-	 * @return bool
-	 */
 	public function setActiveSince(Room $room, \DateTime $since, int $callFlag, bool $isGuest): bool {
 		if ($isGuest && $room->getType() === Room::TYPE_PUBLIC) {
 			$update = $this->db->getQueryBuilder();

@@ -255,7 +255,6 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareController $controller
 	 * @throws PermissionsException
 	 */
 	protected function checkPermission(AEnvironmentAwareController $controller, string $permission): void {
@@ -273,7 +272,6 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareController $controller
 	 * @throws LobbyException
 	 */
 	protected function checkLobbyState(AEnvironmentAwareController $controller): void {

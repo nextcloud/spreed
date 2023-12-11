@@ -104,20 +104,11 @@ class ChatManager {
 	/**
 	 * Sends a new message to the given chat.
 	 *
-	 * @param Room $chat
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $message
-	 * @param \DateTime $creationDateTime
-	 * @param bool $sendNotifications
-	 * @param string|null $referenceId
-	 * @param int|null $parentId
 	 * @param bool $shouldSkipLastMessageUpdate If multiple messages will be posted
 	 *             (e.g. when adding multiple users to a room) we can skip the last
 	 *             message and last activity update until the last entry was created
 	 *             and then update with those values.
 	 *             This will replace O(n) with 1 database update.
-	 * @return IComment
 	 */
 	public function addSystemMessage(
 		Room $chat,
@@ -228,16 +219,6 @@ class ChatManager {
 
 	/**
 	 * Sends a new message to the given chat.
-	 *
-	 * @param Room $chat
-	 * @param ?Participant $participant
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $message
-	 * @param \DateTime $creationDateTime
-	 * @param IComment|null $replyTo
-	 * @param string $referenceId
-	 * @return IComment
 	 */
 	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo, string $referenceId, bool $silent): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
@@ -350,9 +331,6 @@ class ChatManager {
 	}
 
 	/**
-	 * @param Room $room
-	 * @param Participant $participant
-	 * @param array $messageData
 	 * @throws ShareNotFound
 	 */
 	public function removePollOnMessageDelete(Room $room, Participant $participant, array $messageData, \DateTime $deletionTime): void {
@@ -753,8 +731,6 @@ class ChatManager {
 	 * @param string $search content to search for
 	 * @param string[] $objectIds Limit the search by object ids
 	 * @param string $verb Limit the verb of the comment
-	 * @param int $offset
-	 * @param int $limit
 	 * @return list<IComment>
 	 */
 	public function searchForObjectsWithFilters(string $search, array $objectIds, string $verb, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50): array {

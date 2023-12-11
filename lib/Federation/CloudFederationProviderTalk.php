@@ -301,9 +301,6 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	}
 
 	/**
-	 * @param int $remoteAttendeeId
-	 * @param string $sharedSecret
-	 * @return Invitation
 	 * @throws ActionNotSupportedException
 	 * @throws ShareNotFound
 	 * @throws AuthenticationFailedException
