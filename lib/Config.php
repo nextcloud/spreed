@@ -295,19 +295,19 @@ class Config {
 
 	protected function getWebSocketDomainForSignalingServer(string $url): string {
 		$url .= '/';
-		if (strpos($url, 'https://') === 0) {
+		if (str_starts_with($url, 'https://')) {
 			return 'wss://' . substr($url, 8, strpos($url, '/', 9) - 8);
 		}
 
-		if (strpos($url, 'http://') === 0) {
+		if (str_starts_with($url, 'http://')) {
 			return 'ws://' . substr($url, 7, strpos($url, '/', 8) - 7);
 		}
 
-		if (strpos($url, 'wss://') === 0) {
+		if (str_starts_with($url, 'wss://')) {
 			return substr($url, 0, strpos($url, '/', 7));
 		}
 
-		if (strpos($url, 'ws://') === 0) {
+		if (str_starts_with($url, 'ws://')) {
 			return substr($url, 0, strpos($url, '/', 6));
 		}
 
@@ -509,7 +509,7 @@ class Config {
 			return;
 		}
 
-		if (substr($alg, 0, 2) === 'ES') {
+		if (str_starts_with($alg, 'ES')) {
 			$privKey = openssl_pkey_new([
 				'curve_name' => 'prime256v1',
 				'private_key_bits' => 2048,
@@ -520,7 +520,7 @@ class Config {
 			if (!openssl_pkey_export($privKey, $secret)) {
 				throw new \Exception('Could not export private key');
 			}
-		} elseif (substr($alg, 0, 2) === 'RS') {
+		} elseif (str_starts_with($alg, 'RS')) {
 			$privKey = openssl_pkey_new([
 				'private_key_bits' => 2048,
 				'private_key_type' => OPENSSL_KEYTYPE_RSA,

@@ -58,7 +58,7 @@ class MapsPluginLoader implements IEventListener {
 			return;
 		}
 
-		if (strpos($this->request->getPathInfo(), '/apps/maps') === 0) {
+		if (str_starts_with($this->request->getPathInfo(), '/apps/maps')) {
 			Util::addScript('spreed', 'talk-collections');
 			Util::addScript('spreed', 'talk-maps');
 		}

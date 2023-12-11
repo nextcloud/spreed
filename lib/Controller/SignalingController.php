@@ -235,11 +235,11 @@ class SignalingController extends OCSController {
 		$url = rtrim($signalingServers[$serverId]['server'], '/');
 		$url = strtolower($url);
 
-		if (strpos($url, 'wss://') === 0) {
+		if (str_starts_with($url, 'wss://')) {
 			$url = 'https://' . substr($url, 6);
 		}
 
-		if (strpos($url, 'ws://') === 0) {
+		if (str_starts_with($url, 'ws://')) {
 			$url = 'http://' . substr($url, 5);
 		}
 

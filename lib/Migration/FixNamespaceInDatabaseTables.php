@@ -54,7 +54,7 @@ class FixNamespaceInDatabaseTables implements IRepairStep {
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$oldClass = $row['class'];
-			if (strpos($oldClass, 'OCA\\Spreed\\') !== 0) {
+			if (!str_starts_with($oldClass, 'OCA\\Spreed\\')) {
 				continue;
 			}
 
