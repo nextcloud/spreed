@@ -26,6 +26,7 @@ namespace OCA\Talk\Command\Developer;
 use OC\Core\Command\Base;
 use OCP\App\IAppManager;
 use OCP\IConfig;
+use OCP\Server;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,10 +34,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateDocs extends Base {
-	private IAppManager $appManager;
-
 	public function __construct(
 		private IConfig $config,
+		private IAppManager $appManager,
 	) {
 		parent::__construct();
 	}
@@ -53,8 +53,6 @@ class UpdateDocs extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$this->appManager = \OC::$server->get(IAppManager::class);
-
 		$info = $this->appManager->getAppInfo('spreed');
 		$documentation = "# Talk occ commands\n\n";
 		foreach ($info['commands'] as $namespace) {
@@ -73,7 +71,7 @@ class UpdateDocs extends Base {
 	}
 
 	protected function getCommand(string $namespace): Command {
-		$command = \OC::$server->get($namespace);
+		$command = Server::get($namespace);
 		// Clean full definition of command that have the default Symfony options
 		$command->setApplication($this->getApplication());
 		return $command;
