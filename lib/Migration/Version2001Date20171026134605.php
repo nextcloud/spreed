@@ -322,9 +322,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 		try {
 			$result = $query->executeQuery();
-		} catch (TableNotFoundException $e) {
-			return;
-		} catch (InvalidFieldNameException $e) {
+		} catch (TableNotFoundException|InvalidFieldNameException) {
 			return;
 		}
 
@@ -380,9 +378,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 		try {
 			$result = $query->executeQuery();
-		} catch (TableNotFoundException $e) {
-			return;
-		} catch (InvalidFieldNameException $e) {
+		} catch (TableNotFoundException|InvalidFieldNameException) {
 			return;
 		}
 

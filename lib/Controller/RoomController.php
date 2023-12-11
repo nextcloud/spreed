@@ -1752,8 +1752,7 @@ class RoomController extends AEnvironmentAwareController {
 				);
 			}
 			$this->participantService->leaveRoomAsSession($room, $participant);
-		} catch (RoomNotFoundException $e) {
-		} catch (ParticipantNotFoundException $e) {
+		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 		}
 
 		return new DataResponse();

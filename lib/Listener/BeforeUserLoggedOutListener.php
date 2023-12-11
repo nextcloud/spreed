@@ -67,8 +67,7 @@ class BeforeUserLoggedOutListener implements IEventListener {
 					$this->participantService->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
 				}
 				$this->participantService->leaveRoomAsSession($room, $participant);
-			} catch (RoomNotFoundException $e) {
-			} catch (ParticipantNotFoundException $e) {
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
 			}
 		}
 	}

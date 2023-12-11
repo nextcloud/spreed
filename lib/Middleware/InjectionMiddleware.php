@@ -280,8 +280,7 @@ class InjectionMiddleware extends Middleware {
 		try {
 			$this->getLoggedInOrGuest($controller, true);
 			return;
-		} catch (NotAModeratorException $e) {
-		} catch (ParticipantNotFoundException $e) {
+		} catch (NotAModeratorException|ParticipantNotFoundException) {
 		}
 
 		$participant = $controller->getParticipant();
