@@ -50,9 +50,10 @@
 				alt=""
 				:src="defaultIconUrl">
 		</div>
-		<span v-if="isLoading"
+		<span v-else-if="isLoading"
 			v-tooltip="previewTooltip"
-			class="preview loading" />
+			class="preview loading"
+			:style="imageContainerStyle" />
 		<NcButton v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
@@ -189,6 +190,22 @@ export default {
 		},
 
 		/**
+		 * If preview and metadata are available, return width
+		 */
+		width: {
+			type: Number,
+			default: null,
+		},
+
+		/**
+		 * If preview and metadata are available, return height
+		 */
+		height: {
+			type: Number,
+			default: null,
+		},
+
+		/**
 		 * Whether to render a small preview to embed in replies
 		 */
 		smallPreview: {
@@ -291,6 +308,9 @@ export default {
 		},
 
 		fallbackLocalUrl() {
+			if (!this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')) {
+				return undefined
+			}
 			return this.$store.getters.getLocalUrl(this.referenceId)
 		},
 
@@ -333,11 +353,15 @@ export default {
 			return OC.MimeType.getIconUrl(this.mimetype) || imagePath('core', 'filetypes/file')
 		},
 
+		mediumPreview() {
+			return !this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')
+		},
+
 		previewImageClass() {
 			let classes = ''
 			if (this.smallPreview) {
 				classes += 'preview-small '
-			} else if (!this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')) {
+			} else if (this.mediumPreview) {
 				classes += 'preview-medium '
 			} else {
 				classes += 'preview '
@@ -350,6 +374,37 @@ export default {
 			}
 
 			return classes
+		},
+
+		imageContainerStyle() {
+			// Fallback for loading mimeicons (preview for audio files is not provided)
+			if (this.previewAvailable !== 'yes' || this.mimetype.startsWith('audio/')) {
+				return {
+					width: '128px',
+					height: '128px',
+				}
+			}
+
+			const widthConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 600)
+			const heightConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 384)
+
+			// Fallback when no metadata available
+			if (!this.width || !this.height) {
+				return {
+					width: widthConstraint + 'px',
+					height: heightConstraint + 'px',
+				}
+			}
+
+			const sizeMultiplicator = Math.min(
+				(heightConstraint > this.height ? 1 : (heightConstraint / this.height)),
+				(widthConstraint > this.width ? 1 : (widthConstraint / this.width))
+			)
+
+			return {
+				width: this.width * sizeMultiplicator + 'px',
+				aspectRatio: this.width + '/' + this.height,
+			}
 		},
 
 		previewType() {
@@ -529,10 +584,7 @@ export default {
 .file-preview {
 	position: relative;
 	min-width: 0;
-	width: 100%;
-	/* The file preview can not be a block; otherwise it would fill the whole
-	width of the container and the loading icon would not be centered on the
-	image. */
+	max-width: 100%;
 	display: inline-block;
 
 	border-radius: 16px;
@@ -560,7 +612,8 @@ export default {
 
 	.loading {
 		display: inline-block;
-		width: 100%;
+		min-width: 32px;
+		background-color: var(--color-background-dark);
 	}
 
 	.mimeicon {
@@ -594,7 +647,8 @@ export default {
 	}
 
 	.image-container {
-		display: flex;
+		position: relative;
+		display: inline-flex;
 		height: 100%;
 
 		&.playable {
