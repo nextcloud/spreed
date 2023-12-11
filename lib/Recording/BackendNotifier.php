@@ -103,9 +103,9 @@ class BackendNotifier {
 
 		$url = '/api/v1/room/' . $room->getToken();
 		$url = $recording['server'] . $url;
-		if (strpos($url, 'wss://') === 0) {
+		if (str_starts_with($url, 'wss://')) {
 			$url = 'https://' . substr($url, 6);
-		} elseif (strpos($url, 'ws://') === 0) {
+		} elseif (str_starts_with($url, 'ws://')) {
 			$url = 'http://' . substr($url, 5);
 		}
 		$body = json_encode($data);

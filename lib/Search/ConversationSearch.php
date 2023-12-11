@@ -65,7 +65,7 @@ class ConversationSearch implements IProvider {
 	 * @inheritDoc
 	 */
 	public function getOrder(string $route, array $routeParameters): int {
-		if (strpos($route, Application::APP_ID . '.') === 0) {
+		if (str_starts_with($route, Application::APP_ID . '.')) {
 			// Active app, prefer Talk results
 			return -1;
 		}
@@ -88,7 +88,7 @@ class ConversationSearch implements IProvider {
 			$parameters = $query->getRouteParameters();
 			if (isset($parameters['token']) &&
 				$parameters['token'] === $room->getToken() &&
-				strpos($query->getRoute(), Application::APP_ID . '.') === 0) {
+				str_starts_with($query->getRoute(), Application::APP_ID . '.')) {
 				// Don't search the current conversation.
 				//User most likely looks for other things with the same name
 				continue;

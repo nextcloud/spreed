@@ -257,7 +257,7 @@ class Room {
 				/** @var RoomService $roomService */
 				$roomService = Server::get(RoomService::class);
 				$roomService->setName($this, json_encode($users), '');
-			} elseif (strpos($this->name, '["') !== 0) {
+			} elseif (!str_starts_with($this->name, '["')) {
 				// TODO use DI
 				$participantService = Server::get(ParticipantService::class);
 				// Not the json array, but the old fallback when someone left

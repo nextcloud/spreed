@@ -411,7 +411,7 @@ class AdminSettings implements ISettings {
 		}
 		$userLocale = $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'locale', 'en_US');
 		$guessCountry = 'US';
-		if (strpos($userLocale, '_') !== false) {
+		if (str_contains($userLocale, '_')) {
 			$guessCountry = substr($userLocale, strrpos($userLocale, '_') + 1);
 			$correctGuess = false;
 			foreach ($countries as $country) {
@@ -519,11 +519,11 @@ class AdminSettings implements ISettings {
 
 		if ($usingFPM) {
 			// Needs to use mpm_event
-			return strpos($apacheModule, 'event') !== false ? '' : 'invalid';
+			return str_contains($apacheModule, 'event') ? '' : 'invalid';
 		}
 
 		// Needs to use mpm_prefork
-		return strpos($apacheModule, 'prefork') !== false ? '' : 'invalid';
+		return str_contains($apacheModule, 'prefork') ? '' : 'invalid';
 	}
 
 	/**

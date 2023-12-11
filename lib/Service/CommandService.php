@@ -127,7 +127,7 @@ class CommandService {
 
 		if ($command->getApp() === '' || $command->getApp() === null) {
 			$script = $command->getScript();
-			if (strpos($script, 'alias:') === 0) {
+			if (str_starts_with($script, 'alias:')) {
 				try {
 					$this->resolveAlias($command);
 				} catch (DoesNotExistException $e) {
@@ -137,7 +137,7 @@ class CommandService {
 				if (preg_match('/[`\'"]{(?:ARGUMENTS|ROOM|USER)}[`\'"]/i', $script)) {
 					throw new \InvalidArgumentException('script-parameters', 6);
 				}
-				if (strpos($script, '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}') !== false) {
+				if (str_contains($script, '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}')) {
 					throw new \InvalidArgumentException('script-parameters', 6);
 				}
 
@@ -165,7 +165,7 @@ class CommandService {
 	 */
 	public function resolveAlias(Command $command): Command {
 		$script = $command->getScript();
-		if (strpos($script, 'alias:') === 0) {
+		if (str_starts_with($script, 'alias:')) {
 			$alias = explode(':', $script, 3);
 			if (isset($alias[2])) {
 				[, $app, $cmd] = $alias;
