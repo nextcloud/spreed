@@ -20,7 +20,6 @@
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showInfo } from '@nextcloud/dialogs'
 
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
@@ -105,10 +104,6 @@ export function useActiveSession() {
 
 		try {
 			await setSessionState(token.value, SESSION.STATE.INACTIVE)
-			// Show toast message only when tab is visible on screen
-			if (windowIsVisible.value) {
-				showInfo(t('spreed', 'Session has been marked as inactive'))
-			}
 			console.info('Session has been marked as inactive')
 		} catch (error) {
 			console.error(error)
