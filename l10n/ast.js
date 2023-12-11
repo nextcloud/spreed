@@ -12,6 +12,7 @@ OC.L10N.register(
     "{actor} removed circle {circle}" : "{actor} quitó'l círculu «{circle}»",
     "You removed circle {circle}" : "Quitesti'l círculu «{circle}»",
     "An administrator removed circle {circle}" : "L'alministración quitó'l círculu «{circle}»",
+    "Message deleted by author" : "L'autor desanició'l mensaxe",
     "File is too big" : "El ficheru ye mui grande",
     "Accept" : "Aceptar",
     "Decline" : "Refugar",
