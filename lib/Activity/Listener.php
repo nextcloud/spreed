@@ -187,9 +187,7 @@ class Listener implements IEventListener {
 			try {
 				$event->setAffectedUser($userId);
 				$this->activityManager->publish($event);
-			} catch (\BadMethodCallException $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
-			} catch (\InvalidArgumentException $e) {
+			} catch (\BadMethodCallException|\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
@@ -256,9 +254,7 @@ class Listener implements IEventListener {
 					])
 					->setAffectedUser($attendee->getActorId());
 				$this->activityManager->publish($event);
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
-			} catch (\BadMethodCallException $e) {
+			} catch (\BadMethodCallException|\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}

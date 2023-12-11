@@ -178,8 +178,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			$room = $roomMap[$comment->getObjectId()];
 			try {
 				$result[] = $this->commentToSearchResultEntry($room, $user, $comment, $query);
-			} catch (UnauthorizedException $e) {
-			} catch (ParticipantNotFoundException $e) {
+			} catch (UnauthorizedException|ParticipantNotFoundException) {
 			}
 		}
 
@@ -190,6 +189,10 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		);
 	}
 
+	/**
+	 * @throws ParticipantNotFoundException
+	 * @throws UnauthorizedException
+	 */
 	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment, ISearchQuery $query): SearchResultEntry {
 		$participant = $this->participantService->getParticipant($room, $user->getUID(), false);
 

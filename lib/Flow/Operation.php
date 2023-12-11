@@ -130,11 +130,7 @@ class Operation implements IOperation {
 					'',
 					false
 				);
-			} catch (UnexpectedValueException $e) {
-				continue;
-			} catch (ParticipantNotFoundException $e) {
-				continue;
-			} catch (RoomNotFoundException $e) {
+			} catch (UnexpectedValueException|ParticipantNotFoundException|RoomNotFoundException) {
 				continue;
 			}
 		}

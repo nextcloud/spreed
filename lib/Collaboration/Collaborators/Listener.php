@@ -130,9 +130,7 @@ class Listener implements IEventListener {
 			} else {
 				$this->participantService->getParticipantBySession($this->room, $sessionId);
 			}
-		} catch (RoomNotFoundException $e) {
-			return $results;
-		} catch (ParticipantNotFoundException $e) {
+		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 			return $results;
 		}
 

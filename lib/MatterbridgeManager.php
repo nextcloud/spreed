@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
-use OC\Authentication\Token\IToken;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
@@ -36,6 +35,7 @@ use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Authentication\Token\IToken;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IAvatarManager;
