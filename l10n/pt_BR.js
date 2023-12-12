@@ -1633,7 +1633,6 @@ OC.L10N.register(
     "Post to conversation" : "Enviar para a conversa",
     "Sending signaling message has failed." : "Erro no envio da mensagem de sinalização.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "O servidor de sinalização configurado precisa ser atualizado para ser compatível com esta versão do Bate-Papo. Entre em contato com o seu administrador.",
-    "Setup summary" : "Resumo de Configuração",
-    "Session has been marked as inactive" : "A sessão foi marcada como inativa"
+    "Setup summary" : "Resumo de Configuração"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

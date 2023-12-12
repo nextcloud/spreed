@@ -1630,7 +1630,6 @@ OC.L10N.register(
     "Post to conversation" : "Elküldés egy beszélgetésbe",
     "Sending signaling message has failed." : "A jelző üzenet küldése sikertelen.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Frissíteni kell a beállított jelzőkiszolgálót, hogy kompatibilis legyen a Beszélgetés ezen verziójával. Lépjen kapcsolatba a rendszergazdával.",
-    "Setup summary" : "Telepítés összegzés",
-    "Session has been marked as inactive" : "A munkamenet inaktívnak lett jelölve"
+    "Setup summary" : "Telepítés összegzés"
 },
 "nplurals=2; plural=(n != 1);");

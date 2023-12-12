@@ -1732,7 +1732,6 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. الرجاء الاتصال بالمسؤول الخاص بك.",
     "Setup summary" : "ملخص الإعداد",
     "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
-    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار",
-    "Session has been marked as inactive" : "جلسة العمل تمّ تمييزها كـ\"غير نشطة\""
+    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

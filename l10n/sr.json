@@ -1732,7 +1732,6 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Подешени сервер за сигнализирање мора да се ажурира како би био компатибилан са овом верзијом апликације Talk. Молимо вас да се обратите свом администратору.",
     "Setup summary" : "Резиме подешавања",
     "Phone number could not be hanged up" : "Није успело прекидање везе са бројем телефона",
-    "Phone number could not be putted on hold" : "Број телефона није могао да се постави на чекање",
-    "Session has been marked as inactive" : "Сесија је означена као неактивна"
+    "Phone number could not be putted on hold" : "Број телефона није могао да се постави на чекање"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

@@ -1734,7 +1734,6 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Der eingerichtete Signalisierungsserver muss aktualisiert werden, damit er mit dieser Version von Talk kompatibel ist. Bitte wenden Sie sich an Ihre Administration.",
     "Setup summary" : "Einstellungszusammenfassung",
     "Phone number could not be hanged up" : "Telefonnummer konnte nicht aufgelegt werden",
-    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden",
-    "Session has been marked as inactive" : "Die Sitzung wurde als inaktiv markiert"
+    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden"
 },
 "nplurals=2; plural=(n != 1);");
