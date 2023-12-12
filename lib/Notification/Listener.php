@@ -227,9 +227,18 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #4.0: ' . microtime(true));
+		}
 		$this->markCallNotificationsRead($event->getRoom());
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #4.1: ' . microtime(true));
+		}
 		if ($this->shouldSendCallNotification) {
 			$this->sendCallNotifications($event->getRoom());
+		}
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #4.2: ' . microtime(true));
 		}
 	}
 
@@ -263,6 +272,9 @@ class Listener implements IEventListener {
 	 * @param Room $room
 	 */
 	protected function sendCallNotifications(Room $room): void {
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7.0: ' . microtime(true));
+		}
 		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
@@ -290,7 +302,14 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7.1: ' . microtime(true));
+		}
+
 		$userIds = $this->participantsService->getParticipantUserIdsForCallNotifications($room);
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7.2: ' . microtime(true));
+		}
 		$this->connection->beginTransaction();
 		try {
 			foreach ($userIds as $userId) {
@@ -304,15 +323,24 @@ class Listener implements IEventListener {
 				} catch (\InvalidArgumentException $e) {
 					$this->logger->error($e->getMessage(), ['exception' => $e]);
 				}
+				if ($room->getToken() === 'c9bui2ju') {
+					\OC::$server->getLogger()->warning('Debugging step #7.2.' . $userId . ': ' . microtime(true));
+				}
 			}
 		} catch (\Throwable $e) {
 			$this->connection->rollBack();
 			throw $e;
 		}
 		$this->connection->commit();
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7.3: ' . microtime(true));
+		}
 
 		if ($shouldFlush) {
 			$this->notificationManager->flush();
+		}
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7.4: ' . microtime(true));
 		}
 	}
 

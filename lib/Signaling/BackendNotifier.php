@@ -132,11 +132,17 @@ class BackendNotifier {
 			'Content-Type' => 'application/json',
 		];
 
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #6.0: ' . microtime(true));
+		}
 		$random = $this->secureRandom->generate(64);
 		$hash = hash_hmac('sha256', $random . $body, $this->config->getSignalingSecret());
 		$headers['Spreed-Signaling-Random'] = $random;
 		$headers['Spreed-Signaling-Checksum'] = $hash;
 		$headers['Spreed-Signaling-Backend'] = $this->urlGenerator->getAbsoluteURL('');
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #6.1: ' . microtime(true));
+		}
 
 		$params = [
 			'headers' => $headers,
@@ -411,15 +417,24 @@ class BackendNotifier {
 	 */
 	public function roomInCallChanged(Room $room, int $flags, array $sessionIds, bool $changeAll = false): void {
 		if ($changeAll) {
+			if ($room->getToken() === 'c9bui2ju') {
+				\OC::$server->getLogger()->warning('Debugging step #5.a: ' . microtime(true));
+			}
 			$data = [
 				'incall' => $flags,
 				'all' => true
 			];
 		} else {
+			if ($room->getToken() === 'c9bui2ju') {
+				\OC::$server->getLogger()->warning('Debugging step #5.b: ' . microtime(true));
+			}
 			$changed = [];
 			$users = [];
 
 			$participants = $this->participantService->getParticipantsForAllSessions($room);
+			if ($room->getToken() === 'c9bui2ju') {
+				\OC::$server->getLogger()->warning('Debugging step #5.1: ' . microtime(true));
+			}
 			foreach ($participants as $participant) {
 				$session = $participant->getSession();
 				if (!$session instanceof Session) {
@@ -460,6 +475,10 @@ class BackendNotifier {
 			];
 		}
 
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #5.2: ' . microtime(true));
+		}
+
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'incall',
@@ -473,6 +492,9 @@ class BackendNotifier {
 			'duration' => sprintf('%.2f', $duration),
 			'app' => 'spreed-hpb',
 		]);
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #5.3: ' . microtime(true));
+		}
 	}
 
 	/**

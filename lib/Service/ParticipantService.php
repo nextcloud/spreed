@@ -1131,6 +1131,9 @@ class ParticipantService {
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): bool {
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #1.0: ' . microtime(true));
+		}
 		if ($room->getType() === Room::TYPE_CHANGELOG
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
@@ -1153,6 +1156,10 @@ class ParticipantService {
 		$oldFlags = $session->getInCall();
 		$details = [];
 
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #1.1: ' . microtime(true));
+		}
+
 		if ($flags !== Participant::FLAG_DISCONNECTED && $silent) {
 			$details = [AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT => $silent];
 		} elseif ($flags === Participant::FLAG_DISCONNECTED && $endCallForEveryone) {
@@ -1161,7 +1168,9 @@ class ParticipantService {
 
 		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
 		$this->dispatcher->dispatchTyped($event);
-
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #1.2: ' . microtime(true));
+		}
 		$session->setInCall($flags);
 		if (!$endCallForEveryone) {
 			$this->sessionMapper->update($session);
@@ -1176,8 +1185,14 @@ class ParticipantService {
 			$this->attendeeMapper->update($attendee);
 		}
 
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #1.3: ' . microtime(true));
+		}
 		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
 		$this->dispatcher->dispatchTyped($event);
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #1.4: ' . microtime(true));
+		}
 
 		return true;
 	}

@@ -53,6 +53,9 @@ class RestrictStartingCalls implements IEventListener {
 		if (!$event instanceof BeforeParticipantModifiedEvent) {
 			return;
 		}
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #3.0: ' . microtime(true));
+		}
 
 		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
 			return;
@@ -73,6 +76,9 @@ class RestrictStartingCalls implements IEventListener {
 		if (!$event->getParticipant()->canStartCall($this->serverConfig)
 			&& !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
+		}
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #3.1: ' . microtime(true));
 		}
 	}
 }
