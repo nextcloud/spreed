@@ -677,7 +677,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * 400: Deleting message is not possible
 	 * 403: Missing permissions to delete message
 	 * 404: Message not found
-	 * 405: Deleting message is not allowed
+	 * 405: Deleting this message type is not allowed
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
@@ -745,6 +745,28 @@ class ChatController extends AEnvironmentAwareController {
 			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
 		}
 		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * Edit a chat message
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 *
+	 * 200: Message edited successfully
+	 * 202: Message edited successfully, but Matterbridge is configured, so the information can be replicated elsewhere
+	 * 400: Editing message is not possible
+	 * 403: Missing permissions to edit message
+	 * 404: Message not found
+	 * 405: Editing this message type is not allowed
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	public function editMessage(int $messageId): DataResponse {
 	}
 
 	/**
