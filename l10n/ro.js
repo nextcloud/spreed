@@ -919,7 +919,6 @@ OC.L10N.register(
     "An error occurred while posting deck card to conversation" : "Eroare la postarea cardului Deck în conversație",
     "Post to a conversation" : "Postare într-o conversație",
     "Post to conversation" : "Postare în conversație",
-    "Setup summary" : "Sumar configurație",
-    "Session has been marked as inactive" : "Sesiunea a fost marcată ca inactivă"
+    "Setup summary" : "Sumar configurație"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
