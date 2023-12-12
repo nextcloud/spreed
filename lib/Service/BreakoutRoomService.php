@@ -366,7 +366,7 @@ class BreakoutRoomService {
 		try {
 			foreach ($breakoutRooms as $breakoutRoom) {
 				$breakoutParticipant = $this->participantService->getParticipantByActor($breakoutRoom, $attendeeType, $attendeeId);
-				$comment = $this->chatManager->sendMessage($breakoutRoom, $breakoutParticipant, $attendeeType, $attendeeId, $message, $creationDateTime, null, '', false);
+				$comment = $this->chatManager->sendMessage($breakoutRoom, $breakoutParticipant, $attendeeType, $attendeeId, $message, $creationDateTime, rateLimitGuestMentions: false);
 				$breakoutRoom->setLastMessage($comment);
 			}
 		} finally {

@@ -42,8 +42,10 @@ use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICacheFactory;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Security\RateLimiting\ILimiter;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
@@ -78,6 +80,10 @@ class ChatManagerTest extends TestCase {
 	protected $attachmentService;
 	/** @var IReferenceManager|MockObject */
 	protected $referenceManager;
+	/** @var ILimiter|MockObject */
+	protected $rateLimiter;
+	/** @var IRequest|MockObject */
+	protected $request;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -95,24 +101,10 @@ class ChatManagerTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->rateLimiter = $this->createMock(ILimiter::class);
+		$this->request = $this->createMock(IRequest::class);
 
-		$this->chatManager = new ChatManager(
-			$this->commentsManager,
-			$this->dispatcher,
-			\OC::$server->getDatabaseConnection(),
-			$this->notificationManager,
-			$this->shareManager,
-			$this->shareProvider,
-			$this->participantService,
-			$this->roomService,
-			$this->pollService,
-			$this->notifier,
-			$cacheFactory,
-			$this->timeFactory,
-			$this->attachmentService,
-			$this->referenceManager,
-		);
+		$this->chatManager = $this->getManager();
 	}
 
 	/**
@@ -139,6 +131,8 @@ class ChatManagerTest extends TestCase {
 					$this->timeFactory,
 					$this->attachmentService,
 					$this->referenceManager,
+					$this->rateLimiter,
+					$this->request,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -159,6 +153,8 @@ class ChatManagerTest extends TestCase {
 			$this->timeFactory,
 			$this->attachmentService,
 			$this->referenceManager,
+			$this->rateLimiter,
+			$this->request,
 		);
 	}
 

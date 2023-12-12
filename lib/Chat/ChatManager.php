@@ -45,13 +45,17 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
+use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Security\RateLimiting\ILimiter;
+use OCP\Security\RateLimiting\IRateLimitExceededException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
@@ -68,6 +72,9 @@ use OCP\Share\IShare;
  */
 class ChatManager {
 	public const MAX_CHAT_LENGTH = 32000;
+
+	public const RATE_LIMIT_GUEST_MENTIONS_LIMIT = 50;
+	public const RATE_LIMIT_GUEST_MENTIONS_PERIOD = 24 * 60 * 60;
 
 	public const GEO_LOCATION_VALIDATOR = '/^geo:-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?(,-?\d+(\.\d+)?)?(;crs=wgs84)?(;u=\d+(\.\d+)?)?$/i';
 	public const VERB_MESSAGE = 'comment';
@@ -96,6 +103,8 @@ class ChatManager {
 		protected ITimeFactory $timeFactory,
 		protected AttachmentService $attachmentService,
 		protected IReferenceManager $referenceManager,
+		protected ILimiter $rateLimiter,
+		protected IRequest $request,
 	) {
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
@@ -219,8 +228,11 @@ class ChatManager {
 
 	/**
 	 * Sends a new message to the given chat.
+	 *
+	 * @throws IRateLimitExceededException Only when $rateLimitGuestMentions is true and the author is a guest participant
+	 * @throws MessageTooLongException
 	 */
-	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo, string $referenceId, bool $silent): IComment {
+	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo = null, string $referenceId = '', bool $silent = false, bool $rateLimitGuestMentions = true): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
@@ -237,6 +249,18 @@ class ChatManager {
 			$comment->setReferenceId($referenceId);
 		}
 		$this->setMessageExpiration($chat, $comment);
+
+		if ($rateLimitGuestMentions && $participant instanceof Participant && $participant->isGuest()) {
+			$mentions = $comment->getMentions();
+			if (!empty($mentions)) {
+				$this->rateLimiter->registerAnonRequest(
+					'talk-mentions',
+					self::RATE_LIMIT_GUEST_MENTIONS_LIMIT,
+					self::RATE_LIMIT_GUEST_MENTIONS_PERIOD,
+					$this->request->getRemoteAddress(),
+				);
+			}
+		}
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent);
 		$this->dispatcher->dispatchTyped($event);

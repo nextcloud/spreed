@@ -73,6 +73,7 @@ use OCP\IUserManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
+use OCP\Security\RateLimiting\IRateLimitExceededException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
 use OCP\User\Events\UserLiveStatusEvent;
@@ -182,12 +183,13 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @psalm-param non-negative-int $replyTo
 	 * @param bool $silent If sent silent the chat message will not create any notifications
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array<empty>, array{}>
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
 	 * 404: Actor not found
 	 * 413: Message too long
+	 * 429: Mention rate limit exceeded (guests only)
 	 */
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
@@ -225,8 +227,10 @@ class ChatController extends AEnvironmentAwareController {
 
 		try {
 			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent);
-		} catch (MessageTooLongException $e) {
+		} catch (MessageTooLongException) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (IRateLimitExceededException) {
+			return new DataResponse([], Http::STATUS_TOO_MANY_REQUESTS);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

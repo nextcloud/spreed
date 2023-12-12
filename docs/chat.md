@@ -130,6 +130,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
         + `404 Not Found` When the conversation could not be found for the participant
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
         + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
+        + `429 Too Many Requests` When a guest mentioned other participants too often (50 mention meesages per day)
 
     - Header:
 
