@@ -1734,7 +1734,6 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.",
     "Setup summary" : "Setup summary",
     "Phone number could not be hanged up" : "Phone number could not be hanged up",
-    "Phone number could not be putted on hold" : "Phone number could not be putted on hold",
-    "Session has been marked as inactive" : "Session has been marked as inactive"
+    "Phone number could not be putted on hold" : "Phone number could not be putted on hold"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1725,7 +1725,6 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "El servidor de señalización configurado necesita actualizarse para ser compatible con esta versión de Talk. Por favor, contacta con tu administrador.",
     "Setup summary" : "Resumen de la Configuración",
     "Phone number could not be hanged up" : "No se pudo colgar el número de teléfono",
-    "Phone number could not be putted on hold" : "No se pudo poner el número de teléfono en espera",
-    "Session has been marked as inactive" : "La sesión se ha marcado como inactiva"
+    "Phone number could not be putted on hold" : "No se pudo poner el número de teléfono en espera"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

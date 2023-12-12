@@ -1734,7 +1734,6 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "配置的信令伺服器需要更新才能兼容此版本的 Talk。 請聯絡您的管理員。",
     "Setup summary" : "設定摘要",
     "Phone number could not be hanged up" : "無法掛斷電話",
-    "Phone number could not be putted on hold" : "無法暫停電話通話",
-    "Session has been marked as inactive" : "該工作節話已被標記為非活動狀態"
+    "Phone number could not be putted on hold" : "無法暫停電話通話"
 },
 "nplurals=1; plural=0;");
