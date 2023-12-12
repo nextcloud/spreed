@@ -34,7 +34,7 @@ use OCA\Talk\Middleware\Exceptions\UnsupportedClientVersionException;
 use OCA\Talk\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
+use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
@@ -42,6 +42,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 
@@ -61,6 +62,7 @@ class CanUseTalkMiddleware extends Middleware {
 		protected Config $talkConfig,
 		protected IConfig $serverConfig,
 		protected IRequest $request,
+		protected IURLGenerator $url
 	) {
 	}
 
@@ -122,7 +124,7 @@ class CanUseTalkMiddleware extends Middleware {
 				throw new OCSException($exception->getMinVersion(), Http::STATUS_UPGRADE_REQUIRED);
 			}
 
-			return new RedirectToDefaultAppResponse();
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
 		if ($exception instanceof CanNotUseTalkException ||
@@ -131,7 +133,7 @@ class CanUseTalkMiddleware extends Middleware {
 				throw new OCSException($exception->getMessage(), Http::STATUS_FORBIDDEN);
 			}
 
-			return new RedirectToDefaultAppResponse();
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
 		throw $exception;

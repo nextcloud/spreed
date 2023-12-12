@@ -49,13 +49,14 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
-use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
+use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\Federation\ICloudIdManager;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\Bruteforce\MaxDelayReached;
 
@@ -70,6 +71,7 @@ class InjectionMiddleware extends Middleware {
 		protected Manager $manager,
 		protected ICloudIdManager $cloudIdManager,
 		protected IThrottler $throttler,
+		protected IURLGenerator $url,
 		protected ?string $userId,
 	) {
 	}
@@ -329,7 +331,7 @@ class InjectionMiddleware extends Middleware {
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
 			}
 
-			return new RedirectToDefaultAppResponse();
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
 		if ($exception instanceof LobbyException) {
@@ -337,7 +339,7 @@ class InjectionMiddleware extends Middleware {
 				throw new OCSException('', Http::STATUS_PRECONDITION_FAILED);
 			}
 
-			return new RedirectToDefaultAppResponse();
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
 		if ($exception instanceof NotAModeratorException ||
@@ -347,7 +349,7 @@ class InjectionMiddleware extends Middleware {
 				throw new OCSException('', Http::STATUS_FORBIDDEN);
 			}
 
-			return new RedirectToDefaultAppResponse();
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
 		}
 
 		throw $exception;
