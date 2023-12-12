@@ -76,7 +76,7 @@
 				<span v-if="testing" class="icon icon-loading-small" />
 				<AlertCircle v-else-if="testingError" :fill-color="'#E9322D'" />
 				<Check v-else-if="testingSuccess" :fill-color="'#46BA61'" />
-				<CategoryMonitoring v-else />
+				<Pulse v-else />
 			</template>
 		</NcButton>
 		<NcButton v-show="!loading"
@@ -99,13 +99,12 @@ import webrtcSupport from 'webrtcsupport'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import Pulse from 'vue-material-design-icons/Pulse.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-
-import CategoryMonitoring from '../missingMaterialDesignIcons/CategoryMonitoring.vue'
 
 import { isCertificateValid } from '../../services/certificateService.js'
 
@@ -118,12 +117,12 @@ export default {
 
 	components: {
 		AlertCircle,
-		CategoryMonitoring,
 		Check,
 		Delete,
 		NcButton,
 		NcSelect,
 		NcTextField,
+		Pulse,
 	},
 
 	props: {

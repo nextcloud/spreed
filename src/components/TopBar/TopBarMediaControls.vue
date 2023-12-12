@@ -93,15 +93,15 @@
 			:open.sync="screenSharingMenuOpen">
 			<!-- Actions button icon -->
 			<template #icon>
-				<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
-				<PresentToAll v-else :size="20" fill-color="#ffffff" />
+				<MonitorOff v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
+				<MonitorShare v-else :size="20" fill-color="#ffffff" />
 			</template>
 			<!-- /Actions button icon -->
 			<!-- Actions -->
 			<NcActionButton v-if="!screenSharingMenuOpen"
 				@click.stop="toggleScreenSharingMenu">
 				<template #icon>
-					<PresentToAll :size="20" fill-color="#ffffff" />
+					<MonitorShare :size="20" fill-color="#ffffff" />
 				</template>
 				{{ screenSharingButtonTooltip }}
 			</NcActionButton>
@@ -114,7 +114,7 @@
 				</NcActionButton>
 				<NcActionButton close-after-click @click="stopScreen">
 					<template #icon>
-						<CancelPresentation :size="20" />
+						<MonitorOff :size="20" />
 					</template>
 					{{ t('spreed', 'Stop screensharing') }}
 				</NcActionButton>
@@ -129,6 +129,8 @@ import escapeHtml from 'escape-html'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
+import MonitorOff from 'vue-material-design-icons/MonitorOff.vue'
+import MonitorShare from 'vue-material-design-icons/MonitorShare.vue'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
@@ -142,8 +144,6 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
 import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
-import CancelPresentation from '../missingMaterialDesignIcons/CancelPresentation.vue'
-import PresentToAll from '../missingMaterialDesignIcons/PresentToAll.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { PARTICIPANT } from '../../constants.js'
@@ -161,16 +161,17 @@ export default {
 	components: {
 		LocalAudioControlButton,
 		LocalVideoControlButton,
-		Blur,
-		BlurOff,
-		CancelPresentation,
-		Monitor,
-		NcActions,
 		NcActionButton,
+		NcActions,
 		NcButton,
 		NcPopover,
+		// Icons
+		Blur,
+		BlurOff,
+		Monitor,
+		MonitorOff,
+		MonitorShare,
 		NetworkStrength2Alert,
-		PresentToAll,
 	},
 
 	props: {

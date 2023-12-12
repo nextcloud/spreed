@@ -173,6 +173,7 @@ import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
+import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { emit } from '@nextcloud/event-bus'
@@ -184,7 +185,6 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
-import GridView from '../missingMaterialDesignIcons/GridView.vue'
 import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -196,24 +196,25 @@ export default {
 	name: 'TopBarMenu',
 
 	components: {
-		NcButton,
-		NcActions,
-		NcActionSeparator,
-		NcActionLink,
 		NcActionButton,
+		NcActionLink,
+		NcActionSeparator,
+		NcActions,
+		NcButton,
 		NcLoadingIcon,
-		PromotedView,
+		// Icons
 		Cog,
+		DotsCircle,
 		DotsHorizontal,
 		Fullscreen,
 		FullscreenExit,
 		GridView,
 		HandBackLeft,
-		VideoIcon,
 		MicrophoneOff,
+		PromotedView,
 		RecordCircle,
 		StopIcon,
-		DotsCircle,
+		VideoIcon,
 	},
 
 	props: {

@@ -22,7 +22,7 @@
 	<div class="lobby">
 		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
 		<div class="lobby emptycontent">
-			<Lobby :size="64" />
+			<RoomService :size="64" />
 			<h2>{{ currentConversationName }}</h2>
 
 			<p class="lobby__timer">
@@ -49,12 +49,13 @@
 </template>
 
 <script>
+import RoomService from 'vue-material-design-icons/RoomService.vue'
+
 import moment from '@nextcloud/moment'
 
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
-import Lobby from './missingMaterialDesignIcons/Lobby.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
 
 export default {
@@ -62,10 +63,10 @@ export default {
 	name: 'LobbyScreen',
 
 	components: {
-		SetGuestUsername,
-		NcRichText,
-		Lobby,
 		GuestWelcomeWindow,
+		NcRichText,
+		RoomService,
+		SetGuestUsername,
 	},
 
 	computed: {
