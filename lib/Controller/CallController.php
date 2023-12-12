@@ -172,11 +172,11 @@ class CallController extends AEnvironmentAwareController {
 		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
 			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
-		if ($room->getToken() === 'c9bui2ju') {
+		if ($this->room->getToken() === 'c9bui2ju') {
 			\OC::$server->getLogger()->warning('Debugging step #1: ' . microtime(true));
 		}
 		$joined = $this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
-		if ($room->getToken() === 'c9bui2ju') {
+		if ($this->room->getToken() === 'c9bui2ju') {
 			\OC::$server->getLogger()->warning('Debugging step #2: ' . microtime(true));
 		}
 		if (!$joined) {
