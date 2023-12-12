@@ -141,6 +141,9 @@ class CallController extends AEnvironmentAwareController {
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
 	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
+		if ($this->room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #0: ' . microtime(true));
+		}
 		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
 			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
 				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
@@ -169,9 +172,13 @@ class CallController extends AEnvironmentAwareController {
 		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
 			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
-
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #1: ' . microtime(true));
+		}
 		$joined = $this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
-
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #2: ' . microtime(true));
+		}
 		if (!$joined) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

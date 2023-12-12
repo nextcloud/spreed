@@ -1155,6 +1155,9 @@ class ParticipantService {
 	}
 
 	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): bool {
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #3: ' . microtime(true));
+		}
 		if ($room->getType() === Room::TYPE_CHANGELOG
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
@@ -1177,6 +1180,9 @@ class ParticipantService {
 		$oldFlags = $session->getInCall();
 		$details = [];
 
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #4: ' . microtime(true));
+		}
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			if ($silent) {
 				$legacyEvent = new SilentModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
@@ -1194,10 +1200,11 @@ class ParticipantService {
 			}
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $legacyEvent);
 		}
-
 		$event = new BeforeParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
 		$this->dispatcher->dispatchTyped($event);
-
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #5: ' . microtime(true));
+		}
 		$session->setInCall($flags);
 		if (!$endCallForEveryone) {
 			$this->sessionMapper->update($session);
@@ -1211,14 +1218,18 @@ class ParticipantService {
 			$attendee->setCallId('');
 			$this->attendeeMapper->update($attendee);
 		}
-
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #6: ' . microtime(true));
+		}
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_JOIN_CALL, $legacyEvent);
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $legacyEvent);
 		}
 		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
-		$this->dispatcher->dispatchTyped($event);
+		$this->dispatcher->dispatchTyped($event);		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7: ' . microtime(true));
+		}
 
 		return true;
 	}
