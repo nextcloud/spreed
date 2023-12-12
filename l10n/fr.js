@@ -1711,7 +1711,6 @@ OC.L10N.register(
     "Post to conversation" : "Envoyer à la conversation",
     "Sending signaling message has failed." : "L'envoi du message de signalement a échoué.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Le serveur de signalement configuré doit être mis à jour pour être compatible avec cette version de Talk. Merci de contacter votre administrateur.",
-    "Setup summary" : "Configurer le résumé",
-    "Session has been marked as inactive" : "La session a été marquée comme inactive"
+    "Setup summary" : "Configurer le résumé"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

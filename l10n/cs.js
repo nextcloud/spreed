@@ -1733,7 +1733,6 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Nastavený signální server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk. Obraťte se na svého správce.",
     "Setup summary" : "Souhrn uspořádání",
     "Phone number could not be hanged up" : "Hovor na telefonní číslo se nepodařilo zavěsit",
-    "Phone number could not be putted on hold" : "Hovor na telefonní číslo se nepodařilo pozastavit",
-    "Session has been marked as inactive" : "Relace byla označena jako neaktivní"
+    "Phone number could not be putted on hold" : "Hovor na telefonní číslo se nepodařilo pozastavit"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

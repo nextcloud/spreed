@@ -1728,7 +1728,6 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Bu Talk sürümü ile uyumlu olması için yapılandırılmış signalling sunucusunun güncellenmesi gerekiyor. Lütfen BT yöneticiniz ile görüşün.",
     "Setup summary" : "Kurulum özeti",
     "Phone number could not be hanged up" : "Telefon numarası kapatılamadı",
-    "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı",
-    "Session has been marked as inactive" : "Oturum etkin değil olarak işaretlendi"
+    "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
