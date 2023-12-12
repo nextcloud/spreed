@@ -222,7 +222,7 @@ export default {
 
 			const client = getDavClient()
 			// Get a unique relative path based on the previous path variable
-			const uniquePath = await findUniquePath(client, userRoot, filePath)
+			const { uniquePath } = await findUniquePath(client, userRoot, filePath)
 
 			try {
 				// Upload the file
