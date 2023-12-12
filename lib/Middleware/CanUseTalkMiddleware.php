@@ -110,13 +110,9 @@ class CanUseTalkMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param Controller $controller
-	 * @param string $methodName
-	 * @param \Exception $exception
 	 * @throws \Exception
-	 * @return Response
 	 */
-	public function afterException($controller, $methodName, \Exception $exception): Response {
+	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
 		if ($exception instanceof UnsupportedClientVersionException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException($exception->getMinVersion(), Http::STATUS_UPGRADE_REQUIRED);

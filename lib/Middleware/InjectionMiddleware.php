@@ -75,8 +75,6 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param Controller $controller
-	 * @param string $methodName
 	 * @throws LobbyException
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
@@ -294,13 +292,9 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param Controller $controller
-	 * @param string $methodName
-	 * @param \Exception $exception
 	 * @throws \Exception
-	 * @return Response
 	 */
-	public function afterException($controller, $methodName, \Exception $exception): Response {
+	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
 		if ($exception instanceof RoomNotFoundException ||
 			$exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {
