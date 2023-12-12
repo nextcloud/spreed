@@ -185,7 +185,7 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
-import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
+import PromotedView from '../../assets/missingMaterialDesignIcons/PromotedView.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
