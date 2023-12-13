@@ -1929,6 +1929,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" edits message ("[^"]*"|'[^']*') in room "([^"]*)" to ("[^"]*"|'[^']*') with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $oldMessage
+	 * @param string $identifier
+	 * @param string $newMessage
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userEditsMessageToRoom(string $user, string $oldMessage, string $identifier, string $newMessage, string $statusCode, string $apiVersion = 'v1') {
+		$oldMessage = substr($oldMessage, 1, -1);
+		$oldMessage = str_replace('\n', "\n", $oldMessage);
+		$messageId = self::$textToMessageId[$oldMessage];
+		$newMessage = substr($newMessage, 1, -1);
+		$newMessage = str_replace('\n', "\n", $newMessage);
+
+		$this->setCurrentUser($user, $identifier);
+		$this->sendRequest(
+			'PUT',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . $messageId,
+			new TableNode([['message', $newMessage]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		self::$textToMessageId[$newMessage] = $messageId;
+		self::$messageIdToText[$messageId] = $newMessage;
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets reminder for message ("[^"]*"|'[^']*') in room "([^"]*)" for time (\d+) with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -2549,7 +2579,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = $formData->getHash();
 		$count = count($expected);
-		Assert::assertCount($count, $messages, 'Message count does not match');
+		Assert::assertCount($count, $messages, 'Message count does not match' . "\n" . print_r($messages, true));
 		for ($i = 0; $i < $count; $i++) {
 			if ($expected[$i]['messageParameters'] === '"IGNORE"') {
 				$messages[$i]['messageParameters'] = 'IGNORE';
