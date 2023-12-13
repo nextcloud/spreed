@@ -106,8 +106,6 @@ describe('MessageButtonsBar.vue', () => {
 
 		describe('reply action', () => {
 			test('replies to message', async () => {
-				const replyAction = jest.fn()
-				testStoreConfig.modules.quoteReplyStore.actions.addMessageToBeReplied = replyAction
 				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {

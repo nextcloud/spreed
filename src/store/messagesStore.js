@@ -43,6 +43,7 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 } from '../services/messagesService.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
@@ -617,7 +618,8 @@ const actions = {
 	 * @return {object} temporary message
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
-		const parentId = context.getters.getMessageToBeReplied(token)
+		const chatExtrasStore = useChatExtrasStore()
+		const parentId = chatExtrasStore.getParentIdToReply(token)
 		const parent = parentId && context.getters.message(token, parentId)
 		const date = new Date()
 		let tempId = 'temp-' + date.getTime()
