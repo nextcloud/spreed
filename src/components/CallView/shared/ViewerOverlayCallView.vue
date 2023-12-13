@@ -73,7 +73,7 @@
 							:local-media-model="localModel"
 							:shared-data="localSharedData" />
 						<!-- remote screen -->
-						<Screen v-else-if="screens[model.attributes.peerId]"
+						<Screen v-else-if="model && screens[model.attributes.peerId]"
 							:token="token"
 							:call-participant-model="model"
 							:shared-data="sharedData" />
