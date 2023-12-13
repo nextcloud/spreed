@@ -197,10 +197,12 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Incorrect app');
 		}
 
-		$userId = $notification->getUser();
-		$user = $this->userManager->get($userId);
-		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
-			throw new AlreadyProcessedException();
+		if (!($this->notificationManager->isPreparingPushNotification() && $notification->getSubject() === 'call')) {
+			$userId = $notification->getUser();
+			$user = $this->userManager->get($userId);
+			if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
+				throw new AlreadyProcessedException();
+			}
 		}
 
 		$l = $this->lFactory->get(Application::APP_ID, $languageCode);
@@ -217,20 +219,27 @@ class Notifier implements INotifier {
 			return $this->parseCertificateExpiration($notification, $l);
 		}
 
-		try {
-			$room = $this->getRoom($notification->getObjectId(), $userId);
-		} catch (RoomNotFoundException $e) {
-			// Room does not exist
-			throw new AlreadyProcessedException();
-		}
-
 		if ($this->notificationManager->isPreparingPushNotification() && $notification->getSubject() === 'call') {
+			try {
+				$room = $this->manager->getRoomByToken($notification->getObjectId());
+			} catch (RoomNotFoundException) {
+				// Room does not exist
+				throw new AlreadyProcessedException();
+			}
+
 			// Skip the participant check when we generate push notifications
 			// we just looped over the participants to create the notification,
 			// they can not be removed between these 2 steps, but we can save
 			// n queries.
 			$participant = null;
 		} else {
+			try {
+				$room = $this->getRoom($notification->getObjectId(), $userId);
+			} catch (RoomNotFoundException $e) {
+				// Room does not exist
+				throw new AlreadyProcessedException();
+			}
+
 			try {
 				$participant = $this->getParticipant($room, $userId);
 			} catch (ParticipantNotFoundException $e) {

@@ -41,10 +41,12 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager;
+use OCP\Notification\INotification;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -53,10 +55,14 @@ use Psr\Log\LoggerInterface;
 class Listener implements IEventListener {
 
 	protected bool $shouldSendCallNotification = false;
+	/** @var array<string, INotification> $preparedCallNotifications Map of language => parsed notification in that language */
+	protected array $preparedCallNotifications = [];
 
 	public function __construct(
+		protected IConfig $serverConfig,
 		protected IDBConnection $connection,
 		protected IManager $notificationManager,
+		protected Notifier $notificationProvider,
 		protected ParticipantService $participantsService,
 		protected IEventDispatcher $dispatcher,
 		protected IUserSession $userSession,
@@ -305,16 +311,45 @@ class Listener implements IEventListener {
 		if ($room->getToken() === 'c9bui2ju') {
 			\OC::$server->getLogger()->warning('Debugging step #7.1: ' . microtime(true));
 		}
-
+		$this->preparedCallNotifications = [];
 		$userIds = $this->participantsService->getParticipantUserIdsForCallNotifications($room);
-		if ($room->getToken() === 'c9bui2ju') {
-			\OC::$server->getLogger()->warning('Debugging step #7.2: ' . microtime(true));
+		// Room name depends on the notification user for one-to-one,
+		// so we avoid preparsing it there. Also, it comes with some base load,
+		// so we only do it for "big enough" calls.
+		$preparseNotificationForPush = count($userIds) > 10;
+		if ($preparseNotificationForPush) {
+			$fallbackLang = $this->serverConfig->getSystemValue('force_language', null);
+			if (is_string($fallbackLang)) {
+				/** @psalm-var array<string, string> $userLanguages */
+				$userLanguages = [];
+			} else {
+				$fallbackLang = $this->serverConfig->getSystemValueString('default_language', 'en');
+				/** @psalm-var array<string, string> $userLanguages */
+				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', $userIds);
+			}
 		}
+
 		$this->connection->beginTransaction();
 		try {
 			foreach ($userIds as $userId) {
 				if ($actorId === $userId) {
 					continue;
+				}
+
+				if ($preparseNotificationForPush) {
+					// Get the settings for this particular user, then check if we have notifications to email them
+					$languageCode = $userLanguages[$userId] ?? $fallbackLang;
+
+					if (!isset($this->preparedCallNotifications[$languageCode])) {
+						$translatedNotification = clone $notification;
+
+						$this->notificationManager->setPreparingPushNotification(true);
+						$this->preparedCallNotifications[$languageCode] = $this->notificationProvider->prepare($translatedNotification, $languageCode);
+						$this->notificationManager->setPreparingPushNotification(false);
+						$notification = $translatedNotification;
+					} else {
+						$notification = $this->preparedCallNotifications[$languageCode];
+					}
 				}
 
 				try {
