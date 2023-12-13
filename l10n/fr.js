@@ -1345,6 +1345,7 @@ OC.L10N.register(
     "bot" : "robot",
     "guest" : "invité",
     "Dial out phone" : "Composer un numéro de téléphone",
+    "Hang up phone" : "Raccrocher le téléphone",
     "Dial-in PIN" : "Code PIN",
     "Demote from moderator" : "Destituer de modérateur",
     "Promote to moderator" : "Promouvoir comme modérateur",
