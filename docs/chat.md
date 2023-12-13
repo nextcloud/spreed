@@ -314,12 +314,17 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Required capability: `edit-messages`
 * Method: `PUT`
 * Endpoint: `/chat/{token}/{messageId}`
+* Data:
+
+| field              | type   | Description                       |
+|--------------------|--------|-----------------------------------|
+| `message`          | string | The message the user wants to say |
 
 * Response:
     - Status code:
         + `200 OK` - When editing was successful
         + `202 Accepted` - When editing was successful but Matterbridge is enabled so the message was leaked to other services
-        + `400 Bad Request` The message is already older than 24 hours or another reason why deleting is not okay
+        + `400 Bad Request` The message is already older than 24 hours or another reason why editing is not okay
         + `403 Forbidden` When the message is not from the current user and the user not a moderator
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation or chat message could not be found for the participant

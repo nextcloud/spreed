@@ -190,6 +190,17 @@ class Message {
 			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,
 		];
 
+		$metaData = $this->getComment()->getMetaData();
+		if (!empty($metaData)) {
+			if (isset($metaData['last_edited_by_type'], $metaData['last_edited_by_id'], $metaData['last_edited_time'])) {
+				// FIXME @see MessageParser::setActor
+				$data['lastEditActorDisplayName'] = $metaData['last_edited_by_id'];
+				$data['lastEditActorId'] = $metaData['last_edited_by_id'];
+				$data['lastEditActorType'] = $metaData['last_edited_by_type'];
+				$data['lastEditTimestamp'] = $metaData['last_edited_time'];
+			}
+		}
+
 		if ($this->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
 			$data['deleted'] = true;
 		}

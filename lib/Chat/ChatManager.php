@@ -476,6 +476,42 @@ class ChatManager {
 		);
 	}
 
+	/**
+	 * @param Room $chat
+	 * @param IComment $comment
+	 * @param Participant $participant
+	 * @param \DateTime $editTime
+	 * @param string $message
+	 * @return IComment
+	 */
+	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {
+		// FIXME "Caption" handling via $comment->getVerb() === self::VERB_OBJECT_SHARED
+		// TODO prevent editing other shares like polls, contacts, etc.
+
+		$metaData = $comment->getMetaData() ?? [];
+		$metaData['last_edited_by_type'] = $participant->getAttendee()->getActorType();
+		$metaData['last_edited_by_id'] = $participant->getAttendee()->getActorId();
+		$metaData['last_edited_time'] = $editTime->getTimestamp();
+		$comment->setMetaData($metaData);
+		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
+		$this->commentsManager->save($comment);
+		$this->referenceManager->invalidateCache($chat->getToken());
+
+		// TODO update mentions/notifications
+
+		return $this->addSystemMessage(
+			$chat,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'message_edited', 'parameters' => ['message' => $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+			true
+		);
+	}
+
 	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
 		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
 
