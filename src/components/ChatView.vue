@@ -44,8 +44,23 @@
 			:token="token"
 			:is-chat-scrolled-to-bottom.sync="isChatScrolledToBottom"
 			:is-visible="isVisible" />
+
+		<div class="scroll-to-bottom">
+			<TransitionWrapper name="fade">
+				<NcButton v-show="!isChatScrolledToBottom"
+					type="secondary"
+					:aria-label="t('spreed', 'Scroll to bottom')"
+					class="scroll-to-bottom__button"
+					@click="smoothScrollToBottom">
+					<template #icon>
+						<ChevronDoubleDown :size="20" />
+					</template>
+				</NcButton>
+			</TransitionWrapper>
+		</div>
+
+		<!-- Input field -->
 		<NewMessage v-if="containerId"
-			ref="newMessage"
 			role="region"
 			:token="token"
 			:container="containerId"
@@ -54,19 +69,6 @@
 
 		<!-- File upload dialog -->
 		<NewMessageUploadEditor />
-
-		<TransitionWrapper name="fade">
-			<NcButton v-show="!isChatScrolledToBottom"
-				type="secondary"
-				:aria-label="t('spreed', 'Scroll to bottom')"
-				class="scroll-to-bottom"
-				:style="`bottom: ${scrollButtonOffset}px`"
-				@click="smoothScrollToBottom">
-				<template #icon>
-					<ChevronDoubleDown :size="20" />
-				</template>
-			</NcButton>
-		</TransitionWrapper>
 	</div>
 </template>
 
@@ -108,7 +110,6 @@ export default {
 	data() {
 		return {
 			isChatScrolledToBottom: true,
-			scrollButtonOffset: undefined,
 			isDraggingOver: false,
 			containerId: undefined,
 		}
@@ -143,21 +144,6 @@ export default {
 
 		token() {
 			return this.$store.getters.getToken()
-		},
-
-		typingParticipants() {
-			return this.$store.getters.participantsListTyping(this.token)
-		},
-	},
-
-	watch: {
-		isVisible: {
-			immediate: true,
-			handler: 'setScrollToBottomPosition',
-		},
-
-		typingParticipants: {
-			handler: 'setScrollToBottomPosition',
 		},
 	},
 
@@ -202,13 +188,6 @@ export default {
 		smoothScrollToBottom() {
 			EventBus.$emit('smooth-scroll-chat-to-bottom')
 		},
-
-		setScrollToBottomPosition() {
-			this.$nextTick(() => {
-				// offset from NewMessage component by 8px, with its min-height: 69px as a fallback
-				this.scrollButtonOffset = (this.$refs.newMessage?.$el?.clientHeight ?? 69) + 8
-			})
-		},
 	},
 
 }
@@ -249,7 +228,14 @@ export default {
 }
 
 .scroll-to-bottom {
-	position: absolute !important;
-	right: 24px;
+	position: relative;
+	height: 0;
+
+	&__button {
+		position: absolute !important;
+		bottom: 8px;
+		right: 24px;
+		z-index: 2;
+	}
 }
 </style>
