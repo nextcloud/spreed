@@ -44,7 +44,6 @@ components.
 			<!-- file preview-->
 			<NcRichText v-if="isFileShareMessage"
 				text="{file}"
-				class="quote__file-preview"
 				:arguments="richParameters" />
 			<!-- text -->
 			<blockquote v-if="!isFileShareWithoutCaption"
@@ -189,6 +188,7 @@ export default {
 						props: Object.assign({
 							token: this.token,
 							smallPreview: true,
+							rowLayout: !this.messageParameters[p].mimetype.startsWith('image/'),
 						}, this.messageParameters[p]),
 					}
 				} else {
@@ -327,9 +327,6 @@ export default {
 		padding: 0 8px 0 8px;
 		position: relative;
 		margin: auto;
-	}
-	&__file-preview {
-		line-height: 0.5 !important;
 	}
 }
 
