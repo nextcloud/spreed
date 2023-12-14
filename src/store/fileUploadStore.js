@@ -375,6 +375,9 @@ const actions = {
 			if (options?.silent) {
 				Object.assign(rawMetadata, { silent: options.silent })
 			}
+			if (temporaryMessage.parent) {
+				Object.assign(rawMetadata, { replyTo: temporaryMessage.parent.id })
+			}
 			const metadata = JSON.stringify(rawMetadata)
 
 			try {

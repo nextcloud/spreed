@@ -54,7 +54,7 @@
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
-				<NewMessageAbsenceInfo v-if="userAbsence"
+				<NewMessageAbsenceInfo v-if="!upload && userAbsence"
 					:user-absence="userAbsence"
 					:display-name="conversation.displayName" />
 
@@ -517,6 +517,7 @@ export default {
 			if (this.upload) {
 				// Clear input content from store
 				this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: '' })
+				this.$store.dispatch('removeMessageToBeReplied', this.token)
 
 				if (this.$store.getters.getInitialisedUploads(this.$store.getters.currentUploadId).length) {
 					// If dialog contains files to upload, delegate sending
