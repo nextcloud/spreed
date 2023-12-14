@@ -455,12 +455,14 @@ class Listener implements IEventListener {
 			$referenceId = (string) $referenceId;
 		}
 
+		$parent = $parameters['metaData']['replyTo'] ?? null;
+
 		return $this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(), $message === 'file_shared',
 			$referenceId,
-			null,
+			$parent,
 			$shouldSkipLastMessageUpdate,
 			$silent,
 		);
