@@ -469,6 +469,7 @@ export default {
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
+			this.isRecordingFromStart = false
 		},
 
 		toggleAudio() {
