@@ -184,7 +184,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
 		$context->registerEventListener(AttendeeRemovedEvent::class, ActivityListener::class);
 		$context->registerEventListener(BeforeCallEndedForEveryoneEvent::class, ActivityListener::class);
-		$context->registerEventListener(ParticipantModifiedEvent::class, ActivityListener::class, -100);
+		$context->registerEventListener(ParticipantModifiedEvent::class, ActivityListener::class, 75);
 		$context->registerEventListener(SessionLeftRoomEvent::class, ActivityListener::class, -100);
 
 		// Bot listeners
@@ -204,7 +204,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(BeforeShareCreatedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(LobbyModifiedEvent::class, SystemMessageListener::class);
-		$context->registerEventListener(ParticipantModifiedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, SystemMessageListener::class, 100);
 		$context->registerEventListener(RoomCreatedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(ShareCreatedEvent::class, SystemMessageListener::class);
@@ -294,7 +294,7 @@ class Application extends App implements IBootstrap {
 
 		// Signaling listeners (Both)
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, SignalingListener::class);
-		$context->registerEventListener(ParticipantModifiedEvent::class, SignalingListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, SignalingListener::class, 50);
 		$context->registerEventListener(RoomModifiedEvent::class, SignalingListener::class);
 
 		// Signaling listeners (Internal)
