@@ -326,6 +326,8 @@ const actions = {
 		chatExtrasStore.purgeChatExtras(token)
 		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
+		context.dispatch('purgeParticipantsStore', token)
+		context.dispatch('cacheConversations')
 	},
 
 	/**
