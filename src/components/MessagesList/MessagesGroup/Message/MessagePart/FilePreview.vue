@@ -380,8 +380,8 @@ export default {
 			// Fallback for loading mimeicons (preview for audio files is not provided)
 			if (this.previewAvailable !== 'yes' || this.mimetype.startsWith('audio/')) {
 				return {
-					width: '128px',
-					height: '128px',
+					width: this.smallPreview ? '32px' : '128px',
+					height: this.smallPreview ? '32px' : '128px',
 				}
 			}
 
