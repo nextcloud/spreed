@@ -118,8 +118,8 @@ the main body of the message as well as a quote.
 						tabindex="0"
 						@mouseover="showReloadButton = true"
 						@focus="showReloadButton = true"
-						@mouseleave="showReloadButton = true"
-						@blur="showReloadButton = true">
+						@mouseleave="showReloadButton = false"
+						@blur="showReloadButton = false">
 						<NcButton v-if="sendingErrorCanRetry && showReloadButton"
 							:aria-label="sendingErrorIconTooltip"
 							@click="handleRetry">
