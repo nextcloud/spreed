@@ -127,7 +127,7 @@ class ChatManager {
 		\DateTime $creationDateTime,
 		bool $sendNotifications,
 		?string $referenceId = null,
-		?int $parentId = null,
+		?IComment $replyTo = null,
 		bool $shouldSkipLastMessageUpdate = false,
 		bool $silent = false,
 	): IComment {
@@ -140,8 +140,8 @@ class ChatManager {
 				$comment->setReferenceId($referenceId);
 			}
 		}
-		if ($parentId !== null) {
-			$comment->setParentId((string) $parentId);
+		if ($replyTo !== null) {
+			$comment->setParentId($replyTo->getId());
 		}
 
 		$messageDecoded = json_decode($message, true);
@@ -155,6 +155,8 @@ class ChatManager {
 
 		$this->setMessageExpiration($chat, $comment);
 
+		$shouldFlush = $this->notificationManager->defer();
+
 		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatchTyped($event);
 		try {
@@ -167,6 +169,29 @@ class ChatManager {
 			}
 
 			if ($sendNotifications) {
+				/** @var ?IComment $captionComment */
+				$captionComment = null;
+				$alreadyNotifiedUsers = $usersDirectlyMentioned = [];
+				if ($messageType === 'file_shared') {
+					if (isset($messageDecoded['parameters']['metaData']['caption'])) {
+						$captionComment = clone $comment;
+						$captionComment->setMessage($messageDecoded['parameters']['metaData']['caption'], self::MAX_CHAT_LENGTH);
+						$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($captionComment);
+					}
+					if ($replyTo instanceof IComment) {
+						$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent);
+						if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
+							$usersDirectlyMentioned[] = $replyTo->getActorId();
+						}
+					}
+				}
+
+				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $captionComment ?? $comment, $alreadyNotifiedUsers, $silent);
+				if (!empty($alreadyNotifiedUsers)) {
+					$userIds = array_column($alreadyNotifiedUsers, 'id');
+					$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+				}
+
 				$this->notifier->notifyOtherParticipant($chat, $comment, [], $silent);
 			}
 
@@ -186,6 +211,10 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
+
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
+		}
 
 		if ($messageType === 'object_shared' || $messageType === 'file_shared') {
 			$this->attachmentService->createAttachmentEntry($chat, $comment, $messageType, $messageDecoded['parameters'] ?? []);
@@ -442,7 +471,7 @@ class ChatManager {
 			$this->timeFactory->getDateTime(),
 			false,
 			null,
-			(int) $comment->getId(),
+			$comment,
 			true
 		);
 	}

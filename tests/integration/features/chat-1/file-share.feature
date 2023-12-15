@@ -42,6 +42,45 @@ Feature: chat/file-share
       | room        | actorType | actorId      | actorDisplayName         | message         | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {mention-user1} | "IGNORE"          |
 
+  Scenario: Captioned message as a reply
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
+    And user "participant2" sends message "Message 1" to room "public room" with 201
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | public room | users     | participant2 | participant2-displayname | Message 1 | []                |               |
+    When user "participant1" shares "welcome.txt" with room "public room"
+      | talkMetaData.caption      | @participant2 |
+      | talkMetaData.replyTo      | Message 1     |
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage |
+      | public room | users     | participant1 | participant1-displayname | {mention-user1} | "IGNORE"          | Message 1     |
+      | public room | users     | participant2 | participant2-displayname | Message 1       | []                |               |
+
+  Scenario: Captioned message can not reply cross chats
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    Given user "participant1" creates room "room2" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant2" sends message "Message 1" to room "room1" with 201
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room1 | users     | participant2 | participant2-displayname | Message 1 | []                |               |
+    When user "participant1" shares "welcome.txt" with room "room2"
+      | talkMetaData.caption      | @participant2 |
+      | talkMetaData.replyTo      | Message 1     |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room1 | users     | participant2 | participant2-displayname | Message 1 | []                |               |
+    Then user "participant1" sees the following messages in room "room2" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage |
+      | room2 | users     | participant1 | participant1-displayname | {mention-user1} | "IGNORE"          |               |
+
   Scenario: Can not share a file without chat permission
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |

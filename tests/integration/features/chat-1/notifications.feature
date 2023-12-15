@@ -373,6 +373,48 @@ Feature: chat/notifications
       | app    | object_type | object_id        | subject                                                     |
       | spreed | chat        | room/Hi @all @participant2 @"group/attendees1" bye | participant1-displayname replied to your message in conversation room |
 
+  Scenario: Replying with a captioned file gives a reply notification
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "room" with 201
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room | users     | participant2 | participant2-displayname | Message 1 | []                |               |
+    When user "participant1" shares "welcome.txt" with room "room"
+      | talkMetaData.caption      | Caption 1-1 |
+      | talkMetaData.replyTo      | Message 1   |
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | room | users     | participant1 | participant1-displayname | Caption 1-1 | "IGNORE"          | Message 1     |
+      | room | users     | participant2 | participant2-displayname | Message 1   | []                |               |
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id        | subject                                                               |
+      | spreed | chat        | room/Caption 1-1 | participant1-displayname replied to your message in conversation room |
+
+  Scenario: Mentions in captions trigger normal mention notifications
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    When user "participant1" shares "welcome.txt" with room "room"
+      | talkMetaData.caption      | @participant2 |
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room | users     | participant1 | participant1-displayname | {mention-user1} | "IGNORE"    |               |
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id            | subject                                                     |
+      | spreed | chat        | room/{mention-user1} | participant1-displayname mentioned you in conversation room |
+
   Scenario: Delete notification when the message is deleted
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
