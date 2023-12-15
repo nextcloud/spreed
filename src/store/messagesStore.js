@@ -336,11 +336,15 @@ const mutations = {
 	 * @param {object} state current store state;
 	 * @param {object} data the wrapping object;
 	 * @param {object} data.message the temporary message;
+	 * @param {string|undefined} data.uploadId the internal id of the upload;
 	 * @param {string} data.reason the reason the temporary message failed;
 	 */
-	markTemporaryMessageAsFailed(state, { message, reason }) {
+	markTemporaryMessageAsFailed(state, { message, uploadId = undefined, reason }) {
 		if (state.messages[message.token][message.id]) {
 			Vue.set(state.messages[message.token][message.id], 'sendingFailure', reason)
+			if (uploadId) {
+				Vue.set(state.messages[message.token][message.id], 'uploadId', uploadId)
+			}
 		}
 	},
 
@@ -676,10 +680,11 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
 	 * @param {object} data.message the temporary message;
+	 * @param {string} data.uploadId the internal id of the upload;
 	 * @param {string} data.reason the reason the temporary message failed;
 	 */
-	markTemporaryMessageAsFailed(context, { message, reason }) {
-		context.commit('markTemporaryMessageAsFailed', { message, reason })
+	markTemporaryMessageAsFailed(context, { message, uploadId, reason }) {
+		context.commit('markTemporaryMessageAsFailed', { message, uploadId, reason })
 	},
 
 	/**
