@@ -1,10 +1,14 @@
 import { createLocalVue } from '@vue/test-utils'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
+// eslint-disable-next-line no-unused-vars -- required for testing
+import storeConfig from './storeConfig.js'
+// eslint-disable-next-line import/order -- required for testing
 import fileUploadStore from './fileUploadStore.js'
 import { getDavClient } from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.js'
@@ -39,6 +43,7 @@ describe('fileUploadStore', () => {
 
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		mockedActions = {
 			createTemporaryMessage: jest.fn()

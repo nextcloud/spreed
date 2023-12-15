@@ -33,6 +33,7 @@ import {
 	shareFile,
 } from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 import {
 	hasDuplicateUploadNames,
 	findUniquePath,
@@ -64,6 +65,16 @@ const getters = {
 	getInitialisedUploads: (state, getters) => (uploadId) => {
 		return getters.getUploadsArray(uploadId)
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'initialised')
+	},
+
+	getFailedUploads: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'failedUpload')
+	},
+
+	getUploadingFiles: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'uploading')
 	},
 
 	// Returns all the files that have been successfully uploaded provided an
@@ -130,6 +141,11 @@ const mutations = {
 			temporaryMessage,
 		 })
 		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
+	},
+
+	// Marks a given file as initialized (for retry)
+	markFileAsInitializedUpload(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'initialised'
 	},
 
 	// Marks a given file as failed upload
@@ -295,8 +311,8 @@ const actions = {
 
 		// Tag previously indexed files and add temporary messages to the MessagesList
 		// If caption is provided, attach to the last temporary message
-		const lastIndex = getters.getUploadsArray(uploadId).at(-1).at(0)
-		for (const [index, uploadedFile] of getters.getUploadsArray(uploadId)) {
+		const lastIndex = getters.getInitialisedUploads(uploadId).at(-1).at(0)
+		for (const [index, uploadedFile] of getters.getInitialisedUploads(uploadId)) {
 			// mark all files as uploading
 			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
@@ -398,7 +414,7 @@ const actions = {
 		const client = getDavClient()
 		const userRoot = '/files/' + getters.getUserId()
 
-		const uploads = getters.getUploadsArray(uploadId)
+		const uploads = getters.getUploadingFiles(uploadId)
 		// Check for duplicate names in the uploads array
 		if (hasDuplicateUploadNames(uploads)) {
 			const { uniques, duplicates } = separateDuplicateUploads(uploads)
@@ -430,6 +446,30 @@ const actions = {
 
 		EventBus.$emit('upload-finished')
 	},
+
+	/**
+	 * Re-initialize failed uploads and open UploadEditor dialog
+	 * Insert caption if was provided
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} data payload;
+	 * @param {string} data.uploadId the internal id of the upload;
+	 * @param {string} [data.caption] the message caption;
+	 */
+	retryUploadFiles(context, { uploadId, caption }) {
+		context.getters.getFailedUploads(uploadId).forEach(([index, file]) => {
+			context.dispatch('removeTemporaryMessageFromStore', file.temporaryMessage)
+			context.commit('markFileAsInitializedUpload', { uploadId, index })
+		})
+
+		if (caption) {
+			const chatExtrasStore = useChatExtrasStore()
+			chatExtrasStore.setChatInput({ token: context.getters.getToken(), text: caption })
+		}
+
+		context.commit('setCurrentUploadId', uploadId)
+	},
+
 	/**
 	 * Set the folder to store new attachments in
 	 *

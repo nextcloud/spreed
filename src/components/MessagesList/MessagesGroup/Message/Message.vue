@@ -687,6 +687,7 @@ export default {
 
 		sendingErrorCanRetry() {
 			return this.sendingFailure === 'timeout' || this.sendingFailure === 'other'
+				|| this.sendingFailure === 'failed-upload'
 		},
 
 		sendingErrorIconTooltip() {
@@ -802,8 +803,13 @@ export default {
 
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
-				EventBus.$emit('retry-message', this.id)
-				EventBus.$emit('focus-chat-input')
+				if (this.sendingFailure === 'failed-upload') {
+					const caption = this.renderedMessage !== this.message ? this.message : undefined
+					this.$store.dispatch('retryUploadFiles', { uploadId: this.messageObject.uploadId, caption })
+				} else {
+					EventBus.$emit('retry-message', this.id)
+					EventBus.$emit('focus-chat-input')
+				}
 			}
 		},
 
