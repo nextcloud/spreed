@@ -89,7 +89,7 @@ const getters = {
 	},
 
 	uploadProgress: (state) => (uploadId, index) => {
-		if (state.uploads[uploadId].files[index]) {
+		if (state.uploads[uploadId]?.files[index]) {
 			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
 		} else {
 			return 0
@@ -112,9 +112,8 @@ const getters = {
 const mutations = {
 
 	// Adds a "file to be shared to the store"
-	addFileToBeUploaded(state, { file, temporaryMessage, localUrl }) {
+	addFileToBeUploaded(state, { file, temporaryMessage, localUrl, token }) {
 		const uploadId = temporaryMessage.messageParameters.file.uploadId
-		const token = temporaryMessage.messageParameters.file.token
 		const index = temporaryMessage.messageParameters.file.index
 		// Create upload id if not present
 		if (!state.uploads[uploadId]) {
@@ -253,7 +252,7 @@ const actions = {
 				text: '{file}', token, uploadId, index, file, localUrl, isVoiceMessage,
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
-			commit('addFileToBeUploaded', { file, temporaryMessage, localUrl })
+			commit('addFileToBeUploaded', { file, temporaryMessage, localUrl, token })
 		}
 	},
 
@@ -322,14 +321,14 @@ const actions = {
 			// Candidate rest of the path
 			const path = getters.getAttachmentFolder() + '/' + fileName
 
-			// Check if previous propfind attempt was stored
-			const promptPath = getFileNamePrompt(path)
-			const knownSuffix = knownPaths[promptPath]
-			// Get a unique relative path based on the previous path variable
-			const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
-			knownPaths[promptPath] = suffix
-
 			try {
+				// Check if previous propfind attempt was stored
+				const promptPath = getFileNamePrompt(path)
+				const knownSuffix = knownPaths[promptPath]
+				// Get a unique relative path based on the previous path variable
+				const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
+				knownPaths[promptPath] = suffix
+
 				// Upload the file
 				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
 				await client.putFileContents(userRoot + uniquePath, currentFileBuffer, {
