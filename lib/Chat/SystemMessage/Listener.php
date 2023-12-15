@@ -460,17 +460,17 @@ class Listener implements IEventListener {
 			$referenceId = (string) $referenceId;
 		}
 
+		$parent = null;
 		$replyTo = $parameters['metaData']['replyTo'] ?? null;
 		if ($replyTo !== null) {
 			try {
 				$parentComment = $this->chatManager->getParentComment($room, (string) $replyTo);
 				$parentMessage = $this->messageParser->createMessage($room, $participant, $parentComment, $this->l);
 				$this->messageParser->parseMessage($parentMessage);
-				if (!$parentMessage->isReplyable()) {
-					$replyTo = null;
+				if ($parentMessage->isReplyable()) {
+					$parent = $parentComment;
 				}
 			} catch (NotFoundException) {
-				$replyTo = null;
 			}
 
 		}
@@ -478,9 +478,10 @@ class Listener implements IEventListener {
 		return $this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
-			$this->timeFactory->getDateTime(), $message === 'file_shared',
+			$this->timeFactory->getDateTime(),
+			$message === 'file_shared',
 			$referenceId,
-			$replyTo,
+			$parent,
 			$shouldSkipLastMessageUpdate,
 			$silent,
 		);
