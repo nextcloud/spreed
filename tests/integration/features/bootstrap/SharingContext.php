@@ -775,13 +775,26 @@ class SharingContext implements Context {
 		$parameters[] = 'shareType=' . $shareType;
 		$parameters[] = 'shareWith=' . $shareWith;
 
+		$talkMetaData = [];
+
 		if ($body instanceof TableNode) {
 			foreach ($body->getRowsHash() as $key => $value) {
 				if ($key === 'expireDate' && $value !== 'invalid date') {
 					$value = date('Y-m-d', strtotime($value));
 				}
-				$parameters[] = $key . '=' . $value;
+				if ($key === 'talkMetaData.replyTo') {
+					$value = FeatureContext::getMessageIdForText($value);
+				}
+				if (str_starts_with($key, 'talkMetaData.')) {
+					$talkMetaData[substr($key, 13)] = $value;
+				} else {
+					$parameters[] = $key . '=' . $value;
+				}
 			}
+		}
+
+		if (!empty($talkMetaData)) {
+			$parameters[] = 'talkMetaData=' . json_encode($talkMetaData);
 		}
 
 		$url .= '?' . implode('&', $parameters);

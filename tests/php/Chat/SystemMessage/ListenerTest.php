@@ -22,6 +22,7 @@
 namespace OCA\Talk\Tests\php\Chat\SystemMessage;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\SystemMessage\Listener;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
@@ -37,6 +38,7 @@ use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
@@ -71,6 +73,8 @@ class ListenerTest extends TestCase {
 	protected $manager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var MessageParser|MockObject */
+	protected $messageParser;
 	protected ?array $handlers = null;
 	protected ?\DateTime $dummyTime = null;
 
@@ -94,6 +98,13 @@ class ListenerTest extends TestCase {
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->messageParser = $this->createMock(MessageParser::class);
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($string, $args) {
+				return vsprintf($string, $args);
+			});
 
 		$this->handlers = [];
 
@@ -112,6 +123,8 @@ class ListenerTest extends TestCase {
 			$this->timeFactory,
 			$this->manager,
 			$this->participantService,
+			$this->messageParser,
+			$l,
 		);
 	}
 
