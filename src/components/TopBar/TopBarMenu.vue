@@ -176,6 +176,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
+import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -392,6 +393,16 @@ export default {
 		},
 
 		toggleFullscreen() {
+			// Don't toggle fullscreen if there is an open modal
+			// FIXME won't be needed without Fulscreen API
+			if (Array.from(document.body.childNodes).filter(child => {
+				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
+					&& window.getComputedStyle(child).display !== 'none'
+			}).length !== 0) {
+				showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
+				return
+			}
+
 			if (this.isFullscreen) {
 				this.disableFullscreen()
 				this.$store.dispatch('setIsFullscreen', false)
