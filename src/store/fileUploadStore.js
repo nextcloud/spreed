@@ -359,7 +359,7 @@ const actions = {
 
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
-				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, reason })
+				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, uploadId, reason })
 			}
 		}
 
@@ -390,7 +390,7 @@ const actions = {
 				} else {
 					showError(t('spreed', 'An error happened when trying to share your file'))
 				}
-				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, reason: 'failed-share' })
+				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, uploadId, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)
 			}
 		}
