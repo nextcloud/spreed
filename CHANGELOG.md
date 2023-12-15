@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.1 – 2023-12-15
+### Changed
+- Update translations
+
+### Fixed
+- fix(shares): Fix notifications for captions with mentions or as a reply
+  [#11242](https://github.com/nextcloud/spreed/issues/11242)
+- fix(shares): Fix replying to message with attachments
+  [#11242](https://github.com/nextcloud/spreed/issues/11242)
+- fix(shares): Reserve space for file previews while loading
+  [#11196](https://github.com/nextcloud/spreed/issues/11196)
+- fix(chat): Don't trim the quote when it is not an image share with caption
+  [#11237](https://github.com/nextcloud/spreed/issues/11237)
+- fix(call): Reset "Start recording" checkbox on "Media settings" close
+  [#11227](https://github.com/nextcloud/spreed/issues/11227)
+- fix(call): Fix uploading files as image for the call background
+  [#11214](https://github.com/nextcloud/spreed/issues/11214)
+- fix(notifications): Fix the order of event listeners to improve responsiveness when starting calls
+  [#11238](https://github.com/nextcloud/spreed/issues/11238)
+
 ## 18.0.0 – 2023-12-12
 ### Added
 - 🗒️ Note to self
