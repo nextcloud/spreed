@@ -323,6 +323,8 @@ const actions = {
 		// FIXME: rename to deleteConversationsFromStore or a better name
 		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
+		context.dispatch('purgeParticipantsStore', token)
+		context.dispatch('cacheConversations')
 	},
 
 	/**
