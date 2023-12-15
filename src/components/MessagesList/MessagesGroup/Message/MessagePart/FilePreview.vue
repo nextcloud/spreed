@@ -23,7 +23,8 @@
 -->
 
 <template>
-	<div v-bind="filePreview"
+	<component :is="filePreviewElement"
+		v-bind="filePreviewBinding"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable,
@@ -32,7 +33,7 @@
 			'file-preview--row-layout': rowLayout }"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
-		<div v-if="!isLoading || fallbackLocalUrl"
+		<span v-if="!isLoading || fallbackLocalUrl"
 			class="image-container"
 			:class="{'playable': isPlayable}">
 			<span v-if="isPlayable && !smallPreview" class="play-video-button">
@@ -49,7 +50,7 @@
 				:class="previewImageClass"
 				alt=""
 				:src="defaultIconUrl">
-		</div>
+		</span>
 		<span v-else-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading"
@@ -68,7 +69,7 @@
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
 		</div>
-	</div>
+	</component>
 </template>
 
 <script>
@@ -327,22 +328,26 @@ export default {
 		},
 
 		// This is used to decide which outer element type to use
-		// a or div
-		filePreview() {
+		filePreviewElement() {
 			if (this.isUploadEditor || this.isTemporaryUpload) {
-				return {
-					is: 'div',
-				}
+				return 'div'
+			} else if (this.isVoiceMessage && !this.isSharedItems) {
+				return AudioPlayer
+			}
+			return 'a'
+		},
+
+		filePreviewBinding() {
+			if (this.isUploadEditor || this.isTemporaryUpload) {
+				return
 			} else if (this.isVoiceMessage && !this.isSharedItems) {
 				return {
-					is: AudioPlayer,
 					name: this.name,
 					path: this.path,
 					link: this.link,
 				}
 			}
 			return {
-				is: 'a',
 				href: this.link,
 				target: '_blank',
 				rel: 'noopener noreferrer',
@@ -648,7 +653,7 @@ export default {
 
 	.image-container {
 		position: relative;
-		display: inline-flex;
+		display: inline-block;
 		height: 100%;
 
 		&.playable {
