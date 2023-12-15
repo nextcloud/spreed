@@ -59,6 +59,7 @@
 		</div>
 
 		<NewMessage v-if="containerId"
+			:key="containerId"
 			role="region"
 			:token="token"
 			:container="containerId"
@@ -131,11 +132,21 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		}
+	},
+
+	watch: {
+		container(value) {
+			this.containerId = value
+		}
 	},
 
 	mounted() {
 		// Postpone render of NewMessage until application is mounted
-		this.containerId = this.$store.getters.getMainContainerSelector()
+		this.containerId = this.container
 	},
 
 	methods: {
