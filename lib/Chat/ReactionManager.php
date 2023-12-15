@@ -110,7 +110,7 @@ class ReactionManager {
 	 */
 	public function deleteReactionMessage(Room $chat, string $actorType, string $actorId, int $messageId, string $reaction): IComment {
 		// Just to verify that messageId is part of the room and throw error if not.
-		$this->getCommentToReact($chat, (string) $messageId);
+		$parentComment = $this->getCommentToReact($chat, (string) $messageId);
 
 		$comment = $this->commentsManager->getReactionComment(
 			$messageId,
@@ -136,7 +136,7 @@ class ReactionManager {
 			$this->timeFactory->getDateTime(),
 			false,
 			null,
-			$messageId,
+			$parentComment,
 			true
 		);
 
