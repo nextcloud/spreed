@@ -196,6 +196,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 |---------------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `messageType` | string | A message type to show the message in different styles. Currently known: `voice-message` and `comment`                                                                  |
 | `caption`     | string | A caption message that should be shown together with the shared file (only available with `media-caption` capability)                                                   |
+| `replyTo`     | int    | The message ID this caption message is a reply to (only allowed for messages from the same conversation and when the message type is not `system` or `command`)         |
 | `silent`      | bool   | If sent silent the message will not create chat notifications even for mentions (only available with `media-caption` capability, yes `media-caption` not `silent-send`) |
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)

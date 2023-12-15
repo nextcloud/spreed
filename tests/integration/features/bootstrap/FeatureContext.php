@@ -125,6 +125,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$identifierToToken[$identifier];
 	}
 
+	public static function getMessageIdForText(string $text): int {
+		return self::$textToMessageId[$text];
+	}
+
 	public static function getActorIdForPhoneNumber(string $phoneNumber): string {
 		return self::$phoneNumberToActorId[$phoneNumber];
 	}

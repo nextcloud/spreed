@@ -27,6 +27,7 @@ namespace OCA\Talk\Chat\SystemMessage;
 
 use DateInterval;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
@@ -51,8 +52,10 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
@@ -75,6 +78,8 @@ class Listener implements IEventListener {
 		protected ITimeFactory $timeFactory,
 		protected Manager $manager,
 		protected ParticipantService $participantService,
+		protected MessageParser $messageParser,
+		protected IL10N $l,
 	) {
 	}
 
@@ -455,14 +460,27 @@ class Listener implements IEventListener {
 			$referenceId = (string) $referenceId;
 		}
 
-		$parent = $parameters['metaData']['replyTo'] ?? null;
+		$replyTo = $parameters['metaData']['replyTo'] ?? null;
+		if ($replyTo !== null) {
+			try {
+				$parentComment = $this->chatManager->getParentComment($room, (string) $replyTo);
+				$parentMessage = $this->messageParser->createMessage($room, $participant, $parentComment, $this->l);
+				$this->messageParser->parseMessage($parentMessage);
+				if (!$parentMessage->isReplyable()) {
+					$replyTo = null;
+				}
+			} catch (NotFoundException) {
+				$replyTo = null;
+			}
+
+		}
 
 		return $this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(), $message === 'file_shared',
 			$referenceId,
-			$parent,
+			$replyTo,
 			$shouldSkipLastMessageUpdate,
 			$silent,
 		);
