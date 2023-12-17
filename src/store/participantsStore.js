@@ -619,7 +619,15 @@ const actions = {
 			const response = await request(token)
 			const hasUserStatuses = !!response.headers['x-nextcloud-has-user-statuses']
 
-			response.data.ocs.data.forEach(participant => {
+			const currentParticipants = context.state.attendees[token]
+			const newParticipants = response.data.ocs.data
+			for (const attendeeId of Object.keys(Object(currentParticipants))) {
+				if (!newParticipants.some(participant => participant.attendeeId === +attendeeId)) {
+					context.commit('deleteParticipant', { token, attendeeId })
+				}
+			}
+
+			newParticipants.forEach(participant => {
 				if (context.state.attendees[token]?.[participant.attendeeId]) {
 					context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
 				} else {
@@ -668,31 +676,27 @@ const actions = {
 		const { attendeeId } = participant
 		const oldParticipant = context.state.attendees[token][attendeeId]
 
-		// Update, if status has changed
-		if (hasUserStatuses && (oldParticipant.status !== participant.status
-			|| oldParticipant.statusMessage !== participant.statusMessage
-			|| oldParticipant.statusIcon !== participant.statusIcon
-			|| oldParticipant.statusClearAt !== participant.statusClearAt
-		)) {
-			context.commit('updateParticipant', { token, attendeeId, updatedData: participant })
-			emitUserStatusUpdated(participant)
-			return true
-		}
-
-		// Check if any property were changed (no properties except status-related supposed to be added or deleted)
-		for (const key of Object.keys(participant)) {
+		// Check if any property has changed
+		const changedEntries = Object.entries(participant).filter(([key, value]) => {
 			// "sessionIds" is the only property with non-primitive (array) value and cannot be compared by ===
-			if (key !== 'sessionIds' && oldParticipant[key] !== participant[key]) {
-				context.commit('updateParticipant', { token, attendeeId, updatedData: participant })
-				return true
-			} else if (key === 'sessionIds' && (oldParticipant.sessionIds.length !== participant.sessionIds.length
-				|| !oldParticipant.sessionIds.every((element, index) => element === participant.sessionIds[index]))) {
-				context.commit('updateParticipant', { token, attendeeId, updatedData: participant })
-				return true
-			}
+			return key === 'sessionIds'
+				? JSON.stringify(oldParticipant[key]) !== JSON.stringify(value)
+				: oldParticipant[key] !== value
+		})
+
+		if (changedEntries.length === 0) {
+			return false
 		}
 
-		return false
+		const updatedData = Object.fromEntries(changedEntries)
+		context.commit('updateParticipant', { token, attendeeId, updatedData })
+
+		// check if status-related properties have been changed
+		if (hasUserStatuses && changedEntries.some(([key]) => key.startsWith('status'))) {
+			emitUserStatusUpdated(participant)
+		}
+
+		return true
 	},
 
 	/**
