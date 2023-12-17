@@ -399,6 +399,39 @@ describe('participantsStore', () => {
 			expect(store.getters.participantsList(TOKEN)).toMatchObject(payload)
 		})
 
+		test('populates store for the fetched conversation', async () => {
+			// Arrange
+			const payloadFirst = [
+				{ attendeeId: 1, actorType: 'users', sessionIds: ['session-id-1'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED }, // delete
+				{ attendeeId: 2, actorType: 'users', sessionIds: ['session-id-2-1', 'session-id-2-2'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED },
+				{ attendeeId: 3, actorType: 'users', sessionIds: ['session-id-3'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED },
+				{ attendeeId: 4, actorType: 'users', sessionIds: ['session-id-4'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED },
+			]
+			const payloadSecond = [
+				{ attendeeId: 2, actorType: 'users', sessionIds: ['session-id-2-2', 'session-id-2-1'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED }, // change
+				{ attendeeId: 3, actorType: 'users', sessionIds: ['session-id-3'], inCall: PARTICIPANT.CALL_FLAG.IN_CALL }, // change
+				{ attendeeId: 4, actorType: 'users', sessionIds: ['session-id-4'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED, status: 'online' }, // change
+				{ attendeeId: 5, actorType: 'guests', sessionIds: ['session-id-5'], inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED }, // add
+			]
+			fetchParticipants
+				.mockResolvedValueOnce(generateOCSResponse({
+					headers: { 'x-nextcloud-has-user-statuses': true },
+					payload: payloadFirst,
+				}))
+				.mockResolvedValueOnce(generateOCSResponse({
+					headers: { 'x-nextcloud-has-user-statuses': true },
+					payload: payloadSecond,
+				}))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(emit).toHaveBeenCalledTimes(5) // 4 added users and 1 status changed
+			expect(store.getters.participantsList(TOKEN)).toMatchObject(payloadSecond)
+		})
+
 		test('saves a guest name from response', async () => {
 			// Arrange
 			const payload = [{
