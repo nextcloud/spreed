@@ -53,6 +53,23 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
+/**
+ * Emit global event for user status update with the status from a participant
+ *
+ * @param {object} participant - a participant object
+ */
+function emitUserStatusUpdated(participant) {
+	if (participant.actorType === 'users') {
+		emit('user_status:status.updated', {
+			status: participant.status,
+			message: participant.statusMessage,
+			icon: participant.statusIcon,
+			clearAt: participant.statusClearAt,
+			userId: participant.actorId,
+		})
+	}
+}
+
 const state = {
 	attendees: {
 	},
@@ -604,9 +621,12 @@ const actions = {
 
 			response.data.ocs.data.forEach(participant => {
 				if (context.state.attendees[token]?.[participant.attendeeId]) {
-					context.dispatch('updateParticipantIfHasChanged', { token, participant })
+					context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
 				} else {
 					context.dispatch('addParticipant', { token, participant })
+					if (hasUserStatuses) {
+						emitUserStatusUpdated(participant)
+					}
 				}
 
 				if (participant.participantType === PARTICIPANT.TYPE.GUEST
@@ -616,14 +636,6 @@ const actions = {
 						actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 						actorDisplayName: participant.displayName,
 					}, { noUpdate: false })
-				} else if (participant.actorType === 'users' && hasUserStatuses) {
-					emit('user_status:status.updated', {
-						status: participant.status,
-						message: participant.statusMessage,
-						icon: participant.statusIcon,
-						clearAt: participant.statusClearAt,
-						userId: participant.actorId,
-					})
 				}
 			})
 
@@ -649,19 +661,21 @@ const actions = {
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the conversation token;
 	 * @param {object} data.participant the new participant object;
+	 * @param {boolean} data.hasUserStatuses whether user status is enabled or not;
 	 * @return {boolean} whether the participant was changed
 	 */
-	updateParticipantIfHasChanged(context, { token, participant }) {
+	updateParticipantIfHasChanged(context, { token, participant, hasUserStatuses }) {
 		const { attendeeId } = participant
 		const oldParticipant = context.state.attendees[token][attendeeId]
 
 		// Update, if status has changed
-		if (oldParticipant.status !== participant.status
+		if (hasUserStatuses && (oldParticipant.status !== participant.status
 			|| oldParticipant.statusMessage !== participant.statusMessage
 			|| oldParticipant.statusIcon !== participant.statusIcon
 			|| oldParticipant.statusClearAt !== participant.statusClearAt
-		) {
+		)) {
 			context.commit('updateParticipant', { token, attendeeId, updatedData: participant })
+			emitUserStatusUpdated(participant)
 			return true
 		}
 
