@@ -51,3 +51,15 @@ A Golang sample bot that responds to "Good morning" and "Hello" and welcomes new
 * License: GPL-3.0-or-later
 * [Link to source code](https://github.com/nextcloud/welcome_bot)
 * [Link to installation documentation](https://github.com/nextcloud/welcome_bot#readme)
+
+## Bots
+
+### Stable Diffusion
+
+Uses [SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo) for fast image generation. Usage example: `@image cinematic portrait of fluffy cat with black eyes`
+
+![Screenshot showing chat message and the resulting image](botscreenshots/stable-diffusion.png)
+
+* License: MIT
+* [Link to source code](https://github.com/cloud-py-api/ai_image_generator_bot)
+* [Link to installation documentation](https://github.com/cloud-py-api/ai_image_generator_bot#readme)
