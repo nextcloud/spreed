@@ -224,7 +224,7 @@ export default {
 		},
 
 		portalSelector() {
-			return this.$store.getters.isFullscreen() ? '#content-vue' : 'body'
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		hasLocalScreen() {
