@@ -33,6 +33,7 @@ import {
 	shareFile,
 } from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 import {
 	hasDuplicateUploadNames,
 	findUniquePath,
@@ -66,6 +67,16 @@ const getters = {
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'initialised')
 	},
 
+	getFailedUploads: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'failedUpload')
+	},
+
+	getUploadingFiles: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'uploading')
+	},
+
 	// Returns all the files that have been successfully uploaded provided an
 	// upload id
 	getShareableFiles: (state, getters) => (uploadId) => {
@@ -89,7 +100,7 @@ const getters = {
 	},
 
 	uploadProgress: (state) => (uploadId, index) => {
-		if (state.uploads[uploadId].files[index]) {
+		if (state.uploads[uploadId]?.files[index]) {
 			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
 		} else {
 			return 0
@@ -112,9 +123,8 @@ const getters = {
 const mutations = {
 
 	// Adds a "file to be shared to the store"
-	addFileToBeUploaded(state, { file, temporaryMessage, localUrl }) {
+	addFileToBeUploaded(state, { file, temporaryMessage, localUrl, token }) {
 		const uploadId = temporaryMessage.messageParameters.file.uploadId
-		const token = temporaryMessage.messageParameters.file.token
 		const index = temporaryMessage.messageParameters.file.index
 		// Create upload id if not present
 		if (!state.uploads[uploadId]) {
@@ -131,6 +141,11 @@ const mutations = {
 			temporaryMessage,
 		 })
 		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
+	},
+
+	// Marks a given file as initialized (for retry)
+	markFileAsInitializedUpload(state, { uploadId, index }) {
+		state.uploads[uploadId].files[index].status = 'initialised'
 	},
 
 	// Marks a given file as failed upload
@@ -253,7 +268,7 @@ const actions = {
 				text: '{file}', token, uploadId, index, file, localUrl, isVoiceMessage,
 			})
 			console.debug('temporarymessage: ', temporaryMessage, 'uploadId', uploadId)
-			commit('addFileToBeUploaded', { file, temporaryMessage, localUrl })
+			commit('addFileToBeUploaded', { file, temporaryMessage, localUrl, token })
 		}
 	},
 
@@ -296,8 +311,8 @@ const actions = {
 
 		// Tag previously indexed files and add temporary messages to the MessagesList
 		// If caption is provided, attach to the last temporary message
-		const lastIndex = getters.getUploadsArray(uploadId).at(-1).at(0)
-		for (const [index, uploadedFile] of getters.getUploadsArray(uploadId)) {
+		const lastIndex = getters.getInitialisedUploads(uploadId).at(-1).at(0)
+		for (const [index, uploadedFile] of getters.getInitialisedUploads(uploadId)) {
 			// mark all files as uploading
 			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
@@ -322,14 +337,14 @@ const actions = {
 			// Candidate rest of the path
 			const path = getters.getAttachmentFolder() + '/' + fileName
 
-			// Check if previous propfind attempt was stored
-			const promptPath = getFileNamePrompt(path)
-			const knownSuffix = knownPaths[promptPath]
-			// Get a unique relative path based on the previous path variable
-			const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
-			knownPaths[promptPath] = suffix
-
 			try {
+				// Check if previous propfind attempt was stored
+				const promptPath = getFileNamePrompt(path)
+				const knownSuffix = knownPaths[promptPath]
+				// Get a unique relative path based on the previous path variable
+				const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
+				knownPaths[promptPath] = suffix
+
 				// Upload the file
 				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
 				await client.putFileContents(userRoot + uniquePath, currentFileBuffer, {
@@ -360,7 +375,7 @@ const actions = {
 
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
-				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, reason })
+				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, uploadId, reason })
 			}
 		}
 
@@ -391,7 +406,7 @@ const actions = {
 				} else {
 					showError(t('spreed', 'An error happened when trying to share your file'))
 				}
-				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, reason: 'failed-share' })
+				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, uploadId, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)
 			}
 		}
@@ -399,7 +414,7 @@ const actions = {
 		const client = getDavClient()
 		const userRoot = '/files/' + getters.getUserId()
 
-		const uploads = getters.getUploadsArray(uploadId)
+		const uploads = getters.getUploadingFiles(uploadId)
 		// Check for duplicate names in the uploads array
 		if (hasDuplicateUploadNames(uploads)) {
 			const { uniques, duplicates } = separateDuplicateUploads(uploads)
@@ -431,6 +446,30 @@ const actions = {
 
 		EventBus.$emit('upload-finished')
 	},
+
+	/**
+	 * Re-initialize failed uploads and open UploadEditor dialog
+	 * Insert caption if was provided
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} data payload;
+	 * @param {string} data.uploadId the internal id of the upload;
+	 * @param {string} [data.caption] the message caption;
+	 */
+	retryUploadFiles(context, { uploadId, caption }) {
+		context.getters.getFailedUploads(uploadId).forEach(([index, file]) => {
+			context.dispatch('removeTemporaryMessageFromStore', file.temporaryMessage)
+			context.commit('markFileAsInitializedUpload', { uploadId, index })
+		})
+
+		if (caption) {
+			const chatExtrasStore = useChatExtrasStore()
+			chatExtrasStore.setChatInput({ token: context.getters.getToken(), text: caption })
+		}
+
+		context.commit('setCurrentUploadId', uploadId)
+	},
+
 	/**
 	 * Set the folder to store new attachments in
 	 *
