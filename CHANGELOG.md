@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.4 – 2023-12-19
+### Fixed
+- fix(UI): Allow joining a call while editing a document
+  [#11260](https://github.com/nextcloud/spreed/issues/11260)
+- fix(chat): Fix grouping of chat messages when they include the readmarker
+  [#11068](https://github.com/nextcloud/spreed/issues/11068)
+- fix(call): Fix lost audio tracks in Safari after being muted a longer time
+  [#11145](https://github.com/nextcloud/spreed/issues/11145)
+- fix(occ): Fix verification of STUN server details
+  [#11194](https://github.com/nextcloud/spreed/issues/11194)
+- fix(hosted-hpb): Correctly handle API response codes of hosted High-performance backend when the account expired
+  [#11045](https://github.com/nextcloud/spreed/issues/11045)
+
+## 16.0.9 – 2023-12-19
+### Fixed
+- fix(occ): Fix verification of STUN server details
+  [#11195](https://github.com/nextcloud/spreed/issues/11195)
+- fix(hosted-hpb): Correctly handle API response codes of hosted High-performance backend when the account expired
+  [#11045](https://github.com/nextcloud/spreed/issues/11045)
+
 ## 17.1.3 – 2023-11-23
 ### Fixed
 - fix(settings): Remove non-working notification settings for guests
