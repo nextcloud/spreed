@@ -759,30 +759,6 @@ export default {
 			}
 		},
 
-		async handleReactionClick(clickedEmoji) {
-			if (!this.canReact) {
-				showError(t('spreed', 'No permission to post reactions in this conversation'))
-				return
-			}
-
-			// Check if current user has already added this reaction to the message
-			if (!this.userHasReacted(clickedEmoji)) {
-				this.$store.dispatch('addReactionToMessage', {
-					token: this.token,
-					messageId: this.id,
-					selectedEmoji: clickedEmoji,
-					actorId: this.actorId,
-				})
-			} else {
-				this.$store.dispatch('removeReactionFromMessage', {
-					token: this.token,
-					messageId: this.id,
-					selectedEmoji: clickedEmoji,
-					actorId: this.actorId,
-				})
-			}
-		},
-
 		handleReply() {
 			this.chatExtrasStore.setParentIdToReply({
 				token: this.token,

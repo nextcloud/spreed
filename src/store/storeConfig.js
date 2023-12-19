@@ -30,7 +30,6 @@ import messagesStore from './messagesStore.js'
 import newGroupConversationStore from './newGroupConversationStore.js'
 import participantsStore from './participantsStore.js'
 import pollStore from './pollStore.js'
-import reactionsStore from './reactionsStore.js'
 import sidebarStore from './sidebarStore.js'
 import soundsStore from './soundsStore.js'
 import tokenStore from './tokenStore.js'
@@ -52,7 +51,6 @@ export default {
 		tokenStore,
 		uiModeStore,
 		windowVisibilityStore,
-		reactionsStore,
 		pollStore,
 		breakoutRoomsStore,
 	},

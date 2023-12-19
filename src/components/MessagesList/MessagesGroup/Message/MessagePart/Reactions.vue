@@ -71,6 +71,7 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { ATTENDEE } from '../../../../../constants.js'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
+import { useReactionsStore } from '../../../../../stores/reactions.js'
 
 export default {
 	name: 'Reactions',
@@ -111,7 +112,11 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+		const reactionsStore = useReactionsStore()
+		return {
+			guestNameStore,
+			reactionsStore,
+		 }
 	},
 
 	data() {
@@ -127,7 +132,7 @@ export default {
 		},
 
 		isDetailedReactionsLoaded() {
-			return this.$store.getters.reactionsLoaded(this.token, this.id)
+			return this.reactionsStore.reactionsLoaded(this.token, this.id)
 		},
 
 		detailedReactions() {

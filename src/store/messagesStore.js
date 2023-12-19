@@ -45,6 +45,7 @@ import {
 } from '../services/messagesService.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
@@ -521,10 +522,9 @@ const actions = {
 			const parentInStore = context.getters.message(message.token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', message.parent)
-				context.dispatch('resetReactions', {
-					token: message.token,
-					messageId: message.parent.id,
-				})
+				const reactionsStore = useReactionsStore()
+				reactionsStore.resetReactions(message.token, message.parent.id)
+
 			}
 
 			// Check existing messages for having a deleted message as parent, and update them
@@ -1353,7 +1353,8 @@ const actions = {
 			const response = await addReactionToMessage(token, messageId, selectedEmoji)
 			// We replace the reaction details in the reactions store and wipe the old
 			// values
-			context.dispatch('updateReactions', {
+			const reactionsStore = useReactionsStore()
+			reactionsStore.updateReactions({
 				token,
 				messageId,
 				reactionsDetails: response.data.ocs.data,
@@ -1387,7 +1388,8 @@ const actions = {
 			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
 			// We replace the reaction details in the reactions store and wipe the old
 			// values
-			context.dispatch('updateReactions', {
+			const reactionsStore = useReactionsStore()
+			reactionsStore.updateReactions({
 				token,
 				messageId,
 				reactionsDetails: response.data.ocs.data,

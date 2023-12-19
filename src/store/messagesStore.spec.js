@@ -87,7 +87,7 @@ describe('messagesStore', () => {
 		test('doesn\'t add specific messages to the store', () => {
 			testStoreConfig = cloneDeep(storeConfig)
 			testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
-			testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			// testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
 			store = new Vuex.Store(testStoreConfig)
 
 			const messages = [{
@@ -210,7 +210,7 @@ describe('messagesStore', () => {
 
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(storeConfig)
-			testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			// testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
 			store = new Vuex.Store(testStoreConfig)
 
 			message = {
