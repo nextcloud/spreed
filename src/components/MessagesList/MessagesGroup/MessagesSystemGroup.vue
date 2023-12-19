@@ -107,7 +107,7 @@ export default {
 	computed: {
 		lastReadMessageId() {
 			return this.$store.getters.conversation(this.token)?.lastReadMessage
-		}
+		},
 	},
 
 	watch: {

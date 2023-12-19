@@ -31,8 +31,8 @@ const state = {
 }
 
 const getters = {
-	getMainContainerSelector: (state) => () => {
-		return state.mainContainerSelector
+	getMainContainerSelector: (state, getters, rootState, rootGetters) => () => {
+		return rootGetters.isFullscreen() ? state.mainContainerSelector : 'body'
 	},
 }
 
