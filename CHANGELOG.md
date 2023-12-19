@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.9 – 2023-12-19
+### Fixed
+- fix(occ): Fix verification of STUN server details
+  [#11195](https://github.com/nextcloud/spreed/issues/11195)
+- fix(hosted-hpb): Correctly handle API response codes of hosted High-performance backend when the account expired
+  [#11045](https://github.com/nextcloud/spreed/issues/11045)
+
 ## 16.0.8 – 2023-11-23
 ### Fixed
 - fix(settings): Remove non-working notification settings for guests
