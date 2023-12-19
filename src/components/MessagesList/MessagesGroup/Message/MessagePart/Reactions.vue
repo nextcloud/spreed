@@ -126,7 +126,7 @@ export default {
 			return Object.keys(this.reactions).length !== 0
 		},
 
-		detailedReactionsLoaded() {
+		isDetailedReactionsLoaded() {
 			return this.$store.getters.reactionsLoaded(this.token, this.id)
 		},
 
@@ -146,7 +146,7 @@ export default {
 
 	methods: {
 		handleReactionsMouseOver() {
-			if (this.hasReactions && !this.detailedReactionsLoaded) {
+			if (this.hasReactions && !this.isDetailedReactionsLoaded) {
 				this.getReactions()
 			}
 		},
@@ -224,16 +224,12 @@ export default {
 .reaction-button {
 	// Clear server rules
 	min-height: 0 !important;
-	:deep(.button-vue__text) {
-		font-weight: normal !important;
-	}
-
 	margin: 2px;
 	height: 26px;
-	padding: 0 6px !important;
+	padding: 0 6px;
 
-	&__emoji {
-		margin: 0 4px 0 0;
+	:deep(.button-vue__text) {
+		font-weight: normal;
 	}
 }
 

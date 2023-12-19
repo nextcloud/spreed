@@ -76,6 +76,7 @@ const actions = {
 	 * @param {*} param1 conversation token, message id, reactions details
 	 */
 	async updateReactions(context, { token, messageId, reactionsDetails }) {
+		// TODO: patch reactions instead of replacing them
 		context.commit('addReactions', {
 			token,
 			messageId,
