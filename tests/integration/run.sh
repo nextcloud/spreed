@@ -41,7 +41,7 @@ echo -e "Running on process ID: \033[1;35m$PHPPID2\033[0m"
 tail -f phpserver_fed.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
 
 # Kill all sub-processes in case of ctrl+c
-trap 'pkill -P $PHPPID1; pkill -P $PHPPID2; pkill -P $PROCESS_ID; wait $PHPPID1; wait $PHPPID2;' INT TERM 
+trap 'pkill -P $PHPPID1; pkill -P $PHPPID2; pkill -P $PROCESS_ID; wait $PHPPID1; wait $PHPPID2;' INT TERM
 
 NEXTCLOUD_ROOT_DIR=${ROOT_DIR}
 export NEXTCLOUD_ROOT_DIR
@@ -109,13 +109,13 @@ echo -e "\033[0;36m#\033[0m"
 echo -e "\033[0;36m# Stopping PHP webserver\033[0m"
 echo -e "\033[0;36m#\033[0m"
 
-# Kill parent PHP processes
-kill -TERM $PHPPID1; 
-kill -TERM $PHPPID2; 
-
 # Kill child PHP processes
 pkill -P $PHPPID1;
 pkill -P $PHPPID2;
+
+# Kill parent PHP processes
+kill -TERM $PHPPID1;
+kill -TERM $PHPPID2;
 
 # Kill child processes of this script (e.g. tail)
 pkill -P $PROCESS_ID;
