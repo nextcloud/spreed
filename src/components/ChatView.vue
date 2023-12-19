@@ -65,7 +65,6 @@
 			:container="containerId"
 			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />
-
 	</div>
 </template>
 
@@ -135,13 +134,13 @@ export default {
 
 		container() {
 			return this.$store.getters.getMainContainerSelector()
-		}
+		},
 	},
 
 	watch: {
 		container(value) {
 			this.containerId = value
-		}
+		},
 	},
 
 	mounted() {
