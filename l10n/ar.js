@@ -1534,6 +1534,7 @@ OC.L10N.register(
     "Raise hand (R)" : "رفع اليد (r)",
     "Lower hand" : "خفض اليد ",
     "Lower hand (R)" : "خفض اليد (R)",
+    "You need to close a dialog to toggle full screen" : "يجب إغلاق نافذة الحوار ليمكن التبديل إلى وضع ملء الشاشة",
     "No unread mentions" : "لا يوجد منشن جديد",
     "Say hi to your friends and colleagues!" : "قل مرحبا ً لزملاء العمل!",
     "Start a conversation" : "ابدأ محادثة",
