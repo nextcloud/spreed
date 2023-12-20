@@ -1267,7 +1267,8 @@ class ParticipantService {
 			->set('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
+			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)))
+			->andWhere($update->expr()->lt('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		if (!empty($usersDirectlyMentioned)) {
@@ -1276,7 +1277,8 @@ class ParticipantService {
 				->set('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 				->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 				->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter(Attendee::ACTOR_USERS)))
-				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($usersDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)));
+				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($usersDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)))
+				->andWhere($update->expr()->lt('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
 			$update->executeStatement();
 		}
 	}
