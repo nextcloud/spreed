@@ -797,6 +797,7 @@ OC.L10N.register(
     "Copy message link" : "Copiar ligam messatge",
     "Go to file" : "Anar al fichièr",
     "Forward message" : "Transferir lo messatge",
+    "Translate" : "Tradurre",
     "Close reactions menu" : "Tampar lo menú de reaccions",
     "React with {emoji}" : "Reagir amb {emoji}",
     "React with another emoji" : "Reagir amb un autre emoji",
