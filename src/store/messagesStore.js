@@ -523,8 +523,11 @@ const actions = {
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', message.parent)
 				const reactionsStore = useReactionsStore()
-				reactionsStore.resetReactions(message.token, message.parent.id)
-
+				if (message.systemMessage.startsWith('reaction')) {
+					reactionsStore.fetchReactions(message.token, message.parent.id)
+				} else {
+					reactionsStore.resetReactions(message.token, message.parent.id)
+				}
 			}
 
 			// Check existing messages for having a deleted message as parent, and update them
