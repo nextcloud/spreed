@@ -1534,6 +1534,7 @@ OC.L10N.register(
     "Raise hand (R)" : "Подигни руку (R)",
     "Lower hand" : "Спуштена рука",
     "Lower hand (R)" : "Спусти руку (R)",
+    "You need to close a dialog to toggle full screen" : "Да бисте укључили/искључили приказ у пуном екрану, морате да затворите дијалог",
     "No unread mentions" : "Нема непрочитаних помињања",
     "Say hi to your friends and colleagues!" : "Поздравите Ваше пријатеље и колеге!",
     "Start a conversation" : "Започни разговор",
