@@ -614,10 +614,6 @@ export default {
 			return this.participant.attendeeId
 		},
 
-		label() {
-			return this.participant.label
-		},
-
 		shareWithDisplayNameUnique() {
 			return this.participant.shareWithDisplayNameUnique
 		},
@@ -676,10 +672,6 @@ export default {
 
 		isParticipantSpeaking() {
 			return this.participantSpeakingInformation?.speaking
-		},
-
-		lastPing() {
-			return this.participant.lastPing
 		},
 
 		attendeePin() {
