@@ -53,6 +53,23 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
+/**
+ * Emit global event for user status update with the status from a participant
+ *
+ * @param {object} participant - a participant object
+ */
+function emitUserStatusUpdated(participant) {
+	if (participant.actorType === 'users') {
+		emit('user_status:status.updated', {
+			status: participant.status,
+			message: participant.statusMessage,
+			icon: participant.statusIcon,
+			clearAt: participant.statusClearAt,
+			userId: participant.actorId,
+		})
+	}
+}
+
 const state = {
 	attendees: {
 	},
@@ -600,12 +617,25 @@ const actions = {
 
 		try {
 			const response = await request(token)
-			context.dispatch('purgeParticipantsStore', token)
-
 			const hasUserStatuses = !!response.headers['x-nextcloud-has-user-statuses']
 
-			response.data.ocs.data.forEach(participant => {
-				context.dispatch('addParticipant', { token, participant })
+			const currentParticipants = context.state.attendees[token]
+			const newParticipants = response.data.ocs.data
+			for (const attendeeId of Object.keys(Object(currentParticipants))) {
+				if (!newParticipants.some(participant => participant.attendeeId === +attendeeId)) {
+					context.commit('deleteParticipant', { token, attendeeId })
+				}
+			}
+
+			newParticipants.forEach(participant => {
+				if (context.state.attendees[token]?.[participant.attendeeId]) {
+					context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
+				} else {
+					context.dispatch('addParticipant', { token, participant })
+					if (hasUserStatuses) {
+						emitUserStatusUpdated(participant)
+					}
+				}
 
 				if (participant.participantType === PARTICIPANT.TYPE.GUEST
 					|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
@@ -614,14 +644,6 @@ const actions = {
 						actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 						actorDisplayName: participant.displayName,
 					}, { noUpdate: false })
-				} else if (participant.actorType === 'users' && hasUserStatuses) {
-					emit('user_status:status.updated', {
-						status: participant.status,
-						message: participant.statusMessage,
-						icon: participant.statusIcon,
-						clearAt: participant.statusClearAt,
-						userId: participant.actorId,
-					})
 				}
 			})
 
@@ -638,6 +660,43 @@ const actions = {
 			}
 			return null
 		}
+	},
+
+	/**
+	 * Update participant in store according to a new participant object
+	 *
+	 * @param {object} context store context
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation token;
+	 * @param {object} data.participant the new participant object;
+	 * @param {boolean} data.hasUserStatuses whether user status is enabled or not;
+	 * @return {boolean} whether the participant was changed
+	 */
+	updateParticipantIfHasChanged(context, { token, participant, hasUserStatuses }) {
+		const { attendeeId } = participant
+		const oldParticipant = context.state.attendees[token][attendeeId]
+
+		// Check if any property has changed
+		const changedEntries = Object.entries(participant).filter(([key, value]) => {
+			// "sessionIds" is the only property with non-primitive (array) value and cannot be compared by ===
+			return key === 'sessionIds'
+				? JSON.stringify(oldParticipant[key]) !== JSON.stringify(value)
+				: oldParticipant[key] !== value
+		})
+
+		if (changedEntries.length === 0) {
+			return false
+		}
+
+		const updatedData = Object.fromEntries(changedEntries)
+		context.commit('updateParticipant', { token, attendeeId, updatedData })
+
+		// check if status-related properties have been changed
+		if (hasUserStatuses && changedEntries.some(([key]) => key.startsWith('status'))) {
+			emitUserStatusUpdated(participant)
+		}
+
+		return true
 	},
 
 	/**

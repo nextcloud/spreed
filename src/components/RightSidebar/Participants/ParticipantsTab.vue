@@ -285,7 +285,12 @@ export default {
 				return
 			}
 
-			if (this.participants.find(participant => participant.actorId === state.userId)) {
+			const participant = this.participants.find(participant => participant.actorId === state.userId)
+			if (participant && (participant.status !== state.status
+				|| participant.statusMessage !== state.message
+				|| participant.statusIcon !== state.icon
+				|| participant.statusClearAt !== state.clearAt
+			)) {
 				this.$store.dispatch('updateUser', {
 					token: this.token,
 					participantIdentifier: {
@@ -296,6 +301,7 @@ export default {
 						status: state.status,
 						statusIcon: state.icon,
 						statusMessage: state.message,
+						statusClearAt: state.clearAt,
 					},
 				})
 			}
