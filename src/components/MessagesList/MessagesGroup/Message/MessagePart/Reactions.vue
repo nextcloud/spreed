@@ -101,10 +101,6 @@ export default {
 			type: [String, Number],
 			required: true,
 		},
-		actorId: {
-			type: String,
-			required: true,
-		},
 	},
 
 	emits: ['emoji-picker-toggled'],
@@ -163,14 +159,12 @@ export default {
 					token: this.token,
 					messageId: this.id,
 					selectedEmoji: clickedEmoji,
-					actorId: this.actorId,
 				})
 			} else {
 				this.$store.dispatch('removeReactionFromMessage', {
 					token: this.token,
 					messageId: this.id,
 					selectedEmoji: clickedEmoji,
-					actorId: this.actorId,
 				})
 			}
 		},

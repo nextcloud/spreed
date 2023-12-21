@@ -24,9 +24,8 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import {
-	getReactionsDetails,
-} from '../services/messagesService.js'
+import { getReactionsDetails } from '../services/messagesService.js'
+import store from '../store/index.js'
 
 /**
  * @typedef {string} Token
@@ -70,6 +69,79 @@ export const useReactionsStore = defineStore('reactions', {
 
 	actions: {
 		/**
+		 * Add a reaction for a given message.
+		 *
+		 * @param {object} payload action payload
+		 * @param {string} payload.token The conversation token
+		 * @param {number} payload.messageId The id of message
+		 * @param {string} payload.reaction The reaction to add
+		 * @param {object} payload.actors The users who reacted
+		 *
+		 */
+		addReaction({ token, messageId, reaction, actors }) {
+			if (!this.reactions[token]) {
+				Vue.set(this.reactions, token, {})
+
+			}
+			if (!this.reactions[token][messageId]) {
+				Vue.set(this.reactions[token], messageId, {})
+
+			}
+			if (!this.reactions[token][messageId][reaction]) {
+				Vue.set(this.reactions[token][messageId], reaction, actors)
+				return
+			}
+
+			Vue.set(this.reactions[token][messageId], reaction, actors)
+		},
+
+		/**
+		 * Remove a reaction for a given message.
+		 *
+		 * @param {object} payload action payload
+		 * @param {string} payload.token The conversation token
+		 * @param {number} payload.messageId The id of message
+		 * @param {string} payload.reaction The reaction to remove
+		 *
+		 */
+		removeReaction({ token, messageId, reaction }) {
+			Vue.delete(this.reactions[token][messageId], reaction)
+		},
+
+		/**
+		 * Add an actor for a given reaction emoji.
+		 *
+		 * @param {object} payload action payload
+		 * @param {string} payload.token The conversation token
+		 * @param {number} payload.messageId The id of message
+		 * @param {string} payload.emoji The reaction emoji
+		 * @param {object} payload.actor The user who reacted
+		 *
+		 */
+		addActorToReaction({ token, messageId, emoji, actor }) {
+			if (!this.reactions[token]) {
+				Vue.set(this.reactions, token, {})
+
+			}
+			if (!this.reactions[token][messageId]) {
+				Vue.set(this.reactions[token], messageId, {})
+
+			}
+			if (!this.reactions[token][messageId][emoji]) {
+				Vue.set(this.reactions[token][messageId], emoji, [])
+			}
+			const actors = this.reactions[token][messageId][emoji]
+			// Find if actor is already in the list
+			// This is needed when loading as revoking messages fully updates the list
+			const actorExists = actors.find(a => a.actorId === actor.actorId)
+			if (actorExists) {
+				return
+			}
+			actors.push(actor)
+			Vue.set(this.reactions[token][messageId], emoji, actors)
+		},
+
+		/**
 		 * Adds reactions for a given message.
 		 *
 		 * @param {object} payload action payload
@@ -110,12 +182,74 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 */
 		updateReactions({ token, messageId, reactionsDetails }) {
-			// TODO: patch reactions instead of replacing them
-			this.addReactions({
-				token,
-				messageId,
-				reactions: reactionsDetails,
+			if (!this.reactions[token]) {
+				Vue.set(this.reactions, token, {})
+			}
+
+			if (!this.reactions[token][messageId]) {
+				Vue.set(this.reactions[token], messageId, {})
+			}
+
+			const storedReactions = this.reactions[token][messageId]
+
+			if (Object.keys(reactionsDetails).length === 0) {
+				this.resetReactions(token, messageId)
+				return
+			}
+
+			if (Object.keys(storedReactions).length === 0) {
+				Vue.set(this.reactions[token], messageId, reactionsDetails)
+				return
+			}
+
+			// Handle removed reactions
+			const removedReactions = Object.keys(storedReactions).filter(reaction => {
+				return !reactionsDetails[reaction]
 			})
+			if (Object.keys(removedReactions).length > 0) {
+				removedReactions.forEach(reaction => {
+					this.removeReaction({ token, messageId, reaction })
+				})
+			}
+
+			// Add new reactions and/or update existing ones
+			Object.entries(reactionsDetails).forEach(([reaction, actors]) => {
+				if (!storedReactions[reaction] || JSON.stringify(actors) !== JSON.stringify(storedReactions[reaction])) {
+					this.addReaction({ token, messageId, reaction, actors })
+				}
+			})
+		},
+
+		/**
+		 * Process a reaction system message.
+		 *
+		 * @param {object} message the system message
+		 *
+		 */
+		processReaction(message) {
+			// Ignore reactions from self because it is processed locally
+			if (message.actorId === store.getters.getActorId()) {
+				return
+			}
+
+			// 'reaction_deleted' is not handled because it is a message replacement
+			// for 'reaction' when the reaction is revoked, thus it doesn't exist anymore
+			if (message.systemMessage === 'reaction') {
+				const actorObject = {
+					actorDisplayName: message.actorDisplayName,
+					actorId: message.actorId,
+					actorType: message.actorType,
+					timestamp: message.timestamp,
+				}
+				this.addActorToReaction({
+					token: message.token,
+					messageId: message.parent.id,
+					emoji: message.message,
+					actor: actorObject,
+				})
+			} else if (message.systemMessage === 'reaction_revoked') {
+				this.fetchReactions(message.token, message.parent.id)
+			}
 		},
 
 		/**
@@ -123,17 +257,17 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 * @param {string} token The conversation token
 		 * @param {number} messageId The id of message
+		 *
 		 */
 		async fetchReactions(token, messageId) {
 			console.debug('getting reactions details')
 			try {
 				const response = await getReactionsDetails(token, messageId)
-				this.addReactions({
+				this.updateReactions({
 					token,
 					messageId,
-					reactions: response.data.ocs.data,
+					reactionsDetails: response.data.ocs.data,
 				})
-
 				return response
 			} catch (error) {
 				console.debug(error)

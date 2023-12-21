@@ -523,10 +523,10 @@ const actions = {
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', message.parent)
 				const reactionsStore = useReactionsStore()
-				if (message.systemMessage.startsWith('reaction')) {
-					reactionsStore.fetchReactions(message.token, message.parent.id)
-				} else {
+				if (message.systemMessage === 'message_deleted') {
 					reactionsStore.resetReactions(message.token, message.parent.id)
+				} else {
+					reactionsStore.processReaction(message)
 				}
 			}
 
@@ -1345,7 +1345,7 @@ const actions = {
 	 * @param {*} context the context object
 	 * @param {*} param1 conversation token, message id and selected emoji (string)
 	 */
-	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
+	async addReactionToMessage(context, { token, messageId, selectedEmoji, actorId }) {
 		try {
 			context.commit('addReactionToMessage', {
 				token,
@@ -1354,8 +1354,7 @@ const actions = {
 			})
 			// The response return an array with the reaction details for this message
 			const response = await addReactionToMessage(token, messageId, selectedEmoji)
-			// We replace the reaction details in the reactions store and wipe the old
-			// values
+
 			const reactionsStore = useReactionsStore()
 			reactionsStore.updateReactions({
 				token,
@@ -1369,7 +1368,6 @@ const actions = {
 				messageId,
 				reaction: selectedEmoji,
 			})
-			console.error(error)
 			showError(t('spreed', 'Failed to add reaction'))
 		}
 	},
@@ -1389,8 +1387,7 @@ const actions = {
 			})
 			// The response return an array with the reaction details for this message
 			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
-			// We replace the reaction details in the reactions store and wipe the old
-			// values
+
 			const reactionsStore = useReactionsStore()
 			reactionsStore.updateReactions({
 				token,
