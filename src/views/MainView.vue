@@ -22,7 +22,6 @@ import TransitionWrapper from '../components/TransitionWrapper.vue'
 
 import { useIsInCall } from '../composables/useIsInCall.js'
 import isInLobby from '../mixins/isInLobby.js'
-import participant from '../mixins/participant.js'
 
 export default {
 	name: 'MainView',
@@ -36,7 +35,6 @@ export default {
 
 	mixins: [
 		isInLobby,
-		participant,
 	],
 
 	props: {

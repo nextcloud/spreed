@@ -112,7 +112,6 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
-import participant from '../../mixins/participant.js'
 import { callSIPDialOut } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -140,7 +139,6 @@ export default {
 
 	mixins: [
 		isInLobby,
-		participant,
 	],
 
 	props: {

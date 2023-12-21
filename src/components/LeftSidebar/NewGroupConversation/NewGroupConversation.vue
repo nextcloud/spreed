@@ -182,7 +182,6 @@ import LoadingComponent from '../../LoadingComponent.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PRIVACY } from '../../../constants.js'
-import participant from '../../../mixins/participant.js'
 import {
 	createPublicConversation,
 	createPrivateConversation,
@@ -220,8 +219,6 @@ export default {
 		Check,
 		AlertCircle,
 	},
-
-	mixins: [participant],
 
 	props: {
 		canModerateSipDialOut: {

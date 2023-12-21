@@ -249,12 +249,6 @@ describe('Message.vue', () => {
 				store,
 				propsData: messageProps,
 				provide: injected,
-				mixins: [{
-					// mock the isInCall mixin
-					computed: {
-						isInCall: () => true,
-					},
-				}],
 			})
 
 			const richText = wrapper.findComponent({ name: 'NcRichText' })
@@ -728,16 +722,6 @@ describe('Message.vue', () => {
 				store,
 				propsData: messageProps,
 				provide: injected,
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'user-id-1',
-								actorType: ATTENDEE.ACTOR_TYPE.USERS,
-							}
-						},
-					},
-				}],
 			})
 
 			expect(wrapper.findComponent(Check).exists()).toBe(false)
@@ -751,16 +735,6 @@ describe('Message.vue', () => {
 				store,
 				propsData: messageProps,
 				provide: injected,
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'user-id-1',
-								actorType: ATTENDEE.ACTOR_TYPE.USERS,
-							}
-						},
-					},
-				}],
 			})
 
 			expect(wrapper.findComponent(Check).exists()).toBe(true)
@@ -769,21 +743,13 @@ describe('Message.vue', () => {
 
 		test('does not displays check icon for other people\'s messages', () => {
 			conversationProps.lastCommonReadMessage = 123
+			messageProps.actorId = 'user-id-2'
+			messageProps.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
 				propsData: messageProps,
 				provide: injected,
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'user-id-2',
-								actorType: ATTENDEE.ACTOR_TYPE.USERS,
-							}
-						},
-					},
-				}],
 			})
 
 			expect(wrapper.findComponent(Check).exists()).toBe(false)
@@ -884,13 +850,11 @@ describe('Message.vue', () => {
 				stubs: {
 					NcEmojiPicker,
 				},
-				mixins: [{
-					computed: {
-						showMessageButtonsBar: () => {
-							return true
-						},
+				computed: {
+					showMessageButtonsBar: () => {
+						return true
 					},
-				}],
+				},
 			})
 
 			// Act
