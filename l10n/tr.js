@@ -1534,6 +1534,7 @@ OC.L10N.register(
     "Raise hand (R)" : "El kaldır (R)",
     "Lower hand" : "Eli indir",
     "Lower hand (R)" : "Eli indir (R)",
+    "You need to close a dialog to toggle full screen" : "Tam ekrana geçmek için bir pencereyi kapatmalısınız",
     "No unread mentions" : "Okunmamış bir anma yok",
     "Say hi to your friends and colleagues!" : "Tanıdık ve çalışma arkadaşlarınıza selam verin!",
     "Start a conversation" : "Bir görüşme başlatın",
