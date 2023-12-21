@@ -22,19 +22,18 @@
 
 <template>
 	<!-- reactions buttons and popover with details -->
-	<div v-if="hasReactions"
-		class="reactions-wrapper">
+	<div class="reactions-wrapper">
 		<NcPopover v-for="reaction in Object.keys(detailedReactions)"
 			:key="reaction"
 			:delay="200"
 			:focus-trap="false"
 			:triggers="['hover']">
 			<template #trigger>
-				<NcButton v-if="reactions[reaction] !== 0"
+				<NcButton v-if="detailedReactions.length !== 0"
 					:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
 					class="reaction-button"
 					@click="handleReactionClick(reaction)">
-					{{ reaction }} {{ reactions[reaction] }}
+					{{ reaction }} {{ detailedReactions[reaction].length }}
 				</NcButton>
 			</template>
 
@@ -128,11 +127,7 @@ export default {
 
 	computed: {
 		hasReactions() {
-			return Object.keys(this.reactions).length !== 0
-		},
-
-		isDetailedReactionsLoaded() {
-			return this.reactionsStore.reactionsLoaded(this.token, this.id)
+			return Object.keys(this.detailedReactions).length !== 0
 		},
 
 		detailedReactions() {
@@ -150,11 +145,6 @@ export default {
 	},
 
 	methods: {
-		handleReactionsMouseOver() {
-			if (this.hasReactions && !this.isDetailedReactionsLoaded) {
-				this.getReactions()
-			}
-		},
 
 		userHasReacted(reaction) {
 			return this.detailedReactions[reaction]?.find((reaction) =>

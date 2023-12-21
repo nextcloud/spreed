@@ -66,14 +66,6 @@ export const useReactionsStore = defineStore('reactions', {
 				return undefined
 			}
 		},
-
-		reactionsLoaded: (state) => (token, messageId) => {
-			if (state.reactions?.[token]?.[messageId]) {
-				return true
-			} else {
-				return false
-			}
-		},
 	},
 
 	actions: {

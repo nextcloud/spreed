@@ -150,7 +150,8 @@ the main body of the message as well as a quote.
 			</div>
 
 			<!-- reactions buttons and popover with details -->
-			<Reactions :id="id"
+			<Reactions v-if="Object.keys(reactions).length"
+				:id="id"
 				:token="token"
 				:can-react="canReact"
 				@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
