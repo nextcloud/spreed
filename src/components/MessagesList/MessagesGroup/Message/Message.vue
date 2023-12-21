@@ -32,7 +32,7 @@ the main body of the message as well as a quote.
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message--highlighted': isHighlighted}"
+		:class="{'message--highlighted': isHighlighted, 'message--hovered': showMessageButtonsBar}"
 		tabindex="0"
 		@animationend="isHighlighted = false"
 		@mouseover="handleMouseover"
@@ -817,7 +817,8 @@ export default {
 	position: relative;
 
 	&:hover .normal-message-body,
-	&:hover .combined-system {
+	&:hover .combined-system,
+	&--hovered .normal-message-body {
 		border-radius: 8px;
 		background-color: var(--color-background-hover);
 	}
