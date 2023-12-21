@@ -211,7 +211,6 @@ the main body of the message as well as a quote.
 				:can-react="canReact"
 				v-bind="$props"
 				:previous-message-id="previousMessageId"
-				:participant="participant"
 				:show-common-read-icon="showCommonReadIcon"
 				:common-read-icon-tooltip="commonReadIconTooltip"
 				:show-sent-icon="showSentIcon"
@@ -281,7 +280,6 @@ import CallButton from '../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
-import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { useGuestNameStore } from '../../../../stores/guestName.js'
@@ -317,10 +315,6 @@ export default {
 		UnfoldLess,
 		UnfoldMore,
 	},
-
-	mixins: [
-		participant,
-	],
 
 	inject: ['scrollerBoundingClientRect'],
 
@@ -556,8 +550,8 @@ export default {
 			return !this.isSystemMessage
 				&& !this.isTemporary
 				&& !this.isDeleting
-				&& this.actorType === this.participant.actorType
-				&& this.actorId === this.participant.actorId
+				&& this.actorType === this.$store.getters.getActorType()
+				&& this.actorId === this.$store.getters.getActorId()
 				&& !this.isDeletedMessage
 		},
 

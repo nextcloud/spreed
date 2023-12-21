@@ -262,9 +262,8 @@ describe('MessageButtonsBar.vue', () => {
 			/**
 			 * @param {boolean} visible Whether or not the delete action is visible
 			 * @param {Date} mockDate The message date (deletion only works within 6h)
-			 * @param {number} participantType The participant type of the user
 			 */
-			function testDeleteMessageVisible(visible, mockDate, participantType = PARTICIPANT.TYPE.USER) {
+			function testDeleteMessageVisible(visible, mockDate) {
 				store = new Store(testStoreConfig)
 
 				// need to mock the date to be within 6h
@@ -274,8 +273,6 @@ describe('MessageButtonsBar.vue', () => {
 
 				jest.spyOn(global.Date, 'now')
 					.mockImplementation(() => mockDate)
-
-				messageProps.participant.participantType = participantType
 
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -315,19 +312,22 @@ describe('MessageButtonsBar.vue', () => {
 			test('shows delete action on other people messages for moderators', () => {
 				messageProps.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.GROUP
-				testDeleteMessageVisible(true, null, PARTICIPANT.TYPE.MODERATOR)
+				conversationProps.participantType = PARTICIPANT.TYPE.MODERATOR
+				testDeleteMessageVisible(true, null)
 			})
 
 			test('shows delete action on other people messages for owner', () => {
 				messageProps.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.PUBLIC
-				testDeleteMessageVisible(true, null, PARTICIPANT.TYPE.OWNER)
+				conversationProps.participantType = PARTICIPANT.TYPE.OWNER
+				testDeleteMessageVisible(true, null)
 			})
 
 			test('does not show delete action even for guest moderators', () => {
 				messageProps.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.PUBLIC
-				testDeleteMessageVisible(false, null, PARTICIPANT.TYPE.GUEST_MODERATOR)
+				conversationProps.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
+				testDeleteMessageVisible(false, null)
 			})
 
 			test('does not show delete action on other people messages in one to one conversations', () => {

@@ -402,14 +402,6 @@ export default {
 			required: true,
 		},
 
-		/**
-		 * The participant object.
-		 */
-		participant: {
-			type: Object,
-			required: true,
-		},
-
 		messageApiData: {
 			type: Object,
 			required: true,
@@ -486,7 +478,7 @@ export default {
 		},
 
 		isDeleteable() {
-			if (this.isConversationReadOnly || this.participant.participantType === PARTICIPANT.TYPE.GUEST) {
+			if (this.isConversationReadOnly || this.conversation.participantType === PARTICIPANT.TYPE.GUEST) {
 				return false
 			}
 
@@ -496,8 +488,8 @@ export default {
 				&& (this.isMyMsg
 					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 						&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-						&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
-							|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR)))
+						&& (this.conversation.participantType === PARTICIPANT.TYPE.OWNER
+							|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR)))
 		},
 
 		isPrivateReplyable() {
