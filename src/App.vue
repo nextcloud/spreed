@@ -57,7 +57,6 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
-import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 import Router from './router/router.js'
@@ -83,7 +82,6 @@ export default {
 	mixins: [
 		talkHashCheck,
 		sessionIssueHandler,
-		participant,
 		isMobile,
 	],
 

@@ -38,7 +38,6 @@ import PreventUnload from 'vue-prevent-unload'
 import LoadingComponent from './components/LoadingComponent.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
-import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 
@@ -59,7 +58,6 @@ export default {
 
 	mixins: [
 		sessionIssueHandler,
-		participant,
 		talkHashCheck,
 	],
 

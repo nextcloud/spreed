@@ -68,7 +68,6 @@ import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
-import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 import { EventBus } from './services/EventBus.js'
@@ -96,7 +95,6 @@ export default {
 
 	mixins: [
 		sessionIssueHandler,
-		participant,
 		talkHashCheck,
 	],
 
