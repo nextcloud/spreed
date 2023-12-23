@@ -837,6 +837,7 @@ OC.L10N.register(
     "Only normal chat messages can be deleted" : "Si podent cantzellare isceti is messàgios de tzarrada normales",
     "An error occurred while deleting the message" : "B'at àpidu un'errore cantzellende su messàgiu",
     "Reply" : "Risponde",
+    "Set reminder" : "Cunfigura un'apuntu",
     "Reply privately" : "Risponde in privadu",
     "Copy message link" : "Còpia su ligòngiu de su messàgiu",
     "Go to file" : "Bae a s'archìviu",
