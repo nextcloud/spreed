@@ -242,6 +242,7 @@ OC.L10N.register(
     "An error occurred while installing the Matterbridge app" : "Prodúxose un error mentanto s'instalaba l'aplicación Matterbridge",
     "Back" : "Atrás",
     "Cancel" : "Encaboxar",
+    "Confirm" : "Confirmar",
     "Connecting …" : "Conectando…",
     "You" : "Tu",
     "This conversation is read-only" : "Esta conversación ye namás de llectura",

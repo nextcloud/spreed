@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Other activities" : "กิจกรรมอื่น ๆ",
+    "Message deleted by author" : "ข้อความถูกลบโดยผู้เขียน",
     "File is too big" : "ไฟล์ใหญ่เกินไป",
     "Invalid file provided" : "ไฟล์ที่ระบุไม่ถูกต้อง",
     "Invalid image" : "รูปภาพไม่ถูกต้อง",
