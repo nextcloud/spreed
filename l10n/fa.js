@@ -1430,7 +1430,7 @@ OC.L10N.register(
     "Polls" : "نظرسنجی ها",
     "Deck cards" : "Deck cards",
     "Voice messages" : "Voice messages",
-    "Locations" : "مکانها",
+    "Locations" : "مکان‌ها",
     "Call recordings" : "Call recordings",
     "Audio" : "صدا",
     "Other" : "اعلان‌ها",
