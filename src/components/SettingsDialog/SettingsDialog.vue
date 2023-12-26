@@ -38,12 +38,11 @@
 				{{ locationHint }}
 			</h3>
 			<div class="app-settings-section__wrapper">
-				<NcTextField class="app-settings-section__input"
-					:value="attachmentFolder"
-					:disabled="true"
-					@click="selectAttachmentFolder" />
+				<p class="app-settings-section__input" @click="showFilePicker = true">
+					{{ attachmentFolder }}
+				</p>
 				<NcButton type="primary"
-					@click="selectAttachmentFolder">
+					@click="showFilePicker = true">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
 			</div>
@@ -161,12 +160,23 @@
 				</div>
 			</dl>
 		</NcAppSettingsSection>
+
+		<FilePickerVue v-if="showFilePicker"
+			:name="t('spreed', 'Select location for attachments')"
+			:path="attachmentFolder"
+			:container="container"
+			:buttons="filePickerButtons"
+			:multiselect="false"
+			:mimetype-filter="['httpd/unix-directory']"
+			allow-pick-directory
+			@close="showFilePicker = false" />
 	</NcAppSettingsDialog>
 </template>
 
 <script>
 import { getCapabilities } from '@nextcloud/capabilities'
-import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
@@ -174,7 +184,6 @@ import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDia
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import MediaDevicesPreview from '../MediaDevicesPreview.vue'
 
@@ -188,12 +197,12 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
+		FilePickerVue,
 		MediaDevicesPreview,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NcTextField,
 	},
 
 	setup() {
@@ -208,6 +217,7 @@ export default {
 	data() {
 		return {
 			showSettings: false,
+			showFilePicker: false,
 			attachmentFolderLoading: true,
 			privacyLoading: false,
 			playSoundsLoading: false,
@@ -251,6 +261,14 @@ export default {
 		disableKeyboardShortcuts() {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
+
+		filePickerButtons() {
+			return [{
+				label: t('spreed', 'Choose'),
+				callback: (nodes) => this.selectAttachmentFolder(nodes),
+				type: 'primary'
+			}]
+		},
 	},
 
 	created() {
@@ -268,30 +286,24 @@ export default {
 	},
 
 	methods: {
+		async selectAttachmentFolder(nodes) {
+			const path = nodes[0]?.path
+			if (!path) {
+				return
+			}
 
-		selectAttachmentFolder() {
-			const picker = getFilePickerBuilder(t('spreed', 'Select location for attachments'))
-				.setMultiSelect(false)
-				.setType(1)
-				.addMimeTypeFilter('httpd/unix-directory')
-				.allowDirectories()
-				.startAt(this.attachmentFolder)
-				.build()
-			picker.pick()
-				.then(async (path) => {
-					console.debug(`Path '${path}' selected for talk attachments`)
-					if (path !== '' && !path.startsWith('/')) {
-						throw new Error(t('spreed', 'Invalid path selected'))
-					}
+			console.debug(`Path '${path}' selected for talk attachments`)
+			if (path !== '' && !path.startsWith('/')) {
+				throw new Error(t('spreed', 'Invalid path selected'))
+			}
 
-					this.attachmentFolderLoading = true
-					try {
-						this.$store.dispatch('setAttachmentFolder', path)
-					} catch (exception) {
-						showError(t('spreed', 'Error while setting attachment folder'))
-					}
-					this.attachmentFolderLoading = false
-				})
+			this.attachmentFolderLoading = true
+			try {
+				this.$store.dispatch('setAttachmentFolder', path)
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting attachment folder'))
+			}
+			this.attachmentFolderLoading = false
 		},
 
 		async toggleReadStatusPrivacy() {
@@ -356,31 +368,37 @@ export default {
 
 .app-settings-section {
 	margin-bottom: 80px;
+
 	&.last {
 		margin-bottom: 0;
 	}
+
 	&__title {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
+
 	&__hint {
 		color: var(--color-text-lighter);
 		padding: 8px 0;
 	}
+
 	&__wrapper {
 		display: flex;
 		align-items: center;
 		gap: 8px;
 	}
 
-	& &__input {
+	&__input {
 		width: 300px;
 		height: var(--default-clickable-area);
-		:deep(input) {
-			height: var(--default-clickable-area) !important;
-			cursor: default;
-		}
+		padding: 10px 6px 10px 12px;
+		border: 2px solid var(--color-border-maxcontrast);
+		border-radius: var(--border-radius-large);
+		text-overflow: ellipsis;
+		opacity: 0.7;
+		cursor: pointer;
 	}
 
 	.shortcut-description {
