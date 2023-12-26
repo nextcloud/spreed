@@ -964,6 +964,7 @@ OC.L10N.register(
     "Sounds" : "Звуки",
     "Play sounds when participants join or leave a call" : "Коли учасники приєднуються до дзвінка або виходять з нього, відтворювати звуковий сигнал",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Звуки для чату та сповіщень про дзвінки можна налаштувати в особистих налаштуваннях.",
+    "Performance" : "Продуктивність",
     "Keyboard shortcuts" : "Скорочення",
     "Speed up your Talk experience with these quick shortcuts." : "Прискорюйте роботу в чаті за допомогою наступних швидких комбінацій клавіш.",
     "Focus the chat input" : "Фокусування вводу в чаті",
