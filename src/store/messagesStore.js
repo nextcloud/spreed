@@ -1345,7 +1345,7 @@ const actions = {
 	 * @param {*} context the context object
 	 * @param {*} param1 conversation token, message id and selected emoji (string)
 	 */
-	async addReactionToMessage(context, { token, messageId, selectedEmoji, actorId }) {
+	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
 		try {
 			context.commit('addReactionToMessage', {
 				token,

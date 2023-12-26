@@ -867,7 +867,6 @@ describe('Message.vue', () => {
 				token: messageProps.token,
 				messageId: messageProps.id,
 				selectedEmoji: '❤️',
-				actorId: messageProps.actorId,
 			})
 			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
 				token: messageProps.token,
@@ -905,7 +904,6 @@ describe('Message.vue', () => {
 				token: messageProps.token,
 				messageId: messageProps.id,
 				selectedEmoji: '❤️',
-				actorId: messageProps.actorId,
 			})
 			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
 				token: messageProps.token,

@@ -672,7 +672,6 @@ export default {
 					token: this.token,
 					messageId: this.messageObject.id,
 					selectedEmoji,
-					actorId: this.actorId,
 				})
 			} else {
 				console.debug('user has already reacted, removing reaction')
