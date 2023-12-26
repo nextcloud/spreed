@@ -48,7 +48,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['8.2']
-        server-versions: ['stable28']
+        server-versions: ['master']
 
     services:
       oracle:
