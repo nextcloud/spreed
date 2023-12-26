@@ -47,7 +47,7 @@
 				</button>
 				<button class="background-editor__element"
 					:class="{'background-editor__element--selected': isCustomBackground }"
-					@click="openPicker">
+					@click="showFilePicker = true">
 					<Folder :size="20" />
 					{{ t('spreed', 'Files') }}
 				</button>
@@ -76,6 +76,14 @@
 			tabindex="-1"
 			aria-hidden="true"
 			@change="handleFileInput">
+
+		<FilePickerVue v-if="showFilePicker"
+			:name="t('spreed', 'File to share')"
+			:path="relativeBackgroundsFolderPath"
+			:container="container"
+			:buttons="filePickerButtons"
+			:multiselect="false"
+			@close="showFilePicker = false" />
 	</div>
 </template>
 
@@ -87,7 +95,8 @@ import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
+import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
@@ -108,17 +117,16 @@ const predefinedBackgroundLabels = {
 	'8_space_station': t('spreed', 'Select virtual space station background'),
 }
 
-let picker
-
 export default {
 	name: 'VideoBackgroundEditor',
 
 	components: {
-		Cancel,
 		Blur,
+		Cancel,
 		CheckBold,
-		Upload,
+		FilePickerVue,
 		Folder,
+		Upload,
 	},
 
 	props: {
@@ -141,14 +149,19 @@ export default {
 		return {
 			selectedBackground: undefined,
 			getCapabilities,
+			showFilePicker: false,
 		}
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		isCustomBackground() {
 			return this.selectedBackground !== 'none'
-			    && this.selectedBackground !== 'blur'
-			    && !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
+				&& this.selectedBackground !== 'blur'
+				&& !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
 		},
 
 		predefinedBackgroundsURLs() {
@@ -159,6 +172,18 @@ export default {
 
 		hasBackgroundsCapability() {
 			return !!predefinedBackgrounds
+		},
+
+		relativeBackgroundsFolderPath() {
+			return this.$store.getters.getAttachmentFolder() + '/Backgrounds'
+		},
+
+		filePickerButtons() {
+			return [{
+				label: t('spreed', 'Choose'),
+				callback: (nodes) => this.handleFileChoose(nodes),
+				type: 'primary'
+			}]
 		},
 	},
 
@@ -171,8 +196,7 @@ export default {
 		}
 
 		const userRoot = '/files/' + this.$store.getters.getUserId()
-		const relativeBackgroundsFolderPath = this.$store.getters.getAttachmentFolder() + '/Backgrounds'
-		const absoluteBackgroundsFolderPath = userRoot + relativeBackgroundsFolderPath
+		const absoluteBackgroundsFolderPath = userRoot + this.relativeBackgroundsFolderPath
 
 		try {
 			// Create the backgrounds folder if it doesn't exist
@@ -180,14 +204,6 @@ export default {
 			if (await client.exists(absoluteBackgroundsFolderPath) === false) {
 				await client.createDirectory(absoluteBackgroundsFolderPath)
 			}
-
-			// Create picker
-			picker = getFilePickerBuilder(t('spreed', 'File to share'))
-				.setMultiSelect(false)
-				.startAt(relativeBackgroundsFolderPath)
-				.setType(1)
-				.allowDirectories(false)
-				.build()
 		} catch (error) {
 			console.debug(error)
 		}
@@ -244,20 +260,22 @@ export default {
 			}
 		},
 
-		openPicker() {
-			picker.pick()
-				.then((path) => {
-					if (!path.startsWith('/')) {
-						throw new Error(t('files', 'Invalid path selected'))
-					}
+		handleFileChoose(nodes) {
+			const path = nodes[0]?.path
+			if (!path) {
+				return
+			}
 
-					const previewURL = generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
-						path,
-						height: 1080,
-					})
+			if (!path.startsWith('/')) {
+				throw new Error(t('files', 'Invalid path selected'))
+			}
 
-					this.handleSelectBackground(previewURL)
-				})
+			const previewURL = generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+				path,
+				height: 1080,
+			})
+
+			this.handleSelectBackground(previewURL)
 		},
 
 		loadBackground() {
@@ -295,7 +313,7 @@ export default {
 	&__element {
 		border: none;
 		margin: 0 !important;
-		border-radius: calc(var(--border-radius-large)* 1.5);
+		border-radius: calc(var(--border-radius-large) * 1.5);
 		height: calc(var(--default-grid-baseline) * 16);
 		display: flex;
 		flex-direction: column;
@@ -309,7 +327,7 @@ export default {
 		&--selected {
 			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary-element);
 		}
-	 }
+	}
 }
 
 </style>
