@@ -25,6 +25,8 @@
 		<GeneralSettings />
 		<MatterbridgeIntegration />
 		<AllowedGroups />
+		<!-- TODO remove OC.debug when Federation feature is ready -->
+		<Federation v-if="OC.debug" />
 		<BotsSettings />
 		<Commands />
 		<WebServerSetupChecks />
@@ -41,6 +43,7 @@
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Commands from '../components/AdminSettings/Commands.vue'
+import Federation from '../components/AdminSettings/Federation.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
@@ -58,6 +61,7 @@ export default {
 		AllowedGroups,
 		BotsSettings,
 		Commands,
+		Federation,
 		GeneralSettings,
 		HostedSignalingServer,
 		MatterbridgeIntegration,

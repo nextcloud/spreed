@@ -68,6 +68,7 @@ class AdminSettings implements ISettings {
 		$this->initGeneralSettings();
 		$this->initAllowedGroups();
 		$this->initCommands();
+		$this->initFederation();
 		$this->initMatterbridge();
 		$this->initStunServers();
 		$this->initTurnServers();
@@ -107,6 +108,10 @@ class AdminSettings implements ISettings {
 		}, $commands);
 
 		$this->initialState->provideInitialState('commands', $result);
+	}
+
+	protected function initFederation(): void {
+		$this->initialState->provideInitialState('federation_enabled', $this->serverConfig->getAppValue('spreed', 'federation_enabled', 'no'));
 	}
 
 	protected function initMatterbridge(): void {
