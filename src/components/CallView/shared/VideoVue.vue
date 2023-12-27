@@ -99,7 +99,6 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
-import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
@@ -119,8 +118,6 @@ export default {
 		AccountCircle,
 		AccountOff,
 	},
-
-	mixins: [video],
 
 	props: {
 		token: {
@@ -147,12 +144,18 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-
+		fitVideo: {
+			type: Boolean,
+			default: false,
+		},
 		isPresenterOverlay: {
 			type: Boolean,
 			default: false,
 		},
-
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
 		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
 			type: Boolean,
@@ -191,6 +194,8 @@ export default {
 		},
 	},
 
+	emits: ['click-video'],
+
 	setup() {
 		const guestNameStore = useGuestNameStore()
 		return { guestNameStore }
@@ -201,6 +206,7 @@ export default {
 			videoAspectRatio: null,
 			containerAspectRatio: null,
 			resizeObserver: null,
+			mouseover: false,
 		}
 	},
 
@@ -300,6 +306,14 @@ export default {
 				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
 				'one-to-one': this.isOneToOne,
+			}
+		},
+
+		videoClass() {
+			if (this.fitVideo) {
+				return 'video--fit'
+			} else {
+				return 'video--fill'
 			}
 		},
 
@@ -590,6 +604,29 @@ export default {
 			this.videoAspectRatio = this.model.attributes.stream.getVideoTracks()?.[0].getSettings().aspectRatio
 				// Fallback for Firefox
 				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
+		},
+
+		showShadow() {
+			if (this.isSelectable || this.mouseover) {
+				this.mouseover = true
+			}
+		},
+		hideShadow() {
+			if (this.isSelectable || this.mouseover) {
+				this.mouseover = false
+			}
+		},
+
+		handleClickVideo(e) {
+			// Prevent clicks on the media controls buttons to trigger a video selection
+			if (e.target.localName === 'button') {
+				return
+			}
+			// Prevent clicks on the "settings icon" of the popover/actions menu to trigger a video selection
+			if (e.target.localName === 'svg') {
+				return
+			}
+			this.$emit('click-video')
 		},
 	},
 
