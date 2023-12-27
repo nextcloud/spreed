@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2023 Marco Ambrosini <marcoambrosini@icloud.com>
+  - @copyright Copyright (c) 2023 Dorra Jaouad <dorra.jaoued7@gmail.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   - @author Dorra Jaouad <dorra.jaoued7@gmail.com>
@@ -23,21 +23,21 @@
 <template>
 	<!-- reactions buttons and popover with details -->
 	<div class="reactions-wrapper">
-		<NcPopover v-for="reaction in Object.keys(detailedReactions)"
+		<NcPopover v-for="reaction in Object.keys(detailedReactions ?? plainReactions)"
 			:key="reaction"
 			:delay="200"
 			:focus-trap="false"
-			:triggers="['hover']">
+			:triggers="['hover']"
+			@after-show="fetchReactions">
 			<template #trigger>
-				<NcButton v-if="detailedReactions.length !== 0"
-					:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
+				<NcButton :type="userHasReacted(reaction) ? 'primary' : 'secondary'"
 					class="reaction-button"
 					@click="handleReactionClick(reaction)">
-					{{ reaction }} {{ detailedReactions[reaction].length }}
+					{{ reaction }} {{ reactionsCount(reaction) }}
 				</NcButton>
 			</template>
 
-			<div v-if="detailedReactions" class="reaction-details">
+			<div v-if="hasReactions" class="reaction-details">
 				<span>{{ getReactionSummary(reaction) }}</span>
 			</div>
 		</NcPopover>
@@ -114,37 +114,41 @@ export default {
 		 }
 	},
 
-	data() {
-		return {
-			isFollowUpEmojiPickerOpen: false,
-			detailedReactionsLoading: false,
-		}
-	},
-
 	computed: {
 		hasReactions() {
-			return Object.keys(this.detailedReactions).length !== 0
+			return Object.keys(Object(this.detailedReactions)).length !== 0
 		},
 
 		detailedReactions() {
-			return this.reactionsStore.getReactions(this.token, this.id) || {}
+			return this.reactionsStore.getReactions(this.token, this.id)
 		},
 
-		actorId() {
-			return this.$store.getters.getActorId()
+		plainReactions() {
+			return this.$store.getters.message(this.token, this.id).reactions
 		},
-	},
 
-	mounted() {
-		// First fetch of reactions
-		this.reactionsStore.fetchReactions(this.token, this.id)
+		reactionsSelf() {
+			return this.$store.getters.message(this.token, this.id).reactionsSelf
+		},
+
+		/**
+		 * Whether the plain reactions are different than the detailed ones.
+		 */
+		hasMoreReactions() {
+			return this.hasReactions
+					&& Object.keys(this.plainReactions).length !== Object.keys(this.detailedReactions).length
+		},
 	},
 
 	methods: {
+		fetchReactions() {
+			if (!this.hasReactions || this.hasMoreReactions) {
+				this.reactionsStore.fetchReactions(this.token, this.id)
+			}
+		},
 
 		userHasReacted(reaction) {
-			return this.detailedReactions[reaction]?.find((reaction) =>
-				reaction.actorId === this.actorId)
+			return this.reactionsSelf?.includes(reaction)
 		},
 
 		async handleReactionClick(clickedEmoji) {
@@ -182,7 +186,17 @@ export default {
 			return displayName
 		},
 
+		reactionsCount(reaction) {
+			return this.detailedReactions
+				? this.detailedReactions[reaction]?.length
+				: this.plainReactions[reaction]
+		},
+
 		getReactionSummary(reaction) {
+			// Check if the reaction details are loaded
+			if (!this.hasReactions) {
+				return ''
+			}
 			const list = this.detailedReactions[reaction]
 			const summary = []
 
@@ -206,9 +220,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .reactions-wrapper {
-		display: flex;
-		flex-wrap: wrap;
-		margin: 4px 175px 4px -2px;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 4px 175px 4px -2px;
 }
 .reaction-button {
 	// Clear server rules
