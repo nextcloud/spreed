@@ -75,7 +75,6 @@ import VideoBackground from './VideoBackground.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../../constants.js'
-import video from '../../../mixins/video.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -89,8 +88,6 @@ export default {
 		NcButton,
 		VideoBackground,
 	},
-
-	mixins: [video],
 
 	props: {
 		token: {
@@ -113,6 +110,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		fitVideo: {
+			type: Boolean,
+			default: false,
+		},
 		isSidebar: {
 			type: Boolean,
 			default: false,
@@ -125,11 +126,17 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
 		isSmall: {
 			type: Boolean,
 			default: false,
 		},
 	},
+
+	emits: ['click-video'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
@@ -142,6 +149,7 @@ export default {
 			videoAspectRatio: null,
 			containerAspectRatio: null,
 			resizeObserver: null,
+			mouseover: false,
 		}
 	},
 
@@ -166,6 +174,14 @@ export default {
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
 				'video-container-small': this.isSmall,
+			}
+		},
+
+		videoClass() {
+			if (this.fitVideo) {
+				return 'video--fit'
+			} else {
+				return 'video--fill'
 			}
 		},
 
@@ -351,6 +367,29 @@ export default {
 			this.videoAspectRatio = this.localMediaModel.attributes.localStream.getVideoTracks()?.[0].getSettings().aspectRatio
 				// Fallback for Firefox
 				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
+		},
+
+		showShadow() {
+			if (this.isSelectable || this.mouseover) {
+				this.mouseover = true
+			}
+		},
+		hideShadow() {
+			if (this.isSelectable || this.mouseover) {
+				this.mouseover = false
+			}
+		},
+
+		handleClickVideo(e) {
+			// Prevent clicks on the media controls buttons to trigger a video selection
+			if (e.target.localName === 'button') {
+				return
+			}
+			// Prevent clicks on the "settings icon" of the popover/actions menu to trigger a video selection
+			if (e.target.localName === 'svg') {
+				return
+			}
+			this.$emit('click-video')
 		},
 	},
 
