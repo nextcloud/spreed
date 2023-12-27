@@ -143,7 +143,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 			const lastKnownMessageId = Math.min.apply(Math, Object.keys(this.sharedItemsPool[token][type]))
 			try {
 				const response = await getSharedItems(token, type, lastKnownMessageId, limit)
-				const messages = response.data.ocs.data
+				const messages = Object.values(response.data.ocs.data)
 				if (messages.length) {
 					this.addSharedItemsFromMessages(token, type, messages)
 				}
