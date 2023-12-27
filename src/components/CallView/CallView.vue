@@ -135,7 +135,6 @@
 					:is-stripe="!isGrid"
 					:is-recording="isRecording"
 					:token="token"
-					:fit-video="true"
 					:has-pagination="true"
 					:min-height="isGrid && !isSidebar ? 240 : 150"
 					:min-width="isGrid && !isSidebar ? 320 : 200"

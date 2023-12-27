@@ -67,8 +67,6 @@
 									:is-stripe="isStripe"
 									:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
 									:is-selected="isSelected(callParticipantModel)"
-									:fit-video="false"
-									:video-container-aspect-ratio="videoContainerAspectRatio"
 									:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 									@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 							</template>
@@ -100,7 +98,6 @@
 							:fit-video="isStripe"
 							:token="token"
 							:local-media-model="localMediaModel"
-							:video-container-aspect-ratio="videoContainerAspectRatio"
 							:local-call-participant-model="localCallParticipantModel"
 							@click-video="handleClickLocalVideo" />
 					</div>
@@ -122,7 +119,6 @@
 					:show-controls="false"
 					:token="token"
 					:local-media-model="localMediaModel"
-					:video-container-aspect-ratio="videoContainerAspectRatio"
 					:local-call-participant-model="localCallParticipantModel"
 					@click-video="handleClickLocalVideo" />
 				<!-- page indicator (disabled) -->
@@ -489,10 +485,7 @@ export default {
 		sidebarStatus() {
 			return this.$store.getters.getSidebarStatus
 		},
-		// Current aspect ratio of each video component
-		videoContainerAspectRatio() {
-			return (this.gridWidth / this.columns) / (this.gridHeight / this.rows)
-		},
+
 		wrapperStyle() {
 			if (this.isStripe) {
 				return 'height: 250px'
@@ -586,7 +579,6 @@ export default {
 				columnsMax: this.columnsMax,
 				rowsMax: this.rowsMax,
 				numberOfPages: this.numberOfPages,
-				videoContainerAspectRatio: this.videoContainerAspectRatio,
 				bodyWidth: document.body.clientWidth,
 				bodyHeight: document.body.clientHeight,
 				gridWidth: this.$refs.grid.clientWidth,

@@ -28,9 +28,9 @@
 			hover: mouseover && !unSelectable && !isBig,
 			presenter: isPresenterOverlay && mouseover
 		}]"
-		@mouseover="showShadow"
-		@mouseleave="hideShadow"
-		@click="handleClickVideo">
+		@mouseover="mouseover = true"
+		@mouseleave="mouseover = false"
+		@click="$emit('click-video')">
 		<TransitionWrapper name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
@@ -38,7 +38,7 @@
 				:style="videoWrapperStyle">
 				<video ref="video"
 					:disablePictureInPicture="!isBig"
-					:class="videoClass"
+					:class="fitVideo ? 'video--fit' : 'video--fill'"
 					class="video"
 					@playing="updateVideoAspectRatio" />
 			</div>
@@ -309,14 +309,6 @@ export default {
 			}
 		},
 
-		videoClass() {
-			if (this.fitVideo) {
-				return 'video--fit'
-			} else {
-				return 'video--fill'
-			}
-		},
-
 		videoWrapperClass() {
 			return {
 				'icon-loading': this.isLoading,
@@ -527,7 +519,6 @@ export default {
 	},
 
 	watch: {
-
 		'model.attributes.stream'(stream) {
 			this._setStream(stream)
 		},
@@ -563,7 +554,6 @@ export default {
 	},
 
 	methods: {
-
 		_setStream(stream) {
 
 			if (!stream) {
@@ -604,29 +594,6 @@ export default {
 			this.videoAspectRatio = this.model.attributes.stream.getVideoTracks()?.[0].getSettings().aspectRatio
 				// Fallback for Firefox
 				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
-		},
-
-		showShadow() {
-			if (this.isSelectable || this.mouseover) {
-				this.mouseover = true
-			}
-		},
-		hideShadow() {
-			if (this.isSelectable || this.mouseover) {
-				this.mouseover = false
-			}
-		},
-
-		handleClickVideo(e) {
-			// Prevent clicks on the media controls buttons to trigger a video selection
-			if (e.target.localName === 'button') {
-				return
-			}
-			// Prevent clicks on the "settings icon" of the popover/actions menu to trigger a video selection
-			if (e.target.localName === 'svg') {
-				return
-			}
-			this.$emit('click-video')
 		},
 	},
 
@@ -737,6 +704,7 @@ export default {
 	left: 0;
 	border-radius: calc(var(--default-clickable-area) / 2);
 }
+
 .video-container.speaking::after {
 	content: '';
 	box-shadow: inset 0 0 0 2px white;
@@ -758,7 +726,7 @@ export default {
 }
 
 .video-container.presenter::after {
-	content: '' ;
+	content: '';
 	background-color: rgba(0, 0, 0, 0.5);
 	cursor: pointer;
 }

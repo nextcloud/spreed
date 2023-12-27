@@ -24,9 +24,9 @@
 	<div ref="videoContainer"
 		class="localVideoContainer videoContainer videoView"
 		:class="videoContainerClass"
-		@mouseover="showShadow"
-		@mouseleave="hideShadow"
-		@click="handleClickVideo">
+		@mouseover="mouseover = true"
+		@mouseleave="mouseover = false"
+		@click="$emit('click-video')">
 		<div v-show="localMediaModel.attributes.videoEnabled"
 			:class="videoWrapperClass"
 			class="videoWrapper"
@@ -34,7 +34,7 @@
 			<video id="localVideo"
 				ref="video"
 				disablePictureInPicture="true"
-				:class="videoClass"
+				:class="fitVideo ? 'video--fit' : 'video--fill'"
 				class="video"
 				@playing="updateVideoAspectRatio" />
 		</div>
@@ -51,7 +51,6 @@
 				:class="avatarClass" />
 		</div>
 
-		<div v-if="mouseover && isSelectable" class="hover-shadow" />
 		<div class="bottom-bar">
 			<NcButton v-if="isBig"
 				type="tertiary"
@@ -174,14 +173,7 @@ export default {
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
 				'video-container-small': this.isSmall,
-			}
-		},
-
-		videoClass() {
-			if (this.fitVideo) {
-				return 'video--fit'
-			} else {
-				return 'video--fill'
+				'hover-shadow': this.isSelectable && this.mouseover,
 			}
 		},
 
@@ -257,7 +249,6 @@ export default {
 	},
 
 	watch: {
-
 		localCallParticipantModel: {
 			immediate: true,
 
@@ -278,7 +269,6 @@ export default {
 
 		localStreamVideoError: {
 			immediate: true,
-
 			handler(error) {
 				if (error) {
 					if (error.name === 'NotAllowedError') {
@@ -326,7 +316,6 @@ export default {
 	},
 
 	methods: {
-
 		_handleForcedMute() {
 			// The default toast selector is "body-user", but as this toast can
 			// be shown to guests too, a generic selector valid both for logged-in
@@ -367,29 +356,6 @@ export default {
 			this.videoAspectRatio = this.localMediaModel.attributes.localStream.getVideoTracks()?.[0].getSettings().aspectRatio
 				// Fallback for Firefox
 				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
-		},
-
-		showShadow() {
-			if (this.isSelectable || this.mouseover) {
-				this.mouseover = true
-			}
-		},
-		hideShadow() {
-			if (this.isSelectable || this.mouseover) {
-				this.mouseover = false
-			}
-		},
-
-		handleClickVideo(e) {
-			// Prevent clicks on the media controls buttons to trigger a video selection
-			if (e.target.localName === 'button') {
-				return
-			}
-			// Prevent clicks on the "settings icon" of the popover/actions menu to trigger a video selection
-			if (e.target.localName === 'svg') {
-				return
-			}
-			this.$emit('click-video')
 		},
 	},
 
@@ -475,12 +441,13 @@ export default {
 	margin: auto;
 }
 
-.hover-shadow {
+.hover-shadow:after {
 	position: absolute;
 	height: 100%;
 	width: 100%;
 	top: 0;
 	left: 0;
+	content: '';
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
 	border-radius: calc(var(--default-clickable-area) / 2);
