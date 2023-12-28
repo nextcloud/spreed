@@ -29,6 +29,7 @@ import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import store from './store/index.js'
+import { useIntegrationsStore } from './stores/integrations.js'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -52,7 +53,8 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 		callback,
 		icon,
 	}
-	store.dispatch('addMessageAction', messageAction)
+	const integrationsStore = useIntegrationsStore()
+	integrationsStore.addMessageAction(messageAction)
 }
 
 window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon }) => {
@@ -62,7 +64,8 @@ window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon
 		show,
 		icon,
 	}
-	store.dispatch('addParticipantSearchAction', participantSearchAction)
+	const integrationsStore = useIntegrationsStore()
+	integrationsStore.addParticipantSearchAction(participantSearchAction)
 }
 
 EventBus.$on('signaling-join-room', (payload) => {

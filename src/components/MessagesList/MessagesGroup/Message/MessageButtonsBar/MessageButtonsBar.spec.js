@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
 
@@ -10,6 +11,7 @@ import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import storeConfig from '../../../../../store/storeConfig.js'
+import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
 
 describe('MessageButtonsBar.vue', () => {
@@ -26,6 +28,7 @@ describe('MessageButtonsBar.vue', () => {
 		localVue = createLocalVue()
 		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		conversationProps = {
 			token: TOKEN,
@@ -425,16 +428,12 @@ describe('MessageButtonsBar.vue', () => {
 		test('renders clickable custom actions', async () => {
 			const handler = jest.fn()
 			const handler2 = jest.fn()
-			const actionsGetterMock = jest.fn().mockReturnValue([{
-				label: 'first action',
-				icon: 'some-icon',
-				callback: handler,
-			}, {
-				label: 'second action',
-				icon: 'some-icon2',
-				callback: handler2,
-			}])
-			testStoreConfig.modules.integrationsStore.getters.messageActions = actionsGetterMock
+			const actionsGetterMock = [
+				{ label: 'first action', icon: 'some-icon', callback: handler },
+				{ label: 'second action', icon: 'some-icon2', callback: handler2 },
+			]
+			const integrationsStore = useIntegrationsStore()
+			actionsGetterMock.forEach(action => integrationsStore.addMessageAction(action))
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
 			store = new Store(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {

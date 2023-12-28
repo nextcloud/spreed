@@ -104,6 +104,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Hint from '../../../Hint.vue'
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 
+import { useIntegrationsStore } from '../../../../stores/integrations.js'
+
 export default {
 	name: 'ParticipantsSearchResults',
 
@@ -166,6 +168,14 @@ export default {
 
 	emits: ['click', 'click-search-hint'],
 
+	setup() {
+		const { participantSearchActions } = useIntegrationsStore()
+
+		return {
+			participantSearchActions,
+		}
+	},
+
 	computed: {
 		sourcesWithoutResults() {
 			return !this.addableUsers.length
@@ -174,7 +184,7 @@ export default {
 		},
 
 		integrations() {
-			return this.$store.getters.participantSearchActions.filter((integration) => integration.show(this.searchText))
+			return this.participantSearchActions.filter((integration) => integration.show(this.searchText))
 		},
 
 		sourcesWithoutResultsList() {

@@ -705,10 +705,6 @@ export default {
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
 
-		messageActions() {
-			return this.$store.getters.messageActions
-		},
-
 		messageApiData() {
 			return {
 				message: this.messageObject,
