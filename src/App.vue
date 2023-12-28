@@ -56,8 +56,8 @@ import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 
 import { useActiveSession } from './composables/useActiveSession.js'
 import { useIsInCall } from './composables/useIsInCall.js'
+import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
@@ -81,15 +81,15 @@ export default {
 
 	mixins: [
 		talkHashCheck,
-		sessionIssueHandler,
 		isMobile,
 	],
 
 	setup() {
-		const isInCall = useIsInCall()
-		const supportSessionState = useActiveSession()
-
-		return { isInCall, supportSessionState }
+		return {
+			isInCall: useIsInCall(),
+			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+			supportSessionState: useActiveSession(),
+		}
 	},
 
 	data() {

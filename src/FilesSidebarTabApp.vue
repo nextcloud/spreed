@@ -52,7 +52,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import LoadingComponent from './components/LoadingComponent.vue'
 
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import { EventBus } from './services/EventBus.js'
 import { getFileConversation } from './services/filesIntegrationServices.js'
 import {
@@ -76,9 +76,11 @@ export default {
 		NcButton,
 	},
 
-	mixins: [
-		sessionIssueHandler,
-	],
+	setup() {
+		return {
+			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+		}
+	},
 
 	data() {
 		return {
