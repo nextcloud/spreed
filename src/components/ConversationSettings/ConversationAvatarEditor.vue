@@ -73,7 +73,7 @@
 					</NcButton>
 					<NcButton :title="t('settings', 'Choose conversation picture from files')"
 						:aria-label="t('settings', 'Choose conversation picture from files')"
-						@click="openFilePicker">
+						@click="showFilePicker = true">
 						<template #icon>
 							<Folder :size="20" />
 						</template>
@@ -109,6 +109,14 @@
 				</div>
 			</div>
 		</div>
+
+		<FilePickerVue v-if="showFilePicker"
+			:name="t('spreed', 'Choose your conversation picture')"
+			:container="container"
+			:buttons="filePickerButtons"
+			:multiselect="false"
+			:mimetype-filter="validMimeTypes"
+			@close="showFilePicker = false" />
 	</section>
 </template>
 
@@ -123,7 +131,8 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getRequestToken } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
+import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -137,20 +146,14 @@ import { AVATAR } from '../../constants.js'
 // eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
 
-const VALID_MIME_TYPES = ['image/png', 'image/jpeg']
-
-const picker = getFilePickerBuilder(t('spreed', 'Choose your conversation picture'))
-	.setMultiSelect(false)
-	.setMimeTypeFilter(VALID_MIME_TYPES)
-	.setType(1)
-	.allowDirectories(false)
-	.build()
+const validMimeTypes = ['image/png', 'image/jpeg']
 
 export default {
 	name: 'ConversationAvatarEditor',
 
 	components: {
 		ConversationIcon,
+		FilePickerVue,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
@@ -187,14 +190,17 @@ export default {
 	emits: ['avatar-edited'],
 
 	setup() {
-		return { AVATAR }
+		return {
+			AVATAR,
+			validMimeTypes,
+		}
 	},
 
 	data() {
 		return {
 			showCropper: false,
+			showFilePicker: false,
 			loading: false,
-			validMimeTypes: VALID_MIME_TYPES,
 			cropperOptions: {
 				aspectRatio: 1,
 				viewMode: 1,
@@ -211,6 +217,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		inputId() {
 			return `account-property-${this.conversation.displayName}`
 		},
@@ -221,6 +231,14 @@ export default {
 
 		showControls() {
 			return this.editable && (this.showCropper || this.emojiAvatar)
+		},
+
+		filePickerButtons() {
+			return [{
+				label: t('spreed', 'Choose'),
+				callback: (nodes) => this.handleFileChoose(nodes),
+				type: 'primary'
+			}]
 		},
 	},
 
@@ -263,8 +281,12 @@ export default {
 			reader.readAsDataURL(file)
 		},
 
-		async openFilePicker() {
-			const path = await picker.pick()
+		async handleFileChoose(nodes) {
+			const path = nodes[0]?.path
+			if (!path) {
+				return
+			}
+
 			this.loading = true
 			try {
 				const { data } = await axios.post(generateUrl('/avatar'), { path })

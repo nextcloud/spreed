@@ -43,7 +43,7 @@
 
 		<template v-if="canShareFiles">
 			<NcActionButton close-after-click
-				@click="handleFileShare">
+				@click="$emit('handle-file-share')">
 				<template #icon>
 					<Folder :size="20" />
 				</template>
@@ -76,18 +76,8 @@ import Paperclip from 'vue-material-design-icons/Paperclip.vue'
 import Poll from 'vue-material-design-icons/Poll.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
-
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-
-import { shareFile } from '../../services/filesSharingServices.js'
-
-const picker = getFilePickerBuilder(t('spreed', 'File to share'))
-	.setMultiSelect(false)
-	.setType(1)
-	.allowDirectories()
-	.build()
 
 export default {
 	name: 'NewMessageAttachments',
@@ -139,7 +129,7 @@ export default {
 		},
 	},
 
-	emits: ['update-new-file-dialog', 'toggle-poll-editor', 'open-file-upload'],
+	emits: ['update-new-file-dialog', 'toggle-poll-editor', 'open-file-upload', 'handle-file-share'],
 
 	computed: {
 		fileTemplateOptions() {
@@ -148,32 +138,6 @@ export default {
 
 		shareFromNextcloudLabel() {
 			return t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
-		},
-	},
-
-	methods: {
-		handleFileShare() {
-			picker.pick()
-				.then((path) => {
-					console.debug(`path ${path} selected for sharing`)
-					if (!path.startsWith('/')) {
-						throw new Error(t('files', 'Invalid path selected'))
-					}
-					return shareFile(path, this.token)
-				})
-
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the file picker.
-			// By default, the file picker is a sibling of the fullscreen
-			// element, so it is not visible when in fullscreen mode. It is not
-			// possible to specify the parent nor to know when the file picker
-			// was actually opened, so for the time being it is moved if
-			// needed shortly after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.querySelector('.oc-dialog'))
-				}
-			}, 1000)
 		},
 	},
 }

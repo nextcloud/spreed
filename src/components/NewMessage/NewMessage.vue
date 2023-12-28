@@ -48,7 +48,7 @@
 				:can-share-files="canShareFiles"
 				:can-create-poll="canCreatePoll"
 				@open-file-upload="openFileUploadWindow"
-				@handle-file-share="handleFileShare"
+				@handle-file-share="showFilePicker = true"
 				@toggle-poll-editor="togglePollEditor"
 				@update-new-file-dialog="updateNewFileDialog" />
 
@@ -152,6 +152,13 @@
 			:container="container"
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
+
+		<FilePickerVue v-if="showFilePicker"
+			:name="t('spreed', 'File to share')"
+			:container="container"
+			:buttons="filePickerButtons"
+			allow-pick-directory
+			@close="showFilePicker = false" />
 	</div>
 </template>
 
@@ -161,7 +168,7 @@ import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -187,12 +194,6 @@ import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
-const picker = getFilePickerBuilder(t('spreed', 'File to share'))
-	.setMultiSelect(false)
-	.setType(1)
-	.allowDirectories()
-	.build()
-
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 
@@ -202,6 +203,7 @@ export default {
 	disableKeyboardShortcuts,
 
 	components: {
+		FilePickerVue,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -286,6 +288,7 @@ export default {
 			isRecordingAudio: false,
 			showPollEditor: false,
 			showNewFileDialog: -1,
+			showFilePicker: false,
 			isTributePickerActive: false,
 			// Check empty template by default
 			userData: {},
@@ -390,6 +393,14 @@ export default {
 		showTypingStatus() {
 			return this.hasTypingIndicator && this.supportTypingStatus
 				&& this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
+		},
+
+		filePickerButtons() {
+			return [{
+				label: t('spreed', 'Choose'),
+				callback: (nodes) => this.handleFileShare(nodes),
+				type: 'primary'
+			}]
 		},
 
 		userAbsence() {
@@ -604,29 +615,15 @@ export default {
 			}
 		},
 
-		handleFileShare() {
-			picker.pick()
-				.then((path) => {
-					console.debug(`path ${path} selected for sharing`)
-					if (!path.startsWith('/')) {
-						throw new Error(t('files', 'Invalid path selected'))
-					}
-					this.focusInput()
-					return shareFile(path, this.token)
-				})
-
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the file picker.
-			// By default the file picker is a sibling of the fullscreen
-			// element, so it is not visible when in fullscreen mode. It is not
-			// possible to specify the parent nor to know when the file picker
-			// was actually opened, so for the time being it is reparented if
-			// needed shortly after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.querySelector('.oc-dialog'))
+		handleFileShare(nodes) {
+			nodes.forEach(({ path }) => {
+				console.debug(`path ${path} selected for sharing`)
+				if (!path.startsWith('/')) {
+					throw new Error(t('files', 'Invalid path selected'))
 				}
-			}, 1000)
+				this.focusInput()
+				return shareFile(path, this.token)
+			})
 		},
 
 		/**
