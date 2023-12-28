@@ -40,6 +40,9 @@
 			<div v-if="hasReactions" class="reaction-details">
 				<span>{{ getReactionSummary(reaction) }}</span>
 			</div>
+			<div v-else class="details-loading">
+				<NcLoadingIcon />
+			</div>
 		</NcPopover>
 
 		<!-- More reactions picker -->
@@ -66,6 +69,7 @@ import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { ATTENDEE } from '../../../../../constants.js'
@@ -78,6 +82,7 @@ export default {
 	components: {
 		NcButton,
 		NcEmojiPicker,
+		NcLoadingIcon,
 		NcPopover,
 		EmoticonOutline,
 	},
@@ -238,6 +243,12 @@ export default {
 
 .reaction-details {
 	padding: 8px;
+}
+
+.details-loading {
+	display: flex;
+	justify-content: center;
+	width: 38px;
 }
 
 </style>
