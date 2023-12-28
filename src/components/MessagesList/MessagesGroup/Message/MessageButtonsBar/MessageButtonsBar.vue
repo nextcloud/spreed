@@ -289,6 +289,7 @@ import MessageForwarder from './MessageForwarder.vue'
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
+import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 
 const EmojiIndex = new EmojiIndexFactory(data)
@@ -449,11 +450,13 @@ export default {
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply'],
 
 	setup() {
+		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 
 		return {
 			messageActions,
 			supportReminders,
+			reactionsStore,
 		}
 	},
 
@@ -668,18 +671,17 @@ export default {
 		handleReactionClick(selectedEmoji) {
 			// Add reaction only if user hasn't reacted yet
 			if (!this.messageObject.reactionsSelf?.includes(selectedEmoji)) {
-				this.$store.dispatch('addReactionToMessage', {
+				this.reactionsStore.addReactionToMessage({
 					token: this.token,
 					messageId: this.messageObject.id,
 					selectedEmoji,
 				})
 			} else {
 				console.debug('user has already reacted, removing reaction')
-				this.$store.dispatch('removeReactionFromMessage', {
+				this.reactionsStore.removeReactionFromMessage({
 					token: this.token,
 					messageId: this.id,
 					selectedEmoji,
-					actorId: this.actorId,
 				})
 			}
 			this.closeReactionsMenu()

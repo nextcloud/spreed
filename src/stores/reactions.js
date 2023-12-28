@@ -24,7 +24,14 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { getReactionsDetails } from '../services/messagesService.js'
+import { showError } from '@nextcloud/dialogs'
+
+import {
+	getReactionsDetails,
+	addReactionToMessage,
+	removeReactionFromMessage,
+} from '../services/messagesService.js'
+import store from '../store/index.js'
 
 /**
  * @typedef {string} Token
@@ -213,6 +220,75 @@ export const useReactionsStore = defineStore('reactions', {
 				})
 			} else if (message.systemMessage === 'reaction_revoked') {
 				this.fetchReactions(message.token, message.parent.id)
+			}
+		},
+
+		/**
+		 * Adds a single reaction to a message for the current user.
+		 *
+		 * @param {object} payload the context object
+		 * @param {string} payload.token The conversation token
+		 * @param {number} payload.messageId The id of message
+		 * @param {string} payload.selectedEmoji The selected emoji
+		 *
+		 */
+		async addReactionToMessage({ token, messageId, selectedEmoji }) {
+			try {
+				store.commit('addReactionToMessage', {
+					token,
+					messageId,
+					reaction: selectedEmoji,
+				})
+				// The response return an array with the reaction details for this message
+				const response = await addReactionToMessage(token, messageId, selectedEmoji)
+				this.updateReactions({
+					token,
+					messageId,
+					reactionsDetails: response.data.ocs.data,
+				})
+			} catch (error) {
+				// Restore the previous state if the request fails
+				store.commit('removeReactionFromMessage', {
+					token,
+					messageId,
+					reaction: selectedEmoji,
+				})
+				showError(t('spreed', 'Failed to add reaction'))
+			}
+		},
+
+		/**
+		 * Removes a single reaction from a message for the current user.
+		 *
+		 * @param {object} payload the context object
+		 * @param {string} payload.token The conversation token
+		 * @param {number} payload.messageId The id of message
+		 * @param {string} payload.selectedEmoji The selected emoji
+		 *
+		 */
+		async removeReactionFromMessage({ token, messageId, selectedEmoji }) {
+			try {
+				store.commit('removeReactionFromMessage', {
+					token,
+					messageId,
+					reaction: selectedEmoji,
+				})
+				// The response return an array with the reaction details for this message
+				const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
+				this.updateReactions({
+					token,
+					messageId,
+					reactionsDetails: response.data.ocs.data,
+				})
+			} catch (error) {
+				// Restore the previous state if the request fails
+				store.commit('addReactionToMessage', {
+					token,
+					messageId,
+					reaction: selectedEmoji,
+				})
+				console.error(error)
+				showError(t('spreed', 'Failed to remove reaction'))
 			}
 		},
 

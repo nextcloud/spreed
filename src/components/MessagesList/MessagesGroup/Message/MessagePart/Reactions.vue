@@ -164,13 +164,13 @@ export default {
 
 			// Check if current user has already added this reaction to the message
 			if (!this.userHasReacted(clickedEmoji)) {
-				this.$store.dispatch('addReactionToMessage', {
+				this.reactionsStore.addReactionToMessage({
 					token: this.token,
 					messageId: this.id,
 					selectedEmoji: clickedEmoji,
 				})
 			} else {
-				this.$store.dispatch('removeReactionFromMessage', {
+				this.reactionsStore.removeReactionFromMessage({
 					token: this.token,
 					messageId: this.id,
 					selectedEmoji: clickedEmoji,
