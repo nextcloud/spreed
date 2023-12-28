@@ -67,6 +67,7 @@ OC.L10N.register(
     "Collapse" : "Colapsar",
     "Favorite" : "Hacer favorito",
     "Disable" : "Deshabilitar",
+    "Choose" : "Seleccionar",
     "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Permissions" : "Permisos",

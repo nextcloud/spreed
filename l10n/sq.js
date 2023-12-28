@@ -190,6 +190,7 @@ OC.L10N.register(
     "Favorite" : "I/E Preferuar",
     "Disable" : "Çaktivizoje",
     "Enable" : "Aktivizoje",
+    "Choose" : "Zgjidhni",
     "Restricted" : "I/E kufizuar",
     "Personal" : "Personale",
     "Permissions" : "Lejet",

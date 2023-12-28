@@ -41,6 +41,7 @@ OC.L10N.register(
     "Collapse" : "ย่อ",
     "Favorite" : "รายการโปรด",
     "Disable" : "ปิดใช้งาน",
+    "Choose" : "เลือก",
     "Restricted" : "ถูกจำกัด",
     "Personal" : "ส่วนตัว",
     "No" : "ไม่ตกลง",

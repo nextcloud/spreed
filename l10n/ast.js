@@ -243,6 +243,7 @@ OC.L10N.register(
     "Back" : "Atrás",
     "Cancel" : "Encaboxar",
     "Confirm" : "Confirmar",
+    "Reset" : "Reafitar",
     "Connecting …" : "Conectando…",
     "You" : "Tu",
     "This conversation is read-only" : "Esta conversación ye namás de llectura",

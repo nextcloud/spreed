@@ -283,6 +283,7 @@ OC.L10N.register(
     "Favorite" : "Pliŝatata",
     "Disable" : "Malŝalti",
     "Enable" : "Ŝalti",
+    "Choose" : "Elekti",
     "Restricted" : "Limigita",
     "Personal" : "Persona",
     "No" : "Ne",

@@ -261,6 +261,7 @@ OC.L10N.register(
     "Favorite" : "Favorito",
     "Disable" : "Desativar",
     "Enable" : "Activar",
+    "Choose" : "Escolher",
     "Restricted" : "Restrito",
     "Personal" : "Pessoal",
     "Leave conversation" : "Sair da conversação",
