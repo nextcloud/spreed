@@ -44,6 +44,7 @@ OC.L10N.register(
     "Collapse" : "Sulge",
     "Favorite" : "Lemmik",
     "Disable" : "Lülita välja",
+    "Choose" : "Vali",
     "Restricted" : "Piiratud",
     "Personal" : "Isiklik",
     "Submit" : "Saada",

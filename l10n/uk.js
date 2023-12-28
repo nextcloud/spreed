@@ -773,6 +773,7 @@ OC.L10N.register(
     "Set up breakout rooms for this conversation" : "Організуйте окремі кімнати для цієї розмови",
     "Breakout rooms" : "Кімнати обговорення",
     "The file must be a PNG or JPG" : "Файл повинен бути у форматі PNG або JPG",
+    "Choose" : "Вибрати",
     "Please select a valid PNG or JPG file" : "Будь ласка, виберіть правильний файл у форматі PNG або JPG",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Відредагуйте дозволи за замовчуванням для учасників цієї бесіди. Ці налаштування не впливають на модераторів.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "При кожній зміні дозволів у цьому розділі користувацькі дозволи, раніше призначені окремим учасникам, будуть втрачені.",

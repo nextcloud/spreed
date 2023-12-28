@@ -280,6 +280,7 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Disable" : "Nonaktifkan",
     "Enable" : "Aktifkan",
+    "Choose" : "Pilih",
     "Restricted" : "Terbatas",
     "Personal" : "Pribadi",
     "Meeting" : "Rapat",

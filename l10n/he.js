@@ -420,6 +420,7 @@ OC.L10N.register(
     "Drop your files to upload" : "יש לגרור לכאן קבצים כדי להעלות",
     "Favorite" : "סימון כמועדף",
     "Disable" : "השבתה",
+    "Choose" : "בחר",
     "Restricted" : "מוגבלת",
     "Conversation settings" : "הגדרות דיון",
     "Personal" : "אישי",
