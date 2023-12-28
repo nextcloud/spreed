@@ -27,6 +27,7 @@ import {
 } from '../services/messagesService.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
@@ -55,11 +56,13 @@ describe('messagesStore', () => {
 	let testStoreConfig
 	let store = null
 	let updateConversationLastActiveAction
+	let reactionsStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
+		reactionsStore = useReactionsStore()
 
 		testStoreConfig = cloneDeep(messagesStore)
 
@@ -87,7 +90,8 @@ describe('messagesStore', () => {
 		test('doesn\'t add specific messages to the store', () => {
 			testStoreConfig = cloneDeep(storeConfig)
 			testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
-			// testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			reactionsStore.resetReactions = jest.fn()
+			reactionsStore.processReaction = jest.fn()
 			store = new Vuex.Store(testStoreConfig)
 
 			const messages = [{
@@ -210,7 +214,7 @@ describe('messagesStore', () => {
 
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(storeConfig)
-			// testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			reactionsStore.resetReactions = jest.fn()
 			store = new Vuex.Store(testStoreConfig)
 
 			message = {
