@@ -67,6 +67,7 @@ import {
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
+import { useReactionsStore } from '../stores/reactions.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -345,6 +346,8 @@ const actions = {
 		// FIXME: rename to deleteConversationsFromStore or a better name
 		const chatExtrasStore = useChatExtrasStore()
 		chatExtrasStore.purgeChatExtras(token)
+		const reactionsStore = useReactionsStore()
+		reactionsStore.removeReactionsByConversation(token)
 		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
 		context.dispatch('purgeParticipantsStore', token)
@@ -459,6 +462,8 @@ const actions = {
 			const response = await clearConversationHistory(token)
 			const chatExtrasStore = useChatExtrasStore()
 			chatExtrasStore.removeParentIdToReply(token)
+			const reactionsStore = useReactionsStore()
+			reactionsStore.removeReactionsByConversation(token)
 			context.dispatch('deleteMessages', token)
 			return response
 		} catch (error) {

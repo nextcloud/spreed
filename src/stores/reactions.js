@@ -63,6 +63,16 @@ export const useReactionsStore = defineStore('reactions', {
 	},
 
 	actions: {
+		/**
+		 * Remove reactions from the store for a given conversation.
+		 *
+		 * @param {string} token The conversation token
+		 *
+		 */
+		removeReactionsByConversation(token) {
+			Vue.delete(this.reactions, token)
+		},
+
 		checkForExistence(token, messageId) {
 			if (!this.reactions[token]) {
 				Vue.set(this.reactions, token, {})
