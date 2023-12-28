@@ -402,6 +402,7 @@ OC.L10N.register(
     "Disable" : "Tắt",
     "Enable" : "Bật",
     "The file must be a PNG or JPG" : "Tệp phải là PNG hoặc JPG",
+    "Choose" : "Chọn",
     "Restricted" : "Bị giới hạn",
     "Conversation settings" : "Cài đặt cuộc trò chuyện",
     "Personal" : "Cá nhân",

@@ -426,6 +426,7 @@ OC.L10N.register(
     "Favorite" : "Eftirlæti",
     "Disable" : "Gera óvirkt",
     "The file must be a PNG or JPG" : "Skráin verður að vera PNG eða JPG",
+    "Choose" : "Velja",
     "Restricted" : "Takmarkað",
     "Personal" : "Persónulegt",
     "Meeting" : "Fundur",

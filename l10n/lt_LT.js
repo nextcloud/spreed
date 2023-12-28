@@ -509,6 +509,7 @@ OC.L10N.register(
     "Error while updating conversation description" : "Klaida atnaujinant pokalbio aprašą",
     "Disable" : "Išjungti",
     "Enable" : "Aktyvuoti",
+    "Choose" : "Pasirinkite",
     "Restricted" : "Apribota",
     "Conversation settings" : "Pokalbio nustatymai",
     "Personal" : "Asmeniniai",

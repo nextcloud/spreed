@@ -161,6 +161,7 @@ OC.L10N.register(
     "Favorite" : "Favorīts",
     "Disable" : "Deaktivēt",
     "Enable" : "Iespējot",
+    "Choose" : "Izvēlies",
     "Restricted" : "Ierobežota",
     "Personal" : "Personīgs",
     "Permissions" : "Atļaujas",
