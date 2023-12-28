@@ -49,7 +49,7 @@ import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 import { EventBus } from './services/EventBus.js'
 import {
@@ -71,9 +71,14 @@ export default {
 	},
 
 	mixins: [
-		sessionIssueHandler,
 		talkHashCheck,
 	],
+
+	setup() {
+		return {
+			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+		}
+	},
 
 	data() {
 		return {

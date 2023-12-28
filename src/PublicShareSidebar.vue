@@ -68,7 +68,7 @@ import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 import { EventBus } from './services/EventBus.js'
 import { getPublicShareConversationData } from './services/filesIntegrationServices.js'
@@ -94,7 +94,6 @@ export default {
 	},
 
 	mixins: [
-		sessionIssueHandler,
 		talkHashCheck,
 	],
 
@@ -111,8 +110,10 @@ export default {
 	},
 
 	setup() {
-		const isInCall = useIsInCall()
-		return { isInCall }
+		return {
+			isInCall: useIsInCall(),
+			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+		}
 	},
 
 	data() {

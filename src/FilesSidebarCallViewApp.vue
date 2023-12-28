@@ -38,7 +38,7 @@ import PreventUnload from 'vue-prevent-unload'
 import LoadingComponent from './components/LoadingComponent.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 
 export default {
@@ -57,12 +57,14 @@ export default {
 	},
 
 	mixins: [
-		sessionIssueHandler,
 		talkHashCheck,
 	],
 
 	setup() {
-		return { isInCall: useIsInCall() }
+		return {
+			isInCall: useIsInCall(),
+			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+		}
 	},
 
 	data() {
