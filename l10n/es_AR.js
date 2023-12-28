@@ -54,6 +54,7 @@ OC.L10N.register(
     "Favorite" : "Favorito",
     "Disable" : "Deshabilitar",
     "Enable" : "Activar",
+    "Choose" : "Elige",
     "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Permissions" : "Permisos",
