@@ -28,9 +28,9 @@
 			hover: mouseover && !unSelectable && !isBig,
 			presenter: isPresenterOverlay && mouseover
 		}]"
-		@mouseover="showShadow"
-		@mouseleave="hideShadow"
-		@click="handleClickVideo">
+		@mouseover="mouseover = true"
+		@mouseleave="mouseover = false"
+		@click="$emit('click-video')">
 		<TransitionWrapper name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
@@ -38,7 +38,7 @@
 				:style="videoWrapperStyle">
 				<video ref="video"
 					:disablePictureInPicture="!isBig"
-					:class="videoClass"
+					:class="fitVideo ? 'video--fit' : 'video--fill'"
 					class="video"
 					@playing="updateVideoAspectRatio" />
 			</div>
@@ -99,7 +99,6 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
-import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
@@ -119,8 +118,6 @@ export default {
 		AccountCircle,
 		AccountOff,
 	},
-
-	mixins: [video],
 
 	props: {
 		token: {
@@ -147,12 +144,18 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-
+		fitVideo: {
+			type: Boolean,
+			default: false,
+		},
 		isPresenterOverlay: {
 			type: Boolean,
 			default: false,
 		},
-
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
 		// True if this video component is used in the promoted view's video stripe
 		isStripe: {
 			type: Boolean,
@@ -191,6 +194,8 @@ export default {
 		},
 	},
 
+	emits: ['click-video'],
+
 	setup() {
 		const guestNameStore = useGuestNameStore()
 		return { guestNameStore }
@@ -201,6 +206,7 @@ export default {
 			videoAspectRatio: null,
 			containerAspectRatio: null,
 			resizeObserver: null,
+			mouseover: false,
 		}
 	},
 
@@ -513,7 +519,6 @@ export default {
 	},
 
 	watch: {
-
 		'model.attributes.stream'(stream) {
 			this._setStream(stream)
 		},
@@ -549,7 +554,6 @@ export default {
 	},
 
 	methods: {
-
 		_setStream(stream) {
 
 			if (!stream) {
@@ -700,6 +704,7 @@ export default {
 	left: 0;
 	border-radius: calc(var(--default-clickable-area) / 2);
 }
+
 .video-container.speaking::after {
 	content: '';
 	box-shadow: inset 0 0 0 2px white;
@@ -721,7 +726,7 @@ export default {
 }
 
 .video-container.presenter::after {
-	content: '' ;
+	content: '';
 	background-color: rgba(0, 0, 0, 0.5);
 	cursor: pointer;
 }
