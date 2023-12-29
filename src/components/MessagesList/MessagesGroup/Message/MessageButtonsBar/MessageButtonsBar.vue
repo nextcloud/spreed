@@ -289,8 +289,7 @@ import MessageForwarder from './MessageForwarder.vue'
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
-
-// Keep version in sync with @nextcloud/vue in case of issues
+import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
@@ -450,7 +449,10 @@ export default {
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply'],
 
 	setup() {
+		const { messageActions } = useIntegrationsStore()
+
 		return {
+			messageActions,
 			supportReminders,
 		}
 	},
@@ -499,10 +501,6 @@ export default {
 				&& !this.isMyMsg
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
-		},
-
-		messageActions() {
-			return this.$store.getters.messageActions
 		},
 
 		linkToFile() {
