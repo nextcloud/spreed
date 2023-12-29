@@ -3,6 +3,8 @@ import { cloneDeep } from 'lodash'
 import { setActivePinia, createPinia } from 'pinia'
 import Vuex from 'vuex'
 
+import { showError } from '@nextcloud/dialogs'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
@@ -10,11 +12,24 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import Reactions from './Reactions.vue'
 
 import { ATTENDEE } from '../../../../../constants.js'
+import {
+	addReactionToMessage,
+	removeReactionFromMessage,
+	getReactionsDetails,
+} from '../../../../../services/messagesService.js'
+import vuexStore from '../../../../../store/index.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { generateOCSResponse } from '../../../../../test-helpers.js'
 
 jest.mock('../../../../../services/messagesService', () => ({
 	getReactionsDetails: jest.fn(),
+	addReactionToMessage: jest.fn(),
+	removeReactionFromMessage: jest.fn(),
+}))
+
+jest.mock('@nextcloud/dialogs', () => ({
+	showError: jest.fn(),
 }))
 
 describe('Reactions.vue', () => {
@@ -28,6 +43,8 @@ describe('Reactions.vue', () => {
 	let messageMock
 	let getActorTypeMock
 	let getActorIdMock
+	let reactionsStored
+	let message
 
 	beforeEach(() => {
 
@@ -39,7 +56,7 @@ describe('Reactions.vue', () => {
 		testStoreConfig = cloneDeep(storeConfig)
 		token = 'token1'
 		messageId = 'parent-id'
-		messageMock = jest.fn().mockReturnValue({
+		message = {
 			actorId: 'admin',
 			actorType: 'users',
 			id: messageId,
@@ -49,7 +66,8 @@ describe('Reactions.vue', () => {
 			reactionsSelf: ['🔥'],
 			timestamp: 1703668230,
 			token
-		})
+		}
+		messageMock = jest.fn().mockReturnValue(message)
 		testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 
 		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
@@ -62,13 +80,13 @@ describe('Reactions.vue', () => {
 
 		token = 'token1'
 		messageId = 'parent-id'
-		const reactionsExpected = {
+		reactionsStored = {
 			'🎄': [
 				{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' },
 				{ actorDisplayName: 'user2', actorId: 'actorId2', actorType: 'guests' }
 			],
 			'🔥': [
-				{ actorDisplayName: 'user3', actorId: 'actorId3', actorType: 'users' },
+				{ actorDisplayName: 'user3', actorId: 'admin', actorType: 'users' },
 				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' }
 			],
 			'🔒': [
@@ -80,7 +98,7 @@ describe('Reactions.vue', () => {
 		reactionsStore.updateReactions({
 			token,
 			messageId,
-			reactionsDetails: reactionsExpected
+			reactionsDetails: reactionsStored
 		})
 
 		reactionsProps = {
@@ -96,8 +114,8 @@ describe('Reactions.vue', () => {
 		reactionsStore.resetReactions(token, messageId)
 	})
 
-	describe('reactions', () => {
-		test('shows reaction buttons with count and emoji picker', () => {
+	describe('reactions buttons', () => {
+		test('shows reaction buttons with count and emoji picker', async () => {
 			// Arrange
 			const wrapper = shallowMount(Reactions, {
 				localVue,
@@ -113,6 +131,11 @@ describe('Reactions.vue', () => {
 			expect(reactionButtons).toHaveLength(3) // 3 for reactions
 			expect(reactionButtons.at(0).text()).toBe('🎄 2')
 			expect(reactionButtons.at(1).text()).toBe('🔥 2')
+
+			// Assert dropdown contains "You" when you have reacted
+			const summary = wrapper.vm.getReactionSummary('🔥')
+			expect(summary).toContain('You')
+
 		})
 
 		test('shows reaction buttons with count but without emoji picker when no chat permission', () => {
@@ -126,14 +149,18 @@ describe('Reactions.vue', () => {
 					NcPopover,
 				},
 			})
+			const reactionButtons = wrapper.findAllComponents(NcButton)
+			const emojiPicker = wrapper.findAllComponents(NcEmojiPicker)
+			// Act
+			reactionButtons.at(0).vm.$emit('click') // 🎄
 
 			// Assert
-			const reactionButtons = wrapper.findAllComponents(NcPopover)
-			const emojiPicker = wrapper.findAllComponents(NcEmojiPicker)
+			expect(showError).toHaveBeenCalled()
 			expect(emojiPicker).toHaveLength(0)
-			expect(reactionButtons).toHaveLength(3) // 2 for reactions
+			expect(reactionButtons).toHaveLength(3) // 3 for reactions
 			expect(reactionButtons.at(0).text()).toBe('🎄 2')
 			expect(reactionButtons.at(1).text()).toBe('🔥 2')
+			expect(reactionButtons.at(2).text()).toBe('🔒 2')
 		})
 
 		test('doesn\'t mount emoji picker when there are no reactions', () => {
@@ -172,11 +199,8 @@ describe('Reactions.vue', () => {
 
 		test('dispatches store actions upon picking an emoji from the emojipicker', async () => {
 			// Arrange
-			const addReactionToMessageAction = jest.fn()
-			const removeReactionFromMessageAction = jest.fn()
-			testStoreConfig.modules.messagesStore.actions.addReactionToMessage = addReactionToMessageAction
-			testStoreConfig.modules.messagesStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
-			store = new Vuex.Store(testStoreConfig)
+			jest.spyOn(reactionsStore, 'addReactionToMessage')
+			vuexStore.dispatch('processMessage', message)
 
 			const wrapper = shallowMount(Reactions, {
 				propsData: reactionsProps,
@@ -186,32 +210,28 @@ describe('Reactions.vue', () => {
 					NcEmojiPicker,
 				},
 			})
+
+			const response = generateOCSResponse({ payload: Object.assign({}, reactionsStored, { '❤️': [{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' }] }) })
+			addReactionToMessage.mockResolvedValue(response)
 			// Act
 			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
 			emojiPicker.vm.$emit('select', '❤️')
-			emojiPicker.vm.$emit('select', '🔥')
 			await wrapper.vm.$nextTick()
 
 			// Assert
-			expect(addReactionToMessageAction).toHaveBeenCalledWith(expect.anything(), {
+			expect(reactionsStore.addReactionToMessage).toHaveBeenCalledWith({
 				token: reactionsProps.token,
 				messageId: reactionsProps.id,
 				selectedEmoji: '❤️',
-			})
-			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: reactionsProps.token,
-				messageId: reactionsProps.id,
-				selectedEmoji: '🔥',
 			})
 		})
 
 		test('dispatches store actions upon clicking a reaction buttons', async () => {
 			// Arrange
-			const addReactionToMessageAction = jest.fn()
-			const removeReactionFromMessageAction = jest.fn()
-			testStoreConfig.modules.messagesStore.actions.addReactionToMessage = addReactionToMessageAction
-			testStoreConfig.modules.messagesStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
-			store = new Vuex.Store(testStoreConfig)
+			jest.spyOn(reactionsStore, 'addReactionToMessage')
+			jest.spyOn(reactionsStore, 'removeReactionFromMessage')
+
+			vuexStore.dispatch('processMessage', message)
 
 			const wrapper = shallowMount(Reactions, {
 				propsData: reactionsProps,
@@ -222,6 +242,13 @@ describe('Reactions.vue', () => {
 					NcPopover,
 				},
 			})
+			reactionsStored['🎄'].push({ actorDisplayName: 'user3', actorId: 'admin', actorType: 'users' })
+			let response = generateOCSResponse({ payload: reactionsStored })
+			addReactionToMessage.mockResolvedValue(response)
+
+			reactionsStored['🔥'].shift()
+			response = generateOCSResponse({ payload: reactionsStored })
+			removeReactionFromMessage.mockResolvedValue(response)
 
 			// Act
 			const reactionButtons = wrapper.findAllComponents(NcButton)
@@ -229,16 +256,47 @@ describe('Reactions.vue', () => {
 			reactionButtons.at(1).vm.$emit('click') // 🔥
 
 			// Assert
-			expect(addReactionToMessageAction).toHaveBeenCalledWith(expect.anything(), {
+			expect(reactionsStore.addReactionToMessage).toHaveBeenCalledWith({
 				token: reactionsProps.token,
 				messageId: reactionsProps.id,
 				selectedEmoji: '🎄',
 			})
-			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
+			expect(reactionsStore.removeReactionFromMessage).toHaveBeenCalledWith({
 				token: reactionsProps.token,
 				messageId: reactionsProps.id,
 				selectedEmoji: '🔥',
 			})
 		})
+
+	})
+	describe('reactions fetching', () => {
+		test('fetches reactions details when they are not available', async () => {
+			// Arrange
+			reactionsStore.resetReactions(token, messageId)
+			jest.spyOn(reactionsStore, 'fetchReactions')
+
+			const wrapper = shallowMount(Reactions, {
+				propsData: reactionsProps,
+				localVue,
+				store,
+				stubs: {
+					NcPopover,
+				},
+			})
+			const response = generateOCSResponse({ payload: reactionsStored })
+			getReactionsDetails.mockResolvedValue(response)
+
+			// Assert
+			const reactionButtons = wrapper.findAllComponents(NcPopover)
+			expect(reactionButtons).toHaveLength(3) // 3 for reactions
+
+			// Act
+			reactionButtons.at(0).vm.$emit('after-show')
+			await wrapper.vm.$nextTick()
+
+			// Assert
+			expect(reactionsStore.fetchReactions).toHaveBeenCalled()
+		})
+
 	})
 })
