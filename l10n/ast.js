@@ -249,6 +249,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Esta conversación ye namás de llectura",
     "Picture" : "Semeya",
     "The file must be a PNG or JPG" : "El ficheru a ser PNG o JPG",
+    "Choose" : "Escoyer",
     "Permissions" : "Permisos",
     "No" : "Non",
     "Yes" : "Sí",
