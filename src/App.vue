@@ -46,7 +46,7 @@ import { generateUrl } from '@nextcloud/router'
 
 import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
 import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
-import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
@@ -81,13 +81,13 @@ export default {
 
 	mixins: [
 		talkHashCheck,
-		isMobile,
 	],
 
 	setup() {
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
+			isMobile: useIsMobile(),
 			supportSessionState: useActiveSession(),
 		}
 	},
