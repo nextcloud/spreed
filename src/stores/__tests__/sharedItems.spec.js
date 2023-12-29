@@ -136,7 +136,7 @@ describe('sharedItemsStore', () => {
 
 			const responseOverview = generateOCSResponse({ payload: payloadOverview })
 			getSharedItemsOverview.mockResolvedValueOnce(responseOverview)
-			const response = generateOCSResponse({ payload: [message] })
+			const response = generateOCSResponse({ payload: { 1: message } })
 			getSharedItems.mockResolvedValueOnce(response)
 			await sharedItemsStore.getSharedItemsOverview(token)
 

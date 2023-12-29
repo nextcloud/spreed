@@ -87,7 +87,6 @@
 				</div>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
-					class="new-message-form__richContenteditable"
 					:value.sync="text"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
@@ -406,6 +405,10 @@ export default {
 		userAbsence() {
 			return this.chatExtrasStore.absence[this.token]
 		},
+
+		isMobileDevice() {
+			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+		}
 	},
 
 	watch: {
@@ -797,7 +800,7 @@ export default {
 		},
 
 		focusInput() {
-			if (this.isMobile()) {
+			if (this.isMobileDevice) {
 				return
 			}
 			this.$nextTick().then(() => {
@@ -815,10 +818,6 @@ export default {
 			if (!this.isTributePickerActive) {
 				this.blurInput()
 			}
-		},
-
-		isMobile() {
-			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
 
 		async checkAbsenceStatus() {
@@ -865,34 +864,27 @@ export default {
 .new-message-form {
 	align-items: flex-end;
 	display: flex;
+	gap: 4px;
 	position: relative;
 	max-width: 700px;
 	margin: 0 auto;
 
 	&__emoji-picker {
 		position: absolute;
-		bottom: 1px;
+		bottom: 0;
 		z-index: 1;
 	}
 
 	&__input {
 		flex-grow: 1;
-		overflow: hidden;
 		position: relative;
 	}
 
 	// Override NcRichContenteditable styles
-	& &__richContenteditable {
-		border: 2px solid var(--color-border-dark);
+	:deep(.rich-contenteditable__input) {
 		border-radius: calc(var(--default-clickable-area) / 2);
 		padding: 8px 16px 8px 44px;
 		max-height: 180px;
-
-		&:hover,
-		&:focus,
-		&:active {
-			border: 2px solid var(--color-main-text);
-		}
 	}
 
 	&__quote {

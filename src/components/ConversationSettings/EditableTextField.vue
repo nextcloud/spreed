@@ -87,12 +87,12 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 export default {
 	name: 'EditableTextField',
 	components: {
-		NcRichText,
-		Pencil,
 		Check,
 		Close,
-		NcRichContenteditable,
 		NcButton,
+		NcRichContenteditable,
+		NcRichText,
+		Pencil,
 	},
 
 	directives: {
@@ -170,7 +170,6 @@ export default {
 	},
 
 	computed: {
-
 		canSubmit() {
 			return this.charactersCount <= this.maxLength && this.text !== this.initialText
 		},
@@ -200,6 +199,7 @@ export default {
 		initialText(newValue) {
 			this.text = newValue
 		},
+
 		editing(newValue) {
 			if (!newValue) {
 				this.text = this.initialText
@@ -263,11 +263,16 @@ export default {
 		margin-left: var(--default-clickable-area);
 	}
 
-  &__output {
-    width: 100%;
-    padding: 10px;
-    line-height: var(--default-line-height);
-  }
+	&__output {
+		width: 100%;
+		padding: 10px;
+		line-height: var(--default-line-height) !important;
+	}
+
+	// Restyle NcRichContenteditable component from our library.
+	:deep(.rich-contenteditable) {
+		flex-grow: 1;
+	}
 }
 
 .spinner {
@@ -288,29 +293,4 @@ export default {
 	align-items: center;
 	justify-content: center;
 }
-
-// Restyle NcRichContenteditable component from our library.
-:deep(.rich-contenteditable__input) {
-	align-self: flex-start;
-	min-height: var(--default-line-height);
-	max-height: unset;
-	margin: 12px 0 4px 0;
-	padding: 0 0 4px 0;
-	overflow: visible;
-	width: 100% !important;
-	background-color: transparent;
-	transition: $transition;
-	&::before {
-		position: relative;
-	}
-	&[contenteditable='false'] {
-		background-color: transparent;
-		color: var(--color-main-text);
-		border-color: transparent;
-		opacity: 1;
-		border-radius: 0;
-		user-select: text;
-	}
-}
-
 </style>
