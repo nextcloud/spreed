@@ -930,6 +930,7 @@ OC.L10N.register(
     "The file must be a PNG or JPG" : "El fitxer ha de ser PNG o JPG",
     "Set picture" : "Estableix la imatge",
     "Choose your conversation picture" : "Tria la teva imatge de conversa",
+    "Choose" : "Tria",
     "Please select a valid PNG or JPG file" : "Seleccioneu un fitxer PNG o JPG vàlid",
     "Error setting conversation picture" : "S'ha produït un error en establir la imatge de la conversa",
     "Could not set the conversation picture: {error}" : "No s'ha pogut configurar la imatge de la conversa: {error}",

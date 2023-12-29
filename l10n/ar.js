@@ -930,6 +930,7 @@ OC.L10N.register(
     "The file must be a PNG or JPG" : "يحب أن يكون الملف PNG أو JPG",
     "Set picture" : "تعيين الصورة",
     "Choose your conversation picture" : "إختَر صورة محادثتك",
+    "Choose" : "إختَر",
     "Please select a valid PNG or JPG file" : "يرجي اختيار ملف PNG أو JPG صالح",
     "Error setting conversation picture" : "خطأ في تعيين صورة المحادثة",
     "Could not set the conversation picture: {error}" : "تعذّر تعيين صورة المحادثة: {error}",

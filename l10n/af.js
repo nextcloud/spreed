@@ -275,6 +275,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Hierdie gesprek is leesalleen",
     "Favorite" : "Gunsteling",
     "Disable" : "Deaktiveer",
+    "Choose" : "Kies",
     "Personal" : "Persoonlik",
     "Leave conversation" : "verlaat gesprek",
     "Delete conversation" : "Skrap gesprek",
