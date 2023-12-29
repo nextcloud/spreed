@@ -930,6 +930,7 @@ OC.L10N.register(
     "The file must be a PNG or JPG" : "Die Datei muss im PNG- oder JPG-Format sein",
     "Set picture" : "Bild festlegen",
     "Choose your conversation picture" : "Unterhaltungsbild auswählen",
+    "Choose" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
     "Please select a valid PNG or JPG file" : "Bitte eine gültige PNG- oder JPG-Datei wählen",
     "Error setting conversation picture" : "Fehler beim Setzen des Unterhaltungsbildes",
     "Could not set the conversation picture: {error}" : "Unterhaltungsbild konnte nicht festgelegt werden: {error}",

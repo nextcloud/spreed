@@ -833,6 +833,7 @@ OC.L10N.register(
     "Set up breakout rooms for this conversation" : "Създаване на стаи за отделно събрание за този разговор",
     "Breakout rooms" : "Стаи за отделно събрание",
     "The file must be a PNG or JPG" : "Файлът трябва да е във формат PNG или JPG",
+    "Choose" : "Изберете",
     "Please select a valid PNG or JPG file" : "Моля, изберете валиден PNG или JPG файл",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Редактиране на права по подразбиране за участниците в този разговор. Тези настройки не засягат модераторите.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Всеки път, когато се променят права в този раздел, потребителските права, които са били зададени преди това на отделните участници, ще бъдат загубени.",

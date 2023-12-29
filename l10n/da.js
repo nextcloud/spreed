@@ -382,6 +382,7 @@ OC.L10N.register(
     "Disable" : "Deaktiver",
     "Enable" : "Aktiver",
     "The file must be a PNG or JPG" : "Fil format: PNG eller JPG",
+    "Choose" : "Vælg",
     "Restricted" : "Begrænset",
     "Conversation settings" : "Samtale indstillinger",
     "Personal" : "Personlig",
