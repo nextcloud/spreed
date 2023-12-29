@@ -928,6 +928,7 @@
     "The file must be a PNG or JPG" : "Je třeba, aby soubor by PNG nebo JPG",
     "Set picture" : "Nastavit obrázek",
     "Choose your conversation picture" : "Zvolte si obrázek pro konverzaci",
+    "Choose" : "Vybrat",
     "Please select a valid PNG or JPG file" : "Vyberte platný PNG nebo JPG soubor",
     "Error setting conversation picture" : "Chyba při nastavování obrázku konverzace",
     "Could not set the conversation picture: {error}" : "Nepodařilo se nastavit obrázek konverzace: {error}",

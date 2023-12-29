@@ -561,6 +561,7 @@ OC.L10N.register(
     "Favorite" : "Pennroll",
     "Disable" : "Disaotreañ",
     "Enable" : "Aotreañ",
+    "Choose" : "Dibab",
     "Conversation settings" : "Stummoù diviz",
     "Personal" : "Personel",
     "Leave conversation" : "Kuitaat an diviz",
