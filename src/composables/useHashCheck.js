@@ -25,7 +25,7 @@ import { watch, computed, ref } from 'vue'
 
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
-import { useStore } from './useStore.js'
+import { useTalkHashStore } from '../stores/talkHash.js'
 
 /**
  * Check whether the conflicting session detected or not, and navigate to another page
@@ -33,13 +33,11 @@ import { useStore } from './useStore.js'
  * @return {import('vue').ComputedRef<boolean>}
  */
 export function useHashCheck() {
-	const store = useStore()
+	const talkHashStore = useTalkHashStore()
 
 	const reloadWarningShown = ref(false)
 
-	const isNextcloudTalkHashDirty = computed(() => {
-		return store.getters.isNextcloudTalkHashDirty
-	})
+	const isNextcloudTalkHashDirty = computed(() => talkHashStore.isNextcloudTalkHashDirty)
 
 	watch(isNextcloudTalkHashDirty, (newValue) => {
 		if (newValue && !reloadWarningShown.value) {
