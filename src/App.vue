@@ -55,10 +55,10 @@ import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 
 import { useActiveSession } from './composables/useActiveSession.js'
+import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
-import talkHashCheck from './mixins/talkHashCheck.js'
 import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
@@ -79,15 +79,12 @@ export default {
 		MediaSettings,
 	},
 
-	mixins: [
-		talkHashCheck,
-	],
-
 	setup() {
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
+			isNextcloudTalkHashDirty: useHashCheck(),
 			supportSessionState: useActiveSession(),
 		}
 	},

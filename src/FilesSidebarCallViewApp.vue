@@ -37,9 +37,9 @@ import PreventUnload from 'vue-prevent-unload'
 
 import LoadingComponent from './components/LoadingComponent.vue'
 
+import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
-import talkHashCheck from './mixins/talkHashCheck.js'
 
 export default {
 
@@ -56,11 +56,9 @@ export default {
 		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
 	},
 
-	mixins: [
-		talkHashCheck,
-	],
-
 	setup() {
+		useHashCheck()
+
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),

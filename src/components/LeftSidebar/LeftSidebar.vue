@@ -316,6 +316,7 @@ import {
 } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
+import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
@@ -558,7 +559,7 @@ export default {
 					})
 					break
 				case 'update-nextcloud-talk-hash':
-					this.$store.dispatch('setNextcloudTalkHash', event.data.hash)
+					useTalkHashStore().setNextcloudTalkHash(event.data.hash)
 					break
 				}
 			}

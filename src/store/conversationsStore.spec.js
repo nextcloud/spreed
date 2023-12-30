@@ -34,6 +34,7 @@ import {
 	setCallPermissions,
 	setConversationUnread,
 } from '../services/conversationsService.js'
+import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('../services/conversationsService', () => ({
@@ -110,22 +111,19 @@ describe('conversationsStore', () => {
 	})
 
 	describe('conversation list', () => {
-		let deleteMessagesAction = null
-		let checkMaintenanceModeAction = null
-		let clearMaintenanceModeAction = null
-		let updateTalkVersionHashAction = null
+		let talkHashStore
+		let deleteMessagesAction
+		let checkMaintenanceModeAction
+		let clearMaintenanceModeAction
+		let updateTalkVersionHashAction
 
 		beforeEach(() => {
 			deleteMessagesAction = jest.fn()
 			testStoreConfig.modules.messagesStore.actions.deleteMessages = deleteMessagesAction
-
-			checkMaintenanceModeAction = jest.fn()
-			clearMaintenanceModeAction = jest.fn()
-			updateTalkVersionHashAction = jest.fn()
-			testStoreConfig.modules.talkHashStore.actions.checkMaintenanceMode = checkMaintenanceModeAction
-			testStoreConfig.modules.talkHashStore.actions.clearMaintenanceMode = clearMaintenanceModeAction
-			testStoreConfig.modules.talkHashStore.actions.updateTalkVersionHash = updateTalkVersionHashAction
-
+			talkHashStore = useTalkHashStore()
+			checkMaintenanceModeAction = jest.spyOn(talkHashStore, 'checkMaintenanceMode')
+			clearMaintenanceModeAction = jest.spyOn(talkHashStore, 'clearMaintenanceMode')
+			updateTalkVersionHashAction = jest.spyOn(talkHashStore, 'updateTalkVersionHash')
 			store = new Vuex.Store(testStoreConfig)
 		})
 
@@ -252,7 +250,7 @@ describe('conversationsStore', () => {
 			expect(fetchedConversation).toStrictEqual(testConversation)
 
 			expect(clearMaintenanceModeAction).toHaveBeenCalled()
-			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
+			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(response)
 		})
 
 		test('fetches all conversations and set initial', async () => {
@@ -613,7 +611,7 @@ describe('conversationsStore', () => {
 
 			await expect(store.dispatch('fetchConversation', { token: testToken })).rejects.toMatchObject(error)
 
-			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), error.response)
+			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(error.response)
 		})
 
 		test('fetch conversations failure checks for maintenance mode', async () => {
@@ -622,14 +620,14 @@ describe('conversationsStore', () => {
 
 			await expect(store.dispatch('fetchConversations', {})).rejects.toMatchObject(error)
 
-			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), error.response)
+			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(error.response)
 		})
 
 		test('fetch conversations should update talkVersion', async () => {
 			const response = generateOCSResponse({ payload: [] })
 			fetchConversations.mockResolvedValue(response)
 			await store.dispatch('fetchConversations', {})
-			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
+			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(response)
 		})
 	})
 

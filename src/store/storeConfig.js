@@ -33,7 +33,6 @@ import pollStore from './pollStore.js'
 import reactionsStore from './reactionsStore.js'
 import sidebarStore from './sidebarStore.js'
 import soundsStore from './soundsStore.js'
-import talkHashStore from './talkHashStore.js'
 import tokenStore from './tokenStore.js'
 import uiModeStore from './uiModeStore.js'
 import windowVisibilityStore from './windowVisibilityStore.js'
@@ -50,7 +49,6 @@ export default {
 		participantsStore,
 		sidebarStore,
 		soundsStore,
-		talkHashStore,
 		tokenStore,
 		uiModeStore,
 		windowVisibilityStore,

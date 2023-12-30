@@ -67,9 +67,9 @@ import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
+import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
-import talkHashCheck from './mixins/talkHashCheck.js'
 import { EventBus } from './services/EventBus.js'
 import { getPublicShareConversationData } from './services/filesIntegrationServices.js'
 import {
@@ -93,10 +93,6 @@ export default {
 		TransitionWrapper,
 	},
 
-	mixins: [
-		talkHashCheck,
-	],
-
 	props: {
 		shareToken: {
 			type: String,
@@ -110,6 +106,8 @@ export default {
 	},
 
 	setup() {
+		useHashCheck()
+
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),

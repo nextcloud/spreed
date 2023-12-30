@@ -115,6 +115,7 @@ import isInLobby from '../../mixins/isInLobby.js'
 import { callSIPDialOut } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { useSettingsStore } from '../../stores/settings.js'
+import { useTalkHashStore } from '../../stores/talkHash.js'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
 
 export default {
@@ -178,8 +179,9 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
+		const talkHashStore = useTalkHashStore()
 		const settingsStore = useSettingsStore()
-		return { isInCall, settingsStore }
+		return { isInCall, settingsStore, talkHashStore }
 	},
 
 	data() {
@@ -194,7 +196,7 @@ export default {
 			return this.$store.getters.getToken()
 		},
 		isNextcloudTalkHashDirty() {
-			return this.$store.getters.isNextcloudTalkHashDirty
+			return this.talkHashStore.isNextcloudTalkHashDirty
 		},
 		container() {
 			return this.$store.getters.getMainContainerSelector()

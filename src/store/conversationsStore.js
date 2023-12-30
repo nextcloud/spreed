@@ -66,6 +66,7 @@ import {
 } from '../services/recordingService.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useTalkHashStore } from '../stores/talkHash.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -771,23 +772,25 @@ const actions = {
 	},
 
 	async fetchConversation({ dispatch }, { token }) {
+		const talkHashStore = useTalkHashStore()
 		try {
-			dispatch('clearMaintenanceMode')
+			talkHashStore.clearMaintenanceMode()
 			const response = await fetchConversation(token)
-			dispatch('updateTalkVersionHash', response)
+			talkHashStore.updateTalkVersionHash(response)
 			dispatch('addConversation', response.data.ocs.data)
 			return response
 		} catch (error) {
 			if (error?.response) {
-				dispatch('checkMaintenanceMode', error.response)
+				talkHashStore.checkMaintenanceMode(error.response)
 			}
 			throw error
 		}
 	},
 
 	async fetchConversations({ dispatch }, { modifiedSince }) {
+		const talkHashStore = useTalkHashStore()
 		try {
-			dispatch('clearMaintenanceMode')
+			talkHashStore.clearMaintenanceMode()
 			modifiedSince = modifiedSince || 0
 
 			let options = {}
@@ -800,7 +803,7 @@ const actions = {
 			}
 
 			const response = await fetchConversations(options)
-			dispatch('updateTalkVersionHash', response)
+			talkHashStore.updateTalkVersionHash(response)
 
 			dispatch('patchConversations', {
 				conversations: response.data.ocs.data,
@@ -818,7 +821,7 @@ const actions = {
 			return response
 		} catch (error) {
 			if (error?.response) {
-				dispatch('checkMaintenanceMode', error.response)
+				talkHashStore.checkMaintenanceMode(error.response)
 			}
 			throw error
 		}
