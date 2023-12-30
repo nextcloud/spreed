@@ -1529,6 +1529,7 @@ OC.L10N.register(
     "Raise hand (R)" : "Lever la main (R)",
     "Lower hand" : "Baisser la main",
     "Lower hand (R)" : "Baisser la main (R)",
+    "You need to close a dialog to toggle full screen" : "Vous devez fermer une fenêtre de dialogue pour activer le plein écran",
     "No unread mentions" : "Aucune mention non lue",
     "Say hi to your friends and colleagues!" : "Dites bonjour à vos amis et collègues !",
     "Start a conversation" : "Démarrer une conversation",
