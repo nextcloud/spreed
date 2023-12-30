@@ -21,7 +21,7 @@
  *
  */
 
-import { watch, computed, ref } from 'vue'
+import { watch, computed } from 'vue'
 
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
@@ -35,18 +35,18 @@ import { useTalkHashStore } from '../stores/talkHash.js'
 export function useHashCheck() {
 	const talkHashStore = useTalkHashStore()
 
-	const reloadWarningShown = ref(false)
+	let reloadWarningShown = false
 
 	const isNextcloudTalkHashDirty = computed(() => talkHashStore.isNextcloudTalkHashDirty)
 
 	watch(isNextcloudTalkHashDirty, (newValue) => {
-		if (newValue && !reloadWarningShown.value) {
+		if (newValue && !reloadWarningShown) {
 			showReloadWarning()
 		}
 	})
 
 	const showReloadWarning = () => {
-		reloadWarningShown.value = true
+		reloadWarningShown = true
 
 		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
 			timeout: TOAST_PERMANENT_TIMEOUT,

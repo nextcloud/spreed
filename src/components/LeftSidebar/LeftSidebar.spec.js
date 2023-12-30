@@ -1,6 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
@@ -57,6 +58,7 @@ describe('LeftSidebar.vue', () => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		localVue.use(VueRouter)
+		setActivePinia(createPinia())
 
 		loadStateSettings = {
 			circles_enabled: true,
