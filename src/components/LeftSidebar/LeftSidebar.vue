@@ -364,6 +364,7 @@ export default {
 		const searchBox = ref(null)
 		const list = ref(null)
 
+		const talkHashStore = useTalkHashStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
 		const isMobile = useIsMobile()
 
@@ -373,6 +374,7 @@ export default {
 			leftSidebar,
 			searchBox,
 			list,
+			talkHashStore,
 			isMobile,
 			canModerateSipDialOut,
 		}
@@ -559,7 +561,7 @@ export default {
 					})
 					break
 				case 'update-nextcloud-talk-hash':
-					useTalkHashStore().setNextcloudTalkHash(event.data.hash)
+					this.talkHashStore.setNextcloudTalkHash(event.data.hash)
 					break
 				}
 			}
