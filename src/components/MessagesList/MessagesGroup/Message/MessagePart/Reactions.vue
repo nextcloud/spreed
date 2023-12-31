@@ -137,17 +137,22 @@ export default {
 		},
 
 		/**
-		 * Whether the plain reactions are different than the detailed ones.
+		 * Compare the plain reactions with the simplified detailed reactions.
 		 */
-		hasMoreReactions() {
+		hasOutdatedDetails() {
+			const detailedReactionsSimplified = Object.fromEntries(
+				Object.entries(this.detailedReactions)
+					.sort() // Plain reactions come sorted
+					.map(([key, value]) => [key, value.length])
+			)
 			return this.hasReactions
-					&& Object.keys(this.plainReactions).length !== Object.keys(this.detailedReactions).length
+					&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
 		},
 	},
 
 	methods: {
 		fetchReactions() {
-			if (!this.hasReactions || this.hasMoreReactions) {
+			if (!this.hasReactions || this.hasOutdatedDetails) {
 				this.reactionsStore.fetchReactions(this.token, this.id)
 			}
 		},

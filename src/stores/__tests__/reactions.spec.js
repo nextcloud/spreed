@@ -6,6 +6,7 @@ import { showError } from '@nextcloud/dialogs'
 
 import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/messagesService.js'
 import vuexStore from '../../store/index.js'
+import { generateOCSResponse } from '../../test-helpers.js'
 import { useReactionsStore } from '../reactions.js'
 
 jest.mock('../../services/messagesService', () => ({
@@ -37,16 +38,16 @@ describe('reactionsStore', () => {
 		messageId = 'parent-id'
 		reactions = {
 			'🎄': [
-				{ displayName: 'user1', actorId: 'actorId1' },
-				{ displayName: 'user2', actorId: 'actorId2' }
+				{ displayName: 'user1', actorId: 'actorId1', actorType: 'users' },
+				{ displayName: 'user2', actorId: 'actorId2', actorType: 'users' }
 			],
 			'🔥': [
-				{ displayName: 'user3', actorId: 'actorId3' },
-				{ displayName: 'user4', actorId: 'actorId4' }
+				{ displayName: 'user3', actorId: 'actorId3', actorType: 'users' },
+				{ displayName: 'user4', actorId: 'actorId4', actorType: 'users' }
 			],
 			'🔒': [
-				{ displayName: 'user3', actorId: 'actorId3' },
-				{ displayName: 'user4', actorId: 'actorId4' }
+				{ displayName: 'user3', actorId: 'actorId3', actorType: 'users' },
+				{ displayName: 'user4', actorId: 'actorId4', actorType: 'users' }
 			],
 		}
 
@@ -64,13 +65,8 @@ describe('reactionsStore', () => {
 
 	it('fetches reactions from the store', () => {
 		// Arrange
-		getReactionsDetails.mockResolvedValue({
-			data: {
-				ocs: {
-					data: reactions
-				}
-			}
-		})
+		const response = generateOCSResponse({ payload: reactions })
+		getReactionsDetails.mockResolvedValue(response)
 
 		// Act
 		reactionsStore.fetchReactions()
@@ -82,15 +78,15 @@ describe('reactionsStore', () => {
 		// Arrange
 		const newReactions = {
 			'🎄': [
-				{ actorDisplayName: 'user1', actorId: 'actorId1' },
+				{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' },
 			],
 			'😅': [
-				{ actorDisplayName: 'user1', actorId: 'actorId1' },
-				{ actorDisplayName: 'user2', actorId: 'actorId2' }
+				{ actorDisplayName: 'user1', actorId: 'actorId1', actorType: 'users' },
+				{ actorDisplayName: 'user2', actorId: 'actorId2', actorType: 'users' }
 			],
 			'💜': [
-				{ actorDisplayName: 'user3', actorId: 'actorId3' },
-				{ actorDisplayName: 'user4', actorId: 'actorId4' }
+				{ actorDisplayName: 'user3', actorId: 'actorId3', actorType: 'users' },
+				{ actorDisplayName: 'user4', actorId: 'actorId4', actorType: 'users' }
 			]
 		}
 		// Act
@@ -143,7 +139,7 @@ describe('reactionsStore', () => {
 			systemMessage: 'reaction',
 			actorDisplayName: 'Test Actor',
 			actorId: 'actorId1',
-			actorType: 'user1',
+			actorType: 'users',
 			timestamp: Date.now(),
 			token,
 			parent: {
@@ -173,23 +169,18 @@ describe('reactionsStore', () => {
 			},
 			message: 'reaction removed'
 		}
-
-		getReactionsDetails.mockResolvedValue({
-			data: {
-				ocs: {
-					data: {
-						'🎄': [
-							{ displayName: 'user1', actorId: 'actorId1' },
-							{ displayName: 'user2', actorId: 'actorId2' }
-						],
-						'🔥': [
-							{ displayName: 'user3', actorId: 'actorId3' },
-							{ displayName: 'user4', actorId: 'actorId4' }
-						]
-					}
-				}
-			}
-		})
+		const actualReactions = {
+			'🎄': [
+				{ displayName: 'user1', actorId: 'actorId1' },
+				{ displayName: 'user2', actorId: 'actorId2' }
+			],
+			'🔥': [
+				{ displayName: 'user3', actorId: 'actorId3' },
+				{ displayName: 'user4', actorId: 'actorId4' }
+			]
+		}
+		const response = generateOCSResponse({ payload: actualReactions })
+		getReactionsDetails.mockResolvedValue(response)
 		jest.spyOn(reactionsStore, 'removeReaction')
 		jest.spyOn(reactionsStore, 'fetchReactions')
 

@@ -128,7 +128,7 @@ describe('Reactions.vue', () => {
 
 			// Assert
 			const reactionButtons = wrapper.findAllComponents(NcPopover)
-			expect(reactionButtons).toHaveLength(3) // 3 for reactions
+			expect(reactionButtons).toHaveLength(3)
 			expect(reactionButtons.at(0).text()).toBe('🎄 2')
 			expect(reactionButtons.at(1).text()).toBe('🔥 2')
 
@@ -138,7 +138,7 @@ describe('Reactions.vue', () => {
 
 		})
 
-		test('shows reaction buttons with count but without emoji picker when no chat permission', () => {
+		test('shows reaction buttons with count but without emoji picker when no react permission', () => {
 			// Arrange
 			reactionsProps.canReact = false
 			const wrapper = shallowMount(Reactions, {
@@ -157,7 +157,7 @@ describe('Reactions.vue', () => {
 			// Assert
 			expect(showError).toHaveBeenCalled()
 			expect(emojiPicker).toHaveLength(0)
-			expect(reactionButtons).toHaveLength(3) // 3 for reactions
+			expect(reactionButtons).toHaveLength(3)
 			expect(reactionButtons.at(0).text()).toBe('🎄 2')
 			expect(reactionButtons.at(1).text()).toBe('🔥 2')
 			expect(reactionButtons.at(2).text()).toBe('🔒 2')
@@ -242,13 +242,16 @@ describe('Reactions.vue', () => {
 					NcPopover,
 				},
 			})
-			reactionsStored['🎄'].push({ actorDisplayName: 'user3', actorId: 'admin', actorType: 'users' })
-			let response = generateOCSResponse({ payload: reactionsStored })
-			addReactionToMessage.mockResolvedValue(response)
+			const addedReaction = {
+				...reactionsStored,
+				'🎄': [...reactionsStored['🎄'], { actorDisplayName: 'user3', actorId: 'admin', actorType: 'users' }],
+			}
+			const responseAdded = generateOCSResponse({ payload: addedReaction })
+			addReactionToMessage.mockResolvedValue(responseAdded)
 
-			reactionsStored['🔥'].shift()
-			response = generateOCSResponse({ payload: reactionsStored })
-			removeReactionFromMessage.mockResolvedValue(response)
+			const removedReaction = [...reactionsStored['🔥'].filter(obj => obj.actorId !== 'admin')] // remove the current user
+			const responseRemoved = generateOCSResponse({ payload: removedReaction })
+			removeReactionFromMessage.mockResolvedValue(responseRemoved)
 
 			// Act
 			const reactionButtons = wrapper.findAllComponents(NcButton)
@@ -288,7 +291,7 @@ describe('Reactions.vue', () => {
 
 			// Assert
 			const reactionButtons = wrapper.findAllComponents(NcPopover)
-			expect(reactionButtons).toHaveLength(3) // 3 for reactions
+			expect(reactionButtons).toHaveLength(3)
 
 			// Act
 			reactionButtons.at(0).vm.$emit('after-show')

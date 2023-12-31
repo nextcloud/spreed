@@ -76,7 +76,7 @@ export const useReactionsStore = defineStore('reactions', {
 		 * @param {string} token The conversation token
 		 *
 		 */
-		removeReactionsByConversation(token) {
+		purgeReactionsStore(token) {
 			Vue.delete(this.reactions, token)
 		},
 
@@ -130,14 +130,10 @@ export const useReactionsStore = defineStore('reactions', {
 		addActorToReaction({ token, messageId, reaction, actor }) {
 			this.checkForExistence(token, messageId)
 
-			if (!this.reactions[token][messageId][reaction]) {
-				Vue.set(this.reactions[token][messageId], reaction, [])
-			}
-			const actors = this.reactions[token][messageId][reaction]
+			const actors = this.reactions[token][messageId][reaction] ?? []
 			// Find if actor is already in the list
 			// This is needed when loading as revoking messages fully updates the list
-			const actorExists = actors.find(a => a.actorId === actor.actorId)
-			if (actorExists) {
+			if (actors.some(a => a.actorId === actor.actorId && a.actorType === actor.actorType)) {
 				return
 			}
 			actors.push(actor)
@@ -167,12 +163,12 @@ export const useReactionsStore = defineStore('reactions', {
 		updateReactions({ token, messageId, reactionsDetails }) {
 			this.checkForExistence(token, messageId)
 
-			const storedReactions = this.reactions[token][messageId]
-
 			if (Object.keys(reactionsDetails).length === 0) {
 				this.resetReactions(token, messageId)
 				return
 			}
+
+			const storedReactions = this.reactions[token][messageId]
 
 			if (Object.keys(storedReactions).length === 0) {
 				Vue.set(this.reactions[token], messageId, reactionsDetails)

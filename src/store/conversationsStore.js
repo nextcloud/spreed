@@ -347,7 +347,7 @@ const actions = {
 		const chatExtrasStore = useChatExtrasStore()
 		chatExtrasStore.purgeChatExtras(token)
 		const reactionsStore = useReactionsStore()
-		reactionsStore.removeReactionsByConversation(token)
+		reactionsStore.purgeReactionsStore(token)
 		context.dispatch('deleteMessages', token)
 		context.commit('deleteConversation', token)
 		context.dispatch('purgeParticipantsStore', token)
@@ -463,7 +463,7 @@ const actions = {
 			const chatExtrasStore = useChatExtrasStore()
 			chatExtrasStore.removeParentIdToReply(token)
 			const reactionsStore = useReactionsStore()
-			reactionsStore.removeReactionsByConversation(token)
+			reactionsStore.purgeReactionsStore(token)
 			context.dispatch('deleteMessages', token)
 			return response
 		} catch (error) {
