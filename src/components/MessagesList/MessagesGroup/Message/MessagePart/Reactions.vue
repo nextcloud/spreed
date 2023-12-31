@@ -23,7 +23,7 @@
 <template>
 	<!-- reactions buttons and popover with details -->
 	<div class="reactions-wrapper">
-		<NcPopover v-for="reaction in Object.keys(detailedReactions ?? plainReactions)"
+		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
 			:focus-trap="false"
@@ -134,6 +134,14 @@ export default {
 
 		reactionsSelf() {
 			return this.$store.getters.message(this.token, this.id).reactionsSelf
+		},
+
+		reactionsSorted() {
+			return this.detailedReactions
+				? Object.keys(this.detailedReactions)
+					.sort((a, b) => this.detailedReactions[b].length - this.detailedReactions[a].length)
+				: Object.keys(this.plainReactions)
+					.sort((a, b) => this.plainReactions[b] - this.plainReactions[a])
 		},
 
 		/**
