@@ -271,6 +271,7 @@ OC.L10N.register(
     "An error occurred while performing the search" : "Prodúxose un error mentanto se facía la busca",
     "Search …" : "Buscar…",
     "Devices" : "Preseos",
+    "Blur" : "Emborrinar",
     "Upload" : "Xunir",
     "Files" : "Ficheros",
     "The message could not be translated" : "Nun se pudo traducir el mensaxe",
@@ -289,6 +290,8 @@ OC.L10N.register(
     "Search" : "Buscar",
     "Open sidebar" : "Abrir la barra llateral",
     "Audio" : "Audiu",
-    "An error occurred while requesting assistance" : "Prodúxose un error mentanto se solicitaba l'asistencia"
+    "An error occurred while requesting assistance" : "Prodúxose un error mentanto se solicitaba l'asistencia",
+    "Do not disturb" : "Nun molestar",
+    "Away" : "Ausente"
 },
 "nplurals=2; plural=(n != 1);");
