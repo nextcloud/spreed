@@ -71,7 +71,7 @@
 				<NcButton type="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton type="primary" @click="handleUpload(null)">
+				<NcButton type="primary" @click="handleUpload({ caption: null, options: null})">
 					{{ t('spreed', 'Send') }}
 				</NcButton>
 			</div>
