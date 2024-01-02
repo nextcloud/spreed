@@ -86,7 +86,6 @@ import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'
-import isInLobby from '../../mixins/isInLobby.js'
 import { EventBus } from '../../services/EventBus.js'
 
 export default {
@@ -96,8 +95,6 @@ export default {
 		Message,
 		NcEmptyContent,
 	},
-
-	mixins: [isInLobby],
 
 	provide() {
 		return {
@@ -130,7 +127,9 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		return {
+			isInCall,
+		}
 	},
 
 	data() {
@@ -230,6 +229,10 @@ export default {
 			}
 
 			return !!this.$store.getters.findParticipant(this.token, this.$store.getters.getParticipantIdentifier())
+		},
+
+		isInLobby() {
+			return this.$store.getters.isInLobby
 		},
 
 		conversation() {
@@ -818,7 +821,7 @@ export default {
 		 * the bottom of the viewport.
 		 *
 		 * @param {object} messageEl message element after which to start searching
-		 * @return {object} DOM element for the last visible message
+		 * @return {object|undefined} DOM element for the last visible message
 		 */
 		findFirstVisibleMessage(messageEl) {
 			if (!this.$refs.scroller) {

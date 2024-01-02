@@ -23,12 +23,9 @@ import debounce from 'debounce'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import isInLobby from './isInLobby.js'
 import { EventBus } from '../services/EventBus.js'
 
 const getParticipants = {
-
-	mixins: [isInLobby],
 
 	data() {
 		return {
@@ -109,7 +106,9 @@ const getParticipants = {
 		},
 
 		async cancelableGetParticipants() {
-			if (this.fetchingParticipants || this.token === '' || this.isInLobby || !this.isModeratorOrUser) {
+			const isInLobby = this.$store.getters.isInLobby
+			const isModeratorOrUser = this.$store.getters.isModeratorOrUser
+			if (this.fetchingParticipants || this.token === '' || isInLobby || !isModeratorOrUser) {
 				return
 			}
 

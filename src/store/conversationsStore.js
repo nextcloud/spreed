@@ -137,6 +137,26 @@ const getters = {
 	 */
 	conversation: state => token => state.conversations[token],
 	dummyConversation: state => Object.assign({}, DUMMY_CONVERSATION),
+	isModerator: (state, getters, rootState, rootGetters) => {
+		const conversation = getters.conversation(rootGetters.getToken())
+		return conversation?.participantType === PARTICIPANT.TYPE.OWNER
+				|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR
+				|| conversation?.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+	},
+	isModeratorOrUser: (state, getters, rootState, rootGetters) => {
+		const conversation = getters.conversation(rootGetters.getToken())
+		return !conversation?.isDummyConversation
+			&& (getters.isModerator
+				|| conversation?.participantType === PARTICIPANT.TYPE.USER
+				|| conversation?.participantType === PARTICIPANT.TYPE.USER_SELF_JOINED)
+	},
+	isInLobby: (state, getters, rootState, rootGetters) => {
+		const conversation = getters.conversation(rootGetters.getToken())
+		return conversation
+				&& conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+				&& !getters.isModerator
+				&& (conversation.permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) === 0
+	},
 }
 
 const mutations = {
