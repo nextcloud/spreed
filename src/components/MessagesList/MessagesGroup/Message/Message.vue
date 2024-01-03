@@ -32,7 +32,7 @@ the main body of the message as well as a quote.
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message--highlighted': isHighlighted}"
+		:class="{'message--highlighted': isHighlighted, 'message--hovered': showMessageButtonsBar}"
 		tabindex="0"
 		@animationend="isHighlighted = false"
 		@mouseover="handleMouseover"
@@ -150,50 +150,11 @@ the main body of the message as well as a quote.
 			</div>
 
 			<!-- reactions buttons and popover with details -->
-			<div v-if="hasReactions"
-				class="message-body__reactions"
-				@mouseover="handleReactionsMouseOver">
-				<NcPopover v-for="reaction in Object.keys(reactions)"
-					:key="reaction"
-					:delay="200"
-					:focus-trap="false"
-					:triggers="['hover']">
-					<template #trigger>
-						<NcButton v-if="reactions[reaction] !== 0"
-							:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
-							class="reaction-button"
-							@click="handleReactionClick(reaction)">
-							{{ reaction }} {{ reactions[reaction] }}
-						</NcButton>
-					</template>
-
-					<div v-if="detailedReactions" class="reaction-details">
-						<span>{{ getReactionSummary(reaction) }}</span>
-					</div>
-				</NcPopover>
-
-				<!-- More reactions picker -->
-				<NcEmojiPicker v-if="canReact && showMessageButtonsBar"
-					:per-line="5"
-					:container="`#message_${id}`"
-					@select="handleReactionClick"
-					@after-show="onEmojiPickerOpen"
-					@after-hide="onEmojiPickerClose">
-					<NcButton class="reaction-button"
-						:aria-label="t('spreed', 'Add more reactions')">
-						<template #icon>
-							<EmoticonOutline :size="15" />
-						</template>
-					</NcButton>
-				</NcEmojiPicker>
-				<NcButton v-else-if="canReact"
-					class="reaction-button"
-					:aria-label="t('spreed', 'Add more reactions')">
-					<template #icon>
-						<EmoticonOutline :size="15" />
-					</template>
-				</NcButton>
-			</div>
+			<Reactions v-if="Object.keys(reactions).length"
+				:id="id"
+				:token="token"
+				:can-react="canReact"
+				@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
 		</div>
 
 		<!-- Message actions -->
@@ -252,7 +213,6 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
@@ -262,8 +222,6 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
@@ -275,14 +233,14 @@ import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import Poll from './MessagePart/Poll.vue'
+import Reactions from './MessagePart/Reactions.vue'
 import Quote from '../../../Quote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../composables/useIsInCall.js'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
-import { useGuestNameStore } from '../../../../stores/guestName.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.js'
 
 const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-translation-providers']
@@ -300,17 +258,15 @@ export default {
 		CallButton,
 		MessageButtonsBar,
 		NcButton,
-		NcEmojiPicker,
-		NcPopover,
 		NcRichText,
 		Poll,
 		Quote,
+		Reactions,
 		// Icons
 		AlertCircle,
 		Check,
 		CheckAll,
 		ContentCopy,
-		EmoticonOutline,
 		Reload,
 		UnfoldLess,
 		UnfoldMore,
@@ -463,13 +419,11 @@ export default {
 	setup() {
 		const isInCall = useIsInCall()
 		const chatExtrasStore = useChatExtrasStore()
-		const guestNameStore = useGuestNameStore()
 
 		return {
 			isInCall,
 			isTranslationAvailable,
 			chatExtrasStore,
-			guestNameStore
 		}
 	},
 
@@ -490,7 +444,6 @@ export default {
 			isFollowUpEmojiPickerOpen: false,
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
-			detailedReactionsLoading: false,
 			isTranslateDialogOpen: false,
 			codeBlocks: null,
 			currentCodeBlock: null,
@@ -713,23 +666,11 @@ export default {
 			}
 		},
 
-		hasReactions() {
-			return Object.keys(this.reactions).length !== 0
-		},
-
 		canReact() {
 			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 				&& this.messageObject.messageType !== 'command'
 				&& this.messageObject.messageType !== 'comment_deleted'
-		},
-
-		detailedReactions() {
-			return this.$store.getters.reactions(this.token, this.id)
-		},
-
-		detailedReactionsLoaded() {
-			return this.$store.getters.reactionsLoaded(this.token, this.id)
 		},
 
 		containsCodeBlocks() {
@@ -785,10 +726,6 @@ export default {
 			}
 		},
 
-		userHasReacted(reaction) {
-			return this.reactionsSelf?.includes(reaction)
-		},
-
 		lastReadMessageVisibilityChanged(isVisible) {
 			if (isVisible) {
 				this.seen = true
@@ -817,70 +754,9 @@ export default {
 			}
 		},
 
-		handleReactionsMouseOver() {
-			if (this.hasReactions && !this.detailedReactionsLoaded) {
-				this.getReactions()
-			}
-		},
-
 		handleMouseleave() {
 			if (this.isHovered) {
 				this.isHovered = false
-			}
-		},
-
-		async getReactions() {
-			if (this.detailedReactionsLoading) {
-				// A parallel request is already doing this
-				return
-			}
-
-			try {
-				/**
-				 * Get reaction details when the message is hovered for the first
-				 * time. After that we rely on system messages to update the
-				 * reactions.
-				 */
-				this.detailedReactionsLoading = true
-				await this.$store.dispatch('getReactions', {
-					token: this.token,
-					messageId: this.id,
-				})
-				this.detailedReactionsLoading = false
-			} catch {
-				this.detailedReactionsLoading = false
-			}
-		},
-
-		onEmojiPickerOpen() {
-			this.isFollowUpEmojiPickerOpen = true
-		},
-
-		onEmojiPickerClose() {
-			this.isFollowUpEmojiPickerOpen = false
-		},
-
-		async handleReactionClick(clickedEmoji) {
-			if (!this.canReact) {
-				showError(t('spreed', 'No permission to post reactions in this conversation'))
-				return
-			}
-
-			// Check if current user has already added this reaction to the message
-			if (!this.userHasReacted(clickedEmoji)) {
-				this.$store.dispatch('addReactionToMessage', {
-					token: this.token,
-					messageId: this.id,
-					selectedEmoji: clickedEmoji,
-					actorId: this.actorId,
-				})
-			} else {
-				this.$store.dispatch('removeReactionFromMessage', {
-					token: this.token,
-					messageId: this.id,
-					selectedEmoji: clickedEmoji,
-					actorId: this.actorId,
-				})
 			}
 		},
 
@@ -926,38 +802,11 @@ export default {
 			this.isDeleting = false
 		},
 
-		getReactionSummary(reaction) {
-			const list = this.detailedReactions[reaction]
-			const summary = []
-
-			for (const item in list) {
-				if (list[item].actorType === this.$store.getters.getActorType()
-					&& list[item].actorId === this.$store.getters.getActorId()) {
-					summary.unshift(t('spreed', 'You'))
-				} else {
-					summary.push(this.getDisplayNameForReaction(list[item]))
-				}
-			}
-
-			return summary.join(', ')
-		},
-
-		getDisplayNameForReaction(reaction) {
-			const displayName = reaction.actorDisplayName.trim()
-
-			if (reaction.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return this.guestNameStore.getGuestNameWithGuestSuffix(this.token, reaction.actorId)
-			}
-
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
-		},
-
 		toggleCombinedSystemMessage() {
 			this.$emit('toggle-combined-system-message')
+		},
+		toggleFollowUpEmojiPicker() {
+			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen
 		},
 	},
 }
@@ -968,7 +817,8 @@ export default {
 	position: relative;
 
 	&:hover .normal-message-body,
-	&:hover .combined-system {
+	&:hover .combined-system,
+	&--hovered .normal-message-body {
 		border-radius: 8px;
 		background-color: var(--color-background-hover);
 	}
@@ -1046,12 +896,6 @@ export default {
 		height: 100%;
 		padding: 8px 8px 0 0;
 	}
-
-	&__reactions {
-		display: flex;
-		flex-wrap: wrap;
-		margin: 4px 175px 4px -2px;
-	}
 }
 
 .date {
@@ -1107,26 +951,6 @@ export default {
 	&.retry-option {
 		cursor: pointer;
 	}
-}
-
-.reaction-button {
-	// Clear server rules
-	min-height: 0 !important;
-	:deep(.button-vue__text) {
-		font-weight: normal !important;
-	}
-
-	margin: 2px;
-	height: 26px;
-	padding: 0 6px !important;
-
-	&__emoji {
-		margin: 0 4px 0 0;
-	}
-}
-
-.reaction-details {
-	padding: 8px;
 }
 
 .message-buttons-bar {

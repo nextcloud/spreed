@@ -10,7 +10,6 @@ import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
 import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
@@ -37,10 +36,6 @@ const RichTextStub = {
 		},
 	},
 	template: '<div/>',
-}
-
-const NcPopoverStub = {
-	template: '<slot name="trigger" /><slot/>',
 }
 
 describe('Message.vue', () => {
@@ -754,165 +749,6 @@ describe('Message.vue', () => {
 
 			expect(wrapper.findComponent(Check).exists()).toBe(false)
 			expect(wrapper.findComponent(CheckAll).exists()).toBe(false)
-		})
-	})
-
-	describe('reactions', () => {
-		beforeEach(() => {
-			messageProps.reactions = { '❤️': 1, '👍': 7 }
-			messageProps.reactionsSelf = ['👍']
-			store = new Store(testStoreConfig)
-		})
-
-		test('shows reaction buttons with count and emoji picker', () => {
-			// Arrange
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-				stubs: {
-					NcPopover: NcPopoverStub,
-				},
-			})
-
-			// Assert
-			const reactionButtons = wrapper.findAllComponents({ name: 'NcButton' })
-			expect(reactionButtons).toHaveLength(3) // 2 for reactions and 1 for emoji picker
-			expect(reactionButtons.at(0).text()).toBe('❤️ 1')
-			expect(reactionButtons.at(1).text()).toBe('👍 7')
-		})
-
-		test('shows reaction buttons with count but without emoji picker when no chat permission', () => {
-			// Arrange
-			const conversationProps = {
-				token: TOKEN,
-				lastCommonReadMessage: 0,
-				type: CONVERSATION.TYPE.GROUP,
-				readOnly: CONVERSATION.STATE.READ_WRITE,
-				permissions: PARTICIPANT.PERMISSIONS.MAX_DEFAULT - PARTICIPANT.PERMISSIONS.CHAT,
-			}
-			testStoreConfig.modules.conversationsStore.getters.conversation
-				= jest.fn().mockReturnValue((token) => conversationProps)
-			store = new Store(testStoreConfig)
-
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-				stubs: {
-					NcPopover: NcPopoverStub,
-				},
-			})
-
-			// Assert
-			const reactionButtons = wrapper.findAllComponents({ name: 'NcButton' })
-			expect(reactionButtons).toHaveLength(2) // 2 for reactions
-			expect(reactionButtons.at(0).text()).toBe('❤️ 1')
-			expect(reactionButtons.at(1).text()).toBe('👍 7')
-		})
-
-		test('doesn\'t mount emoji picker when there are no reactions', () => {
-			// Arrange
-			messageProps.reactions = { }
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-				stubs: {
-					NcEmojiPicker,
-				},
-			})
-
-			// Assert
-			const reactionButtons = wrapper.findAllComponents({ name: 'NcButton' })
-			expect(reactionButtons).toHaveLength(0)
-			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
-			expect(emojiPicker.exists()).toBeFalsy()
-			expect(emojiPicker.vm).toBeUndefined()
-		})
-
-		test('dispatches store actions upon picking an emoji from the emojipicker', () => {
-			// Arrange
-			const addReactionToMessageAction = jest.fn()
-			const removeReactionFromMessageAction = jest.fn()
-			testStoreConfig.modules.messagesStore.actions.addReactionToMessage = addReactionToMessageAction
-			testStoreConfig.modules.messagesStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
-			store = new Store(testStoreConfig)
-
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-				stubs: {
-					NcEmojiPicker,
-				},
-				computed: {
-					showMessageButtonsBar: () => {
-						return true
-					},
-				},
-			})
-
-			// Act
-			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
-			emojiPicker.vm.$emit('select', '❤️')
-			emojiPicker.vm.$emit('select', '👍')
-
-			// Assert
-			expect(addReactionToMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: messageProps.token,
-				messageId: messageProps.id,
-				selectedEmoji: '❤️',
-				actorId: messageProps.actorId,
-			})
-			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: messageProps.token,
-				messageId: messageProps.id,
-				selectedEmoji: '👍',
-				actorId: messageProps.actorId,
-			})
-		})
-
-		test('dispatches store actions upon clicking a reaction buttons', () => {
-			// Arrange
-			const addReactionToMessageAction = jest.fn()
-			const removeReactionFromMessageAction = jest.fn()
-			testStoreConfig.modules.messagesStore.actions.addReactionToMessage = addReactionToMessageAction
-			testStoreConfig.modules.messagesStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
-			store = new Store(testStoreConfig)
-
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-				stubs: {
-					NcPopover: NcPopoverStub,
-				},
-			})
-
-			// Act
-			const reactionButtons = wrapper.findAllComponents({ name: 'NcButton' })
-			reactionButtons.at(0).vm.$emit('click') // ❤️
-			reactionButtons.at(1).vm.$emit('click') // 👍
-
-			// Assert
-			expect(addReactionToMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: messageProps.token,
-				messageId: messageProps.id,
-				selectedEmoji: '❤️',
-				actorId: messageProps.actorId,
-			})
-			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: messageProps.token,
-				messageId: messageProps.id,
-				selectedEmoji: '👍',
-				actorId: messageProps.actorId,
-			})
 		})
 	})
 })

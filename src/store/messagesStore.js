@@ -40,11 +40,10 @@ import {
 	getMessageContext,
 	postNewMessage,
 	postRichObjectToConversation,
-	addReactionToMessage,
-	removeReactionFromMessage,
 } from '../services/messagesService.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
@@ -521,10 +520,13 @@ const actions = {
 			const parentInStore = context.getters.message(message.token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', message.parent)
-				context.dispatch('resetReactions', {
-					token: message.token,
-					messageId: message.parent.id,
-				})
+			}
+
+			const reactionsStore = useReactionsStore()
+			if (message.systemMessage === 'message_deleted') {
+				reactionsStore.resetReactions(message.token, message.parent.id)
+			} else {
+				reactionsStore.processReaction(message)
 			}
 
 			// Check existing messages for having a deleted message as parent, and update them
@@ -1334,74 +1336,6 @@ const actions = {
 		const response = await postNewMessage(message, { silent: false })
 		return response
 
-	},
-
-	/**
-	 * Adds a single reaction to a message for the current user.
-	 *
-	 * @param {*} context the context object
-	 * @param {*} param1 conversation token, message id and selected emoji (string)
-	 */
-	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
-		try {
-			context.commit('addReactionToMessage', {
-				token,
-				messageId,
-				reaction: selectedEmoji,
-			})
-			// The response return an array with the reaction details for this message
-			const response = await addReactionToMessage(token, messageId, selectedEmoji)
-			// We replace the reaction details in the reactions store and wipe the old
-			// values
-			context.dispatch('updateReactions', {
-				token,
-				messageId,
-				reactionsDetails: response.data.ocs.data,
-			})
-		} catch (error) {
-			// Restore the previous state if the request fails
-			context.commit('removeReactionFromMessage', {
-				token,
-				messageId,
-				reaction: selectedEmoji,
-			})
-			console.error(error)
-			showError(t('spreed', 'Failed to add reaction'))
-		}
-	},
-
-	/**
-	 * Removes a single reaction from a message for the current user.
-	 *
-	 * @param {*} context the context object
-	 * @param {*} param1 conversation token, message id and selected emoji (string)
-	 */
-	async removeReactionFromMessage(context, { token, messageId, selectedEmoji }) {
-		try {
-			context.commit('removeReactionFromMessage', {
-				token,
-				messageId,
-				reaction: selectedEmoji,
-			})
-			// The response return an array with the reaction details for this message
-			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
-			// We replace the reaction details in the reactions store and wipe the old
-			// values
-			context.dispatch('updateReactions', {
-				token,
-				messageId,
-				reactionsDetails: response.data.ocs.data,
-			})
-		} catch (error) {
-			// Restore the previous state if the request fails
-			context.commit('addReactionToMessage', {
-				token,
-				messageId,
-				reaction: selectedEmoji,
-			})
-			console.error(error)
-			showError(t('spreed', 'Failed to remove reaction'))
-		}
 	},
 
 	async removeExpiredMessages(context, { token }) {
