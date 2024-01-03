@@ -50,7 +50,7 @@ export const devices = {
 	props: {
 		initializeOnMounted: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 	},
 
@@ -371,58 +371,6 @@ export const devices = {
 
 		audioPreviewAvailable() {
 			return !!this.audioInputId && !!this.audioStream
-		},
-
-		audioStreamErrorMessage() {
-			if (!this.audioStreamError) {
-				return null
-			}
-
-			if (this.audioStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
-				return t('spreed', 'Calls are not supported in your browser')
-			}
-
-			// In newer browser versions MediaDevicesManager is not supported in
-			// insecure contexts; in older browser versions it is, but getting
-			// the user media fails with "NotAllowedError".
-			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.includes('Only secure origins')
-			if ((this.audioStreamError.name === 'NotSupportedError' && isInsecureContext)
-				|| (this.audioStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
-				return t('spreed', 'Access to microphone is only possible with HTTPS')
-			}
-
-			if (this.audioStreamError.name === 'NotAllowedError') {
-				return t('spreed', 'Access to microphone was denied')
-			}
-
-			return t('spreed', 'Error while accessing microphone')
-		},
-
-		videoStreamErrorMessage() {
-			if (!this.videoStreamError) {
-				return null
-			}
-
-			if (this.videoStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
-				return t('spreed', 'Calls are not supported in your browser')
-			}
-
-			// In newer browser versions MediaDevicesManager is not supported in
-			// insecure contexts; in older browser versions it is, but getting
-			// the user media fails with "NotAllowedError".
-			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.includes('Only secure origins')
-			if ((this.videoStreamError.name === 'NotSupportedError' && isInsecureContext)
-				|| (this.videoStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
-				return t('spreed', 'Access to camera is only possible with HTTPS')
-			}
-
-			if (this.videoStreamError.name === 'NotAllowedError') {
-				return t('spreed', 'Access to camera was denied')
-			}
-
-			return t('spreed', 'Error while accessing camera')
 		},
 
 		videoPreviewAvailable() {

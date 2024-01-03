@@ -32,7 +32,7 @@
 					:is-sidebar="true" />
 				<CallView :token="token" :is-sidebar="true" />
 				<ChatView />
-				<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
+				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>

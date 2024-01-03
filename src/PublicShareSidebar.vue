@@ -46,7 +46,7 @@
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
-				<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
+				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>

@@ -30,7 +30,7 @@
 		</NcAppContent>
 		<RightSidebar :is-in-call="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
-		<MediaSettings :initialize-on-mounted="false" :recording-consent-given.sync="recordingConsentGiven" />
+		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
 	</NcContent>
