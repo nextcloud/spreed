@@ -28,7 +28,7 @@
 		<NcAppSettingsSection id="devices"
 			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
-			<MediaDevicesPreview initialize-on-mounted />
+			<MediaDevicesPreview />
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="attachments"

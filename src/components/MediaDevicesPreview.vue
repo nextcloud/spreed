@@ -45,7 +45,7 @@
 				:audio-preview-available="audioPreviewAvailable"
 				:audio-enabled="true"
 				:current-volume="currentVolume"
-				:volume-threshold="volumeThreshold"
+				:volume-threshold="currentThreshold"
 				:size="64" />
 		</div>
 		<MediaDevicesSelector kind="videoinput"
@@ -80,6 +80,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
@@ -87,7 +89,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import VolumeIndicator from './VolumeIndicator/VolumeIndicator.vue'
 
-import { devices } from '../mixins/devices.js'
+import { useDevices } from '../composables/useDevices.js'
 
 export default {
 
@@ -101,7 +103,37 @@ export default {
 		VolumeIndicator,
 	},
 
-	mixins: [devices],
+	setup() {
+		const video = ref(null)
+		const {
+			devices,
+			currentVolume,
+			currentThreshold,
+			audioPreviewAvailable,
+			videoPreviewAvailable,
+			audioInputId,
+			videoInputId,
+			audioStream,
+			audioStreamError,
+			videoStream,
+			videoStreamError,
+		} = useDevices(video, true)
+
+		return {
+			video,
+			devices,
+			currentVolume,
+			currentThreshold,
+			audioPreviewAvailable,
+			videoPreviewAvailable,
+			audioInputId,
+			videoInputId,
+			audioStream,
+			audioStreamError,
+			videoStream,
+			videoStreamError,
+		}
+	},
 
 	computed: {
 		audioStreamErrorMessage() {
