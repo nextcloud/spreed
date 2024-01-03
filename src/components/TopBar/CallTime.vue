@@ -81,7 +81,6 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { CALL } from '../../constants.js'
-import isInLobby from '../../mixins/isInLobby.js'
 import { formattedTime } from '../../utils/formattedTime.js'
 
 export default {
@@ -94,8 +93,6 @@ export default {
 		RecordCircle,
 		StopIcon,
 	},
-
-	mixins: [isInLobby],
 
 	props: {
 		/**
@@ -150,7 +147,7 @@ export default {
 		},
 
 		isShowRecordingControls() {
-			return this.isModerator && (this.isStartingRecording || this.isRecording)
+			return this.$store.getters.isModerator && (this.isStartingRecording || this.isRecording)
 		},
 
 		isButtonDisabled() {

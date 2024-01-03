@@ -111,7 +111,6 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
-import isInLobby from '../../mixins/isInLobby.js'
 import { callSIPDialOut } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -137,10 +136,6 @@ export default {
 		VideoIcon,
 		VideoOff,
 	},
-
-	mixins: [
-		isInLobby,
-	],
 
 	props: {
 		disabled: {
@@ -181,7 +176,11 @@ export default {
 		const isInCall = useIsInCall()
 		const talkHashStore = useTalkHashStore()
 		const settingsStore = useSettingsStore()
-		return { isInCall, settingsStore, talkHashStore }
+		return {
+			isInCall,
+			settingsStore,
+			talkHashStore,
+		}
 	},
 
 	data() {
@@ -319,6 +318,10 @@ export default {
 				// is the only way to disable it conditionally.
 				return false
 			}
+		},
+
+		isInLobby() {
+			return this.$store.getters.isInLobby
 		},
 	},
 

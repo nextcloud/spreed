@@ -229,7 +229,6 @@ import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { AVATAR, CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
-import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -266,7 +265,7 @@ export default {
 		VideoBackgroundEditor,
 	},
 
-	mixins: [devices, isInLobby],
+	mixins: [devices],
 
 	props: {
 		recordingConsentGiven: {
@@ -281,7 +280,12 @@ export default {
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
 		const settingsStore = useSettingsStore()
-		return { AVATAR, isInCall, guestNameStore, settingsStore }
+		return {
+			AVATAR,
+			isInCall,
+			guestNameStore,
+			settingsStore,
+		}
 	},
 
 	data() {
@@ -367,6 +371,10 @@ export default {
 		canFullModerate() {
 			return this.conversation.participantType === PARTICIPANT.TYPE.OWNER
 				|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		isInLobby() {
+			return this.$store.getters.isInLobby
 		},
 
 		canModerateRecording() {

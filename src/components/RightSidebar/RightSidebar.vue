@@ -123,7 +123,6 @@ import ChatView from '../ChatView.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
-import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 
 export default {
@@ -147,10 +146,6 @@ export default {
 		InformationOutline,
 		Message,
 	},
-
-	mixins: [
-		isInLobby,
-	],
 
 	props: {
 		isInCall: {
@@ -219,6 +214,14 @@ export default {
 
 		canModerate() {
 			return !this.isOneToOne && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+		},
+
+		isModeratorOrUser() {
+			return this.$store.getters.isModeratorOrUser
+		},
+
+		isInLobby() {
+			return this.$store.getters.isInLobby
 		},
 
 		/**

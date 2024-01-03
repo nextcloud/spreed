@@ -21,7 +21,6 @@ import TopBar from '../components/TopBar/TopBar.vue'
 import TransitionWrapper from '../components/TransitionWrapper.vue'
 
 import { useIsInCall } from '../composables/useIsInCall.js'
-import isInLobby from '../mixins/isInLobby.js'
 
 export default {
 	name: 'MainView',
@@ -32,10 +31,6 @@ export default {
 		CallView,
 		TransitionWrapper,
 	},
-
-	mixins: [
-		isInLobby,
-	],
 
 	props: {
 		token: {
@@ -56,6 +51,10 @@ export default {
 
 		showChatInSidebar() {
 			return this.isInCall
+		},
+
+		isInLobby() {
+			return this.$store.getters.isInLobby
 		},
 	},
 
