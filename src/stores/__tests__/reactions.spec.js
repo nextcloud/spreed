@@ -6,7 +6,7 @@ import { showError } from '@nextcloud/dialogs'
 
 import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/messagesService.js'
 import vuexStore from '../../store/index.js'
-import { generateOCSResponse } from '../../test-helpers.js'
+import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useReactionsStore } from '../reactions.js'
 
 jest.mock('../../services/messagesService', () => ({
@@ -191,6 +191,12 @@ describe('reactionsStore', () => {
 		expect(getReactionsDetails).toHaveBeenCalled()
 		expect(Object.keys(reactionsStore.reactions[token][messageId])).toEqual(['🎄', '🔥'])
 	})
+	it('purges the reactions store', () => {
+		// Act
+		reactionsStore.purgeReactionsStore(token)
+		// Assert
+		expect(reactionsStore.getReactions(token, messageId)).toEqual(undefined)
+	})
 	it('does not fetch reactions when receiving a reaction_deleted system message', async () => {
 		// Arrange
 		const message = {
@@ -216,7 +222,8 @@ describe('reactionsStore', () => {
 	describe('error handling', () => {
 		it('does not add a reaction when the API call fails', async () => {
 			// Arrange
-			addReactionToMessage.mockRejectedValue(new Error('API call failed'))
+			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
+			addReactionToMessage.mockResolvedValue(errorResponse)
 			jest.spyOn(vuexStore, 'commit')
 
 			const message = {
@@ -236,17 +243,23 @@ describe('reactionsStore', () => {
 			await reactionsStore.addReactionToMessage({ token, messageId, selectedEmoji: '😅' })
 
 			// Assert
-			expect(vuexStore.commit).toHaveBeenCalledWith('addReactionToMessage', {
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'addReactionToMessage', {
 				token,
 				messageId,
 				reaction: '😅'
 			})
 			expect(showError).toHaveBeenCalled()
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'removeReactionFromMessage', {
+				token,
+				messageId,
+				reaction: '😅'
+			})
 			expect(Object.keys(reactionsStore.getReactions(token, messageId))).toEqual(['🎄', '🔥', '🔒']) // no reaction added
 		})
 		it('does not remove a reaction when the API call fails', async () => {
 			// Arrange
-			removeReactionFromMessage.mockRejectedValue(new Error('API call failed'))
+			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
+			removeReactionFromMessage.mockResolvedValue(errorResponse)
 			jest.spyOn(vuexStore, 'commit')
 
 			const message = {
@@ -267,17 +280,23 @@ describe('reactionsStore', () => {
 			await reactionsStore.removeReactionFromMessage({ token, messageId, selectedEmoji: '🎄' })
 
 			// Assert
-			expect(vuexStore.commit).toHaveBeenCalledWith('removeReactionFromMessage', {
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(2, 'removeReactionFromMessage', {
 				token,
 				messageId,
 				reaction: '🎄'
 			})
 			expect(showError).toHaveBeenCalled()
+			expect(vuexStore.commit).toHaveBeenNthCalledWith(3, 'addReactionToMessage', {
+				token,
+				messageId,
+				reaction: '🎄'
+			})
 			expect(reactionsStore.getReactions(token, messageId)['🎄'].length).toEqual(2) // no reaction removed
 		})
 		it('shows an error when the API call of fetching reactions fails', async () => {
 			// Arrange
-			getReactionsDetails.mockRejectedValue(new Error('API call failed'))
+			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
+			getReactionsDetails.mockResolvedValue(errorResponse)
 			console.debug = jest.fn()
 
 			// Act
