@@ -148,6 +148,9 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 */
 		resetReactions(token, messageId) {
+			if (!this.reactions[token]?.[messageId]) {
+				return
+			}
 			Vue.delete(this.reactions[token], messageId)
 		},
 
