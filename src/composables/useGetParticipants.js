@@ -21,7 +21,7 @@
  *
  */
 import debounce from 'debounce'
-import { ref, nextTick, computed, watch, onBeforeUnmount } from 'vue'
+import { ref, nextTick, computed, watch, onBeforeUnmount, onMounted } from 'vue'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
@@ -32,8 +32,9 @@ import { EventBus } from '../services/EventBus.js'
 
 /**
  * @param {import('vue').Ref} isActive whether the participants tab is active
+ * @param {boolean} isTopBar whether the component is the top bar
  */
-export function useGetParticipants(isActive = ref(true)) {
+export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 
 	// Encapsulation
 	const store = useStore()
@@ -48,7 +49,7 @@ export function useGetParticipants(isActive = ref(true)) {
 	const participantsInitialised = ref(false)
 
 	/**
-	 * Initialise the get participants functionality
+	 * Initialise the get participants listeners
 	 *
 	 */
 	function initialiseGetParticipants() {
@@ -63,7 +64,7 @@ export function useGetParticipants(isActive = ref(true)) {
 	}
 
 	/**
-	 * Stop the get participants functionality
+	 * Stop the get participants listeners
 	 *
 	 */
 	function stopGetParticipants() {
@@ -123,14 +124,11 @@ export function useGetParticipants(isActive = ref(true)) {
 	const debounceSlowUpdateParticipants = debounce(
 		cancelableGetParticipants, 15000)
 
-	// Group conversations have composable in RightSidebar, so should work only for one-to-one
-	watch(isOneToOneConversation, (newValue) => {
-		if (newValue) {
+	onMounted(() => {
+		if (isTopBar) {
 			initialiseGetParticipants()
-		} else {
-			stopGetParticipants()
 		}
-	}, { immediate: true })
+	})
 
 	watch(isActive, (newValue) => {
 		if (newValue && pendingChanges) {
@@ -138,15 +136,14 @@ export function useGetParticipants(isActive = ref(true)) {
 		}
 	})
 
-	onBeforeUnmount(
-		() => {
+	onBeforeUnmount(() => {
+		if (isTopBar) {
 			stopGetParticipants()
 		}
-	)
+	})
 
 	return {
 		participantsInitialised,
-		initialiseGetParticipants,
 		cancelableGetParticipants,
 	}
 }

@@ -131,15 +131,13 @@ export default {
 		const {
 			participantsInitialised,
 			cancelableGetParticipants,
-			initialiseGetParticipants,
-		} = useGetParticipants(isActive)
+		} = useGetParticipants(isActive, false)
 
 		return {
 			sortParticipants,
 			isInCall,
 			participantsInitialised,
 			cancelableGetParticipants,
-			initialiseGetParticipants,
 		}
 	},
 
@@ -206,9 +204,6 @@ export default {
 	beforeMount() {
 		EventBus.$on('route-change', this.abortSearch)
 		subscribe('user_status:status.updated', this.updateUserStatus)
-
-		// Initialises the get participants composable
-		this.initialiseGetParticipants()
 	},
 
 	beforeDestroy() {
