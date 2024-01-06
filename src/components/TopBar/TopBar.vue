@@ -236,6 +236,10 @@ export default {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
+		isModeratorOrUser() {
+			return this.$store.getters.isModeratorOrUser
+		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},
