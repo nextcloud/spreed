@@ -62,7 +62,7 @@
 							<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
 								:audio-enabled="audioOn"
 								:current-volume="currentVolume"
-								:volume-threshold="volumeThreshold"
+								:volume-threshold="currentThreshold"
 								overlay-muted-color="#888888" />
 						</template>
 					</NcButton>
@@ -201,6 +201,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import Bell from 'vue-material-design-icons/Bell.vue'
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
@@ -226,9 +228,9 @@ import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 
+import { useDevices } from '../../composables/useDevices.js'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { AVATAR, CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
-import { devices } from '../../mixins/devices.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useSettingsStore } from '../../stores/settings.js'
@@ -265,8 +267,6 @@ export default {
 		VideoBackgroundEditor,
 	},
 
-	mixins: [devices],
-
 	props: {
 		recordingConsentGiven: {
 			type: Boolean,
@@ -277,14 +277,41 @@ export default {
 	emits: ['update:recording-consent-given'],
 
 	setup() {
+		const video = ref(null)
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
 		const settingsStore = useSettingsStore()
+
+		const {
+			devices,
+			currentVolume,
+			currentThreshold,
+			audioPreviewAvailable,
+			videoPreviewAvailable,
+			audioInputId,
+			videoInputId,
+			initializeDevices,
+			stopDevices,
+			virtualBackground,
+		} = useDevices(video, false)
+
 		return {
 			AVATAR,
 			isInCall,
 			guestNameStore,
 			settingsStore,
+			video,
+			// useDevices
+			devices,
+			currentVolume,
+			currentThreshold,
+			audioPreviewAvailable,
+			videoPreviewAvailable,
+			audioInputId,
+			videoInputId,
+			initializeDevices,
+			stopDevices,
+			virtualBackground,
 		}
 	},
 
@@ -427,9 +454,9 @@ export default {
 					}
 				}
 
-				this.initializeDevicesMixin()
+				this.initializeDevices()
 			} else {
-				this.stopDevicesMixin()
+				this.stopDevices()
 			}
 		},
 
