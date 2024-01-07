@@ -247,9 +247,6 @@ const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-tr
 	// Fallback for the desktop client when connecting to Talk 17
 	?? getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 
-/**
- * @property {object} scrollerBoundingClientRect provided by MessageList.vue
- */
 export default {
 	name: 'Message',
 
@@ -271,8 +268,6 @@ export default {
 		UnfoldLess,
 		UnfoldMore,
 	},
-
-	inject: ['scrollerBoundingClientRect'],
 
 	inheritAttrs: false,
 
