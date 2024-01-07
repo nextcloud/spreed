@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -18,11 +18,6 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-
-<docs>
-This component displays the text inside the message component and can be used for
-the main body of the message as well as a quote.
-</docs>
 
 <template>
 	<li :id="`message_${id}`"
@@ -41,113 +36,23 @@ the main body of the message as well as a quote.
 			'system' : isSystemMessage,
 			'combined-system': isCombinedSystemMessage}"
 			class="message-body">
-			<div ref="messageMain"
-				class="message-body__main">
-				<div v-if="isSingleEmoji"
-					class="message-body__main__text">
-					<Quote v-if="parent" v-bind="parent" />
-					<div class="single-emoji">
-						{{ renderedMessage }}
-					</div>
-				</div>
-				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
-					<NcRichText :text="renderedMessage"
-						:arguments="richParameters"
-						autolink
-						dir="auto"
-						:reference-limit="0" />
-					<CallButton />
-				</div>
-				<div v-else-if="showResultsButton || isSystemMessage" class="message-body__main__text system-message">
-					<NcRichText :text="renderedMessage"
-						:arguments="richParameters"
-						autolink
-						dir="auto"
-						:reference-limit="0" />
-					<!-- Displays only the "see results" button with the results modal -->
-					<Poll v-if="showResultsButton"
-						:id="messageParameters.poll.id"
-						:poll-name="messageParameters.poll.name"
-						:token="token"
-						show-as-button />
-				</div>
-				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
-					<NcRichText :text="renderedMessage"
-						:arguments="richParameters"
-						autolink
-						dir="auto"
-						:reference-limit="0" />
-				</div>
-				<div v-else
-					class="message-body__main__text message-body__main__text--markdown"
-					@mouseover="handleMarkdownMouseOver"
-					@mouseleave="handleMarkdownMouseLeave">
-					<Quote v-if="parent" v-bind="parent" />
-					<NcRichText :text="renderedMessage"
-						:arguments="richParameters"
-						autolink
-						dir="auto"
-						:use-markdown="markdown"
-						:reference-limit="1" />
-
-					<NcButton v-if="containsCodeBlocks"
-						v-show="currentCodeBlock !== null"
-						class="message-copy-code"
-						type="tertiary"
-						:aria-label="t('spreed', 'Copy code block')"
-						:title="t('spreed', 'Copy code block')"
-						:style="{top: copyButtonOffset}"
-						@click="copyCodeBlock">
-						<template #icon>
-							<ContentCopy :size="16" />
-						</template>
-					</NcButton>
-				</div>
-				<div v-if="!isDeletedMessage" class="message-body__main__right">
-					<span :title="messageDate"
-						class="date"
-						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
-						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
-
-					<!-- Message delivery status indicators -->
-					<div v-if="sendingFailure"
-						:title="sendingErrorIconTooltip"
-						class="message-status sending-failed"
-						:class="{'retry-option': sendingErrorCanRetry}"
-						:aria-label="sendingErrorIconTooltip"
-						tabindex="0"
-						@mouseover="showReloadButton = true"
-						@focus="showReloadButton = true"
-						@mouseleave="showReloadButton = false"
-						@blur="showReloadButton = false">
-						<NcButton v-if="sendingErrorCanRetry && showReloadButton"
-							:aria-label="sendingErrorIconTooltip"
-							@click="handleRetry">
-							<template #icon>
-								<Reload :size="16" />
-							</template>
-						</NcButton>
-						<AlertCircle v-else
-							:size="16" />
-					</div>
-					<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
-						:title="loadingIconTooltip"
-						class="icon-loading-small message-status"
-						:aria-label="loadingIconTooltip" />
-					<div v-else-if="showCommonReadIcon"
-						:title="commonReadIconTooltip"
-						class="message-status"
-						:aria-label="commonReadIconTooltip">
-						<CheckAll :size="16" />
-					</div>
-					<div v-else-if="showSentIcon"
-						:title="sentIconTooltip"
-						class="message-status"
-						:aria-label="sentIconTooltip">
-						<Check :size="16" />
-					</div>
-				</div>
-			</div>
+			<MessageBody :id="id"
+				:token="token"
+				:parent="parent"
+				:markdown="markdown"
+				:message="message"
+				:message-type="messageType"
+				:system-message="systemMessage"
+				:message-parameters="messageParameters"
+				:rich-parameters="richParameters"
+				:timestamp="timestamp"
+				:is-deleting="isDeleting"
+				:is-temporary="isTemporary"
+				:sending-failure="sendingFailure"
+				:show-common-read-icon="showCommonReadIcon"
+				:common-read-icon-tooltip="commonReadIconTooltip"
+				:show-sent-icon="showSentIcon"
+				:sent-icon-tooltip="sentIconTooltip" />
 
 			<!-- reactions buttons and popover with details -->
 			<Reactions v-if="Object.keys(reactions).length"
@@ -208,22 +113,13 @@ the main body of the message as well as a quote.
 </template>
 
 <script>
-import emojiRegex from 'emoji-regex/index.js'
-
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import CheckAll from 'vue-material-design-icons/CheckAll.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import Reload from 'vue-material-design-icons/Reload.vue'
 import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
-import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
@@ -233,12 +129,10 @@ import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
+import MessageBody from './MessagePart/MessageBody.vue'
 import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
-import Quote from '../../../Quote.vue'
-import CallButton from '../../../TopBar/CallButton.vue'
 
-import { useIsInCall } from '../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
@@ -252,20 +146,12 @@ export default {
 	name: 'Message',
 
 	components: {
+		MessageBody,
 		MessageTranslateDialog,
-		CallButton,
 		MessageButtonsBar,
 		NcButton,
-		NcRichText,
-		Poll,
-		Quote,
 		Reactions,
 		// Icons
-		AlertCircle,
-		Check,
-		CheckAll,
-		ContentCopy,
-		Reload,
 		UnfoldLess,
 		UnfoldMore,
 	},
@@ -433,13 +319,9 @@ export default {
 	emits: ['toggle-combined-system-message'],
 
 	setup() {
-		const isInCall = useIsInCall()
-		const chatExtrasStore = useChatExtrasStore()
-
 		return {
-			isInCall,
 			isTranslationAvailable,
-			chatExtrasStore,
+			chatExtrasStore: useChatExtrasStore(),
 		}
 	},
 
@@ -448,7 +330,6 @@ export default {
 	data() {
 		return {
 			isHovered: false,
-			showReloadButton: false,
 			isDeleting: false,
 			isHighlighted: false,
 			// whether the message was seen, only used if this was marked as last read message
@@ -461,9 +342,6 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			isTranslateDialogOpen: false,
-			codeBlocks: null,
-			currentCodeBlock: null,
-			copyButtonOffset: 0,
 		}
 	},
 
@@ -477,15 +355,6 @@ export default {
 			return !this.isLastMessage && this.id === this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
 
-		renderedMessage() {
-			if (this.messageParameters?.file && this.message !== '{file}') {
-				// Add a new line after file to split content into different paragraphs
-				return '{file}' + '\n\n' + this.message
-			} else {
-				return this.message
-			}
-		},
-
 		messageObject() {
 			return this.$store.getters.message(this.token, this.id)
 		},
@@ -496,14 +365,6 @@ export default {
 
 		isDeletedMessage() {
 			return this.messageType === 'comment_deleted'
-		},
-
-		messageTime() {
-			return moment(this.timestamp * 1000).format('LT')
-		},
-
-		messageDate() {
-			return moment(this.timestamp * 1000).format('LL')
 		},
 
 		conversation() {
@@ -522,38 +383,6 @@ export default {
 				&& this.actorType === this.$store.getters.getActorType()
 				&& this.actorId === this.$store.getters.getActorId()
 				&& !this.isDeletedMessage
-		},
-
-		isLastCallStartedMessage() {
-			return this.systemMessage === 'call_started' && this.id === this.$store.getters.getLastCallStartedMessageId
-		},
-
-		showJoinCallButton() {
-			return this.conversation.hasCall && !this.isInCall && this.isLastCallStartedMessage
-		},
-
-		showResultsButton() {
-			return this.systemMessage === 'poll_closed'
-		},
-
-		isSingleEmoji() {
-			const regex = emojiRegex()
-			let match
-			let emojiStrings = ''
-			let emojiCount = 0
-			const trimmedMessage = this.renderedMessage.trim()
-
-			// eslint-disable-next-line no-cond-assign
-			while (match = regex.exec(trimmedMessage)) {
-				if (emojiCount > 2) {
-					return false
-				}
-
-				emojiStrings += match[0]
-				emojiCount++
-			}
-
-			return emojiStrings === trimmedMessage
 		},
 
 		richParameters() {
@@ -613,11 +442,6 @@ export default {
 			return richParameters
 		},
 
-		// Determines whether the date has to be displayed or not
-		hasDate() {
-			return (!this.isTemporary && !this.isDeleting && !this.sendingFailure)
-		},
-
 		showMessageButtonsBar() {
 			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
 				&& (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen
@@ -629,38 +453,12 @@ export default {
 				&& this.isCombinedSystemMessage && (this.isHovered || !this.isCombinedSystemMessageCollapsed)
 		},
 
-		isTemporaryUpload() {
-			return this.isTemporary && this.messageParameters.file
-		},
-
-		loadingIconTooltip() {
-			return t('spreed', 'Sending message')
-		},
-
 		sentIconTooltip() {
 			return t('spreed', 'Message sent')
 		},
 
 		commonReadIconTooltip() {
 			return t('spreed', 'Message read by everyone who shares their reading status')
-		},
-
-		sendingErrorCanRetry() {
-			return this.sendingFailure === 'timeout' || this.sendingFailure === 'other'
-				|| this.sendingFailure === 'failed-upload'
-		},
-
-		sendingErrorIconTooltip() {
-			if (this.sendingErrorCanRetry) {
-				return t('spreed', 'Failed to send the message. Click to try again')
-			}
-			if (this.sendingFailure === 'quota') {
-				return t('spreed', 'Not enough free space to upload file')
-			}
-			if (this.sendingFailure === 'failed-share') {
-				return t('spreed', 'You are not allowed to share files')
-			}
-			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
 
 		messageApiData() {
@@ -678,63 +476,19 @@ export default {
 				&& this.messageObject.messageType !== 'comment_deleted'
 		},
 
-		containsCodeBlocks() {
-			return this.message.includes('```')
-		},
-
 		isFileShareOnly() {
 			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file')) && this.message === '{file}'
 		},
 	},
 
 	watch: {
-		showJoinCallButton() {
-			EventBus.$emit('scroll-chat-to-bottom')
-		},
-
 		// Scroll list to the bottom if reaction to the message was added, as it expands the list
 		reactions() {
 			EventBus.$emit('scroll-chat-to-bottom-if-sticky')
 		},
 	},
 
-	mounted() {
-		if (!this.containsCodeBlocks) {
-			return
-		}
-
-		this.codeBlocks = Array.from(this.$refs.message?.querySelectorAll('pre'))
-	},
-
 	methods: {
-		handleMarkdownMouseOver(event) {
-			if (!this.containsCodeBlocks) {
-				return
-			}
-
-			const index = this.codeBlocks.findIndex(item => item.contains(event.target))
-			if (index !== -1) {
-				this.currentCodeBlock = index
-				const el = this.codeBlocks[index]
-				this.copyButtonOffset = `${el.offsetTop}px`
-			}
-		},
-
-		handleMarkdownMouseLeave() {
-			this.currentCodeBlock = null
-			this.copyButtonOffset = 0
-		},
-
-		async copyCodeBlock() {
-			const code = this.codeBlocks[this.currentCodeBlock].textContent
-			try {
-				await navigator.clipboard.writeText(code)
-				showSuccess(t('spreed', 'Code block copied to clipboard'))
-			} catch (error) {
-				showError(t('spreed', 'Code block could not be copied'))
-			}
-		},
-
 		lastReadMessageVisibilityChanged(isVisible) {
 			if (isVisible) {
 				this.seen = true
@@ -743,22 +497,6 @@ export default {
 
 		highlightMessage() {
 			this.isHighlighted = true
-		},
-
-		handleRetry() {
-			if (this.sendingErrorCanRetry) {
-				if (this.sendingFailure === 'failed-upload') {
-					const caption = this.renderedMessage !== this.message ? this.message : undefined
-					this.$store.dispatch('retryUploadFiles', {
-						token: this.token,
-						uploadId: this.messageObject.uploadId,
-						caption
-					})
-				} else {
-					EventBus.$emit('retry-message', this.id)
-					EventBus.$emit('focus-chat-input')
-				}
-			}
 		},
 
 		handleMouseover() {
@@ -851,64 +589,6 @@ export default {
 	font-size: var(--default-font-size);
 	line-height: var(--default-line-height);
 	position: relative;
-	&__main {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		min-width: 100%;
-		&__text {
-			flex: 0 1 600px;
-			width: 100%;
-			min-width: 0;
-			max-width: 600px;
-			color: var(--color-text-light);
-			.single-emoji {
-				font-size: 250%;
-				line-height: 100%;
-			}
-
-			&.call-started {
-				background-color: var(--color-primary-element-light);
-				padding: 10px;
-				border-radius: var(--border-radius-large);
-				text-align: center;
-			}
-
-			&.system-message {
-				color: var(--color-text-maxcontrast);
-				text-align: center;
-				padding: 0 20px;
-				width: 100%;
-			}
-
-			&.deleted-message {
-				color: var(--color-text-lighter);
-				display: flex;
-				border-radius: var(--border-radius-large);
-				align-items: center;
-				:deep(.rich-text--wrapper) {
-					flex-grow: 1;
-					text-align: start;
-				}
-			}
-
-			&--quote {
-				border-left: 4px solid var(--color-primary-element);
-				padding: 4px 0 0 8px;
-			}
-		}
-		&__right {
-			justify-self: flex-start;
-			justify-content: flex-end;
-			position: relative;
-			user-select: none;
-			display: flex;
-			color: var(--color-text-maxcontrast);
-			font-size: var(--default-font-size);
-			flex: 1 0 auto;
-			padding: 0 8px 0 8px;
-		}
-	}
 
 	&__scroll {
 		position: absolute;
@@ -917,13 +597,6 @@ export default {
 		width: fit-content;
 		height: 100%;
 		padding: 8px 8px 0 0;
-	}
-}
-
-.date {
-	margin-right: var(--default-clickable-area);
-	&--self {
-		margin-right: 0;
 	}
 }
 
@@ -963,18 +636,6 @@ export default {
 	}
 }
 
-.message-status {
-	width: var(--default-clickable-area);
-	height: 24px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	&.retry-option {
-		cursor: pointer;
-	}
-}
-
 .message-buttons-bar {
 	display: flex;
 	right: 14px;
@@ -989,69 +650,5 @@ export default {
 	& h6 {
 		margin-left: auto;
 	}
-}
-
-.message-body__main__text--markdown {
-	position: relative;
-
-	.message-copy-code {
-		position: absolute;
-		top: 0;
-		right: 4px;
-		margin-top: 4px;
-		background-color: var(--color-background-dark);
-	}
-
-	:deep(.rich-text--wrapper) {
-		text-align: start;
-
-		// Overwrite core styles, otherwise h4 is lesser than default font-size
-		h4 {
-			font-size: 100%;
-		}
-
-		em {
-			font-style: italic;
-		}
-
-		ul,
-		ol {
-			padding-left: 0;
-			padding-inline-start: 15px;
-		}
-
-		pre {
-			padding: 4px;
-			margin: 2px 0;
-			border-radius: var(--border-radius);
-			background-color: var(--color-background-dark);
-			overflow-x: auto;
-
-			& code {
-				margin: 0;
-				padding: 0;
-			}
-		}
-
-		code {
-			display: inline-block;
-			padding: 2px 4px;
-			margin: 2px 0;
-			border-radius: var(--border-radius);
-			background-color: var(--color-background-dark);
-		}
-
-		blockquote {
-			padding-left: 0;
-			padding-inline-start: 13px;
-			border-left: none;
-			border-inline-start: 4px solid var(--color-border);
-		}
-	}
-}
-
-// Hardcode to prevent RTL affecting on user mentions
-:deep(.rich-text--component) {
-	direction: ltr;
 }
 </style>
