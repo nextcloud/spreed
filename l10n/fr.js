@@ -416,7 +416,7 @@ OC.L10N.register(
     "Austria" : "Autriche",
     "Australia" : "Australie",
     "Aruba" : "Aruba",
-    "Åland Islands" : "Îles Åland",
+    "Åland Islands" : "Åland",
     "Azerbaijan" : "Azerbaïdjan",
     "Bosnia and Herzegovina" : "Bosnie-Herzégovine",
     "Barbados" : " La Barbade",
