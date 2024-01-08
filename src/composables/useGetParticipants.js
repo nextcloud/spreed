@@ -45,15 +45,11 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	let fetchingParticipants = false
 	let pendingChanges = true
 
-	// Exposed
-	const participantsInitialised = ref(false)
-
 	/**
 	 * Initialise the get participants listeners
 	 *
 	 */
 	function initialiseGetParticipants() {
-		EventBus.$on('route-change', onRouteChange)
 		EventBus.$on('joined-conversation', onJoinedConversation)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
@@ -68,14 +64,9 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 *
 	 */
 	function stopGetParticipants() {
-		EventBus.$off('route-change', onRouteChange)
 		EventBus.$off('joined-conversation', onJoinedConversation)
 		EventBus.$off('signaling-participant-list-changed', debounceUpdateParticipants)
 		unsubscribe('guest-promoted', onJoinedConversation)
-	}
-
-	const onRouteChange = () => {
-		participantsInitialised.value = store.getters.participantsList(token.value).length > 1
 	}
 
 	const onJoinedConversation = () => {
@@ -112,10 +103,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 		debounceFastUpdateParticipants.clear()
 		debounceSlowUpdateParticipants.clear()
 
-		const response = await store.dispatch('fetchParticipants', { token: token.value })
-		if (response) {
-			participantsInitialised.value = true
-		}
+		await store.dispatch('fetchParticipants', { token: token.value })
 		fetchingParticipants = false
 	}
 
@@ -143,7 +131,6 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	})
 
 	return {
-		participantsInitialised,
 		cancelableGetParticipants,
 	}
 }

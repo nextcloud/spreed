@@ -128,15 +128,11 @@ export default {
 		const { isActive } = toRefs(props)
 		const { sortParticipants } = useSortParticipants()
 		const isInCall = useIsInCall()
-		const {
-			participantsInitialised,
-			cancelableGetParticipants,
-		} = useGetParticipants(isActive, false)
+		const { cancelableGetParticipants } = useGetParticipants(isActive, false)
 
 		return {
 			sortParticipants,
 			isInCall,
-			participantsInitialised,
 			cancelableGetParticipants,
 		}
 	},
@@ -154,6 +150,10 @@ export default {
 	},
 
 	computed: {
+		participantsInitialised() {
+			return this.$store.getters.participantsInitialised(this.token)
+		},
+
 		participants() {
 			return this.$store.getters.participantsList(this.token).slice().sort(this.sortParticipants)
 		},
