@@ -546,6 +546,7 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		$qb->innerJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'));
+		$qb->andWhere($qb->expr()->eq('f.storage', $qb->createNamedParameter($node->getMountPoint()->getNumericStorageId(), IQueryBuilder::PARAM_INT)));
 		if ($shallow) {
 			$qb->andWhere($qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId())));
 		} else {
