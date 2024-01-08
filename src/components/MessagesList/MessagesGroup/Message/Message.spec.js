@@ -18,6 +18,7 @@ import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
+import MessageBody from './MessagePart/MessageBody.vue'
 import Quote from '../../../Quote.vue'
 
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
@@ -109,6 +110,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -123,15 +127,16 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
 
-			const emoji = wrapper.find('.message-body__main__text')
-			expect(emoji.text()).toBe('🌧️')
-
 			const message = wrapper.findComponent({ name: 'NcRichText' })
-			expect(message.exists()).toBe(false)
+			expect(message.exists()).toBeTruthy()
+			expect(message.attributes('text')).toBe('🌧️')
 		})
 
 		describe('call button', () => {
@@ -159,6 +164,9 @@ describe('Message.vue', () => {
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
+					stubs: {
+						MessageBody,
+					},
 					propsData: messageProps,
 					provide: injected,
 				})
@@ -179,6 +187,9 @@ describe('Message.vue', () => {
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
+					stubs: {
+						MessageBody,
+					},
 					propsData: messageProps,
 					provide: injected,
 				})
@@ -196,6 +207,9 @@ describe('Message.vue', () => {
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
+					stubs: {
+						MessageBody,
+					},
 					propsData: messageProps,
 					provide: injected,
 				})
@@ -215,6 +229,9 @@ describe('Message.vue', () => {
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
+					stubs: {
+						MessageBody,
+					},
 					propsData: messageProps,
 					provide: injected,
 				})
@@ -232,6 +249,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -244,6 +264,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -273,6 +296,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -295,6 +321,7 @@ describe('Message.vue', () => {
 					localVue,
 					store,
 					stubs: {
+						MessageBody,
 						RichText: RichTextStub,
 					},
 					propsData: messageProps,
@@ -482,6 +509,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				directives: {
 					observeVisibility,
 				},
@@ -516,6 +546,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				directives: {
 					observeVisibility,
 				},
@@ -540,6 +573,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -554,6 +590,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -568,6 +607,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -581,6 +623,9 @@ describe('Message.vue', () => {
 			const wrapper = mount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -617,6 +662,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				stubs: {
+					MessageBody,
 					NcActionButton,
 					MessageButtonsBar,
 				},
@@ -658,6 +704,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -669,8 +718,6 @@ describe('Message.vue', () => {
 			expect(reloadButton.exists()).toBe(true)
 
 			await reloadButton.trigger('mouseover')
-
-			expect(wrapper.vm.showReloadButton).toBe(true)
 
 			const reloadNcButton = wrapper.findComponent(NcButton)
 			expect(reloadNcButton.exists()).toBe(true)
@@ -688,6 +735,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -703,6 +753,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -716,6 +769,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -731,6 +787,9 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageBody,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})

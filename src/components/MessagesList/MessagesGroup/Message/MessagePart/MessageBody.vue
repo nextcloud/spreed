@@ -21,55 +21,49 @@
 -->
 
 <template>
-	<div ref="messageMain" class="message-body__main">
-		<!-- Message body content -->
-		<div v-if="isSingleEmoji" class="message-body__main__text">
-			<Quote v-if="parent" v-bind="parent" />
-			<div class="single-emoji">
-				{{ renderedMessage }}
-			</div>
-		</div>
-		<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
+	<div ref="messageMain" class="message-main">
+		<!-- System or deleted message body content -->
+		<div v-if="isSystemMessage || isDeletedMessage"
+			class="message-main__text"
+			:class="{
+				'system-message': isSystemMessage && !showJoinCallButton,
+				'deleted-message': isDeletedMessage,
+				'call-started': showJoinCallButton,
+			}">
+			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"
 				:arguments="richParameters"
 				autolink
 				dir="auto"
 				:reference-limit="0" />
-			<CallButton />
-		</div>
-		<div v-else-if="showResultsButton || isSystemMessage" class="message-body__main__text system-message">
-			<NcRichText :text="renderedMessage"
-				:arguments="richParameters"
-				autolink
-				dir="auto"
-				:reference-limit="0" />
-			<!-- Displays only the "see results" button with the results modal -->
+
+			<!-- Additional controls -->
+			<CallButton v-if="showJoinCallButton" />
 			<Poll v-if="showResultsButton"
 				:id="messageParameters.poll.id"
 				:poll-name="messageParameters.poll.name"
 				:token="token"
 				show-as-button />
 		</div>
-		<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
-			<NcRichText :text="renderedMessage"
-				:arguments="richParameters"
-				autolink
-				dir="auto"
-				:reference-limit="0" />
-		</div>
 
+		<!-- Normal message body content -->
 		<div v-else
-			class="message-body__main__text markdown-message"
+			class="message-main__text markdown-message"
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
+			<!-- Replied parent message -->
 			<Quote v-if="parent" v-bind="parent" />
+
+			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"
 				:arguments="richParameters"
+				:class="{'single-emoji': isSingleEmoji}"
 				autolink
 				dir="auto"
 				:use-markdown="markdown"
 				:reference-limit="1" />
 
+			<!-- Additional controls -->
 			<NcButton v-if="containsCodeBlocks"
 				v-show="currentCodeBlock !== null"
 				class="message-copy-code"
@@ -85,11 +79,8 @@
 		</div>
 
 		<!-- Additional message info-->
-		<div v-if="!isDeletedMessage" class="message-body__main__right">
-			<span :title="messageDate"
-				class="date"
-				:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
-				:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
+		<div v-if="!isDeletedMessage" class="message-main__info">
+			<span v-if="!hideDate" class="date" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
 			<div v-if="sendingFailure"
@@ -109,10 +100,9 @@
 						<Reload :size="16" />
 					</template>
 				</NcButton>
-				<AlertCircle v-else
-					:size="16" />
+				<AlertCircle v-else :size="16" />
 			</div>
-			<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
+			<div v-else-if="showLoadingIcon"
 				:title="loadingIconTooltip"
 				class="icon-loading-small message-status"
 				:aria-label="loadingIconTooltip" />
@@ -153,6 +143,9 @@ import CallButton from '../../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { EventBus } from '../../../../../services/EventBus.js'
+
+// Regular expression to check for Unicode emojis in message text
+const regex = emojiRegex()
 
 export default {
 	name: 'MessageBody',
@@ -220,6 +213,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		hasCall: {
+			type: Boolean,
+			default: false,
+		},
 		sendingFailure: {
 			type: String,
 			default: '',
@@ -263,16 +260,12 @@ export default {
 
 	computed: {
 		renderedMessage() {
-			if (this.messageParameters?.file && this.message !== '{file}') {
+			if (this.isFileShareMessage && this.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
 				return '{file}' + '\n\n' + this.message
 			} else {
 				return this.message
 			}
-		},
-
-		messageObject() {
-			return this.$store.getters.message(this.token, this.id)
 		},
 
 		isSystemMessage() {
@@ -283,16 +276,26 @@ export default {
 			return this.messageType === 'comment_deleted'
 		},
 
+		isFileShareMessage() {
+			return this.messageParameters?.file
+		},
+
+		hideDate() {
+			return this.isTemporary || this.isDeleting || !!this.sendingFailure
+		},
+
 		messageTime() {
+			if (this.hideDate) {
+				return null
+			}
 			return moment(this.timestamp * 1000).format('LT')
 		},
 
 		messageDate() {
+			if (this.hideDate) {
+				return null
+			}
 			return moment(this.timestamp * 1000).format('LL')
-		},
-
-		conversation() {
-			return this.$store.getters.conversation(this.token)
 		},
 
 		isLastCallStartedMessage() {
@@ -300,7 +303,7 @@ export default {
 		},
 
 		showJoinCallButton() {
-			return this.conversation.hasCall && !this.isInCall && this.isLastCallStartedMessage
+			return this.hasCall && !this.isInCall && this.isLastCallStartedMessage
 		},
 
 		showResultsButton() {
@@ -308,32 +311,17 @@ export default {
 		},
 
 		isSingleEmoji() {
-			const regex = emojiRegex()
-			let match
-			let emojiStrings = ''
-			let emojiCount = 0
-			const trimmedMessage = this.renderedMessage.trim()
-
-			// eslint-disable-next-line no-cond-assign
-			while (match = regex.exec(trimmedMessage)) {
-				if (emojiCount > 2) {
-					return false
-				}
-
-				emojiStrings += match[0]
-				emojiCount++
+			if (this.isSystemMessage || this.isDeletedMessage) {
+				return
 			}
 
-			return emojiStrings === trimmedMessage
+			const trimmedMessage = this.renderedMessage.trim()
+			const emojiMatches = trimmedMessage.match(regex)
+			return emojiMatches !== null && emojiMatches.length === 1 && emojiMatches[0] === trimmedMessage
 		},
 
-		// Determines whether the date has to be displayed or not
-		hasDate() {
-			return (!this.isTemporary && !this.isDeleting && !this.sendingFailure)
-		},
-
-		isTemporaryUpload() {
-			return this.isTemporary && this.messageParameters.file
+		showLoadingIcon() {
+			return (this.isTemporary && !this.isFileShareMessage) || this.isDeleting
 		},
 
 		loadingIconTooltip() {
@@ -341,8 +329,7 @@ export default {
 		},
 
 		sendingErrorCanRetry() {
-			return this.sendingFailure === 'timeout' || this.sendingFailure === 'other'
-				|| this.sendingFailure === 'failed-upload'
+			return ['timeout', 'other', 'failed-upload'].includes(this.sendingFailure)
 		},
 
 		sendingErrorIconTooltip() {
@@ -409,8 +396,11 @@ export default {
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
 				if (this.sendingFailure === 'failed-upload') {
-					const caption = this.renderedMessage !== this.message ? this.message : undefined
-					this.$store.dispatch('retryUploadFiles', { token: this.token, uploadId: this.messageObject.uploadId, caption })
+					this.$store.dispatch('retryUploadFiles', {
+						token: this.token,
+						uploadId: this.$store.getters.message(this.token, this.id)?.uploadId,
+						caption: this.renderedMessage !== this.message ? this.message : undefined,
+					})
 				} else {
 					EventBus.$emit('retry-message', this.id)
 					EventBus.$emit('focus-chat-input')
@@ -422,7 +412,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.message-body__main {
+.message-main {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
@@ -434,30 +424,30 @@ export default {
 		min-width: 0;
 		max-width: 600px;
 		color: var(--color-text-light);
-		.single-emoji {
+
+		& > .single-emoji {
 			font-size: 250%;
 			line-height: 100%;
-		}
-
-		&.call-started {
-			background-color: var(--color-primary-element-light);
-			padding: 10px;
-			border-radius: var(--border-radius-large);
-			text-align: center;
 		}
 
 		&.system-message {
 			color: var(--color-text-maxcontrast);
 			text-align: center;
 			padding: 0 20px;
-			width: 100%;
+		}
+
+		&.call-started {
+			color: var(--color-text-light);
+			background-color: var(--color-primary-element-light);
+			padding: 10px;
+			border-radius: var(--border-radius-large);
+			text-align: center;
 		}
 
 		&.deleted-message {
-			color: var(--color-text-lighter);
 			display: flex;
-			border-radius: var(--border-radius-large);
 			align-items: center;
+			color: var(--color-text-maxcontrast);
 			:deep(.rich-text--wrapper) {
 				flex-grow: 1;
 				text-align: start;
@@ -524,7 +514,7 @@ export default {
 		}
 	}
 
-	&__right {
+	&__info {
 		justify-self: flex-start;
 		justify-content: flex-end;
 		position: relative;
@@ -535,11 +525,8 @@ export default {
 		flex: 1 0 auto;
 		padding: 0 8px 0 8px;
 
-		.date {
+		.date:last-child {
 			margin-right: var(--default-clickable-area);
-			&--self {
-				margin-right: 0;
-			}
 		}
 	}
 }

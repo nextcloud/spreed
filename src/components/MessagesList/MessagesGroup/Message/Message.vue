@@ -48,6 +48,7 @@
 				:timestamp="timestamp"
 				:is-deleting="isDeleting"
 				:is-temporary="isTemporary"
+				:has-call="conversation.hasCall"
 				:sending-failure="sendingFailure"
 				:show-common-read-icon="showCommonReadIcon"
 				:common-read-icon-tooltip="commonReadIconTooltip"
@@ -585,7 +586,7 @@ export default {
 }
 
 .message-body {
-	padding: 4px;
+	padding: 4px 4px 4px 8px;
 	font-size: var(--default-font-size);
 	line-height: var(--default-line-height);
 	position: relative;
@@ -598,12 +599,6 @@ export default {
 		height: 100%;
 		padding: 8px 8px 0 0;
 	}
-}
-
-// Increase the padding for regular messages to improve readability and
-// allow some space for the reply button
-.message-body:not(.system) {
-	padding: 4px 4px 4px 8px;
 }
 
 .message--highlighted {
