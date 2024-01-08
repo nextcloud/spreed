@@ -49,7 +49,7 @@
 		"ua-parser-js": "^1.0.37",
 		"url-parse": "^1.5.10",
 		"util": "^0.12.5",
-		"vue": "^2.7.15",
+		"vue": "^2.7.16",
 		"vue-frag": "^1.4.3",
 		"vue-material-design-icons": "^5.2.0",
 		"vue-observe-visibility": "^1.0.0",
@@ -87,7 +87,7 @@
 		"jest-transform-stub": "^2.0.0",
 		"regenerator-runtime": "^0.13.11",
 		"terser-webpack-plugin": "^5.3.10",
-		"vue-template-compiler": "^2.7.15",
+		"vue-template-compiler": "^2.7.16",
 		"wasm-check": "^2.1.2",
 		"webpack-node-externals": "^3.0.0",
 		"worker-loader": "^3.0.8"
