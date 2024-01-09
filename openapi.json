@@ -1810,7 +1810,7 @@
                         }
                     },
                     "400": {
-                        "description": "Sending message is not possible",
+                        "description": "When the replyTo is invalid or message is empty",
                         "content": {
                             "application/json": {
                                 "schema": {
