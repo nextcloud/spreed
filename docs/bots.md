@@ -106,7 +106,7 @@ Bots can also send message. On the sending process the same signature/verificati
 * Response:
     - Status code:
         + `201 Created` When the message was posted successfully
-        + `400 Bad Request` When the provided replyTo parameter is invalid
+        + `400 Bad Request` When the provided replyTo parameter is invalid or the message is empty
         + `401 Unauthenticated` When the bot could not be verified for the conversation
         + `404 Not Found` When the conversation could not be found
         + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)

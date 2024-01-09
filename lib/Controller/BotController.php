@@ -134,7 +134,7 @@ class BotController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
 	 *
 	 * 201: Message sent successfully
-	 * 400: Sending message is not possible
+	 * 400: When the replyTo is invalid or message is empty
 	 * 401: Sending message is not allowed
 	 * 404: Room or session not found
 	 * 413: Message too long
@@ -142,6 +142,10 @@ class BotController extends AEnvironmentAwareController {
 	#[BruteForceProtection(action: 'bot')]
 	#[PublicPage]
 	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+		if (trim($message) === '') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$bot = $this->getBotFromHeaders($token, $message);
 		} catch (\InvalidArgumentException $e) {
