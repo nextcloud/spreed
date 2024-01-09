@@ -467,23 +467,24 @@ class RoomService {
 	/**
 	 * @param Room $room
 	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
-	 * @param bool $allowSwitchingOneToOne
+	 * @param bool $allowSwitchingOneToOne Allows additionally to change the type from `Room::TYPE_ONE_TO_ONE` to `Room::TYPE_ONE_TO_ONE_FORMER`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setType(Room $room, int $newType, bool $allowSwitchingOneToOne = false): bool {
-		if ($newType === $room->getType()) {
+		$oldType = $room->getType();
+		if ($oldType === $newType) {
 			return true;
 		}
 
-		if (!$allowSwitchingOneToOne && $room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
 
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+		if ($oldType === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return false;
 		}
 
-		if ($room->getType() === Room::TYPE_NOTE_TO_SELF) {
+		if ($oldType === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
 
@@ -491,7 +492,7 @@ class RoomService {
 			return false;
 		}
 
-		if ($newType === Room::TYPE_ONE_TO_ONE_FORMER && $room->getType() !== Room::TYPE_ONE_TO_ONE) {
+		if ($newType === Room::TYPE_ONE_TO_ONE_FORMER && $oldType !== Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
 
@@ -502,8 +503,6 @@ class RoomService {
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			return false;
 		}
-
-		$oldType = $room->getType();
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
 		$this->dispatcher->dispatchTyped($event);
