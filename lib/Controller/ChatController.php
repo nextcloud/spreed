@@ -41,6 +41,7 @@ use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -48,6 +49,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\SessionService;
@@ -110,6 +112,7 @@ class ChatController extends AEnvironmentAwareController {
 		private IManager $autoCompleteManager,
 		private IUserStatusManager $statusManager,
 		protected MatterbridgeManager $matterbridgeManager,
+		protected BotService $botService,
 		private SearchPlugin $searchPlugin,
 		private ISearchResult $searchResult,
 		protected ITimeFactory $timeFactory,
@@ -673,7 +676,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 *
 	 * 200: Message deleted successfully
-	 * 202: Message deleted successfully, but Matterbridge is configured, so the information can be replicated elsewhere
+	 * 202: Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere
 	 * 400: Deleting message is not possible
 	 * 403: Missing permissions to delete message
 	 * 404: Message not found
@@ -738,13 +741,17 @@ class ChatController extends AEnvironmentAwareController {
 		$data = $systemMessage->toArray($this->getResponseFormat());
 		$data['parent'] = $message->toArray($this->getResponseFormat());
 
-		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+		$hasBotOrBridge = !empty($this->botService->getBotsForToken($this->room->getToken(), Bot::FEATURE_WEBHOOK));
+		if (!$hasBotOrBridge) {
+			$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+			$hasBotOrBridge = $bridge['enabled'];
+		}
 
 		$headers = [];
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
 		}
-		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
+		return new DataResponse($data, $hasBotOrBridge ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
 	}
 
 	/**
@@ -756,7 +763,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 *
 	 * 200: Message edited successfully
-	 * 202: Message edited successfully, but Matterbridge is configured, so the information can be replicated elsewhere
+	 * 202: Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services
 	 * 400: Editing message is not possible, e.g. when the new message is empty or the message is too old
 	 * 403: Missing permissions to edit message
 	 * 404: Message not found
@@ -825,13 +832,17 @@ class ChatController extends AEnvironmentAwareController {
 		$data = $systemMessage->toArray($this->getResponseFormat());
 		$data['parent'] = $parseMessage->toArray($this->getResponseFormat());
 
-		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+		$hasBotOrBridge = !empty($this->botService->getBotsForToken($this->room->getToken(), Bot::FEATURE_WEBHOOK));
+		if (!$hasBotOrBridge) {
+			$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+			$hasBotOrBridge = $bridge['enabled'];
+		}
 
 		$headers = [];
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
 		}
-		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
+		return new DataResponse($data, $hasBotOrBridge ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
 	}
 
 	/**
