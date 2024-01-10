@@ -750,6 +750,11 @@ const actions = {
 
 		const activeSince = (new Date(notification.datetime)).getTime() / 1000
 
+		// Check if notification information is older than in known conversation object
+		if (activeSince < getters.conversations[token].lastActivity) {
+			return
+		}
+
 		const conversation = Object.assign({}, getters.conversations[token], {
 			hasCall: true,
 			callFlag: PARTICIPANT.CALL_FLAG.WITH_VIDEO,
