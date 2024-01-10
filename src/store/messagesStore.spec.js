@@ -315,7 +315,7 @@ describe('messagesStore', () => {
 		store.dispatch('processMessage', message1)
 		expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
 
-		store.dispatch('deleteMessages', TOKEN)
+		store.dispatch('purgeMessagesStore', TOKEN)
 		expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
 
 		expect(deleteMessage).not.toHaveBeenCalled()

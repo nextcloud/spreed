@@ -112,14 +112,14 @@ describe('conversationsStore', () => {
 
 	describe('conversation list', () => {
 		let talkHashStore
-		let deleteMessagesAction
+		let purgeMessagesStoreAction
 		let checkMaintenanceModeAction
 		let clearMaintenanceModeAction
 		let updateTalkVersionHashAction
 
 		beforeEach(() => {
-			deleteMessagesAction = jest.fn()
-			testStoreConfig.modules.messagesStore.actions.deleteMessages = deleteMessagesAction
+			purgeMessagesStoreAction = jest.fn()
+			testStoreConfig.modules.messagesStore.actions.purgeMessagesStore = purgeMessagesStoreAction
 			talkHashStore = useTalkHashStore()
 			checkMaintenanceModeAction = jest.spyOn(talkHashStore, 'checkMaintenanceMode')
 			clearMaintenanceModeAction = jest.spyOn(talkHashStore, 'clearMaintenanceMode')
@@ -195,7 +195,7 @@ describe('conversationsStore', () => {
 			store.dispatch('addConversation', testConversation)
 
 			store.dispatch('deleteConversation', testToken)
-			expect(deleteMessagesAction).toHaveBeenCalled()
+			expect(purgeMessagesStoreAction).toHaveBeenCalled()
 
 			expect(store.getters.conversation(testToken)).toBeUndefined()
 
@@ -233,7 +233,7 @@ describe('conversationsStore', () => {
 
 			await store.dispatch('deleteConversationFromServer', { token: testToken })
 			expect(deleteConversation).toHaveBeenCalledWith(testToken)
-			expect(deleteMessagesAction).toHaveBeenCalled()
+			expect(purgeMessagesStoreAction).toHaveBeenCalled()
 
 			expect(store.getters.conversation(testToken)).toBeUndefined()
 		})
