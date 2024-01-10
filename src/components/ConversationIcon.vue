@@ -53,14 +53,19 @@
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite" class="overlap-icon">
-			<Star :size="20" :fill-color="'#FFCC00'" />
+			<StarIcon :size="20" :fill-color="'#FFCC00'" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
+		</div>
+		<div v-else-if="showAsFederated" class="overlap-icon">
+			<NetworkIcon :size="20" :fill-color="'#69009E'" />
+			<span class="hidden-visually">{{ t('spreed', 'Federation') }}</span>
 		</div>
 	</div>
 </template>
 
 <script>
-import Star from 'vue-material-design-icons/Star.vue'
+import NetworkIcon from 'vue-material-design-icons/Network.vue'
+import StarIcon from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
@@ -78,7 +83,8 @@ export default {
 
 	components: {
 		NcAvatar,
-		Star,
+		NetworkIcon,
+		StarIcon,
 		VideoIcon,
 	},
 
@@ -144,6 +150,10 @@ export default {
 
 		showFavorite() {
 			return !this.hideFavorite && this.item.isFavorite
+		},
+
+		showAsFederated() {
+			return !!this.item.remoteServer
 		},
 
 		preloadedUserStatus() {
