@@ -207,7 +207,10 @@
                         "type": "string"
                     },
                     "deleted": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
                     },
                     "expirationTimestamp": {
                         "type": "integer",
@@ -1358,7 +1361,11 @@
                         "description": "Theme used for background",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -1744,7 +1751,11 @@
                         "description": "If sent silent the chat message will not create any notifications",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -4299,7 +4310,11 @@
                         "description": "Join the call silently",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -4308,7 +4323,11 @@
                         "description": "When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES} or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL} and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -4604,7 +4623,11 @@
                         "description": "whether to also terminate the call for all participants",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -5510,7 +5533,11 @@
                         "description": "If sent silent the chat message will not create any notifications",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -6859,7 +6886,11 @@
                         "description": "Include the user statuses",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -8257,7 +8288,11 @@
                         "description": "If the bridge should be enabled",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -10965,7 +11000,11 @@
                         "description": "Include the user status",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -13108,7 +13147,11 @@
                         "description": "Include the user statuses",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -13452,7 +13495,11 @@
                         "description": "Include the user statuses",
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -14792,7 +14839,11 @@
                         "description": "Create a new session if necessary",
                         "schema": {
                             "type": "integer",
-                            "default": 1
+                            "default": 1,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
