@@ -224,7 +224,7 @@ class AvatarService {
 				}
 			}
 		}
-		if ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
+		if ($this->emojiHelper->doesPlatformSupportEmoji() && $this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
 			return new InMemoryFile(
 				$token,
 				$this->getEmojiAvatar(
@@ -271,7 +271,7 @@ class AvatarService {
 	 * @return string
 	 */
 	protected function getFirstCombinedEmoji(string $roomName, int $length = 0): string {
-		if (mb_strlen($roomName) === $length) {
+		if (!$this->emojiHelper->doesPlatformSupportEmoji() || mb_strlen($roomName) === $length) {
 			return '';
 		}
 
@@ -344,7 +344,7 @@ class AvatarService {
 			[$version] = explode('.', $avatarVersion);
 			return $version;
 		}
-		if ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
+		if ($this->emojiHelper->doesPlatformSupportEmoji() && $this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
 			return substr(md5($this->getEmojiAvatar($this->getFirstCombinedEmoji($room->getName()), self::THEMING_BRIGHT_BACKGROUND)), 0, 8);
 		}
 		$avatarPath = $this->getAvatarPath($room);
