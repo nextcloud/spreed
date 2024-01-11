@@ -69,7 +69,6 @@ get the messagesList array and loop through the list to generate the messages.
 <script>
 import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
-import { computed } from 'vue'
 
 import Message from 'vue-material-design-icons/Message.vue'
 
@@ -98,7 +97,6 @@ export default {
 
 	provide() {
 		return {
-			scrollerBoundingClientRect: computed(() => this.$refs.scroller.getBoundingClientRect()),
 			getMessagesListScroller: () => this.$refs.scroller,
 		}
 	},

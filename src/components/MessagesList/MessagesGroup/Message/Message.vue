@@ -247,9 +247,6 @@ const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-tr
 	// Fallback for the desktop client when connecting to Talk 17
 	?? getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 
-/**
- * @property {object} scrollerBoundingClientRect provided by MessageList.vue
- */
 export default {
 	name: 'Message',
 
@@ -271,8 +268,6 @@ export default {
 		UnfoldLess,
 		UnfoldMore,
 	},
-
-	inject: ['scrollerBoundingClientRect'],
 
 	inheritAttrs: false,
 
@@ -508,23 +503,12 @@ export default {
 				&& !this.isDeletedMessage
 		},
 
-		messagesList() {
-			return this.$store.getters.messagesList(this.token)
-		},
-
 		isLastCallStartedMessage() {
-			// FIXME: remove dependency to messages list and convert to property
-			const messages = this.messagesList
-			// FIXME: don't reverse the whole array as it would create a copy, just do an actual reverse search
-			const lastCallStartedMessage = messages.reverse().find((message) => message.systemMessage === 'call_started')
-			return lastCallStartedMessage ? (this.id === lastCallStartedMessage.id) : false
+			return this.systemMessage === 'call_started' && this.id === this.$store.getters.getLastCallStartedMessageId
 		},
 
 		showJoinCallButton() {
-			return this.systemMessage === 'call_started'
-				&& this.conversation.hasCall
-				&& this.isLastCallStartedMessage
-				&& !this.isInCall
+			return this.conversation.hasCall && !this.isInCall && this.isLastCallStartedMessage
 		},
 
 		showResultsButton() {

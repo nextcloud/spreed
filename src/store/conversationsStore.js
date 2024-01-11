@@ -215,14 +215,6 @@ const mutations = {
 		}
 	},
 
-	overwriteHasCallByChat(state, { token, hasCall }) {
-		if (hasCall) {
-			Vue.set(state.conversations[token], 'hasCallOverwrittenByChat', hasCall)
-		} else {
-			Vue.delete(state.conversations[token], 'hasCallOverwrittenByChat')
-		}
-	},
-
 	setNotificationLevel(state, { token, notificationLevel }) {
 		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
 	},
@@ -758,6 +750,11 @@ const actions = {
 
 		const activeSince = (new Date(notification.datetime)).getTime() / 1000
 
+		// Check if notification information is older than in known conversation object
+		if (activeSince < getters.conversations[token].lastActivity) {
+			return
+		}
+
 		const conversation = Object.assign({}, getters.conversations[token], {
 			hasCall: true,
 			callFlag: PARTICIPANT.CALL_FLAG.WITH_VIDEO,
@@ -792,8 +789,16 @@ const actions = {
 		commit('updateConversationLastReadMessage', { token, lastReadMessage })
 	},
 
-	async overwriteHasCallByChat({ commit }, { token, hasCall }) {
-		commit('overwriteHasCallByChat', { token, hasCall })
+	async overwriteHasCallByChat({ commit, dispatch }, { token, hasCall, lastActivity }) {
+		dispatch('setConversationProperties', {
+			token,
+			properties: {
+				hasCall,
+				callFlag: hasCall ? PARTICIPANT.CALL_FLAG.IN_CALL : PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				lastActivity,
+				callStartTime: hasCall ? lastActivity : 0,
+			}
+		})
 	},
 
 	async fetchConversation({ dispatch }, { token }) {

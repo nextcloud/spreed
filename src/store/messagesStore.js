@@ -210,6 +210,10 @@ const getters = {
 		return null
 	},
 
+	getLastCallStartedMessageId: (state, getters, rootState, rootGetters) => {
+		return getters.messagesList(rootGetters.getToken()).findLast((message) => message.systemMessage === 'call_started')?.id
+	},
+
 	getFirstDisplayableMessageIdAfterReadMarker: (state, getters) => (token, readMessageId) => {
 		if (!state.messages[token]) {
 			return null
@@ -1086,25 +1090,11 @@ const actions = {
 			// Overwrite the conversation.hasCall property so people can join
 			// after seeing the message in the chat.
 			if (conversation && conversation.lastMessage && message.id > conversation.lastMessage.id) {
-				if (message.systemMessage === 'call_started') {
+				if (['call_started', 'call_ended', 'call_ended_everyone', 'call_missed'].includes(message.systemMessage)) {
 					context.dispatch('overwriteHasCallByChat', {
 						token,
-						hasCall: true,
-					})
-					context.dispatch('setConversationProperties', {
-						token: message.token,
-						properties: { callStartTime: message.timestamp },
-					})
-				} else if (message.systemMessage === 'call_ended'
-					|| message.systemMessage === 'call_ended_everyone'
-					|| message.systemMessage === 'call_missed') {
-					context.dispatch('overwriteHasCallByChat', {
-						token,
-						hasCall: false,
-					})
-					context.dispatch('setConversationProperties', {
-						token: message.token,
-						properties: { callStartTime: 0 },
+						hasCall: message.systemMessage === 'call_started',
+						lastActivity: message.timestamp,
 					})
 				}
 			}

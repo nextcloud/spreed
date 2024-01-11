@@ -387,7 +387,7 @@ export default {
 		},
 
 		hasCall() {
-			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
+			return this.conversation.hasCall
 		},
 
 		isCurrentlyRecording() {
