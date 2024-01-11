@@ -404,10 +404,11 @@ export default {
 
 		showAttachmentsMenu() {
 			return this.canShareFiles && !this.broadcast && !this.upload
+				&& (!this.messageToEdit || this.messageToEdit?.messageParameters?.length !== 0)
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit
 		},
 
 		showTypingStatus() {
@@ -640,6 +641,17 @@ export default {
 		},
 
 		async handleEdit() {
+
+			if (this.messageToEdit.messageParameters.length !== 0) {
+				// Captions editing is not supported yet
+				return
+			}
+
+			// Submitting an empty message will abort the edit
+			if (this.text.trim() === '') {
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			}
+
 			try {
 				await editMessage({
 					token: this.token,
@@ -714,6 +726,9 @@ export default {
 		 * @param {ClipboardEvent} e native paste event
 		 */
 		async handlePastedFiles(e) {
+			if (this.messageToEdit) {
+				return
+			}
 			e.preventDefault()
 			// Prevent a new call of this.handleFiles if already called
 			if (this.clipboardTimeStamp === e.timeStamp) {

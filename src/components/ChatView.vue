@@ -86,6 +86,7 @@ import TransitionWrapper from './TransitionWrapper.vue'
 
 import { CONVERSATION } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
+import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 export default {
 
@@ -108,6 +109,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			chatExtrasStore: useChatExtrasStore(),
+		}
+	},
+
 	data() {
 		return {
 			isChatScrolledToBottom: true,
@@ -124,6 +131,10 @@ export default {
 		isGuestWithoutDisplayName() {
 			const userName = this.$store.getters.getDisplayName()
 			return !userName && this.isGuest
+		},
+
+		isEditingMessage() {
+			return this.chatExtrasStore.getMessageIdToEdit(this.token) !== undefined
 		},
 
 		dropHintText() {
@@ -155,7 +166,7 @@ export default {
 	watch: {
 		container(value) {
 			this.containerId = value
-		}
+		},
 	},
 
 	mounted() {
@@ -163,10 +174,15 @@ export default {
 		this.containerId = this.container
 	},
 
+	beforeDestroy() {
+		EventBus.$off('editing-message')
+		EventBus.$off('message-edited')
+	},
+
 	methods: {
 
 		handleDragOver(event) {
-			if (event.dataTransfer.types.includes('Files')) {
+			if (event.dataTransfer.types.includes('Files') && !this.isEditingMessage) {
 				this.isDraggingOver = true
 			}
 		},

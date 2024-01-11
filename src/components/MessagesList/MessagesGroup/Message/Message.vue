@@ -681,6 +681,10 @@ export default {
 		containsCodeBlocks() {
 			return this.message.includes('```')
 		},
+
+		isFileShareOnly() {
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file')) && this.message === '{file}'
+		},
 	},
 
 	watch: {
@@ -778,11 +782,13 @@ export default {
 		},
 
 		handleEdit() {
-			this.chatExtrasStore.setMessageIdToEdit({
-				token: this.token,
-				message: this.message,
-				id: this.id
-			})
+			this.chatExtrasStore.setMessageIdToEdit(this.token, this.id)
+			if (this.isFileShareOnly) {
+				this.chatExtrasStore.setChatEditInput({ token: this.token, text: '' })
+			} else {
+				this.chatExtrasStore.setChatEditInput({ token: this.token, text: this.message })
+			}
+			EventBus.$emit('editing-message')
 			EventBus.$emit('focus-chat-input')
 		},
 
