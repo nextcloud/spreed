@@ -31,7 +31,7 @@
 			<div class="poll__header">
 				<PollIcon :size="20" />
 				<p>
-					{{ pollName }}
+					{{ name }}
 				</p>
 			</div>
 			<div class="poll__footer">
@@ -57,7 +57,7 @@
 				<div class="poll__header">
 					<PollIcon :size="20" />
 					<h2 class="poll__modal-title">
-						{{ pollName }}
+						{{ name }}
 					</h2>
 				</div>
 				<p class="poll__summary">
@@ -169,7 +169,7 @@ export default {
 	},
 
 	props: {
-		pollName: {
+		name: {
 			type: String,
 			required: true,
 		},

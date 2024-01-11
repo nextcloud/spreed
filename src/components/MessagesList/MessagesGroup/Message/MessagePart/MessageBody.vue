@@ -40,8 +40,7 @@
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" />
 			<Poll v-if="showResultsButton"
-				:id="messageParameters.poll.id"
-				:poll-name="messageParameters.poll.name"
+				v-bind="messageParameters.poll"
 				:token="token"
 				show-as-button />
 		</div>

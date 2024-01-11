@@ -420,10 +420,6 @@ export default {
 					const props = Object.assign({}, this.messageParameters[p])
 					// Add the token to the component props
 					props.token = this.token
-					// The word 'name' is reserved in for the component name in
-					// Vue instances, so we cannot pass that into the component
-					// as a prop, therefore we rename it into pollName
-					props.pollName = this.messageParameters[p].name
 					richParameters[p] = {
 						component: Poll,
 						props,

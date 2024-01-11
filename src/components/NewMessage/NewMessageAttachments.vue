@@ -63,7 +63,7 @@
 			close-after-click
 			@click="$emit('toggle-poll-editor')">
 			<template #icon>
-				<Poll :size="20" />
+				<PollIcon :size="20" />
 			</template>
 			{{ t('spreed', 'Create new poll') }}
 		</NcActionButton>
@@ -73,7 +73,7 @@
 <script>
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Paperclip from 'vue-material-design-icons/Paperclip.vue'
-import Poll from 'vue-material-design-icons/Poll.vue'
+import PollIcon from 'vue-material-design-icons/Poll.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -88,7 +88,7 @@ export default {
 		// Icons
 		Folder,
 		Paperclip,
-		Poll,
+		PollIcon,
 		Upload,
 	},
 
