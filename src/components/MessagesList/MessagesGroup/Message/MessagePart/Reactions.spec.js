@@ -200,7 +200,7 @@ describe('Reactions.vue', () => {
 		test('dispatches store actions upon picking an emoji from the emojipicker', async () => {
 			// Arrange
 			jest.spyOn(reactionsStore, 'addReactionToMessage')
-			vuexStore.dispatch('processMessage', message)
+			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
 				propsData: reactionsProps,
@@ -231,7 +231,7 @@ describe('Reactions.vue', () => {
 			jest.spyOn(reactionsStore, 'addReactionToMessage')
 			jest.spyOn(reactionsStore, 'removeReactionFromMessage')
 
-			vuexStore.dispatch('processMessage', message)
+			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
 				propsData: reactionsProps,

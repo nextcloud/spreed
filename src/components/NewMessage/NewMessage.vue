@@ -557,15 +557,15 @@ export default {
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
 				this.broadcast
-					? await this.broadcastMessage(temporaryMessage, options)
-					: await this.postMessage(temporaryMessage, options)
+					? await this.broadcastMessage(this.token, temporaryMessage.message)
+					: await this.postMessage(this.token, temporaryMessage, options)
 			}
 		},
 
 		// Post message to conversation
-		async postMessage(temporaryMessage, options) {
+		async postMessage(token, temporaryMessage, options) {
 			try {
-				await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
+				await this.$store.dispatch('postNewMessage', { token, temporaryMessage, options })
 				this.$emit('sent')
 			} catch {
 				this.$emit('failure')
@@ -573,9 +573,9 @@ export default {
 		},
 
 		// Broadcast message to all breakout rooms
-		async broadcastMessage(temporaryMessage, options) {
+		async broadcastMessage(token, message) {
 			try {
-				await this.$store.dispatch('broadcastMessageToBreakoutRoomsAction', { temporaryMessage, options })
+				await this.$store.dispatch('broadcastMessageToBreakoutRoomsAction', { token, message })
 				this.$emit('sent')
 			} catch {
 				this.$emit('failure')
@@ -599,9 +599,9 @@ export default {
 			return new Promise(resolve => setTimeout(resolve, ms))
 		},
 
-		handleRetryMessage(temporaryMessageId) {
+		handleRetryMessage(id) {
 			if (this.text === '') {
-				const temporaryMessage = this.$store.getters.message(this.token, temporaryMessageId)
+				const temporaryMessage = this.$store.getters.message(this.token, id)
 				if (temporaryMessage) {
 					this.text = temporaryMessage.message || this.text
 
@@ -613,7 +613,7 @@ export default {
 						})
 					}
 
-					this.$store.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
+					this.$store.dispatch('removeTemporaryMessageFromStore', { token: this.token, id })
 				}
 			}
 		},

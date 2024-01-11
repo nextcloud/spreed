@@ -724,7 +724,11 @@ export default {
 			if (this.sendingErrorCanRetry) {
 				if (this.sendingFailure === 'failed-upload') {
 					const caption = this.renderedMessage !== this.message ? this.message : undefined
-					this.$store.dispatch('retryUploadFiles', { uploadId: this.messageObject.uploadId, caption })
+					this.$store.dispatch('retryUploadFiles', {
+						token: this.token,
+						uploadId: this.messageObject.uploadId,
+						caption
+					})
 				} else {
 					EventBus.$emit('retry-message', this.id)
 					EventBus.$emit('focus-chat-input')
@@ -756,10 +760,8 @@ export default {
 			this.isDeleting = true
 			try {
 				const statusCode = await this.$store.dispatch('deleteMessage', {
-					message: {
-						token: this.token,
-						id: this.id,
-					},
+					token: this.token,
+					id: this.id,
 					placeholder: t('spreed', 'Deleting message'),
 				})
 

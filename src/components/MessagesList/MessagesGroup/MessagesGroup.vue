@@ -37,6 +37,7 @@
 				:key="message.id"
 				ref="message"
 				v-bind="message"
+				:token="token"
 				:is-temporary="message.timestamp === 0"
 				:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 				:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"

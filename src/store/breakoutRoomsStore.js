@@ -188,9 +188,9 @@ const actions = {
 		}
 	},
 
-	async broadcastMessageToBreakoutRoomsAction(context, { temporaryMessage }) {
+	async broadcastMessageToBreakoutRoomsAction(context, { token, message }) {
 		try {
-			await broadcastMessageToBreakoutRooms(temporaryMessage.message, temporaryMessage.token)
+			await broadcastMessageToBreakoutRooms(token, message)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while sending a message to the breakout rooms'))

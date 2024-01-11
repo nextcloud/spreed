@@ -96,12 +96,11 @@ const stopBreakoutRooms = async function(token) {
 }
 
 /**
- *
- * @param {string} message The message to be posted
  * @param {string} token the conversation token
+ * @param {string} message The message to be posted
  * @return {Promise<import('axios').AxiosResponse<any>>} The array of conversations
  */
-const broadcastMessageToBreakoutRooms = async function(message, token) {
+const broadcastMessageToBreakoutRooms = async function(token, message) {
 	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/broadcast', {
 		token,
 	}), {

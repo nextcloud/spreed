@@ -631,10 +631,8 @@ describe('Message.vue', () => {
 			wrapper.findComponent(MessageButtonsBar).vm.$emit('delete')
 
 			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
-				message: {
-					token: TOKEN,
-					id: 123,
-				},
+				token: TOKEN,
+				id: 123,
 				placeholder: expect.anything(),
 			})
 

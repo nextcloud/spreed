@@ -27,6 +27,7 @@
 			<ul v-if="messagesCollapsed.messages?.length > 1"
 				class="messages messages--header">
 				<Message v-bind="createCombinedSystemMessage(messagesCollapsed)"
+					:token="token"
 					is-combined-system-message
 					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
@@ -39,6 +40,7 @@
 				<Message v-for="message in messagesCollapsed.messages"
 					:key="message.id"
 					v-bind="message"
+					:token="token"
 					:next-message-id="getNextMessageId(message)"
 					:previous-message-id="getPrevMessageId(message)" />
 			</ul>
