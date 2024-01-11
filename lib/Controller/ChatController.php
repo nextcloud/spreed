@@ -800,13 +800,20 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$systemMessageComment = $this->chatManager->editMessage(
-			$this->room,
-			$comment,
-			$this->participant,
-			$this->timeFactory->getDateTime(),
-			$message
-		);
+		try {
+			$systemMessageComment = $this->chatManager->editMessage(
+				$this->room,
+				$comment,
+				$this->participant,
+				$this->timeFactory->getDateTime(),
+				$message
+			);
+		} catch (\InvalidArgumentException $e) {
+			if ($e->getMessage() === 'object_share') {
+				return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+			}
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
 
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);

@@ -50,3 +50,17 @@ Feature: chat-1/edit-message
     Then user "participant2" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
       | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               |
+
+  Scenario: Editing a caption
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" shares "welcome.txt" with room "room"
+      | talkMetaData | {"caption":"Caption 1"} |
+    And user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | room | users     | participant1 | participant1-displayname | Caption 1 | "IGNORE"          |
+    When user "participant1" edits message "Caption 1" in room "room" to "Caption 1 - Edit 1" with 200
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters |
+      | room | users     | participant1 | participant1-displayname | Caption 1 - Edit 1 | "IGNORE"          |

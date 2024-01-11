@@ -483,10 +483,21 @@ class ChatManager {
 	 * @param \DateTime $editTime
 	 * @param string $message
 	 * @return IComment
+	 * @throws \InvalidArgumentException
 	 */
 	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {
-		// FIXME "Caption" handling via $comment->getVerb() === self::VERB_OBJECT_SHARED
-		// TODO prevent editing other shares like polls, contacts, etc.
+		if ($comment->getVerb() === ChatManager::VERB_OBJECT_SHARED) {
+			$messageData = json_decode($comment->getMessage(), true);
+			if (!isset($messageData['message']) || $messageData['message'] !== 'file_shared') {
+				// Not a file share
+				throw new \InvalidArgumentException('object_share');
+			}
+
+			$messageData['parameters'] ??= [];
+			$messageData['parameters']['metaData'] ??= [];
+			$messageData['parameters']['metaData']['caption'] = $message;
+			$message = json_encode($messageData);
+		}
 
 		$metaData = $comment->getMetaData() ?? [];
 		$metaData['last_edited_by_type'] = $participant->getAttendee()->getActorType();
