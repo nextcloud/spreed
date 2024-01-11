@@ -356,6 +356,7 @@ export default {
 
 		areGroupsIdentical(group1, group2) {
 			if (group1.messages.length !== group2.messages.length
+				|| JSON.stringify(group1.messages) !== JSON.stringify(group2.messages)
 				|| group1.dateSeparator !== group2.dateSeparator
 				|| group1.previousMessageId !== group2.previousMessageId
 				|| group1.nextMessageId !== group2.nextMessageId) {

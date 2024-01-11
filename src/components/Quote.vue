@@ -40,6 +40,9 @@ components.
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				{{ getDisplayName }}
+				<div v-if="editMessage">
+					{{ t('spreed', '(editing)') }}
+				</div>
 			</div>
 			<!-- file preview-->
 			<NcRichText v-if="isFileShareMessage"
@@ -54,7 +57,7 @@ components.
 		<div v-if="isNewMessageQuote" class="quote__main__right">
 			<NcButton type="tertiary"
 				:aria-label="cancelQuoteLabel"
-				@click="handleAbortReply">
+				@click="handleAbort">
 				<template #icon>
 					<Close :size="20" />
 				</template>
@@ -137,6 +140,11 @@ export default {
 		 * the remove button.
 		 */
 		isNewMessageQuote: {
+			type: Boolean,
+			default: false,
+		},
+
+		editMessage: {
 			type: Boolean,
 			default: false,
 		},
@@ -249,8 +257,12 @@ export default {
 		},
 	},
 	methods: {
-		handleAbortReply() {
-			this.chatExtrasStore.removeParentIdToReply(this.token)
+		handleAbort() {
+			if (this.editMessage) {
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			} else {
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+			}
 			EventBus.$emit('focus-chat-input')
 		},
 

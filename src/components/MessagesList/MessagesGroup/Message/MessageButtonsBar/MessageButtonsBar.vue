@@ -83,6 +83,14 @@
 						</template>
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
+					<NcActionButton :aria-label="t('spreed', 'Edit message')"
+						close-after-click
+						@click.stop="editMessage">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						{{ t('spreed', 'Edit message') }}
+					</NcActionButton>
 					<NcActionButton v-if="!isFileShareOnly"
 						close-after-click
 						@click.stop="handleCopyMessageText">
@@ -267,6 +275,7 @@ import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
@@ -323,6 +332,7 @@ export default {
 		File,
 		Note,
 		OpenInNewIcon,
+		Pencil,
 		Plus,
 		Reply,
 		Share,
@@ -447,7 +457,7 @@ export default {
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
 	setup() {
 		const reactionsStore = useReactionsStore()
@@ -790,6 +800,10 @@ export default {
 
 		setCustomReminder() {
 			this.setReminder(this.customReminderDateTime.valueOf())
+		},
+
+		editMessage() {
+			this.$emit('edit')
 		},
 	},
 }

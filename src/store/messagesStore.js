@@ -507,6 +507,15 @@ const mutations = {
 			Vue.set(state.firstKnown, token, newFirstKnown)
 		}
 	},
+
+	updateMessage(state, { token, messageId, updatedMessageText }) {
+		const message = state.messages[token][messageId]
+		if (!message) {
+			return
+		}
+		const updatedMessage = { ...message, message: updatedMessageText }
+		Vue.set(state.messages[token], messageId, updatedMessage)
+	},
 }
 
 const actions = {
@@ -1354,6 +1363,10 @@ const actions = {
 
 	async easeMessageList(context, { token }) {
 		context.commit('easeMessageList', { token })
+	},
+
+	updateMessage(context, { token, messageId, updatedMessageText }) {
+		context.commit('updateMessage', { token, messageId, updatedMessageText })
 	},
 }
 

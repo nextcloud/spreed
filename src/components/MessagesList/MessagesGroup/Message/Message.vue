@@ -178,6 +178,7 @@ the main body of the message as well as a quote.
 				:sent-icon-tooltip="sentIconTooltip"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
+				@edit="handleEdit"
 				@delete="handleDelete" />
 			<div v-else-if="showCombinedSystemMessageToggle"
 				class="message-buttons-bar">
@@ -752,6 +753,15 @@ export default {
 			this.chatExtrasStore.setParentIdToReply({
 				token: this.token,
 				id: this.id,
+			})
+			EventBus.$emit('focus-chat-input')
+		},
+
+		handleEdit() {
+			this.chatExtrasStore.setMessageIdToEdit({
+				token: this.token,
+				message: this.message,
+				id: this.id
 			})
 			EventBus.$emit('focus-chat-input')
 		},

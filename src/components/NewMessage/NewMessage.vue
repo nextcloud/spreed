@@ -82,8 +82,8 @@
 						</template>
 					</NcButton>
 				</div>
-				<div v-if="parentMessage" class="new-message-form__quote">
-					<Quote is-new-message-quote v-bind="parentMessage" />
+				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
+					<Quote is-new-message-quote :edit-message="!!messageToEdit" v-bind="messageToEdit ?? parentMessage" />
 				</div>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
@@ -109,6 +109,19 @@
 				:disabled="disabled"
 				@recording="handleRecording"
 				@audio-file="handleAudioFile" />
+
+			<!-- Edit -->
+			<NcButton v-else-if="messageToEdit"
+				:disabled="disabled"
+				type="tertiary"
+				native-type="submit"
+				:title="t('spreed', 'Edit message')"
+				:aria-label="t('spreed', 'Edit message')"
+				@click="handleEdit">
+				<template #icon>
+					<CheckBold :size="16" />
+				</template>
+			</NcButton>
 
 			<!-- Send buttons -->
 			<template v-else>
@@ -163,6 +176,7 @@
 
 <script>
 import BellOff from 'vue-material-design-icons/BellOff.vue'
+import CheckBold from 'vue-material-design-icons/CheckBold.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
@@ -188,6 +202,7 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
+import { editMessage } from '../../services/messagesService.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
@@ -217,6 +232,7 @@ export default {
 		Quote,
 		// Icons
 		BellOff,
+		CheckBold,
 		EmoticonOutline,
 		Send,
 	},
@@ -338,6 +354,11 @@ export default {
 			return parentId && this.$store.getters.message(this.token, parentId)
 		},
 
+		messageToEdit() {
+			const messageToEditId = this.chatExtrasStore.getMessageIdToEdit(this.token)
+			return messageToEditId && this.$store.getters.message(this.token, messageToEditId)
+		},
+
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
 		},
@@ -408,7 +429,11 @@ export default {
 
 		isMobileDevice() {
 			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-		}
+		},
+
+		chatInput() {
+			return this.chatExtrasStore.getChatInput(this.token)
+		},
 	},
 
 	watch: {
@@ -418,6 +443,25 @@ export default {
 
 		text(newValue) {
 			this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
+		},
+
+		messageToEdit(newValue) {
+			if (newValue) {
+				this.text = this.chatExtrasStore.getChatInput(this.token)
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+			}
+		},
+
+		parentMessage(newValue) {
+			if (newValue && this.messageToEdit) {
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			}
+		},
+
+		chatInput(newValue) {
+			if (this.text !== newValue) {
+				this.text = newValue
+			}
 		},
 
 		token: {
@@ -592,6 +636,24 @@ export default {
 				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
 				this.text = loremIpsum.slice(0, 25 + randomNumber)
 				await this.handleSubmit({ silent: false })
+			}
+		},
+
+		async handleEdit() {
+			try {
+				await editMessage({
+					token: this.token,
+					messageId: this.messageToEdit.id,
+					updatedMessage: this.text.trim()
+				})
+				this.$store.dispatch('updateMessage', {
+					token: this.token,
+					messageId: this.messageToEdit.id,
+					updatedMessageText: this.text.trim()
+				})
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			} catch {
+				this.$emit('failure')
 			}
 		},
 

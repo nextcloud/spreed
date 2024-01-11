@@ -48,6 +48,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		absence: {},
 		parentToReply: {},
 		chatInput: {},
+		messageIdToEdit: {},
 	}),
 
 	getters: {
@@ -60,6 +61,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		getChatInput: (state) => (token) => {
 			return state.chatInput[token] ?? ''
 		},
+
+		getMessageIdToEdit: (state) => (token) => {
+			return state.messageIdToEdit[token]
+		}
 	},
 
 	actions: {
@@ -115,7 +120,9 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token The conversation token
 		 */
 		removeParentIdToReply(token) {
-			Vue.delete(this.parentToReply, token)
+			if (this.parentToReply[token]) {
+				Vue.delete(this.parentToReply, token)
+			}
 		},
 
 		/**
@@ -133,6 +140,18 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
 
 			Vue.set(this.chatInput, token, parsedText)
+		},
+
+		setMessageIdToEdit({ token, message, id }) {
+			this.setChatInput({ token, text: message })
+			Vue.set(this.messageIdToEdit, token, id)
+		},
+
+		removeMessageIdToEdit(token) {
+			this.removeChatInput(token)
+			if (this.messageIdToEdit[token]) {
+				Vue.delete(this.messageIdToEdit, token)
+			}
 		},
 
 		/**
