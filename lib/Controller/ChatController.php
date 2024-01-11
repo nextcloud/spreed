@@ -677,7 +677,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * 400: Deleting message is not possible
 	 * 403: Missing permissions to delete message
 	 * 404: Message not found
-	 * 405: Deleting message is not allowed
+	 * 405: Deleting this message type is not allowed
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
@@ -737,6 +737,86 @@ class ChatController extends AEnvironmentAwareController {
 
 		$data = $systemMessage->toArray($this->getResponseFormat());
 		$data['parent'] = $message->toArray($this->getResponseFormat());
+
+		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
+
+		$headers = [];
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+		}
+		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * Edit a chat message
+	 *
+	 * @param int $messageId ID of the message
+	 * @param string $message the message to send
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 *
+	 * 200: Message edited successfully
+	 * 202: Message edited successfully, but Matterbridge is configured, so the information can be replicated elsewhere
+	 * 400: Editing message is not possible
+	 * 403: Missing permissions to edit message
+	 * 404: Message not found
+	 * 405: Editing this message type is not allowed
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	public function editMessage(int $messageId, string $message): DataResponse {
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$attendee = $this->participant->getAttendee();
+		$isOwnMessage = $comment->getActorType() === $attendee->getActorType()
+			&& $comment->getActorId() === $attendee->getActorId();
+
+		// Special case for if the message is a bridged message, then the message is the bridge bot's message.
+		$isOwnMessage = $isOwnMessage || ($comment->getActorType() === Attendee::ACTOR_BRIDGED && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID);
+		if (!$isOwnMessage
+			&& (!$this->participant->hasModeratorPermissions(false)
+				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE
+				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
+			// Actor is not a moderator or not the owner of the message
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($comment->getVerb() !== ChatManager::VERB_MESSAGE && $comment->getVerb() !== ChatManager::VERB_OBJECT_SHARED) {
+			// System message (since the message is not parsed, it has type "system")
+			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
+
+		$maxAge = $this->timeFactory->getDateTime();
+		$maxAge->sub(new \DateInterval('P1D'));
+		if ($comment->getCreationDateTime() < $maxAge) {
+			// Message is too old
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$systemMessageComment = $this->chatManager->editMessage(
+			$this->room,
+			$comment,
+			$this->participant,
+			$this->timeFactory->getDateTime(),
+			$message
+		);
+
+		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
+		$this->messageParser->parseMessage($systemMessage);
+
+		$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+		$parseMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+		$this->messageParser->parseMessage($parseMessage);
+
+		$data = $systemMessage->toArray($this->getResponseFormat());
+		$data['parent'] = $parseMessage->toArray($this->getResponseFormat());
 
 		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
 

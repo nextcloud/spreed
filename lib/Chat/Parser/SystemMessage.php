@@ -516,6 +516,11 @@ class SystemMessage implements IEventListener {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a message');
 			}
+		} elseif ($message === 'message_edited') {
+			$parsedMessage = $this->l->t('{actor} edited a message');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You edited a message');
+			}
 		} elseif ($message === 'reaction_revoked') {
 			$parsedMessage = $this->l->t('{actor} deleted a reaction');
 			if ($currentUserIsActor) {

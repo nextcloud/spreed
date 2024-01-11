@@ -44,6 +44,8 @@ return [
 		['name' => 'Chat#clearHistory', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::deleteMessage() */
 		['name' => 'Chat#deleteMessage', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
+		/** @see \OCA\Talk\Controller\ChatController::editMessage() */
+		['name' => 'Chat#editMessage', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}', 'verb' => 'PUT', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\ChatController::getMessageContext() */
 		['name' => 'Chat#getMessageContext', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}/context', 'verb' => 'GET', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\ChatController::setReminder() */

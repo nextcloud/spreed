@@ -43,25 +43,29 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
     - Data:
         Array of messages, each message has at least:
 
-| field                 | type     | Description                                                                                                                                                            |
-|-----------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `id`                  | int      | ID of the comment                                                                                                                                                      |
-| `token`               | string   | Conversation token                                                                                                                                                     |
-| `actorType`           | string   | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages)                                                                              |
-| `actorId`             | string   | Actor id of the message author                                                                                                                                         |
-| `actorDisplayName`    | string   | Display name of the message author                                                                                                                                     |
-| `timestamp`           | int      | Timestamp in seconds and UTC time zone                                                                                                                                 |
-| `systemMessage`       | string   | empty for normal chat message or the type of the system message (untranslated)                                                                                         |
-| `messageType`         | string   | Currently known types are `comment`, `comment_deleted`, `system` and `command`                                                                                         |
-| `isReplyable`         | bool     | True if the user can post a reply to this message (only available with `chat-replies` capability)                                                                      |
-| `referenceId`         | string   | A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)           |
-| `message`             | string   | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))                                                           |
-| `messageParameters`   | array    | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))                                                           |
-| `expirationTimestamp` | int      | Unix time stamp when the message expires and show be removed from the clients UI without further note or warning (only available with `message-expiration` capability) |
-| `parent`              | array    | **Optional:** See `Parent data` below                                                                                                                                  |
-| `reactions`           | int[]    | **Optional:** An array map with relation between reaction emoji and total count of reactions with this emoji                                                           |
-| `reactionsSelf`       | string[] | **Optional:** When the user reacted this is the list of emojis the user reacted with                                                                                   |
-| `markdown`            | bool     | **Optional:** Whether the message should be rendered as markdown or shown as plain text                                                                                |
+| field                      | type     | Description                                                                                                                                                                                                                 |
+|----------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`                       | int      | ID of the comment                                                                                                                                                                                                           |
+| `token`                    | string   | Conversation token                                                                                                                                                                                                          |
+| `actorType`                | string   | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages)                                                                                                                                   |
+| `actorId`                  | string   | Actor id of the message author                                                                                                                                                                                              |
+| `actorDisplayName`         | string   | Display name of the message author                                                                                                                                                                                          |
+| `timestamp`                | int      | Timestamp in seconds and UTC time zone                                                                                                                                                                                      |
+| `systemMessage`            | string   | empty for normal chat message or the type of the system message (untranslated)                                                                                                                                              |
+| `messageType`              | string   | Currently known types are `comment`, `comment_deleted`, `system` and `command`                                                                                                                                              |
+| `isReplyable`              | bool     | True if the user can post a reply to this message (only available with `chat-replies` capability)                                                                                                                           |
+| `referenceId`              | string   | A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)                                                                |
+| `message`                  | string   | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))                                                                                                                |
+| `messageParameters`        | array    | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))                                                                                                                |
+| `expirationTimestamp`      | int      | Unix time stamp when the message expires and show be removed from the clients UI without further note or warning (only available with `message-expiration` capability)                                                      |
+| `parent`                   | array    | **Optional:** See `Parent data` below                                                                                                                                                                                       |
+| `reactions`                | int[]    | **Optional:** An array map with relation between reaction emoji and total count of reactions with this emoji                                                                                                                |
+| `reactionsSelf`            | string[] | **Optional:** When the user reacted this is the list of emojis the user reacted with                                                                                                                                        |
+| `markdown`                 | bool     | **Optional:** Whether the message should be rendered as markdown or shown as plain text                                                                                                                                     |
+| `lastEditActorType`        | string   | Actor type of the last editing author - See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages) (only available with `edit-messages` capability and when the message was actually edited) |
+| `lastEditActorId`          | string   | Actor id of the last editing author (only available with `edit-messages` capability and when the message was actually edited)                                                                                               |
+| `lastEditActorDisplayName` | string   | Display name of the last editing author (only available with `edit-messages` capability and when the message was actually edited)                                                                                           |
+| `lastEditTimestamp`        | int      | Unix time stamp when the message was last edited (only available with `edit-messages` capability and when the message was actually edited)                                                                                  |
 
 #### Parent data
 
@@ -304,6 +308,40 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         The parent message is the object of the deleted message with the replaced text "Message deleted by you".
         This message should **NOT** be displayed to the user but instead be used to remove the original message from any cache/storage of the device.
 
+
+## Editing a chat message
+
+* Required capability: `edit-messages`
+* Method: `PUT`
+* Endpoint: `/chat/{token}/{messageId}`
+* Data:
+
+| field              | type   | Description                       |
+|--------------------|--------|-----------------------------------|
+| `message`          | string | The message the user wants to say |
+
+* Response:
+    - Status code:
+        + `200 OK` - When editing was successful
+        + `202 Accepted` - When editing was successful but Matterbridge is enabled so the message was leaked to other services
+        + `400 Bad Request` The message is already older than 24 hours or another reason why editing is not okay
+        + `403 Forbidden` When the message is not from the current user and the user not a moderator
+        + `403 Forbidden` When the conversation is read-only
+        + `404 Not Found` When the conversation or chat message could not be found for the participant
+        + `405 Method Not Allowed` When the message is not a normal chat message
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+    - Header:
+
+| field                     | type | Description                                                                                                                                                                                                     |
+|---------------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-Chat-Last-Common-Read` | int  | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability) |
+
+    - Data:
+        The full message array of the new system message "You edited a message", as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+        The parent message is the object of the edited message with the new content.
+        This message should **NOT** be displayed to the user but instead be used to update the original message from any cache/storage of the device.
+
 ## Set reminder for chat message
 
 * Required capability: `remind-me-later`
@@ -478,6 +516,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
 * `message_deleted` - Message deleted by {actor} (Should not be shown to the user)
+* `message_edited` - Message edited by {actor} (Should not be shown to the user)
 * `history_cleared` - {actor} cleared the history of the conversation
 * `file_shared` - {file}
 * `object_shared` - {object}

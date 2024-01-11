@@ -237,6 +237,7 @@ class Manager {
 			'latest_child_timestamp' => $row['comment_latest_child_timestamp'],
 			'reactions' => $row['comment_reactions'],
 			'expire_date' => $row['comment_expire_date'],
+			'meta_data' => $row['comment_meta_data'],
 		]);
 	}
 
@@ -1308,5 +1309,6 @@ class Manager {
 		$query->selectAlias('c.latest_child_timestamp', 'comment_latest_child_timestamp');
 		$query->selectAlias('c.reactions', 'comment_reactions');
 		$query->selectAlias('c.expire_date', 'comment_expire_date');
+		$query->selectAlias('c.meta_data', 'comment_meta_data');
 	}
 }
