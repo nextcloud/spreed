@@ -11,7 +11,7 @@
 		"autoloader-suffix": "Talk",
 		"optimize-autoloader": true,
 		"platform": {
-			"php": "8.0"
+			"php": "8.0.2"
 		},
 		"sort-packages": true
 	},
@@ -19,7 +19,7 @@
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
-		"openapi": "generate-spec",
+		"openapi": "generate-spec --verbose",
 		"psalm": "psalm --threads=1",
 		"psalm:dev": "psalm --no-cache --threads=$(nproc)",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline --set-baseline=tests/psalm-baseline.xml",
@@ -43,8 +43,8 @@
 	},
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
-		"cuyz/valinor": "^1.7",
-		"firebase/php-jwt": "^6.3"
+		"cuyz/valinor": "^1.8",
+		"firebase/php-jwt": "^6.10"
 	},
 	"extra": {
 		"mozart": {
