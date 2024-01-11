@@ -48,7 +48,9 @@
 				@open="onMenuOpen"
 				@close="onMenuClose">
 				<template v-if="submenu === null">
-					<NcActionButton class="action--nested"
+					<!-- Message timestamp is a menu for editing details -->
+					<NcActionButton v-if="messageObject.lastEditTimestamp"
+						class="action--nested"
 						@click.stop="submenu = 'edit-history'">
 						<template #icon>
 							<span v-if="showCommonReadIcon"
@@ -65,6 +67,23 @@
 						</template>
 						{{ messageDateTime }}
 					</NcActionButton>
+					<!-- Message timestamp if there is no editing history -->
+					<NcActionText v-else>
+						<template #icon>
+							<span v-if="showCommonReadIcon"
+								:title="commonReadIconTooltip"
+								:aria-label="commonReadIconTooltip">
+								<CheckAll :size="16" />
+							</span>
+							<span v-else-if="showSentIcon"
+								:title="sentIconTooltip"
+								:aria-label="sentIconTooltip">
+								<Check :size="16" />
+							</span>
+							<ClockOutline v-else :size="16" />
+						</template>
+						{{ messageDateTime }}
+					</NcActionText>
 
 					<NcActionButton v-if="supportReminders"
 						class="action--nested"
@@ -84,7 +103,8 @@
 						</template>
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
-					<NcActionButton :aria-label="t('spreed', 'Edit message')"
+					<NcActionButton v-if="isEditable"
+						:aria-label="t('spreed', 'Edit message')"
 						close-after-click
 						@click.stop="editMessage">
 						<template #icon>
@@ -513,8 +533,21 @@ export default {
 			return this.getMessagesListScroller()
 		},
 
+		isModifiable() {
+			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
+		},
+
+		isEditable() {
+			if (!this.isModifiable || this.isObjectShare) {
+				return false
+			}
+
+			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
+				&& (this.$store.getters.isModerator || this.isMyMsg)
+		},
+
 		isDeleteable() {
-			if (this.isConversationReadOnly || this.conversation.participantType === PARTICIPANT.TYPE.GUEST) {
+			if (!this.isModifiable) {
 				return false
 			}
 
@@ -552,6 +585,10 @@ export default {
 
 		isFileShareOnly() {
 			return this.isFileShare && this.message === '{file}'
+		},
+
+		isObjectShare() {
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('object'))
 		},
 
 		isCurrentGuest() {
