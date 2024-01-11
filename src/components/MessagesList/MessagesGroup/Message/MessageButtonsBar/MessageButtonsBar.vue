@@ -48,7 +48,8 @@
 				@open="onMenuOpen"
 				@close="onMenuClose">
 				<template v-if="submenu === null">
-					<NcActionButton>
+					<NcActionButton class="action--nested"
+						@click.stop="submenu = 'edit-history'">
 						<template #icon>
 							<span v-if="showCommonReadIcon"
 								:title="commonReadIconTooltip"
@@ -215,6 +216,24 @@
 						{{ t('spreed', 'Set custom reminder') }}
 					</NcActionButton>
 				</template>
+
+				<template v-else-if="submenu === 'edit-history'">
+					<NcActionButton :aria-label="t('spreed', 'Back')"
+						@click.stop="submenu = null">
+						<template #icon>
+							<ArrowLeft />
+						</template>
+						{{ t('spreed', 'Back') }}
+					</NcActionButton>
+					<NcActionText>
+						{{ t('spreed', 'Edited by : {actor}',
+							{actor : messageObject.lastEditActorDisplayName}) }}
+					</NcActionText>
+					<NcActionSeparator />
+					<NcActionText>
+						{{ editedDateTime }}
+					</NcActionText>
+				</template>
 			</NcActions>
 		</template>
 
@@ -290,6 +309,7 @@ import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
@@ -313,6 +333,7 @@ export default {
 		NcActionInput,
 		NcActionLink,
 		NcActionSeparator,
+		NcActionText,
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
@@ -570,6 +591,10 @@ export default {
 			return moment(this.timestamp * 1000).format('lll')
 		},
 
+		editedDateTime() {
+			return moment(this.messageObject.lastEditTimestamp * 1000).format('lll')
+		},
+
 		reminderOptions() {
 			const currentDateTime = moment()
 
@@ -818,5 +843,9 @@ export default {
 		margin-left: auto;
 		background: no-repeat center var(--icon-triangle-e-dark);
 	}
+}
+
+:deep(.action-text) {
+	padding-left: 5px;
 }
 </style>

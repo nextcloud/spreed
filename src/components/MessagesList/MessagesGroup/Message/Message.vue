@@ -408,6 +408,26 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		lastEditActorDisplayName: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorId: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorType: {
+			type: String,
+			default: '',
+		},
+
+		lastEditTimestamp: {
+			type: Number,
+			default: 0,
+		},
 	},
 
 	emits: ['toggle-combined-system-message'],

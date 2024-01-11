@@ -646,11 +646,6 @@ export default {
 					messageId: this.messageToEdit.id,
 					updatedMessage: this.text.trim()
 				})
-				this.$store.dispatch('updateMessage', {
-					token: this.token,
-					messageId: this.messageToEdit.id,
-					updatedMessageText: this.text.trim()
-				})
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 			} catch {
 				this.$emit('failure')

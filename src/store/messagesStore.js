@@ -508,12 +508,12 @@ const mutations = {
 		}
 	},
 
-	updateMessage(state, { token, messageId, updatedMessageText }) {
+	updateMessage(state, { token, messageId, updatedMessageText, editDetails }) {
 		const message = state.messages[token][messageId]
 		if (!message) {
 			return
 		}
-		const updatedMessage = { ...message, message: updatedMessageText }
+		const updatedMessage = { ...message, message: updatedMessageText, ...editDetails }
 		Vue.set(state.messages[token], messageId, updatedMessage)
 	},
 }
@@ -562,6 +562,31 @@ const actions = {
 			}
 
 			// Quit processing
+			return
+		}
+
+		if (message.parent && message.systemMessage === 'message_edited') {
+			// If parent message is presented in store already, we update it
+			const parentInStore = context.getters.message(message.token, message.parent.id)
+			if (Object.keys(parentInStore).length !== 0) {
+				context.commit('addMessage', message.parent)
+				return
+			}
+
+			// Update message in store
+			const messageUpdated = message.parent
+			const editDetails = {
+				lastEditActorDisplayName: messageUpdated.lastEditActorDisplayName,
+				lastEditActorId: messageUpdated.lastEditActorId,
+				lastEditActorType: messageUpdated.lastEditActorType,
+				lastEditTimestamp: messageUpdated.lastEditTimestamp,
+			}
+			context.commit('updateMessage', {
+				token: messageUpdated.token,
+				messageId: messageUpdated.id,
+				updatedMessageText: messageUpdated.message,
+				editDetails,
+			})
 			return
 		}
 
@@ -1365,8 +1390,8 @@ const actions = {
 		context.commit('easeMessageList', { token })
 	},
 
-	updateMessage(context, { token, messageId, updatedMessageText }) {
-		context.commit('updateMessage', { token, messageId, updatedMessageText })
+	updateMessage(context, { token, messageId, updatedMessageText, editDetails }) {
+		context.commit('updateMessage', { token, messageId, updatedMessageText, editDetails })
 	},
 }
 

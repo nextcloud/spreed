@@ -32,6 +32,11 @@
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
 				{{ actorDisplayName }}
+				<div v-if="lastEditActorDisplayName"
+					:aria-label="getLastEditor"
+					:aria-level="4">
+					{{ getLastEditor }}
+				</div>
 			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
@@ -88,6 +93,11 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
+
+		lastEditActorDisplayName: {
+			type: String,
+			default: ''
+		},
 	},
 
 	setup() {
@@ -131,6 +141,17 @@ export default {
 			}
 
 			return displayName
+		},
+
+		getLastEditor() {
+			if (this.lastEditActorDisplayName === this.actorDisplayName) {
+				return t('spreed', '(edited)')
+			} else if (this.lastEditActorDisplayName === this.$store.getters.getDisplayName()) {
+				return t('spreed', '(edited by you)')
+			} else {
+				return t('spreed', '(edited by {user1})', { user1: this.lastEditActorDisplayName })
+			}
+
 		},
 
 		disableMenu() {
@@ -184,6 +205,8 @@ export default {
 	}
 
 	&__author {
+		display: flex;
+		gap: 4px;
 		padding: 4px 0 0 8px;
 		color: var(--color-text-maxcontrast);
 	}
