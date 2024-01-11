@@ -483,9 +483,13 @@ class ChatManager {
 	 * @param \DateTime $editTime
 	 * @param string $message
 	 * @return IComment
-	 * @throws \InvalidArgumentException
+	 * @throws \InvalidArgumentException When the message is empty or the shared object is not a file share with caption
 	 */
 	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {
+		if (trim($message) === '') {
+			throw new \InvalidArgumentException('message');
+		}
+
 		if ($comment->getVerb() === ChatManager::VERB_OBJECT_SHARED) {
 			$messageData = json_decode($comment->getMessage(), true);
 			if (!isset($messageData['message']) || $messageData['message'] !== 'file_shared') {

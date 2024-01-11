@@ -6282,7 +6282,7 @@
                         }
                     },
                     "400": {
-                        "description": "Editing message is not possible",
+                        "description": "Editing message is not possible, e.g. when the new message is empty or the message is too old",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6301,7 +6301,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
