@@ -66,6 +66,7 @@
 
 <script>
 import debounce from 'debounce'
+import { toRefs } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
@@ -82,9 +83,9 @@ import Hint from '../../Hint.vue'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 
+import { useGetParticipants } from '../../../composables/useGetParticipants.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
-import getParticipants from '../../../mixins/getParticipants.js'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
@@ -108,9 +109,11 @@ export default {
 		SelectPhoneNumber,
 	},
 
-	mixins: [getParticipants],
-
 	props: {
+		isActive: {
+			type: Boolean,
+			required: true,
+		},
 		canSearch: {
 			type: Boolean,
 			required: true,
@@ -121,13 +124,16 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
+		const { isActive } = toRefs(props)
 		const { sortParticipants } = useSortParticipants()
 		const isInCall = useIsInCall()
+		const { cancelableGetParticipants } = useGetParticipants(isActive, false)
 
 		return {
 			sortParticipants,
 			isInCall,
+			cancelableGetParticipants,
 		}
 	},
 
@@ -144,6 +150,10 @@ export default {
 	},
 
 	computed: {
+		participantsInitialised() {
+			return this.$store.getters.participantsInitialised(this.token)
+		},
+
 		participants() {
 			return this.$store.getters.participantsList(this.token).slice().sort(this.sortParticipants)
 		},
@@ -181,7 +191,7 @@ export default {
 			return this.searchText !== ''
 		},
 		noResults() {
-			return this.searchResults === []
+			return this.searchResults.length === 0
 		},
 	},
 
@@ -189,20 +199,11 @@ export default {
 		searchText(value) {
 			this.isFocused = !!value
 		},
-
-		isActive(value) {
-			if (value && this.pendingChanges) {
-				this.debounceUpdateParticipants()
-			}
-		}
 	},
 
 	beforeMount() {
 		EventBus.$on('route-change', this.abortSearch)
 		subscribe('user_status:status.updated', this.updateUserStatus)
-
-		// Initialises the get participants mixin
-		this.initialiseGetParticipantsMixin()
 	},
 
 	beforeDestroy() {
@@ -211,8 +212,6 @@ export default {
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
-
-		this.stopGetParticipantsMixin()
 	},
 
 	methods: {

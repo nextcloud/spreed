@@ -289,8 +289,8 @@ import MessageForwarder from './MessageForwarder.vue'
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
-import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
+import { useReactionsStore } from '../../../../../stores/reactions.js'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')

@@ -85,6 +85,8 @@ const state = {
 	},
 	speaking: {
 	},
+	initialised: {
+	},
 	/**
 	 * Stores the cancel function returned by `cancelableFetchParticipants`,
 	 * which allows to cancel the previous request for participants
@@ -205,6 +207,19 @@ const getters = {
 	},
 
 	/**
+	 * Gets the initialisation status of the participants for a conversation.
+	 * This is used to determine if the participants have been fetched for a
+	 * conversation or not.
+	 *
+	 * @param {object} state - the state object.
+	 * param {string} token - the conversation token.
+	 * @return {boolean} - The initialisation status of the participants.
+	 */
+	participantsInitialised: (state) => (token) => {
+		return state.initialised[token]
+	},
+
+	/**
 	 * Replaces the legacy getParticipant getter. Returns a callback function in which you can
 	 * pass in the token and attendeeId as arguments to get the participant object.
 	 *
@@ -314,6 +329,10 @@ const mutations = {
 		} else {
 			console.error('The conversation you are trying to purge doesn\'t exist')
 		}
+	},
+
+	setParticipantsInitialised(state, { token, initialised }) {
+		Vue.set(state.initialised, token, initialised)
 	},
 
 	setInCall(state, { token, sessionId, flags }) {
@@ -507,6 +526,7 @@ const actions = {
 		const attendee = getters.findParticipant(token, participant)
 		if (!attendee) {
 			commit('addParticipant', { token, participant })
+			commit('setParticipantsInitialised', { token, initialised: false })
 		}
 	},
 
@@ -647,6 +667,9 @@ const actions = {
 				}
 			})
 
+			if (context.state.initialised[token] === false) {
+				context.commit('setParticipantsInitialised', { token, initialised: true })
+			}
 			// Discard current cancel function
 			context.commit('setCancelFetchParticipants', null)
 
