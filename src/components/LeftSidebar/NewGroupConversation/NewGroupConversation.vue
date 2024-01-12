@@ -39,7 +39,7 @@
 						:label="t('spreed', 'Name')"
 						label-visible
 						@keydown.enter="handleEnter" />
-					<NcTextField v-model="conversationDescription"
+					<NcTextArea v-model="conversationDescription"
 						:placeholder="t('spreed', 'Enter a description for this conversation')"
 						:label="t('spreed', 'Description')"
 						label-visible />
@@ -173,6 +173,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
+import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import SetContacts from './SetContacts/SetContacts.vue'
@@ -214,6 +215,7 @@ export default {
 		NcEmptyContent,
 		NcModal,
 		NcPasswordField,
+		NcTextArea,
 		NcTextField,
 		SetContacts,
 		Check,

@@ -31,6 +31,7 @@
 			:value.sync="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
+			:multiline="multiline"
 			:contenteditable="!loading"
 			:placeholder="placeholder"
 			@submit="handleSubmitText"
@@ -152,6 +153,11 @@ export default {
 		editButtonAriaLabel: {
 			type: String,
 			required: true,
+		},
+
+		multiline: {
+			type: Boolean,
+			default: false,
 		},
 
 		useMarkdown: {
