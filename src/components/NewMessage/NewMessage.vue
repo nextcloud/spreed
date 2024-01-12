@@ -403,8 +403,7 @@ export default {
 		},
 
 		showAttachmentsMenu() {
-			return this.canShareFiles && !this.broadcast && !this.upload
-				&& (!this.messageToEdit || this.messageToEdit?.messageParameters?.length !== 0)
+			return this.canShareFiles && !this.broadcast && !this.upload && !this.messageToEdit
 		},
 
 		showAudioRecorder() {
@@ -432,8 +431,8 @@ export default {
 			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
 
-		chatInput() {
-			return this.chatExtrasStore.getChatInput(this.token)
+		chatEditInput() {
+			return this.chatExtrasStore.getChatEditInput(this.token)
 		},
 	},
 
@@ -443,13 +442,19 @@ export default {
 		},
 
 		text(newValue) {
-			this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
+			if (this.messageToEdit) {
+				this.chatExtrasStore.setChatEditInput({ token: this.token, text: newValue })
+			} else {
+				this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
+			}
 		},
 
 		messageToEdit(newValue) {
 			if (newValue) {
-				this.text = this.chatExtrasStore.getChatInput(this.token)
+				this.text = this.chatExtrasStore.getChatEditInput(this.token)
 				this.chatExtrasStore.removeParentIdToReply(this.token)
+			} else {
+				this.text = this.chatExtrasStore.getChatInput(this.token)
 			}
 		},
 
@@ -469,7 +474,9 @@ export default {
 			immediate: true,
 			handler(token) {
 				if (token) {
-					this.text = this.chatExtrasStore.getChatInput(token)
+					this.text = this.messageToEdit
+						? this.chatExtrasStore.getChatEditInput(token)
+						: this.chatExtrasStore.getChatInput(token)
 				} else {
 					this.text = ''
 				}
@@ -641,8 +648,9 @@ export default {
 		},
 
 		async handleEdit() {
-
-			if (this.messageToEdit.messageParameters.length !== 0) {
+			const isSimpleMessage = this.messageToEdit.messageParameters?.length === 0
+				|| this.messageToEdit.messageParameters?.some(parameter => parameter.startsWith('mention'))
+			if (!isSimpleMessage) {
 				// Captions editing is not supported yet
 				return
 			}
@@ -650,6 +658,7 @@ export default {
 			// Submitting an empty message will abort the edit
 			if (this.text.trim() === '') {
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				return
 			}
 
 			try {
@@ -658,6 +667,7 @@ export default {
 					messageId: this.messageToEdit.id,
 					updatedMessage: this.text.trim()
 				})
+				EventBus.$emit('message-edited', this.messageToEdit.id)
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 			} catch {
 				this.$emit('failure')

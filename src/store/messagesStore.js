@@ -507,15 +507,6 @@ const mutations = {
 			Vue.set(state.firstKnown, token, newFirstKnown)
 		}
 	},
-
-	updateMessage(state, { token, messageId, updatedMessageText, editDetails }) {
-		const message = state.messages[token][messageId]
-		if (!message) {
-			return
-		}
-		const updatedMessage = { ...message, message: updatedMessageText, ...editDetails }
-		Vue.set(state.messages[token], messageId, updatedMessage)
-	},
 }
 
 const actions = {
@@ -538,11 +529,16 @@ const actions = {
 			&& (message.systemMessage === 'message_deleted'
 				|| message.systemMessage === 'reaction'
 				|| message.systemMessage === 'reaction_deleted'
-				|| message.systemMessage === 'reaction_revoked')) {
+				|| message.systemMessage === 'reaction_revoked'
+				|| message.systemMessage === 'message_edited')) {
 			// If parent message is presented in store already, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', { token, message: message.parent })
+				if (message.systemMessage === 'message_edited') {
+					// End of process for edited messages
+					return
+				}
 			}
 
 			const reactionsStore = useReactionsStore()
@@ -572,21 +568,6 @@ const actions = {
 				context.commit('addMessage', message.parent)
 				return
 			}
-
-			// Update message in store
-			const messageUpdated = message.parent
-			const editDetails = {
-				lastEditActorDisplayName: messageUpdated.lastEditActorDisplayName,
-				lastEditActorId: messageUpdated.lastEditActorId,
-				lastEditActorType: messageUpdated.lastEditActorType,
-				lastEditTimestamp: messageUpdated.lastEditTimestamp,
-			}
-			context.commit('updateMessage', {
-				token: messageUpdated.token,
-				messageId: messageUpdated.id,
-				updatedMessageText: messageUpdated.message,
-				editDetails,
-			})
 			return
 		}
 
@@ -1388,10 +1369,6 @@ const actions = {
 
 	async easeMessageList(context, { token }) {
 		context.commit('easeMessageList', { token })
-	},
-
-	updateMessage(context, { token, messageId, updatedMessageText, editDetails }) {
-		context.commit('updateMessage', { token, messageId, updatedMessageText, editDetails })
 	},
 }
 

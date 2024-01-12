@@ -284,6 +284,7 @@ export default {
 		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$on('focus-message', this.focusMessage)
 		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.$on('message-edited', this.handleMessageEdited)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -303,6 +304,7 @@ export default {
 		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$off('focus-message', this.focusMessage)
 		EventBus.$off('route-change', this.onRouteChange)
+		EventBus.$off('message-edited', this.handleMessageEdited)
 
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
@@ -395,6 +397,10 @@ export default {
 		messagesShouldBeGrouped(message1, message2) {
 			if (!message2) {
 				return false // No previous message
+			}
+
+			if (!!message1.lastEditTimestamp || !!message2.lastEditTimestamp) {
+				return false // Edited messages are not grouped
 			}
 
 			if (message1.actorType === ATTENDEE.ACTOR_TYPE.BOTS // Don't group messages of commands and bots
@@ -626,6 +632,57 @@ export default {
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
+		},
+
+		handleMessageEdited(id) {
+			// regroup messagesGroupedByAuthor when a message is edited
+			// find the group that contains the id and split it into 3 groups
+			// 1. the messages before the edited message
+			// 2. the edited message
+			// 3. the messages after the edited message
+			const groups = this.messagesGroupedByAuthor
+			const groupIndex = groups.findIndex(group => group.messages.some(message => message.id === id))
+			if (groupIndex === -1) {
+				return
+			}
+			// split the group into 3 groups
+			const group = groups[groupIndex]
+			const messageIndex = group.messages.findIndex(message => message.id === id)
+			const beforeMessages = group.messages.slice(0, messageIndex)
+			const afterMessages = group.messages.slice(messageIndex + 1)
+			const editedMessage = group.messages[messageIndex]
+			// remove the old group and add the 3 new groups at the same index
+			groups.splice(groupIndex, 1,
+				...(beforeMessages.length
+					? [{
+						id: beforeMessages[0].id,
+						messages: beforeMessages,
+						dateSeparator: group.dateSeparator,
+						previousMessageId: group.previousMessageId,
+						nextMessageId: editedMessage.id,
+						isSystemMessagesGroup: group.isSystemMessagesGroup,
+					}]
+					: []),
+				{
+					id: editedMessage.id,
+					messages: [editedMessage],
+					dateSeparator: group.dateSeparator,
+					previousMessageId: beforeMessages.length ? beforeMessages.at(-1).id : group.previousMessageId,
+					nextMessageId: afterMessages.length ? afterMessages[0].id : group.nextMessageId,
+					isSystemMessagesGroup: group.isSystemMessagesGroup,
+				},
+				...(afterMessages.length
+					? [{
+						id: afterMessages[0].id,
+						messages: afterMessages,
+						dateSeparator: group.dateSeparator,
+						previousMessageId: editedMessage.id,
+						nextMessageId: group.nextMessageId,
+						isSystemMessagesGroup: group.isSystemMessagesGroup,
+					}]
+					: []),
+			)
+
 		},
 
 		/**

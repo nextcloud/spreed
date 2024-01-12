@@ -32,9 +32,7 @@
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
 				{{ actorDisplayName }}
-				<div v-if="lastEditActorDisplayName"
-					:aria-label="getLastEditor"
-					:aria-level="4">
+				<div v-if="lastEditActorDisplayName">
 					{{ getLastEditor }}
 				</div>
 			</li>
@@ -144,9 +142,10 @@ export default {
 		},
 
 		getLastEditor() {
-			if (this.lastEditActorDisplayName === this.actorDisplayName) {
+			if (this.lastEditActorId === this.actorId && this.lastEditActorType === this.actorType) {
 				return t('spreed', '(edited)')
-			} else if (this.lastEditActorDisplayName === this.$store.getters.getDisplayName()) {
+			} else if (this.lastEditActorId === this.$store.getters.getActorId()
+						&& this.lastEditActorType === this.$store.getters.getActorType()) {
 				return t('spreed', '(edited by you)')
 			} else {
 				return t('spreed', '(edited by {user1})', { user1: this.lastEditActorDisplayName })
