@@ -71,7 +71,7 @@
 		<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-if="!contactsLoading && sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
-		<template v-if="isNewGroupConversation">
+		<template v-if="isNewConversationDialog">
 			<template v-if="noResults">
 				<div class="icon-category-search participants-search-results__icon" />
 				<p class="participants-search-results__warning">
@@ -261,7 +261,7 @@ export default {
 		},
 		// Determines whether this component is used in the new group conversation creation
 		// context
-		isNewGroupConversation() {
+		isNewConversationDialog() {
 			return this.$parent.$options.name === 'SetContacts'
 		},
 

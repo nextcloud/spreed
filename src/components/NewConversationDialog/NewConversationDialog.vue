@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -177,19 +177,19 @@ import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import SetContacts from './SetContacts/SetContacts.vue'
-import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
-import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
-import LoadingComponent from '../../LoadingComponent.vue'
+import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatarEditor.vue'
+import ListableSettings from '../ConversationSettings/ListableSettings.vue'
+import LoadingComponent from '../LoadingComponent.vue'
 
-import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION, PRIVACY } from '../../../constants.js'
+import { useIsInCall } from '../../composables/useIsInCall.js'
+import { CONVERSATION, PRIVACY } from '../../constants.js'
 import {
 	createPublicConversation,
 	createPrivateConversation,
 	setConversationPassword,
-} from '../../../services/conversationsService.js'
-import { addParticipant } from '../../../services/participantsService.js'
-import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
+} from '../../services/conversationsService.js'
+import { addParticipant } from '../../services/participantsService.js'
+import { copyConversationLinkToClipboard } from '../../services/urlService.js'
 
 const NEW_CONVERSATION = {
 	token: '',
@@ -204,7 +204,7 @@ const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
 
 export default {
 
-	name: 'NewGroupConversation',
+	name: 'NewConversationDialog',
 
 	components: {
 		ConversationAvatarEditor,

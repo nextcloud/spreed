@@ -84,14 +84,14 @@ import { showError } from '@nextcloud/dialogs'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
-import DialpadPanel from '../../../DialpadPanel.vue'
-import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
-import SelectPhoneNumber from '../../../SelectPhoneNumber.vue'
-import TransitionWrapper from '../../../TransitionWrapper.vue'
+import DialpadPanel from '../../DialpadPanel.vue'
+import ParticipantSearchResults from '../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
+import TransitionWrapper from '../../TransitionWrapper.vue'
 
-import { useArrowNavigation } from '../../../../composables/useArrowNavigation.js'
-import { searchPossibleConversations } from '../../../../services/conversationsService.js'
-import CancelableRequest from '../../../../utils/cancelableRequest.js'
+import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
+import { searchPossibleConversations } from '../../../services/conversationsService.js'
+import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 export default {
 	name: 'SetContacts',

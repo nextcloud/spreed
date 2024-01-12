@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -46,9 +46,9 @@ import Close from 'vue-material-design-icons/Close.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import AvatarWrapper from '../../../AvatarWrapper/AvatarWrapper.vue'
 
-import { AVATAR } from '../../../../../constants.js'
+import { AVATAR } from '../../../../constants.js'
 
 export default {
 	name: 'ContactSelectionBubble',
