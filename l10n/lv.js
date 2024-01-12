@@ -164,6 +164,7 @@ OC.L10N.register(
     "Choose" : "Izvēlies",
     "Restricted" : "Ierobežota",
     "Personal" : "Personīgs",
+    "Meeting" : "Tikšanās",
     "Permissions" : "Atļaujas",
     "Leave conversation" : "Atstāt sarunu",
     "Delete conversation" : "Dzēst sarunu",
