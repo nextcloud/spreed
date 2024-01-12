@@ -83,18 +83,19 @@ import { showError } from '@nextcloud/dialogs'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
-import DialpadPanel from '../../DialpadPanel.vue'
-import ParticipantSearchResults from '../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
-import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
-import TransitionWrapper from '../../TransitionWrapper.vue'
+import ContactSelectionBubble from '../ContactSelectionBubble.vue'
+import DialpadPanel from '../DialpadPanel.vue'
+import ParticipantSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import SelectPhoneNumber from '../SelectPhoneNumber.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
-import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
-import { searchPossibleConversations } from '../../../services/conversationsService.js'
-import CancelableRequest from '../../../utils/cancelableRequest.js'
+import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
+import { searchPossibleConversations } from '../../services/conversationsService.js'
+import CancelableRequest from '../../utils/cancelableRequest.js'
 
 export default {
-	name: 'SetContacts',
+	name: 'NewConversationContactsPage',
+
 	components: {
 		ContactSelectionBubble,
 		DialpadPanel,
@@ -110,6 +111,11 @@ export default {
 	props: {
 		conversationName: {
 			type: String,
+			required: true,
+		},
+
+		selectedParticipants: {
+			type: Array,
 			required: true,
 		},
 
@@ -148,9 +154,6 @@ export default {
 	},
 
 	computed: {
-		selectedParticipants() {
-			return this.$store.getters.selectedParticipants
-		},
 		hasSelectedParticipants() {
 			return this.selectedParticipants.length !== 0
 		},

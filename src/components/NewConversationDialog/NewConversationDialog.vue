@@ -42,8 +42,9 @@
 					@avatar-edited="setIsAvatarEdited" />
 
 				<!-- Second page -->
-				<SetContacts v-if="page === 1"
+				<NewConversationContactsPage v-if="page === 1"
 					class="new-group-conversation__content"
+					:selected-participants="selectedParticipants"
 					:can-moderate-sip-dial-out="canModerateSipDialOut"
 					:conversation-name="conversationName" />
 			</div>
@@ -133,8 +134,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
+import NewConversationContactsPage from './NewConversationContactsPage.vue'
 import NewConversationSetupPage from './NewConversationSetupPage.vue'
-import SetContacts from './SetContacts/SetContacts.vue'
 import LoadingComponent from '../LoadingComponent.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -164,7 +165,7 @@ export default {
 		NcButton,
 		NcEmptyContent,
 		NcModal,
-		SetContacts,
+		NewConversationContactsPage,
 		Check,
 		AlertCircle,
 	},
@@ -183,8 +184,8 @@ export default {
 
 	data() {
 		return {
-			newConversation: Object.assign({}, NEW_CONVERSATION),
 			modal: false,
+			newConversation: Object.assign({}, NEW_CONVERSATION),
 			page: 0,
 			isLoading: true,
 			success: false,
@@ -264,8 +265,8 @@ export default {
 		 * the modal closes
 		 */
 		closeModal() {
-			this.newConversation = Object.assign({}, NEW_CONVERSATION)
 			this.modal = false
+			this.newConversation = Object.assign({}, NEW_CONVERSATION)
 			this.page = 0
 			this.isLoading = true
 			this.success = false
