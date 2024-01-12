@@ -31,6 +31,7 @@
 				'call-started': showJoinCallButton,
 			}">
 			<!-- Message content / text -->
+			<CancelIcon v-if="isDeletedMessage" :size="16" />
 			<NcRichText :text="renderedMessage"
 				:arguments="richParameters"
 				autolink
@@ -72,7 +73,7 @@
 				:style="{top: copyButtonOffset}"
 				@click="copyCodeBlock">
 				<template #icon>
-					<ContentCopy :size="16" />
+					<ContentCopyIcon :size="16" />
 				</template>
 			</NcButton>
 		</div>
@@ -96,10 +97,10 @@
 					:aria-label="sendingErrorIconTooltip"
 					@click="handleRetry">
 					<template #icon>
-						<Reload :size="16" />
+						<ReloadIcon :size="16" />
 					</template>
 				</NcButton>
-				<AlertCircle v-else :size="16" />
+				<AlertCircleIcon v-else :size="16" />
 			</div>
 			<div v-else-if="showLoadingIcon"
 				:title="loadingIconTooltip"
@@ -109,13 +110,13 @@
 				:title="commonReadIconTooltip"
 				class="message-status"
 				:aria-label="commonReadIconTooltip">
-				<CheckAll :size="16" />
+				<CheckAllIcon :size="16" />
 			</div>
 			<div v-else-if="showSentIcon"
 				:title="sentIconTooltip"
 				class="message-status"
 				:aria-label="sentIconTooltip">
-				<Check :size="16" />
+				<CheckIcon :size="16" />
 			</div>
 		</div>
 	</div>
@@ -124,11 +125,12 @@
 <script>
 import emojiRegex from 'emoji-regex'
 
-import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import CheckAll from 'vue-material-design-icons/CheckAll.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import Reload from 'vue-material-design-icons/Reload.vue'
+import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
+import CancelIcon from 'vue-material-design-icons/Cancel.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
+import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
+import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
@@ -156,11 +158,12 @@ export default {
 		Poll,
 		Quote,
 		// Icons
-		AlertCircle,
-		Check,
-		CheckAll,
-		ContentCopy,
-		Reload,
+		AlertCircleIcon,
+		CancelIcon,
+		CheckIcon,
+		CheckAllIcon,
+		ContentCopyIcon,
+		ReloadIcon,
 	},
 
 	props: {
