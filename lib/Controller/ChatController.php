@@ -753,11 +753,11 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $messageId ID of the message
 	 * @param string $message the message to send
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 *
 	 * 200: Message edited successfully
 	 * 202: Message edited successfully, but Matterbridge is configured, so the information can be replicated elsewhere
-	 * 400: Editing message is not possible
+	 * 400: Editing message is not possible, e.g. when the new message is empty or the message is too old
 	 * 403: Missing permissions to edit message
 	 * 404: Message not found
 	 * 405: Editing this message type is not allowed
@@ -797,16 +797,23 @@ class ChatController extends AEnvironmentAwareController {
 		$maxAge->sub(new \DateInterval('P1D'));
 		if ($comment->getCreationDateTime() < $maxAge) {
 			// Message is too old
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'age'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$systemMessageComment = $this->chatManager->editMessage(
-			$this->room,
-			$comment,
-			$this->participant,
-			$this->timeFactory->getDateTime(),
-			$message
-		);
+		try {
+			$systemMessageComment = $this->chatManager->editMessage(
+				$this->room,
+				$comment,
+				$this->participant,
+				$this->timeFactory->getDateTime(),
+				$message
+			);
+		} catch (\InvalidArgumentException $e) {
+			if ($e->getMessage() === 'object_share') {
+				return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+			}
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
 
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);
