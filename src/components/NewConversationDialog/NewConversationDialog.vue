@@ -125,6 +125,8 @@
 </template>
 
 <script>
+import { provide } from 'vue'
+
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
@@ -179,6 +181,9 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
+		// Add a visual bulk selection state for Participant component
+		provide('bulkParticipantsSelection', true)
+
 		return { isInCall }
 	},
 

@@ -71,7 +71,6 @@ import { toRefs } from 'vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 
@@ -144,7 +143,6 @@ export default {
 			searchResults: [],
 			contactsLoading: false,
 			participantPhoneItem: {},
-			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
 			cancelSearchPossibleConversations: () => {},
 		}
 	},

@@ -61,13 +61,12 @@
 			:value="searchText"
 			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipantPhone" />
-		<ParticipantSearchResults :add-on-click="false"
-			:search-results="searchResults"
+		<ParticipantSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
-			:scrollable="true"
-			:display-search-hint="displaySearchHint"
-			:selectable="true"
+			scrollable
+			show-search-hints
+			@click="updateSelectedParticipants"
 			@click-search-hint="focusInput" />
 	</div>
 </template>
@@ -157,15 +156,6 @@ export default {
 		hasSelectedParticipants() {
 			return this.selectedParticipants.length !== 0
 		},
-		/**
-		 * Search hint at the bottom of the participants list, displayed only if
-		 * the user is not searching
-		 *
-		 * @return {boolean}
-		 */
-		displaySearchHint() {
-			return !this.contactsLoading && this.searchText === ''
-		},
 
 		isSearching() {
 			return this.searchText !== ''
@@ -253,6 +243,10 @@ export default {
 		},
 		focusInput() {
 			this.setContacts.focus()
+		},
+
+		updateSelectedParticipants(participant) {
+			this.$store.dispatch('updateSelectedParticipants', participant)
 		},
 
 		addParticipantPhone() {

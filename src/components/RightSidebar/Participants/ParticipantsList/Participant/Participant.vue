@@ -288,7 +288,7 @@
 </template>
 
 <script>
-
+import { inject } from 'vue'
 import isEqual from 'lodash/isEqual.js'
 
 import Account from 'vue-material-design-icons/Account.vue'
@@ -398,21 +398,19 @@ export default {
 			type: Boolean,
 			default: true,
 		},
-
-		/**
-		 * Toggles the bulk selection state of this component
-		 */
-		isSelectable: {
-			type: Boolean,
-			default: false,
-		},
 	},
 
 	emits: ['click-participant'],
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		// Toggles the bulk selection state of this component
+		const isSelectable = inject('bulkParticipantsSelection', false)
+
+		return {
+			isInCall,
+			isSelectable,
+		}
 	},
 
 	data() {

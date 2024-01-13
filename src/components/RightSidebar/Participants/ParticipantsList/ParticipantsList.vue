@@ -24,7 +24,6 @@
 		<Participant v-for="item in items"
 			:key="generateKey(item)"
 			:participant="item"
-			:is-selectable="participantsSelectable"
 			:show-user-status="showUserStatus"
 			@click-participant="handleClickParticipant" />
 		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
@@ -72,11 +71,6 @@ export default {
 		dummyParticipants() {
 			const dummies = 6 - this.items.length
 			return dummies > 0 ? dummies : 0
-		},
-		// If the parent component is "ParticipantsSearchResults", make the children
-		// participant components selectable
-		participantsSelectable() {
-			return this.$parent.$options.name === 'ParticipantsSearchResults'
 		},
 	},
 
