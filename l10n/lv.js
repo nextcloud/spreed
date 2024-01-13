@@ -200,6 +200,7 @@ OC.L10N.register(
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Group" : "Grupa",
+    "Upload from device" : "Augšupielādēt no ierīces",
     "New file" : "Jauns fails",
     "Settings" : "Iestatījumi",
     "Send" : "Sūtīt",

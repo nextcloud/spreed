@@ -189,6 +189,8 @@
     "You stopped Matterbridge" : "Tu detuviste Matterbridge",
     "{actor} deleted a message" : "{actor} eliminó un mensaje",
     "You deleted a message" : "Has eliminado un mensaje",
+    "{actor} edited a message" : "{actor} editó un mensaje",
+    "You edited a message" : "Has editado un mensaje",
     "{actor} deleted a reaction" : "{actor} borró una reacción",
     "You deleted a reaction" : "Has borrado una reacción",
     "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["Has cambiado la caducidad del mensaje a %n semana","Has cambiado la caducidad del mensaje a %n semanas","Has cambiado la caducidad del mensaje a %n semanas"],
