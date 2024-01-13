@@ -48,8 +48,8 @@ describe('sharedItemsStore', () => {
 			}
 
 			// Act
-			sharedItemsStore.addSharedItemFromMessage(message)
-			sharedItemsStore.addSharedItemFromMessage(message)
+			sharedItemsStore.addSharedItemFromMessage(token, message)
+			sharedItemsStore.addSharedItemFromMessage(token, message)
 
 			// Assert
 			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 1: message } })
@@ -63,7 +63,7 @@ describe('sharedItemsStore', () => {
 				message: '{file}',
 				messageParameters: { file: { mimetype: 'image/jpeg' } },
 			}
-			sharedItemsStore.addSharedItemFromMessage(message)
+			sharedItemsStore.addSharedItemFromMessage(token, message)
 
 			// Act
 			sharedItemsStore.addSharedItemsFromOverview(token, payloadOverview)

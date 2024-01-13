@@ -340,7 +340,7 @@ const actions = {
 		chatExtrasStore.purgeChatExtras(token)
 		const reactionsStore = useReactionsStore()
 		reactionsStore.purgeReactionsStore(token)
-		context.dispatch('deleteMessages', token)
+		context.dispatch('purgeMessagesStore', token)
 		context.commit('deleteConversation', token)
 		context.dispatch('purgeParticipantsStore', token)
 		context.dispatch('cacheConversations')
@@ -456,7 +456,7 @@ const actions = {
 			chatExtrasStore.removeParentIdToReply(token)
 			const reactionsStore = useReactionsStore()
 			reactionsStore.purgeReactionsStore(token)
-			context.dispatch('deleteMessages', token)
+			context.dispatch('purgeMessagesStore', token)
 			return response
 		} catch (error) {
 			console.debug(

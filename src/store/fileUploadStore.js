@@ -298,11 +298,12 @@ const actions = {
 	 * @param {object} context.getters the contexts getters object.
 	 * @param {object} context.state the contexts state object.
 	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
 	 * @param {string} data.uploadId The unique uploadId
 	 * @param {string|null} data.caption The text caption to the media
 	 * @param {object|null} data.options The share options
 	 */
-	async uploadFiles({ commit, dispatch, state, getters }, { uploadId, caption, options }) {
+	async uploadFiles({ commit, dispatch, state, getters }, { token, uploadId, caption, options }) {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
 		}
@@ -316,12 +317,12 @@ const actions = {
 			// mark all files as uploading
 			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
-			const temporaryMessage = {
+			const message = {
 				...uploadedFile.temporaryMessage,
 				message: index === lastIndex && caption ? caption : '{file}',
 			}
 			// Add temporary messages (files) to the messages list
-			dispatch('addTemporaryMessage', temporaryMessage)
+			dispatch('addTemporaryMessage', { token, message })
 			// Scroll the message list
 			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
@@ -375,7 +376,8 @@ const actions = {
 
 				// Mark the upload as failed in the store
 				commit('markFileAsFailedUpload', { uploadId, index })
-				dispatch('markTemporaryMessageAsFailed', { message: uploadedFile.temporaryMessage, uploadId, reason })
+				const { token, id } = uploadedFile.temporaryMessage
+				dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
 			}
 		}
 
@@ -395,10 +397,10 @@ const actions = {
 			}
 			const metadata = JSON.stringify(rawMetadata)
 
+			const { token, id, referenceId } = temporaryMessage
 			try {
-				const token = temporaryMessage.token
 				dispatch('markFileAsSharing', { uploadId, index })
-				await shareFile(path, token, temporaryMessage.referenceId, metadata)
+				await shareFile(path, token, referenceId, metadata)
 				dispatch('markFileAsShared', { uploadId, index })
 			} catch (error) {
 				if (error?.response?.status === 403) {
@@ -406,7 +408,7 @@ const actions = {
 				} else {
 					showError(t('spreed', 'An error happened when trying to share your file'))
 				}
-				dispatch('markTemporaryMessageAsFailed', { message: temporaryMessage, uploadId, reason: 'failed-share' })
+				dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)
 			}
 		}
@@ -453,18 +455,19 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data payload;
+	 * @param {string} data.token the conversation token;
 	 * @param {string} data.uploadId the internal id of the upload;
 	 * @param {string} [data.caption] the message caption;
 	 */
-	retryUploadFiles(context, { uploadId, caption }) {
+	retryUploadFiles(context, { token, uploadId, caption }) {
 		context.getters.getFailedUploads(uploadId).forEach(([index, file]) => {
-			context.dispatch('removeTemporaryMessageFromStore', file.temporaryMessage)
+			context.dispatch('removeTemporaryMessageFromStore', { token, id: file.temporaryMessage.id })
 			context.commit('markFileAsInitializedUpload', { uploadId, index })
 		})
 
 		if (caption) {
 			const chatExtrasStore = useChatExtrasStore()
-			chatExtrasStore.setChatInput({ token: context.getters.getToken(), text: caption })
+			chatExtrasStore.setChatInput({ token, text: caption })
 		}
 
 		context.commit('setCurrentUploadId', uploadId)

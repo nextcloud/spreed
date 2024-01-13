@@ -237,7 +237,7 @@ describe('reactionsStore', () => {
 				timestamp: 1703668230,
 				token
 			}
-			vuexStore.commit('addMessage', message) // add a message to the store
+			vuexStore.commit('addMessage', { token, message }) // add a message to the store
 
 			// Act
 			await reactionsStore.addReactionToMessage({ token, messageId, selectedEmoji: '😅' })
@@ -274,7 +274,7 @@ describe('reactionsStore', () => {
 				token
 			}
 
-			vuexStore.commit('addMessage', message) // add a message to the store
+			vuexStore.commit('addMessage', { token, message }) // add a message to the store
 
 			// Act
 			await reactionsStore.removeReactionFromMessage({ token, messageId, selectedEmoji: '🎄' })

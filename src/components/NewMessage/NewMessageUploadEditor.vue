@@ -206,7 +206,7 @@ export default {
 		},
 
 		handleUpload({ caption, options }) {
-			this.$store.dispatch('uploadFiles', { uploadId: this.currentUploadId, caption, options })
+			this.$store.dispatch('uploadFiles', { token: this.token, uploadId: this.currentUploadId, caption, options })
 		},
 		/**
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,

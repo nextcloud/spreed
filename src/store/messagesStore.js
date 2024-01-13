@@ -283,29 +283,33 @@ const mutations = {
 	 * Adds a message to the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} message the message;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.message message object;
 	 */
-	addMessage(state, message) {
-		if (!state.messages[message.token]) {
-			Vue.set(state.messages, message.token, {})
+	addMessage(state, { token, message }) {
+		if (!state.messages[token]) {
+			Vue.set(state.messages, token, {})
 		}
-		if (state.messages[message.token][message.id]) {
-			Vue.set(state.messages[message.token], message.id,
-				Object.assign(state.messages[message.token][message.id], message)
+		if (state.messages[token][message.id]) {
+			Vue.set(state.messages[token], message.id,
+				Object.assign(state.messages[token][message.id], message)
 			)
 		} else {
-			Vue.set(state.messages[message.token], message.id, message)
+			Vue.set(state.messages[token], message.id, message)
 		}
 	},
 	/**
 	 * Deletes a message from the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} message the message;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.id message id;
 	 */
-	deleteMessage(state, message) {
-		if (state.messages[message.token][message.id]) {
-			Vue.delete(state.messages[message.token], message.id)
+	deleteMessage(state, { token, id }) {
+		if (state.messages[token][id]) {
+			Vue.delete(state.messages[token], id)
 		}
 	},
 
@@ -313,41 +317,45 @@ const mutations = {
 	 * Deletes a message from the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} data the wrapping object;
-	 * @param {object} data.message the message;
-	 * @param {string} data.placeholder Placeholder message until deleting finished
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {number} payload.id conversation token;
+	 * @param {string} payload.placeholder Placeholder message until deleting finished
 	 */
-	markMessageAsDeleting(state, { message, placeholder }) {
-		Vue.set(state.messages[message.token][message.id], 'messageType', 'comment_deleted')
-		Vue.set(state.messages[message.token][message.id], 'message', placeholder)
+	markMessageAsDeleting(state, { token, id, placeholder }) {
+		Vue.set(state.messages[token][id], 'messageType', 'comment_deleted')
+		Vue.set(state.messages[token][id], 'message', placeholder)
 	},
 	/**
 	 * Adds a temporary message to the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} message the temporary message;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.message message object;
 	 */
-	addTemporaryMessage(state, message) {
-		if (!state.messages[message.token]) {
-			Vue.set(state.messages, message.token, {})
+	addTemporaryMessage(state, { token, message }) {
+		if (!state.messages[token]) {
+			Vue.set(state.messages, token, {})
 		}
-		Vue.set(state.messages[message.token], message.id, message)
+		Vue.set(state.messages[token], message.id, message)
 	},
 
 	/**
 	 * Adds a temporary message to the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} data the wrapping object;
-	 * @param {object} data.message the temporary message;
-	 * @param {string|undefined} data.uploadId the internal id of the upload;
-	 * @param {string} data.reason the reason the temporary message failed;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.id message id;
+	 * @param {string|undefined} payload.uploadId the internal id of the upload;
+	 * @param {string} payload.reason the reason the temporary message failed;
 	 */
-	markTemporaryMessageAsFailed(state, { message, uploadId = undefined, reason }) {
-		if (state.messages[message.token][message.id]) {
-			Vue.set(state.messages[message.token][message.id], 'sendingFailure', reason)
+	markTemporaryMessageAsFailed(state, { token, id, uploadId = undefined, reason }) {
+		if (state.messages[token][id]) {
+			Vue.set(state.messages[token][id], 'sendingFailure', reason)
 			if (uploadId) {
-				Vue.set(state.messages[message.token][message.id], 'uploadId', uploadId)
+				Vue.set(state.messages[token][id], 'uploadId', uploadId)
 			}
 		}
 	},
@@ -388,7 +396,7 @@ const mutations = {
 	 * @param {object} state current store state
 	 * @param {string} token Token of the conversation
 	 */
-	deleteMessages(state, token) {
+	purgeMessagesStore(state, token) {
 		if (state.firstKnown[token]) {
 			Vue.delete(state.firstKnown, token)
 		}
@@ -510,9 +518,11 @@ const actions = {
 	 * first it adds the parent to the store.
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} message the message;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.message message object;
 	 */
-	processMessage(context, message) {
+	processMessage(context, { token, message }) {
 		const sharedItemsStore = useSharedItemsStore()
 
 		if (message.parent && message.systemMessage
@@ -521,24 +531,24 @@ const actions = {
 				|| message.systemMessage === 'reaction_deleted'
 				|| message.systemMessage === 'reaction_revoked')) {
 			// If parent message is presented in store already, we update it
-			const parentInStore = context.getters.message(message.token, message.parent.id)
+			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0) {
-				context.commit('addMessage', message.parent)
+				context.commit('addMessage', { token, message: message.parent })
 			}
 
 			const reactionsStore = useReactionsStore()
 			if (message.systemMessage === 'message_deleted') {
-				reactionsStore.resetReactions(message.token, message.parent.id)
+				reactionsStore.resetReactions(token, message.parent.id)
 			} else {
 				reactionsStore.processReaction(message)
 			}
 
 			// Check existing messages for having a deleted message as parent, and update them
 			if (message.systemMessage === 'message_deleted') {
-				context.getters.messagesList(message.token)
+				context.getters.messagesList(token)
 					.filter(storedMessage => storedMessage.parent?.id === message.parent.id)
 					.forEach(storedMessage => {
-						context.commit('addMessage', Object.assign({}, storedMessage, { parent: message.parent }))
+						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
 					})
 			}
 
@@ -547,15 +557,15 @@ const actions = {
 		}
 
 		if (message.referenceId) {
-			const tempMessages = context.getters.getTemporaryReferences(message.token, message.referenceId)
+			const tempMessages = context.getters.getTemporaryReferences(token, message.referenceId)
 			tempMessages.forEach(tempMessage => {
-				context.commit('deleteMessage', tempMessage)
+				context.commit('deleteMessage', { token, id: tempMessage.id })
 			})
 		}
 
 		if (message.systemMessage === 'poll_voted') {
 			context.dispatch('debounceGetPollData', {
-				token: message.token,
+				token,
 				pollId: message.messageParameters.poll.id,
 			})
 			// Quit processing
@@ -564,24 +574,24 @@ const actions = {
 
 		if (message.systemMessage === 'poll_closed') {
 			context.dispatch('getPollData', {
-				token: message.token,
+				token,
 				pollId: message.messageParameters.poll.id,
 			})
 		}
 
 		if (message.systemMessage === 'history_cleared') {
 			context.commit('clearMessagesHistory', {
-				token: message.token,
+				token,
 				id: message.id,
 			})
 		}
 
-		context.commit('addMessage', message)
+		context.commit('addMessage', { token, message })
 
 		if (message.messageParameters && (message.messageType === 'comment' || message.messageType === 'voice-message')) {
 			if (message.messageParameters?.object || message.messageParameters?.file) {
 				// Handle voice messages, shares with single file, polls, deck cards, e.t.c
-				sharedItemsStore.addSharedItemFromMessage(message)
+				sharedItemsStore.addSharedItemFromMessage(token, message)
 			} else if (Object.keys(message.messageParameters).some(key => key.startsWith('file'))) {
 				// Handle shares with multiple files
 			}
@@ -592,22 +602,22 @@ const actions = {
 	 * Delete a message
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} data the wrapping object;
-	 * @param {object} data.message the message to be deleted;
-	 * @param {string} data.placeholder Placeholder message until deleting finished
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.id message id;
+	 * @param {string} payload.placeholder Placeholder message until deleting finished
 	 */
-	async deleteMessage(context, { message, placeholder }) {
-		const messageObject = Object.assign({}, context.getters.message(message.token, message.id))
-		context.commit('markMessageAsDeleting', { message, placeholder })
+	async deleteMessage(context, { token, id, placeholder }) {
+		const message = Object.assign({}, context.getters.message(token, id))
+		context.commit('markMessageAsDeleting', { token, id, placeholder })
 
-		let response
 		try {
-			response = await deleteMessage(message)
-			context.dispatch('processMessage', response.data.ocs.data)
+			const response = await deleteMessage({ token, id })
+			context.dispatch('processMessage', { token, message: response.data.ocs.data })
 			return response.status
 		} catch (error) {
 			// Restore the previous message state
-			context.commit('addMessage', messageObject)
+			context.commit('addMessage', { token, message })
 			throw error
 		}
 	},
@@ -674,35 +684,40 @@ const actions = {
 	 * message object is received from the server.
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} message the temporary message;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.message message object;
 	 */
-	addTemporaryMessage(context, message) {
-		context.commit('addTemporaryMessage', message)
+	addTemporaryMessage(context, { token, message }) {
+		context.commit('addTemporaryMessage', { token, message })
 		// Update conversations list order
-		context.dispatch('updateConversationLastActive', message.token)
+		context.dispatch('updateConversationLastActive', token)
 	},
 
 	/**
 	 * Mark a temporary message as failed to allow retrying it again
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} data the wrapping object;
-	 * @param {object} data.message the temporary message;
-	 * @param {string} data.uploadId the internal id of the upload;
-	 * @param {string} data.reason the reason the temporary message failed;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.id message id;
+	 * @param {string} payload.uploadId the internal id of the upload;
+	 * @param {string} payload.reason the reason the temporary message failed;
 	 */
-	markTemporaryMessageAsFailed(context, { message, uploadId, reason }) {
-		context.commit('markTemporaryMessageAsFailed', { message, uploadId, reason })
+	markTemporaryMessageAsFailed(context, { token, id, uploadId, reason }) {
+		context.commit('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
 	},
 
 	/**
 	 * Remove temporary message from store after receiving the parsed one from server
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} message the temporary message;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token conversation token;
+	 * @param {object} payload.id message id;
 	 */
-	removeTemporaryMessageFromStore(context, message) {
-		context.commit('deleteMessage', message)
+	removeTemporaryMessageFromStore(context, { token, id }) {
+		context.commit('deleteMessage', { token, id })
 	},
 
 	/**
@@ -741,8 +756,8 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {string} token the token of the conversation to be deleted;
 	 */
-	deleteMessages(context, token) {
-		context.commit('deleteMessages', token)
+	purgeMessagesStore(context, token) {
+		context.commit('purgeMessagesStore', token)
 	},
 
 	/**
@@ -854,7 +869,7 @@ const actions = {
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: true })
 			}
-			context.dispatch('processMessage', message)
+			context.dispatch('processMessage', { token, message })
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 
 			if (message.systemMessage !== 'reaction'
@@ -945,7 +960,7 @@ const actions = {
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: true })
 			}
-			context.dispatch('processMessage', message)
+			context.dispatch('processMessage', { token, message })
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 			oldestKnownMessageId = Math.min(oldestKnownMessageId, message.id)
 
@@ -1071,7 +1086,7 @@ const actions = {
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: false })
 			}
-			context.dispatch('processMessage', message)
+			context.dispatch('processMessage', { token, message })
 			if (!lastMessage || message.id > lastMessage.id) {
 				if (!message.systemMessage) {
 					if (actorId !== message.actorId || actorType !== message.actorType) {
@@ -1157,11 +1172,12 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data Passed in parameters
+	 * @param {string} data.token token of the conversation
 	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
 	 * @param {object} data.options post request options.
 	 */
-	async postNewMessage(context, { temporaryMessage, options }) {
-		context.dispatch('addTemporaryMessage', temporaryMessage)
+	async postNewMessage(context, { token, temporaryMessage, options }) {
+		context.dispatch('addTemporaryMessage', { token, message: temporaryMessage })
 
 		const { request, cancel } = CancelableRequest(postNewMessage)
 		context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: cancel })
@@ -1169,7 +1185,8 @@ const actions = {
 		const timeout = setTimeout(() => {
 			context.dispatch('cancelPostNewMessage', { messageId: temporaryMessage.id })
 			context.dispatch('markTemporaryMessageAsFailed', {
-				message: temporaryMessage,
+				token,
+				id: temporaryMessage.id,
 				reason: 'timeout',
 			})
 		}, 30000)
@@ -1182,33 +1199,33 @@ const actions = {
 			if ('x-chat-last-common-read' in response.headers) {
 				const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
 				context.dispatch('updateLastCommonReadMessage', {
-					token: temporaryMessage.token,
+					token,
 					lastCommonReadMessage,
 				})
 			}
 
 			// If successful, deletes the temporary message from the store
-			context.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
+			context.dispatch('removeTemporaryMessageFromStore', { token, id: temporaryMessage.id })
 
 			const message = response.data.ocs.data
 			// And adds the complete version of the message received
 			// by the server
-			context.dispatch('processMessage', message)
+			context.dispatch('processMessage', { token, message })
 
-			const conversation = context.getters.conversation(temporaryMessage.token)
+			const conversation = context.getters.conversation(token)
 
 			// update lastMessage and lastReadMessage
 			// do it conditionally because there could have been more messages appearing concurrently
 			if (conversation && conversation.lastMessage && message.id > conversation.lastMessage.id) {
 				context.dispatch('updateConversationLastMessage', {
-					token: conversation.token,
+					token,
 					lastMessage: message,
 				})
 			}
 			if (conversation && message.id > conversation.lastReadMessage) {
 				// no await to make it async
 				context.dispatch('updateLastReadMessage', {
-					token: conversation.token,
+					token,
 					id: message.id,
 					updateVisually: true,
 				})
@@ -1234,19 +1251,22 @@ const actions = {
 			if (statusCode === 403) {
 				showError(t('spreed', 'No permission to post messages in this conversation'))
 				context.dispatch('markTemporaryMessageAsFailed', {
-					message: temporaryMessage,
+					token,
+					id: temporaryMessage.id,
 					reason: 'read-only',
 				})
 			} else if (statusCode === 412) {
 				showError(t('spreed', 'No permission to post messages in this conversation'))
 				context.dispatch('markTemporaryMessageAsFailed', {
-					message: temporaryMessage,
+					token,
+					id: temporaryMessage.id,
 					reason: 'lobby',
 				})
 			} else {
 				showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
 				context.dispatch('markTemporaryMessageAsFailed', {
-					message: temporaryMessage,
+					token,
+					id: temporaryMessage.id,
 					reason: 'other',
 				})
 			}

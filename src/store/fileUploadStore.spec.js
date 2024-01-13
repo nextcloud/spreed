@@ -164,7 +164,7 @@ describe('fileUploadStore', () => {
 			findUniquePath.mockResolvedValueOnce({ uniquePath: uniqueFileName, suffix: 1 })
 			shareFile.mockResolvedValue()
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption', options: { silent: true } })
+			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', caption: 'text-caption', options: { silent: true } })
 
 			expect(findUniquePath).toHaveBeenCalledTimes(1)
 			expect(findUniquePath).toHaveBeenCalledWith(client, '/files/current-user', '/Talk/' + file.name, undefined)
@@ -213,7 +213,7 @@ describe('fileUploadStore', () => {
 				.mockResolvedValueOnce({ data: { ocs: { data: { id: '1' } } } })
 				.mockResolvedValueOnce({ data: { ocs: { data: { id: '2' } } } })
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', caption: 'text-caption', options: { silent: false } })
+			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', caption: 'text-caption', options: { silent: false } })
 
 			expect(findUniquePath).toHaveBeenCalledTimes(2)
 			expect(client.putFileContents).toHaveBeenCalledTimes(2)
@@ -256,15 +256,19 @@ describe('fileUploadStore', () => {
 				},
 			})
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', options: { silent: false } })
+			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', options: { silent: false } })
 
 			expect(client.putFileContents).toHaveBeenCalledTimes(1)
 			expect(shareFile).not.toHaveBeenCalled()
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
 			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledTimes(1)
-			expect(mockedActions.markTemporaryMessageAsFailed.mock.calls[0][1].message.referenceId).toBe('reference-id-1')
-			expect(mockedActions.markTemporaryMessageAsFailed.mock.calls[0][1].reason).toBe('failed-upload')
+			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledWith(expect.anything(), {
+				token: 'XXTOKENXX',
+				id: 1,
+				uploadId: 'upload-id1',
+				reason: 'failed-upload'
+			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
 		})
@@ -293,15 +297,19 @@ describe('fileUploadStore', () => {
 				},
 			})
 
-			await store.dispatch('uploadFiles', { uploadId: 'upload-id1', options: { silent: false } })
+			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', options: { silent: false } })
 
 			expect(client.putFileContents).toHaveBeenCalledTimes(1)
 			expect(shareFile).toHaveBeenCalledTimes(1)
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
 			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledTimes(1)
-			expect(mockedActions.markTemporaryMessageAsFailed.mock.calls[0][1].message.referenceId).toBe('reference-id-1')
-			expect(mockedActions.markTemporaryMessageAsFailed.mock.calls[0][1].reason).toBe('failed-share')
+			expect(mockedActions.markTemporaryMessageAsFailed).toHaveBeenCalledWith(expect.anything(), {
+				token: 'XXTOKENXX',
+				id: 1,
+				uploadId: 'upload-id1',
+				reason: 'failed-share'
+			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
 		})

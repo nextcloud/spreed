@@ -83,7 +83,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 			}
 
-			store.dispatch('processMessage', message1)
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
 			expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
 		})
 
@@ -124,7 +124,7 @@ describe('messagesStore', () => {
 			}]
 
 			messages.forEach(message => {
-				store.dispatch('processMessage', message)
+				store.dispatch('processMessage', { token: TOKEN, message })
 			})
 
 			expect(store.getters.messagesList(TOKEN)).toHaveLength(0)
@@ -142,7 +142,7 @@ describe('messagesStore', () => {
 				messageType: 'comment',
 			}
 
-			store.dispatch('processMessage', message1)
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([message1])
 		})
 
@@ -152,7 +152,7 @@ describe('messagesStore', () => {
 				referenceId: 'reference-1',
 				token: TOKEN,
 			}
-			store.dispatch('addTemporaryMessage', temporaryMessage)
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 
 			const message1 = {
 				id: 1,
@@ -160,7 +160,7 @@ describe('messagesStore', () => {
 				referenceId: 'reference-1',
 			}
 
-			store.dispatch('processMessage', message1)
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message1])
 		})
 
@@ -172,8 +172,8 @@ describe('messagesStore', () => {
 			}
 			const message2 = Object.assign({}, message1, { message: 'replaced' })
 
-			store.dispatch('processMessage', message1)
-			store.dispatch('processMessage', message2)
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
+			store.dispatch('processMessage', { token: TOKEN, message: message2 })
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message2])
 		})
 	})
@@ -192,9 +192,9 @@ describe('messagesStore', () => {
 			token: TOKEN,
 		}
 
-		store.dispatch('processMessage', message1)
-		store.dispatch('processMessage', message2)
-		store.dispatch('processMessage', message3)
+		store.dispatch('processMessage', { token: message1.token, message: message1 })
+		store.dispatch('processMessage', { token: message2.token, message: message2 })
+		store.dispatch('processMessage', { token: message3.token, message: message3 })
 		expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 		expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual(message3)
 		expect(store.getters.messagesList('token-2')[0]).toStrictEqual(message2)
@@ -223,7 +223,7 @@ describe('messagesStore', () => {
 				message: 'hello',
 			}
 
-			store.dispatch('processMessage', message)
+			store.dispatch('processMessage', { token: TOKEN, message })
 		})
 
 		test('deletes from server and replaces deleted message with response', async () => {
@@ -242,9 +242,9 @@ describe('messagesStore', () => {
 			const response = generateOCSResponse({ payload })
 			deleteMessage.mockResolvedValueOnce(response)
 
-			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+			const status = await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
 
-			expect(deleteMessage).toHaveBeenCalledWith(message)
+			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id })
 			expect(status).toBe(200)
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
@@ -271,9 +271,9 @@ describe('messagesStore', () => {
 			const response = generateOCSResponse({ payload })
 			deleteMessage.mockResolvedValueOnce(response)
 
-			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+			const status = await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
 
-			expect(deleteMessage).toHaveBeenCalledWith(message)
+			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id })
 			expect(status).toBe(200)
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
@@ -283,7 +283,7 @@ describe('messagesStore', () => {
 			const error = generateOCSErrorResponse({ payload: {}, status: 400 })
 			deleteMessage.mockRejectedValueOnce(error)
 
-			await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+			await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
 				.catch(error => {
 					expect(error.status).toBe(400)
 
@@ -293,7 +293,8 @@ describe('messagesStore', () => {
 
 		test('shows placeholder while deletion is in progress', () => {
 			store.dispatch('deleteMessage', {
-				message,
+				token: message.token,
+				id: message.id,
 				placeholder: 'placeholder-message',
 			}).catch(() => {})
 
@@ -312,10 +313,10 @@ describe('messagesStore', () => {
 			token: TOKEN,
 		}
 
-		store.dispatch('processMessage', message1)
+		store.dispatch('processMessage', { token: TOKEN, message: message1 })
 		expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
 
-		store.dispatch('deleteMessages', TOKEN)
+		store.dispatch('purgeMessagesStore', TOKEN)
 		expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
 
 		expect(deleteMessage).not.toHaveBeenCalled()
@@ -386,7 +387,7 @@ describe('messagesStore', () => {
 				message: 'hello',
 			}
 
-			store.dispatch('processMessage', parent)
+			store.dispatch('processMessage', { token: TOKEN, message: parent })
 			chatExtraStore.setParentIdToReply({ token: TOKEN, id: 123 })
 
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
@@ -471,7 +472,7 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
@@ -494,7 +495,7 @@ describe('messagesStore', () => {
 
 			// add again just replaces it
 			temporaryMessage.message = 'replaced'
-			store.dispatch('addTemporaryMessage', temporaryMessage)
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
@@ -524,9 +525,10 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 			store.dispatch('markTemporaryMessageAsFailed', {
-				message: temporaryMessage,
+				token: TOKEN,
+				id: temporaryMessage.id,
 				reason: 'failure-reason',
 			})
 
@@ -558,8 +560,8 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
-			store.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
+			store.dispatch('removeTemporaryMessageFromStore', { token: TOKEN, id: temporaryMessage.id })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
 		})
@@ -574,7 +576,7 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
+			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
 
 			expect(store.getters.getTemporaryReferences(TOKEN, temporaryMessage.referenceId)).toMatchObject([{
 				id: 'temp-1577908800000',
@@ -1566,7 +1568,7 @@ describe('messagesStore', () => {
 				message: 'first',
 			}
 
-			store.dispatch('processMessage', message1)
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
 		})
 
 		afterEach(() => {
@@ -1601,7 +1603,7 @@ describe('messagesStore', () => {
 			})
 			postNewMessage.mockResolvedValueOnce(response)
 
-			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {
+			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {
 			})
 			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage, { silent: false })
 			expect(store.getters.isSendingMessages).toBe(true)
@@ -1640,8 +1642,8 @@ describe('messagesStore', () => {
 				sendingFailure: '',
 			}
 
-			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
-			store.dispatch('postNewMessage', { temporaryMessage: temporaryMessage2, options: { silent: false } }).catch(() => {})
+			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {})
+			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage: temporaryMessage2, options: { silent: false } }).catch(() => {})
 
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 			expect(cancelFunctionMocks[1]).not.toHaveBeenCalled()
@@ -1680,7 +1682,7 @@ describe('messagesStore', () => {
 
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
 			await expect(
-				store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } })
+				store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } })
 			).rejects.toMatchObject({ response })
 
 			expect(store.getters.isSendingMessages).toBe(false)
@@ -1719,7 +1721,7 @@ describe('messagesStore', () => {
 				sendingFailure: '',
 			}
 
-			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
+			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {})
 
 			jest.advanceTimersByTime(60000)
 
@@ -1752,7 +1754,7 @@ describe('messagesStore', () => {
 			const response = generateOCSResponse({ payload })
 			postNewMessage.mockResolvedValueOnce(response)
 
-			await store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } })
+			await store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } })
 
 			jest.advanceTimersByTime(60000)
 

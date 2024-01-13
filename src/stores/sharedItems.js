@@ -101,10 +101,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
+		 * @param {Token} token conversation token
 		 * @param {Message} message message with shared items
 		 */
-		addSharedItemFromMessage(message) {
-			const token = message.token
+		addSharedItemFromMessage(token, message) {
 			const type = getItemTypeFromMessage(message)
 			this.checkForExistence(token, type)
 
