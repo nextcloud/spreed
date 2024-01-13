@@ -191,6 +191,8 @@ OC.L10N.register(
     "You stopped Matterbridge" : "قمت بإيقاف Matterbridge .",
     "{actor} deleted a message" : "{actor} مسح رسالة ",
     "You deleted a message" : "أنت حذفت الرسالة ",
+    "{actor} edited a message" : "{actor} قام بتحرير رسالة",
+    "You edited a message" : "أنت قمت بتحرير رسالة",
     "{actor} deleted a reaction" : "حذف {actor} تفاعل",
     "You deleted a reaction" : "لقد قمت بحذف تفاعل",
     "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["لقد قمت بتعيين انتهاء صلاحية الرسالة بعد%n أسابيع","لقد قمت بتعيين انتهاء صلاحية الرسالة بعد %nأسبوع","لقد قمت بتعيين انتهاء صلاحية الرسالة بعد %nأسابيع","لقد قمت بتعيين انتهاء صلاحية الرسالة بعد %n أسابيع","لقد قمت بتعيين انتهاء صلاحية الرسالة بعد %nأسابيع","لقد قمت بتعيين انتهاء صلاحية الرسالة بعد %nأسابيع"],
