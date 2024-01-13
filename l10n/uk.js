@@ -1010,6 +1010,7 @@ OC.L10N.register(
     "Remove all permissions" : "Видалити всі дозволи",
     "Remove group and members" : "Вилучити групи та учасників",
     "Remove participant" : "Вилучити учасника",
+    "Next week – {timeLocale}" : "Наступного тижня - {timeLocale}",
     "Add users" : "Додати користувачів",
     "Add groups" : "Додати групи",
     "Add circles" : "Додати кола",
