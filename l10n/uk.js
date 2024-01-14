@@ -1011,6 +1011,7 @@ OC.L10N.register(
     "Remove group and members" : "Вилучити групи та учасників",
     "Remove participant" : "Вилучити учасника",
     "Next week – {timeLocale}" : "Наступного тижня - {timeLocale}",
+    "This weekend – {timeLocale}" : "На цих вихідних - {timeLocale}",
     "Add users" : "Додати користувачів",
     "Add groups" : "Додати групи",
     "Add circles" : "Додати кола",

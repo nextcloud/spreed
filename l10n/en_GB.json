@@ -189,6 +189,8 @@
     "You stopped Matterbridge" : "You stopped Matterbridge",
     "{actor} deleted a message" : "{actor} deleted a message",
     "You deleted a message" : "You deleted a message",
+    "{actor} edited a message" : "{actor} edited a message",
+    "You edited a message" : "You edited a message",
     "{actor} deleted a reaction" : "{actor} deleted a reaction",
     "You deleted a reaction" : "You deleted a reaction",
     "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["You set the message expiration to %n week","You set the message expiration to %n weeks"],
