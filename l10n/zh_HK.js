@@ -191,6 +191,8 @@ OC.L10N.register(
     "You stopped Matterbridge" : "您停止了 Matterbridge",
     "{actor} deleted a message" : "{actor} 刪除了訊息",
     "You deleted a message" : "您刪除了訊息",
+    "{actor} edited a message" : "{actor} 編輯了訊息",
+    "You edited a message" : "您編輯了訊息",
     "{actor} deleted a reaction" : "{actor} 刪除了反應",
     "You deleted a reaction" : "您刪除了反應",
     "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["您將訊息過期時間設置為%n星期"],
