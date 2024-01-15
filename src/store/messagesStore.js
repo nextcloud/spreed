@@ -1349,8 +1349,7 @@ const actions = {
 			}
 		}
 
-		const response = await postNewMessage(message, { silent: false })
-		return response
+		return await postNewMessage(message, { silent: false })
 
 	},
 

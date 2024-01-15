@@ -123,6 +123,7 @@ describe('messagesService', () => {
 			referenceId: 'reference-id',
 			parent: { id: 111 },
 		}, {
+			silent: false,
 			dummyOption: true,
 		})
 
@@ -133,6 +134,7 @@ describe('messagesService', () => {
 				actorDisplayName: 'actor-display-name',
 				referenceId: 'reference-id',
 				replyTo: 111,
+				silent: false,
 			},
 			{
 				dummyOption: true,

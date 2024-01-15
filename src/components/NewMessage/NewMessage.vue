@@ -578,6 +578,7 @@ export default {
 		 * Sends the new message
 		 *
 		 * @param {object} options the submit options
+		 * @param {boolean} options.silent whether the message should trigger notifications
 		 */
 		async handleSubmit(options) {
 			// Submit event has enter key listener
