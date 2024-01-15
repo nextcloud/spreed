@@ -1400,6 +1400,12 @@
     "Permissions removed for {displayName}" : "Permissions retirées pour {displayName}",
     "Permissions set to default for {displayName}" : "Permissions réinitialisées pour {displayName}",
     "Phone number could not be hung up" : "Le numéro de téléphone n'a pas pu être raccroché",
+    "Phone number could not be put on hold" : "Impossible de mettre en attente le numéro de téléphone",
+    "Phone number could not be muted" : "Impossible de mettre en sourdine le numéro de téléphone",
+    "Phone number could not be unmuted" : "Impossible de réactiver le numéro de téléphone",
+    "DTMF message could not be sent" : "Impossible d'envoyer le message DTMF",
+    "Phone number copied to clipboard" : "Numéro de téléphone copié dans le presse-papier",
+    "Phone number could not be copied" : "Le numéro de téléphone n'a pas pu être copié dans le presse-papier",
     "Permissions modified for {displayName}" : "Permissions modifiées pour {displayName}",
     "Add users" : "Ajouter des utilisateurs",
     "Add groups" : "Ajouter des groupes",
@@ -1728,6 +1734,8 @@
     "Post to conversation" : "Envoyer à la conversation",
     "Sending signaling message has failed." : "L'envoi du message de signalement a échoué.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Le serveur de signalement configuré doit être mis à jour pour être compatible avec cette version de Talk. Merci de contacter votre administrateur.",
-    "Setup summary" : "Configurer le résumé"
+    "Setup summary" : "Configurer le résumé",
+    "Phone number could not be hanged up" : "Impossible de raccrocher le numéro de téléphone",
+    "Phone number could not be putted on hold" : "Impossible de mettre en attente le numéro de téléphone"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
