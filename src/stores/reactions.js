@@ -198,10 +198,10 @@ export const useReactionsStore = defineStore('reactions', {
 		/**
 		 * Process a reaction system message.
 		 *
+		 * @param {Token} token the conversation token
 		 * @param {object} message the system message
-		 *
 		 */
-		processReaction(message) {
+		processReaction(token, message) {
 			// 'reaction_deleted' is not handled because it is a message replacement
 			// for 'reaction' when the reaction is revoked, thus it doesn't exist anymore
 			if (message.systemMessage === 'reaction') {
@@ -212,13 +212,13 @@ export const useReactionsStore = defineStore('reactions', {
 					timestamp: message.timestamp,
 				}
 				this.addActorToReaction({
-					token: message.token,
+					token,
 					messageId: message.parent.id,
 					reaction: message.message,
 					actor: actorObject,
 				})
 			} else if (message.systemMessage === 'reaction_revoked') {
-				this.fetchReactions(message.token, message.parent.id)
+				this.fetchReactions(token, message.parent.id)
 			}
 		},
 
