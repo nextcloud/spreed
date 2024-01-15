@@ -32,7 +32,7 @@
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
 				{{ actorDisplayName }}
-				<div v-if="lastEditActorDisplayName">
+				<div v-if="lastEditTimestamp">
 					{{ getLastEditor }}
 				</div>
 			</li>
@@ -64,6 +64,7 @@ export default {
 		AvatarWrapper,
 		Message,
 	},
+
 	inheritAttrs: false,
 
 	props: {
@@ -91,55 +92,30 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
-
-		lastEditTimestamp: {
-			type: Number,
-			default: 0,
-		},
-		lastEditActorId: {
-			type: String,
-			default: '',
-		},
-		lastEditActorType: {
-			type: String,
-			default: '',
-		},
-
-		lastEditActorDisplayName: {
-			type: String,
-			default: ''
-		},
 	},
 
 	setup() {
-		const guestNameStore = useGuestNameStore()
-		return { AVATAR, guestNameStore }
+		return {
+			AVATAR,
+			guestNameStore: useGuestNameStore()
+		}
 	},
 
 	expose: ['highlightMessage'],
 
 	computed: {
-		/**
-		 * The message actor type.
-		 *
-		 * @return {string}
-		 */
-		actorType() {
-			return this.messages[0].actorType
-		},
-		/**
-		 * The message actor id.
-		 *
-		 * @return {string}
-		 */
 		actorId() {
 			return this.messages[0].actorId
 		},
-		/**
-		 * The message actor display name.
-		 *
-		 * @return {string}
-		 */
+
+		actorType() {
+			return this.messages[0].actorType
+		},
+
+		lastEditTimestamp() {
+			return this.messages[0].lastEditTimestamp
+		},
+
 		actorDisplayName() {
 			const displayName = this.messages[0].actorDisplayName.trim()
 
@@ -155,16 +131,18 @@ export default {
 		},
 
 		getLastEditor() {
-			if (this.lastEditActorId === this.actorId && this.lastEditActorType === this.actorType) {
+			if (!this.lastEditTimestamp) {
+				return ''
+			} else if (this.messages[0].lastEditActorId === this.actorId
+				&& this.messages[0].lastEditActorType === this.actorType) {
 				// TRANSLATORS Edited by the author of the message themselves
 				return t('spreed', '(edited)')
-			} else if (this.lastEditActorId === this.$store.getters.getActorId()
-						&& this.lastEditActorType === this.$store.getters.getActorType()) {
+			} else if (this.messages[0].lastEditActorId === this.$store.getters.getActorId()
+				&& this.messages[0].lastEditActorType === this.$store.getters.getActorType()) {
 				return t('spreed', '(edited by you)')
 			} else {
-				return t('spreed', '(edited by {moderator})', { moderator: this.lastEditActorDisplayName })
+				return t('spreed', '(edited by {moderator})', { moderator: this.messages[0].lastEditActorDisplayName })
 			}
-
 		},
 
 		disableMenu() {

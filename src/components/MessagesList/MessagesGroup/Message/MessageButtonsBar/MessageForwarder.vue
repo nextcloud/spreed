@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -78,11 +78,12 @@ export default {
 	},
 
 	props: {
-		/**
-		 * The message to be forwarded
-		 */
-		messageObject: {
-			type: Object,
+		token: {
+			type: String,
+			required: true,
+		},
+		id: {
+			type: [String, Number],
 			required: true,
 		},
 	},
@@ -122,7 +123,7 @@ export default {
 			try {
 				const response = await this.$store.dispatch('forwardMessage', {
 					targetToken: this.selectedConversationToken,
-					messageToBeForwarded: this.messageObject,
+					messageToBeForwarded: this.$store.getters.message(this.token, this.id),
 				 })
 				this.forwardedMessageID = response.data.ocs.data.id
 				this.showForwardedConfirmation = true

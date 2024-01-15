@@ -129,23 +129,16 @@ describe('MessagesList.vue', () => {
 			expect(group.props('messages')).toStrictEqual(messagesGroup1)
 			expect(group.props('previousMessageId')).toBe(0)
 			expect(group.props('nextMessageId')).toBe(200)
-			// using attributes to access v-bind props
-			expect(group.attributes('actorid')).toBe('alice')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 
 			group = groups.at(1)
 			expect(group.props('messages')).toStrictEqual(messagesGroup2)
 			expect(group.props('previousMessageId')).toBe(110)
 			expect(group.props('nextMessageId')).toBe(300)
-			expect(group.attributes('actorid')).toBe('bob')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 
 			group = groups.at(2)
 			expect(group.props('messages')).toStrictEqual(messagesGroup3)
 			expect(group.props('previousMessageId')).toBe(210)
 			expect(group.props('nextMessageId')).toBe(0)
-			expect(group.attributes('actorid')).toBe('alice')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 
 			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
 
@@ -208,23 +201,11 @@ describe('MessagesList.vue', () => {
 
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
 
-			expect(groups.exists()).toBe(true)
+			expect(groups.exists()).toBeTruthy()
 
-			let group = groups.at(0)
-			expect(group.props('messages')).toStrictEqual([messages[0]])
-			// using attributes to access v-bind props
-			expect(group.attributes('actorid')).toBe('alice')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-
-			group = groups.at(1)
-			expect(group.props('messages')).toStrictEqual([messages[1]])
-			expect(group.attributes('actorid')).toBe('alice')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-
-			group = groups.at(2)
-			expect(group.props('messages')).toStrictEqual([messages[2]])
-			expect(group.attributes('actorid')).toBe('alice')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
+			groups.wrappers.forEach((group, index) => {
+				expect(group.props('messages')).toStrictEqual([messages[index]])
+			})
 
 			const dateSeparators = wrapper.findAll('.messages-group__date')
 			expect(dateSeparators).toHaveLength(3)
@@ -279,9 +260,6 @@ describe('MessagesList.vue', () => {
 
 			const group = groups.at(0)
 			expect(group.props('messages')).toStrictEqual(messages)
-			// using attributes to access v-bind props
-			expect(group.attributes('actorid')).toBe('alice')
-			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 
 			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
 		})
@@ -303,12 +281,11 @@ describe('MessagesList.vue', () => {
 
 			const groups = wrapper.findAllComponents({ ref: 'messagesGroup' })
 
-			expect(groups.exists()).toBe(true)
+			expect(groups.exists()).toBeTruthy()
 
-			let group = groups.at(0)
-			expect(group.props('messages')).toStrictEqual([messages[0]])
-			group = groups.at(1)
-			expect(group.props('messages')).toStrictEqual([messages[1]])
+			groups.wrappers.forEach((group, index) => {
+				expect(group.props('messages')).toStrictEqual([messages[index]])
+			})
 		}
 
 		test('does not group system messages with regular messages from the same author', () => {

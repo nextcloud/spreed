@@ -166,6 +166,8 @@ export default {
 		ReloadIcon,
 	},
 
+	inheritAttrs: false,
+
 	props: {
 		id: {
 			type: [String, Number],

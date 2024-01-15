@@ -60,6 +60,8 @@ describe('MessageButtonsBar.vue', () => {
 			isTranslationAvailable: false,
 			canReact: true,
 			isReactionsMenuOpen: false,
+			isActionMenuOpen: false,
+			isEmojiPickerOpen: false,
 			isLastRead: false,
 			isForwarderOpen: false,
 			timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
@@ -67,10 +69,6 @@ describe('MessageButtonsBar.vue', () => {
 			systemMessage: '',
 			messageType: 'comment',
 			previousMessageId: 100,
-			messageObject: {},
-			messageApiData: {
-				apiDummyData: 1,
-			},
 			participant: {
 				actorId: 'user-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -333,7 +331,7 @@ describe('MessageButtonsBar.vue', () => {
 		test('marks message as unread', async () => {
 			const updateLastReadMessageAction = jest.fn().mockResolvedValueOnce()
 			const fetchConversationAction = jest.fn().mockResolvedValueOnce()
-			testStoreConfig.modules.conversationsStore.actions.updateLastReadMessage = updateLastReadMessageAction
+			testStoreConfig.modules.messagesStore.actions.updateLastReadMessage = updateLastReadMessageAction
 			testStoreConfig.modules.conversationsStore.actions.fetchConversation = fetchConversationAction
 			store = new Store(testStoreConfig)
 
@@ -437,19 +435,23 @@ describe('MessageButtonsBar.vue', () => {
 			})
 
 			const actionButton = findNcActionButton(wrapper, 'first action')
-			expect(actionButton.exists()).toBe(true)
+			expect(actionButton.exists()).toBeTruthy()
 			await actionButton.find('button').trigger('click')
 
 			expect(handler).toHaveBeenCalledWith({
-				apiDummyData: 1,
+				apiVersion: 'v3',
+				message: messageProps,
+				metadata: conversationProps,
 			},)
 
 			const actionButton2 = findNcActionButton(wrapper, 'second action')
-			expect(actionButton2.exists()).toBe(true)
+			expect(actionButton2.exists()).toBeTruthy()
 			await actionButton2.find('button').trigger('click')
 
 			expect(handler2).toHaveBeenCalledWith({
-				apiDummyData: 1,
+				apiVersion: 'v3',
+				message: messageProps,
+				metadata: conversationProps,
 			})
 		})
 	})

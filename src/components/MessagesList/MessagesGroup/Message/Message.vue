@@ -36,24 +36,10 @@
 			'system' : isSystemMessage,
 			'combined-system': isCombinedSystemMessage}"
 			class="message-body">
-			<MessageBody :id="id"
-				:token="token"
-				:parent="parent"
-				:markdown="markdown"
-				:message="message"
-				:message-type="messageType"
-				:system-message="systemMessage"
-				:message-parameters="messageParameters"
+			<MessageBody v-bind="{...$props, ...readInfoProps}"
 				:rich-parameters="richParameters"
-				:timestamp="timestamp"
 				:is-deleting="isDeleting"
-				:is-temporary="isTemporary"
-				:has-call="conversation.hasCall"
-				:sending-failure="sendingFailure"
-				:show-common-read-icon="showCommonReadIcon"
-				:common-read-icon-tooltip="commonReadIconTooltip"
-				:show-sent-icon="showSentIcon"
-				:sent-icon-tooltip="sentIconTooltip" />
+				:has-call="conversation.hasCall" />
 
 			<!-- reactions buttons and popover with details -->
 			<Reactions v-if="Object.keys(reactions).length"
@@ -68,20 +54,13 @@
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
 				class="message-buttons-bar"
+				v-bind="{...$props, ...readInfoProps}"
 				:is-translation-available="isTranslationAvailable"
 				:is-action-menu-open.sync="isActionMenuOpen"
 				:is-emoji-picker-open.sync="isEmojiPickerOpen"
 				:is-reactions-menu-open.sync="isReactionsMenuOpen"
 				:is-forwarder-open.sync="isForwarderOpen"
-				:message-api-data="messageApiData"
-				:message-object="messageObject"
 				:can-react="canReact"
-				v-bind="$props"
-				:previous-message-id="previousMessageId"
-				:show-common-read-icon="showCommonReadIcon"
-				:common-read-icon-tooltip="commonReadIconTooltip"
-				:show-sent-icon="showSentIcon"
-				:sent-icon-tooltip="sentIconTooltip"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
 				@edit="handleEdit"
@@ -99,6 +78,11 @@
 				</NcButton>
 			</div>
 		</div>
+
+		<MessageForwarder v-if="isForwarderOpen"
+			:id="id"
+			:token="token"
+			@close="isForwarderOpen = false" />
 
 		<MessageTranslateDialog v-if="isTranslationAvailable && isTranslateDialogOpen"
 			:message="message"
@@ -123,6 +107,7 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
 import Contact from './MessagePart/Contact.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -148,8 +133,9 @@ export default {
 
 	components: {
 		MessageBody,
-		MessageTranslateDialog,
 		MessageButtonsBar,
+		MessageForwarder,
+		MessageTranslateDialog,
 		NcButton,
 		Reactions,
 		// Icons
@@ -301,16 +287,6 @@ export default {
 			default: '',
 		},
 
-		lastEditActorId: {
-			type: String,
-			default: '',
-		},
-
-		lastEditActorType: {
-			type: String,
-			default: '',
-		},
-
 		lastEditTimestamp: {
 			type: Number,
 			default: 0,
@@ -356,10 +332,6 @@ export default {
 			return !this.isLastMessage && this.id === this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
 
-		messageObject() {
-			return this.$store.getters.message(this.token, this.id)
-		},
-
 		isSystemMessage() {
 			return this.systemMessage !== ''
 		},
@@ -391,7 +363,10 @@ export default {
 			Object.keys(this.messageParameters).forEach(function(p) {
 				const type = this.messageParameters[p].type
 				const mimetype = this.messageParameters[p].mimetype
-				const itemType = getItemTypeFromMessage(this.messageObject)
+				const itemType = getItemTypeFromMessage({
+					messageParameters: this.messageParameters,
+					messageType: this.messageType
+				})
 				if (type === 'user' || type === 'call' || type === 'guest' || type === 'user-group' || type === 'group') {
 					richParameters[p] = {
 						component: Mention,
@@ -450,27 +425,20 @@ export default {
 				&& this.isCombinedSystemMessage && (this.isHovered || !this.isCombinedSystemMessageCollapsed)
 		},
 
-		sentIconTooltip() {
-			return t('spreed', 'Message sent')
-		},
-
-		commonReadIconTooltip() {
-			return t('spreed', 'Message read by everyone who shares their reading status')
-		},
-
-		messageApiData() {
+		readInfoProps() {
 			return {
-				message: this.messageObject,
-				metadata: this.conversation,
-				apiVersion: 'v3',
+				showCommonReadIcon: this.showCommonReadIcon,
+				commonReadIconTooltip: t('spreed', 'Message read by everyone who shares their reading status'),
+				showSentIcon: this.showSentIcon,
+				sentIconTooltip: t('spreed', 'Message sent'),
 			}
 		},
 
 		canReact() {
 			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
-				&& this.messageObject.messageType !== 'command'
-				&& this.messageObject.messageType !== 'comment_deleted'
+				&& this.messageType !== 'command'
+				&& this.messageType !== 'comment_deleted'
 		},
 
 		isFileShareOnly() {

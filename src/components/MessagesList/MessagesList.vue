@@ -44,7 +44,6 @@ get the messagesList array and loop through the list to generate the messages.
 				:key="item.id"
 				ref="messagesGroup"
 				class="messages-group"
-				v-bind="item.messages"
 				:token="token"
 				:messages="item.messages"
 				:previous-message-id="item.previousMessageId"
