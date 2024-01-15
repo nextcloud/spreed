@@ -320,3 +320,19 @@ Feature: chat/bots
       | reaction  | 👍 |
     Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
       | actorType | actorId           | actorDisplayName | reaction |
+
+  Scenario: Editing and deleting messages returns a 202 status code with a bot
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    Then user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
+    And user "participant1" deletes message "Message 1 - Edit 1" from room "room" with 200
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=webhook"
+    And the command was successful
+    And read bot ids from OCC
+    And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room)"
+    And the command was successful
+    When user "participant1" sends message "Message 2" to room "room" with 201
+    Then user "participant1" edits message "Message 2" in room "room" to "Message 2 - Edit 2" with 202
+    And user "participant1" deletes message "Message 2 - Edit 2" from room "room" with 202

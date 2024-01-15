@@ -5989,7 +5989,7 @@
                         }
                     },
                     "202": {
-                        "description": "Message deleted successfully, but Matterbridge is configured, so the information can be replicated elsewhere",
+                        "description": "Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere",
                         "headers": {
                             "X-Chat-Last-Common-Read": {
                                 "schema": {
@@ -6245,7 +6245,7 @@
                         }
                     },
                     "202": {
-                        "description": "Message edited successfully, but Matterbridge is configured, so the information can be replicated elsewhere",
+                        "description": "Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services",
                         "headers": {
                             "X-Chat-Last-Common-Read": {
                                 "schema": {

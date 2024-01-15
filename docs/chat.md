@@ -289,7 +289,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Response:
     - Status code:
         + `200 OK` - When deleting was successful
-        + `202 Accepted` - When deleting was successful but Matterbridge is enabled so the message was leaked to other services
+        + `202 Accepted` - When deleting was successful, but a bot or Matterbridge is configured, so the information can be replicated to other services
         + `400 Bad Request` The message is already older than 6 hours
         + `403 Forbidden` When the message is not from the current user and the user not a moderator
         + `403 Forbidden` When the conversation is read-only
@@ -323,7 +323,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Response:
     - Status code:
         + `200 OK` - When editing was successful
-        + `202 Accepted` - When editing was successful but Matterbridge is enabled so the message was leaked to other services
+        + `202 Accepted` - When editing was successful, but a bot or Matterbridge is configured, so the information can be replicated to other services
         + `400 Bad Request` The message is already older than 24 hours or another reason why editing is not okay
         + `403 Forbidden` When the message is not from the current user and the user not a moderator
         + `403 Forbidden` When the conversation is read-only

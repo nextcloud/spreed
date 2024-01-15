@@ -36,6 +36,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\SessionService;
@@ -95,6 +96,7 @@ class ChatControllerTest extends TestCase {
 	protected $statusManager;
 	/** @var MatterbridgeManager|MockObject */
 	protected $matterbridgeManager;
+	protected BotService|MockObject $botService;
 	/** @var SearchPlugin|MockObject */
 	protected $searchPlugin;
 	/** @var ISearchResult|MockObject */
@@ -138,6 +140,7 @@ class ChatControllerTest extends TestCase {
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->statusManager = $this->createMock(IUserStatusManager::class);
 		$this->matterbridgeManager = $this->createMock(MatterbridgeManager::class);
+		$this->botService = $this->createMock(BotService::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
@@ -179,6 +182,7 @@ class ChatControllerTest extends TestCase {
 			$this->autoCompleteManager,
 			$this->statusManager,
 			$this->matterbridgeManager,
+			$this->botService,
 			$this->searchPlugin,
 			$this->searchResult,
 			$this->timeFactory,
