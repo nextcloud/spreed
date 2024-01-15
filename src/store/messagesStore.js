@@ -26,6 +26,7 @@ import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
 
+import { useFederationAccess } from '../composables/useFederationAccess.js'
 import {
 	ATTENDEE,
 	CHAT,
@@ -35,6 +36,7 @@ import { fetchNoteToSelfConversation } from '../services/conversationsService.js
 import { EventBus } from '../services/EventBus.js'
 import {
 	deleteMessage,
+	editMessage,
 	updateLastReadMessage,
 	fetchMessages,
 	lookForNewMessages,
@@ -618,12 +620,33 @@ const actions = {
 		context.commit('markMessageAsDeleting', { token, id, placeholder })
 
 		try {
-			const response = await deleteMessage({ token, id })
+			const remoteOptions = useFederationAccess(context.getters.conversation(token), context.getters.getUserId())
+			const response = await deleteMessage({ token, id }, remoteOptions)
 			context.dispatch('processMessage', { token, message: response.data.ocs.data })
 			return response.status
 		} catch (error) {
 			// Restore the previous message state
 			context.commit('addMessage', { token, message })
+			throw error
+		}
+	},
+
+	/**
+	 * Edit a message text
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token The conversation token
+	 * @param {string} payload.messageId The message id
+	 * @param {string} payload.updatedMessage The modified text of the message / file share caption
+	 */
+	async editMessage(context, { token, messageId, updatedMessage }) {
+		try {
+			const remoteOptions = useFederationAccess(context.getters.conversation(token), context.getters.getUserId())
+			const response = await editMessage({ token, messageId, updatedMessage }, remoteOptions)
+			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+		} catch (error) {
+			console.error(error)
 			throw error
 		}
 	},
@@ -788,7 +811,7 @@ const actions = {
 	 * @param {boolean} data.updateVisually whether to also clear the marker visually in the UI;
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
-		const conversation = context.getters.conversations[token]
+		const conversation = context.getters.conversation(token)
 		if (!conversation || !conversation.lastMessage) {
 			return
 		}
@@ -808,7 +831,7 @@ const actions = {
 	 * @param {boolean} data.updateVisually whether to also update the marker visually in the UI;
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
-		const conversation = context.getters.conversations[token]
+		const conversation = context.getters.conversation(token)
 		if (!conversation || conversation.lastReadMessage === id) {
 			return
 		}
@@ -823,9 +846,11 @@ const actions = {
 			context.commit('setVisualLastReadMessageId', { token, id })
 		}
 
-		if (context.getters.getUserId()) {
+		const userId = context.getters.getUserId()
+		if (userId) {
+			const remoteOptions = useFederationAccess(conversation, userId)
 			// only update on server side if there's an actual user, not guest
-			await updateLastReadMessage(token, id)
+			await updateLastReadMessage(token, id, remoteOptions)
 		}
 	},
 
@@ -851,12 +876,13 @@ const actions = {
 		// Assign the new cancel function to our data value
 		context.commit('setCancelFetchMessages', cancel)
 
+		const remoteOptions = useFederationAccess(context.getters.conversation(token), context.getters.getUserId())
 		const response = await request({
 			token,
 			lastKnownMessageId,
 			includeLastKnown,
 			limit: CHAT.FETCH_LIMIT,
-		}, requestOptions)
+		}, { ...requestOptions, ...remoteOptions })
 
 		let newestKnownMessageId = 0
 
@@ -942,11 +968,12 @@ const actions = {
 		// Assign the new cancel function to our data value
 		context.commit('setCancelGetMessageContext', cancel)
 
+		const remoteOptions = useFederationAccess(context.getters.conversation(token), context.getters.getUserId())
 		const response = await request({
 			token,
 			messageId,
 			limit: CHAT.FETCH_LIMIT / 2,
-		}, requestOptions)
+		}, { ...requestOptions, ...remoteOptions })
 
 		let oldestKnownMessageId = messageId
 		let newestKnownMessageId = messageId
@@ -1062,11 +1089,12 @@ const actions = {
 		// Assign the new cancel function to our data value
 		context.commit('setCancelLookForNewMessages', { cancelFunction: cancel, requestId })
 
+		const remoteOptions = useFederationAccess(context.getters.conversation(token), context.getters.getUserId())
 		const response = await request({
 			token,
 			lastKnownMessageId,
 			limit: CHAT.FETCH_LIMIT,
-		}, requestOptions)
+		}, { ...requestOptions, ...remoteOptions })
 		context.commit('setCancelLookForNewMessages', { requestId })
 
 		if ('x-chat-last-common-read' in response.headers) {
@@ -1198,7 +1226,8 @@ const actions = {
 		}, 30000)
 
 		try {
-			const response = await request(temporaryMessage, options)
+			const remoteOptions = useFederationAccess(context.getters.conversation(token), context.getters.getUserId())
+			const response = await request(temporaryMessage, { ...options, ...remoteOptions })
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
@@ -1327,6 +1356,7 @@ const actions = {
 
 		if (message.messageParameters?.object) {
 			const richObject = message.messageParameters.object
+			const remoteOptions = useFederationAccess(context.getters.conversation(targetToken), context.getters.getUserId())
 			const response = await postRichObjectToConversation(
 				targetToken,
 				{
@@ -1335,6 +1365,7 @@ const actions = {
 					metaData: JSON.stringify(richObject),
 					referenceId: '',
 				},
+				remoteOptions,
 			)
 			return response
 		}
@@ -1349,8 +1380,8 @@ const actions = {
 			}
 		}
 
-		return await postNewMessage(message, { silent: false })
-
+		const remoteOptions = useFederationAccess(context.getters.conversation(targetToken), context.getters.getUserId())
+		return await postNewMessage(message, { silent: false, ...remoteOptions })
 	},
 
 	async removeExpiredMessages(context, { token }) {

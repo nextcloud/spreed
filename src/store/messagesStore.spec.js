@@ -244,7 +244,7 @@ describe('messagesStore', () => {
 
 			const status = await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
 
-			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id })
+			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id }, {})
 			expect(status).toBe(200)
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
@@ -273,7 +273,7 @@ describe('messagesStore', () => {
 
 			const status = await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
 
-			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id })
+			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id }, {})
 			expect(status).toBe(200)
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
@@ -611,14 +611,13 @@ describe('messagesStore', () => {
 	})
 
 	describe('last read message markers', () => {
-		let conversationsMock
+		let conversationMock
 		let markConversationReadAction
 		let getUserIdMock
 		let updateConversationLastReadMessageMock
 
 		beforeEach(() => {
-			const conversations = {}
-			conversations[TOKEN] = {
+			const conversation = {
 				lastMessage: {
 					id: 123,
 				},
@@ -627,10 +626,10 @@ describe('messagesStore', () => {
 			testStoreConfig = cloneDeep(messagesStore)
 
 			getUserIdMock = jest.fn()
-			conversationsMock = jest.fn().mockReturnValue(conversations)
+			conversationMock = jest.fn().mockReturnValue(conversation)
 			markConversationReadAction = jest.fn()
 			updateConversationLastReadMessageMock = jest.fn()
-			testStoreConfig.getters.conversations = conversationsMock
+			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
 			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
 			testStoreConfig.actions.markConversationRead = markConversationReadAction
 			testStoreConfig.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
@@ -657,7 +656,7 @@ describe('messagesStore', () => {
 				updateVisually: false,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(markConversationReadAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
@@ -665,7 +664,7 @@ describe('messagesStore', () => {
 				lastReadMessage: 123,
 			})
 
-			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 123)
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 123, {})
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(100)
 		})
 
@@ -678,7 +677,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(markConversationReadAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
@@ -686,7 +685,7 @@ describe('messagesStore', () => {
 				lastReadMessage: 123,
 			})
 
-			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 123)
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 123, {})
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(123)
 		})
 
@@ -699,7 +698,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(markConversationReadAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
@@ -721,7 +720,7 @@ describe('messagesStore', () => {
 				updateVisually: false,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(markConversationReadAction).not.toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
@@ -729,7 +728,7 @@ describe('messagesStore', () => {
 				lastReadMessage: 200,
 			})
 
-			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 200)
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 200, {})
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(100)
 		})
 
@@ -743,7 +742,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(markConversationReadAction).not.toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
@@ -751,7 +750,7 @@ describe('messagesStore', () => {
 				lastReadMessage: 200,
 			})
 
-			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 200)
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 200, {})
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(200)
 		})
 
@@ -765,7 +764,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(markConversationReadAction).not.toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
@@ -780,6 +779,8 @@ describe('messagesStore', () => {
 
 	describe('fetchMessages', () => {
 		let updateLastCommonReadMessageAction
+		let conversationMock
+		let getUserIdMock
 		let addGuestNameAction
 		let cancelFunctionMock
 
@@ -791,6 +792,10 @@ describe('messagesStore', () => {
 			addGuestNameAction = jest.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
+			conversationMock = jest.fn().mockReturnValue({})
+			getUserIdMock = jest.fn()
+			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
 
 			cancelFunctionMock = jest.fn()
 			CancelableRequest.mockImplementation((request) => {
@@ -939,12 +944,12 @@ describe('messagesStore', () => {
 		let cancelFunctionMock
 
 		beforeEach(() => {
-			testStoreConfig = cloneDeep(messagesStore)
+			testStoreConfig = cloneDeep(storeConfig)
 			const guestNameStore = useGuestNameStore()
 
 			updateLastCommonReadMessageAction = jest.fn()
 			addGuestNameAction = jest.fn()
-			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
+			testStoreConfig.modules.conversationsStore.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
 
 			cancelFunctionMock = jest.fn()
@@ -1062,7 +1067,7 @@ describe('messagesStore', () => {
 				lastKnownMessageId: 3,
 				includeLastKnown: false,
 				limit: CHAT.FETCH_LIMIT,
-			}, undefined)
+			}, {})
 
 			expect(updateLastCommonReadMessageAction).toHaveBeenCalledTimes(2)
 			expect(updateLastCommonReadMessageAction).toHaveBeenNthCalledWith(1, expect.anything(), { token: TOKEN, lastCommonReadMessage: 2 })
@@ -1528,6 +1533,7 @@ describe('messagesStore', () => {
 	describe('posting new message', () => {
 		let message1
 		let conversationMock
+		let userIdMock
 		let updateLastCommonReadMessageAction
 		let updateLastReadMessageAction
 		let updateConversationLastMessageAction
@@ -1541,10 +1547,12 @@ describe('messagesStore', () => {
 
 			restoreConsole = mockConsole(['error'])
 			conversationMock = jest.fn()
+			userIdMock = jest.fn()
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
 			updateLastReadMessageAction = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(userIdMock)
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			// mock this complex local action as we already tested it elsewhere
@@ -1931,6 +1939,7 @@ describe('messagesStore', () => {
 					metaData: JSON.stringify(objectToBeForwarded),
 					referenceId: '',
 				},
+				{}
 			)
 
 		})

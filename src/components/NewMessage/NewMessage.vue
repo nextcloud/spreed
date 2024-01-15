@@ -215,7 +215,6 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
-import { editMessage } from '../../services/messagesService.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
@@ -676,12 +675,11 @@ export default {
 
 		async handleEdit() {
 			try {
-				const response = await editMessage({
+				await this.$store.dispatch('editMessage', {
 					token: this.token,
 					messageId: this.messageToEdit.id,
-					updatedMessage: this.text.trim()
+					updatedMessage: this.text.trim(),
 				})
-				this.$store.dispatch('processMessage', { token: this.token, message: response.data.ocs.data })
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 			} catch {
 				this.$emit('failure')

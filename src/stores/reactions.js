@@ -26,6 +26,7 @@ import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
 
+import { useFederationAccess } from '../composables/useFederationAccess.js'
 import {
 	getReactionsDetails,
 	addReactionToMessage,
@@ -238,8 +239,9 @@ export const useReactionsStore = defineStore('reactions', {
 					messageId,
 					reaction: selectedEmoji,
 				})
+				const remoteOptions = useFederationAccess(store.getters.conversation(token), store.getters.getUserId())
 				// The response return an array with the reaction details for this message
-				const response = await addReactionToMessage(token, messageId, selectedEmoji)
+				const response = await addReactionToMessage(token, messageId, selectedEmoji, remoteOptions)
 				this.updateReactions({
 					token,
 					messageId,
@@ -272,8 +274,9 @@ export const useReactionsStore = defineStore('reactions', {
 					messageId,
 					reaction: selectedEmoji,
 				})
+				const remoteOptions = useFederationAccess(store.getters.conversation(token), store.getters.getUserId())
 				// The response return an array with the reaction details for this message
-				const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
+				const response = await removeReactionFromMessage(token, messageId, selectedEmoji, remoteOptions)
 				this.updateReactions({
 					token,
 					messageId,
@@ -301,7 +304,8 @@ export const useReactionsStore = defineStore('reactions', {
 		async fetchReactions(token, messageId) {
 			console.debug('getting reactions details')
 			try {
-				const response = await getReactionsDetails(token, messageId)
+				const remoteOptions = useFederationAccess(store.getters.conversation(token), store.getters.getUserId())
+				const response = await getReactionsDetails(token, messageId, remoteOptions)
 				this.updateReactions({
 					token,
 					messageId,
