@@ -112,7 +112,7 @@
 
 			<!-- Edit -->
 			<NcButton v-else-if="messageToEdit"
-				:disabled="disabled"
+				:disabled="disabledEdit"
 				type="tertiary"
 				native-type="submit"
 				:title="t('spreed', 'Edit message')"
@@ -334,6 +334,10 @@ export default {
 
 		disabled() {
 			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
+		},
+
+		disabledEdit() {
+			return this.disabled || this.text === this.messageToEdit.message || this.text === ''
 		},
 
 		placeholderText() {
@@ -562,6 +566,14 @@ export default {
 		 * @param {object} options the submit options
 		 */
 		async handleSubmit(options) {
+			// Submit event has enter key listener
+			// Handle edit here too
+			if (this.messageToEdit) {
+				if (!this.disabledEdit) {
+					this.handleEdit()
+				}
+				return
+			}
 			if (OC.debug && this.text.startsWith('/spam ')) {
 				const pattern = /^\/spam (\d+) messages$/i
 				const match = pattern.exec(this.text)
@@ -648,19 +660,6 @@ export default {
 		},
 
 		async handleEdit() {
-			const isSimpleMessage = this.messageToEdit.messageParameters?.length === 0
-				|| this.messageToEdit.messageParameters?.some(parameter => parameter.startsWith('mention'))
-			if (!isSimpleMessage) {
-				// Captions editing is not supported yet
-				return
-			}
-
-			// Submitting an empty message will abort the edit
-			if (this.text.trim() === '') {
-				this.chatExtrasStore.removeMessageIdToEdit(this.token)
-				return
-			}
-
 			try {
 				await editMessage({
 					token: this.token,
