@@ -125,9 +125,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token The conversation token
 		 */
 		removeParentIdToReply(token) {
-			if (this.parentToReply[token]) {
-				Vue.delete(this.parentToReply, token)
-			}
+			Vue.delete(this.parentToReply, token)
 		},
 
 		/**
@@ -180,21 +178,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token The conversation token
 		 */
 		removeMessageIdToEdit(token) {
-			this.removeChatEditInput(token)
-			if (this.messageIdToEdit[token]) {
-				Vue.delete(this.messageIdToEdit, token)
-			}
-		},
-
-		/**
-		 * Remove the edited message text from the store for a given conversation token
-		 *
-		 * @param {string} token The conversation token
-		 */
-		removeChatEditInput(token) {
-			if (this.chatEditInput[token]) {
-				Vue.delete(this.chatEditInput, token)
-			}
+			Vue.delete(this.chatEditInput, token)
+			Vue.delete(this.messageIdToEdit, token)
 		},
 
 		/**

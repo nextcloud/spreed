@@ -117,6 +117,31 @@ describe('chatExtrasStore', () => {
 		})
 	})
 
+	describe('current edit input message', () => {
+		it('sets current edit input message', () => {
+			// Act
+			chatExtrasStore.setChatEditInput({ token: 'token-1', text: 'This is an edited message' })
+			chatExtrasStore.setMessageIdToEdit('token-1', 'id-1')
+
+			// Assert
+			expect(chatExtrasStore.getChatEditInput('token-1')).toStrictEqual('This is an edited message')
+			expect(chatExtrasStore.getMessageIdToEdit('id-1')).toBe(undefined)
+		})
+
+		it('clears current edit input message', () => {
+			// Arrange
+			chatExtrasStore.setChatEditInput({ token: 'token-1', text: 'This is an edited message' })
+			chatExtrasStore.setMessageIdToEdit('token-1', 'id-1')
+
+			// Act
+			chatExtrasStore.removeMessageIdToEdit('token-1')
+
+			// Assert
+			expect(chatExtrasStore.chatEditInput['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('')
+		})
+	})
+
 	describe('purge store', () => {
 		it('clears store for provided token', async () => {
 			// Arrange
