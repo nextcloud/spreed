@@ -83,7 +83,9 @@
 					</NcButton>
 				</div>
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
-					<Quote is-new-message-quote :edit-message="!!messageToEdit" v-bind="messageToEdit ?? parentMessage" />
+					<Quote v-bind="messageToEdit ?? parentMessage"
+						:can-cancel="!!parentMessage"
+						:edit-message="!!messageToEdit" />
 				</div>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
@@ -111,17 +113,27 @@
 				@audio-file="handleAudioFile" />
 
 			<!-- Edit -->
-			<NcButton v-else-if="messageToEdit"
-				:disabled="disabledEdit"
-				type="tertiary"
-				native-type="submit"
-				:title="t('spreed', 'Edit message')"
-				:aria-label="t('spreed', 'Edit message')"
-				@click="handleEdit">
-				<template #icon>
-					<CheckBold :size="16" />
-				</template>
-			</NcButton>
+			<template v-else-if="messageToEdit">
+				<NcButton type="tertiary"
+					native-type="submit"
+					:title="t('spreed', 'Cancel editing')"
+					:aria-label="t('spreed', 'Cancel editing')"
+					@click="handleAbortEdit">
+					<template #icon>
+						<CloseIcon :size="20" />
+					</template>
+				</NcButton>
+				<NcButton :disabled="disabledEdit"
+					type="tertiary"
+					native-type="submit"
+					:title="t('spreed', 'Edit message')"
+					:aria-label="t('spreed', 'Edit message')"
+					@click="handleEdit">
+					<template #icon>
+						<CheckIcon :size="20" />
+					</template>
+				</NcButton>
+			</template>
 
 			<!-- Send buttons -->
 			<template v-else>
@@ -176,7 +188,8 @@
 
 <script>
 import BellOff from 'vue-material-design-icons/BellOff.vue'
-import CheckBold from 'vue-material-design-icons/CheckBold.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
@@ -232,7 +245,8 @@ export default {
 		Quote,
 		// Icons
 		BellOff,
-		CheckBold,
+		CheckIcon,
+		CloseIcon,
 		EmoticonOutline,
 		Send,
 	},
@@ -917,7 +931,11 @@ export default {
 				// Remove stored absence status
 				this.chatExtrasStore.removeUserAbsence(this.token)
 			}
-		}
+		},
+
+		handleAbortEdit() {
+			this.chatExtrasStore.removeMessageIdToEdit(this.token)
+		},
 	},
 }
 </script>

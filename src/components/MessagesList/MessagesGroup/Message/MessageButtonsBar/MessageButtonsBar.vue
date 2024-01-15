@@ -246,7 +246,7 @@
 						{{ t('spreed', 'Back') }}
 					</NcActionButton>
 					<NcActionText>
-						{{ t('spreed', 'Edited by : {actor}',
+						{{ t('spreed', 'Edited by: {actor}',
 							{actor : messageObject.lastEditActorDisplayName}) }}
 					</NcActionText>
 					<NcActionSeparator />

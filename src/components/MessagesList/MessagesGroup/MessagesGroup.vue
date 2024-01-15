@@ -143,12 +143,13 @@ export default {
 
 		getLastEditor() {
 			if (this.lastEditActorId === this.actorId && this.lastEditActorType === this.actorType) {
+				// TRANSLATORS Edited by the author of the message themselves
 				return t('spreed', '(edited)')
 			} else if (this.lastEditActorId === this.$store.getters.getActorId()
 						&& this.lastEditActorType === this.$store.getters.getActorType()) {
 				return t('spreed', '(edited by you)')
 			} else {
-				return t('spreed', '(edited by {user1})', { user1: this.lastEditActorDisplayName })
+				return t('spreed', '(edited by {moderator})', { moderator: this.lastEditActorDisplayName })
 			}
 
 		},
