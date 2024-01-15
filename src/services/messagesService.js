@@ -38,7 +38,8 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {object} options options;
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit = 100 }, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
+		...options,
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 0,
@@ -46,7 +47,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
 			limit,
 			includeLastKnown: includeLastKnown ? 1 : 0,
 		},
-	}))
+	})
 }
 
 /**
@@ -60,7 +61,8 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {object} options options
  */
 const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }, options) => {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
+		...options,
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 1,
@@ -69,7 +71,7 @@ const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }, op
 			includeLastKnown: 0,
 			markNotificationsAsRead: 0,
 		},
-	}))
+	})
 }
 
 /**
@@ -84,11 +86,12 @@ const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }, op
  * @param {object} options options;
  */
 const getMessageContext = async function({ token, messageId, limit = 50 }, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/context', { token, messageId }), Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/context', { token, messageId }, options), {
+		...options,
 		params: {
 			limit,
 		},
-	}))
+	})
 }
 
 /**
@@ -104,7 +107,7 @@ const getMessageContext = async function({ token, messageId, limit = 50 }, optio
  * @param {boolean} param1.silent whether the message should trigger a notifications
  */
 const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, { silent, ...options }) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		message,
 		actorDisplayName,
 		referenceId,
@@ -119,9 +122,25 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
  * @param {object} param0 The message object that is destructured
  * @param {string} param0.token The conversation token
  * @param {string} param0.id The id of the message to be deleted
+ * @param {object} options request options
  */
-const deleteMessage = async function({ token, id }) {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{id}', { token, id }))
+const deleteMessage = async function({ token, id }, options) {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{id}', { token, id }, options), options)
+}
+
+/**
+ * Edit a message text / file share caption.
+ *
+ * @param {object} param0 The destructured payload
+ * @param {string} param0.token The conversation token
+ * @param {string} param0.messageId The message id
+ * @param {string} param0.updatedMessage The modified text of the message / file share caption
+ * @param {object} options request options
+ */
+const editMessage = async function({ token, messageId, updatedMessage }, options) {
+	return axios.put(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}', { token, messageId }, options), {
+		message: updatedMessage,
+	}, options)
 }
 
 /**
@@ -133,18 +152,19 @@ const deleteMessage = async function({ token, id }) {
  * @param {string} data.objectId object id
  * @param {string} data.metaData JSON metadata of the rich object encoded as string
  * @param {string} data.referenceId generated reference id, leave empty to generate it based on the other args
+ * @param {object} options request options
  */
-const postRichObjectToConversation = async function(token, { objectType, objectId, metaData, referenceId }) {
+const postRichObjectToConversation = async function(token, { objectType, objectId, metaData, referenceId }, options) {
 	if (!referenceId) {
 		const tempId = 'richobject-' + objectType + '-' + objectId + '-' + token + '-' + (new Date().getTime())
 		referenceId = Hex.stringify(SHA256(tempId))
 	}
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/share', { token }), {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/share', { token }, options), {
 		objectType,
 		objectId,
 		metaData,
 		referenceId,
-	})
+	}, options)
 }
 
 /**
@@ -152,47 +172,43 @@ const postRichObjectToConversation = async function(token, { objectType, objectI
  *
  * @param {string} token The token of the conversation to be removed from favorites
  * @param {number} lastReadMessage id of the last read message to set
+ * @param {object} options request options
  */
-const updateLastReadMessage = async function(token, lastReadMessage) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }), {
+const updateLastReadMessage = async function(token, lastReadMessage, options) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }, options), {
 		lastReadMessage,
-	})
+	}, options)
 }
 
-const addReactionToMessage = async function(token, messageId, selectedEmoji) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
+const addReactionToMessage = async function(token, messageId, selectedEmoji, options) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }, options), {
 		reaction: selectedEmoji,
-	})
+	}, options)
 }
 
-const removeReactionFromMessage = async function(token, messageId, selectedEmoji) {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
+const removeReactionFromMessage = async function(token, messageId, selectedEmoji, options) {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }, options), {
+		...options,
 		params: {
 			reaction: selectedEmoji,
 		},
 	})
 }
 
-const getReactionsDetails = async function(token, messageId) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }))
+const getReactionsDetails = async function(token, messageId, options) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }, options), options)
 }
 
-const editMessage = async function({ token, messageId, updatedMessage }, options) {
-	return axios.put(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}', { token, messageId }), {
-		message: updatedMessage,
-	}, options)
+const getTranslationLanguages = async function(options) {
+	return axios.get(generateOcsUrl('/translation/languages', undefined, options), options)
 }
 
-const getTranslationLanguages = async function() {
-	return axios.get(generateOcsUrl('/translation/languages'))
-}
-
-const translateText = async function(text, fromLanguage, toLanguage) {
-	return axios.post(generateOcsUrl('/translation/translate'), {
+const translateText = async function(text, fromLanguage, toLanguage, options) {
+	return axios.post(generateOcsUrl('/translation/translate', undefined, options), {
 		text,
 		fromLanguage,
 		toLanguage,
-	})
+	}, options)
 }
 
 export {
