@@ -7,14 +7,19 @@ import {
 	lookForNewMessages,
 	postNewMessage,
 	deleteMessage,
+	editMessage,
 	postRichObjectToConversation,
 	updateLastReadMessage,
+	addReactionToMessage,
+	removeReactionFromMessage,
+	getReactionsDetails,
 } from './messagesService.js'
 import { CHAT } from '../constants.js'
 
 jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),
 	post: jest.fn(),
+	put: jest.fn(),
 	delete: jest.fn(),
 }))
 
@@ -146,10 +151,25 @@ describe('messagesService', () => {
 		deleteMessage({
 			token: 'XXTOKENXX',
 			id: 1234,
-		})
+		}, { dummyOption: true })
 
 		expect(axios.delete).toHaveBeenCalledWith(
 			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/1234'),
+			{ dummyOption: true }
+		)
+	})
+
+	test('editMessage calls the chat API endpoint', () => {
+		editMessage({
+			token: 'XXTOKENXX',
+			messageId: 1234,
+			updatedMessage: 'edited message text',
+		}, { dummyOption: true })
+
+		expect(axios.put).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/1234'),
+			{ message: 'edited message text' },
+			{ dummyOption: true }
 		)
 	})
 
@@ -159,7 +179,7 @@ describe('messagesService', () => {
 			objectId: 999,
 			metaData: '{"x":1}',
 			referenceId: 'reference-id',
-		})
+		}, { dummyOption: true })
 
 		expect(axios.post).toHaveBeenCalledWith(
 			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/share'),
@@ -168,7 +188,8 @@ describe('messagesService', () => {
 				objectId: 999,
 				metaData: '{"x":1}',
 				referenceId: 'reference-id',
-			}
+			},
+			{ dummyOption: true }
 		)
 	})
 
@@ -177,7 +198,7 @@ describe('messagesService', () => {
 			objectType: 'deck',
 			objectId: 999,
 			metaData: '{"x":1}',
-		})
+		}, { dummyOption: true })
 
 		expect(axios.post).toHaveBeenCalledWith(
 			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/share'),
@@ -186,17 +207,56 @@ describe('messagesService', () => {
 				objectId: 999,
 				metaData: '{"x":1}',
 				referenceId: expect.stringMatching(/^[a-z0-9]{64}$/),
-			}
+			},
+			{ dummyOption: true }
 		)
 	})
 
 	test('updateLastReadMessage calls the chat API endpoint', () => {
-		updateLastReadMessage('XXTOKENXX', 1234)
+		updateLastReadMessage('XXTOKENXX', 1234, { dummyOption: true })
 
 		expect(axios.post).toHaveBeenCalledWith(
 			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/read'),
 			{
 				lastReadMessage: 1234,
+			},
+			{ dummyOption: true }
+		)
+	})
+
+	test('addReactionToMessage calls the reaction API endpoint', () => {
+		addReactionToMessage('XXTOKENXX', 1234, '👍', { dummyOption: true })
+
+		expect(axios.post).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/reaction/XXTOKENXX/1234'),
+			{
+				reaction: '👍',
+			},
+			{ dummyOption: true }
+		)
+	})
+
+	test('removeReactionFromMessage calls the reaction API endpoint', () => {
+		removeReactionFromMessage('XXTOKENXX', 1234, '👍', { dummyOption: true })
+
+		expect(axios.delete).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/reaction/XXTOKENXX/1234'),
+			{
+				dummyOption: true,
+				params: {
+					reaction: '👍',
+				},
+			}
+		)
+	})
+
+	test('getReactionsDetails calls the reaction API endpoint', () => {
+		getReactionsDetails('XXTOKENXX', 1234, { dummyOption: true })
+
+		expect(axios.get).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/reaction/XXTOKENXX/1234'),
+			{
+				dummyOption: true,
 			}
 		)
 	})

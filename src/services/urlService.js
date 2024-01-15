@@ -20,7 +20,7 @@
  */
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { generateUrl } from '@nextcloud/router'
+import { generateUrl, generateOcsUrl as _generateOcsUrl } from '@nextcloud/router'
 
 /**
  * Generate a full absolute link with @nextcloud/router.generateUrl
@@ -74,4 +74,27 @@ export async function copyConversationLinkToClipboard(token, messageId) {
 	} catch (error) {
 		showError(t('spreed', 'The link could not be copied'))
 	}
+}
+
+/**
+ * Get the base path for the given OCS API service (remote, if provided)
+ *
+ * @param {string} url OCS API service url
+ * @param {object} params parameters to be replaced into the service url
+ * @param {object} options options for the parameter replacement (UrlOptions)
+ * @param {string} [options.remoteServer] host name of remote instance
+ * @param {string} [options.remoteToken] remote token of conversation on remote instance
+ * @return {string} Absolute path for the OCS URL
+ */
+export const generateOcsUrl = (url, params, options = {}) => {
+	if (!params.token) {
+		// Fallback to default function
+		return _generateOcsUrl(url, params, options)
+	}
+
+	const { remoteServer, remoteToken, ...rest } = options
+	return remoteServer && remoteToken
+		? _generateOcsUrl(url, { ...params, token: remoteToken }, rest)
+			.replace(window.location.host, remoteServer)
+		: _generateOcsUrl(url, params, rest)
 }
