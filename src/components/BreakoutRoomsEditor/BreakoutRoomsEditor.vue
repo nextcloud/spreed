@@ -30,7 +30,11 @@
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
 					<label class="breakout-rooms-editor__caption" for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
+					<p v-if="isInvalidAmount" class="breakout-rooms-editor__error-hint">
+						{{ t('spreed', 'You can create from 1 to 20 breakout rooms.') }}
+					</p>
 					<NcTextField id="room-number"
+						ref="textField"
 						:value="amount.toString()"
 						class="breakout-rooms-editor__number-input"
 						type="number"
@@ -61,10 +65,16 @@
 					</fieldset>
 				</div>
 				<div class="breakout-rooms-editor__buttons">
-					<NcButton v-if="mode === '2'" type="primary" @click="isEditingParticipants = true">
+					<NcButton v-if="mode === '2'"
+						type="primary"
+						:disabled="isInvalidAmount"
+						@click="isEditingParticipants = true">
 						{{ t('spreed', 'Assign participants to rooms') }}
 					</NcButton>
-					<NcButton v-else type="primary" @click="handleCreateRooms">
+					<NcButton v-else
+						type="primary"
+						:disabled="isInvalidAmount"
+						@click="handleCreateRooms">
 						{{ t('spreed', 'Create rooms') }}
 					</NcButton>
 				</div>
@@ -114,6 +124,7 @@ export default {
 			amount: 2,
 			attendeeMap: '',
 			isEditingParticipants: false,
+			isInvalidAmount: false,
 		}
 	},
 
@@ -147,6 +158,7 @@ export default {
 		// now it breaks validation. Another option: Create NcNumberField component
 		setAmount(value) {
 			this.amount = parseFloat(value)
+			this.isInvalidAmount = isNaN(this.amount) || !this.$refs.textField.$refs.inputField.$refs.input?.checkValidity()
 		},
 	},
 }
@@ -169,6 +181,11 @@ export default {
 		font-weight: bold;
 		display: block;
 		margin: calc(var(--default-grid-baseline)*3) 0 calc(var(--default-grid-baseline)*2) 0;
+	}
+
+	&__error-hint {
+		color: var(--color-error);
+		font-size: 0.8rem;
 	}
 
 	&__participants-step {
