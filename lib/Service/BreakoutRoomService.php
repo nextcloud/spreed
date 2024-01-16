@@ -36,6 +36,7 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
@@ -48,6 +49,7 @@ class BreakoutRoomService {
 		protected ParticipantService $participantService,
 		protected ChatManager $chatManager,
 		protected INotificationManager $notificationManager,
+		protected ITimeFactory $timeFactory,
 		protected IEventDispatcher $dispatcher,
 		protected IL10N $l,
 	) {
@@ -337,6 +339,7 @@ class BreakoutRoomService {
 	public function removeBreakoutRooms(Room $parent): void {
 		$this->deleteBreakoutRooms($parent);
 		$this->roomService->setBreakoutRoomMode($parent, BreakoutRoom::MODE_NOT_CONFIGURED);
+		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
 	}
 
 	protected function deleteBreakoutRooms(Room $parent): void {
@@ -403,6 +406,7 @@ class BreakoutRoomService {
 		}
 
 		$this->roomService->setBreakoutRoomStatus($breakoutRoom, $status);
+		$this->roomService->setLastActivity($breakoutRoom, $this->timeFactory->getDateTime());
 	}
 
 	/**
