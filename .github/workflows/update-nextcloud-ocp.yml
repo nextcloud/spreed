@@ -17,20 +17,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branches: ["main", "master", "stable28", "stable27", "stable26"]
+        branches: ['main', 'master', 'stable28', 'stable27', 'stable26']
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
     steps:
-      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+      - id: checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ matrix.branches }}
           submodules: true
+        continue-on-error: true
 
-      - name: Set up php8.1
-        uses: shivammathur/setup-php@4bd44f22a98a19e0950cbad5f31095157cc9621b # v2
+      - name: Set up php8.2
+        if: steps.checkout.outcome == 'success'
+        uses: shivammathur/setup-php@e6f75134d35752277f093989e72e140eaa222f35 # v2
         with:
-          php-version: 8.1
+          php-version: 8.2
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: none
@@ -38,22 +41,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Read codeowners
+        if: steps.checkout.outcome == 'success'
         id: codeowners
         run: |
-          grep '/appinfo/info.xml' .github/CODEOWNERS | awk '{ print "codeowners="$2 }' >> $GITHUB_OUTPUT
+          grep '/appinfo/info.xml' .github/CODEOWNERS | cut -f 2- -d ' ' | xargs | awk '{ print "codeowners="$0 }' >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Composer install
+        if: steps.checkout.outcome == 'success'
         run: composer install
 
       - name: Composer update nextcloud/ocp
         id: update_branch
-        if: matrix.branches != 'main'
+        if: ${{ steps.checkout.outcome == 'success' && matrix.branches != 'main' }}
         run: composer require --dev nextcloud/ocp:dev-${{ matrix.branches }}
 
       - name: Raise on issue on failure
         uses: dacbd/create-issue-action@ba4d1c45cccf9c483f2720cefb40e437f0ee6f7d # v1.2.1
-        if: ${{ failure() && steps.update_branch.conclusion == 'failure' }}
+        if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_branch.conclusion == 'failure' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}
@@ -61,36 +66,40 @@ jobs:
 
       - name: Composer update nextcloud/ocp
         id: update_main
-        if: matrix.branches == 'main'
+        if: ${{ steps.checkout.outcome == 'success' && matrix.branches == 'main' }}
         run: composer require --dev nextcloud/ocp:dev-master
 
       - name: Raise on issue on failure
         uses: dacbd/create-issue-action@ba4d1c45cccf9c483f2720cefb40e437f0ee6f7d # v1.2.1
-        if: ${{ failure() && steps.update_main.conclusion == 'failure' }}
+        if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_main.conclusion == 'failure' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}
           body: Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}
 
       - name: Reset checkout 3rdparty
+        if: steps.checkout.outcome == 'success'
         run: |
           git clean -f 3rdparty
           git checkout 3rdparty
         continue-on-error: true
 
       - name: Reset checkout vendor
+        if: steps.checkout.outcome == 'success'
         run: |
           git clean -f vendor
           git checkout vendor
         continue-on-error: true
 
       - name: Reset checkout vendor-bin
+        if: steps.checkout.outcome == 'success'
         run: |
           git clean -f vendor-bin
           git checkout vendor-bin
         continue-on-error: true
 
       - name: Create Pull Request
+        if: steps.checkout.outcome == 'success'
         uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38 # v3
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
