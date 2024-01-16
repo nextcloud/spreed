@@ -58,6 +58,7 @@ import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 import Participant from '../Participants/Participant.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.js'
 
 export default {
 	name: 'BreakoutRoomsTab',
@@ -90,6 +91,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
+	},
+
 	data() {
 		return {
 			breakoutRoomsParticipantsInterval: undefined,
@@ -111,7 +118,7 @@ export default {
 		},
 
 		breakoutRooms() {
-			return this.$store.getters.breakoutRooms(this.mainToken)
+			return this.breakoutRoomsStore.breakoutRooms(this.mainToken)
 		},
 
 		breakoutRoomsConfigured() {
@@ -150,7 +157,7 @@ export default {
 	methods: {
 		getBreakoutRooms() {
 			if (this.breakoutRoomsConfigured) {
-				this.$store.dispatch('getBreakoutRoomsAction', {
+				this.breakoutRoomsStore.getBreakoutRoomsAction({
 					token: this.mainToken,
 				})
 			}
@@ -158,7 +165,7 @@ export default {
 
 		getParticipants() {
 			if (this.breakoutRoomsConfigured) {
-				this.$store.dispatch('getBreakoutRoomsParticipantsAction', {
+				this.breakoutRoomsStore.getBreakoutRoomsParticipantsAction({
 					token: this.mainToken,
 				})
 			}

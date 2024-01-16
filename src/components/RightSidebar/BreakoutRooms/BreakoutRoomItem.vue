@@ -93,6 +93,7 @@ import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'
+import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.js'
 
 export default {
 	name: 'BreakoutRoomItem',
@@ -136,6 +137,12 @@ export default {
 			type: Object,
 			default: undefined,
 		},
+	},
+
+	setup() {
+		return {
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
 	},
 
 	data() {
@@ -217,7 +224,7 @@ export default {
 		},
 
 		dismissRequestAssistance() {
-			this.$store.dispatch('resetRequestAssistanceAction', { token: this.roomToken })
+			this.breakoutRoomsStore.resetRequestAssistanceAction({ token: this.roomToken })
 		},
 
 		async joinRoom() {
@@ -228,8 +235,8 @@ export default {
 			} else {
 				try {
 					if (this.mainConversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE) {
-						await this.$store.dispatch('switchToBreakoutRoomAction', {
-							token: this.$store.getters.parentRoomToken(this.roomToken),
+						await this.breakoutRoomsStore.switchToBreakoutRoomAction({
+							token: this.breakoutRoomsStore.getParentRoomToken(this.roomToken),
 							target: this.roomToken,
 						})
 					}

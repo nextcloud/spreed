@@ -22,7 +22,6 @@
 
 import actorStore from './actorStore.js'
 import audioRecorderStore from './audioRecorderStore.js'
-import breakoutRoomsStore from './breakoutRoomsStore.js'
 import callViewStore from './callViewStore.js'
 import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
@@ -50,7 +49,6 @@ export default {
 		uiModeStore,
 		windowVisibilityStore,
 		pollStore,
-		breakoutRoomsStore,
 	},
 
 	mutations: {},
