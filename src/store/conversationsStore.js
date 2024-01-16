@@ -369,6 +369,13 @@ const actions = {
 				const conversationHasChanged = context.dispatch('updateConversationIfHasChanged', newConversation)
 				storeHasChanged = conversationHasChanged || storeHasChanged
 			}
+
+			if (newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM) {
+				context.commit('addBreakoutRoom', {
+					parentRoomToken: newConversation.objectId,
+					breakoutRoom: newConversation,
+				})
+			}
 		}
 
 		if (withCaching && storeHasChanged) {
