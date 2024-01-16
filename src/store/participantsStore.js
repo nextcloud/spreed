@@ -607,7 +607,6 @@ const actions = {
 	 * @return {object|null}
 	 */
 	async fetchParticipants(context, { token }) {
-		const guestNameStore = useGuestNameStore()
 		// Cancel a previous request
 		context.dispatch('cancelFetchParticipants')
 		// Get a new cancelable request function and cancel function pair
@@ -619,33 +618,7 @@ const actions = {
 			const response = await request(token)
 			const hasUserStatuses = !!response.headers['x-nextcloud-has-user-statuses']
 
-			const currentParticipants = context.state.attendees[token]
-			const newParticipants = response.data.ocs.data
-			for (const attendeeId of Object.keys(Object(currentParticipants))) {
-				if (!newParticipants.some(participant => participant.attendeeId === +attendeeId)) {
-					context.commit('deleteParticipant', { token, attendeeId })
-				}
-			}
-
-			newParticipants.forEach(participant => {
-				if (context.state.attendees[token]?.[participant.attendeeId]) {
-					context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
-				} else {
-					context.dispatch('addParticipant', { token, participant })
-					if (hasUserStatuses) {
-						emitUserStatusUpdated(participant)
-					}
-				}
-
-				if (participant.participantType === PARTICIPANT.TYPE.GUEST
-					|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
-					guestNameStore.addGuestName({
-						token,
-						actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
-						actorDisplayName: participant.displayName,
-					}, { noUpdate: false })
-				}
-			})
+			context.dispatch('patchParticipants', { token, newParticipants: response.data.ocs.data, hasUserStatuses })
 
 			// Discard current cancel function
 			context.commit('setCancelFetchParticipants', null)
@@ -660,6 +633,46 @@ const actions = {
 			}
 			return null
 		}
+	},
+
+	/**
+	 * Update participants in the store with specified token.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation token;
+	 * @param {object} data.newParticipants the participant array;
+	 * @param {boolean} data.hasUserStatuses whether participants has user statuses or not;
+	 */
+	async patchParticipants(context, { token, newParticipants, hasUserStatuses }) {
+		const guestNameStore = useGuestNameStore()
+
+		const currentParticipants = context.state.attendees[token]
+		for (const attendeeId of Object.keys(Object(currentParticipants))) {
+			if (!newParticipants.some(participant => participant.attendeeId === +attendeeId)) {
+				context.commit('deleteParticipant', { token, attendeeId })
+			}
+		}
+
+		newParticipants.forEach(participant => {
+			if (context.state.attendees[token]?.[participant.attendeeId]) {
+				context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
+			} else {
+				context.dispatch('addParticipant', { token, participant })
+				if (hasUserStatuses) {
+					emitUserStatusUpdated(participant)
+				}
+			}
+
+			if (participant.participantType === PARTICIPANT.TYPE.GUEST
+				|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
+				guestNameStore.addGuestName({
+					token,
+					actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
+					actorDisplayName: participant.displayName,
+				}, { noUpdate: false })
+			}
+		})
 	},
 
 	/**
