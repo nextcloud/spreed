@@ -200,23 +200,17 @@ const actions = {
 	async getBreakoutRoomsParticipantsAction(context, { token }) {
 		try {
 			const response = await getBreakoutRoomsParticipants(token)
+			const splittedParticipants = response.data.ocs.data.reduce((acc, participant) => {
+				if (!acc[participant.roomToken]) {
+					acc[participant.roomToken] = []
+				}
+				acc[participant.roomToken].push(participant)
+				return acc
+			}, {})
 
-			// Purge the participants of the breakout rooms before adding the updated ones
-			context.state.breakoutRooms[token].forEach(breakoutRoom => {
-				context.commit('purgeParticipantsStore', breakoutRoom.token)
+			Object.entries(splittedParticipants).forEach(([token, newParticipants]) => {
+				context.dispatch('patchParticipants', { token, newParticipants, hasUserStatuses: false })
 			})
-
-			// Purge the participants of the main room
-			context.commit('purgeParticipantsStore', token)
-
-			// Add the participants of the breakout rooms to the participants store
-			response.data.ocs.data.forEach(participant => {
-				context.dispatch('addParticipant', {
-					token: participant.roomToken,
-					participant,
-				})
-			})
-
 		} catch (error) {
 			console.error(error)
 		}
