@@ -221,6 +221,10 @@ const actions = {
 			const response = await requestAssistance(token)
 			// Add the updated parent conversation to the conversations store
 			context.commit('addConversation', response.data.ocs.data)
+			context.commit('addBreakoutRoom', {
+				parentRoomToken: response.data.ocs.data.objectId,
+				breakoutRoom: response.data.ocs.data,
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while requesting assistance'))
@@ -232,6 +236,10 @@ const actions = {
 			const response = await resetRequestAssistance(token)
 			// Add the updated parent conversation to the conversations store
 			context.commit('addConversation', response.data.ocs.data)
+			context.commit('addBreakoutRoom', {
+				parentRoomToken: response.data.ocs.data.objectId,
+				breakoutRoom: response.data.ocs.data,
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while resetting the request for assistance'))
