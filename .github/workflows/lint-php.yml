@@ -31,6 +31,7 @@ jobs:
         uses: shivammathur/setup-php@e6f75134d35752277f093989e72e140eaa222f35 # v2
         with:
           php-version: ${{ matrix.php-versions }}
+          extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: none
           ini-file: development
         env:
