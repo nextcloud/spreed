@@ -184,6 +184,9 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+		userId() {
+			return this.$store.getters.getUserId()
+		},
 		canAddPhones() {
 			return canModerateSipDialOut && this.conversation.canEnableSIP
 		},
@@ -203,11 +206,13 @@ export default {
 
 	beforeMount() {
 		EventBus.$on('route-change', this.abortSearch)
+		EventBus.$on('signaling-users-changed', this.updateUsers)
 		subscribe('user_status:status.updated', this.updateUserStatus)
 	},
 
 	beforeDestroy() {
 		EventBus.$off('route-change', this.abortSearch)
+		EventBus.$off('signaling-users-changed', this.updateUsers)
 		unsubscribe('user_status:status.updated', this.updateUserStatus)
 
 		this.cancelSearchPossibleConversations()
@@ -215,6 +220,21 @@ export default {
 	},
 
 	methods: {
+		async updateUsers(usersList) {
+			const currentUser = usersList.flat().find(user => user.userId === this.userId)
+			const currentParticipant = this.participants.find(user => user.userId === this.userId)
+			if (!currentUser) {
+				return
+			}
+			// refresh conversation, if current user permissions have been changed
+			if (currentUser.participantPermissions !== this.conversation.permissions) {
+				await this.$store.dispatch('fetchConversation', { token: this.token })
+			}
+			if (currentUser.participantPermissions !== currentParticipant?.permissions) {
+				await this.cancelableGetParticipants()
+			}
+		},
+
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 		},
