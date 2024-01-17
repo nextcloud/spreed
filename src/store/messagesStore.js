@@ -32,6 +32,7 @@ import {
 	CONVERSATION,
 } from '../constants.js'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
+import { EventBus } from '../services/EventBus.js'
 import {
 	deleteMessage,
 	updateLastReadMessage,
@@ -529,11 +530,16 @@ const actions = {
 			&& (message.systemMessage === 'message_deleted'
 				|| message.systemMessage === 'reaction'
 				|| message.systemMessage === 'reaction_deleted'
-				|| message.systemMessage === 'reaction_revoked')) {
+				|| message.systemMessage === 'reaction_revoked'
+				|| message.systemMessage === 'message_edited')) {
 			// If parent message is presented in store already, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', { token, message: message.parent })
+				if (message.systemMessage === 'message_edited') {
+					EventBus.$emit('message-edited')
+					return
+				}
 			}
 
 			const reactionsStore = useReactionsStore()

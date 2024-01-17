@@ -32,6 +32,9 @@
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
 				{{ actorDisplayName }}
+				<div v-if="lastEditActorDisplayName">
+					{{ getLastEditor }}
+				</div>
 			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
@@ -88,6 +91,24 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
+
+		lastEditTimestamp: {
+			type: Number,
+			default: 0,
+		},
+		lastEditActorId: {
+			type: String,
+			default: '',
+		},
+		lastEditActorType: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorDisplayName: {
+			type: String,
+			default: ''
+		},
 	},
 
 	setup() {
@@ -131,6 +152,19 @@ export default {
 			}
 
 			return displayName
+		},
+
+		getLastEditor() {
+			if (this.lastEditActorId === this.actorId && this.lastEditActorType === this.actorType) {
+				// TRANSLATORS Edited by the author of the message themselves
+				return t('spreed', '(edited)')
+			} else if (this.lastEditActorId === this.$store.getters.getActorId()
+						&& this.lastEditActorType === this.$store.getters.getActorType()) {
+				return t('spreed', '(edited by you)')
+			} else {
+				return t('spreed', '(edited by {moderator})', { moderator: this.lastEditActorDisplayName })
+			}
+
 		},
 
 		disableMenu() {
@@ -184,6 +218,8 @@ export default {
 	}
 
 	&__author {
+		display: flex;
+		gap: 4px;
 		padding: 4px 0 0 8px;
 		color: var(--color-text-maxcontrast);
 	}

@@ -284,6 +284,7 @@ export default {
 		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$on('focus-message', this.focusMessage)
 		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.$on('message-edited', this.handleMessageEdited)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -303,6 +304,7 @@ export default {
 		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$off('focus-message', this.focusMessage)
 		EventBus.$off('route-change', this.onRouteChange)
+		EventBus.$off('message-edited', this.handleMessageEdited)
 
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
@@ -356,6 +358,7 @@ export default {
 
 		areGroupsIdentical(group1, group2) {
 			if (group1.messages.length !== group2.messages.length
+				|| JSON.stringify(group1.messages) !== JSON.stringify(group2.messages)
 				|| group1.dateSeparator !== group2.dateSeparator
 				|| group1.previousMessageId !== group2.previousMessageId
 				|| group1.nextMessageId !== group2.nextMessageId) {
@@ -394,6 +397,10 @@ export default {
 		messagesShouldBeGrouped(message1, message2) {
 			if (!message2) {
 				return false // No previous message
+			}
+
+			if (!!message1.lastEditTimestamp || !!message2.lastEditTimestamp) {
+				return false // Edited messages are not grouped
 			}
 
 			if (message1.actorType === ATTENDEE.ACTOR_TYPE.BOTS // Don't group messages of commands and bots
@@ -625,6 +632,10 @@ export default {
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
+		},
+
+		handleMessageEdited(id) {
+			this.messagesGroupedByAuthor = this.prepareMessagesGroups(this.messagesList)
 		},
 
 		/**

@@ -48,7 +48,8 @@
 				@open="onMenuOpen"
 				@close="onMenuClose">
 				<template v-if="submenu === null">
-					<NcActionButton>
+					<!-- Message timestamp -->
+					<NcActionText>
 						<template #icon>
 							<span v-if="showCommonReadIcon"
 								:title="commonReadIconTooltip"
@@ -63,7 +64,20 @@
 							<ClockOutline v-else :size="16" />
 						</template>
 						{{ messageDateTime }}
-					</NcActionButton>
+					</NcActionText>
+					<!-- Edited message timestamp -->
+					<NcActionButtonGroup v-if="messageObject.lastEditTimestamp">
+						<NcActionText>
+							<template #icon>
+								<ClockEditOutline :size="16" />
+							</template>
+							{{ messageObject.lastEditActorDisplayName }}
+						</NcActionText>
+						<NcActionText>
+							{{ editedDateTime }}
+						</NcActionText>
+					</NcActionButtonGroup>
+					<NcActionSeparator />
 
 					<NcActionButton v-if="supportReminders"
 						class="action--nested"
@@ -73,8 +87,6 @@
 						</template>
 						{{ t('spreed', 'Set reminder') }}
 					</NcActionButton>
-
-					<NcActionSeparator />
 					<NcActionButton v-if="isPrivateReplyable"
 						close-after-click
 						@click.stop="handlePrivateReply">
@@ -82,6 +94,15 @@
 							<AccountIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Reply privately') }}
+					</NcActionButton>
+					<NcActionButton v-if="isEditable"
+						:aria-label="t('spreed', 'Edit message')"
+						close-after-click
+						@click.stop="editMessage">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						{{ t('spreed', 'Edit message') }}
 					</NcActionButton>
 					<NcActionButton v-if="!isFileShareOnly"
 						close-after-click
@@ -258,6 +279,7 @@ import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
+import ClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue'
 import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
@@ -267,6 +289,7 @@ import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
@@ -277,10 +300,12 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
 import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
@@ -300,10 +325,12 @@ export default {
 
 	components: {
 		MessageForwarder,
+		NcActionButtonGroup,
 		NcActionButton,
 		NcActionInput,
 		NcActionLink,
 		NcActionSeparator,
+		NcActionText,
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
@@ -315,6 +342,7 @@ export default {
 		CloseCircleOutline,
 		Check,
 		CheckAll,
+		ClockEditOutline,
 		ClockOutline,
 		ContentCopy,
 		DeleteIcon,
@@ -323,6 +351,7 @@ export default {
 		File,
 		Note,
 		OpenInNewIcon,
+		Pencil,
 		Plus,
 		Reply,
 		Share,
@@ -447,7 +476,7 @@ export default {
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
 	setup() {
 		const reactionsStore = useReactionsStore()
@@ -482,8 +511,21 @@ export default {
 			return this.getMessagesListScroller()
 		},
 
+		isModifiable() {
+			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
+		},
+
+		isEditable() {
+			if (!this.isModifiable || this.isObjectShare
+					|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
+				return false
+			}
+
+			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
+		},
+
 		isDeleteable() {
-			if (this.isConversationReadOnly || this.conversation.participantType === PARTICIPANT.TYPE.GUEST) {
+			if (!this.isModifiable) {
 				return false
 			}
 
@@ -523,6 +565,10 @@ export default {
 			return this.isFileShare && this.message === '{file}'
 		},
 
+		isObjectShare() {
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('object'))
+		},
+
 		isCurrentGuest() {
 			return this.$store.getters.getActorType() === 'guests'
 		},
@@ -558,6 +604,10 @@ export default {
 
 		messageDateTime() {
 			return moment(this.timestamp * 1000).format('lll')
+		},
+
+		editedDateTime() {
+			return moment(this.messageObject.lastEditTimestamp * 1000).format('lll')
 		},
 
 		reminderOptions() {
@@ -790,6 +840,10 @@ export default {
 
 		setCustomReminder() {
 			this.setReminder(this.customReminderDateTime.valueOf())
+		},
+
+		editMessage() {
+			this.$emit('edit')
 		},
 	},
 }

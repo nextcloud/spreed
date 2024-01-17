@@ -178,6 +178,7 @@ the main body of the message as well as a quote.
 				:sent-icon-tooltip="sentIconTooltip"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
+				@edit="handleEdit"
 				@delete="handleDelete" />
 			<div v-else-if="showCombinedSystemMessageToggle"
 				class="message-buttons-bar">
@@ -406,6 +407,26 @@ export default {
 		referenceId: {
 			type: String,
 			default: '',
+		},
+
+		lastEditActorDisplayName: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorId: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorType: {
+			type: String,
+			default: '',
+		},
+
+		lastEditTimestamp: {
+			type: Number,
+			default: 0,
 		},
 	},
 
@@ -660,6 +681,10 @@ export default {
 		containsCodeBlocks() {
 			return this.message.includes('```')
 		},
+
+		isFileShareOnly() {
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file')) && this.message === '{file}'
+		},
 	},
 
 	watch: {
@@ -753,6 +778,17 @@ export default {
 				token: this.token,
 				id: this.id,
 			})
+			EventBus.$emit('focus-chat-input')
+		},
+
+		handleEdit() {
+			this.chatExtrasStore.setMessageIdToEdit(this.token, this.id)
+			if (this.isFileShareOnly) {
+				this.chatExtrasStore.setChatEditInput({ token: this.token, text: '' })
+			} else {
+				this.chatExtrasStore.setChatEditInput({ token: this.token, text: this.message })
+			}
+			EventBus.$emit('editing-message')
 			EventBus.$emit('focus-chat-input')
 		},
 

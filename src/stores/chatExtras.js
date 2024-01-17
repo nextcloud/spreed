@@ -48,6 +48,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		absence: {},
 		parentToReply: {},
 		chatInput: {},
+		messageIdToEdit: {},
+		chatEditInput: {},
 	}),
 
 	getters: {
@@ -59,6 +61,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		getChatInput: (state) => (token) => {
 			return state.chatInput[token] ?? ''
+		},
+
+		getChatEditInput: (state) => (token) => {
+			return state.chatEditInput[token] ?? ''
+		},
+
+		getMessageIdToEdit: (state) => (token) => {
+			return state.messageIdToEdit[token]
 		},
 	},
 
@@ -133,6 +143,43 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
 
 			Vue.set(this.chatInput, token, parsedText)
+		},
+
+		/**
+		 * Add a message text that is being edited to the store for a given conversation token
+		 *
+		 * @param {object} payload action payload
+		 * @param {string} payload.token The conversation token
+		 * @param {string} payload.text The string to store
+		 */
+		setChatEditInput({ token, text }) {
+			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
+			const temp = document.createElement('textarea')
+			temp.innerHTML = text.replace(/&/gmi, '&amp;')
+			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
+				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+
+			Vue.set(this.chatEditInput, token, parsedText)
+		},
+
+		/**
+		 * Add a message id that is being edited to the store
+		 *
+		 * @param {string} token The conversation token
+		 * @param {number} id The id of message
+		 */
+		setMessageIdToEdit(token, id) {
+			Vue.set(this.messageIdToEdit, token, id)
+		},
+
+		/**
+		 * Remove a message id that is being edited to the store
+		 *
+		 * @param {string} token The conversation token
+		 */
+		removeMessageIdToEdit(token) {
+			Vue.delete(this.chatEditInput, token)
+			Vue.delete(this.messageIdToEdit, token)
 		},
 
 		/**

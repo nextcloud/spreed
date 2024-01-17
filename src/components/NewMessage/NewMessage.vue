@@ -82,8 +82,10 @@
 						</template>
 					</NcButton>
 				</div>
-				<div v-if="parentMessage" class="new-message-form__quote">
-					<Quote is-new-message-quote v-bind="parentMessage" />
+				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
+					<Quote v-bind="messageToEdit ?? parentMessage"
+						:can-cancel="!!parentMessage"
+						:edit-message="!!messageToEdit" />
 				</div>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
@@ -109,6 +111,29 @@
 				:disabled="disabled"
 				@recording="handleRecording"
 				@audio-file="handleAudioFile" />
+
+			<!-- Edit -->
+			<template v-else-if="messageToEdit">
+				<NcButton type="tertiary"
+					native-type="submit"
+					:title="t('spreed', 'Cancel editing')"
+					:aria-label="t('spreed', 'Cancel editing')"
+					@click="handleAbortEdit">
+					<template #icon>
+						<CloseIcon :size="20" />
+					</template>
+				</NcButton>
+				<NcButton :disabled="disabledEdit"
+					type="tertiary"
+					native-type="submit"
+					:title="t('spreed', 'Edit message')"
+					:aria-label="t('spreed', 'Edit message')"
+					@click="handleEdit">
+					<template #icon>
+						<CheckIcon :size="20" />
+					</template>
+				</NcButton>
+			</template>
 
 			<!-- Send buttons -->
 			<template v-else>
@@ -163,6 +188,8 @@
 
 <script>
 import BellOff from 'vue-material-design-icons/BellOff.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
@@ -188,6 +215,7 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
+import { editMessage } from '../../services/messagesService.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
@@ -217,6 +245,8 @@ export default {
 		Quote,
 		// Icons
 		BellOff,
+		CheckIcon,
+		CloseIcon,
 		EmoticonOutline,
 		Send,
 	},
@@ -320,6 +350,10 @@ export default {
 			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
 		},
 
+		disabledEdit() {
+			return this.disabled || this.text === this.messageToEdit.message || this.text === ''
+		},
+
 		placeholderText() {
 			if (this.isReadOnly) {
 				return t('spreed', 'This conversation has been locked')
@@ -336,6 +370,11 @@ export default {
 		parentMessage() {
 			const parentId = this.chatExtrasStore.getParentIdToReply(this.token)
 			return parentId && this.$store.getters.message(this.token, parentId)
+		},
+
+		messageToEdit() {
+			const messageToEditId = this.chatExtrasStore.getMessageIdToEdit(this.token)
+			return messageToEditId && this.$store.getters.message(this.token, messageToEditId)
 		},
 
 		currentUserIsGuest() {
@@ -382,11 +421,11 @@ export default {
 		},
 
 		showAttachmentsMenu() {
-			return this.canShareFiles && !this.broadcast && !this.upload
+			return this.canShareFiles && !this.broadcast && !this.upload && !this.messageToEdit
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit
 		},
 
 		showTypingStatus() {
@@ -408,7 +447,11 @@ export default {
 
 		isMobileDevice() {
 			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-		}
+		},
+
+		chatEditInput() {
+			return this.chatExtrasStore.getChatEditInput(this.token)
+		},
 	},
 
 	watch: {
@@ -417,14 +460,41 @@ export default {
 		},
 
 		text(newValue) {
-			this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
+			if (this.messageToEdit) {
+				this.chatExtrasStore.setChatEditInput({ token: this.token, text: newValue })
+			} else {
+				this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
+			}
+		},
+
+		messageToEdit(newValue) {
+			if (newValue) {
+				this.text = this.chatExtrasStore.getChatEditInput(this.token)
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+			} else {
+				this.text = this.chatExtrasStore.getChatInput(this.token)
+			}
+		},
+
+		parentMessage(newValue) {
+			if (newValue && this.messageToEdit) {
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			}
+		},
+
+		chatInput(newValue) {
+			if (this.text !== newValue) {
+				this.text = newValue
+			}
 		},
 
 		token: {
 			immediate: true,
 			handler(token) {
 				if (token) {
-					this.text = this.chatExtrasStore.getChatInput(token)
+					this.text = this.messageToEdit
+						? this.chatExtrasStore.getChatEditInput(token)
+						: this.chatExtrasStore.getChatInput(token)
 				} else {
 					this.text = ''
 				}
@@ -510,6 +580,14 @@ export default {
 		 * @param {object} options the submit options
 		 */
 		async handleSubmit(options) {
+			// Submit event has enter key listener
+			// Handle edit here too
+			if (this.messageToEdit) {
+				if (!this.disabledEdit) {
+					this.handleEdit()
+				}
+				return
+			}
 			if (OC.debug && this.text.startsWith('/spam ')) {
 				const pattern = /^\/spam (\d+) messages$/i
 				const match = pattern.exec(this.text)
@@ -595,6 +673,20 @@ export default {
 			}
 		},
 
+		async handleEdit() {
+			try {
+				const response = await editMessage({
+					token: this.token,
+					messageId: this.messageToEdit.id,
+					updatedMessage: this.text.trim()
+				})
+				this.$store.dispatch('processMessage', { token: this.token, message: response.data.ocs.data })
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			} catch {
+				this.$emit('failure')
+			}
+		},
+
 		sleep(ms) {
 			return new Promise(resolve => setTimeout(resolve, ms))
 		},
@@ -657,6 +749,9 @@ export default {
 		 * @param {ClipboardEvent} e native paste event
 		 */
 		async handlePastedFiles(e) {
+			if (this.messageToEdit) {
+				return
+			}
 			e.preventDefault()
 			// Prevent a new call of this.handleFiles if already called
 			if (this.clipboardTimeStamp === e.timeStamp) {
@@ -836,7 +931,11 @@ export default {
 				// Remove stored absence status
 				this.chatExtrasStore.removeUserAbsence(this.token)
 			}
-		}
+		},
+
+		handleAbortEdit() {
+			this.chatExtrasStore.removeMessageIdToEdit(this.token)
+		},
 	},
 }
 </script>

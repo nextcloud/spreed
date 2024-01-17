@@ -40,6 +40,10 @@ components.
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				{{ getDisplayName }}
+				<div v-if="editMessage" class="quote__main__edit-hint">
+					<PencilIcon :size="20" />
+					{{ t('spreed', '(editing)') }}
+				</div>
 			</div>
 			<!-- file preview-->
 			<NcRichText v-if="isFileShareMessage"
@@ -51,10 +55,10 @@ components.
 				<p dir="auto">{{ shortenedQuoteMessage }}</p>
 			</blockquote>
 		</div>
-		<div v-if="isNewMessageQuote" class="quote__main__right">
+		<div v-if="canCancel" class="quote__main__right">
 			<NcButton type="tertiary"
 				:aria-label="cancelQuoteLabel"
-				@click="handleAbortReply">
+				@click="handleAbort">
 				<template #icon>
 					<Close :size="20" />
 				</template>
@@ -65,6 +69,7 @@ components.
 
 <script>
 import Close from 'vue-material-design-icons/Close.vue'
+import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
@@ -84,6 +89,7 @@ export default {
 		NcButton,
 		Close,
 		NcRichText,
+		PencilIcon,
 	},
 	props: {
 		actorId: {
@@ -136,7 +142,12 @@ export default {
 		 * If the quote component is used in the `NewMessage` component we display
 		 * the remove button.
 		 */
-		isNewMessageQuote: {
+		canCancel: {
+			type: Boolean,
+			default: false,
+		},
+
+		editMessage: {
 			type: Boolean,
 			default: false,
 		},
@@ -249,8 +260,12 @@ export default {
 		},
 	},
 	methods: {
-		handleAbortReply() {
-			this.chatExtrasStore.removeParentIdToReply(this.token)
+		handleAbort() {
+			if (this.editMessage) {
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			} else {
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+			}
 			EventBus.$emit('focus-chat-input')
 		},
 
@@ -320,6 +335,11 @@ export default {
 				-webkit-box-orient: vertical;
 				text-align: start;
 			}
+		}
+		&__edit-hint {
+			display: flex;
+			align-items: center;
+			gap: 4px;
 		}
 	}
 	&__right {
