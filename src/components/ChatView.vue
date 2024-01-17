@@ -174,11 +174,6 @@ export default {
 		this.containerId = this.container
 	},
 
-	beforeDestroy() {
-		EventBus.$off('editing-message')
-		EventBus.$off('message-edited')
-	},
-
 	methods: {
 
 		handleDragOver(event) {

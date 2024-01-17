@@ -32,6 +32,7 @@ import {
 	CONVERSATION,
 } from '../constants.js'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
+import { EventBus } from '../services/EventBus.js'
 import {
 	deleteMessage,
 	updateLastReadMessage,
@@ -536,7 +537,7 @@ const actions = {
 			if (Object.keys(parentInStore).length !== 0) {
 				context.commit('addMessage', { token, message: message.parent })
 				if (message.systemMessage === 'message_edited') {
-					// End of process for edited messages
+					EventBus.$emit('message-edited')
 					return
 				}
 			}
@@ -558,16 +559,6 @@ const actions = {
 			}
 
 			// Quit processing
-			return
-		}
-
-		if (message.parent && message.systemMessage === 'message_edited') {
-			// If parent message is presented in store already, we update it
-			const parentInStore = context.getters.message(message.token, message.parent.id)
-			if (Object.keys(parentInStore).length !== 0) {
-				context.commit('addMessage', message.parent)
-				return
-			}
 			return
 		}
 

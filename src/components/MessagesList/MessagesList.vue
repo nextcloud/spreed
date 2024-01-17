@@ -635,54 +635,7 @@ export default {
 		},
 
 		handleMessageEdited(id) {
-			// regroup messagesGroupedByAuthor when a message is edited
-			// find the group that contains the id and split it into 3 groups
-			// 1. the messages before the edited message
-			// 2. the edited message
-			// 3. the messages after the edited message
-			const groups = this.messagesGroupedByAuthor
-			const groupIndex = groups.findIndex(group => group.messages.some(message => message.id === id))
-			if (groupIndex === -1) {
-				return
-			}
-			// split the group into 3 groups
-			const group = groups[groupIndex]
-			const messageIndex = group.messages.findIndex(message => message.id === id)
-			const beforeMessages = group.messages.slice(0, messageIndex)
-			const afterMessages = group.messages.slice(messageIndex + 1)
-			const editedMessage = group.messages[messageIndex]
-			// remove the old group and add the 3 new groups at the same index
-			groups.splice(groupIndex, 1,
-				...(beforeMessages.length
-					? [{
-						id: beforeMessages[0].id,
-						messages: beforeMessages,
-						dateSeparator: group.dateSeparator,
-						previousMessageId: group.previousMessageId,
-						nextMessageId: editedMessage.id,
-						isSystemMessagesGroup: group.isSystemMessagesGroup,
-					}]
-					: []),
-				{
-					id: editedMessage.id,
-					messages: [editedMessage],
-					dateSeparator: group.dateSeparator,
-					previousMessageId: beforeMessages.length ? beforeMessages.at(-1).id : group.previousMessageId,
-					nextMessageId: afterMessages.length ? afterMessages[0].id : group.nextMessageId,
-					isSystemMessagesGroup: group.isSystemMessagesGroup,
-				},
-				...(afterMessages.length
-					? [{
-						id: afterMessages[0].id,
-						messages: afterMessages,
-						dateSeparator: group.dateSeparator,
-						previousMessageId: editedMessage.id,
-						nextMessageId: group.nextMessageId,
-						isSystemMessagesGroup: group.isSystemMessagesGroup,
-					}]
-					: []),
-			)
-
+			this.messagesGroupedByAuthor = this.prepareMessagesGroups(this.messagesList)
 		},
 
 		/**

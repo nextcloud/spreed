@@ -675,12 +675,12 @@ export default {
 
 		async handleEdit() {
 			try {
-				await editMessage({
+				const response = await editMessage({
 					token: this.token,
 					messageId: this.messageToEdit.id,
 					updatedMessage: this.text.trim()
 				})
-				EventBus.$emit('message-edited', this.messageToEdit.id)
+				this.$store.dispatch('processMessage', { token: this.token, message: response.data.ocs.data })
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 			} catch {
 				this.$emit('failure')

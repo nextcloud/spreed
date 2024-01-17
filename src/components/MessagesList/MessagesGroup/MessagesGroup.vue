@@ -92,6 +92,19 @@ export default {
 			default: 0,
 		},
 
+		lastEditTimestamp: {
+			type: Number,
+			default: 0,
+		},
+		lastEditActorId: {
+			type: String,
+			default: '',
+		},
+		lastEditActorType: {
+			type: String,
+			default: '',
+		},
+
 		lastEditActorDisplayName: {
 			type: String,
 			default: ''

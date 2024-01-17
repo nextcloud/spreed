@@ -48,27 +48,8 @@
 				@open="onMenuOpen"
 				@close="onMenuClose">
 				<template v-if="submenu === null">
-					<!-- Message timestamp is a menu for editing details -->
-					<NcActionButton v-if="messageObject.lastEditTimestamp"
-						class="action--nested"
-						@click.stop="submenu = 'edit-history'">
-						<template #icon>
-							<span v-if="showCommonReadIcon"
-								:title="commonReadIconTooltip"
-								:aria-label="commonReadIconTooltip">
-								<CheckAll :size="16" />
-							</span>
-							<span v-else-if="showSentIcon"
-								:title="sentIconTooltip"
-								:aria-label="sentIconTooltip">
-								<Check :size="16" />
-							</span>
-							<ClockOutline v-else :size="16" />
-						</template>
-						{{ messageDateTime }}
-					</NcActionButton>
-					<!-- Message timestamp if there is no editing history -->
-					<NcActionText v-else>
+					<!-- Message timestamp -->
+					<NcActionText>
 						<template #icon>
 							<span v-if="showCommonReadIcon"
 								:title="commonReadIconTooltip"
@@ -84,6 +65,19 @@
 						</template>
 						{{ messageDateTime }}
 					</NcActionText>
+					<!-- Edited message timestamp -->
+					<NcActionButtonGroup v-if="messageObject.lastEditTimestamp">
+						<NcActionText>
+							<template #icon>
+								<ClockEditOutline :size="16" />
+							</template>
+							{{ messageObject.lastEditActorDisplayName }}
+						</NcActionText>
+						<NcActionText>
+							{{ editedDateTime }}
+						</NcActionText>
+					</NcActionButtonGroup>
+					<NcActionSeparator />
 
 					<NcActionButton v-if="supportReminders"
 						class="action--nested"
@@ -93,8 +87,6 @@
 						</template>
 						{{ t('spreed', 'Set reminder') }}
 					</NcActionButton>
-
-					<NcActionSeparator />
 					<NcActionButton v-if="isPrivateReplyable"
 						close-after-click
 						@click.stop="handlePrivateReply">
@@ -236,24 +228,6 @@
 						{{ t('spreed', 'Set custom reminder') }}
 					</NcActionButton>
 				</template>
-
-				<template v-else-if="submenu === 'edit-history'">
-					<NcActionButton :aria-label="t('spreed', 'Back')"
-						@click.stop="submenu = null">
-						<template #icon>
-							<ArrowLeft />
-						</template>
-						{{ t('spreed', 'Back') }}
-					</NcActionButton>
-					<NcActionText>
-						{{ t('spreed', 'Edited by: {actor}',
-							{actor : messageObject.lastEditActorDisplayName}) }}
-					</NcActionText>
-					<NcActionSeparator />
-					<NcActionText>
-						{{ editedDateTime }}
-					</NcActionText>
-				</template>
 			</NcActions>
 		</template>
 
@@ -305,6 +279,7 @@ import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
+import ClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue'
 import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
@@ -325,6 +300,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
 import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -349,6 +325,7 @@ export default {
 
 	components: {
 		MessageForwarder,
+		NcActionButtonGroup,
 		NcActionButton,
 		NcActionInput,
 		NcActionLink,
@@ -365,6 +342,7 @@ export default {
 		CloseCircleOutline,
 		Check,
 		CheckAll,
+		ClockEditOutline,
 		ClockOutline,
 		ContentCopy,
 		DeleteIcon,
@@ -538,12 +516,12 @@ export default {
 		},
 
 		isEditable() {
-			if (!this.isModifiable || this.isObjectShare) {
+			if (!this.isModifiable || this.isObjectShare
+					|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
 				return false
 			}
 
 			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
-				&& (this.$store.getters.isModerator || this.isMyMsg)
 		},
 
 		isDeleteable() {
@@ -880,9 +858,5 @@ export default {
 		margin-left: auto;
 		background: no-repeat center var(--icon-triangle-e-dark);
 	}
-}
-
-:deep(.action-text) {
-	padding-left: 5px;
 }
 </style>
