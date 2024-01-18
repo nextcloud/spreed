@@ -1135,6 +1135,7 @@ OC.L10N.register(
     "Reply" : "پاسخ",
     "Set reminder" : "Set reminder",
     "Reply privately" : "Reply privately",
+    "Edit message" : "Edit message",
     "Copy message link" : "Copy message link",
     "Go to file" : "Go to file",
     "Forward message" : "Forward message",

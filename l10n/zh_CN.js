@@ -1218,6 +1218,7 @@ OC.L10N.register(
     "Reply" : "回复",
     "Set reminder" : "设置提醒",
     "Reply privately" : "私下回复",
+    "Edit message" : "编辑邮件",
     "Copy formatted message" : "复制带格式的信息",
     "Copy message link" : "复制消息链接",
     "Go to file" : "前往文件",

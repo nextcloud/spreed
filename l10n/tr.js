@@ -1224,6 +1224,7 @@ OC.L10N.register(
     "Reply" : "Yanıtla",
     "Set reminder" : "Anımsatıcı ayarla",
     "Reply privately" : "Kişisel yanıt gönder",
+    "Edit message" : "İletiyi düzenle",
     "Copy formatted message" : "Biçimlendirilmiş iletiyi kopyala",
     "Copy message link" : "İleti bağlantısını kopyala",
     "Go to file" : "Dosyaya git",
