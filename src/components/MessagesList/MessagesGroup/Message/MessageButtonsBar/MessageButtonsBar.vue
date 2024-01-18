@@ -519,7 +519,7 @@ export default {
 
 		isEditable() {
 			if (!this.isModifiable || this.isObjectShare
-					|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
+					|| (!this.$store.getters.isModerator && !this.isOwnMessage)) {
 				return false
 			}
 
@@ -534,7 +534,7 @@ export default {
 			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
 				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
 				&& !this.isDeleting
-				&& (this.isMyMsg
+				&& (this.isOwnMessage
 					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 						&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 						&& (this.conversation.participantType === PARTICIPANT.TYPE.OWNER
@@ -545,7 +545,7 @@ export default {
 			return this.isReplyable
 				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
 					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
-				&& !this.isMyMsg
+				&& !this.isOwnMessage
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
 		},
@@ -575,7 +575,11 @@ export default {
 			return this.$store.getters.getActorType() === 'guests'
 		},
 
-		isMyMsg() {
+		isOwnMessage() {
+			if (this.conversation?.remoteToken) {
+				return this.actorId === this.$store.getters.getActorId() + '@' + window.location.host
+					&& this.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+			}
 			return this.actorId === this.$store.getters.getActorId()
 				&& this.actorType === this.$store.getters.getActorType()
 		},
