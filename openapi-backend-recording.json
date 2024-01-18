@@ -1,0 +1,648 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "spreed-backend-recording",
+        "version": "0.0.1",
+        "description": "Chat, video & audio-conferencing using WebRTC",
+        "license": {
+            "name": "agpl"
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basic_auth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "bearer_auth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "OCSMeta": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "statuscode"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "statuscode": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "totalitems": {
+                        "type": "string"
+                    },
+                    "itemsperpage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicCapabilities": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "spreed"
+                        ],
+                        "properties": {
+                            "spreed": {
+                                "type": "object",
+                                "required": [
+                                    "features",
+                                    "config",
+                                    "version"
+                                ],
+                                "properties": {
+                                    "features": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "config": {
+                                        "type": "object",
+                                        "required": [
+                                            "attachments",
+                                            "call",
+                                            "chat",
+                                            "conversations",
+                                            "previews",
+                                            "signaling"
+                                        ],
+                                        "properties": {
+                                            "attachments": {
+                                                "type": "object",
+                                                "required": [
+                                                    "allowed"
+                                                ],
+                                                "properties": {
+                                                    "allowed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "folder": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "call": {
+                                                "type": "object",
+                                                "required": [
+                                                    "enabled",
+                                                    "breakout-rooms",
+                                                    "recording",
+                                                    "recording-consent",
+                                                    "supported-reactions",
+                                                    "predefined-backgrounds",
+                                                    "can-upload-background",
+                                                    "sip-enabled",
+                                                    "sip-dialout-enabled",
+                                                    "can-enable-sip"
+                                                ],
+                                                "properties": {
+                                                    "enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "breakout-rooms": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording-consent": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "supported-reactions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "predefined-backgrounds": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "can-upload-background": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-dialout-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "can-enable-sip": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "chat": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-length",
+                                                    "read-privacy",
+                                                    "has-translation-providers",
+                                                    "typing-privacy"
+                                                ],
+                                                "properties": {
+                                                    "max-length": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "read-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "has-translation-providers": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "typing-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "conversations": {
+                                                "type": "object",
+                                                "required": [
+                                                    "can-create"
+                                                ],
+                                                "properties": {
+                                                    "can-create": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "previews": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-gif-size"
+                                                ],
+                                                "properties": {
+                                                    "max-gif-size": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "signaling": {
+                                                "type": "object",
+                                                "required": [
+                                                    "session-ping-limit"
+                                                ],
+                                                "properties": {
+                                                    "session-ping-limit": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "hello-v2-token-key": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "version": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "array",
+                        "maxLength": 0
+                    }
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/backend": {
+            "post": {
+                "operationId": "recording-backend",
+                "summary": "Update the recording status as a backend",
+                "tags": [
+                    "recording"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recording status updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Updating recording status is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "type",
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "error": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "code",
+                                                                "message"
+                                                            ],
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Missing permissions to update recording status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "type",
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "error": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "code",
+                                                                "message"
+                                                            ],
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Room not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "type",
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "error": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "code",
+                                                                "message"
+                                                            ],
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/store": {
+            "post": {
+                "operationId": "recording-store",
+                "summary": "Store the recording",
+                "tags": [
+                    "recording"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "owner",
+                        "in": "query",
+                        "description": "User that will own the recording file",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recording stored successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Storing recording is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Missing permissions to store recording",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "type",
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "error": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "code",
+                                                                "message"
+                                                            ],
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": []
+}
