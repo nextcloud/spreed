@@ -575,6 +575,40 @@ Feature: conversation/breakout-rooms
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of the following rooms (v4)
 
+  Scenario: Removing breakout rooms also stops them on the parent
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 0                | 0                  |
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+      | users::participant2 | 0 |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 1                  |
+      | 2    | Room 1     | 0          | 0                | 0                  |
+      | 2    | Room 2     | 0          | 0                | 0                  |
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 1     |
+    When user "participant1" removes breakout rooms from "class room" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 0                | 0                  |
+
   Scenario: Deleting a single breakout room unassigned the students from the mapping
     Given user "participant1" creates room "class room" (v4)
       | roomType | 2 |
