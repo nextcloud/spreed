@@ -1180,6 +1180,7 @@ OC.L10N.register(
     "Reply" : "답장",
     "Set reminder" : "알림 설정",
     "Reply privately" : "비공개로 답장",
+    "Edit message" : "메시지 편집",
     "Copy formatted message" : "서식 있는 메시지 복사",
     "Copy message link" : "메시지 링크 복사",
     "Go to file" : "파일로 이동",

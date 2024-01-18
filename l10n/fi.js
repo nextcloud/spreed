@@ -920,6 +920,7 @@ OC.L10N.register(
     "Reply" : "Vastaa",
     "Set reminder" : "Aseta muistutus",
     "Reply privately" : "Vastaa yksityisesti",
+    "Edit message" : "Muokkaa viestiä",
     "Copy formatted message" : "Kopioi muotoiltu viesti",
     "Copy message link" : "Kopioi viestin linkki",
     "Go to file" : "Siirry tiedostoon",

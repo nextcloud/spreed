@@ -1151,6 +1151,7 @@ OC.L10N.register(
     "Reply" : "Odgovori",
     "Set reminder" : "Nastavi opomnik",
     "Reply privately" : "Odgovori zasebno",
+    "Edit message" : "Uredi sporočilo",
     "Copy formatted message" : "Kopiraj oblikovano sporočilo",
     "Copy message link" : "Kopiraj povezavo sporočila",
     "Go to file" : "Odpri mesto datoteke",

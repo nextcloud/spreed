@@ -631,6 +631,7 @@ OC.L10N.register(
     "Reply" : "Atsakyti",
     "Set reminder" : "Nustatyti priminimą",
     "Reply privately" : "Atsakyti privačiai",
+    "Edit message" : "Taisyti laišką",
     "Copy message link" : "Kopijuoti žinutės nuorodą",
     "Go to file" : "Pereiti į failą",
     "Forward message" : "Persiųsti žinutę",

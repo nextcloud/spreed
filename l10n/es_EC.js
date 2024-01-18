@@ -1098,6 +1098,7 @@ OC.L10N.register(
     "Add a reaction to this message" : "Agregar una reacción a este mensaje",
     "Reply" : "Responder",
     "Reply privately" : "Responder de forma privada",
+    "Edit message" : "Editar mensaje",
     "Copy message link" : "Copiar enlace del mensaje",
     "Go to file" : "Ir al archivo",
     "Forward message" : "Reenviar mensaje",

@@ -1224,6 +1224,7 @@ OC.L10N.register(
     "Reply" : "Odpovědět",
     "Set reminder" : "Nastavit připomínku",
     "Reply privately" : "Odpovědět soukromě",
+    "Edit message" : "Upravit zprávu",
     "Copy formatted message" : "Zkopírovat zprávu včetně formátu",
     "Copy message link" : "Zkopírovat odkaz zprávy",
     "Go to file" : "Přejít k souboru",

@@ -807,6 +807,7 @@ OC.L10N.register(
     "Reply" : "Απάντηση",
     "Set reminder" : "Προσθήκη υπενθύμισης",
     "Reply privately" : "Απάντηση ιδιωτικά",
+    "Edit message" : "Επεξεργασία μηνύματος",
     "Copy message link" : "Αντιγραφή συνδέσμου μηνύματος",
     "Go to file" : "Μετάβαση στο αρχείο",
     "Forward message" : "Προώθηση μηνύματος",
