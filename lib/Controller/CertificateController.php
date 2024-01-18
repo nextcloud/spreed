@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Service\CertificateService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IL10N;
@@ -53,6 +54,7 @@ class CertificateController extends OCSController {
 	 * 200: Certificate expiration returned
 	 * 400: Getting certificate expiration is not possible
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
 	public function getCertificateExpiration(string $host): DataResponse {
 		try {
 			$expirationInDays = $this->certificateService->getCertificateExpirationInDays($host);

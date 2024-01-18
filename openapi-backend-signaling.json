@@ -1,0 +1,382 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "spreed-backend-signaling",
+        "version": "0.0.1",
+        "description": "Chat, video & audio-conferencing using WebRTC",
+        "license": {
+            "name": "agpl"
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basic_auth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "bearer_auth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "OCSMeta": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "statuscode"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "statuscode": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "totalitems": {
+                        "type": "string"
+                    },
+                    "itemsperpage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicCapabilities": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "spreed"
+                        ],
+                        "properties": {
+                            "spreed": {
+                                "type": "object",
+                                "required": [
+                                    "features",
+                                    "config",
+                                    "version"
+                                ],
+                                "properties": {
+                                    "features": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "config": {
+                                        "type": "object",
+                                        "required": [
+                                            "attachments",
+                                            "call",
+                                            "chat",
+                                            "conversations",
+                                            "previews",
+                                            "signaling"
+                                        ],
+                                        "properties": {
+                                            "attachments": {
+                                                "type": "object",
+                                                "required": [
+                                                    "allowed"
+                                                ],
+                                                "properties": {
+                                                    "allowed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "folder": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "call": {
+                                                "type": "object",
+                                                "required": [
+                                                    "enabled",
+                                                    "breakout-rooms",
+                                                    "recording",
+                                                    "recording-consent",
+                                                    "supported-reactions",
+                                                    "predefined-backgrounds",
+                                                    "can-upload-background",
+                                                    "sip-enabled",
+                                                    "sip-dialout-enabled",
+                                                    "can-enable-sip"
+                                                ],
+                                                "properties": {
+                                                    "enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "breakout-rooms": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording-consent": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "supported-reactions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "predefined-backgrounds": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "can-upload-background": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-dialout-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "can-enable-sip": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "chat": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-length",
+                                                    "read-privacy",
+                                                    "has-translation-providers",
+                                                    "typing-privacy"
+                                                ],
+                                                "properties": {
+                                                    "max-length": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "read-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "has-translation-providers": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "typing-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "conversations": {
+                                                "type": "object",
+                                                "required": [
+                                                    "can-create"
+                                                ],
+                                                "properties": {
+                                                    "can-create": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "previews": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-gif-size"
+                                                ],
+                                                "properties": {
+                                                    "max-gif-size": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "signaling": {
+                                                "type": "object",
+                                                "required": [
+                                                    "session-ping-limit"
+                                                ],
+                                                "properties": {
+                                                    "session-ping-limit": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "hello-v2-token-key": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "version": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "array",
+                        "maxLength": 0
+                    }
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/backend": {
+            "post": {
+                "operationId": "signaling-backend",
+                "summary": "Backend API to query information required for standalone signaling servers",
+                "description": "See sections \"Backend validation\" in https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests",
+                "tags": [
+                    "signaling"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v3"
+                            ],
+                            "default": "v3"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Always, sorry about that",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "type"
+                                                    ],
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "error": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "code",
+                                                                "message"
+                                                            ],
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "auth": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "version"
+                                                            ],
+                                                            "properties": {
+                                                                "version": {
+                                                                    "type": "string"
+                                                                },
+                                                                "userid": {
+                                                                    "type": "string"
+                                                                },
+                                                                "user": {
+                                                                    "type": "object",
+                                                                    "additionalProperties": {
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "room": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "version"
+                                                            ],
+                                                            "properties": {
+                                                                "version": {
+                                                                    "type": "string"
+                                                                },
+                                                                "roomid": {
+                                                                    "type": "string"
+                                                                },
+                                                                "properties": {
+                                                                    "type": "object",
+                                                                    "additionalProperties": {
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "permissions": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "session": {
+                                                                    "type": "object",
+                                                                    "additionalProperties": {
+                                                                        "type": "object"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": []
+}

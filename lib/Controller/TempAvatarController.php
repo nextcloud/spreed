@@ -30,6 +30,7 @@ use OC\Files\Filesystem;
 use OC\NotSquareException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IAvatarManager;
@@ -59,6 +60,7 @@ class TempAvatarController extends OCSController {
 	 * 400: Uploading avatar is not possible
 	 */
 	#[NoAdminRequired]
+	#[OpenAPI(tags: ['user_avatar'])]
 	public function postAvatar(): DataResponse {
 		$files = $this->request->getUploadedFile('files');
 
@@ -133,6 +135,7 @@ class TempAvatarController extends OCSController {
 	 * 400: Deleting avatar is not possible
 	 */
 	#[NoAdminRequired]
+	#[OpenAPI(tags: ['user_avatar'])]
 	public function deleteAvatar(): DataResponse {
 		try {
 			$avatar = $this->avatarManager->getAvatar($this->userId);

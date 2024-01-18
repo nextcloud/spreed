@@ -32,6 +32,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Files\Folder;
@@ -129,6 +130,7 @@ class SettingsController extends OCSController {
 	 *
 	 * 200: Successfully set new SIP settings
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
 	public function setSIPSettings(
 		array $sipGroups = [],
 		string $dialInInfo = '',
