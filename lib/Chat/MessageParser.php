@@ -34,8 +34,10 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
+use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
+use OCP\IUser;
 use OCP\IUserManager;
 
 /**
@@ -67,42 +69,82 @@ class MessageParser {
 			$verb = ChatManager::VERB_SYSTEM;
 		}
 		$message->setMessageType($verb);
-		$this->setActor($message);
+		$this->setMessageActor($message);
+		$this->setLastEditInfo($message);
 
 		$event = new MessageParseEvent($message->getRoom(), $message);
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	protected function setActor(Message $message): void {
-		$comment = $message->getComment();
+	protected function setMessageActor(Message $message): void {
+		[$actorType, $actorId, $displayName] = $this->getActorInformation(
+			$message,
+			$message->getComment()->getActorType(),
+			$message->getComment()->getActorId()
+		);
 
-		$actorId = $comment->getActorId();
-		$displayName = '';
-		if ($comment->getActorType() === Attendee::ACTOR_USERS) {
-			$displayName = $this->userManager->getDisplayName($comment->getActorId()) ?? $comment->getActorId();
-		} elseif ($comment->getActorType() === Attendee::ACTOR_BRIDGED) {
-			$displayName = $comment->getActorId();
+		$message->setActor(
+			$actorType,
+			$actorId,
+			$displayName
+		);
+	}
+
+	protected function setLastEditInfo(Message $message): void {
+		$metaData = $message->getComment()->getMetaData();
+		if (!empty($metaData)) {
+			if (isset($metaData['last_edited_by_type'], $metaData['last_edited_by_id'], $metaData['last_edited_time'])) {
+				[$actorType, $actorId, $displayName] = $this->getActorInformation(
+					$message,
+					$metaData['last_edited_by_type'],
+					$metaData['last_edited_by_id'],
+					$metaData['last_edited_by_displayname'] ?? '',
+				);
+
+				$message->setLastEdit(
+					$actorType,
+					$actorId,
+					$displayName,
+					$metaData['last_edited_time']
+				);
+			}
+		}
+	}
+
+	protected function getActorInformation(Message $message, string $actorType, string $actorId, string $displayName = ''): array {
+		if ($actorType === Attendee::ACTOR_USERS) {
+			$tempDisplayName = $this->userManager->getDisplayName($actorId);
+			if ($tempDisplayName === null) {
+				$user = $this->userManager->get($actorId);
+				if (!$user instanceof IUser) {
+					// Deleted user
+					return [
+						ICommentsManager::DELETED_USER,
+						ICommentsManager::DELETED_USER,
+						'',
+					];
+				}
+				$displayName = $user->getDisplayName();
+			} else {
+				$displayName = $tempDisplayName;
+			}
+		} elseif ($actorType === Attendee::ACTOR_BRIDGED) {
+			$displayName = $actorId;
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
-		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS
-			&& $comment->getActorId() === Attendee::ACTOR_ID_CLI) {
-			$actorId = Attendee::ACTOR_ID_CLI;
-		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS
-			&& $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG) {
-			$actorId = Attendee::ACTOR_ID_CHANGELOG;
-		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
-			if (isset($guestNames[$comment->getActorId()])) {
-				$displayName = $this->guestNames[$comment->getActorId()];
+		} elseif ($actorType === Attendee::ACTOR_GUESTS
+			&& !in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_CHANGELOG], true)) {
+			if (isset($guestNames[$actorId])) {
+				$displayName = $this->guestNames[$actorId];
 			} else {
 				try {
-					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_GUESTS, $comment->getActorId());
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_GUESTS, $actorId);
 					$displayName = $participant->getAttendee()->getDisplayName();
 				} catch (ParticipantNotFoundException $e) {
 				}
-				$this->guestNames[$comment->getActorId()] = $displayName;
+				$this->guestNames[$actorId] = $displayName;
 			}
-		} elseif ($comment->getActorType() === Attendee::ACTOR_BOTS) {
-			$actorId = $comment->getActorId();
-			$displayName = $comment->getActorId() . '-bot';
+		} elseif ($actorType === Attendee::ACTOR_BOTS) {
+			$displayName = $actorId . '-bot';
 			$token = $message->getRoom()->getToken();
 			if (str_starts_with($actorId, Attendee::ACTOR_BOT_PREFIX)) {
 				$urlHash = substr($actorId, strlen(Attendee::ACTOR_BOT_PREFIX));
@@ -111,16 +153,16 @@ class MessageParser {
 					$displayName = $botName . ' (Bot)';
 				}
 			}
-		} elseif ($comment->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			// FIXME Read from some addressbooks?
 			$displayName = $actorId;
 		}
 
-		$message->setActor(
-			$comment->getActorType(),
+		return [
+			$actorType,
 			$actorId,
 			$displayName
-		);
+		];
 	}
 
 	protected function getBotNameByUrlHashForConversation(string $token, string $urlHash): ?string {

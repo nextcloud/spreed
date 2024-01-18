@@ -92,7 +92,7 @@ Feature: command/user-remove
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
       | room | guests        | cli          | read_only            | An administrator locked the conversation | {"actor":{"type":"guest","id":"guest\/cli","name":"Guest"}} |
-      | room | users         | participant1 | call_tried           | You tried to call {user}     | {"user":{"type":"highlight","id":"deleted_user","name":"participant2-displayname"}} |
+      | room | users         | participant1 | call_tried           | You tried to call {user}     | {"user":{"type":"highlight","id":"deleted_users","name":"participant2-displayname"}} |
       | room | users         | participant1 | call_left            | You left the call            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
       | room | users         | participant1 | call_started         | You started a call           | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |

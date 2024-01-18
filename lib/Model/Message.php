@@ -61,6 +61,18 @@ class Message {
 	/** @var string */
 	protected $actorDisplayName = '';
 
+	/** @var string */
+	protected $lastEditActorType = '';
+
+	/** @var string */
+	protected $lastEditActorId = '';
+
+	/** @var string */
+	protected $lastEditActorDisplayName = '';
+
+	/** @var int */
+	protected $lastEditTimestamp = 0;
+
 	public function __construct(
 		protected Room $room,
 		protected ?Participant $participant,
@@ -133,6 +145,13 @@ class Message {
 		$this->actorDisplayName = $displayName;
 	}
 
+	public function setLastEdit(string $type, string $id, string $displayName, int $timestamp): void {
+		$this->lastEditActorType = $type;
+		$this->lastEditActorId = $id;
+		$this->lastEditActorDisplayName = $displayName;
+		$this->lastEditTimestamp = $timestamp;
+	}
+
 	public function getActorType(): string {
 		return $this->actorType;
 	}
@@ -190,15 +209,11 @@ class Message {
 			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,
 		];
 
-		$metaData = $this->getComment()->getMetaData();
-		if (!empty($metaData)) {
-			if (isset($metaData['last_edited_by_type'], $metaData['last_edited_by_id'], $metaData['last_edited_time'])) {
-				// FIXME @see MessageParser::setActor
-				$data['lastEditActorDisplayName'] = $metaData['last_edited_by_id'];
-				$data['lastEditActorId'] = $metaData['last_edited_by_id'];
-				$data['lastEditActorType'] = $metaData['last_edited_by_type'];
-				$data['lastEditTimestamp'] = $metaData['last_edited_time'];
-			}
+		if ($this->lastEditActorType && $this->lastEditActorId && $this->lastEditTimestamp) {
+			$data['lastEditActorType'] = $this->lastEditActorType;
+			$data['lastEditActorId'] = $this->lastEditActorId;
+			$data['lastEditActorDisplayName'] = $this->lastEditActorDisplayName;
+			$data['lastEditTimestamp'] = $this->lastEditTimestamp;
 		}
 
 		if ($this->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
