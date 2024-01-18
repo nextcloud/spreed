@@ -489,7 +489,11 @@ export default {
 			if (this.isFileShareOnly) {
 				this.chatExtrasStore.setChatEditInput({ token: this.token, text: '' })
 			} else {
-				this.chatExtrasStore.setChatEditInput({ token: this.token, text: this.message })
+				this.chatExtrasStore.setChatEditInput({
+					token: this.token,
+					text: this.message,
+					parameters: this.messageParameters
+				})
 			}
 			EventBus.$emit('editing-message')
 			EventBus.$emit('focus-chat-input')

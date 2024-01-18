@@ -151,12 +151,25 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {object} payload action payload
 		 * @param {string} payload.token The conversation token
 		 * @param {string} payload.text The string to store
+		 * @param {object} payload.parameters message parameters
 		 */
-		setChatEditInput({ token, text }) {
+		setChatEditInput({ token, text, parameters = {} }) {
+			let parsedText = text
+
+			// Handle mentions
+			if (parameters.length !== 0) {
+				for (const [key, value] of Object.entries(parameters)) {
+					if (value?.type === 'call') {
+						parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), '@all')
+					} else if (value?.type === 'user') {
+						parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), `@${value.id}`)
+					}
+				}
+			}
 			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 			const temp = document.createElement('textarea')
-			temp.innerHTML = text.replace(/&/gmi, '&amp;')
-			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
+			temp.innerHTML = parsedText.replace(/&/gmi, '&amp;')
+			parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
 				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
 
 			Vue.set(this.chatEditInput, token, parsedText)

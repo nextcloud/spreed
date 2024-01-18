@@ -461,7 +461,11 @@ export default {
 
 		text(newValue) {
 			if (this.messageToEdit) {
-				this.chatExtrasStore.setChatEditInput({ token: this.token, text: newValue })
+				this.chatExtrasStore.setChatEditInput({
+					token: this.token,
+					text: newValue,
+					parameters: this.messageToEdit.messageParameters
+				})
 			} else {
 				this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
 			}
