@@ -672,6 +672,7 @@ OC.L10N.register(
     "Message sent" : "Mesajul a fost transmis",
     "Reply" : "Răspunde",
     "Set reminder" : "Setează memo",
+    "Edit message" : "Editare mesaj",
     "Translate" : "Tradu",
     "Set custom reminder" : "Setează memento particular",
     "Set reminder for later today" : "Setează memo pentru azi, mai târziu",

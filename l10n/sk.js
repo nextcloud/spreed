@@ -1030,6 +1030,7 @@ OC.L10N.register(
     "Reply" : "Odpovedať",
     "Set reminder" : "Nastaviť pripomienku",
     "Reply privately" : "Odpovedať súkromne",
+    "Edit message" : "Upraviť správu",
     "Copy formatted message" : "Kopírovať formátovanú správu",
     "Copy message link" : "Kopírovať odkaz správy",
     "Go to file" : "Prejsť na súbor",

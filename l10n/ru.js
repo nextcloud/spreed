@@ -1152,6 +1152,7 @@ OC.L10N.register(
     "Reply" : "Ответить",
     "Set reminder" : "Установить напоминание",
     "Reply privately" : "Ответить личным сообщением",
+    "Edit message" : "Редактировать сообщение",
     "Copy formatted message" : "Копировать отформатированное сообщение",
     "Copy message link" : "Скопировать ссылку на сообщение",
     "Go to file" : "Перейти к файлу",

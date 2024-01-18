@@ -1226,6 +1226,7 @@ OC.L10N.register(
     "Reply" : "回覆",
     "Set reminder" : "設定提醒",
     "Reply privately" : "私下回覆",
+    "Edit message" : "編輯訊息",
     "Copy formatted message" : "複製格式化後的訊息",
     "Copy message link" : "複製訊息連結",
     "Go to file" : "前往檔案",

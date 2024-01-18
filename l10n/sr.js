@@ -1226,6 +1226,7 @@ OC.L10N.register(
     "Reply" : "Одговори",
     "Set reminder" : "Постави подсетник",
     "Reply privately" : "Одговори приватно",
+    "Edit message" : "Уреди поруку",
     "Copy formatted message" : "Копирај форматирану поруку",
     "Copy message link" : "Копирај линк поруке",
     "Go to file" : "Иди на фајл",
