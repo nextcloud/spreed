@@ -3140,7 +3140,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($body === null) {
 			self::$lastNotifications = [];
-			Assert::assertCount(0, $data);
+			Assert::assertCount(0, $data, json_encode($data, JSON_PRETTY_PRINT));
 			return;
 		}
 
@@ -3149,7 +3149,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function assertNotifications($notifications, TableNode $formData) {
-		Assert::assertCount(count($formData->getHash()), $notifications, 'Notifications count does not match');
+		Assert::assertCount(count($formData->getHash()), $notifications, 'Notifications count does not match:' . "\n" . json_encode($notifications, JSON_PRETTY_PRINT));
 		Assert::assertEquals($formData->getHash(), array_map(function ($notification, $expectedNotification) {
 			$data = [];
 			if (isset($expectedNotification['object_id'])) {
@@ -3181,7 +3181,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 
 			return $data;
-		}, $notifications, $formData->getHash()));
+		}, $notifications, $formData->getHash()), json_encode($notifications, JSON_PRETTY_PRINT));
 	}
 
 	/**

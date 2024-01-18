@@ -508,11 +508,38 @@ class ChatManager {
 		$metaData['last_edited_by_id'] = $participant->getAttendee()->getActorId();
 		$metaData['last_edited_time'] = $editTime->getTimestamp();
 		$comment->setMetaData($metaData);
+
+		$mentionsBefore = $comment->getMentions();
+		$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
+		$usersToNotifyBefore = $this->notifier->getUsersToNotify($chat, $comment, []);
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
+		$mentionsAfter = $comment->getMentions();
+
 		$this->commentsManager->save($comment);
 		$this->referenceManager->invalidateCache($chat->getToken());
 
-		// TODO update mentions/notifications
+		$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, [$this, 'compareMention']);
+		$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, [$this, 'compareMention']);
+
+		// FIXME Not needed when it was silent, once it's stored in metadata
+		if (!empty($removedMentions)) {
+			$usersToNotifyAfter = $this->notifier->getUsersToNotify($chat, $comment, []);
+			$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, [$this, 'compareMention']);
+			$userIds = array_column($removedUsersMentioned, 'id');
+			$this->notifier->removeMentionNotificationAfterEdit($chat, $comment, $userIds);
+		}
+
+		// FIXME silent support, once it's stored in metadata
+		if (!empty($addedMentions)) {
+			$usersDirectlyMentionedAfter = $this->notifier->getMentionedUserIds($comment);
+			$addedUsersDirectMentioned = array_diff($usersDirectlyMentionedAfter, $usersDirectlyMentionedBefore);
+
+			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $usersToNotifyBefore, silent: false);
+			if (!empty($alreadyNotifiedUsers)) {
+				$userIds = array_column($alreadyNotifiedUsers, 'id');
+				$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+			}
+		}
 
 		return $this->addSystemMessage(
 			$chat,
@@ -525,6 +552,13 @@ class ChatManager {
 			$comment,
 			true
 		);
+	}
+
+	protected static function compareMention(array $mention1, array $mention2): int {
+		if ($mention1['type'] === $mention2['type']) {
+			return $mention1['id'] <=> $mention2['id'];
+		}
+		return $mention1['type'] <=> $mention2['type'];
 	}
 
 	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
