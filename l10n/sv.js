@@ -848,6 +848,7 @@ OC.L10N.register(
     "You are not allowed to share files" : "Du tillåẗs inte dela filer",
     "Reply" : "Svara",
     "Set reminder" : "Ställ in påminnelse",
+    "Edit message" : "Redigera meddelande",
     "Go to file" : "Gå till fil",
     "Translate" : "Översätt",
     "Set custom reminder" : "Ställ in anpassad påminnelse",

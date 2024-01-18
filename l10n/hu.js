@@ -1175,6 +1175,7 @@ OC.L10N.register(
     "Reply" : "Válasz",
     "Set reminder" : "Emlékeztető beállítása",
     "Reply privately" : "Válasz privátban",
+    "Edit message" : "Üzenet szerkesztése",
     "Copy formatted message" : "Formázott üzenet másolása",
     "Copy message link" : "Üzenethivatkozás másolása",
     "Go to file" : "Ugrás a fájlhoz",

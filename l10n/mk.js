@@ -729,6 +729,7 @@ OC.L10N.register(
     "Message sent" : "Пораката е испратена",
     "Reply" : "Одговор",
     "Set reminder" : "Постави потсетник",
+    "Edit message" : "Уреди порака",
     "Copy message link" : "Копирај линк на пораката",
     "Go to file" : "Оди до датотеката",
     "Forward message" : "Препрати порака",

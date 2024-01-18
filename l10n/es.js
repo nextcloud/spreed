@@ -1226,6 +1226,7 @@ OC.L10N.register(
     "Reply" : "Responder",
     "Set reminder" : "Enviar recordatorio",
     "Reply privately" : "Responder en privado",
+    "Edit message" : "Editar mensaje",
     "Copy formatted message" : "Copiar mensaje formateado",
     "Copy message link" : "Copiar link del mensaje",
     "Go to file" : "Ir al archivo",
