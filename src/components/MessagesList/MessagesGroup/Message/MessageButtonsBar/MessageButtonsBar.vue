@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -66,12 +66,12 @@
 						{{ messageDateTime }}
 					</NcActionText>
 					<!-- Edited message timestamp -->
-					<NcActionButtonGroup v-if="messageObject.lastEditTimestamp">
+					<NcActionButtonGroup v-if="lastEditTimestamp">
 						<NcActionText>
 							<template #icon>
 								<ClockEditOutline :size="16" />
 							</template>
-							{{ messageObject.lastEditActorDisplayName }}
+							{{ lastEditActorDisplayName }}
 						</NcActionText>
 						<NcActionText>
 							{{ editedDateTime }}
@@ -263,9 +263,6 @@
 				</NcButton>
 			</NcEmojiPicker>
 		</template>
-		<MessageForwarder v-if="isForwarderOpen"
-			:message-object="messageObject"
-			@close="closeForwarder" />
 	</div>
 </template>
 
@@ -309,8 +306,6 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
-import MessageForwarder from './MessageForwarder.vue'
-
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
@@ -324,7 +319,6 @@ export default {
 	name: 'MessageButtonsBar',
 
 	components: {
-		MessageForwarder,
 		NcActionButtonGroup,
 		NcActionButton,
 		NcActionInput,
@@ -360,6 +354,8 @@ export default {
 
 	inject: ['getMessagesListScroller'],
 
+	inheritAttrs: false,
+
 	props: {
 		token: {
 			type: String,
@@ -373,11 +369,6 @@ export default {
 
 		isReplyable: {
 			type: Boolean,
-			required: true,
-		},
-
-		messageObject: {
-			type: Object,
 			required: true,
 		},
 
@@ -431,16 +422,27 @@ export default {
 			required: true,
 		},
 
-		messageApiData: {
-			type: Object,
-			required: true,
+		lastEditActorDisplayName: {
+			type: String,
+			default: '',
+		},
+		lastEditTimestamp: {
+			type: Number,
+			default: 0,
 		},
 
+		isActionMenuOpen: {
+			type: Boolean,
+			required: true,
+		},
+		isEmojiPickerOpen: {
+			type: Boolean,
+			required: true,
+		},
 		isReactionsMenuOpen: {
 			type: Boolean,
 			required: true,
 		},
-
 		isForwarderOpen: {
 			type: Boolean,
 			required: true,
@@ -607,7 +609,7 @@ export default {
 		},
 
 		editedDateTime() {
-			return moment(this.messageObject.lastEditTimestamp * 1000).format('lll')
+			return moment(this.lastEditTimestamp * 1000).format('lll')
 		},
 
 		reminderOptions() {
@@ -660,7 +662,18 @@ export default {
 		},
 
 		clearReminderLabel() {
+			if (!this.currentReminder) {
+				return ''
+			}
 			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(this.currentReminder.timestamp * 1000).format('ddd LT') })
+		},
+
+		messageApiData() {
+			return {
+				message: this.$store.getters.message(this.token, this.id),
+				metadata: this.$store.getters.conversation(this.token),
+				apiVersion: 'v3',
+			}
 		},
 	},
 
@@ -684,9 +697,9 @@ export default {
 		},
 
 		async handleCopyMessageText() {
-			let parsedText = this.messageObject.message
+			let parsedText = this.message
 
-			for (const [key, value] of Object.entries(this.messageObject.messageParameters)) {
+			for (const [key, value] of Object.entries(this.messageParameters)) {
 				if (value?.type === 'call') {
 					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), '@all')
 				} else if (value?.type === 'user') {
@@ -720,10 +733,10 @@ export default {
 
 		handleReactionClick(selectedEmoji) {
 			// Add reaction only if user hasn't reacted yet
-			if (!this.messageObject.reactionsSelf?.includes(selectedEmoji)) {
+			if (!this.reactionsSelf?.includes(selectedEmoji)) {
 				this.reactionsStore.addReactionToMessage({
 					token: this.token,
-					messageId: this.messageObject.id,
+					messageId: this.id,
 					selectedEmoji,
 				})
 			} else {
@@ -765,7 +778,9 @@ export default {
 
 		async forwardToNote() {
 			try {
-				await this.$store.dispatch('forwardMessage', { messageToBeForwarded: this.messageObject })
+				await this.$store.dispatch('forwardMessage', {
+					messageToBeForwarded: this.$store.getters.message(this.token, this.id)
+				})
 				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
 				console.error('Error while forwarding message to "Note to self"', error)
@@ -775,10 +790,6 @@ export default {
 
 		openForwarder() {
 			this.$emit('update:isForwarderOpen', true)
-		},
-
-		closeForwarder() {
-			this.$emit('update:isForwarderOpen', false)
 		},
 
 		// Making sure that the click is outside the MessageButtonsBar

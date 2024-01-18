@@ -34,8 +34,7 @@
 			<Poll v-else-if="isPoll"
 				:key="item.id"
 				:token="token"
-				v-bind="item.messageParameters.object"
-				:poll-name="item.messageParameters.object.name" />
+				v-bind="item.messageParameters.object" />
 
 			<div v-else-if="isOther"
 				:key="item.id"
