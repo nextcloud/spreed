@@ -128,34 +128,38 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return array{X-Nextcloud-Talk-Hash: string}
 	 */
 	protected function getTalkHashHeader(): array {
+		$values = [
+			$this->config->getSystemValueString('version'),
+			$this->config->getAppValue('spreed', 'installed_version'),
+			$this->config->getAppValue('spreed', 'stun_servers'),
+			$this->config->getAppValue('spreed', 'turn_servers'),
+			$this->config->getAppValue('spreed', 'signaling_servers'),
+			$this->config->getAppValue('spreed', 'signaling_mode'),
+			$this->config->getAppValue('spreed', 'signaling_ticket_secret'),
+			$this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256'),
+			$this->config->getAppValue('spreed', 'signaling_token_privkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')),
+			$this->config->getAppValue('spreed', 'signaling_token_pubkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')),
+			$this->config->getAppValue('spreed', 'call_recording'),
+			$this->config->getAppValue('spreed', 'recording_servers'),
+			$this->config->getAppValue('spreed', 'allowed_groups'),
+			$this->config->getAppValue('spreed', 'start_calls'),
+			$this->config->getAppValue('spreed', 'start_conversations'),
+			$this->config->getAppValue('spreed', 'default_permissions'),
+			$this->config->getAppValue('spreed', 'breakout_rooms'),
+			$this->config->getAppValue('spreed', 'federation_enabled'),
+			$this->config->getAppValue('spreed', 'enable_matterbridge'),
+			$this->config->getAppValue('spreed', 'has_reference_id'),
+			$this->config->getAppValue('spreed', 'sip_bridge_groups', '[]'),
+			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
+			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
+			$this->config->getAppValue('spreed', 'recording_consent'),
+			$this->config->getAppValue('theming', 'cachebuster', '1'),
+			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
+		];
+
 		return [
-			'X-Nextcloud-Talk-Hash' => sha1(
-				$this->config->getSystemValueString('version') . '#' .
-				$this->config->getAppValue('spreed', 'installed_version') . '#' .
-				$this->config->getAppValue('spreed', 'stun_servers') . '#' .
-				$this->config->getAppValue('spreed', 'turn_servers') . '#' .
-				$this->config->getAppValue('spreed', 'signaling_servers') . '#' .
-				$this->config->getAppValue('spreed', 'signaling_mode') . '#' .
-				$this->config->getAppValue('spreed', 'signaling_ticket_secret') . '#' .
-				$this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256') . '#' .
-				$this->config->getAppValue('spreed', 'signaling_token_privkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')) . '#' .
-				$this->config->getAppValue('spreed', 'signaling_token_pubkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')) . '#' .
-				$this->config->getAppValue('spreed', 'call_recording') . '#' .
-				$this->config->getAppValue('spreed', 'recording_servers') . '#' .
-				$this->config->getAppValue('spreed', 'allowed_groups') . '#' .
-				$this->config->getAppValue('spreed', 'start_calls') . '#' .
-				$this->config->getAppValue('spreed', 'start_conversations') . '#' .
-				$this->config->getAppValue('spreed', 'default_permissions') . '#' .
-				$this->config->getAppValue('spreed', 'breakout_rooms') . '#' .
-				$this->config->getAppValue('spreed', 'federation_enabled') . '#' .
-				$this->config->getAppValue('spreed', 'enable_matterbridge') . '#' .
-				$this->config->getAppValue('spreed', 'has_reference_id') . '#' .
-				$this->config->getAppValue('spreed', 'sip_bridge_groups', '[]') . '#' .
-				$this->config->getAppValue('spreed', 'sip_bridge_dialin_info') . '#' .
-				$this->config->getAppValue('spreed', 'sip_bridge_shared_secret') . '#' .
-				$this->config->getAppValue('spreed', 'recording_consent') . '#' .
-				$this->config->getAppValue('theming', 'cachebuster', '1')
-			)];
+			'X-Nextcloud-Talk-Hash' => sha1(implode('#', $values)),
+		];
 	}
 
 	/**
