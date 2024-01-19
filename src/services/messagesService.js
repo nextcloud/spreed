@@ -96,21 +96,20 @@ const getMessageContext = async function({ token, messageId, limit = 50 }, optio
  *
  * @param {object} param0 The message object that is destructured
  * @param {string} param0.token The conversation token
- * @param {string} param0.message The message object
+ * @param {string} param0.message The message text
  * @param {string} param0.actorDisplayName The display name of the actor
  * @param {string} param0.referenceId A reference id to identify the message later again
  * @param {object|undefined} param0.parent The message to be replied to
- * @param {object} options request options
- * @param {boolean} options.silent whether the message should trigger a notifications for the
- * recipients or not
+ * @param {object} param1 options object destructured
+ * @param {boolean} param1.silent whether the message should trigger a notifications
  */
-const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, options) {
+const postNewMessage = async function({ token, message, actorDisplayName, referenceId, parent }, { silent, ...options }) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		message,
 		actorDisplayName,
 		referenceId,
 		replyTo: parent?.id,
-		silent: options.silent,
+		silent,
 	}, options)
 }
 

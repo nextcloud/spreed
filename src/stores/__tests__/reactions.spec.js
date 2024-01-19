@@ -128,7 +128,7 @@ describe('reactionsStore', () => {
 		}
 		expect(Object.keys(reactionsStore.getReactions(token, messageId))).toEqual(['🎄', '🔥', '🔒'])
 		// Act
-		reactionsStore.processReaction(message)
+		reactionsStore.processReaction(token, message)
 
 		// Assert
 		expect(Object.keys(reactionsStore.getReactions(token, messageId))).toContain('😅')
@@ -149,7 +149,7 @@ describe('reactionsStore', () => {
 		}
 		expect(Object.keys(reactionsStore.getReactions(token, messageId))).toEqual(['🎄', '🔥', '🔒'])
 		// Act
-		reactionsStore.processReaction(message)
+		reactionsStore.processReaction(token, message)
 
 		// Assert
 		const actors = reactionsStore.getReactions(token, messageId)['🎄']
@@ -185,7 +185,7 @@ describe('reactionsStore', () => {
 		jest.spyOn(reactionsStore, 'fetchReactions')
 
 		// Act
-		await reactionsStore.processReaction(message)
+		await reactionsStore.processReaction(token, message)
 
 		// Assert
 		expect(getReactionsDetails).toHaveBeenCalled()
@@ -213,7 +213,7 @@ describe('reactionsStore', () => {
 		}
 
 		// Act
-		await reactionsStore.processReaction(message)
+		await reactionsStore.processReaction(token, message)
 
 		// Assert
 		expect(getReactionsDetails).not.toHaveBeenCalled()

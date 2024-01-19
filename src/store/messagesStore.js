@@ -546,7 +546,7 @@ const actions = {
 			if (message.systemMessage === 'message_deleted') {
 				reactionsStore.resetReactions(token, message.parent.id)
 			} else {
-				reactionsStore.processReaction(message)
+				reactionsStore.processReaction(token, message)
 			}
 
 			// Check existing messages for having a deleted message as parent, and update them
@@ -1349,8 +1349,7 @@ const actions = {
 			}
 		}
 
-		const response = await postNewMessage(message, { silent: false })
-		return response
+		return await postNewMessage(message, { silent: false })
 
 	},
 
