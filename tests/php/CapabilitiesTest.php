@@ -144,6 +144,8 @@ class CapabilitiesTest extends TestCase {
 			'note-to-self',
 			'recording-consent',
 			'sip-support-dialout',
+			'delete-messages-unlimited',
+			'edit-messages',
 			'message-expiration',
 			'reactions',
 		];

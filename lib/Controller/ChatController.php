@@ -713,13 +713,6 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
 
-		$maxDeleteAge = $this->timeFactory->getDateTime();
-		$maxDeleteAge->sub(new \DateInterval('PT6H'));
-		if ($message->getCreationDateTime() < $maxDeleteAge) {
-			// Message is too old
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
 		try {
 			$systemMessageComment = $this->chatManager->deleteMessage(
 				$this->room,

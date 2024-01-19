@@ -170,6 +170,8 @@ class Capabilities implements IPublicCapability {
 				'note-to-self',
 				'recording-consent',
 				'sip-support-dialout',
+				'delete-messages-unlimited',
+				'edit-messages',
 			],
 			'config' => [
 				'attachments' => [
