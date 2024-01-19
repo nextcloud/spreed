@@ -32,6 +32,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
@@ -53,6 +54,8 @@ class BreakoutRoomServiceTest extends TestCase {
 	private $chatManager;
 	/** @var INotificationManager|MockObject */
 	private $notificationManager;
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
 	/** @var IEventDispatcher|MockObject */
 	private $dispatcher;
 	/** @var IL10N|MockObject */
@@ -67,6 +70,7 @@ class BreakoutRoomServiceTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->service = new BreakoutRoomService(
@@ -76,6 +80,7 @@ class BreakoutRoomServiceTest extends TestCase {
 			$this->participantService,
 			$this->chatManager,
 			$this->notificationManager,
+			$this->timeFactory,
 			$this->dispatcher,
 			$this->l
 		);
