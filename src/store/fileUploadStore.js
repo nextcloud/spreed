@@ -355,10 +355,8 @@ const actions = {
 					},
 					contentLength: currentFile.size,
 				})
-				// Path for the sharing request
-				const sharePath = '/' + uniquePath
 				// Mark the file as uploaded in the store
-				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
+				commit('markFileAsSuccessUpload', { uploadId, index, sharePath: uniquePath })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
@@ -381,38 +379,6 @@ const actions = {
 			}
 		}
 
-		const performShare = async ([index, shareableFile]) => {
-			const path = shareableFile.sharePath
-			const temporaryMessage = shareableFile.temporaryMessage
-
-			const rawMetadata = { messageType: temporaryMessage.messageType }
-			if (caption && index === lastIndex) {
-				Object.assign(rawMetadata, { caption })
-			}
-			if (options?.silent) {
-				Object.assign(rawMetadata, { silent: options.silent })
-			}
-			if (temporaryMessage.parent) {
-				Object.assign(rawMetadata, { replyTo: temporaryMessage.parent.id })
-			}
-			const metadata = JSON.stringify(rawMetadata)
-
-			const { token, id, referenceId } = temporaryMessage
-			try {
-				dispatch('markFileAsSharing', { uploadId, index })
-				await shareFile(path, token, referenceId, metadata)
-				dispatch('markFileAsShared', { uploadId, index })
-			} catch (error) {
-				if (error?.response?.status === 403) {
-					showError(t('spreed', 'You are not allowed to share files'))
-				} else {
-					showError(t('spreed', 'An error happened when trying to share your file'))
-				}
-				dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
-				console.error('An error happened when trying to share your file: ', error)
-			}
-		}
-
 		const client = getDavClient()
 		const userRoot = '/files/' + getters.getUserId()
 
@@ -430,23 +396,64 @@ const actions = {
 			await Promise.all(uploads.map(upload => performUpload(upload)))
 		}
 
-		const shares = getters.getShareableFiles(uploadId)
+		await dispatch('shareFiles', { token, uploadId, lastIndex, caption, options })
+
+		EventBus.$emit('upload-finished')
+	},
+
+	/**
+	 * Shares the files to the conversation
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.uploadId The unique uploadId
+	 * @param {string} data.lastIndex The index of last uploaded file
+	 * @param {string|null} data.caption The text caption to the media
+	 * @param {object|null} data.options The share options
+	 */
+	async shareFiles(context, { token, uploadId, lastIndex, caption, options }) {
+		const performShare = async ([index, shareableFile]) => {
+			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
+
+			const metadata = JSON.stringify(Object.assign({ messageType },
+				caption && index === lastIndex ? { caption } : {},
+				options?.silent ? { silent: options.silent } : {},
+				parent ? { replyTo: parent.id } : {},
+			))
+
+			try {
+				context.dispatch('markFileAsSharing', { uploadId, index })
+				await shareFile(shareableFile.sharePath, token, referenceId, metadata)
+				context.dispatch('markFileAsShared', { uploadId, index })
+			} catch (error) {
+				if (error?.response?.status === 403) {
+					showError(t('spreed', 'You are not allowed to share files'))
+				} else {
+					showError(t('spreed', 'An error happened when trying to share your file'))
+				}
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
+				console.error('An error happened when trying to share your file: ', error)
+			}
+		}
+
+		const shares = context.getters.getShareableFiles(uploadId)
+
 		// Check if caption message for share was provided
 		if (caption) {
 			const captionShareIndex = shares.findIndex(([index]) => index === lastIndex)
 
 			// Share all files in parallel, except for last one
-			const parallelShares = shares.slice(0, captionShareIndex).concat(shares.slice(captionShareIndex + 1))
-			await Promise.all(parallelShares.map(share => performShare(share)))
+			await Promise.all(shares
+				.filter((_item, index) => index !== captionShareIndex)
+				.map(performShare))
 
 			// Share a last file, where caption is attached
 			await performShare(shares.at(captionShareIndex))
 		} else {
 			// Share all files in parallel
-			await Promise.all(shares.map(share => performShare(share)))
+			await Promise.all(shares.map(performShare))
 		}
-
-		EventBus.$emit('upload-finished')
 	},
 
 	/**
