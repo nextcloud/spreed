@@ -335,50 +335,9 @@ const actions = {
 			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
 
-		const client = getDavClient()
-		const userRoot = '/files/' + getters.getUserId()
-
-		const performUpload = async ([index, uploadedFile]) => {
-			const currentFile = uploadedFile.file
-			const fileName = (currentFile.newName || currentFile.name)
-
-			try {
-				commit('markFileAsUploading', { uploadId, index })
-				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
-				await client.putFileContents(userRoot + uploadedFile.sharePath, currentFileBuffer, {
-					onUploadProgress: progress => {
-						const uploadedSize = progress.loaded
-						commit('setUploadedSize', { state, uploadId, index, uploadedSize })
-					},
-					contentLength: currentFile.size,
-				})
-				commit('markFileAsSuccessUpload', { uploadId, index })
-			} catch (exception) {
-				let reason = 'failed-upload'
-				if (exception.response) {
-					console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
-					if (exception.response.status === 507) {
-						reason = 'quota'
-						showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
-					} else {
-						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
-					}
-				} else {
-					console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
-				}
-
-				// Mark the upload as failed in the store
-				commit('markFileAsFailedUpload', { uploadId, index })
-				const { token, id } = uploadedFile.temporaryMessage
-				dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
-			}
-		}
-
 		await dispatch('prepareUploadPaths', { token, uploadId })
 
-		const uploads = getters.getPendingUploads(uploadId)
-		await Promise.all(uploads.map(performUpload))
+		await dispatch('processUpload', { token, uploadId })
 
 		await dispatch('shareFiles', { token, uploadId, lastIndex, caption, options })
 
@@ -436,6 +395,59 @@ const actions = {
 			// All original names are unique, prepare files in parallel
 			await Promise.all(initialisedUploads.map(performPropFind))
 		}
+	},
+
+	/**
+	 * Upload all pending files to the server
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.uploadId The unique uploadId
+	 */
+	async processUpload(context, { token, uploadId }) {
+		const client = getDavClient()
+		const userRoot = '/files/' + context.getters.getUserId()
+
+		const performUpload = async ([index, uploadedFile]) => {
+			const currentFile = uploadedFile.file
+			const fileName = (currentFile.newName || currentFile.name)
+
+			try {
+				context.commit('markFileAsUploading', { uploadId, index })
+				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
+				await client.putFileContents(userRoot + uploadedFile.sharePath, currentFileBuffer, {
+					onUploadProgress: progress => {
+						const uploadedSize = progress.loaded
+						context.commit('setUploadedSize', { state, uploadId, index, uploadedSize })
+					},
+					contentLength: currentFile.size,
+				})
+				context.commit('markFileAsSuccessUpload', { uploadId, index })
+			} catch (exception) {
+				let reason = 'failed-upload'
+				if (exception.response) {
+					console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
+					if (exception.response.status === 507) {
+						reason = 'quota'
+						showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
+					} else {
+						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					}
+				} else {
+					console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
+					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				}
+
+				// Mark the upload as failed in the store
+				context.commit('markFileAsFailedUpload', { uploadId, index })
+				const { id } = uploadedFile.temporaryMessage
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
+			}
+		}
+
+		const uploads = context.getters.getPendingUploads(uploadId)
+		await Promise.all(uploads.map(performUpload))
 	},
 
 	/**
