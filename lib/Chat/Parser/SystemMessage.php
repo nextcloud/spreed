@@ -37,6 +37,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Federation\ICloudIdManager;
@@ -803,7 +804,7 @@ class SystemMessage implements IEventListener {
 		if ($this->displayNames[$uid] === null) {
 			return [
 				'type' => 'highlight',
-				'id' => 'deleted_user',
+				'id' => ICommentsManager::DELETED_USER,
 				'name' => $this->l->t('Deleted user'),
 			];
 		}
@@ -964,7 +965,7 @@ class SystemMessage implements IEventListener {
 				[
 					'user' => [
 						'type' => 'highlight',
-						'id' => 'deleted_user',
+						'id' => ICommentsManager::DELETED_USER,
 						'name' => $room->getName(),
 					],
 				],

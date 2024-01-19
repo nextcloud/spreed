@@ -32,6 +32,7 @@ use OCA\Talk\Model\Vote;
 use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\Comments\ICommentsManager;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -339,8 +340,8 @@ class PollService {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_polls')
 			->set('display_name', $update->createNamedParameter(''))
-			->set('actor_type', $update->createNamedParameter('deleted_users'))
-			->set('actor_id', $update->createNamedParameter('deleted_users'))
+			->set('actor_type', $update->createNamedParameter(ICommentsManager::DELETED_USER))
+			->set('actor_id', $update->createNamedParameter(ICommentsManager::DELETED_USER))
 			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
 			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
 		$update->executeStatement();
@@ -348,8 +349,8 @@ class PollService {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_poll_votes')
 			->set('display_name', $update->createNamedParameter(''))
-			->set('actor_type', $update->createNamedParameter('deleted_users'))
-			->set('actor_id', $update->createNamedParameter('deleted_users'))
+			->set('actor_type', $update->createNamedParameter(ICommentsManager::DELETED_USER))
+			->set('actor_id', $update->createNamedParameter(ICommentsManager::DELETED_USER))
 			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
 			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
 		$update->executeStatement();

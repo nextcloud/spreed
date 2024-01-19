@@ -140,6 +140,9 @@ export default {
 			} else if (this.messages[0].lastEditActorId === this.$store.getters.getActorId()
 				&& this.messages[0].lastEditActorType === this.$store.getters.getActorType()) {
 				return t('spreed', '(edited by you)')
+			} else if (this.lastEditActorId === 'deleted_users'
+						&& this.lastEditActorType === 'deleted_users') {
+				return t('spreed', '(edited by a deleted user)')
 			} else {
 				return t('spreed', '(edited by {moderator})', { moderator: this.messages[0].lastEditActorDisplayName })
 			}
