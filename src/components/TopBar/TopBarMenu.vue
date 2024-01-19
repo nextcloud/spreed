@@ -466,8 +466,17 @@ export default {
 			// If the current conversation is a break-out room and the user is not a moderator,
 			// also send request for assistance to the moderators.
 			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
-				if (newState) {
+				const hasRaisedHands = Object.keys(this.$store.getters.participantRaisedHandList)
+					.filter(sessionId => sessionId !== this.$store.getters.getSessionId())
+					.length !== 0
+				if (hasRaisedHands) {
+					return // Assistance is already requested by someone in the room
+				}
+				const hasAssistanceRequested = this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
+				if (newState && !hasAssistanceRequested) {
 					this.$store.dispatch('requestAssistanceAction', { token: this.token })
+				} else if (!newState && hasAssistanceRequested) {
+					this.$store.dispatch('resetRequestAssistanceAction', { token: this.token })
 				}
 			}
 		},
