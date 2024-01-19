@@ -138,3 +138,7 @@
 * `config => call => sip-enabled` - Whether SIP is configured on the server allowing for SIP dial-in
 * `config => call => sip-dialout-enabled` - Whether SIP dial-out is configured on the server, additionally requires `config => call => sip-enabled`
 * `config => call => can-enable-sip` - Whether the current user is a member of the groups that are allowed to enable SIP dial-in on a conversation or use SIP dial-out
+
+## 19
+* `delete-messages-unlimited` - Whether messages can be deleted at any time (used to be restricted to 6 hours after posting)
+* `edit-messages` - Whether messages can be edited (restricted to 24 hours after posting)
