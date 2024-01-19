@@ -2576,6 +2576,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeReferenceId = in_array('referenceId', $formData->getRow(0), true);
 		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
+		$includeLastEdit = in_array('lastEditActorId', $formData->getRow(0), true);
 
 		$expected = $formData->getHash();
 		$count = count($expected);
@@ -2615,7 +2616,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
+		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -2640,6 +2641,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['reactionsSelf'] = json_encode($message['reactionsSelf'], JSON_UNESCAPED_UNICODE);
 				} else {
 					$data['reactionsSelf'] = null;
+				}
+			}
+			if ($includeLastEdit) {
+				$data['lastEditActorType'] = $message['lastEditActorType'] ?? '';
+				$data['lastEditActorDisplayName'] = $message['lastEditActorDisplayName'] ?? '';
+				$data['lastEditActorId'] = $message['lastEditActorId'] ?? '';
+				if ($message['lastEditActorType'] === 'guests') {
+					$data['lastEditActorId'] = self::$sessionIdToUser[$message['lastEditActorId']];
 				}
 			}
 			return $data;
