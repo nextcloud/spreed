@@ -50,6 +50,10 @@
 				:class="previewImageClass"
 				alt=""
 				:src="defaultIconUrl">
+			<NcProgressBar v-if="showUploadProgress"
+				class="file-preview__progress"
+				type="circular"
+				:value="uploadProgress" />
 		</span>
 		<span v-else-if="isLoading"
 			v-tooltip="previewTooltip"
@@ -65,7 +69,6 @@
 				<Close />
 			</template>
 		</NcButton>
-		<NcProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
 		</div>
@@ -538,6 +541,11 @@ export default {
 			}
 		},
 
+		showUploadProgress() {
+			return this.isTemporaryUpload && !this.isUploadEditor
+				&& ['shared', 'sharing', 'successUpload', 'uploading'].includes(this.uploadFile?.status)
+		},
+
 		hasTemporaryImageUrl() {
 			return this.mimetype.startsWith('image/') && this.localUrl
 		},
@@ -628,6 +636,7 @@ export default {
 	border-radius: 16px;
 
 	box-sizing: content-box !important;
+
 	&:hover,
 	&:focus,
 	&:focus-visible {
@@ -646,6 +655,13 @@ export default {
 	&__image {
 		object-fit: cover;
 		transition: outline 0.1s ease-in-out;
+	}
+
+	&__progress {
+		position: absolute;
+		top: 50%;
+		right: 0;
+		transform: translate(100%, -50%);
 	}
 
 	.loading {
