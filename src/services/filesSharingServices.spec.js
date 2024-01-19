@@ -1,7 +1,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import { shareFile } from './filesSharingServices.js'
+import { shareFile, shareMultipleFiles } from './filesSharingServices.js'
 
 jest.mock('@nextcloud/axios', () => ({
 	post: jest.fn(),
@@ -23,6 +23,20 @@ describe('filesSharingServices', () => {
 				shareWith: 'XXTOKENXX',
 				path: 'path/to/file',
 				referenceId: 'the-reference-id',
+			}
+		)
+	})
+
+	test('shareMultipleFiles calls the spreed API endpoint', () => {
+		shareMultipleFiles('XXTOKENXX', ['1', '2', '3'], 'text caption', 'Display name', 'long_hash_string')
+
+		expect(axios.post).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/share-files'),
+			{
+				shareIds: ['1', '2', '3'],
+				caption: 'text caption',
+				actorDisplayName: 'Display name',
+				referenceId: 'long_hash_string',
 			}
 		)
 	})
