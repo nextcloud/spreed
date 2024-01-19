@@ -67,6 +67,11 @@ const getters = {
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'initialised')
 	},
 
+	getPendingUploads: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'pendingUpload')
+	},
+
 	getFailedUploads: (state, getters) => (uploadId) => {
 		return getters.getUploadsArray(uploadId)
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'failedUpload')
@@ -148,6 +153,12 @@ const mutations = {
 		state.uploads[uploadId].files[index].status = 'initialised'
 	},
 
+	// Marks a given file as ready to be uploaded (after propfind)
+	markFileAsPendingUpload(state, { uploadId, index, sharePath }) {
+		state.uploads[uploadId].files[index].status = 'pendingUpload'
+		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
+	},
+
 	// Marks a given file as failed upload
 	markFileAsFailedUpload(state, { uploadId, index, status }) {
 		state.uploads[uploadId].files[index].status = 'failedUpload'
@@ -156,7 +167,6 @@ const mutations = {
 	// Marks a given file as uploaded
 	markFileAsSuccessUpload(state, { uploadId, index, sharePath }) {
 		state.uploads[uploadId].files[index].status = 'successUpload'
-		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
 	},
 
 	// Marks a given file as uploading
@@ -314,8 +324,6 @@ const actions = {
 		// If caption is provided, attach to the last temporary message
 		const lastIndex = getters.getInitialisedUploads(uploadId).at(-1).at(0)
 		for (const [index, uploadedFile] of getters.getInitialisedUploads(uploadId)) {
-			// mark all files as uploading
-			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
 			const message = {
 				...uploadedFile.temporaryMessage,
@@ -327,36 +335,24 @@ const actions = {
 			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
 
-		// Store propfind attempts within one action to reduce amount of requests for duplicates
-		const knownPaths = {}
+		const client = getDavClient()
+		const userRoot = '/files/' + getters.getUserId()
 
 		const performUpload = async ([index, uploadedFile]) => {
-			// currentFile to be uploaded
 			const currentFile = uploadedFile.file
-			// userRoot path
 			const fileName = (currentFile.newName || currentFile.name)
-			// Candidate rest of the path
-			const path = getters.getAttachmentFolder() + '/' + fileName
 
 			try {
-				// Check if previous propfind attempt was stored
-				const promptPath = getFileNamePrompt(path)
-				const knownSuffix = knownPaths[promptPath]
-				// Get a unique relative path based on the previous path variable
-				const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
-				knownPaths[promptPath] = suffix
-
-				// Upload the file
+				commit('markFileAsUploading', { uploadId, index })
 				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
-				await client.putFileContents(userRoot + uniquePath, currentFileBuffer, {
+				await client.putFileContents(userRoot + uploadedFile.sharePath, currentFileBuffer, {
 					onUploadProgress: progress => {
 						const uploadedSize = progress.loaded
 						commit('setUploadedSize', { state, uploadId, index, uploadedSize })
 					},
 					contentLength: currentFile.size,
 				})
-				// Mark the file as uploaded in the store
-				commit('markFileAsSuccessUpload', { uploadId, index, sharePath: uniquePath })
+				commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
@@ -379,26 +375,67 @@ const actions = {
 			}
 		}
 
-		const client = getDavClient()
-		const userRoot = '/files/' + getters.getUserId()
+		await dispatch('prepareUploadPaths', { token, uploadId })
 
-		const uploads = getters.getUploadingFiles(uploadId)
-		// Check for duplicate names in the uploads array
-		if (hasDuplicateUploadNames(uploads)) {
-			const { uniques, duplicates } = separateDuplicateUploads(uploads)
-			await Promise.all(uniques.map(upload => performUpload(upload)))
-			// Search for uniquePath and upload files one by one to avoid 423 (Locked)
-			for (const upload of duplicates) {
-				await performUpload(upload)
-			}
-		} else {
-			// All original names are unique, upload files in parallel
-			await Promise.all(uploads.map(upload => performUpload(upload)))
-		}
+		const uploads = getters.getPendingUploads(uploadId)
+		await Promise.all(uploads.map(performUpload))
 
 		await dispatch('shareFiles', { token, uploadId, lastIndex, caption, options })
 
 		EventBus.$emit('upload-finished')
+	},
+
+	/**
+	 * Prepare unique paths to upload for each file
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.uploadId The unique uploadId
+	 */
+	async prepareUploadPaths(context, { token, uploadId }) {
+		const client = getDavClient()
+		const userRoot = '/files/' + context.getters.getUserId()
+
+		// Store propfind attempts within one action to reduce amount of requests for duplicates
+		const knownPaths = {}
+
+		const performPropFind = async ([index, uploadedFile]) => {
+			const fileName = (uploadedFile.file.newName || uploadedFile.file.name)
+			// Candidate rest of the path
+			const path = context.getters.getAttachmentFolder() + '/' + fileName
+
+			try {
+				// Check if previous propfind attempt was stored
+				const promptPath = getFileNamePrompt(path)
+				const knownSuffix = knownPaths[promptPath]
+				// Get a unique relative path based on the previous path variable
+				const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
+				knownPaths[promptPath] = suffix
+				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
+			} catch (exception) {
+				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
+				showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				// Mark the upload as failed in the store
+				context.commit('markFileAsFailedUpload', { uploadId, index })
+				const { id } = uploadedFile.temporaryMessage
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-upload' })
+			}
+		}
+
+		const initialisedUploads = context.getters.getInitialisedUploads(uploadId)
+		// Check for duplicate names in the uploads array
+		if (hasDuplicateUploadNames(initialisedUploads)) {
+			const { uniques, duplicates } = separateDuplicateUploads(initialisedUploads)
+			await Promise.all(uniques.map(performPropFind))
+			// Search for uniquePath one by one
+			for (const duplicate of duplicates) {
+				await performPropFind(duplicate)
+			}
+		} else {
+			// All original names are unique, prepare files in parallel
+			await Promise.all(initialisedUploads.map(performPropFind))
+		}
 	},
 
 	/**
