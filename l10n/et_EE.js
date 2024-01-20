@@ -25,6 +25,7 @@ OC.L10N.register(
     "None" : "Pole",
     "User" : "Kasutaja",
     "Users" : "Kasutajad",
+    "Federation" : "Liidendus",
     "Language" : "Keel",
     "Country" : "Riik",
     "Status" : "Staatus",

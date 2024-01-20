@@ -36,6 +36,7 @@ OC.L10N.register(
     "None" : "არც ერთი",
     "User" : "მომხმარებელი",
     "Users" : "მომხმარებლები",
+    "Federation" : "ფედერაცია",
     "General settings" : "მთავარი პარამეტრები",
     "Language" : "ენა",
     "Country" : "ქვეყანა",

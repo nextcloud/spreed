@@ -35,6 +35,7 @@ OC.L10N.register(
     "None" : "Ninguno",
     "User" : "Ususario",
     "Users" : "Ususarios",
+    "Federation" : "Federación",
     "General settings" : "Configuraciones generales",
     "Language" : "Idioma",
     "Country" : "País",
