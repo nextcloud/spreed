@@ -7,6 +7,7 @@ import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
+import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -151,21 +152,31 @@ describe('FilePreview.vue', () => {
 		})
 
 		describe('uploading', () => {
-			let uploadProgressMock
+			const path = '/Talk/path-to-file.png'
+			let getUploadFileMock
 
 			beforeEach(() => {
-				uploadProgressMock = jest.fn()
-				testStoreConfig.modules.fileUploadStore.getters.uploadProgress = () => uploadProgressMock
+				getUploadFileMock = jest.fn(() => ({
+					sharePath: path,
+					status: 'uploading',
+				}))
+				testStoreConfig.modules.fileUploadStore.getters.getUploadFile = () => getUploadFileMock
 				store = new Vuex.Store(testStoreConfig)
 			})
 
 			test('renders progress bar while uploading', async () => {
+				getUploader.mockImplementation(() => ({
+					queue: [{
+						_source: path,
+						_uploaded: 85,
+						_size: 100,
+					}],
+				}))
+
 				propsData.id = 'temp-123'
 				propsData.index = 'index-1'
 				propsData.uploadId = 1000
 				propsData.localUrl = 'blob:XYZ'
-
-				uploadProgressMock.mockReturnValue(85)
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -182,7 +193,7 @@ describe('FilePreview.vue', () => {
 				expect(progressEl.exists()).toBe(true)
 				expect(progressEl.props('value')).toBe(85)
 
-				expect(uploadProgressMock).toHaveBeenCalledWith(1000, 'index-1')
+				expect(getUploadFileMock).toHaveBeenCalledWith(1000, 'index-1')
 			})
 		})
 

@@ -39,6 +39,10 @@ jest.mock('@nextcloud/initial-state', () => ({
 	}),
 }))
 
+jest.mock('@nextcloud/upload', () => ({
+	getUploader: jest.fn(),
+}))
+
 window.IntersectionObserver = jest.fn(() => ({
 	observe: jest.fn(),
 	unobserve: jest.fn(),

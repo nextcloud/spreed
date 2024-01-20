@@ -79,6 +79,7 @@ import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
+import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
@@ -283,6 +284,7 @@ export default {
 		return {
 			isLoading: true,
 			failed: false,
+			uploadManager: null,
 		}
 	},
 	computed: {
@@ -511,14 +513,29 @@ export default {
 			return this.id.startsWith('temp') && this.index && this.uploadId
 		},
 
+		uploadFile() {
+			return this.$store.getters.getUploadFile(this.uploadId, this.index)
+		},
+
+		upload() {
+			return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile.sharePath))
+		},
+
 		uploadProgress() {
-			if (this.isTemporaryUpload) {
-				if (this.$store.getters.uploadProgress(this.uploadId, this.index)) {
-					return this.$store.getters.uploadProgress(this.uploadId, this.index)
-				}
+			switch (this.uploadFile?.status) {
+			case 'shared':
+			case 'sharing':
+			case 'successUpload':
+				return 100
+			case 'uploading':
+				return this.upload
+					? this.upload._uploaded / this.upload._size * 100
+					: 100 // file was removed from the upload queue, so considering done
+			case 'pendingUpload':
+			case 'initialised':
+			default:
+				return 0
 			}
-			// likely never reached
-			return 0
 		},
 
 		hasTemporaryImageUrl() {
@@ -534,7 +551,19 @@ export default {
 		},
 	},
 
+	watch: {
+		uploadProgress(value) {
+			if (value === 100) {
+				this.uploadManager = null
+			}
+		},
+	},
+
 	mounted() {
+		if (this.isTemporaryUpload && !this.isUploadEditor) {
+			this.uploadManager = getUploader()
+		}
+
 		const img = new Image()
 		img.onerror = () => {
 			this.isLoading = false
@@ -544,6 +573,10 @@ export default {
 			this.isLoading = false
 		}
 		img.src = this.previewUrl
+	},
+
+	beforeDestroy() {
+		this.uploadManager = null
 	},
 
 	methods: {

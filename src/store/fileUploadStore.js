@@ -25,6 +25,7 @@ import Vue from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
+import { getUploader } from '@nextcloud/upload'
 
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
@@ -104,12 +105,8 @@ const getters = {
 		return state.localUrls[referenceId]
 	},
 
-	uploadProgress: (state) => (uploadId, index) => {
-		if (state.uploads[uploadId]?.files[index]) {
-			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
-		} else {
-			return 0
-		}
+	getUploadFile: (state) => (uploadId, index) => {
+		return state.uploads[uploadId]?.files[index]
 	},
 
 	currentUploadId: (state) => {
@@ -142,7 +139,6 @@ const mutations = {
 			file,
 			status: 'initialised',
 			totalSize: file.size,
-			uploadedSize: 0,
 			temporaryMessage,
 		 })
 		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
@@ -192,11 +188,6 @@ const mutations = {
 	 */
 	setAttachmentFolder(state, attachmentFolder) {
 		state.attachmentFolder = attachmentFolder
-	},
-
-	// Sets uploaded amount of bytes
-	setUploadedSize(state, { uploadId, index, uploadedSize }) {
-		state.uploads[uploadId].files[index].uploadedSize = uploadedSize
 	},
 
 	// Set temporary message for each file
@@ -406,23 +397,14 @@ const actions = {
 	 * @param {string} data.uploadId The unique uploadId
 	 */
 	async processUpload(context, { token, uploadId }) {
-		const client = getDavClient()
-		const userRoot = '/files/' + context.getters.getUserId()
-
 		const performUpload = async ([index, uploadedFile]) => {
 			const currentFile = uploadedFile.file
 			const fileName = (currentFile.newName || currentFile.name)
 
 			try {
 				context.commit('markFileAsUploading', { uploadId, index })
-				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
-				await client.putFileContents(userRoot + uploadedFile.sharePath, currentFileBuffer, {
-					onUploadProgress: progress => {
-						const uploadedSize = progress.loaded
-						context.commit('setUploadedSize', { state, uploadId, index, uploadedSize })
-					},
-					contentLength: currentFile.size,
-				})
+				const uploader = getUploader()
+				await uploader.upload(uploadedFile.sharePath, currentFile)
 				context.commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
