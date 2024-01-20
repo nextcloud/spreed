@@ -41,7 +41,7 @@
     "emoji-mart-vue-fast": "^15.0.0",
     "emoji-regex": "^10.3.0",
     "escape-html": "^1.0.3",
-    "extendable-media-recorder": "^9.1.6",
+    "extendable-media-recorder": "^9.1.7",
     "extendable-media-recorder-wav-encoder": "^7.0.102",
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
