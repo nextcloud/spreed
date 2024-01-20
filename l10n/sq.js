@@ -166,6 +166,7 @@ OC.L10N.register(
     "None" : "Asnjë",
     "User" : "Përdorues",
     "Users" : "Përdoruesit",
+    "Federation" : "Federim",
     "General settings" : "Opsjonet e Pergjithshme",
     "Language" : "Gjuha",
     "Country" : "Vend",

@@ -24,6 +24,7 @@ OC.L10N.register(
     "None" : "ไม่มี",
     "User" : "ผู้ใช้",
     "Users" : "ผู้ใช้",
+    "Federation" : "ที่ติดต่อกับภายนอก",
     "All messages" : "ข้อความทั้งหมด",
     "@-mentions only" : "เฉพาะการกล่าวถึงแบบ @",
     "Language" : "ภาษา",

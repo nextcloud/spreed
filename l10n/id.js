@@ -261,6 +261,7 @@ OC.L10N.register(
     "None" : "Tidak ada",
     "User" : "Pengguna",
     "Users" : "Pengguna",
+    "Federation" : "Federasi",
     "Off" : "Nonaktif",
     "Language" : "Bahasa",
     "Country" : "Negara",
