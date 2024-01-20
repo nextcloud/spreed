@@ -284,6 +284,7 @@ OC.L10N.register(
     "User" : "Người dùng",
     "Moderators" : "Người kiểm duyệt",
     "Users" : "Người dùng",
+    "Federation" : "Kết nối Liên Bang ",
     "General settings" : "Cài đặt chung",
     "Default notification settings" : "Cài đặt thông báo mặc định",
     "Default group notification" : "Thông báo nhóm mặc định",

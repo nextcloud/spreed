@@ -120,6 +120,7 @@ OC.L10N.register(
     "None" : "Ninguno",
     "User" : "Usuario",
     "Users" : " Usuarios",
+    "Federation" : "Federación",
     "General settings" : "Configuraciones generales",
     "@-mentions only" : "Solo menciones con @",
     "Language" : "Idioma",
