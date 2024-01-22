@@ -34,6 +34,7 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 trait TInitialState {
 	/** @var Config */
@@ -44,6 +45,8 @@ trait TInitialState {
 	protected $initialState;
 	/** @var ICacheFactory */
 	protected $memcacheFactory;
+	/** @var LoggerInterface */
+	protected $logger;
 
 	protected function publishInitialStateShared(): void {
 		// Needed to enable the screensharing extension in Chromium < 72
@@ -134,6 +137,12 @@ trait TInitialState {
 				try {
 					try {
 						$folder = $userFolder->get($attachmentFolder);
+						if ($folder->isShared()) {
+							$this->logger->error('Talk attachment folder for user {userId} is set to a shared folder. Resetting to their root.', [
+								'userId' => $user->getUID(),
+							]);
+							throw new NotPermittedException('Folder is shared');
+						}
 					} catch (NotFoundException $e) {
 						$folder = $userFolder->newFolder($attachmentFolder);
 					}
