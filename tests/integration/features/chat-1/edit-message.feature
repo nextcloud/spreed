@@ -38,22 +38,26 @@ Feature: chat-1/edit-message
       | room | users     | participant2 | participant2-displayname | Message 1   | []                |               |
     And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 1 | []                |               |
+      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 1 | []                |               | users             | participant1         | participant1-displayname |
     Then user "participant2" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 1 | []                |               |
+      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 1 | []                |               | users             | participant1         | participant1-displayname |
     And user "participant2" edits message "Message 1 - Edit 1" in room "room" to "Message 1 - Edit 2" with 200
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               |
+      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               | users             | participant2         | participant2-displayname |
     Then user "participant2" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               |
+      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               | users             | participant2         | participant2-displayname |
     And user "participant2" edits message "Message 1 - Edit 1" in room "room" to "" with 400
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
-      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               |
+      | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
+      | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               | users             | participant2         | participant2-displayname |
+    When user "participant2" is deleted
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType     | actorId       | actorDisplayName | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
+      | room | deleted_users | deleted_users |                  | Message 1 - Edit 2 | []                |               | deleted_users     | deleted_users        |                          |
 
   Scenario: Editing a caption
     Given user "participant1" creates room "room" (v4)
