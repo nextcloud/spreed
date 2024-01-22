@@ -220,15 +220,16 @@ const removeAllPermissionsFromParticipant = async (token, attendeeId) => {
  *
  * @param {string} token conversation token
  * @param {number} attendeeId attendee id to target
+ * @param {'set'|'add'|'remove'} method permissions update method
  * @param {number} permission the type of permission to be granted. Valid values are
  * any sums of 'DEFAULT', 'CUSTOM', 'CALL_START', 'CALL_JOIN', 'LOBBY_IGNORE',
  * 'PUBLISH_AUDIO', 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
  */
-const setPermissions = async (token, attendeeId, permission) => {
+const setPermissions = async (token, attendeeId, method = 'set', permission) => {
 	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/attendees/permissions', { token }),
 		{
 			attendeeId,
-			method: 'set',
+			method,
 			permissions: permission,
 		})
 }

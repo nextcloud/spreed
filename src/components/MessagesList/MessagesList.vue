@@ -237,7 +237,7 @@ export default {
 		},
 
 		chatIdentifier() {
-			return this.token + ':' + this.isParticipant + ':' + this.isInLobby + ':' + this.viewId
+			return this.token + ':' + this.isParticipant + ':' + this.viewId
 		},
 	},
 

@@ -60,6 +60,7 @@
 				<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isBridgeBotUser" class="participant-row__moderator-indicator">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
+				<span v-if="!isSelf && isLobbyEnabled && !canSkipLobby" class="participant-row__guest-indicator">({{ t('spreed', 'in the lobby') }})</span>
 			</div>
 
 			<!-- Second line: participant status message if applicable -->
@@ -123,7 +124,8 @@
 		<NcActions v-if="(canBeModerated || canSendCallNotification) && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
-			force-menu
+			:inline="showToggleLobbyAction ? 1 : 0"
+			:force-menu="!showToggleLobbyAction"
 			placement="bottom-end"
 			class="participant-row__actions">
 			<template #icon>
@@ -144,6 +146,26 @@
 				</template>
 				{{ attendeePin }}
 			</NcActionText>
+			<!-- Grant or revoke lobby permissions (inline button) -->
+			<template v-if="showToggleLobbyAction">
+				<NcActionButton v-if="canSkipLobby"
+					close-after-click
+					@click="setLobbyPermission(false)">
+					<template #icon>
+						<AccountMinusIcon :size="20" />
+					</template>
+					{{ t('spreed', 'Move back to lobby') }}
+				</NcActionButton>
+				<NcActionButton v-else
+					close-after-click
+					@click="setLobbyPermission(true)">
+					<template #icon>
+						<AccountPlusIcon :size="20" />
+					</template>
+					{{ t('spreed', 'Move to conversation') }}
+				</NcActionButton>
+			</template>
+			<!-- Grant or revoke moderator permissions -->
 			<NcActionButton v-if="canBeDemoted"
 				close-after-click
 				@click="demoteFromModerator">
@@ -292,6 +314,8 @@
 import isEqual from 'lodash/isEqual.js'
 
 import Account from 'vue-material-design-icons/Account.vue'
+import AccountMinusIcon from 'vue-material-design-icons/AccountMinus.vue'
+import AccountPlusIcon from 'vue-material-design-icons/AccountPlus.vue'
 import Bell from 'vue-material-design-icons/Bell.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Crown from 'vue-material-design-icons/Crown.vue'
@@ -327,7 +351,7 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import DialpadPanel from '../../../../DialpadPanel.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
+import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../../../constants.js'
 import {
 	callSIPDialOut,
 	callSIPHangupPhone,
@@ -354,6 +378,8 @@ export default {
 		ParticipantPermissionsEditor,
 		// Icons
 		Account,
+		AccountMinusIcon,
+		AccountPlusIcon,
 		Bell,
 		ContentCopy,
 		Crown,
@@ -763,6 +789,18 @@ export default {
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 
+		isLobbyEnabled() {
+			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
+		canSkipLobby() {
+			return this.isModerator || (this.participant.permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) !== 0
+		},
+
+		showToggleLobbyAction() {
+			return this.canBeModerated && !this.isModerator && this.isLobbyEnabled
+		},
+
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
 				// We preloaded the status when via participants API
@@ -930,6 +968,24 @@ export default {
 			try {
 				this.$store.dispatch('setPermissions', { token: this.token, attendeeId: this.attendeeId, permissions: PARTICIPANT.PERMISSIONS.DEFAULT })
 				showSuccess(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.computedName }))
+			} catch (error) {
+				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
+			}
+		},
+
+		async setLobbyPermission(value) {
+			try {
+				await this.$store.dispatch('setPermissions', {
+					token: this.token,
+					attendeeId: this.attendeeId,
+					method: value ? 'add' : 'remove',
+					permissions: PARTICIPANT.PERMISSIONS.LOBBY_IGNORE,
+				})
+				if (value) {
+					showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
+				} else {
+					showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
+				}
 			} catch (error) {
 				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}

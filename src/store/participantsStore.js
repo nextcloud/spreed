@@ -991,10 +991,11 @@ const actions = {
 	 * @param {object} root0 - the arguments object.
 	 * @param {string} root0.token - the conversation token.
 	 * @param {string} root0.attendeeId - the participant-s attendeeId.
+	 * @param {'set'|'add'|'remove'} [root0.method] permissions update method
 	 * @param {number} root0.permissions - bitwise combination of the permissions.
 	 */
-	async setPermissions(context, { token, attendeeId, permissions }) {
-		await setPermissions(token, attendeeId, permissions)
+	async setPermissions(context, { token, attendeeId, method, permissions }) {
+		await setPermissions(token, attendeeId, method, permissions)
 		const updatedData = {
 			permissions,
 			attendeePermissions: permissions,
