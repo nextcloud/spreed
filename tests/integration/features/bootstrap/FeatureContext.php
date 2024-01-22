@@ -2897,6 +2897,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" removes breakout rooms from "([^"]*)" with (\d+) \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $status
+	 * @param string $apiVersion
+	 */
+	public function userRemovesBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $status);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" moves participants into different breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
