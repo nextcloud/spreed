@@ -289,6 +289,13 @@ class RecordingService {
 		try {
 			/** @var \OCP\Files\Folder */
 			$recordingRootFolder = $userFolder->get($recordingRootFolderName);
+			if ($recordingRootFolder->isShared()) {
+				$this->logger->error('Talk attachment folder for user {userId} is set to a shared folder. Resetting to their root.', [
+					'userId' => $owner,
+				]);
+
+				$this->serverConfig->setUserValue($owner, 'spreed', 'attachment_folder', '/');
+			}
 		} catch (NotFoundException $e) {
 			/** @var \OCP\Files\Folder */
 			$recordingRootFolder = $userFolder->newFolder($recordingRootFolderName);
