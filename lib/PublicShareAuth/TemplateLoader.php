@@ -36,6 +36,7 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 /**
  * Helper class to extend the "publicshareauth" template from the server.
@@ -53,12 +54,14 @@ class TemplateLoader implements IEventListener {
 		Config $talkConfig,
 		IConfig $serverConfig,
 		IGroupManager $groupManager,
+		LoggerInterface $logger,
 	) {
 		$this->initialState = $initialState;
 		$this->talkConfig = $talkConfig;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->serverConfig = $serverConfig;
 		$this->groupManager = $groupManager;
+		$this->logger = $logger;
 	}
 
 	/**

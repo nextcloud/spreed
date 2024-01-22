@@ -97,6 +97,9 @@ class SettingsController extends OCSController {
 				if (!$node instanceof Folder) {
 					throw new NotPermittedException('Node is not a directory');
 				}
+				if ($node->isShared()) {
+					throw new NotPermittedException('Folder is shared');
+				}
 				return !$node->getStorage()->instanceOfStorage(SharedStorage::class);
 			} catch (NotFoundException $e) {
 				$userFolder->newFolder($value);
