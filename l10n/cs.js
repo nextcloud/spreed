@@ -191,6 +191,7 @@ OC.L10N.register(
     "You stopped Matterbridge" : "Zastavili jste Matterbridge",
     "{actor} deleted a message" : "{actor} smazal(a) zprávu",
     "You deleted a message" : "Smazali jste zprávu",
+    "{actor} edited a message" : "{actor} upravil(a) zprávu",
     "You edited a message" : "Upravili jste správu",
     "{actor} deleted a reaction" : "{actor} smazal(a) reakci",
     "You deleted a reaction" : "Smazali jste reakci",
