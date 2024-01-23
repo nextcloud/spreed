@@ -479,6 +479,7 @@ OC.L10N.register(
     "User" : "Implijer",
     "Moderators" : "Habaskaer",
     "Users" : "Implijer",
+    "Federation" : "Kevread",
     "Beta" : "Beta",
     "General settings" : "Stummoù hollek",
     "Default notification settings" : "Arventennoù kemenadenn dre ziouer",
