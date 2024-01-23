@@ -234,6 +234,7 @@ OC.L10N.register(
     "Saving …" : "Guardando…",
     "Name" : "Nome",
     "Description" : "Descripción",
+    "Federation" : "Federación",
     "Beta" : "Beta",
     "General settings" : "Configuración xeneral",
     "Language" : "Llingua",
