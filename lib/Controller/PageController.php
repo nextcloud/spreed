@@ -81,7 +81,7 @@ class PageController extends Controller {
 		private TalkSession $talkSession,
 		private IUserSession $userSession,
 		private ?string $userId,
-		private LoggerInterface $logger,
+		LoggerInterface $logger,
 		private Manager $manager,
 		private ParticipantService $participantService,
 		private RoomService $roomService,
@@ -97,6 +97,7 @@ class PageController extends Controller {
 		IGroupManager $groupManager,
 	) {
 		parent::__construct($appName, $request);
+		$this->logger = $logger;
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
