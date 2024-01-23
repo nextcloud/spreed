@@ -638,6 +638,7 @@ OC.L10N.register(
     "User" : "Потребител",
     "Moderators" : "Модератори",
     "Users" : "Потребители",
+    "Federation" : "Федерация",
     "Beta" : "Бета",
     "General settings" : "Общи настройки",
     "Default notification settings" : "Настройки на известие по подразбиране",
