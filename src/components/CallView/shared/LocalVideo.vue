@@ -168,12 +168,12 @@ export default {
 		videoContainerClass() {
 			return {
 				'not-connected': this.isNotConnected,
-				speaking: this.localMediaModel.attributes.speaking,
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
 				'video-container-small': this.isSmall,
 				'hover-shadow': this.isSelectable && this.mouseover,
+				speaking: this.localMediaModel.attributes.speaking,
 			}
 		},
 
@@ -441,16 +441,24 @@ export default {
 	margin: auto;
 }
 
-.hover-shadow:after {
+.localVideoContainer:after {
 	position: absolute;
 	height: 100%;
 	width: 100%;
 	top: 0;
 	left: 0;
+	border-radius: calc(var(--default-clickable-area) / 2);
+}
+
+.hover-shadow:after {
 	content: '';
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	border-radius: calc(var(--default-clickable-area) / 2);
+}
+
+.speaking:after {
+	content: '';
+	box-shadow: inset 0 0 0 2px white;
 }
 
 .bottom-bar {
