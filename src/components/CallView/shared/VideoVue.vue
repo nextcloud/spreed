@@ -23,11 +23,7 @@
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
 		ref="videoContainer"
 		class="video-container"
-		:class="[containerClass, {
-			speaking: isSpeaking && !isBig,
-			hover: mouseover && !unSelectable && !isBig,
-			presenter: isPresenterOverlay && mouseover
-		}]"
+		:class="containerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
 		@click="$emit('click-video')">
@@ -300,10 +296,11 @@ export default {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
 				'not-connected': !this.placeholderForPromoted && !this.isConnected,
-				speaking: !this.placeholderForPromoted && this.model.attributes.speaking,
+				speaking: !this.placeholderForPromoted && this.isSpeaking && !this.isBig,
+				hover: this.mouseover && !this.unSelectable && !this.isBig,
 				promoted: !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
+				presenter: this.isPresenterOverlay && this.mouseover,
 				'video-container-grid': this.isGrid,
-				'video-container-grid--speaking': this.isSpeaking,
 				'video-container-big': this.isBig,
 				'one-to-one': this.isOneToOne,
 			}
