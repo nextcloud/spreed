@@ -136,7 +136,7 @@ export default {
 .bots-settings {
 	&__hint {
 		margin-bottom: calc(var(--default-grid-baseline) * 4);
-		color: var(--color-text-lighter);
+		color: var(--color-text-maxcontrast);
 	}
 
 	&__item {

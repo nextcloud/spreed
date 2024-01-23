@@ -93,7 +93,7 @@ export default {
 .breakout-rooms-settings {
 	&__hint{
 		margin-bottom: calc(var(--default-grid-baseline) * 2);
-		color: var(--color-text-lighter);
+		color: var(--color-text-maxcontrast);
 	}
 }
 

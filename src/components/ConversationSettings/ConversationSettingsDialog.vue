@@ -302,7 +302,7 @@ export default {
 }
 
 :deep(.app-settings-section__hint) {
-	color: var(--color-text-lighter);
+	color: var(--color-text-maxcontrast);
 	padding: 8px 0;
 }
 

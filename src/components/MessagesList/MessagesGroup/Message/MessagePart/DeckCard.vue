@@ -131,7 +131,7 @@ export default {
 
 	&__linetwo {
 		height: 30px;
-		color: var(--color-text-lighter);
+		color: var(--color-text-maxcontrast);
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;

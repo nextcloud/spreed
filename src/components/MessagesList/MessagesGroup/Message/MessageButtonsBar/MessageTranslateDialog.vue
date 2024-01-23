@@ -276,7 +276,7 @@ export default {
 		border-radius: var(--border-radius-large);
 
 		&-source {
-			color: var(--color-text-lighter);
+			color: var(--color-text-maxcontrast);
 			margin-bottom: calc(var(--default-grid-baseline) * 2);
 			border: 2px solid var(--color-border);
 		}
