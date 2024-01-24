@@ -59,9 +59,9 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE, AVATAR } from '../../../../../constants.js'
+import { ATTENDEE, AVATAR } from '../../constants.js'
 
 export default {
 
