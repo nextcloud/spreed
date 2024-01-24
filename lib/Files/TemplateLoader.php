@@ -39,6 +39,7 @@ use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 /**
  * Helper class to add the Talk UI to the sidebar of the Files app.
@@ -60,6 +61,7 @@ class TemplateLoader implements IEventListener {
 		IAppManager $appManager,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
+		LoggerInterface $logger,
 	) {
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
@@ -68,6 +70,7 @@ class TemplateLoader implements IEventListener {
 		$this->appManager = $appManager;
 		$this->rootFolder = $rootFolder;
 		$this->userSession = $userSession;
+		$this->logger = $logger;
 	}
 
 

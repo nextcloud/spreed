@@ -56,7 +56,7 @@ jobs:
         test-suite: ['callapi', 'chat', 'chat-2', 'command', 'conversation', 'conversation-2', 'federation', 'integration', 'sharing', 'sharing-2']
         php-versions: ['8.2']
         server-versions: ['stable26']
-        guests-versions: ['stable-2.5']
+        guests-versions: ['stable2.5']
         notifications-versions: ['stable26']
 
     steps:
