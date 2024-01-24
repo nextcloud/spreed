@@ -35,21 +35,18 @@
 			<div id="videos">
 				<template v-if="!isGrid">
 					<!-- Selected video override mode -->
-					<div v-if="showSelectedVideo"
+					<div v-if="showSelectedVideo && selectedCallParticipantModel"
 						class="video__promoted selected-video"
 						:class="{'full-page': isOneToOne}">
-						<template v-for="callParticipantModel in reversedCallParticipantModels">
-							<VideoVue v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
-								:key="callParticipantModel.attributes.selectedVideoPeerId"
-								:token="token"
-								:model="callParticipantModel"
-								:shared-data="sharedDatas[selectedVideoPeerId]"
-								:show-talking-highlight="false"
-								:is-grid="true"
-								:is-big="true"
-								:is-one-to-one="isOneToOne"
-								:fit-video="true" />
-						</template>
+						<VideoVue :key="selectedVideoPeerId"
+							:token="token"
+							:model="selectedCallParticipantModel"
+							:shared-data="sharedDatas[selectedVideoPeerId]"
+							:show-talking-highlight="false"
+							:is-one-to-one="isOneToOne"
+							is-grid
+							is-big
+							fit-video />
 					</div>
 					<!-- Screens -->
 					<div v-else-if="showLocalScreen || showRemoteScreen || showSelectedScreen" id="screens">
@@ -299,6 +296,15 @@ export default {
 			return this.$store.getters.selectedVideoPeerId
 		},
 
+		selectedCallParticipantModel() {
+			if (!this.showSelectedVideo || !this.selectedVideoPeerId) {
+				return null
+			}
+			return this.callParticipantModels.find(callParticipantModel => {
+				return callParticipantModel.attributes.peerId === this.selectedVideoPeerId
+			})
+		},
+
 		hasSelectedScreen() {
 			return this.selectedVideoPeerId !== null && this.screens.includes(this.selectedVideoPeerId)
 		},
@@ -310,12 +316,9 @@ export default {
 		isOneToOne() {
 			return this.callParticipantModels.length === 1
 		},
+
 		hasLocalVideo() {
 			return this.localMediaModel.attributes.videoEnabled
-		},
-
-		hasRemoteVideo() {
-			return this.callParticipantModelsWithVideo.length > 0
 		},
 
 		hasLocalScreen() {
