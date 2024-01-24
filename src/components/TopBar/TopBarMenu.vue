@@ -379,8 +379,7 @@ export default {
 		// True if current conversation is a breakout room and the breakout room has started
 		// And a call is in progress
 		userIsInBreakoutRoomAndInCall() {
-			return this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
-				&& this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 				&& this.isInCall
 		},
 	},
@@ -468,9 +467,18 @@ export default {
 			// If the current conversation is a break-out room and the user is not a moderator,
 			// also send request for assistance to the moderators.
 			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
-				this.$store.dispatch('requestAssistanceAction', {
-					token: this.token,
-				})
+				const hasRaisedHands = Object.keys(this.$store.getters.participantRaisedHandList)
+					.filter(sessionId => sessionId !== this.$store.getters.getSessionId())
+					.length !== 0
+				if (hasRaisedHands) {
+					return // Assistance is already requested by someone in the room
+				}
+				const hasAssistanceRequested = this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
+				if (newState && !hasAssistanceRequested) {
+					this.$store.dispatch('requestAssistanceAction', { token: this.token })
+				} else if (!newState && hasAssistanceRequested) {
+					this.$store.dispatch('resetRequestAssistanceAction', { token: this.token })
+				}
 			}
 		},
 

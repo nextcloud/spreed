@@ -46,7 +46,8 @@
 				</NcButton>
 				<NcActions v-if="canModerate"
 					:container="container"
-					:force-menu="true">
+					:inline="showAssistanceButton ? 1 : 0"
+					:force-menu="!showAssistanceButton">
 					<NcActionButton v-if="showAssistanceButton"
 						@click="dismissRequestAssistance">
 						<template #icon>

@@ -54,6 +54,9 @@ const getters = {
 		return state.selectedVideoPeerId
 	},
 	isQualityWarningTooltipDismissed: (state) => state.qualityWarningTooltipDismissed,
+	participantRaisedHandList: (state) => {
+		return state.participantRaisedHands
+	},
 	getParticipantRaisedHand: (state) => (sessionIds) => {
 		for (let i = 0; i < sessionIds.length; i++) {
 			if (state.participantRaisedHands[sessionIds[i]]) {
