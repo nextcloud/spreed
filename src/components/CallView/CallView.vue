@@ -30,7 +30,7 @@
 			:local-shared-data="localSharedData" />
 
 		<template v-else>
-			<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
+			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
 
 			<div id="videos">
 				<template v-if="!isGrid">
@@ -136,13 +136,8 @@
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
-					:min-height="isGrid && !isSidebar ? 240 : 150"
-					:min-width="isGrid && !isSidebar ? 320 : 200"
-					:videos-cap="gridVideosCap"
-					:videos-cap-enforced="gridVideosCapEnforced"
 					:call-participant-models="callParticipantModels"
 					:screens="screens"
-					:target-aspect-ratio="gridTargetAspectRatio"
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
 					:shared-datas="sharedDatas"
@@ -180,7 +175,6 @@ import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -199,6 +193,8 @@ import { fetchPeers } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
+
+const supportedReactions = getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 
 export default {
 	name: 'CallView',
@@ -233,6 +229,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			supportedReactions,
+		}
+	},
+
 	data() {
 		return {
 			screens: [],
@@ -243,7 +245,6 @@ export default {
 			speakingUnwatchers: {},
 			screenUnwatchers: {},
 			speakers: [],
-			// callParticipantModelsWithScreen: [],
 			localSharedData: {
 				screenVisible: true,
 			},
@@ -266,10 +267,6 @@ export default {
 			return this.callParticipantModels.slice().reverse()
 		},
 
-		remoteParticipantsCount() {
-			return this.callParticipantModels.length
-		},
-
 		callParticipantModelsWithScreen() {
 			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
 		},
@@ -280,10 +277,6 @@ export default {
 					&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
 					&& (typeof callParticipantModel.attributes.stream === 'object')
 			})
-		},
-
-		injectableLocalMediaModel() {
-			return localMediaModel
 		},
 
 		localScreen() {
@@ -300,22 +293,6 @@ export default {
 
 		isGrid() {
 			return this.$store.getters.isGrid && !this.isSidebar
-		},
-
-		gridTargetAspectRatio() {
-			if (this.isGrid) {
-				return 1.5
-			} else {
-				return 1
-			}
-		},
-
-		gridVideosCap() {
-			return parseInt(loadState('spreed', 'grid_videos_limit'), 10)
-		},
-
-		gridVideosCapEnforced() {
-			return loadState('spreed', 'grid_videos_limit_enforced')
 		},
 
 		selectedVideoPeerId() {
@@ -394,10 +371,6 @@ export default {
 			}
 
 			return null
-		},
-
-		supportedReactions() {
-			return getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 		},
 
 		presenterVideoBlockerEnabled() {
