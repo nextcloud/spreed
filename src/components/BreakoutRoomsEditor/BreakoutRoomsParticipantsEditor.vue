@@ -70,7 +70,7 @@
 			</NcButton>
 			<NcActions v-if="hasSelected"
 				type="primary"
-				:container="container"
+				container=".participants-editor__buttons"
 				:menu-name="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
@@ -91,7 +91,7 @@
 		<NcDialog :open.sync="showDialog"
 			:name="t('spreed','Delete breakout rooms')"
 			:message="dialogMessage"
-			:container="container">
+			container=".participants-editor">
 			<template #actions>
 				<NcButton type="tertiary" @click="toggleShowDialog">
 					{{ t('spreed', 'Cancel') }}
@@ -384,5 +384,10 @@ export default {
 
 .delete {
 	margin-right: auto;
+}
+
+// TODO remove after https://github.com/nextcloud-libraries/nextcloud-vue/issues/5228
+:deep(.modal-wrapper--small .modal-container) {
+	width: 400px !important;
 }
 </style>
