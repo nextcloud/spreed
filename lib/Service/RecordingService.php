@@ -42,6 +42,7 @@ use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IConfig;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
@@ -72,6 +73,7 @@ class RecordingService {
 		protected Manager $roomManager,
 		protected ITimeFactory $timeFactory,
 		protected Config $config,
+		protected IConfig $serverConfig,
 		protected RoomService $roomService,
 		protected ShareManager $shareManager,
 		protected ChatManager $chatManager,
