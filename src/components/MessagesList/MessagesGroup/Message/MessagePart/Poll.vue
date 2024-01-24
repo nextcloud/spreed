@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2022 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
   - @license AGPL-3.0-or-later
   -
@@ -24,33 +25,33 @@
 	<a v-if="!showAsButton"
 		v-observe-visibility="getPollData"
 		:aria-label="t('spreed', 'Poll')"
-		class="poll"
+		class="poll-card"
 		role="button"
 		@click="openPoll">
-		<div class="poll__header">
+		<span class="poll-card__header">
 			<PollIcon :size="20" />
-			<p>
-				{{ name }}
-			</p>
-		</div>
-		<div class="poll__footer">
+			<span>{{ name }}</span>
+		</span>
+		<span class="poll-card__footer">
 			{{ pollFooterText }}
-		</div>
-
+		</span>
 	</a>
 
 	<!-- Poll results button in system message -->
-	<div v-else class="poll-closed">
-		<NcButton type="secondary" @click="openPoll">
-			{{ t('spreed', 'See results') }}
-		</NcButton>
-	</div>
+	<NcButton v-else
+		class="poll-closed"
+		type="secondary"
+		@click="openPoll">
+		{{ t('spreed', 'See results') }}
+	</NcButton>
 </template>
 
 <script>
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import { POLL } from '../../../../../constants.js'
 
 export default {
 	name: 'Poll',
@@ -87,52 +88,22 @@ export default {
 			return this.$store.getters.getPoll(this.token, this.id)
 		},
 
-		pollLoaded() {
-			return !!this.poll
-		},
-
-		selfHasVoted() {
-			if (this.pollLoaded) {
-				if (typeof this.votedSelf === 'object') {
-					return this.votedSelf.length > 0
-				} else {
-					return !!this.votedSelf
-				}
-			} else {
-				return undefined
-			}
-		},
-
-		// The actual vote of the user as returned from the server
-		votedSelf() {
-			return this.pollLoaded ? this.poll.votedSelf : undefined
-		},
-
-		status() {
-			return this.pollLoaded ? this.poll.status : undefined
-		},
-
-		isPollOpen() {
-			return this.status === 0
-		},
-
-		isPollClosed() {
-			return this.status === 1
-		},
-
 		pollFooterText() {
-			if (this.isPollOpen) {
-				return this.selfHasVoted ? t('spreed', 'Open poll • You voted already') : t('spreed', 'Open poll • Click to vote')
-			} else if (this.isPollClosed) {
-				return t('spreed', 'Poll • Ended')
+			if (this.poll?.status === POLL.STATUS.OPEN) {
+				return this.poll?.votedSelf.length > 0
+					? t('spreed', 'Open poll • You voted already')
+					: t('spreed', 'Open poll • Click to vote')
+			} else {
+				return this.poll?.status === POLL.STATUS.CLOSED
+					? t('spreed', 'Poll • Ended')
+					: t('spreed', 'Poll')
 			}
-			return t('spreed', 'Poll')
 		},
 	},
 
 	methods: {
 		getPollData() {
-			if (!this.pollLoaded) {
+			if (!this.poll) {
 				this.$store.dispatch('getPollData', {
 					token: this.token,
 					pollId: this.id,
@@ -152,15 +123,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.poll {
-	display: flex;
-	border: 2px solid var(--color-border);
+.poll-card {
+	display: block;
 	max-width: 300px;
-	padding: 0 16px 16px 16px;
-	flex-direction: column;
-	background: var(--color-main-background);
+	padding: 16px;
+	border: 2px solid var(--color-border);
 	border-radius: var(--border-radius-large);
-	justify-content: space-between;
+	background: var(--color-main-background);
 	transition: border-color 0.1s ease-in-out;
 
 	&:hover,
@@ -172,15 +141,14 @@ export default {
 
 	&__header {
 		display: flex;
-		font-weight: bold;
-		gap: 8px;
-		white-space: normal;
 		align-items: flex-start;
-		top: 0;
-		padding: 20px 0 8px;
+		gap: 8px;
+		margin-bottom: 16px;
+		font-weight: bold;
+		white-space: normal;
 		word-wrap: anywhere;
 
-		span {
+		:deep(.material-design-icon) {
 			margin-bottom: auto;
 		}
 	}
@@ -188,13 +156,10 @@ export default {
 	&__footer {
 		color: var(--color-text-maxcontrast);
 		white-space: normal;
-		margin-top: 8px;
 	}
 }
 
 .poll-closed {
-	display: flex;
-	justify-content: center;
-	margin-top: 4px;
+	margin: 4px auto;
 }
 </style>

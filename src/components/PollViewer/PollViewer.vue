@@ -21,17 +21,16 @@
 -->
 
 <template>
-	<NcModal v-if="vote !== undefined && id"
+	<NcModal v-if="id"
 		size="small"
 		:container="container"
 		@close="dismissModal">
-		<div class="poll-modal">
-			<!-- Title -->
+		<div v-if="poll" class="poll-modal">
 			<div class="poll-modal__header">
 				<PollIcon :size="20" />
-				<h2 class="poll-modal__title">
+				<span role="heading" aria-level="2">
 					{{ name }}
-				</h2>
+				</span>
 			</div>
 			<p class="poll-modal__summary">
 				{{ pollSummaryText }}
@@ -39,22 +38,19 @@
 
 			<!-- options -->
 			<div v-if="modalPage === 'voting'" class="poll-modal__options">
-				<template v-if="checkboxRadioSwitchType">
-					<NcCheckboxRadioSwitch v-for="(option, index) in options"
-						:key="checkboxRadioSwitchType + index"
-						:checked.sync="vote"
-						class="poll-modal__option"
-						:value="index.toString()"
-						:type="checkboxRadioSwitchType"
-						name="answerType">
-						{{ option }}
-					</NcCheckboxRadioSwitch>
-				</template>
+				<NcCheckboxRadioSwitch v-for="(option, index) in poll.options"
+					:key="'option-' + index"
+					:checked.sync="checked"
+					:value="index.toString()"
+					:type="isMultipleAnswers ? 'checkbox' : 'radio'"
+					name="answerType">
+					{{ option }}
+				</NcCheckboxRadioSwitch>
 			</div>
 
 			<!-- results -->
 			<div v-else-if="modalPage === 'results'" class="results__options">
-				<div v-for="(option, index) in options"
+				<div v-for="(option, index) in poll.options"
 					:key="index"
 					class="results__option">
 					<div class="results__option-title">
@@ -65,7 +61,7 @@
 					</div>
 					<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
 						class="results__option__details">
-						<PollVotersDetails v-if="details"
+						<PollVotersDetails v-if="poll.details"
 							:container="container"
 							:details="getFilteredDetails(index)" />
 						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
@@ -82,7 +78,7 @@
 				<!-- Submit vote button-->
 				<NcButton v-if="modalPage === 'voting'"
 					type="primary"
-					:disabled="!canSubmitVote"
+					:disabled="disabled"
 					@click="submitVote">
 					{{ t('spreed', 'Submit vote') }}
 				</NcButton>
@@ -105,6 +101,7 @@
 				</NcActions>
 			</div>
 		</div>
+		<NcLoadingIcon v-else class="poll-modal__loading" />
 	</NcModal>
 </template>
 
@@ -116,12 +113,13 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 
 import PollVotersDetails from './PollVotersDetails.vue'
 
-import { PARTICIPANT } from '../../constants.js'
+import { POLL } from '../../constants.js'
 
 export default {
 	name: 'PollViewer',
@@ -130,6 +128,7 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcCheckboxRadioSwitch,
+		NcLoadingIcon,
 		NcModal,
 		NcButton,
 		NcProgressBar,
@@ -141,8 +140,9 @@ export default {
 
 	data() {
 		return {
-			vote: undefined,
+			voteToSubmit: [],
 			modalPage: '',
+			loading: false,
 		}
 	},
 
@@ -171,103 +171,52 @@ export default {
 			return this.$store.getters.getPoll(this.token, this.id)
 		},
 
-		pollLoaded() {
-			return !!this.poll
-		},
-
-		numVoters() {
-			return this.pollLoaded ? this.poll?.numVoters : undefined
-		},
-
-		question() {
-			return this.pollLoaded ? this.poll?.question : undefined
-		},
-
-		options() {
-			return this.pollLoaded ? this.poll?.options : undefined
-		},
-
-		votes() {
-			return this.pollLoaded ? this.poll?.votes : undefined
-		},
-
 		selfHasVoted() {
-			if (this.pollLoaded) {
-				if (typeof this.votedSelf === 'object') {
-					return this.votedSelf.length > 0
-				} else {
-					return !!this.votedSelf
-				}
-			} else {
-				return undefined
-			}
-		},
-
-		// The actual vote of the user as returned from the server
-		votedSelf() {
-			return this.pollLoaded ? this.poll?.votedSelf : undefined
-		},
-
-		resultMode() {
-			return this.pollLoaded ? this.poll?.resultMode : undefined
+			return this.poll?.votedSelf?.length > 0
 		},
 
 		isPollPublic() {
-			return this.resultMode === 0
-		},
-
-		status() {
-			return this.pollLoaded ? this.poll?.status : undefined
+			return this.poll?.resultMode === POLL.MODE.PUBLIC
 		},
 
 		isPollOpen() {
-			return this.status === 0
+			return this.poll?.status === POLL.STATUS.OPEN
 		},
 
 		isPollClosed() {
-			return this.status === 1
+			return this.poll?.status === POLL.STATUS.CLOSED
 		},
 
-		details() {
-			if (!this.pollLoaded || this.isPollOpen) {
-				return undefined
-			} else {
-				return this.poll?.details
-			}
+		isMultipleAnswers() {
+			return this.poll?.maxVotes === POLL.ANSWER_TYPE.MULTIPLE
 		},
 
-		checkboxRadioSwitchType() {
-			if (this.pollLoaded) {
-				return this.poll?.maxVotes === 0 ? 'checkbox' : 'radio'
-			} else {
-				return undefined
-			}
+		checked: {
+			get() {
+				return this.voteToSubmit
+			},
+			set(value) {
+				this.voteToSubmit = Array.isArray(value) ? value : [value]
+			},
 		},
 
-		canSubmitVote() {
-			if (typeof this.vote === 'object') {
-				return this.vote.length > 0
-			} else {
-				return this.vote !== undefined && this.vote !== ''
-			}
-		},
-
-		participantType() {
-			return this.$store.getters.conversation(this.token).participantType
+		disabled() {
+			return this.loading || this.voteToSubmit.length === 0
 		},
 
 		selfIsOwnerOrModerator() {
-			return (this.poll?.actorType === this.$store.getters.getActorType() && this.poll?.actorId === this.$store.getters.getActorId())
-				|| [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
+			return this.$store.getters.isModerator
+				|| (this.poll?.actorType === this.$store.getters.getActorType()
+					&& this.poll?.actorId === this.$store.getters.getActorId())
 		},
 
 		pollSummaryText() {
 			if (this.isPollClosed) {
-				return n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', this.numVoters)
+				return n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', this.poll?.numVoters)
 			}
 
 			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
-				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.numVoters)
+				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.poll?.numVoters)
 			}
 
 			if (!this.isPollPublic && this.selfHasVoted) {
@@ -283,10 +232,6 @@ export default {
 	},
 
 	watch: {
-		pollLoaded() {
-			this.setVoteData()
-		},
-
 		modalPage(value) {
 			if (value === 'voting') {
 				this.setVoteData()
@@ -307,13 +252,9 @@ export default {
 		},
 	},
 
-	mounted() {
-		this.setVoteData()
-	},
-
 	methods: {
 		getPollData() {
-			if (!this.pollLoaded) {
+			if (!this.poll) {
 				this.$store.dispatch('getPollData', {
 					token: this.token,
 					pollId: this.id,
@@ -322,65 +263,59 @@ export default {
 		},
 
 		setVoteData() {
-			if (this.checkboxRadioSwitchType === 'radio') {
-				this.vote = ''
-				if (this.selfHasVoted) {
-					this.vote = this.votedSelf[0].toString()
-				}
-			} else {
-				this.vote = []
-				if (this.selfHasVoted) {
-					this.vote = this.votedSelf.map(element => element.toString())
-				}
-			}
+			this.voteToSubmit = this.selfHasVoted
+				? this.poll?.votedSelf.map(el => el.toString())
+				: []
 		},
 
 		dismissModal() {
 			this.$store.dispatch('removeActivePoll')
-			// Reset the data
-			typeof this.vote === 'string' ? this.vote = '' : this.vote = []
+			this.voteToSubmit = []
 		},
 
-		submitVote() {
-			let voteToSubmit = this.vote
-			// If it's a radio, we add the selected index to the array
-			if (!Array.isArray(this.vote)) {
-				voteToSubmit = [this.vote]
+		async submitVote() {
+			this.loading = true
+			try {
+				await this.$store.dispatch('submitVote', {
+					token: this.token,
+					pollId: this.id,
+					vote: this.voteToSubmit.map(element => +element),
+				})
+				this.modalPage = 'results'
+			} catch (error) {
+				console.error(error)
+				this.modalPage = 'voting'
 			}
-			this.$store.dispatch('submitVote', {
-				token: this.token,
-				pollId: this.id,
-				vote: voteToSubmit.map(element => parseInt(element)),
-			})
-			this.modalPage = 'results'
+			this.loading = false
 		},
 
-		endPoll() {
-			this.$store.dispatch('endPoll', {
-				token: this.token,
-				pollId: this.id,
-			})
-			this.modalPage = 'results'
+		async endPoll() {
+			this.loading = true
+			try {
+				await this.$store.dispatch('endPoll', {
+					token: this.token,
+					pollId: this.id,
+				})
+				this.modalPage = 'results'
+			} catch (error) {
+				console.error(error)
+			}
+			this.loading = false
 		},
 
 		selfHasVotedOption(index) {
-			return this.votedSelf.includes(index)
+			return this.poll?.votedSelf.includes(index)
 		},
 
 		getFilteredDetails(index) {
-			if (!this.details) {
-				return []
-			}
-			return this.details.filter((item) => {
-				return item.optionId === index
-			})
+			return (this.poll?.details || []).filter(item => item.optionId === index)
 		},
 
 		getVotePercentage(index) {
-			if (this.votes[`option-${index}`] === undefined) {
+			if (!this.poll?.votes['option-' + index] || !this.poll?.numVoters) {
 				return 0
 			}
-			return parseInt(this.votes[`option-${index}`] / this.numVoters * 100)
+			return parseInt(this.poll?.votes['option-' + index] / this.poll?.numVoters * 100)
 		},
 	},
 }
@@ -393,29 +328,29 @@ export default {
 
 	&__header {
 		display: flex;
-		font-weight: bold;
-		gap: 8px;
-		white-space: normal;
 		align-items: flex-start;
-		top: 0;
-		padding: 20px 0 8px;
+		gap: 8px;
+		margin-bottom: 8px;
+		font-weight: bold;
+		font-size: 18px;
+		white-space: normal;
 		word-wrap: anywhere;
 
-		span {
+		:deep(.material-design-icon) {
 			margin-bottom: auto;
 		}
-
 	}
 
-	&__title {
-		margin: 0;
-		font-size: 18px;
-		font-weight: bold;
+	&__summary {
+		color: var(--color-text-maxcontrast);
+		margin-bottom: 16px;
 	}
 
 	&__options {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 		word-wrap: anywhere;
-		margin-top: 8px;
 	}
 
 	&__actions {
@@ -428,13 +363,8 @@ export default {
 		background-color: var(--color-main-background);
 	}
 
-	&__summary {
-		color: var(--color-text-maxcontrast);
-		margin-bottom: 16px;
-	}
-
-	&__option {
-		margin-bottom: 4px;
+	&__loading {
+		height: 200px;
 	}
 }
 
@@ -476,9 +406,7 @@ export default {
 	}
 }
 
-.critical {
-	:deep(.action-button) {
-		color: var(--color-error) !important;
-	}
+.critical :deep(.action-button) {
+	color: var(--color-error) !important;
 }
 </style>

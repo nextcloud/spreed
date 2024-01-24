@@ -82,7 +82,7 @@ export default {
 		container: {
 			type: String,
 			required: true,
-		}
+		},
 	},
 
 	setup() {
