@@ -70,7 +70,6 @@ class PageController extends Controller {
 	private RoomController $api;
 	private TalkSession $talkSession;
 	private IUserSession $userSession;
-	private LoggerInterface $logger;
 	private Manager $manager;
 	private ParticipantService $participantService;
 	private RoomService $roomService;
