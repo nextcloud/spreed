@@ -45,11 +45,8 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 /**
- * Ignored from OpenAPI until the implementation is finished and the API stable
- *
  * @psalm-import-type TalkFederationInvite from ResponseDefinitions
  */
-#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class FederationController extends OCSController {
 
 	public function __construct(
@@ -64,6 +61,8 @@ class FederationController extends OCSController {
 	/**
 	 * Accept a federation invites
 	 *
+	 * 🚧 Draft: Still work in progress
+	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
@@ -74,6 +73,7 @@ class FederationController extends OCSController {
 	 * 200: Invite accepted successfully
 	 */
 	#[NoAdminRequired]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	public function acceptShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -86,6 +86,8 @@ class FederationController extends OCSController {
 	/**
 	 * Decline a federation invites
 	 *
+	 * 🚧 Draft: Still work in progress
+	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
@@ -96,6 +98,7 @@ class FederationController extends OCSController {
 	 * 200: Invite declined successfully
 	 */
 	#[NoAdminRequired]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	public function rejectShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -108,11 +111,14 @@ class FederationController extends OCSController {
 	/**
 	 * Get a list of federation invites
 	 *
+	 * 🚧 Draft: Still work in progress
+	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkFederationInvite[], array{}>
 	 *
 	 * 200: Get list of received federation invites successfully
 	 */
 	#[NoAdminRequired]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	public function getShares(): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
