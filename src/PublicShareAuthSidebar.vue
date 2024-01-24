@@ -32,6 +32,7 @@
 					:is-sidebar="true" />
 				<CallView :token="token" :is-sidebar="true" />
 				<ChatView />
+				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
 		</aside>
@@ -46,6 +47,7 @@ import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
+import PollViewer from './components/PollViewer/PollViewer.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
 
@@ -66,6 +68,7 @@ export default {
 		CallView,
 		ChatView,
 		MediaSettings,
+		PollViewer,
 		TopBar,
 		TransitionWrapper,
 	},

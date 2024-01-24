@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -20,152 +20,43 @@
 -->
 
 <template>
-	<div class="wrapper">
-		<!-- Poll card -->
-		<a v-if="!showAsButton"
-			v-observe-visibility="getPollData"
-			:aria-label="t('spreed', 'Poll')"
-			class="poll"
-			role="button"
-			@click="openPoll">
-			<div class="poll__header">
-				<PollIcon :size="20" />
-				<p>
-					{{ name }}
-				</p>
-			</div>
-			<div class="poll__footer">
-				{{ pollFooterText }}
-			</div>
-
-		</a>
-
-		<!-- Poll results button in system message -->
-		<div v-else class="poll-closed">
-			<NcButton type="secondary" @click="openPoll">
-				{{ t('spreed', 'See results') }}
-			</NcButton>
+	<!-- Poll card -->
+	<a v-if="!showAsButton"
+		v-observe-visibility="getPollData"
+		:aria-label="t('spreed', 'Poll')"
+		class="poll"
+		role="button"
+		@click="openPoll">
+		<div class="poll__header">
+			<PollIcon :size="20" />
+			<p>
+				{{ name }}
+			</p>
+		</div>
+		<div class="poll__footer">
+			{{ pollFooterText }}
 		</div>
 
-		<!-- voting and results dialog -->
-		<NcModal v-if="vote !== undefined && showModal"
-			size="small"
-			:container="container"
-			@close="dismissModal">
-			<div class="poll__modal">
-				<!-- Title -->
-				<div class="poll__header">
-					<PollIcon :size="20" />
-					<h2 class="poll__modal-title">
-						{{ name }}
-					</h2>
-				</div>
-				<p class="poll__summary">
-					{{ pollSummaryText }}
-				</p>
+	</a>
 
-				<!-- options -->
-				<div v-if="modalPage === 'voting'" class="poll__modal-options">
-					<template v-if="checkboxRadioSwitchType">
-						<NcCheckboxRadioSwitch v-for="(option, index) in options"
-							:key="checkboxRadioSwitchType + index"
-							:checked.sync="vote"
-							class="poll__option"
-							:value="index.toString()"
-							:type="checkboxRadioSwitchType"
-							name="answerType">
-							{{ option }}
-						</NcCheckboxRadioSwitch>
-					</template>
-				</div>
-
-				<!-- results -->
-				<div v-else-if="modalPage === 'results'" class="results__options">
-					<div v-for="(option, index) in options"
-						:key="index"
-						class="results__option">
-						<div class="results__option-title">
-							<p>{{ option }}</p>
-							<p class="percentage">
-								{{ getVotePercentage(index) + '%' }}
-							</p>
-						</div>
-						<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
-							class="results__option__details">
-							<PollVotersDetails v-if="details"
-								:container="container"
-								:details="getFilteredDetails(index)" />
-							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-								{{ t('spreed', 'You voted for this option') }}
-							</p>
-						</div>
-						<NcProgressBar class="results__option-progress"
-							:value="getVotePercentage(index)"
-							size="medium" />
-					</div>
-				</div>
-
-				<div v-if="isPollOpen" class="poll__modal-actions">
-					<!-- Submit vote button-->
-					<NcButton v-if="modalPage === 'voting'"
-						type="primary"
-						:disabled="!canSubmitVote"
-						@click="submitVote">
-						{{ t('spreed', 'Submit vote') }}
-					</NcButton>
-					<!-- Vote again-->
-					<NcButton v-else
-						type="secondary"
-						@click="modalPage = 'voting'">
-						{{ t('spreed', 'Change your vote') }}
-					</NcButton>
-					<!-- End poll button-->
-					<NcActions v-if="canEndPoll"
-						force-menu
-						:container="container">
-						<NcActionButton class="critical" @click="endPoll">
-							{{ t('spreed', 'End poll') }}
-							<template #icon>
-								<FileLock :size="20" />
-							</template>
-						</NcActionButton>
-					</NcActions>
-				</div>
-			</div>
-		</NcModal>
+	<!-- Poll results button in system message -->
+	<div v-else class="poll-closed">
+		<NcButton type="secondary" @click="openPoll">
+			{{ t('spreed', 'See results') }}
+		</NcButton>
 	</div>
 </template>
 
 <script>
-
-import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
-
-import PollVotersDetails from './PollVotersDetails.vue'
-
-import { PARTICIPANT } from '../../../../../constants.js'
 
 export default {
-
 	name: 'Poll',
 
 	components: {
-		NcActions,
-		NcActionButton,
-		NcCheckboxRadioSwitch,
-		NcModal,
 		NcButton,
-		NcProgressBar,
-		PollVotersDetails,
-		// icons
-		FileLock,
 		PollIcon,
 	},
 
@@ -191,41 +82,13 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			vote: undefined,
-			showModal: false,
-			modalPage: '',
-		}
-	},
-
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		poll() {
 			return this.$store.getters.getPoll(this.token, this.id)
 		},
 
 		pollLoaded() {
 			return !!this.poll
-		},
-
-		numVoters() {
-			return this.pollLoaded ? this.poll.numVoters : undefined
-		},
-
-		question() {
-			return this.pollLoaded ? this.poll.question : undefined
-		},
-
-		options() {
-			return this.pollLoaded ? this.poll.options : undefined
-		},
-
-		votes() {
-			return this.pollLoaded ? this.poll.votes : undefined
 		},
 
 		selfHasVoted() {
@@ -245,14 +108,6 @@ export default {
 			return this.pollLoaded ? this.poll.votedSelf : undefined
 		},
 
-		resultMode() {
-			return this.pollLoaded ? this.poll.resultMode : undefined
-		},
-
-		isPollPublic() {
-			return this.resultMode === 0
-		},
-
 		status() {
 			return this.pollLoaded ? this.poll.status : undefined
 		},
@@ -265,59 +120,6 @@ export default {
 			return this.status === 1
 		},
 
-		details() {
-			if (!this.pollLoaded || this.isPollOpen) {
-				return undefined
-			} else {
-				return this.poll.details
-			}
-		},
-
-		checkboxRadioSwitchType() {
-			if (this.pollLoaded) {
-				return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
-			} else {
-				return undefined
-			}
-		},
-
-		canSubmitVote() {
-			if (typeof this.vote === 'object') {
-				return this.vote.length > 0
-			} else {
-				return this.vote !== undefined && this.vote !== ''
-			}
-		},
-
-		participantType() {
-			return this.$store.getters.conversation(this.token).participantType
-		},
-
-		selfIsOwnerOrModerator() {
-			return (this.poll.actorType === this.$store.getters.getActorType() && this.poll.actorId === this.$store.getters.getActorId())
-				|| [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
-		},
-
-		pollSummaryText() {
-			if (this.isPollClosed) {
-				return n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', this.numVoters)
-			}
-
-			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
-				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.numVoters)
-			}
-
-			if (!this.isPollPublic && this.selfHasVoted) {
-				return t('spreed', 'Open poll • You voted already')
-			}
-
-			return t('spreed', 'Open poll')
-		},
-
-		canEndPoll() {
-			return this.isPollOpen && this.selfIsOwnerOrModerator
-		},
-
 		pollFooterText() {
 			if (this.isPollOpen) {
 				return this.selfHasVoted ? t('spreed', 'Open poll • You voted already') : t('spreed', 'Open poll • Click to vote')
@@ -326,23 +128,6 @@ export default {
 			}
 			return t('spreed', 'Poll')
 		},
-	},
-
-	watch: {
-		pollLoaded() {
-			this.setVoteData()
-		},
-
-		modalPage(value) {
-			if (value === 'voting') {
-				this.setVoteData()
-			}
-		},
-
-	},
-
-	mounted() {
-		this.setVoteData()
 	},
 
 	methods: {
@@ -355,85 +140,18 @@ export default {
 			}
 		},
 
-		setVoteData() {
-			if (this.checkboxRadioSwitchType === 'radio') {
-				this.vote = ''
-				if (this.selfHasVoted) {
-					this.vote = this.votedSelf[0].toString()
-				}
-			} else {
-				this.vote = []
-				if (this.selfHasVoted) {
-					this.vote = this.votedSelf.map(element => element.toString())
-				}
-			}
-		},
-
 		openPoll() {
-			if (this.selfHasVoted || this.isPollClosed) {
-				this.modalPage = 'results'
-			} else {
-				this.modalPage = 'voting'
-			}
-			this.showModal = true
-		},
-
-		dismissModal() {
-			this.showModal = false
-			// Reset the data
-			typeof this.vote === 'string' ? this.vote = '' : this.vote = []
-		},
-
-		submitVote() {
-			let voteToSubmit = this.vote
-			// If it's a radio, we add the selected index to the array
-			if (!Array.isArray(this.vote)) {
-				voteToSubmit = [this.vote]
-			}
-			this.$store.dispatch('submitVote', {
+			this.$store.dispatch('setActivePoll', {
 				token: this.token,
 				pollId: this.id,
-				vote: voteToSubmit.map(element => parseInt(element)),
+				name: this.name,
 			})
-			this.modalPage = 'results'
-		},
-
-		endPoll() {
-			this.$store.dispatch('endPoll', {
-				token: this.token,
-				pollId: this.id,
-			})
-			this.modalPage = 'results'
-		},
-
-		selfHasVotedOption(index) {
-			return this.votedSelf.includes(index)
-		},
-
-		getFilteredDetails(index) {
-			if (!this.details) {
-				return []
-			}
-			return this.details.filter((item) => {
-				return item.optionId === index
-			})
-		},
-
-		getVotePercentage(index) {
-			if (this.votes[`option-${index}`] === undefined) {
-				return 0
-			}
-			return parseInt(this.votes[`option-${index}`] / this.numVoters * 100)
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
-	display: contents;
-}
-
 .poll {
 	display: flex;
 	border: 2px solid var(--color-border);
@@ -465,7 +183,6 @@ export default {
 		span {
 			margin-bottom: auto;
 		}
-
 	}
 
 	&__footer {
@@ -473,90 +190,11 @@ export default {
 		white-space: normal;
 		margin-top: 8px;
 	}
-
-	&__modal {
-		position: relative;
-		padding: 20px;
-	}
-
-	&__modal-title {
-		margin: 0;
-		font-size: 18px;
-		font-weight: bold;
-	}
-
-	&__modal-options {
-		word-wrap: anywhere;
-		margin-top: 8px;
-	}
-
-	&__modal-actions {
-		position: sticky;
-		bottom: 0;
-		display: flex;
-		justify-content: center;
-		gap: 8px;
-		padding: 8px 0 0;
-		background-color: var(--color-main-background);
-	}
-
-	&__summary {
-		color: var(--color-text-maxcontrast);
-		margin-bottom: 16px;
-	}
-
-	&__option {
-		margin-bottom: 4px;
-	}
-}
-
-.results__options {
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-	word-wrap: anywhere;
-	margin: 8px 0 20px 0;
-}
-
-.results__option {
-	display: flex;
-	flex-direction: column;
-
-	&__details {
-		display: flex;
-		margin-bottom: 8px;
-	}
-
-	&-subtitle {
-		color: var(--color-text-maxcontrast);
-	}
-
-	&-progress {
-		margin-top: 4px;
-	}
-}
-
-.results__option-title {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	margin-bottom: 4px;
-
-	.percentage {
-		white-space: nowrap;
-		margin-left: 16px;
-	}
 }
 
 .poll-closed {
 	display: flex;
 	justify-content: center;
 	margin-top: 4px;
-}
-
-.critical {
-	:deep(.action-button) {
-		color: var(--color-error) !important;
-	}
 }
 </style>

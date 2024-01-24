@@ -23,6 +23,7 @@
 	<div class="talk-tab__wrapper">
 		<CallButton class="call-button" />
 		<ChatView />
+		<PollViewer />
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 	</div>
 </template>
@@ -30,6 +31,7 @@
 
 import ChatView from '../components/ChatView.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
+import PollViewer from '../components/PollViewer/PollViewer.vue'
 import CallButton from '../components/TopBar/CallButton.vue'
 
 export default {
@@ -40,6 +42,7 @@ export default {
 		CallButton,
 		ChatView,
 		MediaSettings,
+		PollViewer,
 	},
 
 	data() {

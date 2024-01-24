@@ -28,11 +28,16 @@ import pollService from '../services/pollService.js'
 
 const state = {
 	polls: {},
+	activePoll: null,
 }
 
 const getters = {
 	getPoll: (state) => (token, id) => {
 		return state.polls?.[token]?.[id]
+	},
+
+	activePoll: (state) => {
+		return state.activePoll
 	},
 }
 
@@ -42,6 +47,16 @@ const mutations = {
 			Vue.set(state.polls, token, {})
 		}
 		Vue.set(state.polls[token], poll.id, poll)
+	},
+
+	setActivePoll(state, { token, pollId, name }) {
+		Vue.set(state, 'activePoll', { token, id: pollId, name })
+	},
+
+	removeActivePoll(state) {
+		if (state.activePoll) {
+			Vue.set(state, 'activePoll', null)
+		}
 	},
 
 	// Add debounce function for getting the poll data
@@ -125,6 +140,14 @@ const actions = {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while ending the poll'))
 		}
+	},
+
+	setActivePoll(context, { token, pollId, name }) {
+		context.commit('setActivePoll', { token, pollId, name })
+	},
+
+	removeActivePoll(context) {
+		context.commit('removeActivePoll')
 	},
 }
 
