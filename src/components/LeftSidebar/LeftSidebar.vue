@@ -395,6 +395,9 @@ export default {
 			initialisedConversations: false,
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
+			debounceFetchSearchResults: () => {},
+			debounceFetchConversations: () => {},
+			debounceHandleScroll: () => {},
 			// Keeps track of whether the conversation list is scrolled to the top or not
 			isScrolledToTop: true,
 			refreshTimer: null,
@@ -569,6 +572,10 @@ export default {
 	},
 
 	mounted() {
+		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
+		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
+		this.debounceHandleScroll = debounce(this.handleScroll, 50)
+
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleConversationsReceived)
 		EventBus.$on('route-change', this.onRouteChange)
@@ -577,6 +584,10 @@ export default {
 	},
 
 	beforeDestroy() {
+		this.debounceFetchSearchResults.clear?.()
+		this.debounceFetchConversations.clear?.()
+		this.debounceHandleScroll.clear?.()
+
 		EventBus.$off('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$off('conversations-received', this.handleUnreadMention)
 		EventBus.$off('route-change', this.onRouteChange)
@@ -628,12 +639,6 @@ export default {
 				this.preventFindingUnread = false
 			}, 500)
 		},
-		debounceFetchSearchResults: debounce(function() {
-			this.resetNavigation()
-			if (this.isSearching) {
-				this.fetchSearchResults()
-			}
-		}, 250),
 
 		async fetchPossibleConversations() {
 			this.contactsLoading = true
@@ -690,6 +695,10 @@ export default {
 		},
 
 		async fetchSearchResults() {
+			if (!this.isSearching) {
+				return
+			}
+			this.resetNavigation()
 			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
 			this.initializeNavigation()
 		},
@@ -786,10 +795,6 @@ export default {
 			this.debounceFetchConversations()
 		},
 
-		debounceFetchConversations: debounce(function() {
-			this.fetchConversations()
-		}, 3000),
-
 		async fetchConversations() {
 			if (this.isFetchingConversations) {
 				return
@@ -856,6 +861,7 @@ export default {
 		// or not
 		handleScroll() {
 			this.isScrolledToTop = this.$refs.scroller.$el.scrollTop === 0
+			this.handleUnreadMention()
 		},
 
 		/**
@@ -873,11 +879,6 @@ export default {
 				}
 			}
 		},
-
-		debounceHandleScroll: debounce(function() {
-			this.handleScroll()
-			this.handleUnreadMention()
-		}, 50),
 
 		async scrollToConversation(token) {
 			await this.$nextTick()

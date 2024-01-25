@@ -152,6 +152,7 @@ export default {
 			noResults: false,
 			participantPhoneItem: {},
 			cancelSearchPossibleConversations: () => {},
+			debounceFetchSearchResults: () => {},
 		}
 	},
 
@@ -174,6 +175,8 @@ export default {
 	},
 
 	mounted() {
+		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
+
 		this.$nextTick(() => {
 			// Focus the input field of the current component.
 			this.focusInput()
@@ -183,6 +186,8 @@ export default {
 	},
 
 	beforeDestroy() {
+		this.debounceFetchSearchResults.clear?.()
+
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
 	},
@@ -204,12 +209,8 @@ export default {
 			this.focusInput()
 		},
 
-		debounceFetchSearchResults: debounce(function() {
-			this.resetNavigation()
-			this.fetchSearchResults()
-		}, 250),
-
 		async fetchSearchResults() {
+			this.resetNavigation()
 			this.contactsLoading = true
 			try {
 				this.cancelSearchPossibleConversations('canceled')

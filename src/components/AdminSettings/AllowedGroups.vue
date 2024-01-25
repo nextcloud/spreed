@@ -54,7 +54,7 @@
 				track-by="id"
 				label="displayname"
 				no-wrap
-				@search-change="searchGroup" />
+				@search-change="debounceSearchGroup" />
 
 			<NcButton type="primary"
 				:disabled="loading"
@@ -84,7 +84,7 @@
 				track-by="id"
 				label="displayname"
 				no-wrap
-				@search-change="searchGroup" />
+				@search-change="debounceSearchGroup" />
 
 			<NcButton type="primary"
 				:disabled="loading"
@@ -155,6 +155,8 @@ export default {
 
 			startCallOptions,
 			startCalls: startCallOptions[0],
+
+			debounceSearchGroup: () => {},
 		}
 	},
 
@@ -183,11 +185,16 @@ export default {
 		})
 		this.loading = false
 
-		this.searchGroup('')
+		this.debounceSearchGroup = debounce(this.searchGroup, 500)
+		this.debounceSearchGroup('')
+	},
+
+	beforeDestroy() {
+		this.debounceSearchGroup.clear?.()
 	},
 
 	methods: {
-		searchGroup: debounce(async function(query) {
+		async searchGroup(query) {
 			this.loadingGroups = true
 			try {
 				const response = await axios.get(generateOcsUrl('cloud/groups/details'), {
@@ -203,7 +210,7 @@ export default {
 			} finally {
 				this.loadingGroups = false
 			}
-		}, 500),
+		},
 
 		saveAllowedGroups() {
 			this.loading = true

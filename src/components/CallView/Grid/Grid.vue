@@ -304,6 +304,7 @@ export default {
 			showVideoOverlay: true,
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
+			debounceMakeGrid: () => {},
 		}
 	},
 
@@ -546,6 +547,7 @@ export default {
 
 	// bind event handlers to the `handleResize` method
 	mounted() {
+		this.debounceMakeGrid = debounce(this.makeGrid, 200)
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
@@ -553,6 +555,7 @@ export default {
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
 	beforeDestroy() {
+		this.debounceMakeGrid.clear?.()
 		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
 		window.removeEventListener('resize', this.handleResize)
@@ -672,7 +675,7 @@ export default {
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
-			debounce(this.makeGrid, 200)
+			this.debounceMakeGrid()
 		},
 
 		// Find the right size if the grid in rows and columns (we already know

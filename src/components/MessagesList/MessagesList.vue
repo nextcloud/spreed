@@ -165,6 +165,10 @@ export default {
 			destroying: false,
 
 			expirationInterval: null,
+
+			debounceUpdateReadMarkerPosition: () => {},
+
+			debounceHandleScroll: () => {},
 		}
 	},
 
@@ -276,6 +280,9 @@ export default {
 	},
 
 	mounted() {
+		this.debounceUpdateReadMarkerPosition = debounce(this.updateReadMarkerPosition, 1000)
+		this.debounceHandleScroll = debounce(this.handleScroll, 50)
+
 		this.viewId = uniqueId('messagesList')
 		this.scrollToBottom()
 		EventBus.$on('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
@@ -297,6 +304,9 @@ export default {
 	},
 
 	beforeDestroy() {
+		this.debounceUpdateReadMarkerPosition.clear?.()
+		this.debounceHandleScroll.clear?.()
+
 		window.removeEventListener('focus', this.onWindowFocus)
 		EventBus.$off('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
 		EventBus.$off('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
@@ -753,10 +763,6 @@ export default {
 			}, 500)
 		},
 
-		debounceHandleScroll: debounce(function() {
-			this.handleScroll()
-		}, 50),
-
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
@@ -878,10 +884,6 @@ export default {
 				id: this.conversation.lastReadMessage,
 			})
 		},
-
-		debounceUpdateReadMarkerPosition: debounce(function() {
-			this.updateReadMarkerPosition()
-		}, 1000),
 
 		/**
 		 * Finds the last visual read message element

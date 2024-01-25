@@ -70,7 +70,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 
 	// Reset focused index if focus moved out of navigation area or moved to the defaultRef
 	const handleBlurEvent = (event) => {
-		if (!listRef.value.contains(event.relatedTarget)
+		if (!listRef.value?.contains(event.relatedTarget)
 			|| defaultRef.value?.$el.contains(event.relatedTarget)
 			|| defaultRef.value.contains?.(event.relatedTarget)) {
 			focusedIndex.value = null
@@ -84,7 +84,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 		defaultRef.value = unref(defaultElementRef)
 		isConfirmationEnabled.value = options.confirmEnter
 
-		listRef.value.addEventListener('keydown', (event) => {
+		listRef.value?.addEventListener('keydown', (event) => {
 			if (itemElementsIdMap.value?.length) {
 				if (event.key === 'ArrowDown') {
 					focusNextElement(event)
@@ -104,11 +104,11 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	 * Put a listener for focus/blur events on navigation area
 	 */
 	function initializeNavigation() {
-		itemElements.value = Array.from(listRef.value.querySelectorAll(itemSelector.value))
+		itemElements.value = Array.from(listRef.value?.querySelectorAll(itemSelector.value))
 		focusedIndex.value = null
 
-		listRef.value.addEventListener('focus', handleFocusEvent, true)
-		listRef.value.addEventListener('blur', handleBlurEvent, true)
+		listRef.value?.addEventListener('focus', handleFocusEvent, true)
+		listRef.value?.addEventListener('blur', handleBlurEvent, true)
 	}
 
 	/**
@@ -118,8 +118,8 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	function resetNavigation() {
 		itemElements.value = []
 
-		listRef.value.removeEventListener('focus', handleFocusEvent, true)
-		listRef.value.removeEventListener('blur', handleBlurEvent, true)
+		listRef.value?.removeEventListener('focus', handleFocusEvent, true)
+		listRef.value?.removeEventListener('blur', handleBlurEvent, true)
 	}
 
 	/**
@@ -166,7 +166,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 			// if confirmEnter = false, first Enter keydown clicks on item, otherwise only focuses it
 			// Additionally check whether the Element is still in the DOM
 			if (!isConfirmationEnabled.value && event?.key === 'Enter'
-				&& listRef.value.contains(itemElements.value[0])) {
+				&& listRef.value?.contains(itemElements.value[0])) {
 				itemElements.value[0].click()
 			}
 		}

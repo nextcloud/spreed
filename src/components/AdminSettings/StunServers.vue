@@ -84,12 +84,18 @@ export default {
 			hasInternetConnection: true,
 			loading: false,
 			saved: false,
+			debounceUpdateServers: () => {},
 		}
 	},
 
 	beforeMount() {
 		this.servers = loadState('spreed', 'stun_servers')
 		this.hasInternetConnection = loadState('spreed', 'has_internet_connection')
+		this.debounceUpdateServers = debounce(this.updateServers, 1000)
+	},
+
+	beforeDestroy() {
+		this.debounceUpdateServers.clear?.()
 	},
 
 	methods: {
@@ -110,10 +116,6 @@ export default {
 				this.servers.push('stun.nextcloud.com:443')
 			}
 		},
-
-		debounceUpdateServers: debounce(function() {
-			this.updateServers()
-		}, 1000),
 
 		async updateServers() {
 			this.loading = true

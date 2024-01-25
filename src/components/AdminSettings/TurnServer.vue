@@ -164,6 +164,7 @@ export default {
 			testing: false,
 			testingError: false,
 			testingSuccess: false,
+			debounceTestServer: () => {},
 		}
 	},
 
@@ -210,16 +211,17 @@ export default {
 	},
 
 	mounted() {
+		this.debounceTestServer = debounce(this.testServer, 1000)
 		this.testing = false
 		this.testingError = false
 		this.testingSuccess = false
 	},
 
-	methods: {
-		debounceTestServer: debounce(function() {
-			this.testServer()
-		}, 1000),
+	beforeDestroy() {
+		this.debounceTestServer.clear?.()
+	},
 
+	methods: {
 		testServer() {
 			this.testing = true
 			this.testingError = false

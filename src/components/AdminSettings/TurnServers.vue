@@ -88,6 +88,7 @@ export default {
 			servers: [],
 			loading: false,
 			saved: false,
+			debounceUpdateServers: () => {},
 		}
 	},
 
@@ -100,7 +101,12 @@ export default {
 	},
 
 	beforeMount() {
+		this.debounceUpdateServers = debounce(this.updateServers, 1000)
 		this.servers = loadState('spreed', 'turn_servers')
+	},
+
+	beforeDestroy() {
+		this.debounceUpdateServers.clear?.()
 	},
 
 	methods: {
@@ -117,10 +123,6 @@ export default {
 				protocols: 'udp,tcp', // default to udp AND tcp
 			})
 		},
-
-		debounceUpdateServers: debounce(function() {
-			this.updateServers()
-		}, 1000),
 
 		async updateServers() {
 			const servers = []

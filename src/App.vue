@@ -96,6 +96,7 @@ export default {
 			loading: false,
 			isRefreshingCurrentConversation: false,
 			recordingConsentGiven: false,
+			debounceRefreshCurrentConversation: () => {},
 		}
 	},
 
@@ -256,6 +257,7 @@ export default {
 	},
 
 	beforeDestroy() {
+		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
 			EventBus.$off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
@@ -479,6 +481,8 @@ export default {
 	},
 
 	async mounted() {
+		this.debounceRefreshCurrentConversation = debounce(this.refreshCurrentConversation, 3000)
+
 		if (!IS_DESKTOP) {
 			checkBrowser()
 		}
@@ -581,12 +585,6 @@ export default {
 			this.fetchSingleConversation(this.token)
 		},
 
-		debounceRefreshCurrentConversation: debounce(function() {
-			if (!this.isRefreshingCurrentConversation) {
-				this.refreshCurrentConversation()
-			}
-		}, 3000),
-
 		changeWindowVisibility() {
 			this.$store.dispatch('setWindowVisibility', !document.hidden)
 			if (this.windowIsVisible) {
@@ -655,6 +653,9 @@ export default {
 		},
 
 		async fetchSingleConversation(token) {
+			if (this.isRefreshingCurrentConversation) {
+				return
+			}
 			this.isRefreshingCurrentConversation = true
 
 			try {
