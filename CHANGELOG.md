@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.2 – 2024-01-25
+### Fixed
+-  fix(calls): Device preview not visible when editing, uploading or viewing a file
+   [#11222](https://github.com/nextcloud/spreed/issues/11222)
+-  fix(conversation): Make description input multi line when creating a conversation
+   [#11376](https://github.com/nextcloud/spreed/issues/11376)
+-  fix(bot): Don't allow empty chat messages from bots
+   [#11353](https://github.com/nextcloud/spreed/issues/11353)
+-  fix(breakout): Stop breakout rooms when they are started while deleting them
+   [#11409](https://github.com/nextcloud/spreed/issues/11409)
+-  fix(attachments): Allow to retry failed uploads
+   [#11256](https://github.com/nextcloud/spreed/issues/11256)
+-  fix(attachments): Fix uploading from local device
+   [#11331](https://github.com/nextcloud/spreed/issues/11331)
+-  fix(attachments): Don't allow selecting shared folders as attachment folder
+   [#11427](https://github.com/nextcloud/spreed/issues/11427)
+
+## 17.1.5 – 2024-01-25
+### Fixed
+-  fix(attachments): Don't allow selecting shared folders as attachment folder
+   [#11430](https://github.com/nextcloud/spreed/issues/11430)
+
+## 16.0.10 – 2024-01-25
+### Fixed
+-  fix(attachments): Don't allow selecting shared folders as attachment folder
+   [#11431](https://github.com/nextcloud/spreed/issues/11431)
+
 ## 17.1.4 – 2023-12-19
 ### Fixed
 - fix(UI): Allow joining a call while editing a document
