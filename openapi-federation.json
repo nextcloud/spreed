@@ -1,0 +1,530 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "spreed-federation",
+        "version": "0.0.1",
+        "description": "Chat, video & audio-conferencing using WebRTC",
+        "license": {
+            "name": "agpl"
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basic_auth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "bearer_auth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "FederationInvite": {
+                "type": "object",
+                "required": [
+                    "access_token",
+                    "id",
+                    "local_room_id",
+                    "remote_attendee_id",
+                    "remote_server_url",
+                    "remote_token",
+                    "user_id"
+                ],
+                "properties": {
+                    "access_token": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "local_room_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "remote_attendee_id": {
+                        "type": "string"
+                    },
+                    "remote_server_url": {
+                        "type": "string"
+                    },
+                    "remote_token": {
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "OCSMeta": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "statuscode"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "statuscode": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "totalitems": {
+                        "type": "string"
+                    },
+                    "itemsperpage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicCapabilities": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "spreed"
+                        ],
+                        "properties": {
+                            "spreed": {
+                                "type": "object",
+                                "required": [
+                                    "features",
+                                    "config",
+                                    "version"
+                                ],
+                                "properties": {
+                                    "features": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "config": {
+                                        "type": "object",
+                                        "required": [
+                                            "attachments",
+                                            "call",
+                                            "chat",
+                                            "conversations",
+                                            "previews",
+                                            "signaling"
+                                        ],
+                                        "properties": {
+                                            "attachments": {
+                                                "type": "object",
+                                                "required": [
+                                                    "allowed"
+                                                ],
+                                                "properties": {
+                                                    "allowed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "folder": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "call": {
+                                                "type": "object",
+                                                "required": [
+                                                    "enabled",
+                                                    "breakout-rooms",
+                                                    "recording",
+                                                    "recording-consent",
+                                                    "supported-reactions",
+                                                    "predefined-backgrounds",
+                                                    "can-upload-background",
+                                                    "sip-enabled",
+                                                    "sip-dialout-enabled",
+                                                    "can-enable-sip"
+                                                ],
+                                                "properties": {
+                                                    "enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "breakout-rooms": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording-consent": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "supported-reactions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "predefined-backgrounds": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "can-upload-background": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-dialout-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "can-enable-sip": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "chat": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-length",
+                                                    "read-privacy",
+                                                    "has-translation-providers",
+                                                    "typing-privacy"
+                                                ],
+                                                "properties": {
+                                                    "max-length": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "read-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "has-translation-providers": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "typing-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "conversations": {
+                                                "type": "object",
+                                                "required": [
+                                                    "can-create"
+                                                ],
+                                                "properties": {
+                                                    "can-create": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "previews": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-gif-size"
+                                                ],
+                                                "properties": {
+                                                    "max-gif-size": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "signaling": {
+                                                "type": "object",
+                                                "required": [
+                                                    "session-ping-limit"
+                                                ],
+                                                "properties": {
+                                                    "session-ping-limit": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "hello-v2-token-key": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "version": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "array",
+                        "maxLength": 0
+                    }
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
+            "post": {
+                "operationId": "federation-accept-share",
+                "summary": "Accept a federation invites",
+                "description": "🚧 Draft: Still work in progress",
+                "tags": [
+                    "federation"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the share",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invite accepted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "federation-reject-share",
+                "summary": "Decline a federation invites",
+                "description": "🚧 Draft: Still work in progress",
+                "tags": [
+                    "federation"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the share",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invite declined successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
+            "get": {
+                "operationId": "federation-get-shares",
+                "summary": "Get a list of federation invites",
+                "description": "🚧 Draft: Still work in progress",
+                "tags": [
+                    "federation"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get list of received federation invites successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/FederationInvite"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": []
+}
