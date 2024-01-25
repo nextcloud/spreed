@@ -2648,7 +2648,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit) {
+		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -2664,6 +2664,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeReferenceId) {
 				$data['referenceId'] = $message['referenceId'];
+			}
+			if (isset($expected['silent'])) {
+				$data['silent'] = isset($message['silent']) ? json_encode($message['silent']) : '!ISSET';
 			}
 			if ($includeReactions) {
 				$data['reactions'] = json_encode($message['reactions'], JSON_UNESCAPED_UNICODE);
@@ -2684,7 +2687,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 			}
 			return $data;
-		}, $messages));
+		}, $messages, $expected));
 	}
 
 	/**
@@ -2771,6 +2774,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			if (isset($expected['messageParameters'])) {
 				$data['messageParameters'] = json_encode($message['messageParameters']);
+			}
+
+			if (isset($expected['silent'])) {
+				$data['silent'] = isset($message['silent']) ? json_encode($message['silent']) : '!ISSET';
 			}
 
 			return $data;

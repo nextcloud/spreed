@@ -220,6 +220,11 @@ class Message {
 			$data['deleted'] = true;
 		}
 
+		$metaData = $this->comment->getMetaData() ?? [];
+		if ($metaData['silent']) {
+			$data['silent'] = true;
+		}
+
 		return $data;
 	}
 }

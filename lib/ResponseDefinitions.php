@@ -87,6 +87,7 @@ namespace OCA\Talk;
  *     lastEditActorId?: string,
  *     lastEditActorType?: string,
  *     lastEditTimestamp?: int,
+ *     silent?: bool,
  * }
  *
  * @psalm-type TalkChatMessageWithParent = TalkChatMessage&array{parent?: TalkChatMessage}

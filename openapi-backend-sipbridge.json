@@ -116,6 +116,9 @@
                     "lastEditTimestamp": {
                         "type": "integer",
                         "format": "int64"
+                    },
+                    "silent": {
+                        "type": "boolean"
                     }
                 }
             },

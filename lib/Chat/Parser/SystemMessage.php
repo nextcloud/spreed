@@ -183,9 +183,20 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('An administrator removed the description');
 			}
 		} elseif ($message === 'call_started') {
-			$parsedMessage = $this->l->t('{actor} started a call');
-			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You started a call');
+			$metaData = $comment->getMetaData() ?? [];
+			$silentCall = $metaData['silent'] ?? false;
+			if ($silentCall) {
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You started a silent call');
+				} else {
+					$parsedMessage = $this->l->t('{actor} started a silent call');
+				}
+			} else {
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You started a call');
+				} else {
+					$parsedMessage = $this->l->t('{actor} started a call');
+				}
 			}
 		} elseif ($message === 'call_joined') {
 			$parsedMessage = $this->l->t('{actor} joined the call');

@@ -172,6 +172,7 @@ class Capabilities implements IPublicCapability {
 				'sip-support-dialout',
 				'delete-messages-unlimited',
 				'edit-messages',
+				'silent-send-state',
 			],
 			'config' => [
 				'attachments' => [
