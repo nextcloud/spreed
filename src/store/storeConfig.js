@@ -27,7 +27,6 @@ import callViewStore from './callViewStore.js'
 import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
 import messagesStore from './messagesStore.js'
-import newGroupConversationStore from './newGroupConversationStore.js'
 import participantsStore from './participantsStore.js'
 import pollStore from './pollStore.js'
 import sidebarStore from './sidebarStore.js'
@@ -44,7 +43,6 @@ export default {
 		conversationsStore,
 		fileUploadStore,
 		messagesStore,
-		newGroupConversationStore,
 		participantsStore,
 		sidebarStore,
 		soundsStore,

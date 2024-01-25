@@ -33,7 +33,7 @@
 		</span>
 		<NcButton type="tertiary-no-background"
 			:aria-label="removeLabel"
-			@click="removeParticipantFromSelection(participant)">
+			@click="$emit('update', participant)">
 			<template #icon>
 				<Close :size="16" />
 			</template>
@@ -66,6 +66,8 @@ export default {
 		},
 	},
 
+	emits: ['update'],
+
 	setup() {
 		return { AVATAR }
 	},
@@ -79,12 +81,6 @@ export default {
 
 		removeLabel() {
 			return t('spreed', 'Remove participant {name}', { name: this.displayName })
-		},
-	},
-
-	methods: {
-		removeParticipantFromSelection(participant) {
-			this.$store.dispatch('updateSelectedParticipants', participant)
 		},
 	},
 }

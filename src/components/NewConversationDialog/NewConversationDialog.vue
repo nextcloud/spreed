@@ -44,7 +44,7 @@
 				<!-- Second page -->
 				<NewConversationContactsPage v-if="page === 1"
 					class="new-group-conversation__content"
-					:selected-participants="selectedParticipants"
+					:selected-participants.sync="selectedParticipants"
 					:can-moderate-sip-dial-out="canModerateSipDialOut"
 					:conversation-name="conversationName" />
 			</div>
@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { provide } from 'vue'
+import { provide, ref } from 'vue'
 
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
@@ -181,10 +181,16 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
+		const selectedParticipants = ref([])
+		provide('selectedParticipants', selectedParticipants)
+
 		// Add a visual bulk selection state for Participant component
 		provide('bulkParticipantsSelection', true)
 
-		return { isInCall }
+		return {
+			isInCall,
+			selectedParticipants,
+		}
 	},
 
 	data() {
@@ -217,10 +223,6 @@ export default {
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
 			return this.conversationName === '' || (this.newConversation.hasPassword && this.password === '')
-		},
-
-		selectedParticipants() {
-			return this.$store.getters.selectedParticipants
 		},
 	},
 
@@ -259,7 +261,7 @@ export default {
 			if (item) {
 				// Preload the conversation name from group selection
 				this.newConversation.displayName = item.label
-				this.$store.dispatch('updateSelectedParticipants', item)
+				this.selectedParticipants.push(item)
 			}
 
 			this.showModal()
@@ -279,7 +281,7 @@ export default {
 			this.password = ''
 			this.listable = CONVERSATION.LISTABLE.NONE
 			this.isAvatarEdited = false
-			this.$store.dispatch('purgeNewGroupConversationStore')
+			this.selectedParticipants = []
 		},
 
 		switchToPage(value) {

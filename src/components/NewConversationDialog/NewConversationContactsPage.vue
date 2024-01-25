@@ -52,7 +52,8 @@
 			group>
 			<ContactSelectionBubble v-for="participant in selectedParticipants"
 				:key="participant.source + participant.id"
-				:participant="participant" />
+				:participant="participant"
+				@update="updateSelectedParticipants" />
 		</TransitionWrapper>
 
 		<!-- Search results -->
@@ -123,6 +124,8 @@ export default {
 			default: false,
 		},
 	},
+
+	emits: ['update:selected-participants'],
 
 	setup() {
 		const wrapper = ref(null)
@@ -246,7 +249,16 @@ export default {
 		},
 
 		updateSelectedParticipants(participant) {
-			this.$store.dispatch('updateSelectedParticipants', participant)
+			const isSelected = this.selectedParticipants.some(selected => {
+				return selected.id === participant.id && selected.source === participant.source
+			})
+			const payload = isSelected
+				? this.selectedParticipants.filter(selected => {
+					return selected.id !== participant.id || selected.source !== participant.source
+				})
+				: [...this.selectedParticipants, participant]
+
+			this.$emit('update:selected-participants', payload)
 		},
 
 		addParticipantPhone() {
@@ -254,7 +266,7 @@ export default {
 				return
 			}
 
-			this.$store.dispatch('updateSelectedParticipants', this.participantPhoneItem)
+			this.updateSelectedParticipants(this.participantPhoneItem)
 		}
 	},
 }
