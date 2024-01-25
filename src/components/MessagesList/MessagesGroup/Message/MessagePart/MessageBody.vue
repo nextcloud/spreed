@@ -28,7 +28,7 @@
 			:class="{
 				'system-message': isSystemMessage && !showJoinCallButton,
 				'deleted-message': isDeletedMessage,
-				'call-started': showJoinCallButton,
+				'message-highlighted': showJoinCallButton,
 			}">
 			<!-- Message content / text -->
 			<CancelIcon v-if="isDeletedMessage" :size="16" />
@@ -49,6 +49,7 @@
 		<!-- Normal message body content -->
 		<div v-else
 			class="message-main__text markdown-message"
+			:class="{'message-highlighted': isNewPollMessage }"
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
@@ -284,6 +285,14 @@ export default {
 			return this.messageParameters?.file
 		},
 
+		isNewPollMessage() {
+			if (this.messageParameters?.object?.type !== 'talk-poll') {
+				return false
+			}
+
+			return this.isInCall && !!this.$store.getters.getNewPolls[this.messageParameters.object.id]
+		},
+
 		hideDate() {
 			return this.isTemporary || this.isDeleting || !!this.sendingFailure
 		},
@@ -442,7 +451,7 @@ export default {
 			padding: 0 20px;
 		}
 
-		&.call-started {
+		&.message-highlighted {
 			color: var(--color-text-light);
 			background-color: var(--color-primary-element-light);
 			padding: 10px;

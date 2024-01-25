@@ -22,7 +22,7 @@
 import debounce from 'debounce'
 import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import pollService from '../services/pollService.js'
 
@@ -30,6 +30,7 @@ const state = {
 	polls: {},
 	pollDebounceFunctions: {},
 	activePoll: null,
+	pollToastsQueue: {},
 }
 
 const getters = {
@@ -39,6 +40,10 @@ const getters = {
 
 	activePoll: (state) => {
 		return state.activePoll
+	},
+
+	getNewPolls: (state) => {
+		return state.pollToastsQueue
 	},
 }
 
@@ -57,6 +62,24 @@ const mutations = {
 	removeActivePoll(state) {
 		if (state.activePoll) {
 			Vue.set(state, 'activePoll', null)
+		}
+	},
+
+	addPollToast(state, { pollId, toast }) {
+		Vue.set(state.pollToastsQueue, pollId, toast)
+	},
+
+	hidePollToast(state, id) {
+		if (state.pollToastsQueue[id]) {
+			state.pollToastsQueue[id].hideToast()
+			Vue.delete(state.pollToastsQueue, id)
+		}
+	},
+
+	hideAllPollToasts(state) {
+		for (const id in state.pollToastsQueue) {
+			state.pollToastsQueue[id].hideToast()
+			Vue.delete(state.pollToastsQueue, id)
 		}
 	},
 
@@ -146,6 +169,33 @@ const actions = {
 
 	removeActivePoll(context) {
 		context.commit('removeActivePoll')
+	},
+
+	addPollToast(context, { token, message }) {
+		const pollId = message.messageParameters.object.id
+		const name = message.messageParameters.object.name
+
+		const toast = showInfo(t('spreed', 'Poll "{name}" was created by {user}. Click to vote', {
+			name,
+			user: message.actorDisplayName,
+		}), {
+			onClick: () => {
+				if (!context.state.activePoll) {
+					context.dispatch('setActivePoll', { token, pollId, name })
+				}
+			},
+			timeout: TOAST_PERMANENT_TIMEOUT,
+		})
+
+		context.commit('addPollToast', { pollId, toast })
+	},
+
+	hidePollToast(context, id) {
+		context.commit('hidePollToast', id)
+	},
+
+	hideAllPollToasts(context) {
+		context.commit('hideAllPollToasts')
 	},
 }
 

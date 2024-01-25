@@ -119,7 +119,9 @@ import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 
 import PollVotersDetails from './PollVotersDetails.vue'
 
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.js'
+import { EventBus } from '../../services/EventBus.js'
 
 export default {
 	name: 'PollViewer',
@@ -136,6 +138,12 @@ export default {
 		// icons
 		FileLock,
 		PollIcon,
+	},
+
+	setup() {
+		return {
+			isInCall: useIsInCall(),
+		}
 	},
 
 	data() {
@@ -238,6 +246,16 @@ export default {
 			}
 		},
 
+		id(value) {
+			this.$store.dispatch('hidePollToast', value)
+		},
+
+		isInCall(value) {
+			if (!value) {
+				this.$store.dispatch('hideAllPollToasts')
+			}
+		},
+
 		poll: {
 			immediate: true,
 			handler(value) {
@@ -250,6 +268,14 @@ export default {
 				}
 			},
 		},
+	},
+
+	mounted() {
+		EventBus.$on('talk:poll-added', this.showPollToast)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('talk:poll-added', this.showPollToast)
 	},
 
 	methods: {
@@ -266,6 +292,14 @@ export default {
 			this.voteToSubmit = this.selfHasVoted
 				? this.poll?.votedSelf.map(el => el.toString())
 				: []
+		},
+
+		showPollToast({ token, message }) {
+			if (!this.isInCall) {
+				return
+			}
+
+			this.$store.dispatch('addPollToast', { token, message })
 		},
 
 		dismissModal() {
