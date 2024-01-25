@@ -101,10 +101,6 @@ export default {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
 		},
-
-		displaySearchHint() {
-			return !this.contactsLoading && this.searchText === ''
-		},
 	},
 
 	expose: ['showModal'],

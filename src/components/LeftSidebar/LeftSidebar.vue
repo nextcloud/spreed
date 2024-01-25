@@ -123,7 +123,7 @@
 			<OpenConversationsList ref="openConversationsList" />
 
 			<!-- New Conversation dialog-->
-			<NewGroupConversation ref="newGroupConversation" :can-moderate-sip-dial-out="canModerateSipDialOut" />
+			<NewConversationDialog ref="newConversationDialog" :can-moderate-sip-dial-out="canModerateSipDialOut" />
 
 			<!-- New Conversation dialog-->
 			<CallPhoneDialog ref="callPhoneDialog" />
@@ -298,11 +298,11 @@ import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsListVirtual from './ConversationsListVirtual.vue'
-import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
+import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import TransitionWrapper from '../TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -336,7 +336,7 @@ export default {
 		NcButton,
 		Hint,
 		SearchBox,
-		NewGroupConversation,
+		NewConversationDialog,
 		OpenConversationsList,
 		Conversation,
 		NcListItem,
@@ -595,7 +595,7 @@ export default {
 
 	methods: {
 		showModalNewConversation() {
-			this.$refs.newGroupConversation.showModal()
+			this.$refs.newConversationDialog.showModal()
 		},
 
 		showModalListConversations() {
@@ -714,7 +714,7 @@ export default {
 				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
 				// For other types, show the modal directly
-				this.$refs.newGroupConversation.showModalForItem(item)
+				this.$refs.newConversationDialog.showModalForItem(item)
 			}
 		},
 

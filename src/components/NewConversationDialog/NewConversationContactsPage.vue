@@ -52,7 +52,8 @@
 			group>
 			<ContactSelectionBubble v-for="participant in selectedParticipants"
 				:key="participant.source + participant.id"
-				:participant="participant" />
+				:participant="participant"
+				@update="updateSelectedParticipants" />
 		</TransitionWrapper>
 
 		<!-- Search results -->
@@ -61,13 +62,12 @@
 			:value="searchText"
 			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipantPhone" />
-		<ParticipantSearchResults :add-on-click="false"
-			:search-results="searchResults"
+		<ParticipantSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
-			:scrollable="true"
-			:display-search-hint="displaySearchHint"
-			:selectable="true"
+			scrollable
+			show-search-hints
+			@click="updateSelectedParticipants"
 			@click-search-hint="focusInput" />
 	</div>
 </template>
@@ -83,18 +83,19 @@ import { showError } from '@nextcloud/dialogs'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
-import DialpadPanel from '../../../DialpadPanel.vue'
-import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
-import SelectPhoneNumber from '../../../SelectPhoneNumber.vue'
-import TransitionWrapper from '../../../TransitionWrapper.vue'
+import ContactSelectionBubble from '../ContactSelectionBubble.vue'
+import DialpadPanel from '../DialpadPanel.vue'
+import ParticipantSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import SelectPhoneNumber from '../SelectPhoneNumber.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
-import { useArrowNavigation } from '../../../../composables/useArrowNavigation.js'
-import { searchPossibleConversations } from '../../../../services/conversationsService.js'
-import CancelableRequest from '../../../../utils/cancelableRequest.js'
+import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
+import { searchPossibleConversations } from '../../services/conversationsService.js'
+import CancelableRequest from '../../utils/cancelableRequest.js'
 
 export default {
-	name: 'SetContacts',
+	name: 'NewConversationContactsPage',
+
 	components: {
 		ContactSelectionBubble,
 		DialpadPanel,
@@ -113,11 +114,18 @@ export default {
 			required: true,
 		},
 
+		selectedParticipants: {
+			type: Array,
+			required: true,
+		},
+
 		canModerateSipDialOut: {
 			type: Boolean,
 			default: false,
 		},
 	},
+
+	emits: ['update:selected-participants'],
 
 	setup() {
 		const wrapper = ref(null)
@@ -148,20 +156,8 @@ export default {
 	},
 
 	computed: {
-		selectedParticipants() {
-			return this.$store.getters.selectedParticipants
-		},
 		hasSelectedParticipants() {
 			return this.selectedParticipants.length !== 0
-		},
-		/**
-		 * Search hint at the bottom of the participants list, displayed only if
-		 * the user is not searching
-		 *
-		 * @return {boolean}
-		 */
-		displaySearchHint() {
-			return !this.contactsLoading && this.searchText === ''
 		},
 
 		isSearching() {
@@ -252,12 +248,25 @@ export default {
 			this.setContacts.focus()
 		},
 
+		updateSelectedParticipants(participant) {
+			const isSelected = this.selectedParticipants.some(selected => {
+				return selected.id === participant.id && selected.source === participant.source
+			})
+			const payload = isSelected
+				? this.selectedParticipants.filter(selected => {
+					return selected.id !== participant.id || selected.source !== participant.source
+				})
+				: [...this.selectedParticipants, participant]
+
+			this.$emit('update:selected-participants', payload)
+		},
+
 		addParticipantPhone() {
 			if (!this.participantPhoneItem?.phoneNumber) {
 				return
 			}
 
-			this.$store.dispatch('updateSelectedParticipants', this.participantPhoneItem)
+			this.updateSelectedParticipants(this.participantPhoneItem)
 		}
 	},
 }

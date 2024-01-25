@@ -143,7 +143,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 			event.stopImmediatePropagation()
 			focusedIndex.value = null
 			// TODO setTimeout hacks NcModal behaviour, which removes focus-trap
-			// and focuses last clicked element before Modal (NcActions in case of NewGroupConversation)
+			// and focuses last clicked element before Modal (NcActions in case of NewConversationDialog)
 			setTimeout(() => {
 				defaultRef.value.focus()
 			}, 0)

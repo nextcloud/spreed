@@ -1225,8 +1225,6 @@ describe('conversationsStore', () => {
 	})
 
 	test('sets default permissions for a conversation', async () => {
-		expect(store.getters.selectedParticipants).toStrictEqual([])
-
 		await store.dispatch('setConversationPermissions', { token: testToken, permissions })
 
 		expect(setConversationPermissions).toHaveBeenCalledWith(testToken, permissions)
@@ -1235,8 +1233,6 @@ describe('conversationsStore', () => {
 	})
 
 	test('sets default permissions for a call', async () => {
-		expect(store.getters.selectedParticipants).toStrictEqual([])
-
 		await store.dispatch('setCallPermissions', { token: testToken, permissions })
 
 		expect(setCallPermissions).toHaveBeenCalledWith(testToken, permissions)

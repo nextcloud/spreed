@@ -310,8 +310,7 @@
 </template>
 
 <script>
-
-import isEqual from 'lodash/isEqual.js'
+import { inject } from 'vue'
 
 import Account from 'vue-material-design-icons/Account.vue'
 import AccountMinusIcon from 'vue-material-design-icons/AccountMinus.vue'
@@ -424,21 +423,22 @@ export default {
 			type: Boolean,
 			default: true,
 		},
-
-		/**
-		 * Toggles the bulk selection state of this component
-		 */
-		isSelectable: {
-			type: Boolean,
-			default: false,
-		},
 	},
 
 	emits: ['click-participant'],
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		const selectedParticipants = inject('selectedParticipants', [])
+
+		// Toggles the bulk selection state of this component
+		const isSelectable = inject('bulkParticipantsSelection', false)
+
+		return {
+			isInCall,
+			selectedParticipants,
+			isSelectable,
+		}
 	},
 
 	data() {
@@ -564,16 +564,11 @@ export default {
 		 * @return {boolean}
 		 */
 		isSelected() {
-			if (this.isSelectable) {
-				let isSelected = false
-				this.$store.getters.selectedParticipants.forEach(selectedParticipant => {
-					if (isEqual(selectedParticipant, this.participant)) {
-						isSelected = true
-					}
+			return this.isSelectable
+				? this.selectedParticipants.some(selected => {
+					return selected.id === this.participant.id && selected.source === this.participant.source
 				})
-				return isSelected
-			}
-			return false
+				: false
 		},
 
 		/**

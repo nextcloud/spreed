@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -22,7 +22,7 @@
 <template>
 	<div v-if="modal" class="wrapper">
 		<!-- New group form -->
-		<NcModal v-show=" page !== 2"
+		<NcModal v-show="page !== 2"
 			class="conversation-form"
 			:container="container"
 			@close="closeModal">
@@ -32,84 +32,47 @@
 
 			<div class="new-group-conversation__main">
 				<!-- First page -->
-				<div v-show="page === 0" class="new-group-conversation__content">
-					<NcTextField ref="conversationName"
-						v-model="conversationName"
-						:placeholder="t('spreed', 'Enter a name for this conversation')"
-						:label="t('spreed', 'Name')"
-						label-visible
-						@keydown.enter="handleEnter" />
-					<NcTextArea v-model="conversationDescription"
-						:placeholder="t('spreed', 'Enter a description for this conversation')"
-						:label="t('spreed', 'Description')"
-						label-visible />
-
-					<template v-if="supportsAvatar">
-						<label class="avatar-editor__label">
-							{{ t('spreed', 'Picture') }}
-						</label>
-						<ConversationAvatarEditor ref="conversationAvatar"
-							:conversation="newConversation"
-							controlled
-							editable
-							@avatar-edited="setIsAvatarEdited" />
-					</template>
-
-					<label class="new-group-conversation__label">
-						{{ t('spreed', 'Conversation visibility') }}
-					</label>
-					<NcCheckboxRadioSwitch :checked.sync="isPublic"
-						type="switch">
-						{{ t('spreed', 'Allow guests to join via link') }}
-					</NcCheckboxRadioSwitch>
-					<div class="new-group-conversation__wrapper">
-						<NcCheckboxRadioSwitch :checked.sync="passwordProtect"
-							type="switch"
-							:disabled="!isPublic"
-							@checked="handleCheckboxInput">
-							<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>
-						</NcCheckboxRadioSwitch>
-						<NcPasswordField v-if="passwordProtect"
-							autocomplete="new-password"
-							check-password-strength
-							:placeholder="t('spreed', 'Enter password')"
-							:aria-label="t('spreed', 'Enter password')"
-							:value.sync="password" />
-					</div>
-					<ListableSettings v-model="listable" />
-				</div>
+				<NewConversationSetupPage v-show="page === 0"
+					ref="setupPage"
+					:new-conversation.sync="newConversation"
+					:password.sync="password"
+					:listable.sync="listable"
+					class="new-group-conversation__content"
+					@handle-enter="handleEnter"
+					@avatar-edited="setIsAvatarEdited" />
 
 				<!-- Second page -->
-				<SetContacts v-if="page === 1"
+				<NewConversationContactsPage v-if="page === 1"
 					class="new-group-conversation__content"
+					:selected-participants.sync="selectedParticipants"
 					:can-moderate-sip-dial-out="canModerateSipDialOut"
-					:conversation-name="conversationNameTrimmed" />
+					:conversation-name="conversationName" />
 			</div>
 
 			<!-- Navigation: different buttons with different actions and
 				placement are rendered depending on the current page -->
 			<div class="new-group-conversation__footer">
 				<!-- First page -->
-				<NcButton v-if="page===0 && conversationName"
+				<NcButton v-if="page === 0 && conversationName"
 					:disabled="disabled"
 					type="tertiary"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
 				</NcButton>
-				<NcButton v-if="page===0"
+				<NcButton v-if="page === 0"
 					type="primary"
 					:disabled="disabled"
 					class="new-group-conversation__button"
-					@click="handleSetConversationName">
+					@click="switchToPage(1)">
 					{{ t('spreed', 'Add participants') }}
 				</NcButton>
 				<!-- Second page -->
-				<NcButton v-if="page===1"
+				<NcButton v-if="page === 1"
 					type="tertiary"
-					@click="handleClickBack">
+					@click="switchToPage(0)">
 					{{ t('spreed', 'Back') }}
 				</NcButton>
-				<NcButton v-if="page===1"
+				<NcButton v-if="page === 1"
 					type="primary"
 					class="new-group-conversation__button"
 					@click="handleCreateConversation">
@@ -162,34 +125,30 @@
 </template>
 
 <script>
+import { provide, ref } from 'vue'
+
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
-import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import SetContacts from './SetContacts/SetContacts.vue'
-import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
-import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
-import LoadingComponent from '../../LoadingComponent.vue'
+import NewConversationContactsPage from './NewConversationContactsPage.vue'
+import NewConversationSetupPage from './NewConversationSetupPage.vue'
+import LoadingComponent from '../LoadingComponent.vue'
 
-import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION, PRIVACY } from '../../../constants.js'
+import { useIsInCall } from '../../composables/useIsInCall.js'
+import { CONVERSATION, PRIVACY } from '../../constants.js'
 import {
 	createPublicConversation,
 	createPrivateConversation,
 	setConversationPassword,
-} from '../../../services/conversationsService.js'
-import { addParticipant } from '../../../services/participantsService.js'
-import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
+} from '../../services/conversationsService.js'
+import { addParticipant } from '../../services/participantsService.js'
+import { copyConversationLinkToClipboard } from '../../services/urlService.js'
 
 const NEW_CONVERSATION = {
 	token: '',
@@ -197,27 +156,18 @@ const NEW_CONVERSATION = {
 	description: '',
 	hasPassword: false,
 	type: CONVERSATION.TYPE.GROUP,
-	readOnly: CONVERSATION.STATE.READ_ONLY,
 }
 
-const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
-
 export default {
-
-	name: 'NewGroupConversation',
+	name: 'NewConversationDialog',
 
 	components: {
-		ConversationAvatarEditor,
-		ListableSettings,
+		NewConversationSetupPage,
 		LoadingComponent,
 		NcButton,
-		NcCheckboxRadioSwitch,
 		NcEmptyContent,
 		NcModal,
-		NcPasswordField,
-		NcTextArea,
-		NcTextField,
-		SetContacts,
+		NewConversationContactsPage,
 		Check,
 		AlertCircle,
 	},
@@ -231,20 +181,27 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall, supportsAvatar }
+		const selectedParticipants = ref([])
+		provide('selectedParticipants', selectedParticipants)
+
+		// Add a visual bulk selection state for Participant component
+		provide('bulkParticipantsSelection', true)
+
+		return {
+			isInCall,
+			selectedParticipants,
+		}
 	},
 
 	data() {
 		return {
-			newConversation: Object.assign({}, NEW_CONVERSATION),
 			modal: false,
+			newConversation: Object.assign({}, NEW_CONVERSATION),
 			page: 0,
-			isPublic: false,
 			isLoading: true,
 			success: false,
 			error: false,
 			password: '',
-			passwordProtect: false,
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
 		}
@@ -254,44 +211,22 @@ export default {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
 		},
-		conversationName: {
-			get() {
-				return this.newConversation.displayName
-			},
-			set(event) {
-				this.newConversation.displayName = event.target.value
-			},
+
+		isPublic() {
+			return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
 		},
-		conversationDescription: {
-			get() {
-				return this.newConversation.description
-			},
-			set(event) {
-				this.newConversation.description = event.target.value
-			},
+
+		conversationName() {
+			return this.newConversation.displayName.trim()
 		},
-		conversationNameTrimmed() {
-			return this.conversationName.trim()
-		},
+
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
-			return this.conversationNameTrimmed === '' || (this.passwordProtect && this.password === '')
-		},
-		selectedParticipants() {
-			return this.$store.getters.selectedParticipants
+			return this.conversationName === '' || (this.newConversation.hasPassword && this.password === '')
 		},
 	},
 
 	watch: {
-		isPublic(value) {
-			if (value) {
-				this.newConversation.type = CONVERSATION.TYPE.PUBLIC
-			} else {
-				this.newConversation.type = CONVERSATION.TYPE.GROUP
-				this.passwordProtect = false
-			}
-		},
-
 		success(value) {
 			if (!value) {
 				return
@@ -310,6 +245,7 @@ export default {
 			})
 		},
 	},
+
 	expose: ['showModalForItem', 'showModal'],
 
 	methods: {
@@ -325,7 +261,7 @@ export default {
 			if (item) {
 				// Preload the conversation name from group selection
 				this.newConversation.displayName = item.label
-				this.$store.dispatch('updateSelectedParticipants', item)
+				this.selectedParticipants.push(item)
 			}
 
 			this.showModal()
@@ -337,26 +273,21 @@ export default {
 		 */
 		closeModal() {
 			this.modal = false
-			this.page = 0
-			this.isPublic = false
-			this.isLoading = true
 			this.newConversation = Object.assign({}, NEW_CONVERSATION)
-			this.isAvatarEdited = false
+			this.page = 0
+			this.isLoading = true
 			this.success = false
 			this.error = false
-			this.passwordProtect = false
 			this.password = ''
 			this.listable = CONVERSATION.LISTABLE.NONE
-			this.$store.dispatch('purgeNewGroupConversationStore')
+			this.isAvatarEdited = false
+			this.selectedParticipants = []
 		},
-		/** Switch to page 2 */
-		handleSetConversationName() {
-			this.page = 1
+
+		switchToPage(value) {
+			this.page = value
 		},
-		/** Switch to page 1 from page 2 */
-		handleClickBack() {
-			this.page = 0
-		},
+
 		/**
 		 * Handles the creation of the group conversation, adds the selected
 		 * participants to it and routes to it
@@ -369,7 +300,7 @@ export default {
 			try {
 				if (this.isPublic) {
 					await this.createConversation(PRIVACY.PUBLIC)
-					if (this.password && this.passwordProtect) {
+					if (this.password && this.newConversation.hasPassword) {
 						await setConversationPassword(this.newConversation.token, this.password)
 					}
 				} else {
@@ -430,15 +361,15 @@ export default {
 		async createConversation(flag) {
 			let response
 			if (flag === PRIVACY.PRIVATE) {
-				response = await createPrivateConversation(this.conversationNameTrimmed)
+				response = await createPrivateConversation(this.conversationName)
 			} else if (flag === PRIVACY.PUBLIC) {
-				response = await createPublicConversation(this.conversationNameTrimmed)
+				response = await createPublicConversation(this.conversationName)
 			}
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.newConversation.token = conversation.token
 			if (this.isAvatarEdited) {
-				this.$refs.conversationAvatar.saveAvatar()
+				this.$refs.setupPage.$refs.conversationAvatar.saveAvatar()
 			}
 			if (this.newConversation.description) {
 				this.handleUpdateDescription()
@@ -448,13 +379,7 @@ export default {
 			this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
-		handleCheckboxInput(event) {
-			this.passwordProtect = event.target.checked
-			// Reinitialise the password value when unchecking the password-protect option.
-			if (this.passwordProtect === false) {
-				this.password = ''
-			}
-		},
+
 		async handleUpdateDescription() {
 			try {
 				await this.$store.dispatch('setConversationDescription', {
@@ -470,8 +395,7 @@ export default {
 		/** Handles the press of the enter key */
 		handleEnter() {
 			if (!this.disabled) {
-				this.handleSetConversationName()
-				this.page = 1
+				this.switchToPage(1)
 			}
 		},
 
@@ -505,22 +429,6 @@ export default {
 		padding: 10px 20px;
 	}
 
-	&__wrapper {
-		display: flex;
-		gap: var(--default-grid-baseline);
-		align-items: center;
-
-		.checkbox__label {
-			white-space: nowrap;
-		}
-	}
-
-	&__label {
-		display: block;
-		margin-top: 10px;
-		padding: 4px 0;
-	}
-
 	&__footer {
 		flex-shrink: 0;
 		display: flex;
@@ -544,17 +452,6 @@ export default {
 		flex-direction: column;
 		height: 100%;
 		overflow: hidden !important;
-	}
-}
-
-:deep(.app-settings-section__hint) {
-	color: var(--color-text-lighter);
-	padding: 8px 0;
-}
-
-:deep(.app-settings-subsection) {
-	&:first-child {
-		margin-top: 0;
 	}
 }
 

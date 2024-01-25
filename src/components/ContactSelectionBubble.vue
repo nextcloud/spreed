@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -33,7 +33,7 @@
 		</span>
 		<NcButton type="tertiary-no-background"
 			:aria-label="removeLabel"
-			@click="removeParticipantFromSelection(participant)">
+			@click="$emit('update', participant)">
 			<template #icon>
 				<Close :size="16" />
 			</template>
@@ -46,9 +46,9 @@ import Close from 'vue-material-design-icons/Close.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 
-import { AVATAR } from '../../../../../constants.js'
+import { AVATAR } from '../constants.js'
 
 export default {
 	name: 'ContactSelectionBubble',
@@ -66,6 +66,8 @@ export default {
 		},
 	},
 
+	emits: ['update'],
+
 	setup() {
 		return { AVATAR }
 	},
@@ -79,12 +81,6 @@ export default {
 
 		removeLabel() {
 			return t('spreed', 'Remove participant {name}', { name: this.displayName })
-		},
-	},
-
-	methods: {
-		removeParticipantFromSelection(participant) {
-			this.$store.dispatch('updateSelectedParticipants', participant)
 		},
 	},
 }
