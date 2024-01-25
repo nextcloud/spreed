@@ -617,6 +617,7 @@ describe('participantsStore', () => {
 	})
 
 	describe('joining conversation', () => {
+		let getTokenMock
 		let getParticipantIdentifierMock
 		let participantData
 		let joinedConversationEventMock
@@ -625,6 +626,7 @@ describe('participantsStore', () => {
 			joinedConversationEventMock = jest.fn()
 			EventBus.$once('joined-conversation', joinedConversationEventMock)
 
+			getTokenMock = jest.fn().mockReturnValue(TOKEN)
 			getParticipantIdentifierMock = jest.fn().mockReturnValue({
 				attendeeId: 1,
 			})
@@ -636,6 +638,7 @@ describe('participantsStore', () => {
 				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			}
 
+			testStoreConfig.getters.getToken = () => getTokenMock
 			testStoreConfig.getters.getParticipantIdentifier = () => getParticipantIdentifierMock
 			testStoreConfig.actions.setCurrentParticipant = jest.fn()
 			testStoreConfig.actions.addConversation = jest.fn().mockImplementation((context) => {
@@ -683,8 +686,8 @@ describe('participantsStore', () => {
 
 			expect(joinConversation).toHaveBeenCalledWith({ token: TOKEN, forceJoin: true })
 
-			expect(testStoreConfig.actions.setCurrentParticipant).toHaveBeenCalledWith(expect.anything(), participantData)
-			expect(testStoreConfig.actions.addConversation).toHaveBeenCalledWith(expect.anything(), participantData)
+			expect(testStoreConfig.actions.setCurrentParticipant).toHaveBeenCalledWith(expect.anything(), updatedParticipantData)
+			expect(testStoreConfig.actions.addConversation).toHaveBeenCalledWith(expect.anything(), updatedParticipantData)
 
 			expect(getParticipantIdentifierMock).toHaveBeenCalled()
 
