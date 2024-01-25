@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.5 – 2024-01-25
+### Fixed
+-  fix(attachments): Don't allow selecting shared folders as attachment folder
+   [#11430](https://github.com/nextcloud/spreed/issues/11430)
+
+## 16.0.10 – 2024-01-25
+### Fixed
+-  fix(attachments): Don't allow selecting shared folders as attachment folder
+   [#11431](https://github.com/nextcloud/spreed/issues/11431)
+
 ## 17.1.4 – 2023-12-19
 ### Fixed
 - fix(UI): Allow joining a call while editing a document
