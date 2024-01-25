@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.10 – 2024-01-25
+### Fixed
+-  fix(attachments): Don't allow selecting shared folders as attachment folder
+   [#11431](https://github.com/nextcloud/spreed/issues/11431)
+
 ## 16.0.9 – 2023-12-19
 ### Fixed
 - fix(occ): Fix verification of STUN server details
