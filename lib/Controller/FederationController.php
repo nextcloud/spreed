@@ -33,6 +33,7 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -46,6 +47,7 @@ use OCP\IUserSession;
 
 /**
  * @psalm-import-type TalkFederationInvite from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class FederationController extends OCSController {
 
@@ -54,8 +56,31 @@ class FederationController extends OCSController {
 		private FederationManager $federationManager,
 		private Manager $talkManager,
 		private IUserSession $userSession,
+		private RoomFormatter $roomFormatter,
 	) {
 		parent::__construct(Application::APP_ID, $request);
+	}
+
+	/**
+	 * Following the logic of {@see Dispatcher::executeController}
+	 * @return string Either 'json' or 'xml'
+	 * @psalm-return 'json'|'xml'
+	 */
+	public function getResponseFormat(): string {
+		// get format from the url format or request format parameter
+		$format = $this->request->getParam('format');
+
+		// if none is given try the first Accept header
+		if ($format === null) {
+			$headers = $this->request->getHeader('Accept');
+			/**
+			 * Default value of
+			 * @see OCSController::buildResponse()
+			 */
+			$format = $this->getResponderByHTTPHeader($headers, 'xml');
+		}
+
+		return $format;
 	}
 
 	/**
@@ -65,7 +90,7 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
@@ -79,8 +104,13 @@ class FederationController extends OCSController {
 		if (!$user instanceof IUser) {
 			throw new UnauthorizedException();
 		}
-		$this->federationManager->acceptRemoteRoomShare($user, $id);
-		return new DataResponse();
+		$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			[],
+			$participant->getRoom(),
+			$participant,
+		));
 	}
 
 	/**

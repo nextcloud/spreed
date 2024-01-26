@@ -425,6 +425,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['type'])) {
 				$data['type'] = (string) $room['type'];
 			}
+			if (isset($expectedRoom['remoteServer'])) {
+				$data['remoteServer'] = self::translateRemoteServer($room['remoteServer']);
+			}
+			if (isset($expectedRoom['remoteToken'])) {
+				$data['remoteToken'] = self::$tokenToIdentifier[$room['remoteToken']] ?? 'unknown-token';
+			}
 			if (isset($expectedRoom['hasPassword'])) {
 				$data['hasPassword'] = (string) $room['hasPassword'];
 			}
@@ -530,6 +536,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->sendRemoteRequest($verb, '/apps/spreed/api/' . $apiVersion . '/federation/invitation/' . $inviteId);
 		}
 		$this->assertStatusCode($this->response, 200);
+		$response = $this->getDataFromResponse($this->response);
+
+		if ($formData) {
+			$this->assertRooms([$response], $formData);
+		} else {
+			Assert::assertEmpty($response);
+		}
 	}
 
 	/**

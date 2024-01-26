@@ -33,6 +33,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -107,7 +108,7 @@ class FederationManager {
 	 * @throws DoesNotExistException
 	 * @throws CannotReachRemoteException
 	 */
-	public function acceptRemoteRoomShare(IUser $user, int $shareId): void {
+	public function acceptRemoteRoomShare(IUser $user, int $shareId): Participant {
 		$invitation = $this->invitationMapper->getInvitationById($shareId);
 		if ($invitation->getUserId() !== $user->getUID()) {
 			throw new UnauthorizedException('invitation is for a different user');
@@ -130,12 +131,16 @@ class FederationManager {
 				'remoteId' => $invitation->getRemoteAttendeeId(), // FIXME this seems unnecessary
 			]
 		];
-		$this->participantService->addUsers($room, $participant, $user);
+		$attendees = $this->participantService->addUsers($room, $participant, $user);
+		/** @var Attendee $attendee */
+		$attendee = array_pop($attendees);
 
 		$invitation->setState(Invitation::STATE_ACCEPTED);
 		$this->invitationMapper->update($invitation);
 
 		$this->markNotificationProcessed($user->getUID(), $shareId);
+
+		return new Participant($room, $attendee, null);
 	}
 
 	/**

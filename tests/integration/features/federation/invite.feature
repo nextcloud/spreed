@@ -48,6 +48,8 @@ Feature: federation/invite
       | app    | object_type       | object_id              | subject                                                                      |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on http://localhost:8080 with you |
     And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 3    | LOCAL        | room        |
     And user "participant2" has the following invitations (v1)
       | remote_server_url | remote_token | state |
       | LOCAL             | room         | 1     |
@@ -104,6 +106,8 @@ Feature: federation/invite
       | remote_server_url | remote_token | state |
       | LOCAL             | room         | 0     |
     And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 2    | LOCAL        | room        |
     And user "participant2" has the following invitations (v1)
       | remote_server_url | remote_token | state |
       | LOCAL             | room         | 1     |
@@ -128,6 +132,8 @@ Feature: federation/invite
       | remote_server_url | remote_token | state |
       | LOCAL             | room         | 0     |
     And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 2    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | name | type |
       | room | room | 2    |
