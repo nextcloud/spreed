@@ -811,15 +811,14 @@ export default {
 					// already loading, don't do it twice
 					return
 				}
-				if (scrollTop === 0) {
-					this.displayMessagesLoader = true
-				}
+				this.displayMessagesLoader = true
 				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
 
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
-						top: this.$refs.scroller.scrollTop + this.$refs.scroller.scrollHeight - scrollHeight,
+						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
 					})
 				}
 			}
