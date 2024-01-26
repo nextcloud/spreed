@@ -24,6 +24,7 @@
 		<NcListItem ref="listItem"
 			:key="item.token"
 			:name="item.displayName"
+			:title="item.displayName"
 			class="conversation-item"
 			:class="{'unread-mention-conversation': item.unreadMention}"
 			:data-nav-id="`conversation_${item.token}`"
@@ -348,22 +349,6 @@ export default {
 					params: { token: this.item.token },
 				}
 				: ''
-		},
-	},
-
-	// TODO: move the implementation to @nextcloud-vue/NcListItem
-	watch: {
-		'item.displayName': {
-			immediate: true,
-			handler(value) {
-				this.$nextTick().then(() => {
-					const titleSpan = this.$refs.listItem?.$el?.querySelector('.line-one__name')
-
-					if (titleSpan && titleSpan.offsetWidth < titleSpan.scrollWidth) {
-						titleSpan.setAttribute('title', value)
-					}
-				})
-			},
 		},
 	},
 
