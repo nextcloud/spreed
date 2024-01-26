@@ -28,6 +28,7 @@
 				{{ dialogTitle }}
 			</h2>
 			<NewMessage v-if="modalContainerId"
+				:key="modalContainerId"
 				ref="newMessage"
 				role="region"
 				:token="token"

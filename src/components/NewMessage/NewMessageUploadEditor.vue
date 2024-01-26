@@ -76,6 +76,7 @@
 				</NcButton>
 			</div>
 			<NewMessage v-else-if="modalContainerId"
+				:key="modalContainerId"
 				ref="newMessage"
 				role="region"
 				upload
