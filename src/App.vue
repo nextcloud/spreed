@@ -540,6 +540,26 @@ export default {
 				event.cancelAction = true
 				break
 			}
+			case 'POST': {
+				// Federation invitation handling
+				if (event.notification.objectType === 'remote_talk_share') {
+					try {
+						const response = await axios.post(event.action.url)
+						this.$store.dispatch('addConversation', response.data.ocs.data)
+						this.$router.push({
+							name: 'conversation',
+							params: {
+								token: response.data.ocs.data.token,
+							},
+						})
+
+						event.cancelAction = true
+					} catch (error) {
+						console.error(error)
+					}
+				}
+				break
+			}
 			default: break
 			}
 		},
@@ -572,6 +592,10 @@ export default {
 				this.$store.dispatch('updateCallStateFromNotification', {
 					notification: event.notification,
 				})
+				break
+			}
+			// Federation invitation handling
+			case 'remote_talk_share': {
 				break
 			}
 			default: break
