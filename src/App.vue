@@ -41,6 +41,7 @@ import debounce from 'debounce'
 import PreventUnload from 'vue-prevent-unload'
 
 import { getCurrentUser } from '@nextcloud/auth'
+import axios from '@nextcloud/axios'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
@@ -515,26 +516,32 @@ export default {
 		 * @param {string} event.action.type The request type used for the action
 		 * @param {boolean} event.cancelAction Option to cancel the action so no page reload is happening
 		 */
-		interceptNotificationActions(event) {
-			if (event.notification.app !== 'spreed' || event.action.type !== 'WEB') {
+		async interceptNotificationActions(event) {
+			if (event.notification.app !== 'spreed') {
 				return
 			}
 
-			const [, load] = event.action.url.split('/call/')
-			if (!load) {
-				return
+			switch (event.action.type) {
+			case 'WEB': {
+				const load = event.action.url.split('/call/').pop()
+				if (!load) {
+					return
+				}
+
+				const [token, hash] = load.split('#')
+				this.$router.push({
+					name: 'conversation',
+					hash: hash ? `#${hash}` : '',
+					params: {
+						token,
+					},
+				})
+
+				event.cancelAction = true
+				break
 			}
-
-			const [token, hash] = load.split('#')
-			this.$router.push({
-				name: 'conversation',
-				hash: hash ? `#${hash}` : '',
-				params: {
-					token,
-				},
-			})
-
-			event.cancelAction = true
+			default: break
+			}
 		},
 
 		/**
@@ -549,7 +556,8 @@ export default {
 				return
 			}
 
-			if (event.notification.objectType === 'chat') {
+			switch (event.notification.objectType) {
+			case 'chat': {
 				if (event.notification.subjectRichParameters?.reaction) {
 					// Ignore reaction notifications in case of one-to-one and always-notify
 					return
@@ -558,12 +566,15 @@ export default {
 				this.$store.dispatch('updateConversationLastMessageFromNotification', {
 					notification: event.notification,
 				})
+				break
 			}
-
-			if (event.notification.objectType === 'call') {
+			case 'call': {
 				this.$store.dispatch('updateCallStateFromNotification', {
 					notification: event.notification,
 				})
+				break
+			}
+			default: break
 			}
 		},
 
