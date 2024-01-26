@@ -37,6 +37,7 @@ use OCA\Talk\Service\SessionService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -63,6 +64,7 @@ class ParticipantServiceTest extends TestCase {
 	protected $dispatcher;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	protected ICloudIdManager|MockObject $cloudIdManager;
 	/** @var IGroupManager|MockObject */
 	protected $groupManager;
 	/** @var MembershipService|MockObject */
@@ -87,6 +89,7 @@ class ParticipantServiceTest extends TestCase {
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->membershipService = $this->createMock(MembershipService::class);
 		$this->federationBackendNotifier = $this->createMock(BackendNotifier::class);
@@ -102,6 +105,7 @@ class ParticipantServiceTest extends TestCase {
 			\OC::$server->getDatabaseConnection(),
 			$this->dispatcher,
 			$this->userManager,
+			$this->cloudIdManager,
 			$this->groupManager,
 			$this->membershipService,
 			$this->federationBackendNotifier,

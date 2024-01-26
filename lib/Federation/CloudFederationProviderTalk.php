@@ -229,6 +229,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			throw new ShareNotFound();
 		}
 
+		$this->invitationMapper->delete($invite);
 		$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $invite->getUserId());
 		$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 		return [];
