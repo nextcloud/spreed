@@ -71,6 +71,11 @@ class CurrentMessageSearch extends MessageSearch {
 			return SearchResult::complete($title, []);
 		}
 
+		$filter = $query->getFilter(self::CONVERSATION_FILTER);
+		if ($filter && $filter->get() !== $currentToken) {
+			return SearchResult::complete($title, []);
+		}
+
 		try {
 			$room = $this->roomManager->getRoomForUserByToken(
 				$currentToken,

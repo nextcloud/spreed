@@ -2437,7 +2437,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" searches for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" searches for messages ?(in other rooms)? with "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $search
@@ -2445,9 +2445,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSearchesInRoom(string $user, string $search, string $identifier, $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userSearchesInRoom(string $user, string $searchProvider, string $search, string $identifier, $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$searchProvider = $searchProvider === 'in other rooms' ? 'talk-message' : 'talk-message-current';
+
+		$searchUrl = '/search/providers/' . $searchProvider . '/search?from=/call/' . self::$identifierToToken[$identifier];
+		if (str_contains($search, 'conversation:ROOM(')) {
+			if (preg_match('/conversation:ROOM\((?P<name>\w+)\)/', $search, $matches)) {
+				if (array_key_exists($matches['name'], self::$identifierToToken)) {
+					$search = trim(preg_replace('/conversation:ROOM\((\w+)\)/', '', $search));
+					$searchUrl .= '&conversation=' . self::$identifierToToken[$matches['name']];
+				}
+			}
+		}
+
+		$searchUrl .= '&term=' . $search;
+
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/search/providers/talk-message-current/search?term=' . $search . '&from=' . '/call/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', $searchUrl);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($statusCode !== '200') {

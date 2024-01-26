@@ -27,6 +27,7 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Model\Attendee;
@@ -38,6 +39,7 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\Search\FilterDefinition;
 use OCP\Search\IFilter;
 use OCP\Search\IFilteringProvider;
 use OCP\Search\IProvider;
@@ -46,6 +48,10 @@ use OCP\Search\SearchResult;
 use OCP\Search\SearchResultEntry;
 
 class MessageSearch implements IProvider, IFilteringProvider {
+
+	public const CONVERSATION_FILTER = 'conversation';
+
+	protected bool $isConversationFiltered = false;
 
 	public function __construct(
 		protected RoomManager $roomManager,
@@ -92,6 +98,9 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	}
 
 	protected function getSublineTemplate(): string {
+		if ($this->isConversationFiltered) {
+			return $this->l->t('{user}');
+		}
 		return $this->l->t('{user} in {conversation}');
 	}
 
@@ -100,12 +109,32 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	 */
 	public function search(IUser $user, ISearchQuery $query): SearchResult {
 		$title = $this->l->t('Messages');
-		if ($this->getCurrentConversationToken($query) !== '') {
+		$currentToken = $this->getCurrentConversationToken($query);
+		if ($currentToken !== '') {
 			$title = $this->l->t('Messages in other conversations');
 		}
 
-		$rooms = $this->roomManager->getRoomsForUser($user->getUID());
-		return $this->performSearch($user, $query, $title, $rooms);
+		$filter = $query->getFilter(self::CONVERSATION_FILTER);
+		if ($filter && $filter->get() !== $currentToken) {
+			$this->isConversationFiltered = true;
+			$title = $this->l->t('Messages');
+
+			try {
+				$rooms = [$this->roomManager->getRoomForUserByToken(
+					$filter->get(),
+					$user->getUID()
+				)];
+			} catch (RoomNotFoundException) {
+				return SearchResult::complete($title, []);
+			}
+		} elseif ($filter) {
+			// The filter is the "Current conversation" so the CurrentMessageSearch will handle it
+			return SearchResult::complete($title, []);
+		} else {
+			$rooms = $this->roomManager->getRoomsForUser($user->getUID());
+		}
+
+		return $this->performSearch($user, $query, $title, $rooms, $this->isConversationFiltered);
 	}
 
 	/**
@@ -279,6 +308,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			IFilter::BUILTIN_SINCE,
 			IFilter::BUILTIN_UNTIL,
 			IFilter::BUILTIN_PERSON,
+			self::CONVERSATION_FILTER,
 		];
 	}
 
@@ -287,6 +317,8 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	}
 
 	public function getCustomFilters(): array {
-		return [];
+		return [
+			new FilterDefinition(self::CONVERSATION_FILTER)
+		];
 	}
 }
