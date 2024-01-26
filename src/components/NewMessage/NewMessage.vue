@@ -87,6 +87,10 @@
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
 				</div>
+				<!-- mention editing hint -->
+				<NcNoteCard v-if="showMentionEditHint" type="warning">
+					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
+				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					:value.sync="text"
@@ -194,6 +198,7 @@ import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
+import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateOcsUrl } from '@nextcloud/router'
 
@@ -201,6 +206,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
@@ -235,6 +241,7 @@ export default {
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
+		NcNoteCard,
 		NcRichContenteditable,
 		NewMessageAbsenceInfo,
 		NewMessageAttachments,
@@ -451,6 +458,10 @@ export default {
 
 		chatEditInput() {
 			return this.chatExtrasStore.getChatEditInput(this.token)
+		},
+
+		showMentionEditHint() {
+			return this.chatEditInput?.includes('@')
 		},
 	},
 
@@ -689,6 +700,7 @@ export default {
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 			} catch {
 				this.$emit('failure')
+				showError(t('spreed', 'The message could not be edited'))
 			}
 		},
 

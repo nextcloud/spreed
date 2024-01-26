@@ -66,17 +66,13 @@
 						{{ messageDateTime }}
 					</NcActionText>
 					<!-- Edited message timestamp -->
-					<NcActionButtonGroup v-if="lastEditTimestamp">
-						<NcActionText>
-							<template #icon>
-								<ClockEditOutline :size="16" />
-							</template>
-							{{ lastEditActorDisplayName }}
-						</NcActionText>
-						<NcActionText>
-							{{ editedDateTime }}
-						</NcActionText>
-					</NcActionButtonGroup>
+					<NcActionText v-if="lastEditTimestamp"
+						:name="lastEditActorDisplayName">
+						<template #icon>
+							<ClockEditOutline :size="16" />
+						</template>
+						{{ editedDateTime }}
+					</NcActionText>
 					<NcActionSeparator />
 
 					<NcActionButton v-if="supportReminders"
@@ -297,7 +293,6 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
 import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -314,12 +309,13 @@ import { useReactionsStore } from '../../../../../stores/reactions.js'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
+const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
+const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
 
 export default {
 	name: 'MessageButtonsBar',
 
 	components: {
-		NcActionButtonGroup,
 		NcActionButton,
 		NcActionInput,
 		NcActionLink,
@@ -518,7 +514,7 @@ export default {
 		},
 
 		isEditable() {
-			if (!this.isModifiable || this.isObjectShare
+			if (!canEditMessage || !this.isModifiable || this.isObjectShare
 					|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
 				return false
 			}
@@ -531,7 +527,8 @@ export default {
 				return false
 			}
 
-			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
+			return ((moment(this.timestamp * 1000).add(6, 'h')) > moment()
+				|| canDeleteMessageUnlimited)
 				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
 				&& !this.isDeleting
 				&& (this.isMyMsg
