@@ -122,14 +122,20 @@ export default {
 			saved: false,
 			isCacheConfigured: loadState('spreed', 'has_cache_configured'),
 			isClusteredMode: loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
+			debounceUpdateServers: () => {},
 		}
 	},
 
 	beforeMount() {
+		this.debounceUpdateServers = debounce(this.updateServers, 1000)
 		const state = loadState('spreed', 'signaling_servers')
 		this.servers = state.servers
 		this.secret = state.secret
 		this.hideWarning = state.hideWarning
+	},
+
+	beforeDestroy() {
+		this.debounceUpdateServers.clear?.()
 	},
 
 	methods: {
@@ -162,10 +168,6 @@ export default {
 			this.secret = value
 			this.debounceUpdateServers()
 		},
-
-		debounceUpdateServers: debounce(function() {
-			this.updateServers()
-		}, 1000),
 
 		async updateServers() {
 			this.loading = true

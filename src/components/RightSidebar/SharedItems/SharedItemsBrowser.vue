@@ -97,6 +97,7 @@ export default {
 			firstItemsLoaded: {},
 			isRequestingMoreItems: {},
 			hasFetchedAllItems: {},
+			debounceHandleScroll: () => {},
 		}
 	},
 
@@ -117,7 +118,12 @@ export default {
 	},
 
 	mounted() {
+		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 		this.firstFetchItems(this.activeTab)
+	},
+
+	beforeDestroy() {
+		this.debounceHandleScroll.clear?.()
 	},
 
 	methods: {
@@ -141,10 +147,6 @@ export default {
 			this.isRequestingMoreItems[this.activeTab] = false
 		},
 
-		debounceHandleScroll: debounce(function() {
-			this.handleScroll()
-		}, 50),
-
 		async handleScroll() {
 			const scrollHeight = this.scroller.scrollHeight
 			const scrollTop = this.scroller.scrollTop
@@ -152,7 +154,7 @@ export default {
 			if ((scrollHeight - scrollTop - containerHeight < 300)
 				&& !this.isRequestingMoreItems?.[this.activeTab]
 				&& !this.hasFetchedAllItems?.[this.activeTab]) {
-				this.fetchItems(this.activeTab)
+				await this.fetchItems(this.activeTab)
 			}
 		},
 	},

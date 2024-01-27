@@ -56,7 +56,7 @@
 				track-by="id"
 				label="displayname"
 				no-wrap
-				@search-change="searchGroup" />
+				@search-change="debounceSearchGroup" />
 			<p class="settings-hint settings-hint--after-select">
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
@@ -137,6 +137,7 @@ export default {
 			dialOutEnabled: false,
 			currentSetup: {},
 			dialOutSupported: false,
+			debounceSearchGroup: () => {},
 		}
 	},
 
@@ -150,6 +151,7 @@ export default {
 	},
 
 	mounted() {
+		this.debounceSearchGroup = debounce(this.searchGroup, 500)
 		this.loading = true
 		this.groups = loadState('spreed', 'sip_bridge_groups').sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
@@ -158,7 +160,7 @@ export default {
 		this.dialInInfo = loadState('spreed', 'sip_bridge_dialin_info')
 		this.dialOutEnabled = loadState('spreed', 'sip_bridge_dialout')
 		this.sharedSecret = loadState('spreed', 'sip_bridge_shared_secret')
-		this.searchGroup('')
+		this.debounceSearchGroup('')
 		this.loading = false
 		this.saveCurrentSetup()
 		const signaling = loadState('spreed', 'signaling_servers')
@@ -166,8 +168,12 @@ export default {
 		this.isDialoutSupported()
 	},
 
+	beforeDestroy() {
+		this.debounceSearchGroup.clear?.()
+	},
+
 	methods: {
-		searchGroup: debounce(async function(query) {
+		async searchGroup(query) {
 			this.loadingGroups = true
 			try {
 				const response = await axios.get(generateOcsUrl('cloud/groups/details'), {
@@ -183,7 +189,7 @@ export default {
 			} finally {
 				this.loadingGroups = false
 			}
-		}, 500),
+		},
 
 		saveCurrentSetup() {
 			this.currentSetup = {

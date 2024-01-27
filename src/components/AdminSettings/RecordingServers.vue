@@ -143,6 +143,7 @@ export default {
 			loading: false,
 			saved: false,
 			recordingConsentSelected: loadState('spreed', 'recording_consent').toString(),
+			debounceUpdateServers: () => {},
 		}
 	},
 
@@ -158,10 +159,15 @@ export default {
 	},
 
 	beforeMount() {
+		this.debounceUpdateServers = debounce(this.updateServers, 1000)
 		const state = loadState('spreed', 'recording_servers')
 		this.servers = state.servers
 		this.secret = state.secret
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
+	},
+
+	beforeDestroy() {
+		this.debounceUpdateServers.clear?.()
 	},
 
 	methods: {
@@ -181,10 +187,6 @@ export default {
 			this.secret = value
 			this.debounceUpdateServers()
 		},
-
-		debounceUpdateServers: debounce(function() {
-			this.updateServers()
-		}, 1000),
 
 		async updateServers() {
 			this.loading = true

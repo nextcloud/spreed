@@ -250,6 +250,7 @@ export default {
 			callParticipantCollection,
 			isBackgroundBlurred: true,
 			showPresenterOverlay: true,
+			debounceFetchPeers: () => {},
 		}
 	},
 	computed: {
@@ -493,6 +494,7 @@ export default {
 		this.isBackgroundBlurred = BrowserStorage.getItem('background-blurred') !== 'false'
 	},
 	mounted() {
+		this.debounceFetchPeers = debounce(this.fetchPeers, 1500)
 		EventBus.$on('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
@@ -501,6 +503,7 @@ export default {
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 	beforeDestroy() {
+		this.debounceFetchPeers.clear?.()
 		EventBus.$off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
@@ -719,7 +722,7 @@ export default {
 			this.$store.dispatch('startPresentation')
 		},
 
-		debounceFetchPeers: debounce(async function() {
+		async fetchPeers() {
 			// The recording participant does not have a Nextcloud session, so
 			// it can not fetch the peers. This should not be a problem, as all
 			// the needed data for the recording should be (eventually)
@@ -743,7 +746,7 @@ export default {
 				// Just means guests have no name, so don't error …
 				console.error(exception)
 			}
-		}, 1500),
+		},
 
 		adjustSimulcastQuality() {
 			this.callParticipantModels.forEach(callParticipantModel => {
