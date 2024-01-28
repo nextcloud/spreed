@@ -27,12 +27,15 @@ const { resolve } = require('node:path')
 const ignorePatterns = [
 	'@mdi/svg',
 	'bail',
+	'ccount', // ESM dependency of remark-gfm
 	'comma-separated-tokens',
 	'decode-named-character-reference',
 	'devlop',
 	'escape-string-regexp',
 	'hast-.*',
 	'is-.*',
+	'longest-streak', // ESM dependency of remark-gfm
+	'markdown-table', // ESM dependency of remark-gfm
 	'mdast-.*',
 	'micromark',
 	'property-information',
@@ -46,6 +49,7 @@ const ignorePatterns = [
 	'vfile',
 	'vue-material-design-icons',
 	'web-namespaces',
+	'zwitch', // ESM dependency of remark-gfm
 ]
 
 module.exports = {
