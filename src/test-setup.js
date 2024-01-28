@@ -33,11 +33,12 @@ jest.mock('extendable-media-recorder-wav-encoder', () => ({
 	connect: jest.fn(),
 }))
 
+window._oc_webroot = '/nc-webroot' // used by getRootUrl() | since @nextcloud/router 2.2.1
+
 global.appName = 'spreed'
 
 global.OC = {
 	requestToken: '123',
-	webroot: '/nc-webroot',
 	coreApps: [
 		'core',
 	],
