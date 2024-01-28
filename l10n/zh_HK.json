@@ -1202,7 +1202,7 @@
     "Message deleted successfully" : "成功刪除了訊息",
     "Message could not be deleted because it is too old" : "無法刪除訊息，因為它距今太久",
     "Only normal chat messages can be deleted" : "只能刪除普通聊天訊息",
-    "An error occurred while deleting the message" : "刪除消息時發個錯誤",
+    "An error occurred while deleting the message" : "刪除訊息時發生錯誤",
     "Add a reaction to this message" : "添加對此訊息的反應",
     "Reply" : "回覆",
     "Set reminder" : "設定提醒",
