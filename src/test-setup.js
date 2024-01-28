@@ -45,11 +45,12 @@ window.IntersectionObserver = jest.fn(() => ({
 	disconnect: jest.fn(),
 }))
 
+window._oc_webroot = '/nc-webroot' // used by getRootUrl() | since @nextcloud/router 2.2.1
+
 global.appName = 'spreed'
 
 global.OC = {
 	requestToken: '123',
-	webroot: '/nc-webroot',
 	coreApps: [
 		'core',
 	],
