@@ -57,11 +57,9 @@
 				:label="t('spreed', 'Email of the user')"
 				label-visible />
 
-			<label for="hosted_hpb_language_input" class="form__label">
-				{{ t('spreed', 'Language') }}
-			</label>
 			<NcSelect v-model="hostedHPBLanguage"
 				input-id="hosted_hpb_language_input"
+				:input-label=" t('spreed', 'Language')"
 				class="form__select"
 				name="hosted_hpb_language"
 				:disabled="loading"
@@ -73,11 +71,9 @@
 				track-by="code"
 				no-wrap />
 
-			<label for="hosted_hpb_country_input" class="form__label">
-				{{ t('spreed', 'Country') }}
-			</label>
 			<NcSelect v-model="hostedHPBCountry"
 				input-id="hosted_hpb_country_input"
+				:input-label=" t('spreed', 'Country')"
 				class="form__select"
 				name="hosted_hpb_country"
 				:disabled="loading"
@@ -281,12 +277,7 @@ export default {
 		}
 
 		&__select {
-			width: 300px;
-		}
-
-		&__label {
-			display: block;
-			padding: 4px 0;
+			min-width: 300px !important;
 		}
 	}
 }

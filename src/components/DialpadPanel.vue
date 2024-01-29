@@ -46,6 +46,7 @@
 				:options="options"
 				:append-to-body="false"
 				:clearable="false"
+				:aria-label-combobox="t('spreed', 'Select a region')"
 				:placeholder="t('spreed', 'Select a region')"
 				label="dial_and_name"
 				@option:selected="dialCode">

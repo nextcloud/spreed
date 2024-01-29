@@ -26,13 +26,10 @@
 
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
 
-		<label for="default_group_notification_input"
-			class="default-group-notification__label">
-			{{ t('spreed', 'Default group notification') }}
-		</label>
 		<NcSelect v-model="defaultGroupNotification"
+			class="default-group-notification"
 			input-id="default_group_notification_input"
-			class="default-group-notification__select"
+			:input-label="t('spreed', 'Default group notification')"
 			name="default_group_notification"
 			:options="defaultGroupNotificationOptions"
 			:clearable="false"
@@ -158,13 +155,6 @@ h3 {
 }
 
 .default-group-notification {
-	&__select {
-		width: 300px;
-	}
-
-	&__label {
-		display: block;
-		padding: 4px 0;
-	}
+	min-width: 300px !important;
 }
 </style>

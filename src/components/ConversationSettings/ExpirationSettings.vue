@@ -29,10 +29,8 @@
 		</div>
 
 		<template v-if="canModerate">
-			<label for="moderation_settings_message_expiration" class="app-settings-section__label">
-				{{ t('spreed', 'Set message expiration') }}
-			</label>
 			<NcSelect id="moderation_settings_message_expiration"
+				:input-label="t('spreed', 'Set message expiration')"
 				:value="selectedOption"
 				:options="expirationOptions"
 				label="label"
@@ -151,7 +149,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-settings-section__label {
-  display: block;
-}
 </style>

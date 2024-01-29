@@ -2,11 +2,13 @@
 	<div>
 		<NcSelect :value="currentRoom"
 			:options="roomOptions"
+			:aria-label-combobox="t('spreed', 'Select a conversation')"
 			label="displayName"
 			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': currentMode.id, 't': newValue.token }))" />
 
 		<NcSelect :value="currentMode"
 			:options="modeOptions"
+			:aria-label-combobox="t('spreed', 'Select a mode')"
 			label="text"
 			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': newValue.id, 't': currentRoom.token }))" />
 	</div>
