@@ -33,13 +33,10 @@
 			{{ t('spreed', 'Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}
 		</p>
 
-		<label for="allow_groups_use_talk"
-			class="form__label">
-			{{ t('spreed', 'Limit using Talk') }}
-		</label>
 		<div class="form">
 			<NcSelect v-model="allowedGroups"
 				input-id="allow_groups_use_talk"
+				:input-label="t('spreed', 'Limit using Talk')"
 				name="allow_groups_use_talk"
 				class="form__select"
 				:options="groups"
@@ -62,14 +59,10 @@
 				{{ saveLabelAllowedGroups }}
 			</NcButton>
 		</div>
-
-		<label for="allow_groups_start_conversation"
-			class="form__label">
-			{{ t('spreed', 'Limit creating a public and group conversation') }}
-		</label>
 		<div class="form">
 			<NcSelect v-model="canStartConversations"
 				input-id="allow_groups_start_conversation"
+				:input-label="t('spreed', 'Limit creating a public and group conversation')"
 				name="allow_groups_start_conversation"
 				class="form__select"
 				:options="groups"
@@ -93,13 +86,10 @@
 			</NcButton>
 		</div>
 
-		<label for="start_calls"
-			class="form__label">
-			{{ t('spreed', 'Limit starting a call') }}
-		</label>
 		<div class="form">
 			<NcSelect v-model="startCalls"
 				input-id="start_calls"
+				:input-label="t('spreed', 'Limit starting a call')"
 				name="allow_groups_start_calls"
 				class="form__select"
 				:options="startCallOptions"
@@ -263,17 +253,12 @@ export default {
 <style lang="scss" scoped>
 .form {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	gap: 10px;
+	padding-top: 5px;
 
 	&__select {
-		width: 300px;
-	}
-
-	&__label {
-		display: block;
-		margin-top: 10px;
-		padding: 4px 0;
+		min-width: 300px !important;
 	}
 }
 </style>

@@ -38,6 +38,7 @@
 					<Plus class="icon" :size="20" />
 					<NcSelect v-model="selectedType"
 						label="displayName"
+						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="formatedTypes"
 						@input="clickAddPart">
