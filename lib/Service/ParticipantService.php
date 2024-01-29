@@ -75,6 +75,7 @@ use OCP\Comments\IComment;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -102,6 +103,7 @@ class ParticipantService {
 		protected IDBConnection $connection,
 		private IEventDispatcher $dispatcher,
 		private IUserManager $userManager,
+		private ICloudIdManager $cloudIdManager,
 		private IGroupManager $groupManager,
 		private MembershipService $membershipService,
 		private BackendNotifier $backendNotifier,
@@ -822,6 +824,17 @@ class ParticipantService {
 	 * @psalm-param AAttendeeRemovedEvent::REASON_* $reason
 	 */
 	public function removeAttendee(Room $room, Participant $participant, string $reason, bool $attendeeEventIsTriggeredAlready = false): void {
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$attendee = $participant->getAttendee();
+			$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
+
+			$this->backendNotifier->sendRemoteUnShare(
+				$cloudId->getRemote(),
+				$attendee->getId(),
+				$attendee->getAccessToken(),
+			);
+		}
+
 		$sessions = $this->sessionService->getAllSessionsForAttendee($participant->getAttendee());
 
 		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {

@@ -132,7 +132,12 @@ class BackendNotifier {
 	 *
 	 * @return bool success
 	 */
-	public function sendShareAccepted(string $remoteServerUrl, int $remoteAttendeeId, string $accessToken): bool {
+	public function sendShareAccepted(
+		string $remoteServerUrl,
+		int $remoteAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+	): bool {
 		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -160,7 +165,12 @@ class BackendNotifier {
 	 * The invited participant declined joining the federated room
 	 * Sent from Remote participant server to Host server
 	 */
-	public function sendShareDeclined(string $remoteServerUrl, int $remoteAttendeeId, string $accessToken): bool {
+	public function sendShareDeclined(
+		string $remoteServerUrl,
+		int $remoteAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+	): bool {
 		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -185,7 +195,12 @@ class BackendNotifier {
 		return true;
 	}
 
-	public function sendRemoteUnShare(string $remoteServerUrl, int $localAttendeeId, string $accessToken): void {
+	public function sendRemoteUnShare(
+		string $remoteServerUrl,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+	): void {
 		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();

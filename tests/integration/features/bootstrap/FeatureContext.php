@@ -505,7 +505,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$invites = $this->getDataFromResponse($this->response);
 
 		if ($formData === null) {
-			Assert::assertEmpty($invites);
+			Assert::assertEmpty($invites, json_encode($invites, JSON_PRETTY_PRINT));
 			return;
 		}
 
@@ -1370,7 +1370,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" removes (user|group|email) "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" removes (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $actorType
@@ -1383,6 +1383,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($actorId === 'stranger') {
 			$attendeeId = 123456789;
 		} else {
+			if ($actorType === 'remote') {
+				$actorId .= '@' . rtrim($this->baseRemoteUrl, '/');
+				$actorType = 'federated_user';
+			}
+
 			$attendeeId = $this->getAttendeeId($actorType . 's', $actorId, $identifier, $statusCode === 200 ? $user : null);
 		}
 
