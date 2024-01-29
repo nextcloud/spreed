@@ -405,6 +405,9 @@ class Notifier implements INotifier {
 				throw new AlreadyProcessedException();
 			}
 			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (DoesNotExistException) {
+			// Invitation does not exist
+			throw new AlreadyProcessedException();
 		} catch (RoomNotFoundException) {
 			// Room does not exist
 			throw new AlreadyProcessedException();

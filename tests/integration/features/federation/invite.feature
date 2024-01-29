@@ -133,6 +133,7 @@ Feature: federation/invite
     When user "participant1" removes remote "participant2" from room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
     Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" has the following notifications
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId      | participantType |
       | users           | participant1 | 1               |
