@@ -20,6 +20,105 @@
             }
         },
         "schemas": {
+            "ChatMessage": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "expirationTimestamp",
+                    "id",
+                    "isReplyable",
+                    "markdown",
+                    "message",
+                    "messageParameters",
+                    "messageType",
+                    "reactions",
+                    "referenceId",
+                    "systemMessage",
+                    "timestamp",
+                    "token"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string"
+                    },
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "deleted": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "expirationTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "isReplyable": {
+                        "type": "boolean"
+                    },
+                    "markdown": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "messageParameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "messageType": {
+                        "type": "string"
+                    },
+                    "reactions": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    "referenceId": {
+                        "type": "string"
+                    },
+                    "systemMessage": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "lastEditActorDisplayName": {
+                        "type": "string"
+                    },
+                    "lastEditActorId": {
+                        "type": "string"
+                    },
+                    "lastEditActorType": {
+                        "type": "string"
+                    },
+                    "lastEditTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
             "FederationInvite": {
                 "type": "object",
                 "required": [
@@ -260,6 +359,266 @@
                         "maxLength": 0
                     }
                 ]
+            },
+            "Room": {
+                "type": "object",
+                "required": [
+                    "actorId",
+                    "actorType",
+                    "attendeeId",
+                    "attendeePermissions",
+                    "attendeePin",
+                    "avatarVersion",
+                    "breakoutRoomMode",
+                    "breakoutRoomStatus",
+                    "callFlag",
+                    "callPermissions",
+                    "callRecording",
+                    "callStartTime",
+                    "canDeleteConversation",
+                    "canEnableSIP",
+                    "canLeaveConversation",
+                    "canStartCall",
+                    "defaultPermissions",
+                    "description",
+                    "displayName",
+                    "hasCall",
+                    "hasPassword",
+                    "id",
+                    "isCustomAvatar",
+                    "isFavorite",
+                    "lastActivity",
+                    "lastCommonReadMessage",
+                    "lastMessage",
+                    "lastPing",
+                    "lastReadMessage",
+                    "listable",
+                    "lobbyState",
+                    "lobbyTimer",
+                    "messageExpiration",
+                    "name",
+                    "notificationCalls",
+                    "notificationLevel",
+                    "objectId",
+                    "objectType",
+                    "participantFlags",
+                    "participantType",
+                    "permissions",
+                    "readOnly",
+                    "recordingConsent",
+                    "sessionId",
+                    "sipEnabled",
+                    "token",
+                    "type",
+                    "unreadMention",
+                    "unreadMentionDirect",
+                    "unreadMessages"
+                ],
+                "properties": {
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "attendeeId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "attendeePermissions": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "attendeePin": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "avatarVersion": {
+                        "type": "string"
+                    },
+                    "breakoutRoomMode": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "breakoutRoomStatus": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "callFlag": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "callPermissions": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "callRecording": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "callStartTime": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "canDeleteConversation": {
+                        "type": "boolean"
+                    },
+                    "canEnableSIP": {
+                        "type": "boolean"
+                    },
+                    "canLeaveConversation": {
+                        "type": "boolean"
+                    },
+                    "canStartCall": {
+                        "type": "boolean"
+                    },
+                    "defaultPermissions": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "hasCall": {
+                        "type": "boolean"
+                    },
+                    "hasPassword": {
+                        "type": "boolean"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "isCustomAvatar": {
+                        "type": "boolean"
+                    },
+                    "isFavorite": {
+                        "type": "boolean"
+                    },
+                    "lastActivity": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "lastCommonReadMessage": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "lastMessage": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ChatMessage"
+                            },
+                            {
+                                "type": "array",
+                                "maxLength": 0
+                            }
+                        ]
+                    },
+                    "lastPing": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "lastReadMessage": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "listable": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "lobbyState": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "lobbyTimer": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "messageExpiration": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "notificationCalls": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "notificationLevel": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "objectId": {
+                        "type": "string"
+                    },
+                    "objectType": {
+                        "type": "string"
+                    },
+                    "participantFlags": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "participantType": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "permissions": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "readOnly": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "recordingConsent": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "sessionId": {
+                        "type": "string"
+                    },
+                    "sipEnabled": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "statusClearAt": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "statusIcon": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "statusMessage": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "unreadMention": {
+                        "type": "boolean"
+                    },
+                    "unreadMentionDirect": {
+                        "type": "boolean"
+                    },
+                    "unreadMessages": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
             }
         }
     },
@@ -336,7 +695,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }

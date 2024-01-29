@@ -445,12 +445,13 @@ class ParticipantService {
 	 * @param Room $room
 	 * @param array $participants
 	 * @param IUser|null $addedBy User that is attempting to add these users (must be set for federated users to be added)
+	 * @return list<Attendee>
 	 * @throws CannotReachRemoteException thrown when sending the federation request didn't work
 	 * @throws \Exception thrown if $addedBy is not set when adding a federated user
 	 */
-	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): void {
+	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): array {
 		if (empty($participants)) {
-			return;
+			return [];
 		}
 
 		$lastMessage = 0;
@@ -524,6 +525,8 @@ class ParticipantService {
 		if ($lastMessage instanceof IComment) {
 			$this->updateRoomLastMessage($room, $lastMessage);
 		}
+
+		return $attendees;
 	}
 
 	protected function updateRoomLastMessage(Room $room, IComment $message): void {
