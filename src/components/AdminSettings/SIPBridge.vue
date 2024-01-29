@@ -38,11 +38,9 @@
 				{{ t('spreed', 'Signaling server needs to be updated to supported SIP Dial-out feature.') }}
 			</NcNoteCard>
 
-			<label for="sip-group-enabled" class="form__label">
-				{{ t('spreed', 'Restrict SIP configuration') }}
-			</label>
 			<NcSelect v-model="sipGroups"
 				input-id="sip-group-enabled"
+				:input-label="t('spreed', 'Restrict SIP configuration')"
 				class="form form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
@@ -254,11 +252,6 @@ export default {
 
 		&__select {
 			margin-bottom: 12px;
-		}
-
-		&__label {
-			display: block;
-			padding: 4px 0;
 		}
 	}
 }

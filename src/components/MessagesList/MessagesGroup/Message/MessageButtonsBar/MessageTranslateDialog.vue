@@ -28,7 +28,7 @@
 				<NcSelect v-model="selectedFrom"
 					class="translate-dialog__select"
 					input-id="from"
-					:aria-label="t('spreed', 'Source language to translate from')"
+					:aria-label-combobox="t('spreed', 'Source language to translate from')"
 					:placeholder="t('spreed', 'Translate from')"
 					:options="optionsFrom"
 					no-wrap />
@@ -38,7 +38,7 @@
 				<NcSelect v-model="selectedTo"
 					class="translate-dialog__select"
 					input-id="to"
-					:aria-label="t('spreed', 'Target language to translate into')"
+					:aria-label-combobox="t('spreed', 'Target language to translate into')"
 					:placeholder="t('spreed', 'Translate to')"
 					:options="optionsTo"
 					no-wrap />

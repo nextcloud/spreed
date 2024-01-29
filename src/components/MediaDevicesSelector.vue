@@ -33,6 +33,7 @@
 			:input-id="deviceSelectorId"
 			:options="deviceOptions"
 			label="label"
+			:aria-label-combobox="t('spreed', 'Select a device')"
 			:clearable="false"
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
