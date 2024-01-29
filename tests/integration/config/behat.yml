@@ -5,6 +5,15 @@ default:
     pretty:
       output_styles:
         comment: [ 'bright-blue' ]
+  extensions:
+    DVDoug\Behat\CodeCoverage\Extension:
+      filter:
+        include:
+          directories:
+            'src': '../../../lib'
+      reports:
+        clover:
+          target: '../../../clover.behat.xml'
   autoload:
     '': '%paths.base%/../features/bootstrap'
   suites:

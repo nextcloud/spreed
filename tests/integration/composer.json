@@ -7,6 +7,7 @@
 	},
 	"require-dev": {
 		"behat/behat": "^3.12.0",
+		"dvdoug/behat-code-coverage": "^5.3",
 		"guzzlehttp/guzzle": "^7.5.0",
 		"phpunit/phpunit": "^9.5.28"
 	}

@@ -118,7 +118,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
           extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
-          coverage: none
+          coverage: xdebug
           ini-file: development
           # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
           ini-values: apc.enable_cli=on, disable_functions=
@@ -150,6 +150,14 @@ jobs:
       - name: Run integration
         working-directory: apps/${{ env.APP_NAME }}/tests/integration
         run: bash run.sh features/${{ matrix.test-suite }}
+
+      - name: Upload Unit test code coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: apps/${{ env.APP_NAME }}/clover.behat.xml
+          flags: behat-${{ matrix.test-suite }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Print logs
         if: always()
