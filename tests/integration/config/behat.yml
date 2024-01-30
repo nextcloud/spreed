@@ -10,10 +10,21 @@ default:
       filter:
         include:
           directories:
-            'src': '../../../lib'
+            '../../lib':
+            'features/bootstrap':
       reports:
         clover:
           target: '../../../clover.behat.xml'
+        html:
+          target: 'coverage'
+          lowUpperBound: 50
+          highLowerBound: 90
+          colors:
+            successLow: '#dff0d8'
+            successMedium: '#c3e3b5'
+            successHigh: '#99cb84'
+            warning: '#fcf8e3'
+            danger: '#f2dede'
   autoload:
     '': '%paths.base%/../features/bootstrap'
   suites:
