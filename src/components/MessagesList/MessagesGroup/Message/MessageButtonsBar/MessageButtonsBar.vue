@@ -67,7 +67,8 @@
 					</NcActionText>
 					<!-- Edited message timestamp -->
 					<NcActionText v-if="lastEditTimestamp"
-						:name="lastEditActorDisplayName">
+						class="edit-timestamp"
+						:name="lastEditActorLabel">
 						<template #icon>
 							<ClockEditOutline :size="16" />
 						</template>
@@ -306,6 +307,7 @@ import { getMessageReminder, removeMessageReminder, setMessageReminder } from '.
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { parseMentions } from '../../../../../utils/textParse.js'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
@@ -527,8 +529,7 @@ export default {
 				return false
 			}
 
-			return ((moment(this.timestamp * 1000).add(6, 'h')) > moment()
-				|| canDeleteMessageUnlimited)
+			return (canDeleteMessageUnlimited || (moment(this.timestamp * 1000).add(6, 'h')) > moment())
 				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
 				&& !this.isDeleting
 				&& (this.isMyMsg
@@ -672,6 +673,12 @@ export default {
 				apiVersion: 'v3',
 			}
 		},
+
+		lastEditActorLabel() {
+			return t('spreed', 'Edited by {actor}', {
+				actor: this.lastEditActorDisplayName,
+			})
+		},
 	},
 
 	watch: {
@@ -694,15 +701,7 @@ export default {
 		},
 
 		async handleCopyMessageText() {
-			let parsedText = this.message
-
-			for (const [key, value] of Object.entries(this.messageParameters)) {
-				if (value?.type === 'call') {
-					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), '@all')
-				} else if (value?.type === 'user') {
-					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), `@${value.id}`)
-				}
-			}
+			const parsedText = parseMentions(this.message, this.messageParameters)
 
 			try {
 				await navigator.clipboard.writeText(parsedText)
@@ -851,6 +850,9 @@ export default {
 		},
 
 		editMessage() {
+			if (!canEditMessage) {
+				return
+			}
 			this.$emit('edit')
 		},
 	},
@@ -866,5 +868,9 @@ export default {
 		margin-left: auto;
 		background: no-repeat center var(--icon-triangle-e-dark);
 	}
+}
+
+.edit-timestamp :deep(.action-text__longtext-wrapper) {
+	padding: 0;
 }
 </style>

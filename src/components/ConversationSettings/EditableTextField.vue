@@ -85,6 +85,8 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import { parseSpecialSymbols } from '../../utils/textParse.js'
+
 export default {
 	name: 'EditableTextField',
 	components: {
@@ -232,12 +234,9 @@ export default {
 			if (!this.canSubmit) {
 				return
 			}
-			// Remove leading/trailing whitespaces.
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
-			const temp = document.createElement('textarea')
-			temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
-			this.text = temp.value.replace(/\r\n|\n|\r/gm, '\n').replace(/&amp;/gmi, '&')
-				.replace(/&lt;/gmi, '<').replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§').trim()
+
+			// Parse special symbols
+			this.text = parseSpecialSymbols(this.text)
 
 			// Submit text
 			this.$emit('submit-text', this.text)

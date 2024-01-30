@@ -25,6 +25,7 @@ import { defineStore } from 'pinia'
 import Vue from 'vue'
 
 import { getUserAbsence } from '../services/participantsService.js'
+import { parseSpecialSymbols, parseMentions } from '../utils/textParse.js'
 
 /**
  * @typedef {string} Token
@@ -136,12 +137,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} payload.text The string to store
 		 */
 		setChatInput({ token, text }) {
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
-			const temp = document.createElement('textarea')
-			temp.innerHTML = text.replace(/&/gmi, '&amp;')
-			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
-
+			const parsedText = parseSpecialSymbols(text)
 			Vue.set(this.chatInput, token, parsedText)
 		},
 
@@ -156,21 +152,9 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		setChatEditInput({ token, text, parameters = {} }) {
 			let parsedText = text
 
-			// Handle mentions
-			if (parameters.length !== 0) {
-				for (const [key, value] of Object.entries(parameters)) {
-					if (value?.type === 'call') {
-						parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), '@all')
-					} else if (value?.type === 'user') {
-						parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), `@${value.id}`)
-					}
-				}
-			}
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
-			const temp = document.createElement('textarea')
-			temp.innerHTML = parsedText.replace(/&/gmi, '&amp;')
-			parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+			// Handle mentions and special symbols
+			parsedText = parseMentions(parsedText, parameters)
+			parsedText = parseSpecialSymbols(parsedText)
 
 			Vue.set(this.chatEditInput, token, parsedText)
 		},

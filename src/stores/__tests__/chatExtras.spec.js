@@ -161,4 +161,39 @@ describe('chatExtrasStore', () => {
 			expect(chatExtrasStore.chatInput['token-1']).not.toBeDefined()
 		})
 	})
+
+	describe('text parsing', () => {
+		it('should render mentions properly when editing message', () => {
+			// Arrange
+			const parameters = {
+				'mention-call1': { type: 'call', name: 'Conversation101' },
+				'mention-user1': { type: 'user', name: 'Alice Joel', id: 'alice' },
+			}
+			// Act
+			chatExtrasStore.setChatEditInput({
+				token: 'token-1',
+				text: 'Hello {mention-call1} and {mention-user1}',
+				parameters
+			})
+			// Assert
+			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('Hello @all and @alice')
+		})
+
+		it('should store chat input without escaping special symbols', () => {
+			// Arrange
+			const message = 'These are special symbols &amp; &lt; &gt; &sect;'
+			// Act
+			chatExtrasStore.setChatInput({ token: 'token-1', text: message })
+			// Assert
+			expect(chatExtrasStore.getChatInput('token-1')).toBe('These are special symbols & < > §')
+		})
+		it('should remove leading/trailing whitespaces', () => {
+			// Arrange
+			const message = '   Many whitespaces   '
+			// Act
+			chatExtrasStore.setChatInput({ token: 'token-1', text: message })
+			// Assert
+			expect(chatExtrasStore.getChatInput('token-1')).toBe('Many whitespaces')
+		})
+	})
 })

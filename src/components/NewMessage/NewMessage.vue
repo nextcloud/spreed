@@ -226,6 +226,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
+import { parseSpecialSymbols } from '../../utils/textParse.js'
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
@@ -461,7 +462,8 @@ export default {
 		},
 
 		showMentionEditHint() {
-			return this.chatEditInput?.includes('@')
+			const mentionPattern = /(^|\s)@/
+			return mentionPattern.test(this.chatEditInput)
 		},
 	},
 
@@ -614,12 +616,8 @@ export default {
 				}
 			}
 
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 			if (this.hasText) {
-				const temp = document.createElement('textarea')
-				temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
-				this.text = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-					.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+				this.text = parseSpecialSymbols(this.text)
 			}
 
 			if (this.upload) {
