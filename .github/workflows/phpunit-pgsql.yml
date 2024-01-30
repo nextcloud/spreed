@@ -88,7 +88,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
-          coverage: xdebug
+          coverage: none
           ini-file: development
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,15 +124,7 @@ jobs:
         # Only run if phpunit config file exists
         if: steps.check_phpunit.outcome == 'success'
         working-directory: apps/${{ env.APP_NAME }}
-        run: composer run test:unit --  --coverage-clover ./clover.phpunit.xml
-
-      - name: Upload Unit test code coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: apps/${{ env.APP_NAME }}/clover.phpunit.xml
-          flags: phpunit
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: composer run test:unit
 
       - name: Check PHPUnit integration script is defined
         id: check_integration
