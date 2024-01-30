@@ -52,46 +52,42 @@
 					<div v-else-if="showLocalScreen || showRemoteScreen || showSelectedScreen" id="screens">
 						<!-- local screen -->
 						<Screen v-if="showLocalScreen"
+							key="screen-local"
 							:token="token"
 							:local-media-model="localMediaModel"
 							:shared-data="localSharedData"
-							:is-big="true" />
+							is-big />
 						<!-- remote screen -->
 						<template v-else>
-							<template v-for="callParticipantModel in reversedCallParticipantModels">
-								<Screen v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
-									:key="'screen-' + callParticipantModel.attributes.peerId"
+							<Screen v-if="shownRemoteScreenCallParticipantModel"
+								:key="`screen-${shownRemoteScreenPeerId}`"
+								:token="token"
+								:call-participant-model="shownRemoteScreenCallParticipantModel"
+								:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+								is-big />
+							<!-- presenter overlay -->
+							<TransitionWrapper v-if="shouldShowPresenterOverlay"
+								name="slide-down">
+								<VideoVue class="presenter-overlay__video"
 									:token="token"
-									:call-participant-model="callParticipantModel"
+									:model="shownRemoteScreenCallParticipantModel"
 									:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-									:is-big="true" />
-								<!-- presenter overlay -->
-								<TransitionWrapper v-if="shouldShowPresenterOverlay(callParticipantModel)"
-									:key="'presenter-overlay-video' + callParticipantModel.attributes.peerId"
-									name="slide-down">
-									<VideoVue :key="'video-overlay-' + callParticipantModel.attributes.peerId"
-										class="presenter-overlay__video"
-										:token="token"
-										:model="callParticipantModel"
-										:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-										is-presenter-overlay
-										un-selectable
-										hide-bottom-bar
-										@click-video="toggleShowPresenterOverlay" />
-								</TransitionWrapper>
-								<!-- presenter button when presenter overlay is collapsed -->
-								<NcButton v-else-if="isPresenterCollapsed(callParticipantModel)"
-									:key="'presenter-overlay-button' + callParticipantModel.attributes.peerId"
-									:aria-label="t('spreed', 'Show presenter')"
-									:title="t('spreed', 'Show presenter')"
-									class="presenter-overlay--collapse"
-									type="tertiary-no-background"
-									@click="toggleShowPresenterOverlay">
-									<template #icon>
-										<AccountBox fill-color="#ffffff" :size="20" />
-									</template>
-								</NcButton>
-							</template>
+									is-presenter-overlay
+									un-selectable
+									hide-bottom-bar
+									@click-video="toggleShowPresenterOverlay" />
+							</TransitionWrapper>
+							<!-- presenter button when presenter overlay is collapsed -->
+							<NcButton v-else-if="isPresenterCollapsed"
+								:aria-label="t('spreed', 'Show presenter')"
+								:title="t('spreed', 'Show presenter')"
+								class="presenter-overlay--collapse"
+								type="tertiary-no-background"
+								@click="toggleShowPresenterOverlay">
+								<template #icon>
+									<AccountBox fill-color="#ffffff" :size="20" />
+								</template>
+							</NcButton>
 						</template>
 					</div>
 					<!-- Local Video Override mode (following own video) -->
@@ -260,20 +256,8 @@ export default {
 			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
 		},
 
-		reversedCallParticipantModels() {
-			return this.callParticipantModels.slice().reverse()
-		},
-
 		callParticipantModelsWithScreen() {
 			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
-		},
-
-		callParticipantModelsWithVideo() {
-			return this.callParticipantModels.filter(callParticipantModel => {
-				return callParticipantModel.attributes.videoAvailable
-					&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
-					&& (typeof callParticipantModel.attributes.stream === 'object')
-			})
 		},
 
 		localScreen() {
@@ -357,11 +341,7 @@ export default {
 		},
 
 		shownRemoteScreenPeerId() {
-			if (!this.screenSharingActive) {
-				return null
-			}
-
-			if (!this.hasRemoteScreen) {
+			if (!this.screenSharingActive || !this.hasRemoteScreen) {
 				return null
 			}
 
@@ -374,6 +354,24 @@ export default {
 			}
 
 			return null
+		},
+
+		shownRemoteScreenCallParticipantModel() {
+			if (!this.shownRemoteScreenPeerId) {
+				return null
+			}
+			return this.callParticipantModels.find(callParticipantModel => {
+				return callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
+			})
+		},
+
+		isPresenterCollapsed() {
+			return !this.showPresenterOverlay && this.shownRemoteScreenCallParticipantModel.attributes.videoAvailable
+		},
+
+		shouldShowPresenterOverlay() {
+			return this.showPresenterOverlay && this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+
 		},
 
 		presenterVideoBlockerEnabled() {
@@ -641,7 +639,7 @@ export default {
 
 			if (!this.screenSharingActive && this.speakers.length) {
 				this.sharedDatas[this.speakers[0].id].promoted = true
-			} else if (this.shownRemoteScreenPeerId) {
+			} else if (this.shownRemoteScreenPeerId && this.sharedDatas[this.shownRemoteScreenPeerId]) {
 				this.sharedDatas[this.shownRemoteScreenPeerId].promoted = true
 			}
 
@@ -744,18 +742,10 @@ export default {
 			this.isBackgroundBlurred = value
 		},
 
-		isPresenterCollapsed(callParticipantModel) {
-			return (callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
-				&& !this.showPresenterOverlay
-				&& callParticipantModel.attributes.videoAvailable)
-
-		},
-
-		shouldShowPresenterOverlay(callParticipantModel) {
-			return callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
-				&& this.showPresenterOverlay
-				&& this.callParticipantModelsWithVideo.includes(callParticipantModel)
-
+		isModelWithVideo(callParticipantModel) {
+			return callParticipantModel.attributes.videoAvailable
+				&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
+				&& (typeof callParticipantModel.attributes.stream === 'object')
 		},
 
 		toggleShowPresenterOverlay() {

@@ -96,6 +96,10 @@ export default {
 		},
 
 		remoteSessionHash() {
+			if (!this.callParticipantModel) {
+				return null
+			}
+
 			return Hex.stringify(SHA1(this.callParticipantModel.attributes.peerId))
 		},
 
