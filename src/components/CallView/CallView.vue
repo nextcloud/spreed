@@ -33,94 +33,85 @@
 			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
 
 			<div id="videos">
-				<template v-if="!isGrid">
+				<div v-if="!isGrid" class="video__promoted" :class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
-					<div v-if="showSelectedVideo && selectedCallParticipantModel"
-						class="video__promoted selected-video"
-						:class="{'full-page': isOneToOne}">
-						<VideoVue :key="selectedVideoPeerId"
-							:token="token"
-							:model="selectedCallParticipantModel"
-							:shared-data="sharedDatas[selectedVideoPeerId]"
-							:show-talking-highlight="false"
-							:is-one-to-one="isOneToOne"
-							is-grid
-							is-big
-							fit-video />
-					</div>
-					<!-- Screens -->
-					<div v-else-if="showLocalScreen || showRemoteScreen || showSelectedScreen" id="screens">
-						<!-- local screen -->
-						<Screen v-if="showLocalScreen"
-							key="screen-local"
-							:token="token"
-							:local-media-model="localMediaModel"
-							:shared-data="localSharedData"
-							is-big />
-						<!-- remote screen -->
-						<template v-else>
-							<Screen v-if="shownRemoteScreenCallParticipantModel"
-								:key="`screen-${shownRemoteScreenPeerId}`"
-								:token="token"
-								:call-participant-model="shownRemoteScreenCallParticipantModel"
-								:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-								is-big />
-							<!-- presenter overlay -->
-							<TransitionWrapper v-if="shouldShowPresenterOverlay"
-								name="slide-down">
-								<VideoVue class="presenter-overlay__video"
-									:token="token"
-									:model="shownRemoteScreenCallParticipantModel"
-									:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-									is-presenter-overlay
-									un-selectable
-									hide-bottom-bar
-									@click-video="toggleShowPresenterOverlay" />
-							</TransitionWrapper>
-							<!-- presenter button when presenter overlay is collapsed -->
-							<NcButton v-else-if="isPresenterCollapsed"
-								:aria-label="t('spreed', 'Show presenter')"
-								:title="t('spreed', 'Show presenter')"
-								class="presenter-overlay--collapse"
-								type="tertiary-no-background"
-								@click="toggleShowPresenterOverlay">
-								<template #icon>
-									<AccountBox fill-color="#ffffff" :size="20" />
-								</template>
-							</NcButton>
-						</template>
-					</div>
+					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
+						:key="selectedVideoPeerId"
+						:token="token"
+						:model="selectedCallParticipantModel"
+						:shared-data="sharedDatas[selectedVideoPeerId]"
+						:show-talking-highlight="false"
+						:is-one-to-one="isOneToOne"
+						is-grid
+						is-big
+						fit-video />
+
 					<!-- Local Video Override mode (following own video) -->
-					<div v-else-if="showLocalVideo"
-						class="video__promoted selected-video--local"
-						:class="{'full-page': isOneToOne}">
-						<LocalVideo ref="localVideo"
-							:fit-video="true"
-							:is-stripe="false"
-							:show-controls="false"
-							:is-big="true"
+					<LocalVideo v-else-if="showLocalVideo"
+						ref="localVideo"
+						:token="token"
+						:local-media-model="localMediaModel"
+						:local-call-participant-model="localCallParticipantModel"
+						:is-stripe="false"
+						:show-controls="false"
+						:is-sidebar="false"
+						is-big
+						fit-video />
+
+					<!-- Screens -->
+					<!-- Local screen -->
+					<Screen v-else-if="showLocalScreen"
+						key="screen-local"
+						:token="token"
+						:local-media-model="localMediaModel"
+						:shared-data="localSharedData"
+						is-big />
+					<!-- Remote or selected screen -->
+					<template v-else-if="showRemoteScreen || showSelectedScreen">
+						<Screen v-if="shownRemoteScreenCallParticipantModel"
+							:key="`screen-${shownRemoteScreenPeerId}`"
 							:token="token"
-							:local-media-model="localMediaModel"
-							:local-call-participant-model="localCallParticipantModel"
-							:is-sidebar="false" />
-					</div>
+							:call-participant-model="shownRemoteScreenCallParticipantModel"
+							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+							is-big />
+						<!-- presenter overlay -->
+						<TransitionWrapper v-if="shouldShowPresenterOverlay"
+							name="slide-down">
+							<VideoVue class="presenter-overlay__video"
+								:token="token"
+								:model="shownRemoteScreenCallParticipantModel"
+								:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+								is-presenter-overlay
+								un-selectable
+								hide-bottom-bar
+								@click-video="toggleShowPresenterOverlay" />
+						</TransitionWrapper>
+						<!-- presenter button when presenter overlay is collapsed -->
+						<NcButton v-else-if="isPresenterCollapsed"
+							:aria-label="t('spreed', 'Show presenter')"
+							:title="t('spreed', 'Show presenter')"
+							class="presenter-overlay--collapse"
+							type="tertiary-no-background"
+							@click="toggleShowPresenterOverlay">
+							<template #icon>
+								<AccountBox fill-color="#ffffff" :size="20" />
+							</template>
+						</NcButton>
+					</template>
+
 					<!-- Promoted "autopilot" mode -->
-					<div v-else
-						class="video__promoted autopilot"
-						:class="{'full-page': isOneToOne}">
-						<VideoVue v-if="promotedParticipantModel"
-							:key="promotedParticipantModel.attributes.peerId"
-							:token="token"
-							:model="promotedParticipantModel"
-							:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
-							:show-talking-highlight="false"
-							:is-grid="true"
-							:fit-video="true"
-							:is-big="true"
-							:is-one-to-one="isOneToOne"
-							:is-sidebar="isSidebar" />
-					</div>
-				</template>
+					<VideoVue v-else-if="promotedParticipantModel"
+						:key="promotedParticipantModel.attributes.peerId"
+						:token="token"
+						:model="promotedParticipantModel"
+						:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
+						:show-talking-highlight="false"
+						is-grid
+						fit-video
+						is-big
+						:is-one-to-one="isOneToOne"
+						:is-sidebar="isSidebar" />
+				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
@@ -299,6 +290,10 @@ export default {
 
 		isOneToOne() {
 			return this.callParticipantModels.length === 1
+		},
+
+		showFullPage() {
+			return this.isOneToOne && !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
 		},
 
 		hasLocalVideo() {
@@ -792,7 +787,7 @@ export default {
 }
 
 .presenter-overlay--collapse {
-	position : absolute !important;
+	position: absolute !important;
 	opacity: .7;
 	bottom: 48px;
 	right: 0;
@@ -828,15 +823,15 @@ export default {
 }
 
 .video__promoted {
-	position:relative;
+	position: relative;
 	height: 100%;
 	width: 100%;
-	display: block;
-}
 
-.video__promoted.full-page {
-	/* make the promoted video cover the whole call view */
-	position: static;
+	&.full-page {
+		// force the promoted remote or local video to cover the whole call view
+		// doesn't affect screen shares, as it's a different MediaStream
+		position: static;
+	}
 }
 
 .local-video {
@@ -845,6 +840,7 @@ export default {
 	bottom: 0;
 	width: 300px;
 	height: 250px;
+
 	&--sidebar {
 		width: 150px;
 		height: 100px;
@@ -907,13 +903,6 @@ export default {
 	bottom: 0;
 	border-top-right-radius: 3px;
 	right: 0;
-}
-
-#screens {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
 }
 
 :deep(.nameIndicator) {
