@@ -35,7 +35,7 @@
     "@nextcloud/moment": "^1.2.2",
     "@nextcloud/paths": "^2.1.0",
     "@nextcloud/router": "^2.2.1",
-    "@nextcloud/vue": "^8.5.1",
+    "@nextcloud/vue": "^8.6.0",
     "crypto-js": "^4.2.0",
     "debounce": "^1.2.1",
     "emoji-mart-vue-fast": "^15.0.0",
