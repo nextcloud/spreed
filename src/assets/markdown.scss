@@ -1,0 +1,76 @@
+/*
+ * @copyright Copyright (c) 2024 Maksim Sukharev <antreesy.web@gmail.com>
+ *
+ * @license AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@mixin markdown {
+	// Overwrite core styles, otherwise h4 is lesser than default font-size
+	h4 {
+		font-size: 100%;
+	}
+
+	em {
+		font-style: italic;
+	}
+
+	ul,
+	ol {
+		padding-left: 0;
+		padding-inline-start: 15px;
+
+		&.contains-task-list {
+			padding: 0;
+		}
+	}
+
+	input:disabled + .checkbox-content {
+		opacity: 1 !important;
+		pointer-events: none !important;
+	}
+
+	div:has(table) {
+		overflow-x: auto;
+	}
+
+	pre {
+		padding: 4px;
+		margin: 2px 0;
+		border-radius: var(--border-radius);
+		background-color: var(--color-background-dark);
+		overflow-x: auto;
+
+		& code {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	code {
+		display: inline-block;
+		padding: 2px 4px;
+		margin: 2px 0;
+		border-radius: var(--border-radius);
+		background-color: var(--color-background-dark);
+	}
+
+	blockquote {
+		padding-left: 0;
+		padding-inline-start: 13px;
+		border-left: none;
+		border-inline-start: 4px solid var(--color-border);
+	}
+}
