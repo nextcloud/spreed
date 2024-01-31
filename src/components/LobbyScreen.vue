@@ -39,10 +39,11 @@
 				</span>
 			</p>
 
-			<p class="lobby__description">
+			<div class="lobby__description">
 				<NcRichText :text="conversation.description"
+					dir="auto"
 					:autolink="true" />
-			</p>
+			</div>
 		</div>
 		<SetGuestUsername v-if="currentUserIsGuest" />
 	</div>
@@ -123,6 +124,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../assets/variables';
+@import '../assets/markdown';
 
 .lobby {
 	display: flex;
@@ -138,6 +140,11 @@ export default {
 		max-width: $messages-list-max-width;
 		margin: 0 auto;
 		margin-top: 25px;
+	}
+
+	:deep(.rich-text--wrapper) {
+		text-align: start;
+		@include markdown;
 	}
 }
 

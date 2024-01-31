@@ -23,11 +23,13 @@
 	<div ref="editable-text-field" class="editable-text-field">
 		<NcRichText v-if="!editing"
 			class="editable-text-field__output"
+			dir="auto"
 			:text="text"
 			autolink
 			:use-markdown="useMarkdown" />
 		<NcRichContenteditable v-else
 			ref="richContenteditable"
+			dir="auto"
 			:value.sync="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
@@ -256,6 +258,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
+@import '../../assets/markdown';
 
 .editable-text-field {
 	display: flex;
@@ -278,6 +281,11 @@ export default {
 	// Restyle NcRichContenteditable component from our library.
 	:deep(.rich-contenteditable) {
 		flex-grow: 1;
+	}
+
+	:deep(.rich-text--wrapper) {
+		text-align: start;
+		@include markdown;
 	}
 }
 

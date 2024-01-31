@@ -416,6 +416,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../../../assets/markdown';
+
 .message-main {
 	display: flex;
 	justify-content: space-between;
@@ -471,49 +473,7 @@ export default {
 
 			:deep(.rich-text--wrapper) {
 				text-align: start;
-
-				// Overwrite core styles, otherwise h4 is lesser than default font-size
-				h4 {
-				font-size: 100%;
-				}
-
-				em {
-				font-style: italic;
-				}
-
-				ul,
-				ol {
-				padding-left: 0;
-				padding-inline-start: 15px;
-				}
-
-				pre {
-				padding: 4px;
-				margin: 2px 0;
-				border-radius: var(--border-radius);
-				background-color: var(--color-background-dark);
-				overflow-x: auto;
-
-				& code {
-					margin: 0;
-					padding: 0;
-				}
-				}
-
-				code {
-				display: inline-block;
-				padding: 2px 4px;
-				margin: 2px 0;
-				border-radius: var(--border-radius);
-				background-color: var(--color-background-dark);
-				}
-
-				blockquote {
-				padding-left: 0;
-				padding-inline-start: 13px;
-				border-left: none;
-				border-inline-start: 4px solid var(--color-border);
-				}
+				@include markdown;
 			}
 		}
 	}
