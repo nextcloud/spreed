@@ -393,6 +393,7 @@ export default {
 
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
+				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 		},
 
 		currentConversationIsJoined() {
