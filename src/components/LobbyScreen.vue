@@ -42,7 +42,8 @@
 			<div class="lobby__description">
 				<NcRichText :text="conversation.description"
 					dir="auto"
-					:autolink="true" />
+					autolink
+					use-extended-markdown />
 			</div>
 		</div>
 		<SetGuestUsername v-if="currentUserIsGuest" />

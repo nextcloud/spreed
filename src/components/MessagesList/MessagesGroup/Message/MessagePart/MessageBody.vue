@@ -60,7 +60,7 @@
 				:class="{'single-emoji': isSingleEmoji}"
 				autolink
 				dir="auto"
-				:use-markdown="markdown"
+				:use-extended-markdown="markdown"
 				:reference-limit="1" />
 
 			<!-- Additional controls -->

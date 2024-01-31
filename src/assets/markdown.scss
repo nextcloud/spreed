@@ -31,6 +31,19 @@
 	ol {
 		padding-left: 0;
 		padding-inline-start: 15px;
+
+		&.contains-task-list {
+			padding: 0;
+		}
+	}
+
+	input:disabled + .checkbox-content {
+		opacity: 1 !important;
+		pointer-events: none !important;
+	}
+
+	div:has(table) {
+		overflow-x: auto;
 	}
 
 	pre {

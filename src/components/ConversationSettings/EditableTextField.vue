@@ -26,7 +26,7 @@
 			dir="auto"
 			:text="text"
 			autolink
-			:use-markdown="useMarkdown" />
+			:use-extended-markdown="useMarkdown" />
 		<NcRichContenteditable v-else
 			ref="richContenteditable"
 			dir="auto"
