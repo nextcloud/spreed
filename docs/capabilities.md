@@ -142,3 +142,4 @@
 ## 19
 * `delete-messages-unlimited` - Whether messages can be deleted at any time (used to be restricted to 6 hours after posting)
 * `edit-messages` - Whether messages can be edited (restricted to 24 hours after posting)
+* `silent-send-state` - Whether messages contain a flag that they were sent silently

@@ -146,6 +146,7 @@ class CapabilitiesTest extends TestCase {
 			'sip-support-dialout',
 			'delete-messages-unlimited',
 			'edit-messages',
+			'silent-send-state',
 			'message-expiration',
 			'reactions',
 		];

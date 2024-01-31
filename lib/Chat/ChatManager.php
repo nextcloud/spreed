@@ -153,6 +153,12 @@ class ChatManager {
 			$comment->setVerb(self::VERB_SYSTEM);
 		}
 
+		if ($silent) {
+			$comment->setMetaData([
+				'silent' => true,
+			]);
+		}
+
 		$this->setMessageExpiration($chat, $comment);
 
 		$shouldFlush = $this->notificationManager->defer();
@@ -289,6 +295,12 @@ class ChatManager {
 					$this->request->getRemoteAddress(),
 				);
 			}
+		}
+
+		if ($silent) {
+			$comment->setMetaData([
+				'silent' => true,
+			]);
 		}
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent);
@@ -509,35 +521,41 @@ class ChatManager {
 		$metaData['last_edited_time'] = $editTime->getTimestamp();
 		$comment->setMetaData($metaData);
 
-		$mentionsBefore = $comment->getMentions();
-		$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
-		$usersToNotifyBefore = $this->notifier->getUsersToNotify($chat, $comment, []);
+		$wasSilent = $metaData['silent'] ?? false;
+
+		if (!$wasSilent) {
+			$mentionsBefore = $comment->getMentions();
+			$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
+			$usersToNotifyBefore = $this->notifier->getUsersToNotify($chat, $comment, []);
+		}
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
-		$mentionsAfter = $comment->getMentions();
+		if (!$wasSilent) {
+			$mentionsAfter = $comment->getMentions();
+		}
 
 		$this->commentsManager->save($comment);
 		$this->referenceManager->invalidateCache($chat->getToken());
 
-		$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, [$this, 'compareMention']);
-		$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, [$this, 'compareMention']);
+		if (!$wasSilent) {
+			$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, [$this, 'compareMention']);
+			$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, [$this, 'compareMention']);
 
-		// FIXME Not needed when it was silent, once it's stored in metadata
-		if (!empty($removedMentions)) {
-			$usersToNotifyAfter = $this->notifier->getUsersToNotify($chat, $comment, []);
-			$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, [$this, 'compareMention']);
-			$userIds = array_column($removedUsersMentioned, 'id');
-			$this->notifier->removeMentionNotificationAfterEdit($chat, $comment, $userIds);
-		}
+			if (!empty($removedMentions)) {
+				$usersToNotifyAfter = $this->notifier->getUsersToNotify($chat, $comment, []);
+				$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, [$this, 'compareMention']);
+				$userIds = array_column($removedUsersMentioned, 'id');
+				$this->notifier->removeMentionNotificationAfterEdit($chat, $comment, $userIds);
+			}
 
-		// FIXME silent support, once it's stored in metadata
-		if (!empty($addedMentions)) {
-			$usersDirectlyMentionedAfter = $this->notifier->getMentionedUserIds($comment);
-			$addedUsersDirectMentioned = array_diff($usersDirectlyMentionedAfter, $usersDirectlyMentionedBefore);
+			if (!empty($addedMentions)) {
+				$usersDirectlyMentionedAfter = $this->notifier->getMentionedUserIds($comment);
+				$addedUsersDirectMentioned = array_diff($usersDirectlyMentionedAfter, $usersDirectlyMentionedBefore);
 
-			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $usersToNotifyBefore, silent: false);
-			if (!empty($alreadyNotifiedUsers)) {
-				$userIds = array_column($alreadyNotifiedUsers, 'id');
-				$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $usersToNotifyBefore, silent: false);
+				if (!empty($alreadyNotifiedUsers)) {
+					$userIds = array_column($alreadyNotifiedUsers, 'id');
+					$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+				}
 			}
 		}
 

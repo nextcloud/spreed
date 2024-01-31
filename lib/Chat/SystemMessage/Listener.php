@@ -134,7 +134,8 @@ class Listener implements IEventListener {
 		if ($this->participantService->hasActiveSessionsInCall($event->getRoom())) {
 			$this->sendSystemMessage($event->getRoom(), 'call_joined', [], $event->getParticipant());
 		} else {
-			$this->sendSystemMessage($event->getRoom(), 'call_started', [], $event->getParticipant());
+			$silent = $event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT) ?? false;
+			$this->sendSystemMessage($event->getRoom(), 'call_started', [], $event->getParticipant(), silent: $silent);
 		}
 	}
 

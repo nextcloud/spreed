@@ -43,6 +43,9 @@ Feature: chat/notifications
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                 | subject                                             |
       | spreed | chat        | one-to-one room/Message 1 | participant1-displayname sent you a private message |
+    Then user "participant2" sees the following messages in room "one-to-one room" with 200
+      | room            | actorType | actorId      | actorDisplayName         | message    | messageParameters | silent |
+      | one-to-one room | users     | participant1 | participant1-displayname | Message 1  | []                | !ISSET |
 
   Scenario: Silent sent message when recipient is offline in the one-to-one
     When user "participant1" creates room "one-to-one room" (v4)
@@ -54,6 +57,9 @@ Feature: chat/notifications
     When user "participant1" silent sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
+    Then user "participant2" sees the following messages in room "one-to-one room" with 200
+      | room            | actorType | actorId      | actorDisplayName         | message    | messageParameters | silent |
+      | one-to-one room | users     | participant1 | participant1-displayname | Message 1  | []                | true   |
 
   Scenario: Normal message when recipient disabled notifications in the one-to-one
     When user "participant1" creates room "one-to-one room" (v4)
