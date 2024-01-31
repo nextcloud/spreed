@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.3 – 2024-01-31
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+-  fix(chat): Fix scrolling behaviour when loading older messages
+   [#11481](https://github.com/nextcloud/spreed/issues/11481)
+-  fix(chat): Fix showing mention and emoji suggestions when writing a caption
+   [#11458](https://github.com/nextcloud/spreed/issues/11458)
+-  fix(chat): Show mention chips when inserting a suggested mention
+   [#11493](https://github.com/nextcloud/spreed/issues/11493)
+
 ## 18.0.2 – 2024-01-25
 ### Fixed
 -  fix(calls): Device preview not visible when editing, uploading or viewing a file
