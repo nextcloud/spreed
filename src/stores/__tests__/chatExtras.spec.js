@@ -1,5 +1,6 @@
 import { setActivePinia, createPinia } from 'pinia'
 
+import { EventBus } from '../../services/EventBus.js'
 import { getUserAbsence } from '../../services/participantsService.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useChatExtrasStore } from '../chatExtras.js'
@@ -194,6 +195,43 @@ describe('chatExtrasStore', () => {
 			chatExtrasStore.setChatInput({ token: 'token-1', text: message })
 			// Assert
 			expect(chatExtrasStore.getChatInput('token-1')).toBe('Many whitespaces')
+		})
+	})
+
+	describe('initiateEditingMessage', () => {
+		it('should set the message ID to edit, set the chat edit input, and emit an event', () => {
+			// Arrange
+			const payload = {
+				token: 'token-1',
+				id: 'id-1',
+				message: 'Hello, world!',
+				messageParameters: {}
+			}
+			const emitSpy = jest.spyOn(EventBus, '$emit')
+
+			// Act
+			chatExtrasStore.initiateEditingMessage(payload)
+
+			// Assert
+			expect(chatExtrasStore.getMessageIdToEdit('token-1')).toBe('id-1')
+			expect(chatExtrasStore.getChatEditInput('token-1')).toEqual('Hello, world!')
+			expect(emitSpy).toHaveBeenCalledWith('editing-message')
+		})
+
+		it('should set the chat edit input text to empty if the message is a file share only', () => {
+			// Arrange
+			const payload = {
+				token: 'token-1',
+				id: 'id-1',
+				message: '{file}',
+				messageParameters: { file0: 'file-path' }
+			}
+
+			// Act
+			chatExtrasStore.initiateEditingMessage(payload)
+
+			// Assert
+			expect(chatExtrasStore.getChatEditInput('token-1')).toEqual('')
 		})
 	})
 })

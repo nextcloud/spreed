@@ -103,6 +103,7 @@
 					dir="auto"
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
+					@keydown.ctrl.up="handleEditLastMessage"
 					@tribute-active-true.native="isTributePickerActive = true"
 					@tribute-active-false.native="isTributePickerActive = false"
 					@input="handleTyping"
@@ -230,6 +231,7 @@ import { parseSpecialSymbols } from '../../utils/textParse.js'
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
+const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
 
 export default {
 	name: 'NewMessage',
@@ -641,7 +643,6 @@ export default {
 					token: this.token,
 				})
 				this.text = ''
-				this.resetTypingIndicator()
 				this.userData = {}
 				// Scrolls the message list to the last added message
 				EventBus.$emit('smooth-scroll-chat-to-bottom')
@@ -651,6 +652,7 @@ export default {
 				this.broadcast
 					? await this.broadcastMessage(this.token, temporaryMessage.message)
 					: await this.postMessage(this.token, temporaryMessage, options)
+				this.resetTypingIndicator()
 			}
 		},
 
@@ -696,6 +698,7 @@ export default {
 				})
 				this.$store.dispatch('processMessage', { token: this.token, message: response.data.ocs.data })
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.resetTypingIndicator()
 			} catch {
 				this.$emit('failure')
 				showError(t('spreed', 'The message could not be edited'))
@@ -923,11 +926,39 @@ export default {
 		},
 
 		handleInputEsc() {
+			if (this.messageToEdit && !this.isTributePickerActive) {
+				this.handleAbortEdit()
+				this.focusInput()
+				return
+			}
 			// When the tribute picker (e.g. emoji picker or mentions) is open
 			// ESC should only close the picker but not blur
 			if (!this.isTributePickerActive) {
 				this.blurInput()
 			}
+
+		},
+
+		handleEditLastMessage() {
+			if (!canEditMessage || this.upload || this.broadcast || this.isRecordingAudio) {
+				return
+			}
+			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast(message => {
+				return message.actorId === this.$store.getters.getUserId()
+					&& message.actorType === this.$store.getters.getActorType()
+					&& !message.isTemporary && !message.systemMessage
+			})
+
+			if (!lastMessageByCurrentUser) {
+				return
+			}
+
+			this.chatExtrasStore.initiateEditingMessage({
+				token: this.token,
+				id: lastMessageByCurrentUser.id,
+				message: lastMessageByCurrentUser.message,
+				messageParameters: lastMessageByCurrentUser.messageParameters,
+			})
 		},
 
 		async checkAbsenceStatus() {

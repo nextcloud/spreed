@@ -24,6 +24,7 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { EventBus } from '../services/EventBus.js'
 import { getUserAbsence } from '../services/participantsService.js'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.js'
 
@@ -186,6 +187,23 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		removeChatInput(token) {
 			Vue.delete(this.chatInput, token)
+		},
+
+		initiateEditingMessage({ token, id, message, messageParameters }) {
+			this.setMessageIdToEdit(token, id)
+			const isFileShareOnly = Object.keys(Object(messageParameters)).some(key => key.startsWith('file'))
+				&& message === '{file}'
+			if (isFileShareOnly) {
+				this.setChatEditInput({ token, text: '' })
+			} else {
+				this.setChatEditInput({
+					token,
+					text: message,
+					parameters: messageParameters
+				})
+			}
+			EventBus.$emit('editing-message')
+			EventBus.$emit('focus-chat-input')
 		},
 
 		/**
