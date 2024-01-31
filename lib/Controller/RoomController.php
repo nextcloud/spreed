@@ -154,6 +154,10 @@ class RoomController extends AEnvironmentAwareController {
 			$this->config->getAppValue('spreed', 'recording_consent'),
 			$this->config->getAppValue('theming', 'cachebuster', '1'),
 			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
+			$this->config->getAppValue('spreed', 'federation_incoming_enabled'),
+			$this->config->getAppValue('spreed', 'federation_outgoing_enabled'),
+			$this->config->getAppValue('spreed', 'federation_only_trusted_servers'),
+			$this->config->getAppValue('spreed', 'federation_allowed_groups', '[]'),
 		];
 
 		return [

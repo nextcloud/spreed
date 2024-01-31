@@ -507,7 +507,7 @@ class ParticipantService {
 				$this->attendeeMapper->insert($attendee);
 
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy->getDisplayName(), $addedBy->getCloudId(), 'user', $room, $this->getHighestPermissionAttendee($room));
+					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
 					if (!$inviteSent) {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();

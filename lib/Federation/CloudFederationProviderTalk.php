@@ -44,6 +44,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\DB\Exception as DBException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\Exceptions\ActionNotSupportedException;
@@ -68,6 +69,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private AddressHandler $addressHandler,
 		private FederationManager $federationManager,
 		private Config $config,
+		private IAppConfig $appConfig,
 		private INotificationManager $notificationManager,
 		private ParticipantService $participantService,
 		private RoomService $roomService,
@@ -95,6 +97,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	public function shareReceived(ICloudFederationShare $share): string {
 		if (!$this->config->isFederationEnabled()) {
 			$this->logger->debug('Received a federation invite but federation is disabled');
+			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
+		}
+		if (!$this->appConfig->getAppValueBool('federation_incoming_enabled', true)) {
+			$this->logger->warning('Received a federation invite but incoming federation is disabled');
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 		if (!in_array($share->getShareType(), $this->getSupportedShareTypes(), true)) {
@@ -132,6 +138,16 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$shareWith = $this->userManager->get($shareWith);
 			if ($shareWith === null) {
 				$this->logger->debug('Received a federation invite for user that could not be found');
+				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
+			}
+
+			if ($this->config->isDisabledForUser($shareWith)) {
+				$this->logger->debug('Received a federation invite for user that is not allowed to use Talk');
+				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
+			}
+
+			if (!$this->config->isFederationEnabledForUserId($shareWith)) {
+				$this->logger->debug('Received a federation invite for user that is not allowed to use Talk Federation');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
