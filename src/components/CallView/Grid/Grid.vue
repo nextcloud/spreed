@@ -156,6 +156,7 @@ import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -166,6 +167,10 @@ import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
+
+// Max number of videos per page. `0`, the default value, means no cap
+const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
+const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
 
 export default {
 	name: 'Grid',
@@ -188,35 +193,6 @@ export default {
 	},
 
 	props: {
-		/**
-		 * Minimum width of the video components
-		 */
-		minWidth: {
-			type: Number,
-			default: 200,
-		},
-		/**
-		 * Minimum height of the video components
-		 */
-		minHeight: {
-			type: Number,
-			default: 150,
-		},
-		/**
-		 * Max number of videos per page. `0`, the default value, means no cap
-		 */
-		videosCap: {
-			type: Number,
-			default: 0,
-		},
-		videosCapEnforced: {
-			type: Boolean,
-			default: false,
-		},
-		targetAspectRatio: {
-			type: Number,
-			default: 1,
-		},
 		/**
 		 * Developer mode: If enabled it allows to debug the grid using dummy
 		 * videos
@@ -289,6 +265,13 @@ export default {
 	},
 
 	emits: ['select-video', 'click-local-video'],
+
+	setup() {
+		return {
+			videosCap,
+			videosCapEnforced,
+		}
+	},
 
 	data() {
 		return {
@@ -389,6 +372,19 @@ export default {
 			return devicePixelRatio
 		},
 
+		/**
+		 * Minimum width of the video components
+		 */
+		minWidth() {
+			return (this.isStripe || this.isSidebar) ? 200 : 320
+		},
+		/**
+		 * Minimum height of the video components
+		 */
+		minHeight() {
+			return (this.isStripe || this.isSidebar) ? 150 : 240
+		},
+
 		dpiAwareMinWidth() {
 			return this.minWidth / this.dpiFactor
 		},
@@ -400,6 +396,10 @@ export default {
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
 			return (this.gridWidth / this.gridHeight).toPrecision([2])
+		},
+
+		targetAspectRatio() {
+			return this.isStripe ? 1 : 1.5
 		},
 
 		// Max number of columns possible

@@ -30,104 +30,88 @@
 			:local-shared-data="localSharedData" />
 
 		<template v-else>
-			<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
+			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
 
 			<div id="videos">
-				<template v-if="!isGrid">
+				<div v-if="!isGrid" class="video__promoted" :class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
-					<div v-if="showSelectedVideo"
-						class="video__promoted selected-video"
-						:class="{'full-page': isOneToOne}">
-						<template v-for="callParticipantModel in reversedCallParticipantModels">
-							<VideoVue v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
-								:key="callParticipantModel.attributes.selectedVideoPeerId"
-								:token="token"
-								:model="callParticipantModel"
-								:shared-data="sharedDatas[selectedVideoPeerId]"
-								:show-talking-highlight="false"
-								:is-grid="true"
-								:is-big="true"
-								:is-one-to-one="isOneToOne"
-								:fit-video="true" />
-						</template>
-					</div>
-					<!-- Screens -->
-					<div v-else-if="showLocalScreen || showRemoteScreen || showSelectedScreen" id="screens">
-						<!-- local screen -->
-						<Screen v-if="showLocalScreen"
-							:token="token"
-							:local-media-model="localMediaModel"
-							:shared-data="localSharedData"
-							:is-big="true" />
-						<!-- remote screen -->
-						<template v-else>
-							<template v-for="callParticipantModel in reversedCallParticipantModels">
-								<Screen v-if="callParticipantModel.attributes.peerId === shownRemoteScreenPeerId"
-									:key="'screen-' + callParticipantModel.attributes.peerId"
-									:token="token"
-									:call-participant-model="callParticipantModel"
-									:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-									:is-big="true" />
-								<!-- presenter overlay -->
-								<TransitionWrapper v-if="shouldShowPresenterOverlay(callParticipantModel)"
-									:key="'presenter-overlay-video' + callParticipantModel.attributes.peerId"
-									name="slide-down">
-									<VideoVue :key="'video-overlay-' + callParticipantModel.attributes.peerId"
-										class="presenter-overlay__video"
-										:token="token"
-										:model="callParticipantModel"
-										:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-										is-presenter-overlay
-										un-selectable
-										hide-bottom-bar
-										@click-video="toggleShowPresenterOverlay" />
-								</TransitionWrapper>
-								<!-- presenter button when presenter overlay is collapsed -->
-								<NcButton v-else-if="isPresenterCollapsed(callParticipantModel)"
-									:key="'presenter-overlay-button' + callParticipantModel.attributes.peerId"
-									:aria-label="t('spreed', 'Show presenter')"
-									:title="t('spreed', 'Show presenter')"
-									class="presenter-overlay--collapse"
-									type="tertiary-no-background"
-									@click="toggleShowPresenterOverlay">
-									<template #icon>
-										<AccountBox fill-color="#ffffff" :size="20" />
-									</template>
-								</NcButton>
-							</template>
-						</template>
-					</div>
+					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
+						:key="selectedVideoPeerId"
+						:token="token"
+						:model="selectedCallParticipantModel"
+						:shared-data="sharedDatas[selectedVideoPeerId]"
+						:show-talking-highlight="false"
+						:is-one-to-one="isOneToOne"
+						is-grid
+						is-big
+						fit-video />
+
 					<!-- Local Video Override mode (following own video) -->
-					<div v-else-if="showLocalVideo"
-						class="video__promoted selected-video--local"
-						:class="{'full-page': isOneToOne}">
-						<LocalVideo ref="localVideo"
-							:fit-video="true"
-							:is-stripe="false"
-							:show-controls="false"
-							:is-big="true"
+					<LocalVideo v-else-if="showLocalVideo"
+						ref="localVideo"
+						:token="token"
+						:local-media-model="localMediaModel"
+						:local-call-participant-model="localCallParticipantModel"
+						:is-stripe="false"
+						:show-controls="false"
+						:is-sidebar="false"
+						is-big
+						fit-video />
+
+					<!-- Screens -->
+					<!-- Local screen -->
+					<Screen v-else-if="showLocalScreen"
+						key="screen-local"
+						:token="token"
+						:local-media-model="localMediaModel"
+						:shared-data="localSharedData"
+						is-big />
+					<!-- Remote or selected screen -->
+					<template v-else-if="showRemoteScreen || showSelectedScreen">
+						<Screen v-if="shownRemoteScreenCallParticipantModel"
+							:key="`screen-${shownRemoteScreenPeerId}`"
 							:token="token"
-							:local-media-model="localMediaModel"
-							:local-call-participant-model="localCallParticipantModel"
-							:is-sidebar="false" />
-					</div>
+							:call-participant-model="shownRemoteScreenCallParticipantModel"
+							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+							is-big />
+						<!-- presenter overlay -->
+						<TransitionWrapper v-if="shouldShowPresenterOverlay"
+							name="slide-down">
+							<VideoVue class="presenter-overlay__video"
+								:token="token"
+								:model="shownRemoteScreenCallParticipantModel"
+								:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+								is-presenter-overlay
+								un-selectable
+								hide-bottom-bar
+								@click-video="toggleShowPresenterOverlay" />
+						</TransitionWrapper>
+						<!-- presenter button when presenter overlay is collapsed -->
+						<NcButton v-else-if="isPresenterCollapsed"
+							:aria-label="t('spreed', 'Show presenter')"
+							:title="t('spreed', 'Show presenter')"
+							class="presenter-overlay--collapse"
+							type="tertiary-no-background"
+							@click="toggleShowPresenterOverlay">
+							<template #icon>
+								<AccountBox fill-color="#ffffff" :size="20" />
+							</template>
+						</NcButton>
+					</template>
+
 					<!-- Promoted "autopilot" mode -->
-					<div v-else
-						class="video__promoted autopilot"
-						:class="{'full-page': isOneToOne}">
-						<VideoVue v-if="promotedParticipantModel"
-							:key="promotedParticipantModel.attributes.peerId"
-							:token="token"
-							:model="promotedParticipantModel"
-							:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
-							:show-talking-highlight="false"
-							:is-grid="true"
-							:fit-video="true"
-							:is-big="true"
-							:is-one-to-one="isOneToOne"
-							:is-sidebar="isSidebar" />
-					</div>
-				</template>
+					<VideoVue v-else-if="promotedParticipantModel"
+						:key="promotedParticipantModel.attributes.peerId"
+						:token="token"
+						:model="promotedParticipantModel"
+						:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
+						:show-talking-highlight="false"
+						is-grid
+						fit-video
+						is-big
+						:is-one-to-one="isOneToOne"
+						:is-sidebar="isSidebar" />
+				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
@@ -136,13 +120,8 @@
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
-					:min-height="isGrid && !isSidebar ? 240 : 150"
-					:min-width="isGrid && !isSidebar ? 320 : 200"
-					:videos-cap="gridVideosCap"
-					:videos-cap-enforced="gridVideosCapEnforced"
 					:call-participant-models="callParticipantModels"
 					:screens="screens"
-					:target-aspect-ratio="gridTargetAspectRatio"
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
 					:shared-datas="sharedDatas"
@@ -180,7 +159,6 @@ import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -199,6 +177,8 @@ import { fetchPeers } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
+
+const supportedReactions = getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 
 export default {
 	name: 'CallView',
@@ -233,6 +213,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			supportedReactions,
+		}
+	},
+
 	data() {
 		return {
 			screens: [],
@@ -243,7 +229,6 @@ export default {
 			speakingUnwatchers: {},
 			screenUnwatchers: {},
 			speakers: [],
-			// callParticipantModelsWithScreen: [],
 			localSharedData: {
 				screenVisible: true,
 			},
@@ -262,28 +247,8 @@ export default {
 			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
 		},
 
-		reversedCallParticipantModels() {
-			return this.callParticipantModels.slice().reverse()
-		},
-
-		remoteParticipantsCount() {
-			return this.callParticipantModels.length
-		},
-
 		callParticipantModelsWithScreen() {
 			return this.callParticipantModels.filter(callParticipantModel => callParticipantModel.attributes.screen)
-		},
-
-		callParticipantModelsWithVideo() {
-			return this.callParticipantModels.filter(callParticipantModel => {
-				return callParticipantModel.attributes.videoAvailable
-					&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
-					&& (typeof callParticipantModel.attributes.stream === 'object')
-			})
-		},
-
-		injectableLocalMediaModel() {
-			return localMediaModel
 		},
 
 		localScreen() {
@@ -302,24 +267,17 @@ export default {
 			return this.$store.getters.isGrid && !this.isSidebar
 		},
 
-		gridTargetAspectRatio() {
-			if (this.isGrid) {
-				return 1.5
-			} else {
-				return 1
-			}
-		},
-
-		gridVideosCap() {
-			return parseInt(loadState('spreed', 'grid_videos_limit'), 10)
-		},
-
-		gridVideosCapEnforced() {
-			return loadState('spreed', 'grid_videos_limit_enforced')
-		},
-
 		selectedVideoPeerId() {
 			return this.$store.getters.selectedVideoPeerId
+		},
+
+		selectedCallParticipantModel() {
+			if (!this.showSelectedVideo || !this.selectedVideoPeerId) {
+				return null
+			}
+			return this.callParticipantModels.find(callParticipantModel => {
+				return callParticipantModel.attributes.peerId === this.selectedVideoPeerId
+			})
 		},
 
 		hasSelectedScreen() {
@@ -333,12 +291,13 @@ export default {
 		isOneToOne() {
 			return this.callParticipantModels.length === 1
 		},
-		hasLocalVideo() {
-			return this.localMediaModel.attributes.videoEnabled
+
+		showFullPage() {
+			return this.isOneToOne && !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
 		},
 
-		hasRemoteVideo() {
-			return this.callParticipantModelsWithVideo.length > 0
+		hasLocalVideo() {
+			return this.localMediaModel.attributes.videoEnabled
 		},
 
 		hasLocalScreen() {
@@ -377,11 +336,7 @@ export default {
 		},
 
 		shownRemoteScreenPeerId() {
-			if (!this.screenSharingActive) {
-				return null
-			}
-
-			if (!this.hasRemoteScreen) {
+			if (!this.screenSharingActive || !this.hasRemoteScreen) {
 				return null
 			}
 
@@ -396,8 +351,22 @@ export default {
 			return null
 		},
 
-		supportedReactions() {
-			return getCapabilities()?.spreed?.config?.call?.['supported-reactions']
+		shownRemoteScreenCallParticipantModel() {
+			if (!this.shownRemoteScreenPeerId) {
+				return null
+			}
+			return this.callParticipantModels.find(callParticipantModel => {
+				return callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
+			})
+		},
+
+		isPresenterCollapsed() {
+			return !this.showPresenterOverlay && this.shownRemoteScreenCallParticipantModel.attributes.videoAvailable
+		},
+
+		shouldShowPresenterOverlay() {
+			return this.showPresenterOverlay && this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+
 		},
 
 		presenterVideoBlockerEnabled() {
@@ -665,7 +634,7 @@ export default {
 
 			if (!this.screenSharingActive && this.speakers.length) {
 				this.sharedDatas[this.speakers[0].id].promoted = true
-			} else if (this.shownRemoteScreenPeerId) {
+			} else if (this.shownRemoteScreenPeerId && this.sharedDatas[this.shownRemoteScreenPeerId]) {
 				this.sharedDatas[this.shownRemoteScreenPeerId].promoted = true
 			}
 
@@ -768,18 +737,10 @@ export default {
 			this.isBackgroundBlurred = value
 		},
 
-		isPresenterCollapsed(callParticipantModel) {
-			return (callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
-				&& !this.showPresenterOverlay
-				&& callParticipantModel.attributes.videoAvailable)
-
-		},
-
-		shouldShowPresenterOverlay(callParticipantModel) {
-			return callParticipantModel.attributes.peerId === this.shownRemoteScreenPeerId
-				&& this.showPresenterOverlay
-				&& this.callParticipantModelsWithVideo.includes(callParticipantModel)
-
+		isModelWithVideo(callParticipantModel) {
+			return callParticipantModel.attributes.videoAvailable
+				&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
+				&& (typeof callParticipantModel.attributes.stream === 'object')
 		},
 
 		toggleShowPresenterOverlay() {
@@ -826,7 +787,7 @@ export default {
 }
 
 .presenter-overlay--collapse {
-	position : absolute !important;
+	position: absolute !important;
 	opacity: .7;
 	bottom: 48px;
 	right: 0;
@@ -862,15 +823,15 @@ export default {
 }
 
 .video__promoted {
-	position:relative;
+	position: relative;
 	height: 100%;
 	width: 100%;
-	display: block;
-}
 
-.video__promoted.full-page {
-	/* make the promoted video cover the whole call view */
-	position: static;
+	&.full-page {
+		// force the promoted remote or local video to cover the whole call view
+		// doesn't affect screen shares, as it's a different MediaStream
+		position: static;
+	}
 }
 
 .local-video {
@@ -879,6 +840,7 @@ export default {
 	bottom: 0;
 	width: 300px;
 	height: 250px;
+
 	&--sidebar {
 		width: 150px;
 		height: 100px;
@@ -941,13 +903,6 @@ export default {
 	bottom: 0;
 	border-top-right-radius: 3px;
 	right: 0;
-}
-
-#screens {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
 }
 
 :deep(.nameIndicator) {

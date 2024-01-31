@@ -140,6 +140,8 @@ export default {
 		tooltip: Tooltip,
 	},
 
+	inheritAttrs: false,
+
 	props: {
 		token: {
 			type: String,
