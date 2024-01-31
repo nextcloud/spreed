@@ -119,6 +119,12 @@
 					</dd>
 				</div>
 				<div>
+					<dt><kbd>Ctrl</kbd> + <kbd>↑</kbd></dt>
+					<dd class="shortcut-description">
+						{{ t('spreed', 'Edit your last message') }}
+					</dd>
+				</div>
+				<div>
 					<dt><kbd>F</kbd></dt>
 					<dd class="shortcut-description">
 						{{ t('spreed', 'Fullscreen the chat or call') }}

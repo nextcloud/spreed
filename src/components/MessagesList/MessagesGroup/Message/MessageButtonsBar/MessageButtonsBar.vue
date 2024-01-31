@@ -66,17 +66,14 @@
 						{{ messageDateTime }}
 					</NcActionText>
 					<!-- Edited message timestamp -->
-					<NcActionButtonGroup v-if="lastEditTimestamp">
-						<NcActionText>
-							<template #icon>
-								<ClockEditOutline :size="16" />
-							</template>
-							{{ lastEditActorDisplayName }}
-						</NcActionText>
-						<NcActionText>
-							{{ editedDateTime }}
-						</NcActionText>
-					</NcActionButtonGroup>
+					<NcActionText v-if="lastEditTimestamp"
+						class="edit-timestamp"
+						:name="lastEditActorLabel">
+						<template #icon>
+							<ClockEditOutline :size="16" />
+						</template>
+						{{ editedDateTime }}
+					</NcActionText>
 					<NcActionSeparator />
 
 					<NcActionButton v-if="supportReminders"
@@ -297,7 +294,6 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
 import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -311,15 +307,17 @@ import { getMessageReminder, removeMessageReminder, setMessageReminder } from '.
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { parseMentions } from '../../../../../utils/textParse.js'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
+const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
+const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
 
 export default {
 	name: 'MessageButtonsBar',
 
 	components: {
-		NcActionButtonGroup,
 		NcActionButton,
 		NcActionInput,
 		NcActionLink,
@@ -518,7 +516,7 @@ export default {
 		},
 
 		isEditable() {
-			if (!this.isModifiable || this.isObjectShare
+			if (!canEditMessage || !this.isModifiable || this.isObjectShare
 					|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
 				return false
 			}
@@ -531,7 +529,7 @@ export default {
 				return false
 			}
 
-			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
+			return (canDeleteMessageUnlimited || (moment(this.timestamp * 1000).add(6, 'h')) > moment())
 				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
 				&& !this.isDeleting
 				&& (this.isMyMsg
@@ -675,6 +673,12 @@ export default {
 				apiVersion: 'v3',
 			}
 		},
+
+		lastEditActorLabel() {
+			return t('spreed', 'Edited by {actor}', {
+				actor: this.lastEditActorDisplayName,
+			})
+		},
 	},
 
 	watch: {
@@ -697,15 +701,7 @@ export default {
 		},
 
 		async handleCopyMessageText() {
-			let parsedText = this.message
-
-			for (const [key, value] of Object.entries(this.messageParameters)) {
-				if (value?.type === 'call') {
-					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), '@all')
-				} else if (value?.type === 'user') {
-					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), `@${value.id}`)
-				}
-			}
+			const parsedText = parseMentions(this.message, this.messageParameters)
 
 			try {
 				await navigator.clipboard.writeText(parsedText)
@@ -854,6 +850,9 @@ export default {
 		},
 
 		editMessage() {
+			if (!canEditMessage) {
+				return
+			}
 			this.$emit('edit')
 		},
 	},
@@ -869,5 +868,9 @@ export default {
 		margin-left: auto;
 		background: no-repeat center var(--icon-triangle-e-dark);
 	}
+}
+
+.edit-timestamp :deep(.action-text__longtext-wrapper) {
+	padding: 0;
 }
 </style>

@@ -24,7 +24,9 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { EventBus } from '../services/EventBus.js'
 import { getUserAbsence } from '../services/participantsService.js'
+import { parseSpecialSymbols, parseMentions } from '../utils/textParse.js'
 
 /**
  * @typedef {string} Token
@@ -136,12 +138,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} payload.text The string to store
 		 */
 		setChatInput({ token, text }) {
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
-			const temp = document.createElement('textarea')
-			temp.innerHTML = text.replace(/&/gmi, '&amp;')
-			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
-
+			const parsedText = parseSpecialSymbols(text)
 			Vue.set(this.chatInput, token, parsedText)
 		},
 
@@ -151,13 +148,14 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {object} payload action payload
 		 * @param {string} payload.token The conversation token
 		 * @param {string} payload.text The string to store
+		 * @param {object} payload.parameters message parameters
 		 */
-		setChatEditInput({ token, text }) {
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
-			const temp = document.createElement('textarea')
-			temp.innerHTML = text.replace(/&/gmi, '&amp;')
-			const parsedText = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-				.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+		setChatEditInput({ token, text, parameters = {} }) {
+			let parsedText = text
+
+			// Handle mentions and special symbols
+			parsedText = parseMentions(parsedText, parameters)
+			parsedText = parseSpecialSymbols(parsedText)
 
 			Vue.set(this.chatEditInput, token, parsedText)
 		},
@@ -189,6 +187,23 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		removeChatInput(token) {
 			Vue.delete(this.chatInput, token)
+		},
+
+		initiateEditingMessage({ token, id, message, messageParameters }) {
+			this.setMessageIdToEdit(token, id)
+			const isFileShareOnly = Object.keys(Object(messageParameters)).some(key => key.startsWith('file'))
+				&& message === '{file}'
+			if (isFileShareOnly) {
+				this.setChatEditInput({ token, text: '' })
+			} else {
+				this.setChatEditInput({
+					token,
+					text: message,
+					parameters: messageParameters
+				})
+			}
+			EventBus.$emit('editing-message')
+			EventBus.$emit('focus-chat-input')
 		},
 
 		/**

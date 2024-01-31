@@ -485,14 +485,12 @@ export default {
 		},
 
 		handleEdit() {
-			this.chatExtrasStore.setMessageIdToEdit(this.token, this.id)
-			if (this.isFileShareOnly) {
-				this.chatExtrasStore.setChatEditInput({ token: this.token, text: '' })
-			} else {
-				this.chatExtrasStore.setChatEditInput({ token: this.token, text: this.message })
-			}
-			EventBus.$emit('editing-message')
-			EventBus.$emit('focus-chat-input')
+			this.chatExtrasStore.initiateEditingMessage({
+				token: this.token,
+				id: this.id,
+				message: this.message,
+				messageParameters: this.messageParameters,
+			})
 		},
 
 		async handleDelete() {

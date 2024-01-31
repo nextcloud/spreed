@@ -87,6 +87,10 @@
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
 				</div>
+				<!-- mention editing hint -->
+				<NcNoteCard v-if="showMentionEditHint" type="warning">
+					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
+				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					:value.sync="text"
@@ -99,6 +103,7 @@
 					dir="auto"
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
+					@keydown.ctrl.up="handleEditLastMessage"
 					@tribute-active-true.native="isTributePickerActive = true"
 					@tribute-active-false.native="isTributePickerActive = false"
 					@input="handleTyping"
@@ -194,6 +199,7 @@ import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
+import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateOcsUrl } from '@nextcloud/router'
 
@@ -201,6 +207,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
@@ -220,9 +227,11 @@ import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
+import { parseSpecialSymbols } from '../../utils/textParse.js'
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
+const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
 
 export default {
 	name: 'NewMessage',
@@ -235,6 +244,7 @@ export default {
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
+		NcNoteCard,
 		NcRichContenteditable,
 		NewMessageAbsenceInfo,
 		NewMessageAttachments,
@@ -453,6 +463,11 @@ export default {
 		chatEditInput() {
 			return this.chatExtrasStore.getChatEditInput(this.token)
 		},
+
+		showMentionEditHint() {
+			const mentionPattern = /(^|\s)@/
+			return mentionPattern.test(this.chatEditInput)
+		},
 	},
 
 	watch: {
@@ -462,7 +477,11 @@ export default {
 
 		text(newValue) {
 			if (this.messageToEdit) {
-				this.chatExtrasStore.setChatEditInput({ token: this.token, text: newValue })
+				this.chatExtrasStore.setChatEditInput({
+					token: this.token,
+					text: newValue,
+					parameters: this.messageToEdit.messageParameters
+				})
 			} else {
 				this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
 			}
@@ -600,12 +619,8 @@ export default {
 				}
 			}
 
-			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 			if (this.hasText) {
-				const temp = document.createElement('textarea')
-				temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
-				this.text = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
-					.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
+				this.text = parseSpecialSymbols(this.text)
 			}
 
 			if (this.upload) {
@@ -629,7 +644,6 @@ export default {
 					token: this.token,
 				})
 				this.text = ''
-				this.resetTypingIndicator()
 				this.userData = {}
 				// Scrolls the message list to the last added message
 				EventBus.$emit('smooth-scroll-chat-to-bottom')
@@ -639,6 +653,7 @@ export default {
 				this.broadcast
 					? await this.broadcastMessage(this.token, temporaryMessage.message)
 					: await this.postMessage(this.token, temporaryMessage, options)
+				this.resetTypingIndicator()
 			}
 		},
 
@@ -684,8 +699,10 @@ export default {
 				})
 				this.$store.dispatch('processMessage', { token: this.token, message: response.data.ocs.data })
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.resetTypingIndicator()
 			} catch {
 				this.$emit('failure')
+				showError(t('spreed', 'The message could not be edited'))
 			}
 		},
 
@@ -910,11 +927,39 @@ export default {
 		},
 
 		handleInputEsc() {
+			if (this.messageToEdit && !this.isTributePickerActive) {
+				this.handleAbortEdit()
+				this.focusInput()
+				return
+			}
 			// When the tribute picker (e.g. emoji picker or mentions) is open
 			// ESC should only close the picker but not blur
 			if (!this.isTributePickerActive) {
 				this.blurInput()
 			}
+
+		},
+
+		handleEditLastMessage() {
+			if (!canEditMessage || this.upload || this.broadcast || this.isRecordingAudio) {
+				return
+			}
+			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast(message => {
+				return message.actorId === this.$store.getters.getUserId()
+					&& message.actorType === this.$store.getters.getActorType()
+					&& !message.isTemporary && !message.systemMessage
+			})
+
+			if (!lastMessageByCurrentUser) {
+				return
+			}
+
+			this.chatExtrasStore.initiateEditingMessage({
+				token: this.token,
+				id: lastMessageByCurrentUser.id,
+				message: lastMessageByCurrentUser.message,
+				messageParameters: lastMessageByCurrentUser.messageParameters,
+			})
 		},
 
 		async checkAbsenceStatus() {

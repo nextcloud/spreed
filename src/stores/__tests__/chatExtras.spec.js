@@ -1,5 +1,6 @@
 import { setActivePinia, createPinia } from 'pinia'
 
+import { EventBus } from '../../services/EventBus.js'
 import { getUserAbsence } from '../../services/participantsService.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useChatExtrasStore } from '../chatExtras.js'
@@ -159,6 +160,78 @@ describe('chatExtrasStore', () => {
 			expect(chatExtrasStore.absence['token-1']).not.toBeDefined()
 			expect(chatExtrasStore.parentToReply['token-1']).not.toBeDefined()
 			expect(chatExtrasStore.chatInput['token-1']).not.toBeDefined()
+		})
+	})
+
+	describe('text parsing', () => {
+		it('should render mentions properly when editing message', () => {
+			// Arrange
+			const parameters = {
+				'mention-call1': { type: 'call', name: 'Conversation101' },
+				'mention-user1': { type: 'user', name: 'Alice Joel', id: 'alice' },
+			}
+			// Act
+			chatExtrasStore.setChatEditInput({
+				token: 'token-1',
+				text: 'Hello {mention-call1} and {mention-user1}',
+				parameters
+			})
+			// Assert
+			expect(chatExtrasStore.getChatEditInput('token-1')).toBe('Hello @all and @alice')
+		})
+
+		it('should store chat input without escaping special symbols', () => {
+			// Arrange
+			const message = 'These are special symbols &amp; &lt; &gt; &sect;'
+			// Act
+			chatExtrasStore.setChatInput({ token: 'token-1', text: message })
+			// Assert
+			expect(chatExtrasStore.getChatInput('token-1')).toBe('These are special symbols & < > §')
+		})
+		it('should remove leading/trailing whitespaces', () => {
+			// Arrange
+			const message = '   Many whitespaces   '
+			// Act
+			chatExtrasStore.setChatInput({ token: 'token-1', text: message })
+			// Assert
+			expect(chatExtrasStore.getChatInput('token-1')).toBe('Many whitespaces')
+		})
+	})
+
+	describe('initiateEditingMessage', () => {
+		it('should set the message ID to edit, set the chat edit input, and emit an event', () => {
+			// Arrange
+			const payload = {
+				token: 'token-1',
+				id: 'id-1',
+				message: 'Hello, world!',
+				messageParameters: {}
+			}
+			const emitSpy = jest.spyOn(EventBus, '$emit')
+
+			// Act
+			chatExtrasStore.initiateEditingMessage(payload)
+
+			// Assert
+			expect(chatExtrasStore.getMessageIdToEdit('token-1')).toBe('id-1')
+			expect(chatExtrasStore.getChatEditInput('token-1')).toEqual('Hello, world!')
+			expect(emitSpy).toHaveBeenCalledWith('editing-message')
+		})
+
+		it('should set the chat edit input text to empty if the message is a file share only', () => {
+			// Arrange
+			const payload = {
+				token: 'token-1',
+				id: 'id-1',
+				message: '{file}',
+				messageParameters: { file0: 'file-path' }
+			}
+
+			// Act
+			chatExtrasStore.initiateEditingMessage(payload)
+
+			// Assert
+			expect(chatExtrasStore.getChatEditInput('token-1')).toEqual('')
 		})
 	})
 })
