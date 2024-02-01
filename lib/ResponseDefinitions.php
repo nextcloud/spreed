@@ -100,13 +100,15 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkFederationInvite = array{
- *     access_token: string,
+ *     accessToken: string,
  *     id: int,
- *     local_room_id: int,
- *     remote_attendee_id: string,
- *     remote_server_url: string,
- *     remote_token: string,
- *     user_id: string,
+ *     state: int,
+ *     localRoomId: int,
+ *     remoteAttendeeId: int,
+ *     remoteServerUrl: string,
+ *     remoteToken: string,
+ *     roomName: string,
+ *     userId: string,
  * }
  *
  * @psalm-type TalkMatterbridgeConfigFields = array<array<string, mixed>>
