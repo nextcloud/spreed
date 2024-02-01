@@ -221,7 +221,7 @@ class Message {
 		}
 
 		$metaData = $this->comment->getMetaData() ?? [];
-		if ($metaData['silent']) {
+		if (!empty($metaData['silent'])) {
 			$data['silent'] = true;
 		}
 
