@@ -46,6 +46,10 @@
 					{{ conversationInformation }}
 				</template>
 			</template>
+			<template v-if="isPublic || isGroup" #details>
+				<LinkIcon v-if="isPublic" :size="16" />
+				<AccountMultipleIcon v-else-if="isGroup" :size="16" />
+			</template>
 			<template v-if="!isSearchResult" #actions>
 				<NcActionButton v-if="canFavorite"
 					:close-after-click="true"
@@ -136,12 +140,14 @@
 import { Fragment } from 'vue-frag'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
+import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
+import LinkIcon from 'vue-material-design-icons/Link.vue'
 import Star from 'vue-material-design-icons/Star.vue'
 
 import { showError } from '@nextcloud/dialogs'
@@ -168,12 +174,14 @@ export default {
 		NcListItem,
 		Fragment,
 		// Icons
+		AccountMultipleIcon,
 		ArrowRight,
 		Cog,
 		Delete,
 		ExitToApp,
 		EyeOffOutline,
 		EyeOutline,
+		LinkIcon,
 		Star,
 	},
 
@@ -229,6 +237,14 @@ export default {
 
 		canFavorite() {
 			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
+		},
+
+		isPublic() {
+			return this.item.type === CONVERSATION.TYPE.PUBLIC
+		},
+
+		isGroup() {
+			return this.item.type === CONVERSATION.TYPE.GROUP
 		},
 
 		labelFavorite() {
