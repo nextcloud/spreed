@@ -26,7 +26,7 @@ PHPPID1=$!
 echo -e "Running on process ID: \033[1;35m$PHPPID1\033[0m"
 
 # Output filtered php server logs
-tail -f phpserver.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
+tail -f phpserver.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" | grep --line-buffered -v -E "] Failed to poll event$" &
 
 # The federated server is started and stopped by the tests themselves
 PORT_FED=8180
@@ -38,7 +38,7 @@ PHPPID2=$!
 echo -e "Running on process ID: \033[1;35m$PHPPID2\033[0m"
 
 # Output filtered federated php server logs
-tail -f phpserver_fed.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
+tail -f phpserver_fed.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" | grep --line-buffered -v -E "] Failed to poll event$" &
 
 # Kill all sub-processes in case of ctrl+c
 trap 'pkill -P $PHPPID1; pkill -P $PHPPID2; pkill -P $PROCESS_ID; wait $PHPPID1; wait $PHPPID2;' INT TERM
