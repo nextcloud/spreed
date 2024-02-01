@@ -68,8 +68,8 @@ class Version13000Date20210625232111 extends SimpleMigrationStep {
 			]);
 		}
 
-		/** Removed in {@see \OCA\Talk\Migration\Version18000Date20231024141626} */
-		/** Recreated in {@see \OCA\Talk\Migration\Version18000Date20231024141627} */
+		/** Removed in {@see Version18000Date20231024141626} */
+		/** Recreated in {@see Version18000Date20231024141627} */
 		// if (!$schema->hasTable('talk_invitations')) {
 		// $table = $schema->createTable('talk_invitations');
 		// $table->addColumn('id', Types::BIGINT, [

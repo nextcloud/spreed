@@ -1091,7 +1091,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $roomToken
 	 * @param string|null $user
 	 */
-	public function deleteInRoom(string $roomToken, string $user = null): void {
+	public function deleteInRoom(string $roomToken, ?string $user = null): void {
 		$this->cleanSharesByIdCache();
 
 		//First delete all custom room shares for the original shares to be removed

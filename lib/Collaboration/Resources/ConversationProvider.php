@@ -75,7 +75,7 @@ class ConversationProvider implements IProvider {
 		}
 	}
 
-	public function canAccessResource(IResource $resource, IUser $user = null): bool {
+	public function canAccessResource(IResource $resource, ?IUser $user = null): bool {
 		$userId = $user instanceof IUser ? $user->getUID() : null;
 		if ($userId === null) {
 			throw new ResourceException('Guests are not supported at the moment');

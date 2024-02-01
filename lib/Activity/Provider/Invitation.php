@@ -35,7 +35,7 @@ class Invitation extends Base {
 	 * @throws \InvalidArgumentException
 	 * @since 11.0.0
 	 */
-	public function parse($language, IEvent $event, IEvent $previousEvent = null): IEvent {
+	public function parse($language, IEvent $event, ?IEvent $previousEvent = null): IEvent {
 		$event = $this->preParse($event);
 
 		if ($event->getSubject() === 'invitation') {

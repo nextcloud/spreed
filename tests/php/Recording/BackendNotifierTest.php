@@ -75,7 +75,7 @@ class BackendNotifierTest extends TestCase {
 	private ?ISecureRandom $secureRandom = null;
 	/** @var IURLGenerator|MockObject */
 	private $urlGenerator;
-	private ?\OCA\Talk\Tests\php\Recording\CustomBackendNotifier $backendNotifier = null;
+	private ?CustomBackendNotifier $backendNotifier = null;
 
 	/** @var ParticipantService|MockObject */
 	private $participantService;

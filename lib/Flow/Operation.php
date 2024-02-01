@@ -88,7 +88,7 @@ class Operation implements IOperation {
 	 * @since 9.1
 	 */
 	public function validateOperation(string $name, array $checks, string $operation): void {
-		list($mode, $token) = $this->parseOperationConfig($operation);
+		[$mode, $token] = $this->parseOperationConfig($operation);
 		$this->validateOperationConfig($mode, $token, $this->getUser()->getUID());
 	}
 
@@ -96,7 +96,7 @@ class Operation implements IOperation {
 		$flows = $ruleMatcher->getFlows(false);
 		foreach ($flows as $flow) {
 			try {
-				list($mode, $token) = $this->parseOperationConfig($flow['operation']);
+				[$mode, $token] = $this->parseOperationConfig($flow['operation']);
 				$uid = $flow['scope_actor_id'];
 				$this->validateOperationConfig($mode, $token, $uid);
 

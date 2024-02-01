@@ -309,7 +309,7 @@ class InjectionMiddleware extends Middleware {
 						$protection = $attribute->newInstance();
 						$action = $protection->getAction();
 
-						if ('talkRoomToken' === $action) {
+						if ($action === 'talkRoomToken') {
 							try {
 								$this->throttler->sleepDelayOrThrowOnMax($this->request->getRemoteAddress(), $action);
 							} catch (MaxDelayReached $e) {

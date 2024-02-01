@@ -103,7 +103,7 @@ class ChatController extends AEnvironmentAwareController {
 		private ParticipantService $participantService,
 		private SessionService $sessionService,
 		protected AttachmentService $attachmentService,
-		protected avatarService $avatarService,
+		protected AvatarService $avatarService,
 		protected ReminderService $reminderService,
 		private GuestManager $guestManager,
 		private MessageParser $messageParser,
@@ -150,7 +150,7 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 */
-	protected function parseCommentToResponse(IComment $comment, Message $parentMessage = null): DataResponse {
+	protected function parseCommentToResponse(IComment $comment, ?Message $parentMessage = null): DataResponse {
 		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($chatMessage);
 

@@ -273,7 +273,7 @@ class Manager {
 	 * @param int|null $offset
 	 * @return Room[]
 	 */
-	public function searchRoomsByToken(string $searchToken = '', int $limit = null, int $offset = null): array {
+	public function searchRoomsByToken(string $searchToken = '', ?int $limit = null, ?int $offset = null): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
