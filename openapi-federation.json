@@ -125,36 +125,46 @@
             "FederationInvite": {
                 "type": "object",
                 "required": [
-                    "access_token",
+                    "accessToken",
                     "id",
-                    "local_room_id",
-                    "remote_attendee_id",
-                    "remote_server_url",
-                    "remote_token",
-                    "user_id"
+                    "state",
+                    "localRoomId",
+                    "remoteAttendeeId",
+                    "remoteServerUrl",
+                    "remoteToken",
+                    "roomName",
+                    "userId"
                 ],
                 "properties": {
-                    "access_token": {
+                    "accessToken": {
                         "type": "string"
                     },
                     "id": {
                         "type": "integer",
                         "format": "int64"
                     },
-                    "local_room_id": {
+                    "state": {
                         "type": "integer",
                         "format": "int64"
                     },
-                    "remote_attendee_id": {
+                    "localRoomId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "remoteAttendeeId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "remoteServerUrl": {
                         "type": "string"
                     },
-                    "remote_server_url": {
+                    "remoteToken": {
                         "type": "string"
                     },
-                    "remote_token": {
+                    "roomName": {
                         "type": "string"
                     },
-                    "user_id": {
+                    "userId": {
                         "type": "string"
                     }
                 }
