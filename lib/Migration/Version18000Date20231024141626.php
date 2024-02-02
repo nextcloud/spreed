@@ -43,7 +43,7 @@ class Version18000Date20231024141626 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		if ($schema->hasTable('talk_invitations')) {
-			/** Recreated in {@see \OCA\Talk\Migration\Version18000Date20231024141627} */
+			/** Recreated in {@see Version18000Date20231024141627} */
 			$schema->dropTable('talk_invitations');
 			return $schema;
 		}

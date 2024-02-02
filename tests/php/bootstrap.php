@@ -28,4 +28,4 @@ require_once __DIR__.'/../../../../lib/base.php';
 if (!class_exists('\PHPUnit\Framework\TestCase')) {
 	require_once('PHPUnit/Autoload.php');
 }
-OC_Hook::clear();
+\OC_Hook::clear();

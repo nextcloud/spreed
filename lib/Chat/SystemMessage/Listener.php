@@ -426,7 +426,7 @@ class Listener implements IEventListener {
 		}
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null, bool $shouldSkipLastMessageUpdate = false, bool $silent = false, bool $forceSystemAsActor = false): IComment {
+	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], ?Participant $participant = null, bool $shouldSkipLastMessageUpdate = false, bool $silent = false, bool $forceSystemAsActor = false): IComment {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->getAttendee()->getActorType();
 			$actorId = $participant->getAttendee()->getActorId();

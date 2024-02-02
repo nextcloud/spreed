@@ -280,7 +280,7 @@ class RoomService {
 
 	/**
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
-	 * @throws \InvalidArgumentException When the room has an active call or the value is invalid
+	 * @throws InvalidArgumentException When the room has an active call or the value is invalid
 	 */
 	public function setRecordingConsent(Room $room, int $recordingConsent, bool $allowUpdatingBreakoutRooms = false): void {
 		$oldRecordingConsent = $room->getRecordingConsent();
@@ -435,8 +435,8 @@ class RoomService {
 	 * @param integer $status 0 none|1 video|2 audio
 	 * @param Participant|null $participant the Participant that changed the
 	 *        state, null for the current user
-	 * @throws \InvalidArgumentException When the status is invalid, not Room::RECORDING_*
-	 * @throws \InvalidArgumentException When trying to start
+	 * @throws InvalidArgumentException When the status is invalid, not Room::RECORDING_*
+	 * @throws InvalidArgumentException When trying to start
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
 		if (!$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
@@ -728,11 +728,11 @@ class RoomService {
 	}
 
 	/**
-	 * @throws \InvalidArgumentException When the room is a breakout room
+	 * @throws InvalidArgumentException When the room is a breakout room
 	 */
 	public function setMessageExpiration(Room $room, int $seconds): void {
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new \InvalidArgumentException('room');
+			throw new InvalidArgumentException('room');
 		}
 
 		$oldExpiration = $room->getMessageExpiration();

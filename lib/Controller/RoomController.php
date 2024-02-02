@@ -28,7 +28,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
@@ -282,7 +281,7 @@ class RoomController extends AEnvironmentAwareController {
 	public function getBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
-		} catch (InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -534,7 +533,7 @@ class RoomController extends AEnvironmentAwareController {
 				$this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)),
 				Http::STATUS_CREATED
 			);
-		} catch (InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException $e) {
 			// Same current and target user
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		} catch (RoomNotFoundException $e) {
@@ -642,7 +641,7 @@ class RoomController extends AEnvironmentAwareController {
 		// Create the room
 		try {
 			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId);
-		} catch (InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -852,7 +851,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			$breakoutRooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
-		} catch (InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 

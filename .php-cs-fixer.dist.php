@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once './vendor/autoload.php';
+require_once './vendor-bin/csfixer/vendor/autoload.php';
 
 use Nextcloud\CodingStandard\Config;
 

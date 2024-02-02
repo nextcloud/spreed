@@ -229,7 +229,7 @@ class BreakoutRoomService {
 				if ($attendee->getActorType() === Attendee::ACTOR_USERS && in_array($attendee->getActorId(), $userIds, true)) {
 					if ($participant->hasModeratorPermissions()) {
 						// Can not remove moderators with this method
-						throw new \InvalidArgumentException('moderator');
+						throw new InvalidArgumentException('moderator');
 					}
 
 					$removals[] = [
@@ -357,7 +357,7 @@ class BreakoutRoomService {
 	 */
 	public function broadcastChatMessage(Room $parent, Participant $participant, string $message): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
-			throw new \InvalidArgumentException('mode');
+			throw new InvalidArgumentException('mode');
 		}
 
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
@@ -391,18 +391,18 @@ class BreakoutRoomService {
 
 	protected function setAssistanceRequest(Room $breakoutRoom, int $status): void {
 		if ($breakoutRoom->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new \InvalidArgumentException('room');
+			throw new InvalidArgumentException('room');
 		}
 
 		if ($breakoutRoom->getLobbyState() !== Webinary::LOBBY_NONE) {
-			throw new \InvalidArgumentException('room');
+			throw new InvalidArgumentException('room');
 		}
 
 		if (!in_array($status, [
 			BreakoutRoom::STATUS_ASSISTANCE_RESET,
 			BreakoutRoom::STATUS_ASSISTANCE_REQUESTED,
 		], true)) {
-			throw new \InvalidArgumentException('status');
+			throw new InvalidArgumentException('status');
 		}
 
 		$this->roomService->setBreakoutRoomStatus($breakoutRoom, $status);
@@ -415,7 +415,7 @@ class BreakoutRoomService {
 	 */
 	public function startBreakoutRooms(Room $parent): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
-			throw new \InvalidArgumentException('mode');
+			throw new InvalidArgumentException('mode');
 		}
 
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken(), true);
@@ -434,7 +434,7 @@ class BreakoutRoomService {
 	 */
 	public function stopBreakoutRooms(Room $parent): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
-			throw new \InvalidArgumentException('mode');
+			throw new InvalidArgumentException('mode');
 		}
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
@@ -453,16 +453,16 @@ class BreakoutRoomService {
 
 	public function switchBreakoutRoom(Room $parent, Participant $participant, string $targetToken): Room {
 		if ($parent->getBreakoutRoomMode() !== BreakoutRoom::MODE_FREE) {
-			throw new \InvalidArgumentException('mode');
+			throw new InvalidArgumentException('mode');
 		}
 
 		if ($parent->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STARTED) {
-			throw new \InvalidArgumentException('status');
+			throw new InvalidArgumentException('status');
 		}
 
 		if ($participant->hasModeratorPermissions()) {
 			// Moderators don't switch, they are part of all breakout rooms
-			throw new \InvalidArgumentException('moderator');
+			throw new InvalidArgumentException('moderator');
 		}
 
 		$attendee = $participant->getAttendee();
@@ -478,7 +478,7 @@ class BreakoutRoomService {
 		}
 
 		if ($target === null) {
-			throw new \InvalidArgumentException('target');
+			throw new InvalidArgumentException('target');
 		}
 
 		foreach ($breakoutRooms as $breakoutRoom) {
@@ -525,11 +525,11 @@ class BreakoutRoomService {
 	 */
 	public function getBreakoutRooms(Room $parent, Participant $participant): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
-			throw new \InvalidArgumentException('mode');
+			throw new InvalidArgumentException('mode');
 		}
 
 		if (!$participant->hasModeratorPermissions() && $parent->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STARTED) {
-			throw new \InvalidArgumentException('status');
+			throw new InvalidArgumentException('status');
 		}
 
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken(), true);
@@ -574,7 +574,7 @@ class BreakoutRoomService {
 				);
 
 				if ($throwOnModerator && $participant->hasModeratorPermissions()) {
-					throw new \InvalidArgumentException('moderator');
+					throw new InvalidArgumentException('moderator');
 				}
 
 				$this->participantService->removeAttendee($breakoutRoom, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
