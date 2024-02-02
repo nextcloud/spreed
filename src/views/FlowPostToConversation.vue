@@ -47,7 +47,7 @@ export default {
 				},
 				{
 					id: FLOW.MESSAGE_MODES.ROOM_MENTION,
-					text: t('spreed', 'Mention room'),
+					text: t('spreed', 'Mention everyone'),
 				},
 			],
 			roomOptions: [],
