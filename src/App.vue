@@ -41,7 +41,6 @@ import debounce from 'debounce'
 import PreventUnload from 'vue-prevent-unload'
 
 import { getCurrentUser } from '@nextcloud/auth'
-import axios from '@nextcloud/axios'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
@@ -64,6 +63,7 @@ import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
+import { useFederationStore } from './stores/federation.js'
 import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -87,6 +87,7 @@ export default {
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
 			supportSessionState: useActiveSession(),
+			federationStore: useFederationStore(),
 		}
 	},
 
@@ -548,16 +549,24 @@ export default {
 				// Federation invitation handling
 				if (event.notification.objectType === 'remote_talk_share') {
 					try {
-						const response = await axios.post(event.action.url)
-						this.$store.dispatch('addConversation', response.data.ocs.data)
-						this.$router.push({
-							name: 'conversation',
-							params: {
-								token: response.data.ocs.data.token,
-							},
-						})
-
 						event.cancelAction = true
+						const conversation = await this.federationStore.acceptShare(event.notification.objectId)
+						if (conversation.token) {
+							this.$store.dispatch('addConversation', conversation)
+							this.$router.push({ name: 'conversation', params: { token: conversation.token } })
+						}
+					} catch (error) {
+						console.error(error)
+					}
+				}
+				break
+			}
+			case 'DELETE': {
+				// Federation invitation handling
+				if (event.notification.objectType === 'remote_talk_share') {
+					try {
+						event.cancelAction = true
+						this.federationStore.rejectShare(event.notification.objectId)
 					} catch (error) {
 						console.error(error)
 					}
@@ -600,6 +609,7 @@ export default {
 			}
 			// Federation invitation handling
 			case 'remote_talk_share': {
+				this.federationStore.addInvitationFromNotification(event.notification)
 				break
 			}
 			default: break
