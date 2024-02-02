@@ -518,7 +518,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" (accepts|declines) invite to room "([^"]*)" of server "([^"]*)" \((v1)\)$/
+	 * @Then /^user "([^"]*)" (accepts|declines) invite to room "([^"]*)" of server "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
 	 * @param string $roomName
@@ -526,7 +526,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, string $apiVersion, TableNode $formData = null): void {
+	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, int $status, string $apiVersion, TableNode $formData = null): void {
 		$inviteId = self::$remoteToInviteId[$server . '::' . $roomName];
 
 		$verb = $acceptsDeclines === 'accepts' ? 'POST' : 'DELETE';
@@ -535,11 +535,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($server === 'LOCAL') {
 			$this->sendRemoteRequest($verb, '/apps/spreed/api/' . $apiVersion . '/federation/invitation/' . $inviteId);
 		}
-		$this->assertStatusCode($this->response, 200);
+		$this->assertStatusCode($this->response, $status);
 		$response = $this->getDataFromResponse($this->response);
 
 		if ($formData) {
-			$this->assertRooms([$response], $formData);
+			if ($status === 200) {
+				$this->assertRooms([$response], $formData);
+			} else {
+				Assert::assertSame($formData->getRowsHash(), $response);
+			}
 		} else {
 			Assert::assertEmpty($response);
 		}
@@ -2755,7 +2759,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = $formData->getHash();
 
-		Assert::assertCount(count($expected), $messages, 'Message count does not match');
+		Assert::assertCount(count($expected), $messages, 'Message count does not match:' . "\n" . json_encode($messages, JSON_PRETTY_PRINT));
 		Assert::assertEquals($expected, array_map(function ($message, $expected) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],

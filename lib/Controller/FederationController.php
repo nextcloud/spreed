@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2021, Gary Kim <gary@garykim.dev>
+ * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2021 Gary Kim <gary@garykim.dev>
  *
  * @author Gary Kim <gary@garykim.dev>
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -27,6 +29,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\FederationManager;
@@ -34,13 +37,11 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\RoomFormatter;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\DB\Exception as DBException;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -90,21 +91,29 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
-	 * @throws UnauthorizedException
-	 * @throws DBException
-	 * @throws MultipleObjectsReturnedException
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_GONE, array{error: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 200: Invite accepted successfully
+	 * 400: Invite can not be accepted (maybe it was accepted already)
+	 * 404: Invite can not be found
+	 * 410: Remote server could not be reached to notify about the acceptance
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	public function acceptShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
-			throw new UnauthorizedException();
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-		$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
+		try {
+			$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
+		} catch (CannotReachRemoteException) {
+			return new DataResponse(['error' => 'remote'], Http::STATUS_GONE);
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
+		}
 		return new DataResponse($this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
 			[],
@@ -120,21 +129,25 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
-	 * @throws UnauthorizedException
-	 * @throws DBException
-	 * @throws MultipleObjectsReturnedException
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 200: Invite declined successfully
+	 * 404: Invite can not be found
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	public function rejectShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
-			throw new UnauthorizedException();
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-		$this->federationManager->rejectRemoteRoomShare($user, $id);
+		try {
+			$this->federationManager->rejectRemoteRoomShare($user, $id);
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+		}
 		return new DataResponse();
 	}
 

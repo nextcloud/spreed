@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 /**
+ * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2021 Gary Kim <gary@garykim.dev>
  *
  * @author Gary Kim <gary@garykim.dev>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -104,14 +106,21 @@ class FederationManager {
 	}
 
 	/**
-	 * @throws UnauthorizedException
-	 * @throws DoesNotExistException
+	 * @throws \InvalidArgumentException
 	 * @throws CannotReachRemoteException
 	 */
 	public function acceptRemoteRoomShare(IUser $user, int $shareId): Participant {
-		$invitation = $this->invitationMapper->getInvitationById($shareId);
+		try {
+			$invitation = $this->invitationMapper->getInvitationById($shareId);
+		} catch (DoesNotExistException $e) {
+			throw new \InvalidArgumentException('invitation');
+		}
 		if ($invitation->getUserId() !== $user->getUID()) {
-			throw new UnauthorizedException('invitation is for a different user');
+			throw new UnauthorizedException('user');
+		}
+
+		if ($invitation->getState() === Invitation::STATE_ACCEPTED) {
+			throw new \InvalidArgumentException('state');
 		}
 
 		// Add user to the room
@@ -151,13 +160,17 @@ class FederationManager {
 	}
 
 	/**
+	 * @throws \InvalidArgumentException
 	 * @throws UnauthorizedException
-	 * @throws DoesNotExistException
 	 */
 	public function rejectRemoteRoomShare(IUser $user, int $shareId): void {
-		$invitation = $this->invitationMapper->getInvitationById($shareId);
+		try {
+			$invitation = $this->invitationMapper->getInvitationById($shareId);
+		} catch (DoesNotExistException $e) {
+			throw new \InvalidArgumentException('invitation');
+		}
 		if ($invitation->getUserId() !== $user->getUID()) {
-			throw new UnauthorizedException('invitation is for a different user');
+			throw new UnauthorizedException('user');
 		}
 
 		$this->invitationMapper->delete($invitation);
