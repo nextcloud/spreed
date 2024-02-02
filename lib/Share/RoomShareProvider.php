@@ -139,7 +139,7 @@ class RoomShareProvider implements IShareProvider {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
 				$event = new BeforeDuplicateShareSentEvent($existingShare);
 				$this->dispatcher->dispatchTyped($event);
-				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this room'), 403);
+				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this conversation'), 403);
 			}
 		}
 
