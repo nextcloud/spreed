@@ -45,8 +45,8 @@ Feature: federation/invite
       | remoteServerUrl | remoteToken | state |
       | LOCAL           | room        | 0     |
     Then user "participant2" has the following notifications
-      | app    | object_type       | object_id              | subject                                                                      |
-      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on http://localhost:8080 with you |
+      | app    | object_type       | object_id              | subject                                                           | message                                                                     |
+      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 3    | LOCAL        | room        |
@@ -97,8 +97,8 @@ Feature: federation/invite
       | remoteServerUrl | remoteToken | state |
       | LOCAL           | room        | 0     |
     Then user "participant2" has the following notifications
-      | app    | object_type       | object_id              | subject                                                                      |
-      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on http://localhost:8080 with you |
+      | app    | object_type       | object_id              | subject                                                           | message                                                                     |
+      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
     And user "participant2" declines invite to room "room" of server "LOCAL" with 200 (v1)
     And user "participant2" declines invite to room "room" of server "LOCAL" with 404 (v1)
       | error | invitation |
@@ -132,8 +132,8 @@ Feature: federation/invite
       | remoteServerUrl | remoteToken | state |
       | LOCAL           | room        | 0     |
     Then user "participant2" has the following notifications
-      | app    | object_type       | object_id              | subject                                                                      |
-      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on http://localhost:8080 with you |
+      | app    | object_type       | object_id              | subject                                                           | message                                                                     |
+      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
     When user "participant1" removes remote "participant2" from room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
     Then user "participant2" is participant of the following rooms (v4)
