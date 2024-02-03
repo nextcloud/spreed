@@ -35,7 +35,7 @@
 		"attachmediastream": "^2.1.0",
 		"crypto-js": "^4.1.1",
 		"debounce": "^1.2.1",
-		"emoji-mart-vue-fast": "^15.0.0",
+		"emoji-mart-vue-fast": "^15.0.1",
 		"emoji-regex": "^10.2.1",
 		"escape-html": "^1.0.3",
 		"extendable-media-recorder": "^7.1.22",
