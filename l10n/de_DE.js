@@ -1302,7 +1302,7 @@ OC.L10N.register(
     "Password protect" : "Passwortschutz",
     "Enter password" : "Passwort eingeben",
     "Add emoji" : "Emoji hinzufügen",
-    "Adding a mention will only notify users who did not read the message." : "Das Hinzufügen einer Erwähnung wird nur Benutzer benachrichtigen, die die Nachricht noch nicht gelesen haben.",
+    "Adding a mention will only notify users who did not read the message." : "Hinzufügen einer Erwähnung benachrichtigt nur Benutzer, die die Nachricht noch nicht gelesen haben.",
     "Send without notification" : "Ohne Benachrichtigung senden",
     "Send message" : "Nachricht senden",
     "This conversation has been locked" : "Diese Unterhaltung wurde gesperrt",
