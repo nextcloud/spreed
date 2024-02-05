@@ -225,6 +225,15 @@ export default {
 		},
 		addableRemotes() {
 			return this.searchResults.filter((item) => item.source === 'remotes')
+				// TODO remove when Federation feature is ready
+				.concat(OC.debug
+					? this.addableUsers.map(user => ({
+						...user,
+						id: user.id + '@' + window.location.host,
+						label: user.id + '@' + window.location.host,
+						source: 'remotes',
+					}))
+					: [])
 		},
 
 		displaySearchHint() {

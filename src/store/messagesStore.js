@@ -35,6 +35,7 @@ import { fetchNoteToSelfConversation } from '../services/conversationsService.js
 import { EventBus } from '../services/EventBus.js'
 import {
 	deleteMessage,
+	editMessage,
 	updateLastReadMessage,
 	fetchMessages,
 	lookForNewMessages,
@@ -622,6 +623,37 @@ const actions = {
 			context.dispatch('processMessage', { token, message: response.data.ocs.data })
 			return response.status
 		} catch (error) {
+			// Restore the previous message state
+			context.commit('addMessage', { token, message })
+			throw error
+		}
+	},
+
+	/**
+	 * Edit a message text
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token The conversation token
+	 * @param {string} payload.messageId The message id
+	 * @param {string} payload.updatedMessage The modified text of the message / file share caption
+	 */
+	async editMessage(context, { token, messageId, updatedMessage }) {
+		const message = Object.assign({}, context.getters.message(token, messageId))
+		context.commit('addMessage', {
+			token,
+			message: { ...message, message: updatedMessage },
+		})
+
+		try {
+			const response = await editMessage({
+				token,
+				messageId,
+				updatedMessage,
+			})
+			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+		} catch (error) {
+			console.error(error)
 			// Restore the previous message state
 			context.commit('addMessage', { token, message })
 			throw error

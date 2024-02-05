@@ -46,8 +46,9 @@
 					{{ conversationInformation }}
 				</template>
 			</template>
-			<template v-if="isPublic || isGroup" #details>
-				<LinkIcon v-if="isPublic" :size="16" />
+			<template v-if="isFederated || isPublic || isGroup" #details>
+				<WebIcon v-if="isFederated" :size="16" />
+				<LinkIcon v-else-if="isPublic" :size="16" />
 				<AccountMultipleIcon v-else-if="isGroup" :size="16" />
 			</template>
 			<template v-if="!isSearchResult" #actions>
@@ -149,6 +150,7 @@ import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import LinkIcon from 'vue-material-design-icons/Link.vue'
 import Star from 'vue-material-design-icons/Star.vue'
+import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -183,6 +185,7 @@ export default {
 		EyeOutline,
 		LinkIcon,
 		Star,
+		WebIcon,
 	},
 
 	props: {
@@ -237,6 +240,10 @@ export default {
 
 		canFavorite() {
 			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
+		},
+
+		isFederated() {
+			return !!this.item.remoteServer
 		},
 
 		isPublic() {
