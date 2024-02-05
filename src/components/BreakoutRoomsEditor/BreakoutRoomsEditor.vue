@@ -33,14 +33,13 @@
 					<p v-if="isInvalidAmount" class="breakout-rooms-editor__error-hint">
 						{{ t('spreed', 'You can create from 1 to 20 breakout rooms.') }}
 					</p>
-					<NcTextField id="room-number"
-						ref="textField"
-						:value="amount.toString()"
+					<NcInputField id="room-number"
+						ref="inputField"
+						:value.sync="amount"
 						class="breakout-rooms-editor__number-input"
 						type="number"
 						min="1"
-						max="20"
-						@update:value="setAmount" />
+						max="20" />
 
 					<label class="breakout-rooms-editor__caption">{{ t('spreed', 'Assignment method') }}</label>
 					<fieldset>
@@ -93,8 +92,8 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
 
@@ -105,7 +104,7 @@ export default {
 		BreakoutRoomsParticipantsEditor,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NcTextField,
+		NcInputField,
 		NcModal,
 	},
 
@@ -140,6 +139,12 @@ export default {
 		},
 	},
 
+	watch: {
+		amount(value) {
+			this.isInvalidAmount = isNaN(value) || !this.$refs.inputField.$refs.input?.checkValidity()
+		},
+	},
+
 	methods: {
 		async handleCreateRooms() {
 			try {
@@ -152,13 +157,6 @@ export default {
 			} catch (error) {
 				console.debug(error)
 			}
-		},
-
-		// FIXME upstream: support of value type as Number should be added to NcInputField,
-		// now it breaks validation. Another option: Create NcNumberField component
-		setAmount(value) {
-			this.amount = parseFloat(value)
-			this.isInvalidAmount = isNaN(this.amount) || !this.$refs.textField.$refs.inputField.$refs.input?.checkValidity()
 		},
 	},
 }
