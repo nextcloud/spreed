@@ -1039,7 +1039,7 @@ OC.L10N.register(
     "Delete" : "Löschen",
     "You can bridge channels from various instant messaging systems with Matterbridge." : "Mit Matterbridge können Sie Kanäle von verschiedenen Instant-Messaging-Systemen verbinden.",
     "More info on Matterbridge" : "Weitere Informationen über Matterbridge",
-    "Messaging systems" : "Messaging Systeme",
+    "Messaging systems" : "Messaging-Systeme",
     "Enable bridge" : "Einbindung aktivieren",
     "Show Matterbridge log" : "Zeige das Matterbridge-Protokoll",
     "Log content" : "Log-Inhalt",
