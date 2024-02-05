@@ -1051,7 +1051,7 @@ class RoomController extends AEnvironmentAwareController {
 		foreach ($participants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$participantsByUserId[$participant->getAttendee()->getActorId()] = $participant;
-			} elseif ($participant->getAttendee()->getAccessToken() === Attendee::ACTOR_FEDERATED_USERS) {
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 				$remoteParticipantsByFederatedId[$participant->getAttendee()->getActorId()] = $participant;
 			}
 		}

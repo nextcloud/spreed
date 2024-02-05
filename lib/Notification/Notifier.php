@@ -415,7 +415,7 @@ class Notifier implements INotifier {
 
 		[$sharedById, $sharedByServer] = $this->addressHandler->splitUserRemote($subjectParameters['sharedByFederatedId']);
 
-		$message = $l->t('{user1} shared room {roomName} on {remoteServer} with you');
+		$message = $l->t('{user1} invited you to join {roomName} on {remoteServer}');
 
 		$rosParameters = [
 			'user1' => [
@@ -436,16 +436,6 @@ class Notifier implements INotifier {
 			]
 		];
 
-		$placeholders = $replacements = [];
-		foreach ($rosParameters as $placeholder => $parameter) {
-			$placeholders[] = '{' . $placeholder .'}';
-			if ($parameter['type'] === 'user') {
-				$replacements[] = '@' . $parameter['name'];
-			} else {
-				$replacements[] = $parameter['name'];
-			}
-		}
-
 		$acceptAction = $notification->createAction();
 		$acceptAction->setParsedLabel($l->t('Accept'));
 		$acceptAction->setLink($this->url->linkToOCSRouteAbsolute(
@@ -463,8 +453,8 @@ class Notifier implements INotifier {
 		), IAction::TYPE_DELETE);
 		$notification->addParsedAction($declineAction);
 
-		$notification->setParsedSubject(str_replace($placeholders, $replacements, $message));
-		$notification->setRichSubject($message, $rosParameters);
+		$notification->setRichSubject($l->t('{user1} invited you to a federated conversation'), ['user1' => $rosParameters['user1']]);
+		$notification->setRichMessage($message, $rosParameters);
 
 		return $notification;
 	}
