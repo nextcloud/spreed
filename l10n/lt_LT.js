@@ -383,7 +383,6 @@ OC.L10N.register(
     "Zimbabwe" : "Zimbabvė",
     "Invalid date, date format must be YYYY-MM-DD" : "Netinkama data, datos formatas privalo būti MMMM-mm-dd",
     "Conversation not found" : "Pokalbis nerastas",
-    "Path is already shared with this room" : "Kelias jau yra bendrinamas su šiuo kambariu",
     "Chat, video & audio-conferencing using WebRTC" : "Pokalbiai, vaizdo ir garso konferencijos naudojant WebRTC",
     "Leave call" : "Išeiti iš skambučio",
     "Stay in call" : "Pasilikti skambutyje",
@@ -756,7 +755,6 @@ OC.L10N.register(
     "Start a conversation" : "Pradėti pokalbį",
     "Message without mention" : "Rašyti be paminėjimo",
     "Mention myself" : "Paminėti save",
-    "Mention room" : "Paminėti kambarį",
     "The conversation does not exist" : "Pokalbio nėra",
     "Join a conversation or start a new one!" : "Prisijunkite prie pokalbio arba pradėkite naują!",
     "Join a conversation or start a new one" : "Prisijunkite prie pokalbio arba pradėkite naują",
@@ -809,6 +807,7 @@ OC.L10N.register(
     "{actor} invited {user}" : "{actor} pakvietė naudotoją {user}",
     "You invited {user}" : "Jūs pakvietėte naudotoją {user}",
     "An administrator invited {user}" : "Administratorius pakvietė naudotoją {user}",
+    "Path is already shared with this room" : "Kelias jau yra bendrinamas su šiuo kambariu",
     "Submit conversation description" : "Pateikti pokalbio aprašą",
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Aprašas privalo būti trumpesnis arba lygiai {maxLength} simbolių ilgio. Jūsų dabartinis tekstas yra {charactersCount} simbolių ilgio.",
     "Creating your conversation" : "Kuriamas jūsų pokalbis",
@@ -821,6 +820,7 @@ OC.L10N.register(
     "Rename conversation" : "Pervadinti pokalbį",
     "Exit fullscreen (F)" : "Išeiti iš viso ekrano (F)",
     "Fullscreen (F)" : "Visas ekranas (F)",
+    "Mention room" : "Paminėti kambarį",
     "Sending signaling message has failed." : "Nepavyko išsiųsti signalinės žinutės."
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
