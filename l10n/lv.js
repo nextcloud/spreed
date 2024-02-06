@@ -95,7 +95,6 @@ OC.L10N.register(
     "Avatar image is not square" : "Avatar attēls nav kvadrāts",
     "Invalid date, date format must be YYYY-MM-DD" : "Nederīgs datums, datuma formātam jābūt YYYY-MM-DD",
     "Conversation not found" : "Saruna nav atrasta",
-    "Path is already shared with this room" : "Ceļš jau ir koplietots ar šo telpu",
     "Chat, video & audio-conferencing using WebRTC" : "Video un audio konferences, izmantojot WebRTC",
     "Leave call" : "Pamest zvanu",
     "Request password" : "Pieprasīt paroli",
@@ -259,6 +258,7 @@ OC.L10N.register(
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Esiet sveicināts Nextcloud Talk!\nŠajā sarunā jūs tiksit informēts par jaunām Nextcloud Talk iespējām.",
+    "Path is already shared with this room" : "Ceļš jau ir koplietots ar šo telpu",
     "Conversation name" : "Sarunas nosaukums",
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …"
 },

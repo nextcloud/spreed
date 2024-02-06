@@ -467,7 +467,6 @@
     "Zimbabwe" : "Ζιμπάμπουε",
     "Invalid date, date format must be YYYY-MM-DD" : "Μη έγκυρη ημερομηνία, η μορφή της ημερομηνίας πρέπει να είναι YYYY-MM-DD",
     "Conversation not found" : "Η συζήτηση δεν βρέθηκε",
-    "Path is already shared with this room" : "Η διαδρομή είναι ήδη κοινόχρηστη με το δωμάτιο",
     "Chat, video & audio-conferencing using WebRTC" : "Το Chat, video & ήχο-διάσκεψη χρησιμοποιούν το WebRTC",
     "Navigating away from the page will leave the call in {conversation}" : "Η απομάκρυνση από την σελίδα θα αφήσει την κλήση σε {conversation}",
     "Leave call" : "Αποχώρηση από την κλήση",
@@ -960,7 +959,6 @@
     "Start a conversation" : "Έναρξη συνομιλίας",
     "Message without mention" : "Μήνυμα χωρίς αναφορά σε κάποιον",
     "Mention myself" : "Αναφορά στον εαυτό μου",
-    "Mention room" : "Αναφορά στο δωμάτιο",
     "The conversation does not exist" : "Η συνομιλία δεν υπάρχει",
     "Join a conversation or start a new one!" : "Συμμετέχετε σε συνομιλία ή ξεκινήστε μια νέα!",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Συμμετείχατε στη συνομιλία σε άλλο παράθυρο ή συσκευή. Αυτήν τη στιγμή δεν υποστηρίζεται από το Nextcloud Talk, επομένως αυτή η συνεδρία τερματίστηκε.",
@@ -1021,6 +1019,7 @@
     "You opened the conversation to registered and guest app users" : "Ανοίξατε τη συνομιλία σε εγγεγραμμένους χρήστες και επισκέπτες της εφαρμογής ",
     "An administrator opened the conversation to registered and guest app users" : "Ένας διαχειριστής άνοιξε τη συζήτηση σε εγγεγραμμένους χρήστες και επισκέπτες εφαρμογής.",
     "Messages in {conversation}" : "Μηνύματα στην {conversation}",
+    "Path is already shared with this room" : "Η διαδρομή είναι ήδη κοινόχρηστη με το δωμάτιο",
     "An error occurred while installing the Matterbridge app." : "Παρουσιάστηκε σφάλμα κατά την εγκατάσταση της εφαρμογής Matterbridge.",
     "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Παρουσιάστηκε σφάλμα κατά την εγκατάσταση του Talk Matterbridge. Εγκαταστήστε το χειροκίνητα.",
     "Also open to guest app users" : "Ανοιχτό επίσης για επισκέπτες της εφαρμογής",
@@ -1042,6 +1041,7 @@
     "Rename conversation" : "Μετονομασία συνομιλίας",
     "Exit fullscreen (F)" : "Έξοδος από πλήρη οθόνη (F)",
     "Fullscreen (F)" : "Πλήρης οθόνη (F)",
+    "Mention room" : "Αναφορά στο δωμάτιο",
     "Sending signaling message has failed." : "Η αποστολή μηνύματος σηματοδοσίας απέτυχε.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Ο διαμορφωμένος διακομιστής σηματοδότησης πρέπει να ενημερωθεί για να είναι συμβατός με αυτήν την έκδοση του Talk. Επικοινωνήστε με τον διαχειριστή σας."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -573,7 +573,6 @@ OC.L10N.register(
     "Start a conversation" : "התחלת דיון",
     "Message without mention" : "הודעה ללא אזכור",
     "Mention myself" : "אזכור עצמי",
-    "Mention room" : "אזכור חדר",
     "The conversation does not exist" : "הדיון לא קיים",
     "Join a conversation or start a new one!" : "הצטרפות לדיון או ליצור אחד חדש!",
     "Join a conversation or start a new one" : "ניתן להצטרף לדיון או להתחיל באחד חדש.",
@@ -606,6 +605,7 @@ OC.L10N.register(
     "Conversation name" : "שם דיון",
     "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Rename conversation" : "שינוי שם הדיון",
-    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
+    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
+    "Mention room" : "אזכור חדר"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
