@@ -346,7 +346,6 @@ OC.L10N.register(
     "Zimbabwe" : "Simbabve",
     "Invalid date, date format must be YYYY-MM-DD" : "Ógild dagsetning, dagsetningasniðið verður að vera ÁÁÁÁ-MM-DD",
     "Conversation not found" : "Samtal fannst ekki",
-    "Path is already shared with this room" : "Slóðinni er þegar deilt með þessu spjallsvæði",
     "Chat, video & audio-conferencing using WebRTC" : "Spjall, mynd- og hljóðfundir með WebRTC",
     "Leave call" : "Hætta símtali",
     "Duplicate session" : "Duplicate session",
@@ -568,6 +567,7 @@ OC.L10N.register(
     "Android app" : "Android-forrit",
     "iOS app" : "iOS-forrit",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkomin í Nextcloud Talk-spjallforritið!\nÍ þessum spjallþræði verður þú upplýst/ur um nýja eigileika sem tiltækir eru í Nextcloud Talk.",
+    "Path is already shared with this room" : "Slóðinni er þegar deilt með þessu spjallsvæði",
     "Conversation name" : "Heiti samtals",
     "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
     "Rename conversation" : "Endurnefna samtal"
