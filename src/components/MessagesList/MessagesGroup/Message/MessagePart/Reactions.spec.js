@@ -152,15 +152,15 @@ describe('Reactions.vue', () => {
 			const reactionButtons = wrapper.findAllComponents(NcButton)
 			const emojiPicker = wrapper.findAllComponents(NcEmojiPicker)
 			// Act
-			reactionButtons.at(0).vm.$emit('click') // 🎄
+			reactionButtons.at(1).vm.$emit('click') // 🎄
 
 			// Assert
 			expect(showError).toHaveBeenCalled()
 			expect(emojiPicker).toHaveLength(0)
-			expect(reactionButtons).toHaveLength(3)
-			expect(reactionButtons.at(0).text()).toBe('🎄 2')
-			expect(reactionButtons.at(1).text()).toBe('🔥 2')
-			expect(reactionButtons.at(2).text()).toBe('🔒 2')
+			expect(reactionButtons).toHaveLength(4) // "All" + "🎄" + "🔥" + "🔒" buttons
+			expect(reactionButtons.at(1).text()).toBe('🎄 2')
+			expect(reactionButtons.at(2).text()).toBe('🔥 2')
+			expect(reactionButtons.at(3).text()).toBe('🔒 2')
 		})
 
 		test('doesn\'t mount emoji picker when there are no reactions', () => {
@@ -255,8 +255,8 @@ describe('Reactions.vue', () => {
 
 			// Act
 			const reactionButtons = wrapper.findAllComponents(NcButton)
-			reactionButtons.at(0).vm.$emit('click') // 🎄
-			reactionButtons.at(1).vm.$emit('click') // 🔥
+			reactionButtons.at(1).vm.$emit('click') // 🎄
+			reactionButtons.at(2).vm.$emit('click') // 🔥
 
 			// Assert
 			expect(reactionsStore.addReactionToMessage).toHaveBeenCalledWith({
