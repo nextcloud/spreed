@@ -289,7 +289,6 @@ OC.L10N.register(
     "Zimbabwe" : "Zimbabwe",
     "Invalid date, date format must be YYYY-MM-DD" : "Ugyldig dato. Brug formatet ÅÅÅ-MM-DD",
     "Conversation not found" : "Samtalen blev ikke fundet",
-    "Path is already shared with this room" : "Stien er allerede delt med dette rum",
     "Chat, video & audio-conferencing using WebRTC" : "Chat, video- & lyd-samtaler over WebRTC",
     "Leave call" : "Forlad opkald",
     "Discuss this file" : "Diskuter denne fil",
@@ -536,7 +535,6 @@ OC.L10N.register(
     "Start a conversation" : "Start en samtale",
     "Message without mention" : "Besked som ikke nævner nogen",
     "Mention myself" : "Nævn mig selv",
-    "Mention room" : "Nævn rum",
     "The conversation does not exist" : "Samtalen findes ikke",
     "Join a conversation or start a new one!" : "Deltag i en samtale eller start en ny!",
     "Join a conversation or start a new one" : "Deltag i en samtale eller start en ny",
@@ -578,6 +576,7 @@ OC.L10N.register(
     "{actor} invited {user}" : "{actor} inviterede {user}",
     "You invited {user}" : "Du inviterede {user}",
     "An administrator invited {user}" : "En administrator inviterede {user}",
+    "Path is already shared with this room" : "Stien er allerede delt med dette rum",
     "No matches" : "Ingen matches",
     "Creating your conversation" : "Opret din samtale",
     "All set" : "Samtalen er klar",
@@ -585,6 +584,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
     "Rename conversation" : "Omdøb samtale",
+    "Mention room" : "Nævn rum",
     "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"
 },
 "nplurals=2; plural=(n != 1);");
