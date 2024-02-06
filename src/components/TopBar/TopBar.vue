@@ -39,17 +39,19 @@
 					{{ conversation.displayName }}
 				</p>
 				<p v-if="showUserStatusAsDescription"
-					class="description">
+					class="description"
+					:class="{'description__in-chat' : !isInCall }">
 					{{ statusMessage }}
 				</p>
-				<template v-if="!isInCall && conversation.description">
+				<template v-if="conversation.description">
 					<p v-tooltip.bottom="{
 							content: renderedDescription,
 							delay: { show: 500, hide: 500 },
 							autoHide: false,
 							html: true,
 						}"
-						class="description">
+						class="description"
+						:class="{'description__in-chat' : !isInCall }">
 						{{ conversation.description }}
 					</p>
 				</template>
@@ -498,7 +500,9 @@ export default {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: fit-content;
-		color: var(--color-text-lighter);
+		&__in-chat {
+			color: var(--color-text-maxcontrast);
+		}
 	}
 }
 </style>

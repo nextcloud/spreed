@@ -323,7 +323,7 @@ export default {
 			color: var(--color-text-maxcontrast);
 		}
 		&__text {
-			color: var(--color-text-lighter);
+			color: var(--color-text-maxcontrast);
 			white-space: pre-wrap;
 			word-break: break-word;
 			& p {

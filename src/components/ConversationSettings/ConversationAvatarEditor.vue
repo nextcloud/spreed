@@ -411,7 +411,7 @@ section {
 	}
 
 	&__warning {
-		color: var(--color-text-lighter);
+		color: var(--color-text-maxcontrast);
 	}
 
 	&__preview {

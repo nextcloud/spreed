@@ -468,7 +468,7 @@ export default {
 	}
 
 	&__footer {
-		color: var(--color-text-lighter);
+		color: var(--color-text-maxcontrast);
 		white-space: normal;
 		margin-top: 8px;
 	}
