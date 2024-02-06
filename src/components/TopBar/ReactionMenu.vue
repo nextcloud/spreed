@@ -138,6 +138,7 @@ export default {
 		:deep(.nc-button-group-content) {
 			flex-wrap: wrap;
 			justify-content: flex-start;
+			gap: 0;
 			width: calc(var(--reactions-in-single-row) * var(--default-clickable-area))
 		}
 	}
