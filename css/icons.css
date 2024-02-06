@@ -7,6 +7,16 @@
 	background-image: url(../img/icon-contacts-white.svg);
 }
 
+.app-talk .icon-user,
+.talk-modal .icon-user,
+.sidebar-callview .icon-user,
+#talk-panel .icon-user,
+#talk-sidebar .icon-user,
+#call-container .icon-user,
+.talkChatTab .icon-user {
+	background-image: url(../img/icon-user-white.svg);
+}
+
 .app-talk .icon-public,
 .talk-modal .icon-public,
 .sidebar-callview .icon-public,
