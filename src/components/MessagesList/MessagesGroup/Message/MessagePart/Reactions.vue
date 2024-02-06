@@ -24,9 +24,9 @@
 	<!-- reactions buttons and popover with details -->
 	<div class="reactions-wrapper">
 		<!-- all reactions button -->
-		<NcButton v-if="reactionsSorted.length > 1"
-			class="reaction-button"
+		<NcButton class="reaction-button"
 			@click="showAllReactions = true">
+			<!--  TRANSLATORS For a tab to see all reactions to specific message -->
 			{{ t('spreed', 'All') }}
 		</NcButton>
 		<NcPopover v-for="reaction in reactionsSorted"
@@ -61,51 +61,31 @@
 			<NcButton class="reaction-button"
 				:aria-label="t('spreed', 'Add more reactions')">
 				<template #icon>
-					<EmoticonOutline :size="15" />
+					<EmoticonPlusOutline :size="15" />
 				</template>
 			</NcButton>
 		</NcEmojiPicker>
 
 		<!-- all reactions -->
-		<NcModal v-if="showAllReactions"
-			size="small"
-			:container="container"
-			@close="showAllReactions = false">
-			<div class="reactions__modal">
-				<h2>
-					{{ t('spreed', 'All ({count})', { count: flatReactions.length }) }}
-				</h2>
-				<ul id="all-reactions">
-					<li v-for="item in flatReactions"
-						:key="item.actorDisplayName"
-						class="reaction-item">
-						<span class="reaction-actor">
-							<AvatarWrapper :id="item.actorId"
-								:name="getDisplayNameForReaction(item)"
-								:source="item.actorType"
-								disable-menu />
-							{{ item.actorDisplayName }}
-						</span>
-						<span class="reaction-emoji">{{ item.reaction.join('') }}</span>
-					</li>
-				</ul>
-			</div>
-		</NcModal>
+		<ReactionsList v-if="showAllReactions"
+			:token="token"
+			:detailed-reactions="detailedReactions"
+			:reactions-sorted="reactionsSorted"
+			@close="showAllReactions = false" />
 	</div>
 </template>
 
 <script>
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import ReactionsList from './ReactionsList.vue'
 
 import { ATTENDEE } from '../../../../../constants.js'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
@@ -118,10 +98,9 @@ export default {
 		NcButton,
 		NcEmojiPicker,
 		NcLoadingIcon,
-		NcModal,
 		NcPopover,
-		EmoticonOutline,
-		AvatarWrapper,
+		EmoticonPlusOutline,
+		ReactionsList,
 	},
 
 	props: {
@@ -163,10 +142,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		hasReactions() {
 			return Object.keys(Object(this.detailedReactions)).length !== 0
 		},
@@ -177,28 +152,6 @@ export default {
 
 		plainReactions() {
 			return this.$store.getters.message(this.token, this.id).reactions
-		},
-
-		flatReactions() {
-			const mergedReactionsMap = {}
-
-			Object.entries(this.detailedReactions).forEach(([reaction, actors]) => {
-				actors.forEach(actor => {
-					const key = `${actor.actorId}-${actor.actorType}`
-					if (mergedReactionsMap[key]) {
-						mergedReactionsMap[key].reaction.push(reaction)
-					} else {
-						mergedReactionsMap[key] = {
-							actorDisplayName: actor.actorDisplayName,
-							actorId: actor.actorId,
-							actorType: actor.actorType,
-							reaction: [reaction]
-						}
-					}
-				})
-			})
-
-			return Object.values(mergedReactionsMap)
 		},
 
 		reactionsSelf() {
@@ -306,11 +259,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.reactions__modal{
-	min-height: 50vh;
-	padding: 18px;
-}
-
 .reactions-wrapper {
 	display: flex;
 	flex-wrap: wrap;
@@ -330,22 +278,6 @@ export default {
 
 .reaction-details {
 	padding: 8px;
-}
-
-.reaction-item {
-	display: flex;
-	justify-content: space-between;
-	padding: 8px;
-}
-
-.reaction-actor {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.reaction-emoji {
-	line-height: 44px;
 }
 
 .details-loading {
