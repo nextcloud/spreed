@@ -156,6 +156,7 @@ const NEW_CONVERSATION = {
 	description: '',
 	hasPassword: false,
 	type: CONVERSATION.TYPE.GROUP,
+	isDummyConversation: true,
 }
 
 export default {

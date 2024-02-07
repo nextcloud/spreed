@@ -431,7 +431,7 @@ section {
 			height: 100%;
 			padding-bottom: 6px;
 			border-radius: 100%;
-			background-color: var(--color-background-darker);
+			background-color: var(--color-text-maxcontrast);
 			font-size: 575%;
 			line-height: 100%;
 		}
