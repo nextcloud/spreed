@@ -127,7 +127,24 @@
 
 			<!-- New phone (SIP dial-out) dialog -->
 			<CallPhoneDialog ref="callPhoneDialog" />
+
+			<!-- New Pending Invitations dialog -->
+			<InvitationHandler v-if="isFederationEnabled" ref="invitationHandler" />
 		</div>
+
+		<NcAppNavigationItem v-if="pendingInvitationsCount"
+			class="invitation-button"
+			:name="t('spreed', 'Pending invitations')"
+			@click="showInvitationHandler">
+			<template #icon>
+				<AccountMultiplePlus :size="20" />
+			</template>
+			<template #counter>
+				<NcCounterBubble type="highlighted">
+					{{ pendingInvitationsCount }}
+				</NcCounterBubble>
+			</template>
+		</NcAppNavigationItem>
 
 		<template #list>
 			<li ref="container" class="left-sidebar__list">
@@ -268,6 +285,7 @@
 import debounce from 'debounce'
 import { ref } from 'vue'
 
+import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 import AtIcon from 'vue-material-design-icons/At.vue'
 import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
@@ -288,7 +306,9 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
@@ -296,6 +316,7 @@ import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
+import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -314,11 +335,13 @@ import {
 } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
+import { useFederationStore } from '../../stores/federation.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
+const isFederationEnabled = loadState('spreed', 'federation_enabled')
 const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
 	&& getCapabilities()?.spreed?.config.call['sip-enabled']
 	&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
@@ -329,9 +352,12 @@ export default {
 
 	components: {
 		CallPhoneDialog,
+		InvitationHandler,
 		NcAppNavigation,
 		NcAppNavigationCaption,
+		NcAppNavigationItem,
 		NcButton,
+		NcCounterBubble,
 		Hint,
 		SearchBox,
 		NewConversationDialog,
@@ -344,6 +370,7 @@ export default {
 		TransitionWrapper,
 		ConversationsListVirtual,
 		// Icons
+		AccountMultiplePlus,
 		AtIcon,
 		MessageBadge,
 		MessageOutline,
@@ -362,6 +389,7 @@ export default {
 		const searchBox = ref(null)
 		const list = ref(null)
 
+		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
 		const isMobile = useIsMobile()
@@ -372,9 +400,11 @@ export default {
 			leftSidebar,
 			searchBox,
 			list,
+			federationStore,
 			talkHashStore,
 			isMobile,
 			canModerateSipDialOut,
+			isFederationEnabled,
 		}
 	},
 
@@ -487,6 +517,12 @@ export default {
 			return this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF)
 		},
 
+		pendingInvitationsCount() {
+			return isFederationEnabled
+				? Object.keys(this.federationStore.pendingShares).length
+				: 0
+		},
+
 		sourcesWithoutResults() {
 			return !this.searchResultsUsers.length
 				|| !this.searchResultsGroups.length
@@ -542,6 +578,10 @@ export default {
 			this.refreshTimer = window.setInterval(() => {
 				this.fetchConversations()
 			}, 30000)
+
+			if (isFederationEnabled) {
+				this.federationStore.getShares()
+			}
 		})
 
 		talkBroadcastChannel.addEventListener('message', (event) => {
@@ -613,6 +653,10 @@ export default {
 
 		showModalCallPhoneDialog() {
 			this.$refs.callPhoneDialog.showModal()
+		},
+
+		showInvitationHandler() {
+			this.$refs.invitationHandler.showModal()
 		},
 
 		handleFilter(filter) {
@@ -933,7 +977,7 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	padding: 0 4px;
-	overflow-y: scroll; // reserve a place for scrollbar
+	overflow-y: scroll !important; // reserve a place for scrollbar
 }
 
 .h-100 {
@@ -960,6 +1004,21 @@ export default {
 		position: absolute;
 		top: 8px;
 		right: 8px;
+	}
+}
+
+.invitation-button {
+	padding: 0 10px;
+	overflow-y: scroll; // align total width with list items
+	margin-bottom: 4px;
+
+	:deep(.app-navigation-entry-link) {
+		padding-left: 10px;
+	}
+
+	:deep(.app-navigation-entry__name) {
+		padding-left: 8px;
+		font-weight: bold;
 	}
 }
 
