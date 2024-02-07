@@ -662,6 +662,7 @@ class SignalingController extends OCSController {
 					'actorType' => $actorType ?? 'null',
 					'actorId' => $actorId ?? 'null',
 					'app' => 'spreed-hpb',
+					'hpbRequest' => json_encode($roomRequest),
 				]);
 				return new DataResponse([
 					'type' => 'error',
@@ -699,6 +700,7 @@ class SignalingController extends OCSController {
 				$this->logger->debug('Failed to get room by token {token}', [
 					'token' => $token,
 					'app' => 'spreed-hpb',
+					'hpbRequest' => json_encode($roomRequest),
 				]);
 				return new DataResponse([
 					'type' => 'error',
@@ -727,6 +729,7 @@ class SignalingController extends OCSController {
 			$this->logger->debug('Failed to get room {token} with participant', [
 				'token' => $token,
 				'app' => 'spreed-hpb',
+				'hpbRequest' => json_encode($roomRequest),
 			]);
 			// Return generic error to avoid leaking which rooms exist.
 			return new DataResponse([
@@ -778,6 +781,7 @@ class SignalingController extends OCSController {
 			'actorType' => $participant->getAttendee()->getActorType(),
 			'actorId' => $participant->getAttendee()->getActorId(),
 			'app' => 'spreed-hpb',
+			'hpbRequest' => json_encode($roomRequest),
 		]);
 
 		$permissions = [];
