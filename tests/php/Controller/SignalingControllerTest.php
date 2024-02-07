@@ -44,6 +44,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -998,7 +999,8 @@ class SignalingControllerTest extends TestCase {
 			$dispatcher,
 			$this->timeFactory,
 			$this->createMock(IHasher::class),
-			$this->createMock(IL10N::class)
+			$this->createMock(IL10N::class),
+			$this->createMock(ICacheFactory::class),
 		);
 		$this->recreateSignalingController();
 
