@@ -1563,6 +1563,7 @@ OC.L10N.register(
     "Select a mode" : "Sélectionner un mode",
     "Message without mention" : "Message sans mention",
     "Mention myself" : "Me mentionner",
+    "Mention everyone" : "Mentionner tout le monde",
     "The conversation does not exist" : "La conversation n'existe pas",
     "Join a conversation or start a new one!" : "Joignez-vous à une conversation ou commencez en une nouvelle !",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Vous avez déjà ouvert une conversation dans une autre fenêtre ou sur un autre périphérique. Ce n'est pas supporté pour l'instant dans Nextcloud Talk, votre session a été fermée. ",
