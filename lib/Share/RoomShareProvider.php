@@ -44,6 +44,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
+use OCP\ICacheFactory;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
@@ -83,6 +84,7 @@ class RoomShareProvider implements IShareProvider {
 		protected ITimeFactory $timeFactory,
 		protected IL10N $l,
 		protected IMimeTypeLoader $mimeTypeLoader,
+		protected ICacheFactory $cacheFactory,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -214,6 +216,9 @@ class RoomShareProvider implements IShareProvider {
 
 		$insert->executeStatement();
 		$id = $insert->getLastInsertId();
+
+		$genCache = $this->cacheFactory->createDistributed('talk/shares');
+		$genCache->set('generationId', $id);
 
 		return $id;
 	}
@@ -805,6 +810,35 @@ class RoomShareProvider implements IShareProvider {
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
 		$allRooms = $this->manager->getRoomTokensForUser($userId);
 
+		$cacheKey = null;
+		$cacheKeySuffix = $node === null && $limit === -1 && $offset === 0 ? sha1(json_encode($allRooms)) : null;
+		if ($cacheKeySuffix) {
+			$genCache = $this->cacheFactory->createDistributed('talk/shares');
+			$generationId = $genCache->get('generationId');
+			if ($generationId !== null) {
+				$localCache = $this->cacheFactory->createLocal('talk/shares');
+				$cacheKey = $generationId . '$' . $cacheKeySuffix;
+				$cachedData = $localCache->get($cacheKey);
+				if ($cachedData === 'empty') {
+					return [];
+				}
+			} else {
+				// To warm up the cache, we query the maximum ID from oc_share
+				// and store it as generationId in the distributed cache.
+				$query = $this->dbConnection->getQueryBuilder();
+				$query->select('id')
+					->from('share')
+					->orderBy('id', 'DESC')
+					->setMaxResults(1);
+				$result = $query->executeQuery();
+				$generationId = (int) $result->fetchOne();
+				$result->closeCursor();
+
+				$genCache->set('generationId', $generationId);
+				$cacheKey = $generationId . '$' . $cacheKeySuffix;
+			}
+		}
+
 		$query = $this->dbConnection->getQueryBuilder();
 		$query->select('s.*')
 			->from('share', 's')
@@ -840,6 +874,14 @@ class RoomShareProvider implements IShareProvider {
 				$fileData[(int)$row['file_source']] = null;
 			}
 			$result->closeCursor();
+		}
+
+		if (empty($shareRows) && $cacheKey) {
+			if (!isset($localCache)) {
+				$localCache = $this->cacheFactory->createLocal('talk/shares');
+			}
+			$localCache->set($cacheKey, 'empty', 300);
+			return [];
 		}
 
 		$queryFileCache = $this->dbConnection->getQueryBuilder();
