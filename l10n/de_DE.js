@@ -285,7 +285,7 @@ OC.L10N.register(
     "The transcript for the call in {call} was uploaded to {file}." : "Das Transkript für den Anruf in {call} wurde als {file} hochgeladen.",
     "Failed to transcript call recording" : "Transkription der Anrufaufzeichnung fehlgeschlagen",
     "The server failed to transcript the recording at {file} for the call in {call}. Please reach out to the administration." : "Der Server konnte die Aufzeichnung in {file} für den Anruf in {call} nicht transkribieren. Bitte wenden Sie sich an die Administration.",
-    "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} hat Sie eingeladen, {roomName} auf {remoteServer} beizutreten",
+    "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} hat Sie eingeladen dem {roomName} auf {remoteServer} beizutreten",
     "Accept" : "Annehmen",
     "Decline" : "Ablehnen",
     "{user1} invited you to a federated conversation" : "{user1} hat Sie zu einer Federated-Unterhaltung eingeladen",
