@@ -74,15 +74,15 @@ class RoomShareProvider implements IShareProvider {
 	private CappedMemoryCache $sharesByIdCache;
 
 	public function __construct(
-		private IDBConnection $dbConnection,
-		private ISecureRandom $secureRandom,
-		private IShareManager $shareManager,
-		private IEventDispatcher $dispatcher,
-		private Manager $manager,
-		private ParticipantService $participantService,
+		protected IDBConnection $dbConnection,
+		protected ISecureRandom $secureRandom,
+		protected IShareManager $shareManager,
+		protected IEventDispatcher $dispatcher,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
 		protected ITimeFactory $timeFactory,
-		private IL10N $l,
-		private IMimeTypeLoader $mimeTypeLoader,
+		protected IL10N $l,
+		protected IMimeTypeLoader $mimeTypeLoader,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -682,6 +682,10 @@ class RoomShareProvider implements IShareProvider {
 		$shares = [];
 		while ($data = $cursor->fetch()) {
 			$id = $data['id'];
+			if ($data['item_type'] !== 'file' && $data['item_type'] !== 'folder') {
+				$this->sharesByIdCache[$id] = false;
+				continue;
+			}
 			if ($this->isAccessibleResult($data)) {
 				$share = $this->createShareObject($data);
 				$shares[] = $share;
@@ -801,59 +805,75 @@ class RoomShareProvider implements IShareProvider {
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
 		$allRooms = $this->manager->getRoomTokensForUser($userId);
 
+		$query = $this->dbConnection->getQueryBuilder();
+		$query->select('s.*')
+			->from('share', 's')
+			->where($query->expr()->eq('s.share_type', $query->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($query->expr()->in('s.share_with', $query->createParameter('rooms')));
+
+		// Filter by node if provided
+		if ($node !== null) {
+			$query->andWhere($query->expr()->eq('s.file_source', $query->createNamedParameter($node->getId())));
+		}
+
+		if ($limit !== -1) {
+			$query->orderBy('s.id', 'ASC')
+				->setMaxResults($limit);
+		}
+
+		/** @var array<int, array> $shareRows */
+		$shareRows = [];
+
+		/** @var array<int, ?array> $fileData */
+		$fileData = [];
+
+		foreach (array_chunk($allRooms, 1000) as $rooms) {
+			$query->setParameter('rooms', $rooms, IQueryBuilder::PARAM_STR_ARRAY);
+
+			$result = $query->executeQuery();
+			while ($row = $result->fetch()) {
+				if ($row['item_type'] !== 'file' && $row['item_type'] !== 'folder') {
+					continue;
+				}
+
+				$shareRows[(int)$row['id']] = $row;
+				$fileData[(int)$row['file_source']] = null;
+			}
+			$result->closeCursor();
+		}
+
+		$queryFileCache = $this->dbConnection->getQueryBuilder();
+		$queryFileCache->select('f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum')
+			->selectAlias('st.id', 'storage_string_id')
+			->from('filecache', 'f')
+			->leftJoin('f', 'storages', 'st', $queryFileCache->expr()->eq('f.storage', 'st.numeric_id'))
+			->where($queryFileCache->expr()->in('f.fileid', $queryFileCache->createParameter('fileIds')));
+
+		$allFileIds = array_keys($fileData);
+		foreach (array_chunk($allFileIds, 1000) as $fileIds) {
+			// Filecache and storage info
+			$queryFileCache->setParameter('fileIds', $fileIds, IQueryBuilder::PARAM_INT_ARRAY);
+
+			$result = $queryFileCache->executeQuery();
+			while ($row = $result->fetch()) {
+				if (!$this->isAccessibleResult($row)) {
+					continue;
+				}
+
+				$fileData[(int) $row['fileid']] = $row;
+			}
+			$result->closeCursor();
+		}
+
 		/** @var IShare[] $shares */
 		$shares = [];
-
-		$start = 0;
-		while (true) {
-			$rooms = array_slice($allRooms, $start, 100);
-			$start += 100;
-
-			if ($rooms === []) {
-				break;
+		foreach ($shareRows as $row) {
+			if (empty($fileData[(int)$row['file_source']])) {
+				continue;
 			}
-
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->select('s.*',
-				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
-				'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
-				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
-			)
-				->selectAlias('st.id', 'storage_string_id')
-				->from('share', 's')
-				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
-				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
-
-			if ($limit !== -1) {
-				$qb->orderBy('s.id', 'ASC')
-					->setMaxResults($limit);
-			}
-
-			// Filter by node if provided
-			if ($node !== null) {
-				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
-			}
-
-			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
-				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
-					$rooms,
-					IQueryBuilder::PARAM_STR_ARRAY
-				)));
-
-			$cursor = $qb->executeQuery();
-			while ($data = $cursor->fetch()) {
-				if (!$this->isAccessibleResult($data)) {
-					continue;
-				}
-
-				if ($offset > 0) {
-					$offset--;
-					continue;
-				}
-
-				$shares[] = $this->createShareObject($data);
-			}
-			$cursor->closeCursor();
+			$shares[] = $this->createShareObject(array_merge($row, $fileData[(int)$row['file_source']]));
 		}
 
 		$shares = $this->resolveSharesForRecipient($shares, $userId);
@@ -862,10 +882,6 @@ class RoomShareProvider implements IShareProvider {
 	}
 
 	private function isAccessibleResult(array $data): bool {
-		if ($data['item_type'] !== 'file' && $data['item_type'] !== 'folder') {
-			return false;
-		}
-
 		// exclude shares leading to deleted file entries
 		if ($data['fileid'] === null || $data['path'] === null) {
 			return false;
