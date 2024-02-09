@@ -31,17 +31,21 @@
 				<div class="reactions-list__navigation">
 					<NcButton v-for="reaction in reactionsMenu"
 						:key="reaction"
-						:class="{'active' : reactionFilter === reaction}"
+						:class="{'active' : reactionFilter === reaction, 'all-reactions__button': reaction === '♡'}"
 						type="tertiary"
 						@click="handleTabClick(reaction)">
-						{{ (reaction === 'all' ? t('spreed', 'All') : reaction) + ' ' + reactionsOverview[reaction].length }}
+						<HeartOutlineIcon v-if="reaction === '♡'" :size="15" />
+						<span v-else>
+							{{ reaction }}
+						</span>
+						{{ reactionsOverview[reaction].length }}
 					</NcButton>
 				</div>
 				<div class="scrollable">
 					<NcListItemIcon v-for="item in reactionsOverview[reactionFilter]"
 						:key="item.actorId + item.actorType"
 						:name="item.actorDisplayName">
-						<span>
+						<span class="reactions-emojis">
 							{{ item.reaction?.join('') ?? reactionFilter }}
 						</span>
 					</NcListItemIcon>
@@ -53,6 +57,8 @@
 </template>
 
 <script>
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcListItemIcon from '@nextcloud/vue/dist/Components/NcListItemIcon.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -70,6 +76,7 @@ export default {
 		NcLoadingIcon,
 		NcListItemIcon,
 		NcButton,
+		HeartOutlineIcon,
 	},
 
 	props: {
@@ -99,7 +106,7 @@ export default {
 
 	data() {
 		return {
-			reactionFilter: 'All',
+			reactionFilter: '♡',
 		}
 	},
 
@@ -136,11 +143,11 @@ export default {
 				})
 			})
 
-			return { All: Object.values(mergedReactionsMap), ...modifiedDetailedReactions }
+			return { '♡': Object.values(mergedReactionsMap), ...modifiedDetailedReactions }
 		},
 
 		reactionsMenu() {
-			return ['All', ...this.reactionsSorted]
+			return ['♡', ...this.reactionsSorted]
 		},
 	},
 
@@ -177,7 +184,18 @@ export default {
 	display: flex;
 	gap: 2px;
 	flex-wrap: wrap;
-	border-bottom: 1px solid var(--color-background-darker);
+
+	:deep(.button-vue) {
+		border-radius: var(--border-radius-large);
+		&.active {
+			background-color: var(--color-primary-element-light);
+		}
+	}
+}
+
+.all-reactions__button :deep(.button-vue__text) {
+	display: inline-flex;
+	gap: 4px;
 }
 
 .scrollable {
@@ -186,11 +204,13 @@ export default {
 	height: calc(450px - 123px); // 123px is the height of the header 105px and the footer 18px
 }
 
-:deep(.button-vue) {
-	border-radius: var(--border-radius-large);
-
-	&.active {
-		background-color: var(--color-primary-element-light);
-	}
+.reactions-emojis {
+	max-width: 180px;
+	direction: rtl;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	position: relative;
 }
 </style>

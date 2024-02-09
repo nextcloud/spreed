@@ -25,15 +25,16 @@
 	<div class="reactions-wrapper">
 		<!-- all reactions button -->
 		<NcButton class="reaction-button"
+			:title="t('spreed', 'Show all reactions')"
 			@click="showAllReactions = true">
-			<!--  TRANSLATORS For a tab to see all reactions to specific message -->
-			{{ t('spreed', 'All') }}
+			<HeartOutlineIcon :size="15" />
 		</NcButton>
 		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
 			:focus-trap="false"
 			:triggers="['hover']"
+			:popper-triggers="['hover']"
 			@after-show="fetchReactions">
 			<template #trigger>
 				<NcButton :type="userHasReacted(reaction) ? 'primary' : 'secondary'"
@@ -45,6 +46,11 @@
 
 			<div v-if="hasReactions" class="reaction-details">
 				<span>{{ getReactionSummary(reaction) }}</span>
+				<NcButton v-if="reactionsCount(reaction) > 3"
+					type="tertiary-no-background"
+					@click="showAllReactions = true">
+					{{ remainingReactionsLabel(reaction) }}
+				</NcButton>
 			</div>
 			<div v-else class="details-loading">
 				<NcLoadingIcon />
@@ -59,6 +65,7 @@
 			@after-show="emitEmojiPickerStatus"
 			@after-hide="emitEmojiPickerStatus">
 			<NcButton class="reaction-button"
+				:title="t('spreed', 'Add more reactions')"
 				:aria-label="t('spreed', 'Add more reactions')">
 				<template #icon>
 					<EmoticonPlusOutline :size="15" />
@@ -77,6 +84,7 @@
 
 <script>
 import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 
@@ -99,8 +107,9 @@ export default {
 		NcEmojiPicker,
 		NcLoadingIcon,
 		NcPopover,
-		EmoticonPlusOutline,
 		ReactionsList,
+		EmoticonPlusOutline,
+		HeartOutlineIcon,
 	},
 
 	props: {
@@ -237,7 +246,7 @@ export default {
 			if (!this.hasReactions) {
 				return ''
 			}
-			const list = this.detailedReactions[reaction]
+			const list = this.detailedReactions[reaction].slice(0, 3)
 			const summary = []
 
 			for (const item in list) {
@@ -248,12 +257,15 @@ export default {
 					summary.push(this.getDisplayNameForReaction(list[item]))
 				}
 			}
-
 			return summary.join(', ')
 		},
 
 		emitEmojiPickerStatus() {
 			this.$emit('emoji-picker-toggled')
+		},
+
+		remainingReactionsLabel(reaction) {
+			return n('spreed', 'and %n other participant', 'and %n other participants', this.reactionsCount(reaction) - 3)
 		},
 	}
 }
