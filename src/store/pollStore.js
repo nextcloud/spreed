@@ -28,6 +28,7 @@ import pollService from '../services/pollService.js'
 
 const state = {
 	polls: {},
+	pollDebounceFunctions: {},
 	activePoll: null,
 }
 
@@ -61,13 +62,10 @@ const mutations = {
 
 	// Add debounce function for getting the poll data
 	addDebounceGetPollDataFunction(state, { token, pollId, debounceGetPollDataFunction }) {
-		if (!state.polls?.pollDebounceFunctions) {
-			Vue.set(state.polls, 'pollDebounceFunctions', {})
+		if (!state.pollDebounceFunctions[token]) {
+			Vue.set(state.pollDebounceFunctions, token, {})
 		}
-		if (!state.polls.pollDebounceFunctions?.[token]) {
-			Vue.set(state.polls.pollDebounceFunctions, [token], {})
-		}
-		Vue.set(state.polls.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
+		Vue.set(state.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
 	},
 }
 
@@ -100,7 +98,7 @@ const actions = {
 	debounceGetPollData(context, { token, pollId }) {
 		// Create debounce function for getting this particular poll data
 		// if it does not exist yet
-		if (!context.state.polls?.pollDebounceFunctions?.[token]?.[pollId]) {
+		if (!context.state.pollDebounceFunctions[token]?.[pollId]) {
 			const debounceGetPollDataFunction = debounce(async () => {
 				await context.dispatch('getPollData', {
 					token,
@@ -115,7 +113,7 @@ const actions = {
 			})
 		}
 		// Call the debounce function for getting the poll data
-		context.state.polls.pollDebounceFunctions[token][pollId]()
+		context.state.pollDebounceFunctions[token][pollId]()
 	},
 
 	async submitVote(context, { token, pollId, vote }) {
