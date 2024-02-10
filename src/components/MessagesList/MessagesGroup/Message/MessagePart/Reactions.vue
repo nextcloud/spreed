@@ -23,11 +23,18 @@
 <template>
 	<!-- reactions buttons and popover with details -->
 	<div class="reactions-wrapper">
+		<!-- all reactions button -->
+		<NcButton class="reaction-button"
+			:title="t('spreed', 'Show all reactions')"
+			@click="showAllReactions = true">
+			<HeartOutlineIcon :size="15" />
+		</NcButton>
 		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
 			:focus-trap="false"
 			:triggers="['hover']"
+			:popper-triggers="['hover']"
 			@after-show="fetchReactions">
 			<template #trigger>
 				<NcButton :type="userHasReacted(reaction) ? 'primary' : 'secondary'"
@@ -39,6 +46,11 @@
 
 			<div v-if="hasReactions" class="reaction-details">
 				<span>{{ getReactionSummary(reaction) }}</span>
+				<NcButton v-if="reactionsCount(reaction) > 3"
+					type="tertiary-no-background"
+					@click="showAllReactions = true">
+					{{ remainingReactionsLabel(reaction) }}
+				</NcButton>
 			</div>
 			<div v-else class="details-loading">
 				<NcLoadingIcon />
@@ -53,17 +65,26 @@
 			@after-show="emitEmojiPickerStatus"
 			@after-hide="emitEmojiPickerStatus">
 			<NcButton class="reaction-button"
+				:title="t('spreed', 'Add more reactions')"
 				:aria-label="t('spreed', 'Add more reactions')">
 				<template #icon>
-					<EmoticonOutline :size="15" />
+					<EmoticonPlusOutline :size="15" />
 				</template>
 			</NcButton>
 		</NcEmojiPicker>
+
+		<!-- all reactions -->
+		<ReactionsList v-if="showAllReactions"
+			:token="token"
+			:detailed-reactions="detailedReactions"
+			:reactions-sorted="reactionsSorted"
+			@close="showAllReactions = false" />
 	</div>
 </template>
 
 <script>
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 
@@ -71,6 +92,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+
+import ReactionsList from './ReactionsList.vue'
 
 import { ATTENDEE } from '../../../../../constants.js'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
@@ -84,7 +107,9 @@ export default {
 		NcEmojiPicker,
 		NcLoadingIcon,
 		NcPopover,
-		EmoticonOutline,
+		ReactionsList,
+		EmoticonPlusOutline,
+		HeartOutlineIcon,
 	},
 
 	props: {
@@ -117,6 +142,12 @@ export default {
 			guestNameStore,
 			reactionsStore,
 		 }
+	},
+
+	data() {
+		return {
+			showAllReactions: false,
+		}
 	},
 
 	computed: {
@@ -215,7 +246,7 @@ export default {
 			if (!this.hasReactions) {
 				return ''
 			}
-			const list = this.detailedReactions[reaction]
+			const list = this.detailedReactions[reaction].slice(0, 3)
 			const summary = []
 
 			for (const item in list) {
@@ -226,12 +257,15 @@ export default {
 					summary.push(this.getDisplayNameForReaction(list[item]))
 				}
 			}
-
 			return summary.join(', ')
 		},
 
 		emitEmojiPickerStatus() {
 			this.$emit('emoji-picker-toggled')
+		},
+
+		remainingReactionsLabel(reaction) {
+			return n('spreed', 'and %n other participant', 'and %n other participants', this.reactionsCount(reaction) - 3)
 		},
 	}
 }
