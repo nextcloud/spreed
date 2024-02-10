@@ -49,7 +49,7 @@
     "libphonenumber-js": "^1.10.54",
     "lodash": "^4.17.21",
     "mockconsole": "0.0.1",
-    "nextcloud-vue-collections": "^0.11.1",
+    "nextcloud-vue-collections": "^0.12.0",
     "pinia": "^2.1.7",
     "ua-parser-js": "^1.0.37",
     "util": "^0.12.5",
