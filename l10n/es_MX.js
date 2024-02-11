@@ -111,6 +111,7 @@ OC.L10N.register(
     "Limit to groups" : "Limitar a grupos",
     "Everyone" : "Todos",
     "Save changes" : "Guardar cambios",
+    "Saving …" : "Guardando ...",
     "Saved!" : "¡Guardado!",
     "State" : "Estado",
     "Name" : "Nombre",
