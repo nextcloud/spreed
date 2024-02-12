@@ -21,7 +21,10 @@
 -->
 
 <template>
-	<NcModal ref="translate-modal" size="large" @close="$emit('close')">
+	<NcModal ref="translate-modal"
+		size="large"
+		:container="container"
+		@close="$emit('close')">
 		<div v-if="isMounted" class="translate-dialog">
 			<h2> {{ t('spreed', 'Translate message') }} </h2>
 			<div class="translate-dialog__wrapper">
@@ -128,6 +131,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		userLanguage() {
 			return navigator.language.substring(0, 2)
 		},

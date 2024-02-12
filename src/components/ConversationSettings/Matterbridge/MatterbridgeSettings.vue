@@ -68,7 +68,7 @@
 						</template>
 					</NcButton>
 					<NcModal v-if="logModal"
-						:container="container"
+						container=".matterbridge-settings"
 						@close="closeLogModal">
 						<div class="modal__content">
 							<NcTextArea :value="processLog"
@@ -88,7 +88,7 @@
 						:type="types[part.type]"
 						:editing="part.editing"
 						:editable="!enabled"
-						:container="container"
+						container=".matterbridge-settings"
 						@edit-clicked="onEditClicked(i)"
 						@delete-part="onDelete(i)" />
 				</li>
