@@ -145,6 +145,7 @@
 				{{ attendeePin }}
 			</NcActionText>
 			<NcActionButton v-if="canBeDemoted"
+				key="demote-moderator"
 				close-after-click
 				@click="demoteFromModerator">
 				<template #icon>
@@ -153,6 +154,7 @@
 				{{ t('spreed', 'Demote from moderator') }}
 			</NcActionButton>
 			<NcActionButton v-else-if="canBePromoted"
+				key="promote-moderator"
 				close-after-click
 				@click="promoteToModerator">
 				<template #icon>
@@ -161,6 +163,7 @@
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
 			<NcActionButton v-if="canBeModerated && isEmailActor"
+				key="resend-invitation"
 				close-after-click
 				@click="resendInvitation">
 				<template #icon>
@@ -169,6 +172,7 @@
 				{{ t('spreed', 'Resend invitation') }}
 			</NcActionButton>
 			<NcActionButton v-if="canSendCallNotification"
+				key="send-call-notification"
 				close-after-click
 				@click="sendCallNotification">
 				<template #icon>
@@ -178,6 +182,7 @@
 			</NcActionButton>
 			<template v-if="canBeModerated && isPhoneActor">
 				<NcActionButton v-if="!conversation.hasCall && !isInCall && !participant.callId"
+					key="dial-out-phone-number"
 					close-after-click
 					@click="dialOutPhoneNumber">
 					<template #icon>
@@ -187,6 +192,7 @@
 				</NcActionButton>
 				<template v-else-if="isInCall && participant.callId">
 					<NcActionButton v-if="phoneMuteState === 'hold'"
+						key="resume-call-phone-number"
 						close-after-click
 						@click="unmutePhoneNumber">
 						<template #icon>
@@ -195,7 +201,8 @@
 						{{ t('spreed', 'Resume call for phone number') }}
 					</NcActionButton>
 					<template v-else>
-						<NcActionButton close-after-click
+						<NcActionButton key="hold-call-phone-number"
+							close-after-click
 							@click="holdPhoneNumber">
 							<template #icon>
 								<PhonePaused :size="20" />
@@ -203,6 +210,7 @@
 							{{ t('spreed', 'Put phone number on hold') }}
 						</NcActionButton>
 						<NcActionButton v-if="phoneMuteState === 'muted'"
+							key="unmute-call-phone-number"
 							close-after-click
 							@click="unmutePhoneNumber">
 							<template #icon>
@@ -211,6 +219,7 @@
 							{{ t('spreed', 'Unmute phone number') }}
 						</NcActionButton>
 						<NcActionButton v-else
+							key="mute-call-phone-number"
 							close-after-click
 							@click="mutePhoneNumber">
 							<template #icon>
@@ -220,7 +229,8 @@
 						</NcActionButton>
 					</template>
 				</template>
-				<NcActionButton close-after-click
+				<NcActionButton key="copy-phone-number"
+					close-after-click
 					@click="copyPhoneNumber">
 					<template #icon>
 						<ContentCopy :size="20" />
@@ -233,6 +243,7 @@
 			<template v-if="showPermissionsOptions">
 				<NcActionSeparator />
 				<NcActionButton v-if="hasNonDefaultPermissions"
+					key="reset-permissions"
 					close-after-click
 					@click="applyDefaultPermissions">
 					<template #icon>
@@ -240,21 +251,24 @@
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</NcActionButton>
-				<NcActionButton close-after-click
+				<NcActionButton key="grant-all-permissions"
+					close-after-click
 					@click="grantAllPermissions">
 					<template #icon>
 						<LockOpenVariant :size="20" />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</NcActionButton>
-				<NcActionButton close-after-click
+				<NcActionButton key="remove-all-permissions"
+					close-after-click
 					@click="removeAllPermissions">
 					<template #icon>
 						<Lock :size="20" />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</NcActionButton>
-				<NcActionButton close-after-click
+				<NcActionButton key="edit-permissions"
+					close-after-click
 					@click="showPermissionsEditor">
 					<template #icon>
 						<Pencil :size="20" />
@@ -266,6 +280,7 @@
 			<!-- Remove -->
 			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
 			<NcActionButton v-if="canBeModerated"
+				key="remove-participant"
 				close-after-click
 				@click="removeParticipant">
 				<template #icon>
