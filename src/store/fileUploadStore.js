@@ -25,6 +25,7 @@ import Vue from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
+import { getUploader } from '@nextcloud/upload'
 
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
@@ -67,6 +68,11 @@ const getters = {
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'initialised')
 	},
 
+	getPendingUploads: (state, getters) => (uploadId) => {
+		return getters.getUploadsArray(uploadId)
+			.filter(([_index, uploadedFile]) => uploadedFile.status === 'pendingUpload')
+	},
+
 	getFailedUploads: (state, getters) => (uploadId) => {
 		return getters.getUploadsArray(uploadId)
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'failedUpload')
@@ -99,12 +105,8 @@ const getters = {
 		return state.localUrls[referenceId]
 	},
 
-	uploadProgress: (state) => (uploadId, index) => {
-		if (state.uploads[uploadId]?.files[index]) {
-			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
-		} else {
-			return 0
-		}
+	getUploadFile: (state) => (uploadId, index) => {
+		return state.uploads[uploadId]?.files[index]
 	},
 
 	currentUploadId: (state) => {
@@ -137,7 +139,6 @@ const mutations = {
 			file,
 			status: 'initialised',
 			totalSize: file.size,
-			uploadedSize: 0,
 			temporaryMessage,
 		 })
 		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
@@ -148,6 +149,12 @@ const mutations = {
 		state.uploads[uploadId].files[index].status = 'initialised'
 	},
 
+	// Marks a given file as ready to be uploaded (after propfind)
+	markFileAsPendingUpload(state, { uploadId, index, sharePath }) {
+		state.uploads[uploadId].files[index].status = 'pendingUpload'
+		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
+	},
+
 	// Marks a given file as failed upload
 	markFileAsFailedUpload(state, { uploadId, index, status }) {
 		state.uploads[uploadId].files[index].status = 'failedUpload'
@@ -156,7 +163,6 @@ const mutations = {
 	// Marks a given file as uploaded
 	markFileAsSuccessUpload(state, { uploadId, index, sharePath }) {
 		state.uploads[uploadId].files[index].status = 'successUpload'
-		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
 	},
 
 	// Marks a given file as uploading
@@ -182,11 +188,6 @@ const mutations = {
 	 */
 	setAttachmentFolder(state, attachmentFolder) {
 		state.attachmentFolder = attachmentFolder
-	},
-
-	// Sets uploaded amount of bytes
-	setUploadedSize(state, { uploadId, index, uploadedSize }) {
-		state.uploads[uploadId].files[index].uploadedSize = uploadedSize
 	},
 
 	// Set temporary message for each file
@@ -314,8 +315,6 @@ const actions = {
 		// If caption is provided, attach to the last temporary message
 		const lastIndex = getters.getInitialisedUploads(uploadId).at(-1).at(0)
 		for (const [index, uploadedFile] of getters.getInitialisedUploads(uploadId)) {
-			// mark all files as uploading
-			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
 			const message = {
 				...uploadedFile.temporaryMessage,
@@ -327,16 +326,34 @@ const actions = {
 			EventBus.$emit('scroll-chat-to-bottom', { force: true })
 		}
 
+		await dispatch('prepareUploadPaths', { token, uploadId })
+
+		await dispatch('processUpload', { token, uploadId })
+
+		await dispatch('shareFiles', { token, uploadId, lastIndex, caption, options })
+
+		EventBus.$emit('upload-finished')
+	},
+
+	/**
+	 * Prepare unique paths to upload for each file
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.uploadId The unique uploadId
+	 */
+	async prepareUploadPaths(context, { token, uploadId }) {
+		const client = getDavClient()
+		const userRoot = '/files/' + context.getters.getUserId()
+
 		// Store propfind attempts within one action to reduce amount of requests for duplicates
 		const knownPaths = {}
 
-		const performUpload = async ([index, uploadedFile]) => {
-			// currentFile to be uploaded
-			const currentFile = uploadedFile.file
-			// userRoot path
-			const fileName = (currentFile.newName || currentFile.name)
+		const performPropFind = async ([index, uploadedFile]) => {
+			const fileName = (uploadedFile.file.newName || uploadedFile.file.name)
 			// Candidate rest of the path
-			const path = getters.getAttachmentFolder() + '/' + fileName
+			const path = context.getters.getAttachmentFolder() + '/' + fileName
 
 			try {
 				// Check if previous propfind attempt was stored
@@ -345,20 +362,50 @@ const actions = {
 				// Get a unique relative path based on the previous path variable
 				const { uniquePath, suffix } = await findUniquePath(client, userRoot, path, knownSuffix)
 				knownPaths[promptPath] = suffix
+				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
+			} catch (exception) {
+				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
+				showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				// Mark the upload as failed in the store
+				context.commit('markFileAsFailedUpload', { uploadId, index })
+				const { id } = uploadedFile.temporaryMessage
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-upload' })
+			}
+		}
 
-				// Upload the file
-				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
-				await client.putFileContents(userRoot + uniquePath, currentFileBuffer, {
-					onUploadProgress: progress => {
-						const uploadedSize = progress.loaded
-						commit('setUploadedSize', { state, uploadId, index, uploadedSize })
-					},
-					contentLength: currentFile.size,
-				})
-				// Path for the sharing request
-				const sharePath = '/' + uniquePath
-				// Mark the file as uploaded in the store
-				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
+		const initialisedUploads = context.getters.getInitialisedUploads(uploadId)
+		// Check for duplicate names in the uploads array
+		if (hasDuplicateUploadNames(initialisedUploads)) {
+			const { uniques, duplicates } = separateDuplicateUploads(initialisedUploads)
+			await Promise.all(uniques.map(performPropFind))
+			// Search for uniquePath one by one
+			for (const duplicate of duplicates) {
+				await performPropFind(duplicate)
+			}
+		} else {
+			// All original names are unique, prepare files in parallel
+			await Promise.all(initialisedUploads.map(performPropFind))
+		}
+	},
+
+	/**
+	 * Upload all pending files to the server
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.uploadId The unique uploadId
+	 */
+	async processUpload(context, { token, uploadId }) {
+		const performUpload = async ([index, uploadedFile]) => {
+			const currentFile = uploadedFile.file
+			const fileName = (currentFile.newName || currentFile.name)
+
+			try {
+				context.commit('markFileAsUploading', { uploadId, index })
+				const uploader = getUploader()
+				await uploader.upload(uploadedFile.sharePath, currentFile)
+				context.commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
@@ -375,78 +422,69 @@ const actions = {
 				}
 
 				// Mark the upload as failed in the store
-				commit('markFileAsFailedUpload', { uploadId, index })
-				const { token, id } = uploadedFile.temporaryMessage
-				dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
+				context.commit('markFileAsFailedUpload', { uploadId, index })
+				const { id } = uploadedFile.temporaryMessage
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
 			}
 		}
 
+		const uploads = context.getters.getPendingUploads(uploadId)
+		await Promise.all(uploads.map(performUpload))
+	},
+
+	/**
+	 * Shares the files to the conversation
+	 *
+	 * @param {object} context the wrapping object
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token The conversation token
+	 * @param {string} data.uploadId The unique uploadId
+	 * @param {string} data.lastIndex The index of last uploaded file
+	 * @param {string|null} data.caption The text caption to the media
+	 * @param {object|null} data.options The share options
+	 */
+	async shareFiles(context, { token, uploadId, lastIndex, caption, options }) {
 		const performShare = async ([index, shareableFile]) => {
-			const path = shareableFile.sharePath
-			const temporaryMessage = shareableFile.temporaryMessage
+			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
 
-			const rawMetadata = { messageType: temporaryMessage.messageType }
-			if (caption && index === lastIndex) {
-				Object.assign(rawMetadata, { caption })
-			}
-			if (options?.silent) {
-				Object.assign(rawMetadata, { silent: options.silent })
-			}
-			if (temporaryMessage.parent) {
-				Object.assign(rawMetadata, { replyTo: temporaryMessage.parent.id })
-			}
-			const metadata = JSON.stringify(rawMetadata)
+			const metadata = JSON.stringify(Object.assign({ messageType },
+				caption && index === lastIndex ? { caption } : {},
+				options?.silent ? { silent: options.silent } : {},
+				parent ? { replyTo: parent.id } : {},
+			))
 
-			const { token, id, referenceId } = temporaryMessage
 			try {
-				dispatch('markFileAsSharing', { uploadId, index })
-				await shareFile(path, token, referenceId, metadata)
-				dispatch('markFileAsShared', { uploadId, index })
+				context.dispatch('markFileAsSharing', { uploadId, index })
+				await shareFile(shareableFile.sharePath, token, referenceId, metadata)
+				context.dispatch('markFileAsShared', { uploadId, index })
 			} catch (error) {
 				if (error?.response?.status === 403) {
 					showError(t('spreed', 'You are not allowed to share files'))
 				} else {
 					showError(t('spreed', 'An error happened when trying to share your file'))
 				}
-				dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
+				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)
 			}
 		}
 
-		const client = getDavClient()
-		const userRoot = '/files/' + getters.getUserId()
+		const shares = context.getters.getShareableFiles(uploadId)
 
-		const uploads = getters.getUploadingFiles(uploadId)
-		// Check for duplicate names in the uploads array
-		if (hasDuplicateUploadNames(uploads)) {
-			const { uniques, duplicates } = separateDuplicateUploads(uploads)
-			await Promise.all(uniques.map(upload => performUpload(upload)))
-			// Search for uniquePath and upload files one by one to avoid 423 (Locked)
-			for (const upload of duplicates) {
-				await performUpload(upload)
-			}
-		} else {
-			// All original names are unique, upload files in parallel
-			await Promise.all(uploads.map(upload => performUpload(upload)))
-		}
-
-		const shares = getters.getShareableFiles(uploadId)
 		// Check if caption message for share was provided
 		if (caption) {
 			const captionShareIndex = shares.findIndex(([index]) => index === lastIndex)
 
 			// Share all files in parallel, except for last one
-			const parallelShares = shares.slice(0, captionShareIndex).concat(shares.slice(captionShareIndex + 1))
-			await Promise.all(parallelShares.map(share => performShare(share)))
+			await Promise.all(shares
+				.filter((_item, index) => index !== captionShareIndex)
+				.map(performShare))
 
 			// Share a last file, where caption is attached
 			await performShare(shares.at(captionShareIndex))
 		} else {
 			// Share all files in parallel
-			await Promise.all(shares.map(share => performShare(share)))
+			await Promise.all(shares.map(performShare))
 		}
-
-		EventBus.$emit('upload-finished')
 	},
 
 	/**

@@ -5,6 +5,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
+import { getUploader } from '@nextcloud/upload'
 
 // eslint-disable-next-line no-unused-vars -- required for testing
 import storeConfig from './storeConfig.js'
@@ -84,8 +85,9 @@ describe('fileUploadStore', () => {
 
 	describe('uploading', () => {
 		let restoreConsole
+		const uploadMock = jest.fn()
 		const client = {
-			putFileContents: jest.fn(),
+			exists: jest.fn(),
 		}
 
 		beforeEach(() => {
@@ -93,6 +95,7 @@ describe('fileUploadStore', () => {
 			store = new Vuex.Store(storeConfig)
 			restoreConsole = mockConsole(['error', 'debug'])
 			getDavClient.mockReturnValue(client)
+			getUploader.mockReturnValue({ upload: uploadMock })
 		})
 
 		afterEach(() => {
@@ -150,7 +153,6 @@ describe('fileUploadStore', () => {
 				size: 123,
 				lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
 			}
-			const fileBuffer = await new Blob([file]).arrayBuffer()
 
 			await store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
@@ -162,6 +164,7 @@ describe('fileUploadStore', () => {
 
 			const uniqueFileName = '/Talk/' + file.name + 'uniq'
 			findUniquePath.mockResolvedValueOnce({ uniquePath: uniqueFileName, suffix: 1 })
+			uploadMock.mockResolvedValue()
 			shareFile.mockResolvedValue()
 
 			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', caption: 'text-caption', options: { silent: true } })
@@ -169,11 +172,11 @@ describe('fileUploadStore', () => {
 			expect(findUniquePath).toHaveBeenCalledTimes(1)
 			expect(findUniquePath).toHaveBeenCalledWith(client, '/files/current-user', '/Talk/' + file.name, undefined)
 
-			expect(client.putFileContents).toHaveBeenCalledTimes(1)
-			expect(client.putFileContents).toHaveBeenCalledWith(`/files/current-user${uniqueFileName}`, fileBuffer, expect.anything())
+			expect(uploadMock).toHaveBeenCalledTimes(1)
+			expect(uploadMock).toHaveBeenCalledWith(uniqueFileName, file)
 
 			expect(shareFile).toHaveBeenCalledTimes(1)
-			expect(shareFile).toHaveBeenCalledWith(`/${uniqueFileName}`, 'XXTOKENXX', 'reference-id-1', '{"caption":"text-caption","silent":true}')
+			expect(shareFile).toHaveBeenCalledWith(uniqueFileName, 'XXTOKENXX', 'reference-id-1', '{"caption":"text-caption","silent":true}')
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
 			expect(store.getters.currentUploadId).not.toBeDefined()
@@ -193,10 +196,6 @@ describe('fileUploadStore', () => {
 				lastModified: Date.UTC(2021, 3, 25, 15, 30, 0),
 			}
 			const files = [file1, file2]
-			const fileBuffers = [
-				await new Blob([file1]).arrayBuffer(),
-				await new Blob([file2]).arrayBuffer(),
-			]
 
 			await store.dispatch('initialiseUpload', {
 				uploadId: 'upload-id1',
@@ -216,17 +215,15 @@ describe('fileUploadStore', () => {
 			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', caption: 'text-caption', options: { silent: false } })
 
 			expect(findUniquePath).toHaveBeenCalledTimes(2)
-			expect(client.putFileContents).toHaveBeenCalledTimes(2)
-			expect(shareFile).toHaveBeenCalledTimes(2)
-
+			expect(uploadMock).toHaveBeenCalledTimes(2)
 			for (const index in files) {
-				expect(findUniquePath).toHaveBeenCalledWith(client, '/files/current-user', '/Talk/' + files[index].name, undefined)
-				expect(client.putFileContents).toHaveBeenCalledWith(`/files/current-user/Talk/${files[index].name}uniq`, fileBuffers[index], expect.anything())
+				expect(findUniquePath).toHaveBeenNthCalledWith(+index + 1, client, '/files/current-user', '/Talk/' + files[index].name, undefined)
+				expect(uploadMock).toHaveBeenNthCalledWith(+index + 1, `/Talk/${files[index].name}uniq`, files[index])
 			}
 
 			expect(shareFile).toHaveBeenCalledTimes(2)
-			expect(shareFile).toHaveBeenNthCalledWith(1, '//Talk/' + files[0].name + 'uniq', 'XXTOKENXX', 'reference-id-1', '{}')
-			expect(shareFile).toHaveBeenNthCalledWith(2, '//Talk/' + files[1].name + 'uniq', 'XXTOKENXX', 'reference-id-2', '{"caption":"text-caption"}')
+			expect(shareFile).toHaveBeenNthCalledWith(1, '/Talk/' + files[0].name + 'uniq', 'XXTOKENXX', 'reference-id-1', '{}')
+			expect(shareFile).toHaveBeenNthCalledWith(2, '/Talk/' + files[1].name + 'uniq', 'XXTOKENXX', 'reference-id-2', '{"caption":"text-caption"}')
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(2)
 			expect(store.getters.currentUploadId).not.toBeDefined()
@@ -250,15 +247,14 @@ describe('fileUploadStore', () => {
 
 			findUniquePath
 				.mockResolvedValueOnce({ uniquePath: '/Talk/' + files[0].name + 'uniq', suffix: 1 })
-			client.putFileContents.mockRejectedValueOnce({
+			uploadMock.mockRejectedValueOnce({
 				response: {
 					status: 403,
 				},
 			})
-
 			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', options: { silent: false } })
 
-			expect(client.putFileContents).toHaveBeenCalledTimes(1)
+			expect(uploadMock).toHaveBeenCalledTimes(1)
 			expect(shareFile).not.toHaveBeenCalled()
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
@@ -299,7 +295,7 @@ describe('fileUploadStore', () => {
 
 			await store.dispatch('uploadFiles', { token: 'XXTOKENXX', uploadId: 'upload-id1', options: { silent: false } })
 
-			expect(client.putFileContents).toHaveBeenCalledTimes(1)
+			expect(uploadMock).toHaveBeenCalledTimes(1)
 			expect(shareFile).toHaveBeenCalledTimes(1)
 
 			expect(mockedActions.addTemporaryMessage).toHaveBeenCalledTimes(1)
