@@ -38,8 +38,6 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\PollController::createPoll() */
 		['name' => 'Poll#createPoll', 'url' => '/api/{apiVersion}/poll/{token}', 'verb' => 'POST', 'requirements' => $requirements],
-		/** @see \OCA\Talk\Controller\PollController::showPoll() */
-		['name' => 'Poll#showPoll', 'url' => '/api/{apiVersion}/poll/{token}/{pollId}', 'verb' => 'GET', 'requirements' => $requirementsWithPollId],
 		/** @see \OCA\Talk\Controller\PollController::votePoll() */
 		['name' => 'Poll#votePoll', 'url' => '/api/{apiVersion}/poll/{token}/{pollId}', 'verb' => 'POST', 'requirements' => $requirementsWithPollId],
 		/** @see \OCA\Talk\Controller\PollController::closePoll() */

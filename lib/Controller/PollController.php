@@ -42,6 +42,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\PollService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -143,6 +144,7 @@ class PollController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/poll/{token}/{pollId}', requirements: ['apiVersion' => '(v1)', 'token' => '[a-z0-9]{4,30}', 'pollId' => '\d+'])]
 	public function showPoll(int $pollId): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
