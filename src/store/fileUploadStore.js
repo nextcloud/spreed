@@ -31,6 +31,7 @@ import { EventBus } from '../services/EventBus.js'
 import {
 	getFileTemplates,
 	shareFile,
+	// shareMultipleFiles,
 } from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
@@ -310,6 +311,9 @@ const actions = {
 
 		EventBus.$emit('upload-start')
 
+		// Check for quantity of files to upload
+		// const isMultipleFilesUpload = getters.getUploadsArray(uploadId).length !== 1
+
 		// Tag previously indexed files and add temporary messages to the MessagesList
 		// If caption is provided, attach to the last temporary message
 		const lastIndex = getters.getInitialisedUploads(uploadId).at(-1).at(0)
@@ -395,6 +399,9 @@ const actions = {
 			if (temporaryMessage.parent) {
 				Object.assign(rawMetadata, { replyTo: temporaryMessage.parent.id })
 			}
+			// if (isMultipleFilesUpload) {
+			// 	Object.assign(rawMetadata, { noMessage: isMultipleFilesUpload })
+			// }
 			const metadata = JSON.stringify(rawMetadata)
 
 			const { token, id, referenceId } = temporaryMessage
@@ -402,6 +409,9 @@ const actions = {
 				dispatch('markFileAsSharing', { uploadId, index })
 				await shareFile(path, token, referenceId, metadata)
 				dispatch('markFileAsShared', { uploadId, index })
+
+				// return share id of file returned from the server
+				// return response.data.ocs.data.id
 			} catch (error) {
 				if (error?.response?.status === 403) {
 					showError(t('spreed', 'You are not allowed to share files'))
@@ -445,6 +455,10 @@ const actions = {
 			// Share all files in parallel
 			await Promise.all(shares.map(share => performShare(share)))
 		}
+
+		// if (isMultipleFilesUpload) {
+		// 	await shareMultipleFiles(temporaryMessage.token, shareIds, caption, temporaryMessage.actorDisplayName, temporaryMessage.referenceId)
+		// }
 
 		EventBus.$emit('upload-finished')
 	},
