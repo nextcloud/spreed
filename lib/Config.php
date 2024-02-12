@@ -27,6 +27,7 @@ use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
@@ -56,6 +57,7 @@ class Config {
 
 	public function __construct(
 		protected IConfig $config,
+		protected IAppConfig $appConfig,
 		private ISecureRandom $secureRandom,
 		private IGroupManager $groupManager,
 		private IUserManager $userManager,
@@ -109,6 +111,16 @@ class Config {
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
 		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+	}
+
+	public function isFederationEnabledForUserId(IUser $user): bool {
+		$allowedGroups = $this->appConfig->getAppValueArray('federation_allowed_groups', lazy: true);
+		if (empty($allowedGroups)) {
+			return true;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return empty(array_intersect($allowedGroups, $userGroups));
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {

@@ -41,6 +41,7 @@ use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
@@ -114,6 +115,8 @@ class SignalingControllerTest extends TestCase {
 
 		$this->userId = 'testUser';
 		$this->secureRandom = \OC::$server->getSecureRandom();
+		/** @var MockObject|IAppConfig $appConfig */
+		$appConfig = $this->createMock(IAppConfig::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$this->serverConfig = \OC::$server->getConfig();
@@ -125,7 +128,7 @@ class SignalingControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
+		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);

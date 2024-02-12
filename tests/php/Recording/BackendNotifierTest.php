@@ -34,6 +34,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
@@ -102,12 +103,13 @@ class BackendNotifierTest extends TestCase {
 		$this->secureRandom = \OC::$server->getSecureRandom();
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
+		$appConfig = $this->createMock(IAppConfig::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$userManager = $this->createMock(IUserManager::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$dispatcher = \OC::$server->get(IEventDispatcher::class);
 
-		$this->config = new Config($config, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
+		$this->config = new Config($config, $appConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
 
 		$this->recreateBackendNotifier();
 

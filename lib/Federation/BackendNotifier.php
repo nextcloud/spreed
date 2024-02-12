@@ -26,11 +26,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use OCA\FederatedFileSharing\AddressHandler;
-use OCA\Talk\AppInfo\Application;
+use OCA\Federation\TrustedServers;
 use OCA\Talk\BackgroundJob\RetryJob;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\BackgroundJob\IJobList;
 use OCP\DB\Exception;
 use OCP\Federation\ICloudFederationFactory;
@@ -40,6 +43,7 @@ use OCP\HintException;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
@@ -53,6 +57,9 @@ class BackendNotifier {
 		private IJobList $jobList,
 		private IUserManager $userManager,
 		private IURLGenerator $url,
+		private IAppManager $appManager,
+		private Config $talkConfig,
+		private IAppConfig $appConfig,
 	) {
 	}
 
@@ -68,8 +75,7 @@ class BackendNotifier {
 		string $providerId,
 		string $token,
 		string $shareWith,
-		string $sharedBy,
-		string $sharedByFederatedId,
+		IUser $sharedBy,
 		string $shareType,
 		Room $room,
 		Attendee $roomOwnerAttendee,
@@ -81,11 +87,35 @@ class BackendNotifier {
 		$roomToken = $room->getToken();
 
 		if (!($user && $remote)) {
-			$this->logger->info(
-				"could not share $roomToken, invalid contact $shareWith",
-				['app' => Application::APP_ID]
-			);
+			$this->logger->info("Could not share conversation $roomToken as the recipient is invalid: $shareWith");
 			return false;
+		}
+
+		if (!$this->appConfig->getAppValueBool('federation_outgoing_enabled', true)) {
+			$this->logger->info("Could not share conversation $roomToken as outgoing federation is disabled");
+			return false;
+		}
+
+		if (!$this->talkConfig->isFederationEnabledForUserId($sharedBy)) {
+			$this->logger->info('Talk federation not allowed for user ' . $sharedBy->getUID());
+			return false;
+		}
+
+		if ($this->appConfig->getAppValueBool('federation_only_trusted_servers')) {
+			if (!$this->appManager->isEnabledForUser('federation')) {
+				$this->logger->error('Federation is limited to trusted servers but the "federation" app is disabled');
+				return false;
+			}
+
+			$trustedServers = Server::get(TrustedServers::class);
+			$serverUrl = $this->addressHandler->removeProtocolFromUrl($remote);
+			if (!$trustedServers->isTrustedServer($serverUrl)) {
+				$this->logger->warning(
+					'Tried to send Talk federation invite to untrusted server {serverUrl}',
+					['serverUrl' => $serverUrl]
+				);
+				return false;
+			}
 		}
 
 		/** @var IUser|null $roomOwner */
@@ -100,8 +130,8 @@ class BackendNotifier {
 			$providerId,
 			$roomOwner->getCloudId(),
 			$roomOwner->getDisplayName(),
-			$sharedByFederatedId,
-			$sharedBy,
+			$sharedBy->getCloudId(),
+			$sharedBy->getDisplayName(),
 			$token,
 			$shareType,
 			FederationManager::TALK_ROOM_RESOURCE
@@ -118,10 +148,7 @@ class BackendNotifier {
 		if (is_array($response)) {
 			return true;
 		}
-		$this->logger->info(
-			"failed sharing $roomToken with $shareWith",
-			['app' => Application::APP_ID]
-		);
+		$this->logger->info("Failed sharing $roomToken with $shareWith");
 
 		return false;
 	}
@@ -152,10 +179,7 @@ class BackendNotifier {
 			]);
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
 		if (!is_array($response)) {
-			$this->logger->info(
-				"failed to send share accepted notification for share from $remote",
-				['app' => Application::APP_ID]
-			);
+			$this->logger->info("Failed to send share accepted notification for share from $remote");
 			return false;
 		}
 		return true;
@@ -186,10 +210,7 @@ class BackendNotifier {
 		);
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
 		if (!is_array($response)) {
-			$this->logger->info(
-				"failed to send share declined notification for share from $remote",
-				['app' => Application::APP_ID]
-			);
+			$this->logger->info("Failed to send share declined notification for share from $remote");
 			return false;
 		}
 		return true;

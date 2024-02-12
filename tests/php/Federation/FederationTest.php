@@ -36,6 +36,8 @@ use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
@@ -65,6 +67,7 @@ class FederationTest extends TestCase {
 
 	/** @var Config|MockObject */
 	protected $config;
+	protected IAppConfig|MockObject $appConfig;
 	/** @var LoggerInterface|MockObject */
 	protected $logger;
 
@@ -75,6 +78,7 @@ class FederationTest extends TestCase {
 
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	protected IAppManager|MockObject $appManager;
 
 	/** @var IURLGenerator|MockObject */
 	protected $url;
@@ -94,6 +98,8 @@ class FederationTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 		$this->config = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 
@@ -105,6 +111,9 @@ class FederationTest extends TestCase {
 			$this->createMock(IJobList::class),
 			$this->userManager,
 			$this->url,
+			$this->appManager,
+			$this->config,
+			$this->appConfig,
 		);
 
 		$this->federationManager = $this->createMock(FederationManager::class);
@@ -115,6 +124,7 @@ class FederationTest extends TestCase {
 			$this->addressHandler,
 			$this->federationManager,
 			$this->config,
+			$this->appConfig,
 			$this->notificationManager,
 			$this->createMock(ParticipantService::class),
 			$this->createMock(RoomService::class),
@@ -138,7 +148,7 @@ class FederationTest extends TestCase {
 		$owner = 'Owner\'s name';
 		$ownerId = 'owner';
 		$ownerFederatedId = $ownerId . '@test.local';
-		$sharedBy = 'Owner\'s name';
+		$sharedByDisplayName = 'Owner\'s name';
 		$sharedByFederatedId = 'owner@test.local';
 		$shareType = 'user';
 		$roomType = Room::TYPE_GROUP;
@@ -147,6 +157,15 @@ class FederationTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$attendee = $this->createStub(Attendee::class);
 		$ownerUser = $this->createMock(IUser::class);
+		$sharedBy = $this->createMock(IUser::class);
+		$sharedBy->expects($this->once())
+			->method('getCloudId')
+			->with()
+			->willReturn($sharedByFederatedId);
+		$sharedBy->expects($this->once())
+			->method('getDisplayName')
+			->with()
+			->willReturn($sharedByDisplayName);
 
 		$room->expects($this->once())
 			->method('getName')
@@ -187,7 +206,7 @@ class FederationTest extends TestCase {
 				$ownerFederatedId,
 				$owner,
 				$sharedByFederatedId,
-				$sharedBy,
+				$sharedByDisplayName,
 				$token,
 				$shareType,
 				'talk-room'
@@ -203,7 +222,17 @@ class FederationTest extends TestCase {
 			->with($shareWith)
 			->willReturn(['test', 'remote.test.local']);
 
-		$this->backendNotifier->sendRemoteShare($providerId, $token, $shareWith, $sharedBy, $sharedByFederatedId, $shareType, $room, $attendee);
+		$this->appConfig->method('getAppValueBool')
+			->willReturnMap([
+				['federation_outgoing_enabled', true, false, true],
+				['federation_only_trusted_servers', false, false, false],
+			]);
+
+		$this->config->method('isFederationEnabledForUserId')
+			->with($sharedBy)
+			->willReturn(true);
+
+		$this->backendNotifier->sendRemoteShare($providerId, $token, $shareWith, $sharedBy, $shareType, $room, $attendee);
 	}
 
 	public function testReceiveRemoteShare() {
@@ -254,6 +283,19 @@ class FederationTest extends TestCase {
 			->willReturn($invite);
 
 		$this->config->method('isFederationEnabled')
+			->willReturn(true);
+
+		$this->appConfig->method('getAppValueBool')
+			->willReturnMap([
+				['federation_incoming_enabled', true, false, true],
+			]);
+
+		$this->config->method('isDisabledForUser')
+			->with($shareWithUser)
+			->willReturn(false);
+
+		$this->config->method('isFederationEnabledForUserId')
+			->with($shareWithUser)
 			->willReturn(true);
 
 		$this->addressHandler->expects($this->once())
