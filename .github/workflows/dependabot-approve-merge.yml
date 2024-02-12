@@ -33,7 +33,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # GitHub actions bot approve
+      # Github actions bot approve
       - uses: hmarr/auto-approve-action@b40d6c9ed2fa10c9a2749eca7eb004418a705501 # v2
         if: contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
         with:
