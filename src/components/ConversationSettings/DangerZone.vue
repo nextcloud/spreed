@@ -51,7 +51,7 @@
 					:open.sync="isDeleteConversationDialogOpen"
 					:name="t('spreed','Delete Conversation')"
 					:message="deleteConversationDialogMessage"
-					:container="container">
+					container=".danger-zone">
 					<template #actions>
 						<NcButton type="tertiary" @click="toggleShowDeleteConversationDialog">
 							{{ t('spreed', 'No') }}
@@ -77,7 +77,7 @@
 					:open.sync="isDeleteChatDialogOpen"
 					:name="t('spreed','Delete all chat messages')"
 					:message="deleteChatDialogMessage"
-					:container="container">
+					container=".danger-zone">
 					<template #actions>
 						<NcButton type="tertiary" @click="toggleShowDeleteChatDialog">
 							{{ t('spreed', 'No') }}
@@ -235,6 +235,11 @@ h4 {
 		color: var(--color-text-maxcontrast);
 	}
 	&__dialog {
+		// TODO remove after https://github.com/nextcloud-libraries/nextcloud-vue/issues/5228
+		:deep(.modal-wrapper--small .modal-container) {
+			width: 400px !important;
+		}
+
 		:deep(.modal-container) {
 			padding-block: 4px 8px;
 			padding-inline: 12px 8px;
