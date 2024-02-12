@@ -330,7 +330,9 @@
                     "remoteServerUrl",
                     "remoteToken",
                     "roomName",
-                    "userId"
+                    "userId",
+                    "inviterCloudId",
+                    "inviterDisplayName"
                 ],
                 "properties": {
                     "accessToken": {
@@ -362,6 +364,12 @@
                         "type": "string"
                     },
                     "userId": {
+                        "type": "string"
+                    },
+                    "inviterCloudId": {
+                        "type": "string"
+                    },
+                    "inviterDisplayName": {
                         "type": "string"
                     }
                 }

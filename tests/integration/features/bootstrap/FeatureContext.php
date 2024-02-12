@@ -555,13 +555,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	private function assertInvites($invites, TableNode $formData) {
 		Assert::assertCount(count($formData->getHash()), $invites, 'Invite count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function ($invite, $expectedInvite) {
+		$expectedInvites = array_map(static function ($expectedInvite): array {
+			if (isset($expectedInvite['state'])) {
+				$expectedInvite['state'] = (int) $expectedInvite['state'];
+			}
+			return $expectedInvite;
+		}, $formData->getHash());
+
+		Assert::assertEquals($expectedInvites, array_map(function ($invite, $expectedInvite): array {
 			$data = [];
 			if (isset($expectedInvite['id'])) {
 				$data['id'] = self::$tokenToIdentifier[$invite['token']];
 			}
 			if (isset($expectedInvite['accessToken'])) {
-				$data['accessToken'] = (string) $invite['accessToken'];
+				$data['accessToken'] = $invite['accessToken'];
+			}
+			if (isset($expectedInvite['inviterCloudId'])) {
+				$data['inviterCloudId'] = $invite['inviterCloudId'];
+			}
+			if (isset($expectedInvite['inviterDisplayName'])) {
+				$data['inviterDisplayName'] = $invite['inviterDisplayName'];
 			}
 			if (isset($expectedInvite['remoteToken'])) {
 				$data['remoteToken'] = self::$tokenToIdentifier[$invite['remoteToken']] ?? 'unknown-token';
@@ -570,11 +583,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['remoteServerUrl'] = $this->translateRemoteServer($invite['remoteServerUrl']);
 			}
 			if (isset($expectedInvite['state'])) {
-				$data['state'] = (int) $invite['state'];
+				$data['state'] = $invite['state'];
 			}
 
 			return $data;
-		}, $invites, $formData->getHash()));
+		}, $invites, $expectedInvites));
 	}
 
 	protected function translateRemoteServer(string $server): string {

@@ -77,6 +77,8 @@ class FederationManager {
 		string $remoteServerUrl,
 		#[SensitiveParameter]
 		string $sharedSecret,
+		string $inviterCloudId,
+		string $inviterDisplayName,
 	): Invitation {
 		try {
 			$room = $this->manager->getRoomByToken($remoteToken, null, $remoteServerUrl);
@@ -92,6 +94,8 @@ class FederationManager {
 		$invitation->setRemoteServerUrl($remoteServerUrl);
 		$invitation->setRemoteToken($remoteToken);
 		$invitation->setRemoteAttendeeId($remoteAttendeeId);
+		$invitation->setInviterCloudId($inviterCloudId);
+		$invitation->setInviterDisplayName($inviterDisplayName);
 		$this->invitationMapper->insert($invitation);
 
 		return $invitation;
