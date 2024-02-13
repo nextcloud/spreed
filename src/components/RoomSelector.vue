@@ -21,49 +21,44 @@
   -->
 
 <template>
-	<NcModal size="normal"
-		:container="container"
-		@close="close">
-		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
-			<div id="modal-content">
-				<h2>
-					{{ dialogTitle }}
-				</h2>
-				<p v-if="dialogSubtitle" class="subtitle">
-					{{ dialogSubtitle }}
-				</p>
-				<NcTextField :value.sync="searchText"
-					trailing-button-icon="close"
-					class="search-form"
-					:label="t('spreed', 'Search conversations or users')"
-					:show-trailing-button="searchText !==''"
-					@trailing-button-click="clearText">
-					<Magnify :size="16" />
-				</NcTextField>
-				<div id="room-list">
-					<ConversationsSearchListVirtual v-if="loading || availableRooms.length > 0"
-						:conversations="availableRooms"
-						:loading="loading"
-						class="scroller h-100"
-						@select="onSelect" />
-					<div v-else-if="!loading" class="no-match-message">
-						<h2 class="no-match-title">
-							{{ noMatchFoundTitle }}
-						</h2>
-						<p v-if="noMatchFoundSubtitle" class="subtitle">
-							{{ noMatchFoundSubtitle }}
-						</p>
-					</div>
-				</div>
-				<div id="modal-buttons">
-					<NcButton v-if="!loading && availableRooms.length > 0"
-						type="primary"
-						:disabled="!selectedRoom"
-						@click="select">
-						{{ t('spreed', 'Select conversation') }}
-					</NcButton>
-				</div>
-			</div>
+	<NcModal size="small" :container="container" @close="close">
+		<div class="selector">
+			<!-- Heading, search field -->
+			<h2 class="selector__heading">
+				{{ dialogTitle }}
+			</h2>
+			<p v-if="dialogSubtitle" class="selector__subtitle">
+				{{ dialogSubtitle }}
+			</p>
+			<NcTextField :value.sync="searchText"
+				trailing-button-icon="close"
+				class="selector__search"
+				:label="t('spreed', 'Search conversations or users')"
+				:show-trailing-button="searchText !==''"
+				@trailing-button-click="clearText">
+				<Magnify :size="16" />
+			</NcTextField>
+
+			<!-- Conversations list-->
+			<ConversationsSearchListVirtual v-if="loading || availableRooms.length > 0"
+				:conversations="availableRooms"
+				:loading="loading"
+				class="selector__list"
+				@select="onSelect" />
+			<NcEmptyContent v-else :name="noMatchFoundTitle" :description="noMatchFoundSubtitle">
+				<template #icon>
+					<MessageOutline :size="64" />
+				</template>
+			</NcEmptyContent>
+
+			<!-- Actions -->
+			<NcButton v-if="!loading && availableRooms.length > 0"
+				class="selector__action"
+				type="primary"
+				:disabled="!selectedRoom"
+				@click="onSubmit">
+				{{ t('spreed', 'Select conversation') }}
+			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -72,8 +67,10 @@
 import { provide, ref } from 'vue'
 
 import Magnify from 'vue-material-design-icons/Magnify.vue'
+import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -84,14 +81,18 @@ import { searchListedConversations, fetchConversations } from '../services/conve
 
 export default {
 	name: 'RoomSelector',
+
 	components: {
 		ConversationsSearchListVirtual,
 		NcButton,
+		NcEmptyContent,
 		NcModal,
 		NcTextField,
 		// Icons
 		Magnify,
+		MessageOutline,
 	},
+
 	props: {
 		container: {
 			type: String,
@@ -109,19 +110,22 @@ export default {
 		},
 
 		/**
-		 * Whether to only show conversations to which
-		 * the user can post messages.
+		 * Whether to only show conversations to which the user can post messages.
 		 */
 		showPostableOnly: {
 			type: Boolean,
 			default: false,
 		},
 
+		/**
+		 * Whether to only show open conversations to which the user can join.
+		 */
 		listOpenConversations: {
 			type: Boolean,
 			default: false,
 		},
 	},
+
 	emits: ['close', 'select'],
 
 	setup() {
@@ -141,20 +145,16 @@ export default {
 			loading: true,
 		}
 	},
+
 	computed: {
 		availableRooms() {
-			const roomsTemp = this.rooms.filter((room) => {
-				return room.type !== CONVERSATION.TYPE.CHANGELOG
-					&& (!this.currentRoom || this.currentRoom !== room.token)
-					&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
-					&& room.objectType !== CONVERSATION.OBJECT_TYPE.FILE
-					&& room.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
-			})
-			if (!this.searchText) {
-				return roomsTemp
-			} else {
-				return roomsTemp.filter(room => room.displayName.toLowerCase().includes(this.searchText.toLowerCase()))
-			}
+			return this.rooms.filter(room => room.type !== CONVERSATION.TYPE.CHANGELOG
+				&& room.objectType !== CONVERSATION.OBJECT_TYPE.FILE
+				&& room.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION
+				&& (!this.currentRoom || this.currentRoom !== room.token)
+				&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
+				&& (!this.searchText || room.displayName.toLowerCase().includes(this.searchText.toLowerCase()))
+			)
 		},
 
 		noMatchFoundTitle() {
@@ -169,6 +169,7 @@ export default {
 				: t('spreed', 'Check spelling or use complete words.')
 		},
 	},
+
 	beforeMount() {
 		this.fetchRooms()
 		const $store = OCA.Talk?.instance?.$store
@@ -176,6 +177,7 @@ export default {
 			this.currentRoom = $store.getters.getToken()
 		}
 	},
+
 	methods: {
 		async fetchRooms() {
 			const response = this.listOpenConversations
@@ -185,6 +187,7 @@ export default {
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)
 			this.loading = false
 		},
+
 		sortConversations(conversation1, conversation2) {
 			if (conversation1.isFavorite !== conversation2.isFavorite) {
 				return conversation1.isFavorite ? -1 : 1
@@ -202,10 +205,13 @@ export default {
 			this.$root.$emit('close')
 			this.$emit('close')
 		},
+
 		onSelect(item) {
 			this.selectedRoom = item.token
 		},
-		select() {
+
+		onSubmit() {
+			// FIXME: should not emit on $root but on itself
 			this.$root.$emit('select', this.selectedRoom)
 			this.$emit('select', this.selectedRoom)
 		},
@@ -214,81 +220,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
+/* Styles to be applied outside of Talk (Deck plugin, e.t.c) */
+:deep(.modal-wrapper *) {
+	box-sizing: border-box;
+}
 
-:deep(.modal-container) {
+:deep(.modal-wrapper .modal-container) {
 	height: 700px;
 }
 
-/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4350 regression is solved */
-/* Force modal close button to be above modal content */
-:deep(.modal-container__close) {
-	z-index: 1;
-}
-
-.talk-modal {
-	height: 80vh;
-}
-
-#modal-inner {
+.selector {
 	width: 100%;
-	padding: 16px;
-	margin: 0 auto;
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	height: 100%;
-	box-sizing: border-box;
-
-	h2 {
-		margin-bottom: 4px;
-	}
-}
-
-#modal-content {
-	position: absolute;
-	width: calc(100% - 40px);
-	height: calc(100% - 40px);
 	display: flex;
 	flex-direction: column;
-}
+	padding: 16px;
 
-#room-list {
-	overflow-y: auto;
-	flex: 0 1 auto;
-	height: 100%;
-}
+	&__heading {
+		margin-bottom: 4px;
+	}
 
-.no-match-message {
-	padding: 40px 0;
-	text-align: center;
+	&__subtitle {
+		color: var(--color-text-maxcontrast);
+		margin-bottom: 8px;
+	}
 
-}
+	&__search {
+		margin-bottom: 10px;
+	}
 
-.no-match-title {
-	font-weight: normal;
-}
+	&__list {
+		height: 100%;
+	}
 
-#modal-buttons {
-	overflow: hidden;
-	flex-shrink: 0;
-	margin-left: auto;
-}
-
-.subtitle {
-	color: var(--color-text-maxcontrast);
-	margin-bottom: 8px;
-}
-
-.search-form {
-	margin-bottom: 10px;
-}
-
-.scroller {
-	padding: 0 4px;
-}
-
-.h-100 {
-	height: 100%;
+	&__action {
+		flex-shrink: 0;
+		margin-left: auto;
+	}
 }
 </style>
