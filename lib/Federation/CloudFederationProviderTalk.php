@@ -121,20 +121,20 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
 		$roomType = (int) $roomType;
-		$sharedBy = $share->getSharedByDisplayName();
+		$sharedByDisplayName = $share->getSharedByDisplayName();
 		$sharedByFederatedId = $share->getSharedBy();
-		$owner = $share->getOwnerDisplayName();
+		$ownerDisplayName = $share->getOwnerDisplayName();
 		$ownerFederatedId = $share->getOwner();
 		[, $remote] = $this->addressHandler->splitUserRemote($ownerFederatedId);
 
-		// if no explicit information about the person who created the share was send
+		// if no explicit information about the person who created the share was sent
 		// we assume that the share comes from the owner
 		if ($sharedByFederatedId === null) {
-			$sharedBy = $owner;
+			$sharedByDisplayName = $ownerDisplayName;
 			$sharedByFederatedId = $ownerFederatedId;
 		}
 
-		if ($remote && $shareSecret && $shareWith && $roomToken && $remoteId && is_string($roomName) && $roomName && $owner) {
+		if ($remote && $shareSecret && $shareWith && $roomToken && $remoteId && is_string($roomName) && $roomName && $ownerDisplayName) {
 			$shareWith = $this->userManager->get($shareWith);
 			if ($shareWith === null) {
 				$this->logger->debug('Received a federation invite for user that could not be found');
@@ -151,9 +151,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWith, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret);
+			$invite = $this->federationManager->addRemoteRoom($shareWith, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName);
 
-			$this->notifyAboutNewShare($shareWith, (string) $invite->getId(), $sharedByFederatedId, $sharedBy, $roomName, $roomToken, $remote);
+			$this->notifyAboutNewShare($shareWith, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
 			return (string) $invite->getId();
 		}
 

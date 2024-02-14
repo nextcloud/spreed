@@ -109,6 +109,8 @@ namespace OCA\Talk;
  *     remoteToken: string,
  *     roomName: string,
  *     userId: string,
+ *     inviterCloudId: string,
+ *     inviterDisplayName: string,
  * }
  *
  * @psalm-type TalkMatterbridgeConfigFields = array<array<string, mixed>>

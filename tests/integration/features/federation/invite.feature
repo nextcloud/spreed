@@ -51,8 +51,8 @@ Feature: federation/invite
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 0     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     Then user "participant2" has the following notifications
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
@@ -62,8 +62,8 @@ Feature: federation/invite
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 400 (v1)
       | error | state |
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 1     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 1     | participant1@http://localhost:8080 | participant1-displayname |
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId      | participantType |
       | users           | participant1 | 1               |
@@ -103,8 +103,8 @@ Feature: federation/invite
       | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 0     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     Then user "participant2" has the following notifications
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
@@ -138,8 +138,8 @@ Feature: federation/invite
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 0     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     Then user "participant2" has the following notifications
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
@@ -164,14 +164,14 @@ Feature: federation/invite
       | roomName | room |
     And user "participant1" adds remote "participant2" to room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 0     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 2    | LOCAL        | room        |
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 1     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 1     | participant1@http://localhost:8080 | participant1-displayname |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type |
       | room | 2    |
@@ -190,8 +190,8 @@ Feature: federation/invite
       | roomName | room |
     And user "participant1" adds remote "participant2" to room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state |
-      | LOCAL           | room        | 0     |
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 2    | LOCAL        | room        |

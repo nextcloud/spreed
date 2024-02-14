@@ -43,6 +43,10 @@ use OCP\AppFramework\Db\Entity;
  * @method string getRemoteToken()
  * @method void setRemoteAttendeeId(int $remoteAttendeeId)
  * @method int getRemoteAttendeeId()
+ * @method void setInviterCloudId(string $inviterCloudId)
+ * @method string getInviterCloudId()
+ * @method void setInviterDisplayName(string $inviterDisplayName)
+ * @method string getInviterDisplayName()
  */
 class Invitation extends Entity implements \JsonSerializable {
 	public const STATE_PENDING = 0;
@@ -55,6 +59,8 @@ class Invitation extends Entity implements \JsonSerializable {
 	protected string $remoteServerUrl = '';
 	protected string $remoteToken = '';
 	protected int $remoteAttendeeId = 0;
+	protected string $inviterCloudId = '';
+	protected string $inviterDisplayName = '';
 
 	public function __construct() {
 		$this->addType('userId', 'string');
@@ -64,10 +70,12 @@ class Invitation extends Entity implements \JsonSerializable {
 		$this->addType('remoteServerUrl', 'string');
 		$this->addType('remoteToken', 'string');
 		$this->addType('remoteAttendeeId', 'int');
+		$this->addType('inviterCloudId', 'string');
+		$this->addType('inviterDisplayName', 'string');
 	}
 
 	/**
-	 * @return array{accessToken: string, id: int, localRoomId: int, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string}
+	 * @return array{accessToken: string, id: int, localRoomId: int, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string, inviterCloudId: string, inviterDisplayName: string}
 	 */
 	public function jsonSerialize(): array {
 		return [
@@ -79,6 +87,8 @@ class Invitation extends Entity implements \JsonSerializable {
 			'remoteServerUrl' => $this->getRemoteServerUrl(),
 			'remoteToken' => $this->getRemoteToken(),
 			'remoteAttendeeId' => $this->getRemoteAttendeeId(),
+			'inviterCloudId' => $this->getInviterCloudId(),
+			'inviterDisplayName' => $this->getInviterDisplayName() ?: $this->getInviterCloudId(),
 		];
 	}
 }
