@@ -76,12 +76,20 @@ class SearchPlugin implements ISearchPlugin {
 			}
 		}
 
-		$userIds = $groupIds = $guestAttendees = [];
+		/** @var array<string, string> $userIds */
+		$userIds = [];
+		/** @var array<string, string> $groupIds */
+		$groupIds = [];
+		/** @var array<string, string> $cloudIds */
+		$cloudIds = [];
+		/** @var list<Attendee> $guestAttendees */
+		$guestAttendees = [];
+
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
 			$participants = json_decode($this->room->getName(), true);
 			foreach ($participants as $userId) {
-				$userIds[] = $userId;
+				$userIds[$userId] = $this->userManager->getDisplayName($userId) ?? $userId;
 			}
 		} else {
 			$participants = $this->participantService->getParticipantsForRoom($this->room);
@@ -142,7 +150,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if ($displayName === null || $displayName === '') {
+			if ($displayName === '') {
 				continue;
 			}
 
@@ -160,6 +168,9 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
+	/**
+	 * @param array<string, string> $cloudIds
+	 */
 	protected function searchFederatedUsers(string $search, array $cloudIds, ISearchResult $searchResult): void {
 		$search = strtolower($search);
 
@@ -191,7 +202,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if ($displayName === null || $displayName === '') {
+			if ($displayName === '') {
 				continue;
 			}
 
@@ -259,7 +270,7 @@ class SearchPlugin implements ISearchPlugin {
 
 	/**
 	 * @param string $search
-	 * @param Attendee[] $attendees
+	 * @param list<Attendee> $attendees
 	 * @param ISearchResult $searchResult
 	 */
 	protected function searchGuests(string $search, array $attendees, ISearchResult $searchResult): void {

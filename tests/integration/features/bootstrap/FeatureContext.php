@@ -2827,7 +2827,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
+		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match' . "\n" . json_encode($mentions, JSON_PRETTY_PRINT));
 
 		usort($mentions, function ($a, $b) {
 			if ($a['source'] === $b['source']) {

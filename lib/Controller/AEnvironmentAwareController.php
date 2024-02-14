@@ -36,7 +36,13 @@ abstract class AEnvironmentAwareController extends OCSController {
 	protected int $apiVersion = 1;
 	protected ?Room $room = null;
 	protected ?Participant $participant = null;
+	/**
+	 * @deprecated
+	 */
 	protected ?string $federationCloudId = null;
+	/**
+	 * @deprecated
+	 */
 	protected ?string $federationAccessToken = null;
 
 	public function setAPIVersion(int $apiVersion): void {
@@ -63,15 +69,24 @@ abstract class AEnvironmentAwareController extends OCSController {
 		return $this->participant;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function setRemoteAccess(?string $actorId, ?string $accessToken): void {
 		$this->federationCloudId = $actorId;
 		$this->federationAccessToken = $accessToken;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function getRemoteAccessCloudId(): ?string {
 		return $this->federationCloudId;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function getRemoteAccessToken(): ?string {
 		return $this->federationAccessToken;
 	}
