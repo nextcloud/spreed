@@ -23,12 +23,6 @@
 <template>
 	<!-- reactions buttons and popover with details -->
 	<div class="reactions-wrapper">
-		<!-- all reactions button -->
-		<NcButton class="reaction-button"
-			:title="t('spreed', 'Show all reactions')"
-			@click="showAllReactions = true">
-			<HeartOutlineIcon :size="15" />
-		</NcButton>
 		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
@@ -44,7 +38,7 @@
 				</NcButton>
 			</template>
 
-			<div v-if="hasReactions" class="reaction-details">
+			<div v-if="hasReactionsLoaded" class="reaction-details">
 				<span>{{ getReactionSummary(reaction) }}</span>
 				<NcButton v-if="reactionsCount(reaction) > 3"
 					type="tertiary-no-background"
@@ -57,8 +51,16 @@
 			</div>
 		</NcPopover>
 
+		<!-- all reactions button -->
+		<NcButton v-if="showControls"
+			class="reaction-button"
+			:title="t('spreed', 'Show all reactions')"
+			@click="showAllReactions = true">
+			<HeartOutlineIcon :size="15" />
+		</NcButton>
+
 		<!-- More reactions picker -->
-		<NcEmojiPicker v-if="canReact && hasReactions"
+		<NcEmojiPicker v-if="canReact && showControls"
 			:per-line="5"
 			:container="`#message_${id}`"
 			@select="handleReactionClick"
@@ -73,7 +75,7 @@
 			</NcButton>
 		</NcEmojiPicker>
 
-		<!-- all reactions -->
+		<!-- all reactions modal-->
 		<ReactionsList v-if="showAllReactions"
 			:token="token"
 			:detailed-reactions="detailedReactions"
@@ -131,6 +133,11 @@ export default {
 			type: [String, Number],
 			required: true,
 		},
+
+		showControls: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['emoji-picker-toggled'],
@@ -151,7 +158,7 @@ export default {
 	},
 
 	computed: {
-		hasReactions() {
+		hasReactionsLoaded() {
 			return Object.keys(Object(this.detailedReactions)).length !== 0
 		},
 
@@ -184,14 +191,14 @@ export default {
 					.sort() // Plain reactions come sorted
 					.map(([key, value]) => [key, value.length])
 			)
-			return this.hasReactions
+			return this.hasReactionsLoaded
 					&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
 		},
 	},
 
 	methods: {
 		fetchReactions() {
-			if (!this.hasReactions || this.hasOutdatedDetails) {
+			if (!this.hasReactionsLoaded || this.hasOutdatedDetails) {
 				this.reactionsStore.fetchReactions(this.token, this.id)
 			}
 		},
@@ -243,7 +250,7 @@ export default {
 
 		getReactionSummary(reaction) {
 			// Check if the reaction details are loaded
-			if (!this.hasReactions) {
+			if (!this.hasReactionsLoaded) {
 				return ''
 			}
 			const list = this.detailedReactions[reaction].slice(0, 3)
