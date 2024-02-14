@@ -44,8 +44,8 @@
 					<ul v-if="!loading && availableRooms.length > 0">
 						<li v-for="room in availableRooms"
 							:key="room.token"
-							:class="{selected: selectedRoom === room.token }"
-							@click="selectedRoom=room.token">
+							:class="{selected: selectedRoom?.token === room.token }"
+							@click="selectedRoom = room">
 							<ConversationIcon :item="room" :hide-favorite="false" />
 							<span>{{ room.displayName }}</span>
 						</li>

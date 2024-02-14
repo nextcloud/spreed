@@ -106,6 +106,7 @@ export default {
 	data() {
 		return {
 			selectedConversationToken: null,
+			selectedConversationName: null,
 			showForwardedConfirmation: false,
 			forwardedMessageID: '',
 		}
@@ -122,10 +123,6 @@ export default {
 
 		dialogSubtitle() {
 			return t('spreed', 'Choose a conversation to forward the selected message.')
-		},
-
-		selectedConversationName() {
-			return this.$store.getters?.conversation(this.selectedConversationToken).displayName
 		},
 
 		/**
@@ -145,11 +142,12 @@ export default {
 	},
 
 	methods: {
-		async setSelectedConversationToken(token) {
-			this.selectedConversationToken = token
+		async setSelectedConversationToken(conversation) {
+			this.selectedConversationToken = conversation.token
+			this.selectedConversationName = conversation.displayName
 			const messageToBeForwarded = cloneDeep(this.messageObject)
 			// Overwrite the selected conversation token
-			messageToBeForwarded.token = token
+			messageToBeForwarded.token = conversation.token
 
 			if (messageToBeForwarded.parent) {
 				delete messageToBeForwarded.parent
@@ -159,7 +157,7 @@ export default {
 				const richObject = messageToBeForwarded.messageParameters.object
 				try {
 					const response = await this.$store.dispatch('forwardRichObject', {
-						token,
+						token: conversation.token,
 						richObject: {
 							objectId: richObject.id,
 							objectType: richObject.type,

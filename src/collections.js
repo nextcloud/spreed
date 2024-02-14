@@ -58,8 +58,8 @@ import Vue from 'vue'
 					ComponentVM.$destroy()
 					reject(new Error('User cancelled resource selection'))
 				})
-				ComponentVM.$root.$on('select', (id) => {
-					resolve(id)
+				ComponentVM.$root.$on('select', ({ token }) => {
+					resolve(token)
 					ComponentVM.$el.remove()
 					ComponentVM.$destroy()
 				})
