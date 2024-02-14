@@ -16,7 +16,7 @@ Webhook based bots are available with the Nextcloud 27.1 compatible Nextcloud Ta
 ## Receiving chat messages
 
 Messages are signed using the shared secret that is specified when installing a bot on the server.
-Create a HMAC with SHA256 over the request body and the `RANDOM` header using the shared secret.
+Create a HMAC with SHA256 over the `RANDOM` header and the request body using the shared secret.
 Only when the `SIGNATURE` matches the request should be accepted and handled.
 
 **Sample PHP code:**
