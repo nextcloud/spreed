@@ -124,6 +124,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Whether component is used as plugin and should emit on $root.
+		 */
+		isPlugin: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['close', 'select'],
@@ -201,9 +209,11 @@ export default {
 		},
 
 		close() {
-			// FIXME: should not emit on $root but on itself
-			this.$root.$emit('close')
-			this.$emit('close')
+			if (this.isPlugin) {
+				this.$root.$emit('close')
+			} else {
+				this.$emit('close')
+			}
 		},
 
 		onSelect(item) {
@@ -211,9 +221,11 @@ export default {
 		},
 
 		onSubmit() {
-			// FIXME: should not emit on $root but on itself
-			this.$root.$emit('select', this.selectedRoom)
-			this.$emit('select', this.selectedRoom)
+			if (this.isPlugin) {
+				this.$root.$emit('select', this.selectedRoom)
+			} else {
+				this.$emit('select', this.selectedRoom)
+			}
 		},
 	},
 }
