@@ -11642,7 +11642,7 @@
                                 "groups",
                                 "circles",
                                 "emails",
-                                "remotes",
+                                "federated_users",
                                 "phones"
                             ]
                         }

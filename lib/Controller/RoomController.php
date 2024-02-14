@@ -1026,7 +1026,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Add a participant to a room
 	 *
 	 * @param string $newParticipant New participant
-	 * @param 'users'|'groups'|'circles'|'emails'|'remotes'|'phones' $source Source of the participant
+	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones' $source Source of the participant
 	 * @return DataResponse<Http::STATUS_OK, array{type: int}|array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Participant successfully added
@@ -1114,7 +1114,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			return new DataResponse($data);
-		} elseif ($source === 'remotes') {
+		} elseif ($source === 'federated_users') {
 			if (!$this->talkConfig->isFederationEnabled()) {
 				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 			}

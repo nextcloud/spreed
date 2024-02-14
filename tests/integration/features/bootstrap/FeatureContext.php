@@ -1662,7 +1662,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle|remote|phone) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle|federated_user|phone) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
@@ -1674,7 +1674,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
-		if ($newType === 'remote') {
+		if ($newType === 'federated_user') {
 			$newId .= '@' . $this->baseRemoteUrl;
 		}
 
