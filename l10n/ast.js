@@ -14,6 +14,7 @@ OC.L10N.register(
     "An administrator removed circle {circle}" : "L'alministración quitó'l círculu «{circle}»",
     "Message deleted by author" : "L'autor desanició'l mensaxe",
     "File is too big" : "El ficheru ye mui grande",
+    "Invalid file provided" : "Fornióse un ficheru inválidu",
     "Accept" : "Aceptar",
     "Decline" : "Refugar",
     "{user} invited you to a private conversation" : "{user} convidóte a una conversación privada",
