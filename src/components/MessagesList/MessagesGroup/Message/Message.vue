@@ -46,6 +46,7 @@
 				:id="id"
 				:token="token"
 				:can-react="canReact"
+				:show-controls="isHovered || isFollowUpEmojiPickerOpen"
 				@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
 		</div>
 
