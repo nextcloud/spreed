@@ -28,6 +28,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SelectHelper;
@@ -73,6 +74,7 @@ class Manager {
 		protected ITimeFactory $timeFactory,
 		protected IHasher $hasher,
 		protected IL10N $l,
+		protected Authenticator $federationAuthenticator,
 	) {
 		$this->commentsManager = $commentsManager;
 	}
@@ -1096,6 +1098,16 @@ class Manager {
 
 		if ($forceName) {
 			return $room->getName();
+		}
+
+		if ($this->federationAuthenticator->isFederationRequest()) {
+			try {
+				$authenticatedRoom = $this->federationAuthenticator->getRoom();
+				if ($authenticatedRoom->getId() === $room->getId()) {
+					return $room->getName();
+				}
+			} catch (RoomNotFoundException) {
+			}
 		}
 
 		if ($userId === '' && $room->getType() !== Room::TYPE_PUBLIC) {
