@@ -48,6 +48,9 @@ class Util {
 	) {
 	}
 
+	/**
+	 * @return string[]
+	 */
 	public function getUsersWithAccessFile(string $fileId): array {
 		if (!isset($this->accessLists[$fileId])) {
 			$nodes = $this->rootFolder->getById((int) $fileId);

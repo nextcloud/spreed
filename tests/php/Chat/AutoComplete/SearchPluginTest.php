@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -32,8 +34,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
-use OCP\IGroup;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -45,8 +45,6 @@ class SearchPluginTest extends TestCase {
 	protected $userManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
-	/** @var IGroupManager|MockObject */
-	protected $groupManager;
 	/** @var TalkSession|MockObject */
 	protected $talkSession;
 	/** @var ParticipantService|MockObject */
@@ -62,7 +60,6 @@ class SearchPluginTest extends TestCase {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -84,7 +81,6 @@ class SearchPluginTest extends TestCase {
 		if (empty($methods)) {
 			return new SearchPlugin(
 				$this->userManager,
-				$this->groupManager,
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
@@ -97,7 +93,6 @@ class SearchPluginTest extends TestCase {
 		return $this->getMockBuilder(SearchPlugin::class)
 			->setConstructorArgs([
 				$this->userManager,
-				$this->groupManager,
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
@@ -109,12 +104,13 @@ class SearchPluginTest extends TestCase {
 			->getMock();
 	}
 
-	protected function createParticipantMock(string $uid, string $session = ''): Participant {
+	protected function createParticipantMock(string $uid, string $displayName, string $session = ''): Participant {
 		/** @var Participant|MockObject $p */
 		$p = $this->createMock(Participant::class);
 		$a = Attendee::fromRow([
 			'actor_type' => $uid ? 'users' : 'guests',
 			'actor_id' => $uid ? $uid : sha1($session),
+			'display_name' => $displayName,
 		]);
 		$s = Session::fromRow([
 			'session_id' => $session,
@@ -141,18 +137,18 @@ class SearchPluginTest extends TestCase {
 			->method('getParticipantsForRoom')
 			->with($room)
 			->willReturn([
-				$this->createParticipantMock('123'),
-				$this->createParticipantMock('foo'),
-				$this->createParticipantMock('', '123456'),
-				$this->createParticipantMock('bar'),
-				$this->createParticipantMock('', 'abcdef'),
+				$this->createParticipantMock('123', 'OneTwoThree'),
+				$this->createParticipantMock('foo', 'Foo Bar'),
+				$this->createParticipantMock('', 'Guest 1-6', '123456'),
+				$this->createParticipantMock('bar', 'Bar Tender'),
+				$this->createParticipantMock('', 'Guest a-f', 'abcdef'),
 			]);
 
 		$plugin = $this->getPlugin(['searchUsers', 'searchGuests']);
 		$plugin->setContext(['room' => $room]);
 		$plugin->expects($this->once())
 			->method('searchUsers')
-			->with('fo', ['123', 'foo', 'bar'], $result)
+			->with('fo', ['123' => 'OneTwoThree', 'foo' => 'Foo Bar', 'bar' => 'Bar Tender'], $result)
 			->willReturnCallback(function ($search, $users, $result) {
 				array_map(function ($user) {
 					$this->assertIsString($user);
@@ -170,53 +166,45 @@ class SearchPluginTest extends TestCase {
 		$plugin->search('fo', 10, 0, $result);
 	}
 
-	public static function dataSearchUsers() {
+	public static function dataSearchUsers(): array {
 		return [
 			['test', [], [], [], []],
-			['test', ['current', 'foo', 'test', 'test1'], [
-				['current', 'test'],
-				['test', 'Te st'],
-				['test1', 'Te st 1'],
-			], [['test1' => '']], [['test' => '']]],
-			['test', ['foo', 'bar'], [
-				['foo', 'Test'],
-				['bar', 'test One'],
+			['test', [
+				'current' => 'test',
+				'foo' => '',
+				'test' => 'Te st',
+				'test1' => 'Te st 1',
+			], [['test1' => 'Te st 1']], [['test' => 'Te st']]],
+			['test', [
+				'foo' => 'Test',
+				'bar' => 'test One',
 			], [['bar' => 'test One']], [['foo' => 'Test']]],
-			['', ['foo', 'bar'], [
-			], [['foo' => ''], ['bar' => '']], []],
+			['', ['foo' => '', 'bar' => ''], [['foo' => ''], ['bar' => '']], []],
 		];
 	}
 
 	/**
 	 * @dataProvider dataSearchUsers
-	 * @param string $search
-	 * @param string[] $userIds
-	 * @param array $userNames
-	 * @param array $expected
-	 * @param array $expectedExact
+	 * @param array<string, string> $users
 	 */
-	public function testSearchUsers($search, array $userIds, array $userNames, array $expected, array $expectedExact) {
+	public function testSearchUsers(string $search, array $users, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 
-		$this->userManager->expects($this->any())
-			->method('getDisplayName')
-			->willReturnMap($userNames);
 
 		$result->expects($this->once())
 			->method('addResultSet')
 			->with($this->anything(), $expected, $expectedExact);
 
 		$plugin = $this->getPlugin(['createResult']);
-		$plugin->expects($this->any())
-			->method('createResult')
+		$plugin->method('createResult')
 			->willReturnCallback(function ($type, $uid, $name) {
 				return [$uid => $name];
 			});
 
-		self::invokePrivate($plugin, 'searchUsers', [$search, $userIds, $result]);
+		self::invokePrivate($plugin, 'searchUsers', [$search, $users, $result]);
 	}
 
-	public static function dataSearchGuests() {
+	public static function dataSearchGuests(): array {
 		return [
 			['test', [], [], []],
 			['', ['abcdef' => ''], [['abcdef' => 'Guest']], []],
@@ -234,7 +222,7 @@ class SearchPluginTest extends TestCase {
 	 * @param array $expected
 	 * @param array $expectedExact
 	 */
-	public function testSearchGuests($search, array $guests, array $expected, array $expectedExact) {
+	public function testSearchGuests($search, array $guests, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 		$result->expects($this->once())
 			->method('addResultSet')
@@ -322,24 +310,23 @@ class SearchPluginTest extends TestCase {
 		$this->assertEquals($expected, self::invokePrivate($plugin, 'createGuestResult', [$actorId, $name]));
 	}
 
+	public static function dataSearchGroups(): array {
+		return [
+			// $search, $groups, $isGroup, $totalMatches, $totalExactMatches
+			['',        ['groupid' => 'group'], true,  1, 0],
+			['groupid', ['groupid' => 'group'], true,  0, 1],
+			['gro',     ['groupid' => 'group'], true,  1, 0],
+			['not',     ['groupid' => 'group'], false, 0, 0],
+			['name',    ['groupid' => 'name'], true,   0, 1],
+			['na',      ['groupid' => 'name'], true,   1, 0],
+			['not',     ['groupid' => 'group'], true,  0, 0],
+		];
+	}
+
 	/**
 	 * @dataProvider dataSearchGroups
 	 */
-	public function testSearchGroups($search, $groupIds, $isGroup, $displayName, $totalMatches, $totalExactMatches): void {
-		$this->groupManager
-			->method('get')
-			->willReturnCallback(function ($groupId) use ($isGroup, $displayName) {
-				if ($isGroup) {
-					$group = $this->createMock(IGroup::class);
-					$group
-						->method('getDisplayName')
-						->willReturn($displayName);
-					$group
-						->method('getGID')
-						->willReturn($groupId);
-					return $group;
-				}
-			});
+	public function testSearchGroups(string $search, array $groups, bool $isGroup, int $totalMatches, int $totalExactMatches): void {
 		$plugin = $this->getPlugin(['createGroupResult']);
 		$plugin->expects($this->any())
 			->method('createGroupResult')
@@ -353,22 +340,9 @@ class SearchPluginTest extends TestCase {
 				];
 			});
 		$searchResult = new SearchResult();
-		self::invokePrivate($plugin, 'searchGroups', [$search, $groupIds, $searchResult]);
+		self::invokePrivate($plugin, 'searchGroups', [$search, $groups, $searchResult]);
 		$actual = $searchResult->asArray();
 		$this->assertCount($totalMatches, $actual['groups']);
 		$this->assertCount($totalExactMatches, $actual['exact']['groups']);
-	}
-
-	public static function dataSearchGroups(): array {
-		return [
-			// $search, $groupIds, $isGroup, $displayName, $totalMatches, $totalExactMatches
-			['',        ['groupid'], true,  'group', 1, 0],
-			['groupid', ['groupid'], true,  'group', 0, 1],
-			['gro',     ['groupid'], true,  'group', 1, 0],
-			['not',     ['groupid'], false, 'group', 0, 0],
-			['name',    ['groupid'], true,  'name',  0, 1],
-			['na',      ['groupid'], true,  'name',  1, 0],
-			['not',     ['groupid'], true,  'group', 0, 0],
-		];
 	}
 }
