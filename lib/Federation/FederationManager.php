@@ -79,6 +79,7 @@ class FederationManager {
 		string $sharedSecret,
 		string $inviterCloudId,
 		string $inviterDisplayName,
+		string $localCloudId,
 	): Invitation {
 		try {
 			$room = $this->manager->getRoomByToken($remoteToken, null, $remoteServerUrl);
@@ -90,6 +91,7 @@ class FederationManager {
 		$invitation->setUserId($user->getUID());
 		$invitation->setState(Invitation::STATE_PENDING);
 		$invitation->setLocalRoomId($room->getId());
+		$invitation->setLocalCloudId($localCloudId);
 		$invitation->setAccessToken($sharedSecret);
 		$invitation->setRemoteServerUrl($remoteServerUrl);
 		$invitation->setRemoteToken($remoteToken);
@@ -142,6 +144,7 @@ class FederationManager {
 				'displayName' => $user->getDisplayName(),
 				'accessToken' => $invitation->getAccessToken(),
 				'remoteId' => $invitation->getRemoteAttendeeId(), // FIXME this seems unnecessary
+				'invitedCloudId' => $invitation->getLocalCloudId(),
 			]
 		];
 		$attendees = $this->participantService->addUsers($room, $participant, $user);

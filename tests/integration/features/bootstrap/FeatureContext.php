@@ -540,6 +540,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($formData) {
 			if ($status === 200) {
+				if (!isset(self::$tokenToIdentifier[$response['token']])) {
+					self::$identifierToToken[$server . '::' . $roomName] = $response['token'];
+				}
+
 				$this->assertRooms([$response], $formData);
 			} else {
 				Assert::assertSame($formData->getRowsHash(), $response);
@@ -2844,6 +2848,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if ($row['id'] === 'GUEST_ID') {
 				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
+			}
+			if (str_ends_with($row['id'], '@{$BASE_URL}')) {
+				$row['id'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $row['id']);
+			}
+			if (str_ends_with($row['id'], '@{$REMOTE_URL}')) {
+				$row['id'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['id']);
 			}
 			if (array_key_exists('avatar', $row)) {
 				Assert::assertRegExp('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);

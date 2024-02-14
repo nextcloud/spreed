@@ -53,6 +53,7 @@ use OCP\Federation\Exceptions\BadRequestException;
 use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
+use OCP\Federation\ICloudIdManager;
 use OCP\HintException;
 use OCP\ISession;
 use OCP\IUser;
@@ -65,6 +66,7 @@ use SensitiveParameter;
 class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	public function __construct(
+		private ICloudIdManager $cloudIdManager,
 		private IUserManager $userManager,
 		private AddressHandler $addressHandler,
 		private FederationManager $federationManager,
@@ -120,6 +122,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$remoteId = $share->getProviderId();
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
+		if (isset($share->getProtocol()['invitedCloudId'])) {
+			$invitedCloudId = $share->getProtocol()['invitedCloudId'];
+		} else {
+			$this->logger->debug('Received a federation invite without invitedCloudId, falling back to shareWith');
+			$invitedCloudId = $this->cloudIdManager->getCloudId($shareWith, null);
+		}
 		$roomType = (int) $roomType;
 		$sharedByDisplayName = $share->getSharedByDisplayName();
 		$sharedByFederatedId = $share->getSharedBy();
@@ -151,7 +159,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWith, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName);
+			$invite = $this->federationManager->addRemoteRoom($shareWith, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $invitedCloudId);
 
 			$this->notifyAboutNewShare($shareWith, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
 			return (string) $invite->getId();

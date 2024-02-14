@@ -27,6 +27,7 @@ use OCA\Talk\Controller\AEnvironmentAwareController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
@@ -61,9 +62,6 @@ use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\Bruteforce\MaxDelayReached;
 
 class InjectionMiddleware extends Middleware {
-	protected bool $isTalkFederation = false;
-	protected ?string $federationCloudId = null;
-
 	public function __construct(
 		protected IRequest $request,
 		protected ParticipantService $participantService,
@@ -72,6 +70,7 @@ class InjectionMiddleware extends Middleware {
 		protected ICloudIdManager $cloudIdManager,
 		protected IThrottler $throttler,
 		protected IURLGenerator $url,
+		protected Authenticator $federationAuthenticator,
 		protected ?string $userId,
 	) {
 	}
@@ -89,9 +88,8 @@ class InjectionMiddleware extends Middleware {
 			return;
 		}
 
-		$this->isTalkFederation = (bool) $this->request->getHeader('X-Nextcloud-Federation');
-		if ($this->isTalkFederation) {
-			$controller->setRemoteAccess($this->getRemoteAccessActorId(), $this->getRemoteAccessToken());
+		if ($this->federationAuthenticator->isFederationRequest()) {
+			$controller->setRemoteAccess($this->federationAuthenticator->getCloudId(), $this->federationAuthenticator->getAccessToken());
 		}
 
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
@@ -181,13 +179,14 @@ class InjectionMiddleware extends Middleware {
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
 			$sessionId = $this->talkSession->getSessionForRoom($token);
-			if (!$this->isTalkFederation) {
+			if (!$this->federationAuthenticator->isFederationRequest()) {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			} else {
-				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessActorId(), $this->getRemoteAccessToken());
+				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $this->federationAuthenticator->getAccessToken());
 
-				// Get and set the participant already so we don't retry public access
-				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessActorId());
+				// Get and set the participant already, so we don't retry public access
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
+				$this->federationAuthenticator->authenticated($room, $participant);
 				$controller->setParticipant($participant);
 			}
 			$controller->setRoom($room);
@@ -217,27 +216,6 @@ class InjectionMiddleware extends Middleware {
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
 			throw new NotAModeratorException();
 		}
-	}
-
-	protected function getRemoteAccessActorId(): string {
-		if ($this->federationCloudId !== null) {
-			return $this->federationCloudId;
-		}
-		$authUser = $this->request->server['PHP_AUTH_USER'] ?? '';
-		$authUser = urldecode($authUser);
-
-		try {
-			$cloudId = $this->cloudIdManager->resolveCloudId($authUser);
-			$this->federationCloudId = $cloudId->getId();
-		} catch (\InvalidArgumentException) {
-			$this->federationCloudId = '';
-		}
-
-		return $this->federationCloudId;
-	}
-
-	protected function getRemoteAccessToken(): string {
-		return $this->request->server['PHP_AUTH_PW'] ?? '';
 	}
 
 	/**

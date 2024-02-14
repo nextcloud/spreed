@@ -41,6 +41,11 @@
       <code>Filesystem</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Federation/Authenticator.php">
+    <NoInterfaceProperties>
+      <code><![CDATA[$this->request->server]]></code>
+    </NoInterfaceProperties>
+  </file>
   <file src="lib/Files/Util.php">
     <InvalidArgument>
       <code>$fileId</code>
@@ -53,12 +58,6 @@
       <code><![CDATA[$this->tokenProvider]]></code>
       <code>private</code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Middleware/InjectionMiddleware.php">
-    <NoInterfaceProperties>
-      <code><![CDATA[$this->request->server]]></code>
-      <code><![CDATA[$this->request->server]]></code>
-    </NoInterfaceProperties>
   </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
     <InvalidArrayAccess>

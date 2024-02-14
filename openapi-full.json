@@ -325,6 +325,7 @@
                     "accessToken",
                     "id",
                     "state",
+                    "localCloudId",
                     "localRoomId",
                     "remoteAttendeeId",
                     "remoteServerUrl",
@@ -345,6 +346,9 @@
                     "state": {
                         "type": "integer",
                         "format": "int64"
+                    },
+                    "localCloudId": {
+                        "type": "string"
                     },
                     "localRoomId": {
                         "type": "integer",

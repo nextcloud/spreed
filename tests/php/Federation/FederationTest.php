@@ -272,6 +272,7 @@ class FederationTest extends TestCase {
 			'options' => [
 				'sharedSecret' => $token,
 			],
+			'invitedCloudId' => 'test@remote.test.local',
 		]);
 
 		$invite = Invitation::fromRow(['id' => 20]);

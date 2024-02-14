@@ -121,6 +121,7 @@ class BackendNotifier {
 		/** @var IUser|null $roomOwner */
 		$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
 
+		$invitedCloudId = $user . '@' . $remote;
 		$remote = $this->prepareRemoteUrl($remote);
 
 		$share = $this->cloudFederationFactory->getCloudFederationShare(
@@ -139,6 +140,7 @@ class BackendNotifier {
 
 		// Put room name info in the share
 		$protocol = $share->getProtocol();
+		$protocol['invitedCloudId'] = $invitedCloudId;
 		$protocol['roomName'] = $roomName;
 		$protocol['roomType'] = $roomType;
 		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;

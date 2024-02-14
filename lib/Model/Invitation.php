@@ -33,7 +33,7 @@ use OCP\AppFramework\Db\Entity;
  * @method string getUserId()
  * @method void setState(int $state)
  * @method int getState()
- * @method void setLocalRoomId(int $roomLocalId)
+ * @method void setLocalRoomId(int $localRoomId)
  * @method int getLocalRoomId()
  * @method void setAccessToken(string $accessToken)
  * @method string getAccessToken()
@@ -47,6 +47,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getInviterCloudId()
  * @method void setInviterDisplayName(string $inviterDisplayName)
  * @method string getInviterDisplayName()
+ * @method void setLocalCloudId(string $localCloudId)
+ * @method string getLocalCloudId()
  */
 class Invitation extends Entity implements \JsonSerializable {
 	public const STATE_PENDING = 0;
@@ -61,6 +63,7 @@ class Invitation extends Entity implements \JsonSerializable {
 	protected int $remoteAttendeeId = 0;
 	protected string $inviterCloudId = '';
 	protected string $inviterDisplayName = '';
+	protected string $localCloudId = '';
 
 	public function __construct() {
 		$this->addType('userId', 'string');
@@ -72,10 +75,11 @@ class Invitation extends Entity implements \JsonSerializable {
 		$this->addType('remoteAttendeeId', 'int');
 		$this->addType('inviterCloudId', 'string');
 		$this->addType('inviterDisplayName', 'string');
+		$this->addType('localCloudId', 'string');
 	}
 
 	/**
-	 * @return array{accessToken: string, id: int, localRoomId: int, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string, inviterCloudId: string, inviterDisplayName: string}
+	 * @return array{accessToken: string, id: int, localRoomId: int, localCloudId: string, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string, inviterCloudId: string, inviterDisplayName: string}
 	 */
 	public function jsonSerialize(): array {
 		return [
@@ -83,6 +87,7 @@ class Invitation extends Entity implements \JsonSerializable {
 			'userId' => $this->getUserId(),
 			'state' => $this->getState(),
 			'localRoomId' => $this->getLocalRoomId(),
+			'localCloudId' => $this->getLocalCloudId(),
 			'accessToken' => $this->getAccessToken(),
 			'remoteServerUrl' => $this->getRemoteServerUrl(),
 			'remoteToken' => $this->getRemoteToken(),

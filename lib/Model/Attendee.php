@@ -60,6 +60,8 @@ use OCP\AppFramework\Db\Entity;
  * @method null|string getAccessToken()
  * @method void setRemoteId(string $remoteId)
  * @method string getRemoteId()
+ * @method void setInvitedCloudId(string $invitedCloudId)
+ * @method string getInvitedCloudId()
  * @method void setPhoneNumber(?string $phoneNumber)
  * @method null|string getPhoneNumber()
  * @method void setCallId(?string $callId)
@@ -157,6 +159,9 @@ class Attendee extends Entity {
 	/** @var string */
 	protected $remoteId;
 
+	/** @var string */
+	protected $invitedCloudId;
+
 	/** @var null|string */
 	protected $phoneNumber;
 
@@ -180,9 +185,10 @@ class Attendee extends Entity {
 		$this->addType('readPrivacy', 'int');
 		$this->addType('permissions', 'int');
 		$this->addType('accessToken', 'string');
-		$this->addType('remote_id', 'string');
-		$this->addType('phone_number', 'string');
-		$this->addType('call_id', 'string');
+		$this->addType('remoteId', 'string');
+		$this->addType('invitedCloudId', 'string');
+		$this->addType('phoneNumber', 'string');
+		$this->addType('callId', 'string');
 	}
 
 	public function getDisplayName(): string {
@@ -212,6 +218,7 @@ class Attendee extends Entity {
 			'permissions' => $this->getPermissions(),
 			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
+			'invited_cloud_id' => $this->getInvitedCloudId(),
 			'phone_number' => $this->getPhoneNumber(),
 			'call_id' => $this->getCallId(),
 		];
