@@ -41,15 +41,11 @@
 					<Magnify :size="16" />
 				</NcTextField>
 				<div id="room-list">
-					<ul v-if="!loading && availableRooms.length > 0">
-						<li v-for="room in availableRooms"
-							:key="room.token"
-							:class="{selected: selectedRoom === room.token }"
-							@click="selectedRoom=room.token">
-							<ConversationIcon :item="room" :hide-favorite="false" />
-							<span>{{ room.displayName }}</span>
-						</li>
-					</ul>
+					<ConversationsSearchListVirtual v-if="loading || availableRooms.length > 0"
+						:conversations="availableRooms"
+						:loading="loading"
+						class="scroller h-100"
+						@select="onSelect" />
 					<div v-else-if="!loading" class="no-match-message">
 						<h2 class="no-match-title">
 							{{ noMatchFoundTitle }}
@@ -73,13 +69,15 @@
 </template>
 
 <script>
+import { provide, ref } from 'vue'
+
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ConversationIcon from './ConversationIcon.vue'
+import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
 
 import { CONVERSATION } from '../constants.js'
 import { searchListedConversations, fetchConversations } from '../services/conversationsService.js'
@@ -87,10 +85,11 @@ import { searchListedConversations, fetchConversations } from '../services/conve
 export default {
 	name: 'RoomSelector',
 	components: {
-		ConversationIcon,
-		NcModal,
+		ConversationsSearchListVirtual,
 		NcButton,
+		NcModal,
 		NcTextField,
+		// Icons
 		Magnify,
 	},
 	props: {
@@ -124,10 +123,19 @@ export default {
 		},
 	},
 	emits: ['close', 'select'],
+
+	setup() {
+		const selectedRoom = ref(null)
+		provide('selectedRoom', selectedRoom)
+
+		return {
+			selectedRoom,
+		}
+	},
+
 	data() {
 		return {
 			rooms: [],
-			selectedRoom: null,
 			currentRoom: null,
 			searchText: '',
 			loading: true,
@@ -194,6 +202,9 @@ export default {
 			this.$root.$emit('close')
 			this.$emit('close')
 		},
+		onSelect(item) {
+			this.selectedRoom = item.token
+		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
 			this.$emit('select', this.selectedRoom)
@@ -258,31 +269,6 @@ export default {
 	font-weight: normal;
 }
 
-li {
-	padding: 6px;
-	border: 1px solid transparent;
-	display: flex;
-
-	&:hover,
-	&:focus {
-		background-color: var(--color-background-dark);
-		border-radius: var(--border-radius-pill);
-	}
-
-	&.selected {
-		background-color: var(--color-primary-element-light);
-		border-radius: var(--border-radius-pill);
-	}
-
-	& > span {
-		padding: 8px 5px 8px 10px;
-		vertical-align: middle;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
-}
-
 #modal-buttons {
 	overflow: hidden;
 	flex-shrink: 0;
@@ -296,5 +282,13 @@ li {
 
 .search-form {
 	margin-bottom: 10px;
+}
+
+.scroller {
+	padding: 0 4px;
+}
+
+.h-100 {
+	height: 100%;
 }
 </style>
