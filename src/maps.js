@@ -20,6 +20,7 @@
  *
  */
 
+import escapeHtml from 'escape-html'
 import Vue from 'vue'
 
 import { getRequestToken } from '@nextcloud/auth'
@@ -36,10 +37,11 @@ import '@nextcloud/dialogs/style.css'
 (function(OC, OCA, t, n) {
 	/**
 	 * @param {object} location Geo location object
-	 * @param {string} token Conversation token to be posted to
-	 * @return {Promise<void>}
+	 * @param {object} conversation The conversation object given by the RoomSelector
+	 * @param {string} conversation.token The conversation token
+	 * @param {string} conversation.displayName The conversation display name
 	 */
-	async function postLocationToRoom(location, token) {
+	async function postLocationToRoom(location, { token, displayName }) {
 		try {
 			const response = await postRichObjectToConversation(token, {
 				objectType: 'geo-location',
@@ -48,9 +50,10 @@ import '@nextcloud/dialogs/style.css'
 			})
 			const messageId = response.data.ocs.data.id
 			const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
-			showSuccess(t('spreed', 'Location has been posted to the selected <a href="{link}">conversation</a>', {
-				link: targetUrl,
-			}), {
+
+			showSuccess(t('spreed', 'Location has been posted to {conversation}')
+				.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
+			{
 				isHTML: true,
 			})
 		} catch (exception) {
@@ -93,11 +96,11 @@ import '@nextcloud/dialogs/style.css'
 					vm.$el.remove()
 					vm.$destroy()
 				})
-				vm.$root.$on('select', (token) => {
+				vm.$root.$on('select', (conversation) => {
 					vm.$el.remove()
 					vm.$destroy()
 
-					postLocationToRoom(location, token)
+					postLocationToRoom(location, conversation)
 				})
 			},
 		})

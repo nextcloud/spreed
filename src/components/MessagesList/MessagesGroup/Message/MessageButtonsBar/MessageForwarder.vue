@@ -92,6 +92,7 @@ export default {
 	data() {
 		return {
 			selectedConversationToken: null,
+			selectedConversationName: null,
 			showForwardedConfirmation: false,
 			forwardedMessageID: '',
 		}
@@ -109,16 +110,12 @@ export default {
 		dialogSubtitle() {
 			return t('spreed', 'Choose a conversation to forward the selected message.')
 		},
-
-		selectedConversationName() {
-			return this.$store.getters?.conversation(this.selectedConversationToken).displayName
-		},
-
 	},
 
 	methods: {
-		async setSelectedConversationToken(token) {
-			this.selectedConversationToken = token
+		async setSelectedConversationToken(conversation) {
+			this.selectedConversationToken = conversation.token
+			this.selectedConversationName = conversation.displayName
 			try {
 				const response = await this.$store.dispatch('forwardMessage', {
 					targetToken: this.selectedConversationToken,

@@ -30,7 +30,6 @@ import { generateFilePath, generateUrl } from '@nextcloud/router'
 
 import RoomSelector from './components/RoomSelector.vue'
 
-import { fetchConversation } from './services/conversationsService.js'
 import { postRichObjectToConversation } from './services/messagesService.js'
 
 import '@nextcloud/dialogs/style.css'
@@ -38,25 +37,23 @@ import '@nextcloud/dialogs/style.css'
 (function(OC, OCA, t, n) {
 	/**
 	 * @param {object} card The card object given by the deck app
-	 * @param {string} token The conversation to post to
+	 * @param {object} conversation The conversation object given by the RoomSelector
+	 * @param {string} conversation.token The conversation token
+	 * @param {string} conversation.displayName The conversation display name
 	 */
-	async function postCardToRoom(card, token) {
+	async function postCardToRoom(card, { token, displayName }) {
 		try {
-			const [responsePostCard, responseGetConversation] = await Promise.allSettled([
-				postRichObjectToConversation(token, {
-					objectType: 'deck-card',
-					objectId: card.id,
-					metaData: JSON.stringify(card),
-				}),
-				fetchConversation(token),
-			])
+			const response = await postRichObjectToConversation(token, {
+				objectType: 'deck-card',
+				objectId: card.id,
+				metaData: JSON.stringify(card),
+			})
 
-			const messageId = responsePostCard.value.data.ocs.data.id
-			const conversation = responseGetConversation.value.data.ocs.data.displayName
+			const messageId = response.data.ocs.data.id
 			const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
 
 			showSuccess(t('spreed', 'Deck card has been posted to {conversation}')
-				.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(conversation)} ↗</a>`),
+				.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
 			{
 				isHTML: true,
 			})
@@ -100,11 +97,11 @@ import '@nextcloud/dialogs/style.css'
 					vm.$el.remove()
 					vm.$destroy()
 				})
-				vm.$root.$on('select', (token) => {
+				vm.$root.$on('select', (conversation) => {
 					vm.$el.remove()
 					vm.$destroy()
 
-					postCardToRoom(card, token)
+					postCardToRoom(card, conversation)
 				})
 			},
 		})
