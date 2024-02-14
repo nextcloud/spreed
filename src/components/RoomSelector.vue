@@ -207,7 +207,7 @@ export default {
 		},
 
 		onSelect(item) {
-			this.selectedRoom = item.token
+			this.selectedRoom = item
 		},
 
 		onSubmit() {

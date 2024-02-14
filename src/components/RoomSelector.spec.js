@@ -229,7 +229,7 @@ describe('RoomSelector', () => {
 			await wrapper.findComponent(NcButton).vm.$emit('click')
 
 			// Assert
-			expect(eventHandler).toHaveBeenCalledWith('token-3')
+			expect(eventHandler).toHaveBeenCalledWith(conversations[0])
 		})
 
 		it('emits close event', async () => {
