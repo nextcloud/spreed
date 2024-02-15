@@ -88,10 +88,6 @@ class InjectionMiddleware extends Middleware {
 			return;
 		}
 
-		if ($this->federationAuthenticator->isFederationRequest()) {
-			$controller->setRemoteAccess($this->federationAuthenticator->getCloudId(), $this->federationAuthenticator->getAccessToken());
-		}
-
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 
 		$apiVersion = $this->request->getParam('apiVersion');

@@ -37,6 +37,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -119,6 +120,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected IPhoneNumberUtil $phoneNumberUtil,
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
+		protected Authenticator $federationAuthenticator,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -356,17 +358,26 @@ class RoomController extends AEnvironmentAwareController {
 				}
 			} else {
 				$action = 'talkFederationAccess';
-				$room = $this->manager->getRoomByRemoteAccess(
-					$token,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-					$this->getRemoteAccessToken(),
-				);
-				$participant = $this->participantService->getParticipantByActor(
-					$room,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-				);
+				try {
+					$room = $this->federationAuthenticator->getRoom();
+				} catch (RoomNotFoundException) {
+					$room = $this->manager->getRoomByRemoteAccess(
+						$token,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+						$this->federationAuthenticator->getAccessToken(),
+					);
+				}
+				try {
+					$participant = $this->federationAuthenticator->getParticipant();
+				} catch (ParticipantNotFoundException) {
+					$participant = $this->participantService->getParticipantByActor(
+						$room,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+					);
+					$this->federationAuthenticator->authenticated($room, $participant);
+				}
 			}
 
 			$statuses = [];
@@ -1446,12 +1457,16 @@ class RoomController extends AEnvironmentAwareController {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
 			} else {
 				$action = 'talkFederationAccess';
-				$room = $this->manager->getRoomByRemoteAccess(
-					$token,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-					$this->getRemoteAccessToken(),
-				);
+				try {
+					$room = $this->federationAuthenticator->getRoom();
+				} catch (RoomNotFoundException) {
+					$room = $this->manager->getRoomByRemoteAccess(
+						$token,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+						$this->federationAuthenticator->getAccessToken(),
+					);
+				}
 			}
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -1500,7 +1515,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoom($this->roomService, $room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
 			} elseif ($isTalkFederation) {
-				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessCloudId());
+				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 			}
@@ -1749,17 +1764,27 @@ class RoomController extends AEnvironmentAwareController {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 			} else {
-				$room = $this->manager->getRoomByRemoteAccess(
-					$token,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-					$this->getRemoteAccessToken(),
-				);
-				$participant = $this->participantService->getParticipantByActor(
-					$room,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-				);
+				try {
+					$room = $this->federationAuthenticator->getRoom();
+				} catch (RoomNotFoundException) {
+					$room = $this->manager->getRoomByRemoteAccess(
+						$token,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+						$this->federationAuthenticator->getAccessToken(),
+					);
+				}
+
+				try {
+					$participant = $this->federationAuthenticator->getParticipant();
+				} catch (ParticipantNotFoundException) {
+					$participant = $this->participantService->getParticipantByActor(
+						$room,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+					);
+					$this->federationAuthenticator->authenticated($room, $participant);
+				}
 			}
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {

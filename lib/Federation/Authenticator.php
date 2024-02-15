@@ -68,7 +68,7 @@ class Authenticator {
 			$this->readHeaders();
 
 			if ($this->isFederationRequest === null) {
-				throw new \RuntimeException('readHeaders() did not set isFederationRequest');
+				return false;
 			}
 		}
 
@@ -80,7 +80,7 @@ class Authenticator {
 			$this->readHeaders();
 
 			if ($this->federationCloudId === null) {
-				throw new \RuntimeException('readHeaders() did not set federationCloudId');
+				return '';
 			}
 		}
 
@@ -92,7 +92,7 @@ class Authenticator {
 			$this->readHeaders();
 
 			if ($this->accessToken === null) {
-				throw new \RuntimeException('readHeaders() did not set accessToken');
+				return '';
 			}
 		}
 

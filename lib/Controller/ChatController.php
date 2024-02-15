@@ -31,6 +31,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\Proxy\TalkV1\ChatService;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
@@ -121,6 +122,7 @@ class ChatController extends AEnvironmentAwareController {
 		protected IValidator $richObjectValidator,
 		protected ITrustedDomainHelper $trustedDomainHelper,
 		private IL10N $l,
+		protected Authenticator $federationAuthenticator,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -129,8 +131,8 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
 	 */
 	protected function getActorInfo(string $actorDisplayName = ''): array {
-		$remoteCloudId = $this->getRemoteAccessCloudId();
-		if ($remoteCloudId !== null) {
+		$remoteCloudId = $this->federationAuthenticator->getCloudId();
+		if ($remoteCloudId !== '') {
 			return [Attendee::ACTOR_FEDERATED_USERS, $remoteCloudId];
 		}
 
