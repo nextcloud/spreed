@@ -30,8 +30,11 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\IUserManager;
+use OCP\Security\ITrustedDomainHelper;
 
 /**
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
@@ -42,6 +45,9 @@ class ChatService {
 	public function __construct(
 		protected IConfig $config,
 		protected IClientService $clientService,
+		protected ICloudIdManager $cloudIdManager,
+		protected IUserManager $userManager,
+		protected ITrustedDomainHelper $trustedDomainHelper,
 	) {
 	}
 
@@ -88,6 +94,18 @@ class ChatService {
 		if ($suggestion['source'] === Attendee::ACTOR_USERS) {
 			$suggestion['source'] = Attendee::ACTOR_FEDERATED_USERS;
 			$suggestion['id'] .= '@' . $this->room->getRemoteServer();
+		} elseif ($suggestion['source'] === Attendee::ACTOR_FEDERATED_USERS) {
+			try {
+				$cloudId = $this->cloudIdManager->resolveCloudId($suggestion['id']);
+				if ($this->trustedDomainHelper->isTrustedUrl($cloudId->getRemote())) {
+					$suggestion['source'] = Attendee::ACTOR_USERS;
+					$suggestion['id'] = $cloudId->getUser();
+					$suggestion['label'] = $this->userManager->getDisplayName($cloudId->getUser());
+
+					// FIXME post-load status information
+				}
+			} catch (\InvalidArgumentException) {
+			}
 		}
 
 		return $suggestion;
