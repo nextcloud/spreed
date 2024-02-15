@@ -226,6 +226,7 @@ OC.L10N.register(
     "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla.",
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
+    "Exit full screen (F)" : "Salir de pantalla completa (F)",
     "Grid view" : "Vista de cuadrícula",
     "No unread mentions" : "No hay menciones sin leer",
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
@@ -252,6 +253,7 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bienvenido a Nextcloud Talk!\nEn esta conversación se te informará sobre nuevas características disponibles en Nextcloud Talk.",
     "Conversation name" : "Nombre de la conversación",
-    "Rename conversation" : "Renombrar conversación"
+    "Rename conversation" : "Renombrar conversación",
+    "Exit fullscreen (F)" : "Salir de pantalla completa (F)"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
