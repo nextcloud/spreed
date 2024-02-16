@@ -9,7 +9,7 @@ OC.L10N.register(
     "You attended a call with {user1}, {user2} and {user3}" : "השתתפת בשיחה עם {user1}, {user2} ועם {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "השתתפת בשיחה עם {user1}, {user2}, {user3} ועם {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "השתתפת בשיחה עם {user1}, {user2}, {user3}, {user4} ועם {user5}",
-    "_%n other_::_%n others_" : ["מישהו נוסף","%n נוספים","%n נוספים","%n נוספים"],
+    "_%n other_::_%n others_" : ["מישהו נוסף","%n נוספים","%n נוספים"],
     "{actor} invited you to {call}" : "הוזמנת אל {call} על ידי {actor}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "הוזמנת ל<strong>דיון</strong> או שקיבלת <strong>שיחה</strong>",
     "Other activities" : "פעילויות אחרות",
@@ -430,6 +430,8 @@ OC.L10N.register(
     "Leave conversation" : "יציאה מהדיון",
     "Delete conversation" : "מחיקת דיון",
     "Submit" : "שליחה",
+    "_%n hour_::_%n hours_" : ["שעה","שעתיים","%n שעות"],
+    "_%n day_::_%n days_" : ["יום","יומיים","%n ימים"],
     "Password protection" : "הגנה בססמה",
     "Copy conversation link" : "העתקת קישור דיון",
     "Start time (optional)" : "מועד התחלה (רשות)",
@@ -608,4 +610,4 @@ OC.L10N.register(
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
     "Mention room" : "אזכור חדר"
 },
-"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
+"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
