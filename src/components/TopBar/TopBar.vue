@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="top-bar" :class="{ 'in-call': isInCall }">
+	<div class="top-bar" :data-theme-dark="isInCall">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -58,33 +58,28 @@
 
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
-			:start="conversation.callStartTime"
-			class="top-bar__button dark-hover" />
+			:start="conversation.callStartTime" />
 
 		<!-- Participants counter -->
 		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
 			:title="participantsInCallAriaLabel"
 			:aria-label="participantsInCallAriaLabel"
-			class="top-bar__button dark-hover"
 			type="tertiary"
 			@click="openSidebar('participants')">
 			<template #icon>
-				<AccountMultiple :size="20"
-					fill-color="#ffffff" />
+				<AccountMultiple :size="20" />
 			</template>
 			{{ participantsInCall }}
 		</NcButton>
 
 		<!-- Reactions menu -->
-		<ReactionMenu v-if="hasReactionSupport"
-			class="top-bar__button dark-hover"
+		<ReactionMenu v-if="isInCall && hasReactionSupport"
 			:token="token"
 			:supported-reactions="supportedReactions"
 			:local-call-participant-model="localCallParticipantModel" />
 
 		<!-- Local media controls -->
 		<TopBarMediaControls v-if="isInCall"
-			class="local-media-controls dark-hover"
 			:token="token"
 			:model="localMediaModel"
 			:show-actions="!isSidebar"
@@ -93,13 +88,12 @@
 
 		<!-- TopBar menu -->
 		<TopBarMenu :token="token"
-			class="top-bar__button dark-hover"
 			:show-actions="!isSidebar"
 			:is-sidebar="isSidebar"
 			:model="localMediaModel"
 			@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
-		<CallButton class="top-bar__button" />
+		<CallButton :is-screensharing="!!localMediaModel.attributes.localScreen" />
 
 		<!-- sidebar toggle -->
 		<template v-if="showOpenSidebarButton">
@@ -107,7 +101,6 @@
 			<NcButton v-if="!isInCall"
 				:aria-label="t('spreed', 'Open sidebar')"
 				:title="t('spreed', 'Open sidebar')"
-				class="top-bar__button dark-hover"
 				close-after-click="true"
 				type="tertiary"
 				@click="openSidebar">
@@ -120,12 +113,11 @@
 			<NcButton v-else
 				:aria-label="t('spreed', 'Open chat')"
 				:title="t('spreed', 'Open chat')"
-				class="top-bar__button chat-button dark-hover"
+				class="chat-button"
 				type="tertiary"
 				@click="openSidebar('chat')">
 				<template #icon>
-					<MessageText :size="20"
-						fill-color="#ffffff" />
+					<MessageText :size="20" />
 					<NcCounterBubble v-if="unreadMessagesCounter > 0"
 						class="chat-button__unread-messages-counter"
 						:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
@@ -411,7 +403,9 @@ export default {
 <style lang="scss" scoped>
 .top-bar {
 	display: flex;
+	flex-wrap: wrap;
 	z-index: 10;
+	gap: 3px;
 	justify-content: flex-end;
 	padding: 8px;
 	background-color: var(--color-main-background);
@@ -421,40 +415,13 @@ export default {
 		margin-right: var(--default-clickable-area);
 	}
 
-	&.in-call {
+	&[data-theme-dark="true"] {
 		right: 0;
 		border: none;
 		position: absolute;
 		top: 0;
-		left:0;
+		left: 0;
 		background-color: transparent;
-		display: flex;
-		flex-wrap: wrap;
-		& * {
-			color: #fff;
-		}
-
-		:deep(button.dark-hover:hover),
-		.dark-hover :deep(button:hover),
-		.dark-hover :deep(.action-item--open button),
-		:deep(.action-item--open.dark-hover button) {
-			background-color: rgba(0, 0, 0, 0.2);
-		}
-	}
-
-	&__button {
-		margin: 0 2px;
-		align-self: center;
-		display: flex;
-		align-items: center;
-		white-space: nowrap;
-		.icon {
-			margin-right: 4px !important;
-		}
-
-		&__force-white {
-			color: white;
-		}
 	}
 
 	.chat-button {

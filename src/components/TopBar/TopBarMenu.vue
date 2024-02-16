@@ -25,13 +25,13 @@
 			v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
 			v-tooltip="raiseHandButtonLabel"
 			:aria-label="raiseHandButtonLabel"
-			type="tertiary-no-background"
+			type="tertiary"
 			@shortkey="toggleHandRaised"
 			@click.stop="toggleHandRaised">
 			<template #icon>
 				<!-- The following icon is much bigger than all the others
 					so we reduce its size -->
-				<HandBackLeft :size="18" fill-color="#ffffff" />
+				<HandBackLeft :size="18" />
 			</template>
 		</NcButton>
 
@@ -39,12 +39,12 @@
 			v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
 			v-tooltip="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
+			type="tertiary"
 			:container="container"
 			@shortkey.native="toggleFullscreen">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
-				<DotsHorizontal :size="20"
-					fill-color="#ffffff" />
+				<DotsHorizontal :size="20" />
 			</template>
 			<template v-if="showActions && isInCall">
 				<!-- Raise hand -->

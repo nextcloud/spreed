@@ -20,14 +20,14 @@
 <template>
 	<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
 		v-tooltip="videoButtonTooltip"
-		:type="ncButtonType"
+		:type="type"
 		:aria-label="videoButtonAriaLabel"
 		:class="{ 'no-video-available': !isVideoAllowed || !model.attributes.videoAvailable }"
 		@shortkey="toggleVideo"
 		@click.stop="toggleVideo">
 		<template #icon>
-			<VideoIcon v-if="showVideoOn" :size="20" :fill-color="color" />
-			<VideoOff v-else :size="20" :fill-color="color" />
+			<VideoIcon v-if="showVideoOn" :size="20" />
+			<VideoOff v-else :size="20" />
 		</template>
 	</NcButton>
 </template>
@@ -68,14 +68,9 @@ export default {
 			default: OCP.Accessibility.disableKeyboardShortcuts(),
 		},
 
-		ncButtonType: {
+		type: {
 			type: String,
 			default: 'tertiary-no-background',
-		},
-
-		color: {
-			type: String,
-			default: 'currentColor',
 		},
 
 		token: {

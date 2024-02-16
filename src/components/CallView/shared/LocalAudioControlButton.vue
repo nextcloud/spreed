@@ -20,7 +20,7 @@
 <template>
 	<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
 		v-tooltip="audioButtonTooltip"
-		:type="ncButtonType"
+		:type="type"
 		:aria-label="audioButtonAriaLabel"
 		:class="{ 'no-audio-available': !isAudioAllowed || !model.attributes.audioAvailable }"
 		@shortkey="toggleAudio"
@@ -30,7 +30,6 @@
 				:audio-enabled="showMicrophoneOn"
 				:current-volume="model.attributes.currentVolume"
 				:volume-threshold="model.attributes.volumeThreshold"
-				:primary-color="color"
 				overlay-muted-color="#888888" />
 		</template>
 	</NcButton>
@@ -70,14 +69,9 @@ export default {
 			default: OCP.Accessibility.disableKeyboardShortcuts(),
 		},
 
-		ncButtonType: {
+		type: {
 			type: String,
 			default: 'tertiary-no-background',
-		},
-
-		color: {
-			type: String,
-			default: 'currentColor',
 		},
 
 		token: {

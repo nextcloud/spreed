@@ -63,28 +63,29 @@
 			:token="token"
 			:conversation="conversation"
 			:model="model"
-			color="#ffffff" />
+			type="tertiary" />
 
 		<LocalVideoControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
-			color="#ffffff" />
+			type="tertiary" />
 
 		<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
 			v-tooltip="toggleVirtualBackgroundButtonLabel"
-			type="tertiary-no-background"
+			type="tertiary"
 			:aria-label="toggleVirtualBackgroundButtonLabel"
 			:class="blurButtonClass"
 			@click.stop="toggleVirtualBackground">
 			<template #icon>
-				<Blur v-if="isVirtualBackgroundEnabled" :size="20" fill-color="#ffffff" />
-				<BlurOff v-else :size="20" fill-color="#ffffff" />
+				<Blur v-if="isVirtualBackgroundEnabled" :size="20" />
+				<BlurOff v-else :size="20" />
 			</template>
 		</NcButton>
 
-		<NcActions v-if="!screenSharingButtonHidden"
+		<NcActions v-if="!screenSharingButtonHidden && isScreensharing"
 			id="screensharing-button"
 			v-tooltip="screenSharingButtonTooltip"
+			type="error"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
@@ -98,12 +99,17 @@
 			</template>
 			<!-- /Actions button icon -->
 			<!-- Actions -->
-			<NcActionButton v-if="!screenSharingMenuOpen"
-				@click.stop="toggleScreenSharingMenu">
+			<NcActionButton close-after-click @click="showScreen">
 				<template #icon>
 					<PresentToAll :size="20" fill-color="#ffffff" />
 				</template>
-				{{ screenSharingButtonTooltip }}
+				{{ t('spreed', 'Show your screen') }}
+			</NcActionButton>
+			<NcActionButton close-after-click @click="stopScreen">
+				<template #icon>
+					<MonitorOff :size="20" />
+				</template>
+				{{ t('spreed', 'Stop screensharing') }}
 			</NcActionButton>
 			<template v-if="model.attributes.localScreen">
 				<NcActionButton close-after-click @click="showScreen">
@@ -120,6 +126,14 @@
 				</NcActionButton>
 			</template>
 		</NcActions>
+		<NcButton v-else-if="!screenSharingButtonHidden"
+			v-tooltip="screenSharingButtonTooltip"
+			type="tertiary"
+			@click.stop="toggleScreenSharingMenu">
+			<template #icon>
+				<MonitorShare :size="20" />
+			</template>
+		</NcButton>
 	</div>
 </template>
 
@@ -253,9 +267,13 @@ export default {
 
 		screenSharingButtonClass() {
 			return {
-				'screensharing-enabled': this.isScreensharingAllowed && this.model.attributes.localScreen,
+				'screensharing-enabled': this.isScreensharingAllowed && this.isScreensharing,
 				'no-screensharing-available': !this.isScreensharingAllowed,
 			}
+		},
+
+		isScreensharing() {
+			return this.model.attributes.localScreen
 		},
 
 		screenSharingButtonTooltip() {
@@ -271,7 +289,7 @@ export default {
 				return t('spreed', 'No screensharing')
 			}
 
-			return this.model.attributes.localScreen
+			return this.isScreensharing
 				? t('spreed', 'Screensharing options')
 				: t('spreed', 'Enable screensharing')
 		},
@@ -281,7 +299,7 @@ export default {
 				return ''
 			}
 
-			return this.model.attributes.localScreen
+			return this.isScreensharing
 				? t('spreed', 'Screensharing options')
 				: t('spreed', 'Enable screensharing')
 		},
@@ -485,13 +503,13 @@ export default {
 				return
 			}
 
-			if (!this.model.attributes.localScreen) {
+			if (!this.isScreensharing) {
 				this.startShareScreen()
 			}
 		},
 
 		showScreen() {
-			if (this.model.attributes.localScreen) {
+			if (this.isScreensharing) {
 				emit('switch-screen-to-id', this.localCallParticipantModel.attributes.peerId)
 			}
 		},
@@ -567,6 +585,7 @@ export default {
 .buttons-bar {
 	display: flex;
 	align-items: center;
+	gap: 3px;
 }
 
 .buttons-bar #screensharing-menu button {
