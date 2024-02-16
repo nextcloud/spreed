@@ -82,9 +82,10 @@
 			</template>
 		</NcButton>
 
-		<NcActions v-if="!screenSharingButtonHidden"
+		<NcActions v-if="!screenSharingButtonHidden && model.attributes.localScreen"
 			id="screensharing-button"
 			v-tooltip="screenSharingButtonTooltip"
+			type="tertiary-no-background"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
@@ -93,33 +94,31 @@
 			:open.sync="screenSharingMenuOpen">
 			<!-- Actions button icon -->
 			<template #icon>
-				<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
-				<PresentToAll v-else :size="20" fill-color="#ffffff" />
+				<CancelPresentation :size="20" fill-color="#ffffff" />
 			</template>
 			<!-- /Actions button icon -->
 			<!-- Actions -->
-			<NcActionButton v-if="!screenSharingMenuOpen"
-				@click.stop="toggleScreenSharingMenu">
+			<NcActionButton close-after-click @click="showScreen">
 				<template #icon>
-					<PresentToAll :size="20" fill-color="#ffffff" />
+					<Monitor :size="20" />
 				</template>
-				{{ screenSharingButtonTooltip }}
+				{{ t('spreed', 'Show your screen') }}
 			</NcActionButton>
-			<template v-if="model.attributes.localScreen">
-				<NcActionButton close-after-click @click="showScreen">
-					<template #icon>
-						<Monitor :size="20" />
-					</template>
-					{{ t('spreed', 'Show your screen') }}
-				</NcActionButton>
-				<NcActionButton close-after-click @click="stopScreen">
-					<template #icon>
-						<CancelPresentation :size="20" />
-					</template>
-					{{ t('spreed', 'Stop screensharing') }}
-				</NcActionButton>
-			</template>
+			<NcActionButton close-after-click @click="stopScreen">
+				<template #icon>
+					<CancelPresentation :size="20" />
+				</template>
+				{{ t('spreed', 'Stop screensharing') }}
+			</NcActionButton>
 		</NcActions>
+		<NcButton v-else-if="!screenSharingButtonHidden"
+			v-tooltip="screenSharingButtonTooltip"
+			type="tertiary-no-background"
+			@click.stop="toggleScreenSharingMenu">
+			<template #icon>
+				<PresentToAll :size="20" fill-color="#ffffff" />
+			</template>
+		</NcButton>
 	</div>
 </template>
 
