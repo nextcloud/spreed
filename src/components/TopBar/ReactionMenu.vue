@@ -21,12 +21,12 @@
 
 <template>
 	<NcActions v-tooltip="t('spreed', 'Send a reaction')"
+		type="tertiary"
 		:aria-label="t('spreed', 'Send a reaction')"
 		:container="container"
 		class="reaction">
 		<template #icon>
-			<EmoticonOutline :size="20"
-				fill-color="#ffffff" />
+			<EmoticonOutline :size="20" />
 		</template>
 
 		<NcActionButtonGroup class="reaction__group"

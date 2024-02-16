@@ -106,13 +106,13 @@
 								:token="token"
 								:conversation="conversation"
 								:model="localModel"
-								nc-button-type="secondary"
+								type="secondary"
 								disable-keyboard-shortcuts />
 							<LocalVideoControlButton class="viewer-overlay__button"
 								:token="token"
 								:conversation="conversation"
 								:model="localModel"
-								nc-button-type="secondary"
+								type="secondary"
 								disable-keyboard-shortcuts />
 						</div>
 					</div>
