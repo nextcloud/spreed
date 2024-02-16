@@ -25,8 +25,8 @@
 		:name="item.displayName"
 		:title="item.displayName"
 		:active="item.token === selectedRoom"
-		:bold="!!item.unreadMessages"
-		:counter-number="item.unreadMessages"
+		:bold="exposeMessages && !!item.unreadMessages"
+		:counter-number="exposeMessages ? item.unreadMessages : 0"
 		:counter-type="counterType"
 		@click="onClick">
 		<template #icon>
@@ -39,13 +39,13 @@
 </template>
 
 <script>
-import { inject } from 'vue'
+import { inject, toRefs } from 'vue'
 
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import ConversationIcon from './../../ConversationIcon.vue'
 
-import { CONVERSATION, ATTENDEE } from '../../../constants.js'
+import { useConversationInfo } from '../../../composables/useConversationInfo.js'
 
 export default {
 	name: 'ConversationSearchResult',
@@ -56,6 +56,10 @@ export default {
 	},
 
 	props: {
+		exposeMessages: {
+			type: Boolean,
+			default: false,
+		},
 		item: {
 			type: Object,
 			default() {
@@ -78,104 +82,16 @@ export default {
 
 	emits: ['click'],
 
-	setup() {
+	setup(props) {
+		const { item, exposeMessages } = toRefs(props)
 		const selectedRoom = inject('selectedRoom', null)
+		const { counterType, conversationInformation } = useConversationInfo({ item, exposeMessages })
 
 		return {
 			selectedRoom,
+			counterType,
+			conversationInformation,
 		}
-	},
-
-	computed: {
-		counterType() {
-			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && (
-				this.item.type === CONVERSATION.TYPE.ONE_TO_ONE || this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-			))) {
-				return 'highlighted'
-			} else if (this.item.unreadMention) {
-				return 'outlined'
-			} else {
-				return ''
-			}
-		},
-
-		conversationInformation() {
-			if (!Object.keys(Object(this.item?.lastMessage)).length) {
-				return ''
-			}
-
-			if (this.shortLastChatMessageAuthor === '') {
-				return this.simpleLastChatMessage
-			}
-
-			if (this.item.lastMessage.actorId === this.item.actorId) {
-				return t('spreed', 'You: {lastMessage}', {
-					lastMessage: this.simpleLastChatMessage,
-				}, undefined, {
-					escape: false,
-					sanitize: false,
-				})
-			}
-
-			if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-				|| this.item.type === CONVERSATION.TYPE.CHANGELOG) {
-				return this.simpleLastChatMessage
-			}
-
-			return t('spreed', '{actor}: {lastMessage}', {
-				actor: this.shortLastChatMessageAuthor,
-				lastMessage: this.simpleLastChatMessage,
-			}, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
-
-		/**
-		 * This is a simplified version of the last chat message.
-		 * Parameters are parsed without markup (just replaced with the name),
-		 * e.g. no avatars on mentions.
-		 *
-		 * @return {string} A simple message to show below the conversation name
-		 */
-		simpleLastChatMessage() {
-			if (!Object.keys(this.item.lastMessage).length) {
-				return ''
-			}
-
-			const params = this.item.lastMessage.messageParameters
-			let subtitle = this.item.lastMessage.message.trim()
-
-			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
-			Object.keys(params).forEach((parameterKey) => {
-				subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
-			})
-
-			return subtitle
-		},
-
-		/**
-		 * @return {string} Part of the name until the first space
-		 */
-		shortLastChatMessageAuthor() {
-			if (!Object.keys(this.item.lastMessage).length
-				|| this.item.lastMessage.systemMessage.length) {
-				return ''
-			}
-
-			let author = this.item.lastMessage.actorDisplayName.trim()
-			const spacePosition = author.indexOf(' ')
-			if (spacePosition !== -1) {
-				author = author.substring(0, spacePosition)
-			}
-
-			if (author.length === 0 && this.item.lastMessage.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return t('spreed', 'Guest')
-			}
-
-			return author
-		},
 	},
 
 	methods: {

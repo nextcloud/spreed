@@ -45,13 +45,13 @@ describe('Conversation.vue', () => {
 		testStoreConfig = cloneDeep(storeConfig)
 		messagesMock = jest.fn().mockReturnValue({})
 		testStoreConfig.modules.messagesStore.getters.messages = () => messagesMock
-		testStoreConfig.modules.actorStore.getters.getUserId = () => jest.fn().mockReturnValue('user-id-self')
 		store = new Vuex.Store(testStoreConfig)
 
 		// common defaults
 		item = {
 			token: TOKEN,
 			actorId: 'actor-id-1',
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			participants: [
 			],
 			participantType: PARTICIPANT.TYPE.USER,
@@ -155,7 +155,7 @@ describe('Conversation.vue', () => {
 			})
 
 			test('displays own last chat message with "You" as author', () => {
-				item.lastMessage.actorId = 'user-id-self'
+				item.lastMessage.actorId = 'actor-id-1'
 
 				testConversationLabel(item, 'You: hello')
 			})
@@ -174,7 +174,7 @@ describe('Conversation.vue', () => {
 
 			test('displays own last message with "You" author in one to one conversations', () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
-				item.lastMessage.actorId = 'user-id-self'
+				item.lastMessage.actorId = 'actor-id-1'
 
 				testConversationLabel(item, 'You: hello')
 			})

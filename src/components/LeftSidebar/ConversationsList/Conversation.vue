@@ -138,6 +138,7 @@
 
 <script>
 
+import { toRefs } from 'vue'
 import { Fragment } from 'vue-frag'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
@@ -162,7 +163,8 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import ConversationIcon from './../../ConversationIcon.vue'
 
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { useConversationInfo } from '../../../composables/useConversationInfo.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
 export default {
@@ -215,6 +217,16 @@ export default {
 
 	emits: ['click'],
 
+	setup(props) {
+		const { item, isSearchResult } = toRefs(props)
+		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
+
+		return {
+			counterType,
+			conversationInformation,
+		}
+	},
+
 	data() {
 		return {
 			isDialogOpen: false,
@@ -224,18 +236,6 @@ export default {
 	computed: {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
-		},
-
-		counterType() {
-			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && (
-				this.item.type === CONVERSATION.TYPE.ONE_TO_ONE || this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-			))) {
-				return 'highlighted'
-			} else if (this.item.unreadMention) {
-				return 'outlined'
-			} else {
-				return ''
-			}
 		},
 
 		canFavorite() {
@@ -266,103 +266,11 @@ export default {
 			return this.item.canLeaveConversation
 		},
 
-		conversationInformation() {
-			// temporary item while joining
-			if (!this.isSearchResult && !this.item.actorId) {
-				return t('spreed', 'Joining conversation …')
-			}
-
-			if (!Object.keys(this.lastChatMessage).length) {
-				return ''
-			}
-
-			if (this.shortLastChatMessageAuthor === '') {
-				return this.simpleLastChatMessage
-			}
-
-			if (this.lastChatMessage.actorId === this.$store.getters.getUserId()) {
-				return t('spreed', 'You: {lastMessage}', {
-					lastMessage: this.simpleLastChatMessage,
-				}, undefined, {
-					escape: false,
-					sanitize: false,
-				})
-			}
-
-			if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-				|| this.item.type === CONVERSATION.TYPE.CHANGELOG) {
-				return this.simpleLastChatMessage
-			}
-
-			return t('spreed', '{actor}: {lastMessage}', {
-				actor: this.shortLastChatMessageAuthor,
-				lastMessage: this.simpleLastChatMessage,
-			}, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
-
-		// Get the last message for this conversation from the message store instead
-		// of the conversations store. The message store is updated immediately,
-		// while the conversations store is refreshed every 30 seconds. This allows
-		// to display message previews in this component as soon as new messages are
-		// received by the server.
-		lastChatMessage() {
-			return this.item.lastMessage
-		},
-
 		dialogMessage() {
 			return t('spreed', 'Do you really want to delete "{displayName}"?', this.item, undefined, {
 				escape: false,
 				sanitize: false,
 			})
-		},
-
-		/**
-		 * This is a simplified version of the last chat message.
-		 * Parameters are parsed without markup (just replaced with the name),
-		 * e.g. no avatars on mentions.
-		 *
-		 * @return {string} A simple message to show below the conversation name
-		 */
-		simpleLastChatMessage() {
-			if (!Object.keys(this.lastChatMessage).length) {
-				return ''
-			}
-
-			const params = this.lastChatMessage.messageParameters
-			let subtitle = this.lastChatMessage.message.trim()
-
-			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
-			Object.keys(params).forEach((parameterKey) => {
-				subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
-			})
-
-			return subtitle
-		},
-
-		/**
-		 * @return {string} Part of the name until the first space
-		 */
-		shortLastChatMessageAuthor() {
-			if (!Object.keys(this.lastChatMessage).length
-				|| this.lastChatMessage.systemMessage.length) {
-				return ''
-			}
-
-			let author = this.lastChatMessage.actorDisplayName.trim()
-			const spacePosition = author.indexOf(' ')
-			if (spacePosition !== -1) {
-				author = author.substring(0, spacePosition)
-			}
-
-			if (author.length === 0 && this.lastChatMessage.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return t('spreed', 'Guest')
-			}
-
-			return author
 		},
 
 		to() {
