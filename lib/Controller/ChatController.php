@@ -32,7 +32,6 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\Federation\Proxy\TalkV1\ChatService;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
@@ -1158,7 +1157,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequireReadWriteConversation]
 	public function mentions(string $search, int $limit = 20, bool $includeStatus = false): DataResponse {
 		if ($this->room->getRemoteServer()) {
-			$proxy = \OCP\Server::get(ChatService::class);
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\ChatController::class);
 			return new DataResponse(
 				$proxy->mentions($this->room, $this->participant, $search, $limit, $includeStatus)
 			);

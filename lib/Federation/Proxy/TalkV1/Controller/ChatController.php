@@ -28,25 +28,19 @@ namespace OCA\Talk\Federation\Proxy\TalkV1;
 
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RemoteClientException;
-use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
-use OCP\Federation\ICloudIdManager;
-use OCP\IUserManager;
-use OCP\Security\ITrustedDomainHelper;
 
 /**
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
  */
-class ChatService {
+class ChatController {
 	protected ?Room $room = null;
 
 	public function __construct(
-		protected ICloudIdManager $cloudIdManager,
-		protected IUserManager $userManager,
-		protected ITrustedDomainHelper $trustedDomainHelper,
-		protected ProxyRequest $proxy,
+		protected ProxyRequest  $proxy,
+		protected UserConverter $userConverter,
 	) {
 	}
 
@@ -71,34 +65,18 @@ class ChatService {
 
 		try {
 			$content = $response->getBody();
-			$data = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
-			if (!is_array($data)) {
+			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+			if (!is_array($responseData)) {
 				throw new \RuntimeException('JSON response is not an array');
 			}
 		} catch (\Throwable $e) {
 			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
 		}
-		return array_map([$this, 'flipLocalAndRemoteSuggestions'], $data['ocs']['data'] ?? []);
-	}
 
-	protected function flipLocalAndRemoteSuggestions(array $suggestion): array {
-		if ($suggestion['source'] === Attendee::ACTOR_USERS) {
-			$suggestion['source'] = Attendee::ACTOR_FEDERATED_USERS;
-			$suggestion['id'] .= '@' . $this->room->getRemoteServer();
-		} elseif ($suggestion['source'] === Attendee::ACTOR_FEDERATED_USERS) {
-			try {
-				$cloudId = $this->cloudIdManager->resolveCloudId($suggestion['id']);
-				if ($this->trustedDomainHelper->isTrustedUrl($cloudId->getRemote())) {
-					$suggestion['source'] = Attendee::ACTOR_USERS;
-					$suggestion['id'] = $cloudId->getUser();
-					$suggestion['label'] = $this->userManager->getDisplayName($cloudId->getUser());
+		/** @var TalkChatMentionSuggestion[] $data */
+		$data = $responseData['ocs']['data'] ?? [];
 
-					// FIXME post-load status information
-				}
-			} catch (\InvalidArgumentException) {
-			}
-		}
-
-		return $suggestion;
+		// FIXME post-load status information
+		return $this->userConverter->convertAttendees($room, $data, 'source', 'id', 'label');
 	}
 }
