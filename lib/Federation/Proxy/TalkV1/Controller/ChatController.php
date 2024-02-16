@@ -26,13 +26,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1;
 
+use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\Federation\ICloudIdManager;
-use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\Security\ITrustedDomainHelper;
 
@@ -43,50 +43,41 @@ class ChatService {
 	protected ?Room $room = null;
 
 	public function __construct(
-		protected IConfig $config,
-		protected IClientService $clientService,
 		protected ICloudIdManager $cloudIdManager,
 		protected IUserManager $userManager,
 		protected ITrustedDomainHelper $trustedDomainHelper,
+		protected ProxyRequest $proxy,
 	) {
 	}
 
 	/**
-	 *
 	 * @return TalkChatMentionSuggestion[]
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
 	 */
-	public function mentions(Room $room, Participant $participant, string $search, int $limit = 20, bool $includeStatus = false): array {
+	public function mentions(Room $room, Participant $participant, string $search, int $limit, bool $includeStatus): array {
 		$this->room = $room;
-		$headers = [
-			'Accept' => 'application/json',
-			'X-Nextcloud-Federation' => 'true',
-			'OCS-APIRequest' => 'true',
-		];
 
-		$client = $this->clientService->newClient();
+		$response = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/mentions',
+			[
+				'search' => $search,
+				'limit' => $limit,
+				'includeStatus' => $includeStatus,
+			],
+		);
+
 		try {
-			$response = $client->get($room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/mentions', [
-				'json' => [
-					'search' => $search,
-					'limit' => $limit,
-					'includeStatus' => $includeStatus,
-				],
-				'verify' => !$this->config->getSystemValueBool('sharing.federation.allowSelfSignedCertificates', false),
-				'nextcloud' => [
-					'allow_local_address' => $this->config->getSystemValueBool('allow_local_remote_servers'),
-				],
-				'headers' => $headers,
-				'timeout' => 5,
-				'auth' => [urlencode($participant->getAttendee()->getInvitedCloudId()), $participant->getAttendee()->getAccessToken()]
-			]);
-		} catch (\Exception $e) {
-			\OC::$server->getLogger()->error($e->getMessage(), ['exception' => $e]);
-			// FIXME Error handling
-			return [];
+			$content = $response->getBody();
+			$data = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+			if (!is_array($data)) {
+				throw new \RuntimeException('JSON response is not an array');
+			}
+		} catch (\Throwable $e) {
+			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
 		}
-
-		$content = $response->getBody();
-		$data = json_decode($content, true);
 		return array_map([$this, 'flipLocalAndRemoteSuggestions'], $data['ocs']['data'] ?? []);
 	}
 
