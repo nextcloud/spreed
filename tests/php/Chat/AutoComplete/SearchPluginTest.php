@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
 use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -51,6 +52,7 @@ class SearchPluginTest extends TestCase {
 	protected $participantService;
 	/** @var Util|MockObject */
 	protected $util;
+	protected Authenticator|MockObject $federationAuthenticator;
 	/** @var IL10N|MockObject */
 	protected $l;
 	protected ?string $userId = null;
@@ -64,6 +66,7 @@ class SearchPluginTest extends TestCase {
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->util = $this->createMock(Util::class);
+		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->userId = 'current';
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
@@ -86,7 +89,8 @@ class SearchPluginTest extends TestCase {
 				$this->participantService,
 				$this->util,
 				$this->userId,
-				$this->l
+				$this->l,
+				$this->federationAuthenticator,
 			);
 		}
 
@@ -99,6 +103,7 @@ class SearchPluginTest extends TestCase {
 				$this->util,
 				$this->userId,
 				$this->l,
+				$this->federationAuthenticator,
 			])
 			->onlyMethods($methods)
 			->getMock();

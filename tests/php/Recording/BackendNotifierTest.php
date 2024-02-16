@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Recording;
 
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
@@ -38,6 +39,8 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -88,7 +91,7 @@ class BackendNotifierTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$config = \OC::$server->getConfig();
+		$config = \OCP\Server::get(IConfig::class);
 		$this->recordingSecret = 'the-recording-secret';
 		$this->baseUrl = 'https://localhost/recording';
 		$config->setAppValue('spreed', 'recording_servers', json_encode([
@@ -100,29 +103,29 @@ class BackendNotifierTest extends TestCase {
 			],
 		]));
 
-		$this->secureRandom = \OC::$server->getSecureRandom();
+		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$appConfig = $this->createMock(IAppConfig::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$userManager = $this->createMock(IUserManager::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
-		$dispatcher = \OC::$server->get(IEventDispatcher::class);
+		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
 		$this->config = new Config($config, $appConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
 
 		$this->recreateBackendNotifier();
 
-		$this->participantService = \OC::$server->get(ParticipantService::class);
+		$this->participantService = \OCP\Server::get(ParticipantService::class);
 
-		$dbConnection = \OC::$server->getDatabaseConnection();
+		$dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->manager = new Manager(
 			$dbConnection,
 			$config,
 			$this->config,
-			\OC::$server->get(IAppManager::class),
-			\OC::$server->get(AttendeeMapper::class),
-			\OC::$server->get(SessionMapper::class),
+			\OCP\Server::get(IAppManager::class),
+			\OCP\Server::get(AttendeeMapper::class),
+			\OCP\Server::get(SessionMapper::class),
 			$this->participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
@@ -132,12 +135,13 @@ class BackendNotifierTest extends TestCase {
 			$dispatcher,
 			$timeFactory,
 			$this->createMock(IHasher::class),
-			$this->createMock(IL10N::class)
+			$this->createMock(IL10N::class),
+			$this->createMock(Authenticator::class),
 		);
 	}
 
 	public function tearDown(): void {
-		$config = \OC::$server->getConfig();
+		$config = \OCP\Server::get(IConfig::class);
 		$config->deleteAppValue('spreed', 'recording_servers');
 		parent::tearDown();
 	}

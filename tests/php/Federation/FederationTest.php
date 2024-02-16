@@ -44,6 +44,7 @@ use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
+use OCP\Federation\ICloudIdManager;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -59,6 +60,7 @@ class FederationTest extends TestCase {
 
 	protected ?BackendNotifier $backendNotifier = null;
 
+	protected ICloudIdManager|MockObject $cloudIdManager;
 	/** @var ICloudFederationProviderManager|MockObject */
 	protected $cloudFederationProviderManager;
 
@@ -92,6 +94,7 @@ class FederationTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->cloudFederationProviderManager = $this->createMock(ICloudFederationProviderManager::class);
 		$this->cloudFederationFactory = $this->createMock(ICloudFederationFactory::class);
 		$this->addressHandler = $this->createMock(AddressHandler::class);
@@ -120,6 +123,7 @@ class FederationTest extends TestCase {
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 
 		$this->cloudFederationProvider = new CloudFederationProviderTalk(
+			$this->cloudIdManager,
 			$this->userManager,
 			$this->addressHandler,
 			$this->federationManager,
