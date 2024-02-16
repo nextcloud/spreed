@@ -29,26 +29,30 @@ get the messagesList array and loop through the list to generate the messages.
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div ref="scroller"
+		:key="token"
 		class="scroller messages-list__scroller"
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
 
-		<template v-for="item of messagesGroupedByAuthor">
-			<div v-if="item.dateSeparator" :key="`date_${item.id}`" class="messages-group__date">
+		<ul v-for="item of dateSeparatorsOrdered"
+			class="dates-group-wrapper">
+			<div :key="item" class="messages-group__date">
 				<span class="messages-group__date-text" role="heading" aria-level="3">
-					{{ item.dateSeparator }}
+					{{ item }}
 				</span>
 			</div>
-			<component :is="messagesGroupComponent(item)"
-				:key="item.id"
-				ref="messagesGroup"
-				class="messages-group"
-				:token="token"
-				:messages="item.messages"
-				:previous-message-id="item.previousMessageId"
-				:next-message-id="item.nextMessageId" />
-		</template>
+			<li v-for="group of Object.values(messagesGroupedByDateByAuthor[item])" :key="`${item}-${group.id}`">
+				<component :is="messagesGroupComponent(group)"
+					:key="group.id"
+					ref="messagesGroup"
+					class="messages-group"
+					:token="token"
+					:messages="group.messages"
+					:previous-message-id="group.previousMessageId"
+					:next-message-id="group.nextMessageId" />
+			</li>
+		</ul>
 
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
@@ -132,9 +136,10 @@ export default {
 	data() {
 		return {
 			/**
-			 * An array of messages grouped in nested arrays by same author.
+			 * An array of messages grouped in nested arrays by same day and then by author.
 			 */
-			messagesGroupedByAuthor: [],
+
+			messagesGroupedByDateByAuthor: {},
 
 			viewId: null,
 
@@ -171,6 +176,8 @@ export default {
 			debounceHandleScroll: () => {},
 
 			stopFetchingOldMessages: false,
+
+			dateSeparatorsList: [],
 		}
 	},
 
@@ -195,11 +202,11 @@ export default {
 
 		showLoadingAnimation() {
 			return !this.$store.getters.isMessageListPopulated(this.token)
-				&& !this.messagesGroupedByAuthor.length
+				&& !this.messagesList.length
 		},
 
 		showEmptyContent() {
-			return !this.messagesGroupedByAuthor.length
+			return !this.messagesList.length
 		},
 
 		/**
@@ -245,6 +252,13 @@ export default {
 		chatIdentifier() {
 			return this.token + ':' + this.isParticipant + ':' + this.viewId
 		},
+
+		dateSeparatorsOrdered() {
+			const orderedList = this.dateSeparatorsList.sort((a, b) => {
+				return moment(a.date, 'YYYY-DDD').diff(moment(b.date, 'YYYY-DDD'))
+			})
+			return orderedList.map(item => item.dateSeparator)
+		},
 	},
 
 	watch: {
@@ -276,8 +290,11 @@ export default {
 		messagesList: {
 			immediate: true,
 			handler(messages) {
+				// Clear the date separators list
+				this.dateSeparatorsList = []
+
 				const groups = this.prepareMessagesGroups(messages)
-				this.messagesGroupedByAuthor = this.softUpdateMessagesGroups(this.messagesGroupedByAuthor, groups)
+				this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, groups)
 			},
 		},
 	},
@@ -332,40 +349,85 @@ export default {
 
 	methods: {
 		prepareMessagesGroups(messages) {
-			const groups = []
+			let prevGroupMap = {}
+			const groupsByDate = {}
 			let lastMessage = null
+			let dateSeparator = null
+			let groupId = null
 			for (const message of messages) {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
-					if (groups.at(-1)) {
-						groups.at(-1).nextMessageId = message.id
+					// If the message should be grouped, we create a new group
+					dateSeparator = this.generateDateSeparator(message)
+					groupId = message.id
+
+					if (!groupsByDate[dateSeparator]) {
+						groupsByDate[dateSeparator] = {}
 					}
 
-					groups.push({
+					groupsByDate[dateSeparator][groupId] = {
 						id: message.id,
 						messages: [message],
-						dateSeparator: this.generateDateSeparator(message, lastMessage),
-						previousMessageId: groups.at(-1)?.messages.at(-1).id ?? 0,
+						token: this.token,
+						dateSeparator,
+						previousMessageId: prevGroupMap.length
+							? groupsByDate[prevGroupMap.date][prevGroupMap.groupId].id
+							: 0,
 						nextMessageId: 0,
 						isSystemMessagesGroup: message.systemMessage.length !== 0,
-					})
+					}
+
+					// Update the previous group with the next message id
+					if (prevGroupMap.length) {
+						groupsByDate[prevGroupMap.date][prevGroupMap.groupId].nextMessageId = message.id
+					}
+
+					// Update the previous group map points
+					prevGroupMap = {
+						date: dateSeparator,
+						groupId: message.id,
+					}
 				} else {
-					groups.at(-1).messages.push(message)
+					// Group is the same, so we just append the message to the array of messages
+					groupsByDate[prevGroupMap.date][prevGroupMap.groupId].messages.push(message)
 				}
 				lastMessage = message
 			}
-
-			return groups
+			return groupsByDate
 		},
 
-		softUpdateMessagesGroups(oldGroups, newGroups) {
-			const oldGroupsMap = new Map(oldGroups.map(group => [group.id, group]))
+		softUpdateByDateGroups(oldGroups, newGroups) {
+			// Messages were just loaded, no need to compare
+			if (!Object.keys(oldGroups).length) {
+				this.messagesGroupedByDateByAuthor = newGroups
+				return
+			}
 
+			// If token has changed, we need to reset the groups
+			if (Object.values(Object.values(oldGroups)?.at(0)).some(group => group.token !== this.token)) {
+				this.messagesGroupedByDateByAuthor = newGroups
+				return
+			}
+
+			const oldGroupsMap = new Map(Object.entries(oldGroups))
 			// Check if we have this group in the old list already and it is unchanged
-			return newGroups.map(newGroup => oldGroupsMap.has(newGroup.id)
-				&& this.areGroupsIdentical(newGroup, oldGroupsMap.get(newGroup.id))
-				? oldGroupsMap.get(newGroup.id)
-				: newGroup
-			).sort((a, b) => a.id - b.id)
+			return Object.keys(newGroups).forEach(date => {
+				if (oldGroupsMap.has(date)) {
+					// the group by date has changed, we update its content (groups by author)
+					this.softUpdateAuthorGroups(oldGroupsMap.get(date), newGroups[date])
+				} else {
+					// the group is new
+					this.messagesGroupedByDateByAuthor[date] = newGroups[date]
+				}
+			})
+		},
+
+		softUpdateAuthorGroups(oldGroups, newGroups) {
+			const oldGroupsMap = new Map(Object.entries(oldGroups))
+			Object.entries(newGroups).forEach(([id, newGroup]) => {
+				if (!oldGroupsMap.has(id) || !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id))) {
+					this.messagesGroupedByDateByAuthor[newGroup.dateSeparator][id] = newGroup
+				}
+			})
 		},
 
 		areGroupsIdentical(group1, group2) {
@@ -467,14 +529,9 @@ export default {
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
 		 * @param {number} message.timestamp Timestamp of the message
-		 * @param {object} lastMessage The previous message object
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
-		generateDateSeparator(message, lastMessage) {
-			if (!this.messagesHaveDifferentDate(message, lastMessage)) {
-				return ''
-			}
-
+		generateDateSeparator(message) {
 			const date = this.getDateOfMessage(message)
 			const dayOfYear = date.format('YYYY-DDD')
 			let relativePrefix = date.fromNow()
@@ -648,8 +705,8 @@ export default {
 			}
 		},
 
-		handleMessageEdited(id) {
-			this.messagesGroupedByAuthor = this.prepareMessagesGroups(this.messagesList)
+		handleMessageEdited() {
+			this.messagesGroupedByDateByAuthor = this.prepareMessagesGroups(this.messagesList)
 		},
 
 		/**
@@ -1215,11 +1272,11 @@ export default {
 
 .messages-group {
 	&__date {
-		display: block;
-		text-align: center;
-		padding-top: 20px;
-		position: relative;
-		margin: 20px 0;
+		position: sticky;
+		top: 0;
+		display: flex;
+		justify-content: center;
+		z-index: 2;
 	}
 
 	&__date-text {
