@@ -51,7 +51,7 @@
 		</NcButton>
 		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
-			type="error"
+			:type="isScreensharing ? 'tertiary' : 'error'"
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
@@ -64,7 +64,7 @@
 			:menu-name="leaveCallCombinedLabel"
 			force-name
 			:container="container"
-			type="error">
+			:type="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
 				<VideoOff v-if="!isBreakoutRoom" :size="20" />
 				<ArrowLeft v-else :size="20" />
@@ -170,6 +170,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		isScreensharing: {
+			type: Boolean,
+			default: false,
+		}
 	},
 
 	setup() {
@@ -446,4 +451,5 @@ export default {
 #call_button {
 	margin: 0 auto;
 }
+
 </style>
