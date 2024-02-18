@@ -188,6 +188,7 @@ OC.L10N.register(
     "Files" : "Archivos",
     "Invalid path selected" : "Ruta seleccionada no válida.",
     "Reply" : "Responder",
+    "Set reminder" : "Establecer recordatorio",
     "Translate" : "Traducir",
     "Dismiss" : "Descartar",
     "Contact" : "Contacto",
