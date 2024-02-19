@@ -22,7 +22,7 @@
 
 <template>
 	<!-- reactions buttons and popover with details -->
-	<div class="reactions-wrapper">
+	<div v-if="reactionsCount && reactionsSorted" class="reactions-wrapper">
 		<NcPopover v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
@@ -175,11 +175,14 @@ export default {
 		},
 
 		reactionsSorted() {
-			return this.detailedReactions
-				? Object.keys(this.detailedReactions)
+			if (this.detailedReactions) {
+				return Object.keys(this.detailedReactions)
 					.sort((a, b) => this.detailedReactions[b].length - this.detailedReactions[a].length)
-				: Object.keys(this.plainReactions)
+			} else if (this.plainReactions) {
+				return Object.keys(this.plainReactions)
 					.sort((a, b) => this.plainReactions[b] - this.plainReactions[a])
+			}
+			return undefined
 		},
 
 		/**
@@ -243,6 +246,9 @@ export default {
 		},
 
 		reactionsCount(reaction) {
+			if (!this.detailedReactions || !this.plainReactions) {
+				return undefined
+			}
 			return this.detailedReactions
 				? this.detailedReactions[reaction]?.length
 				: this.plainReactions[reaction]
