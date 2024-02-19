@@ -537,7 +537,7 @@ const actions = {
 			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
 				context.commit('addMessage', { token, message: message.parent })
 				if (message.systemMessage === 'message_edited') {
-					EventBus.$emit('message-edited')
+					EventBus.$emit('message-edited', message.parent)
 					return
 				}
 			}

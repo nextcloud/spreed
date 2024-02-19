@@ -136,7 +136,7 @@ export default {
 	data() {
 		return {
 			/**
-			 * An array of messages grouped in nested arrays by same day and then by author.
+			 * A list of messages grouped by same day and then by author and time.
 			 */
 
 			messagesGroupedByDateByAuthor: {},
@@ -286,6 +286,7 @@ export default {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
 			this.stopFetchingOldMessages = false
+			this.messagesGroupedByDateByAuthor = this.prepareMessagesGroups(this.messagesList)
 		},
 
 		messagesList: {
@@ -356,7 +357,7 @@ export default {
 
 	methods: {
 		prepareMessagesGroups(messages) {
-			let prevGroupMap = {}
+			let prevGroupMap = null
 			const groupsByDate = {}
 			let lastMessage = null
 			let groupId = null
@@ -384,15 +385,13 @@ export default {
 						messages: [message],
 						token: this.token,
 						dateTimestamp,
-						previousMessageId: Object.keys(prevGroupMap).length
-							? groupsByDate[prevGroupMap.date][prevGroupMap.groupId].messages.at(-1).id
-							: 0,
+						previousMessageId: lastMessage?.id || 0,
 						nextMessageId: 0,
 						isSystemMessagesGroup: message.systemMessage.length !== 0,
 					}
 
 					// Update the previous group with the next message id
-					if (prevGroupMap.length) {
+					if (prevGroupMap) {
 						groupsByDate[prevGroupMap.date][prevGroupMap.groupId].nextMessageId = message.id
 					}
 
@@ -411,24 +410,12 @@ export default {
 		},
 
 		softUpdateByDateGroups(oldGroups, newGroups) {
-			// Messages were just loaded, no need to compare
-			if (!Object.keys(oldGroups).length) {
-				this.messagesGroupedByDateByAuthor = newGroups
-				return
-			}
-
-			// If token has changed, we need to reset the groups
-			if (Object.values(Object.values(oldGroups)?.at(0)).some(group => group.token !== this.token)) {
-				this.messagesGroupedByDateByAuthor = newGroups
-				return
-			}
-
 			const oldGroupsMap = new Map(Object.entries(oldGroups))
 			// Check if we have this group in the old list already and it is unchanged
-			return Object.keys(newGroups).forEach(dateTimestamp => {
+			Object.keys(newGroups).forEach(dateTimestamp => {
 				if (oldGroupsMap.has(dateTimestamp)) {
 					// the group by date has changed, we update its content (groups by author)
-					this.softUpdateAuthorGroups(oldGroupsMap.get(dateTimestamp), newGroups[dateTimestamp])
+					this.softUpdateAuthorGroups(oldGroupsMap.get(dateTimestamp), newGroups[dateTimestamp], dateTimestamp)
 				} else {
 					// the group is new
 					this.messagesGroupedByDateByAuthor[dateTimestamp] = newGroups[dateTimestamp]
@@ -436,7 +423,7 @@ export default {
 			})
 		},
 
-		softUpdateAuthorGroups(oldGroups, newGroups) {
+		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
 			const oldGroupsMap = new Map(Object.entries(oldGroups))
 			Object.entries(newGroups).forEach(([id, newGroup]) => {
 				if (!oldGroupsMap.has(id) || (oldGroupsMap.has(id) && !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id)))) {
@@ -729,8 +716,65 @@ export default {
 			}
 		},
 
-		handleMessageEdited() {
-			this.messagesGroupedByDateByAuthor = this.prepareMessagesGroups(this.messagesList)
+		handleMessageEdited(message) {
+			// soft edit for a message in the list
+			// find the corresponding date group id (dateTimeStamp)
+			const dateGroupId = moment(message.timestamp * 1000).startOf('day').unix()
+			const groups = this.messagesGroupedByDateByAuthor[dateGroupId]
+			if (!groups) {
+				// Message was edited already and this is message loading phase
+				return
+			}
+			// find the corresponding messages group in the list
+			const group = Object.values(groups).find(group => group.id <= message.id && (group.nextMessageId > message.id || group.nextMessageId === 0))
+
+			if (!group) {
+				// Messages were not loaded yet
+				return
+			}
+
+			if (group.messages.length === 1 && group.id === message.id) {
+				// Nothing to split
+				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].messages = [message]
+				return
+			}
+
+			// we split the group in 3 part,
+			// 1. the messages before the edited message (if any)
+			// 2. the edited message
+			// 3. the messages after the edited message (if any)
+			const nextMessageId = group.nextMessageId
+			const index = group.messages.findIndex(m => m.id === message.id)
+			const before = group.messages.slice(0, index)
+			const after = group.messages.slice(index + 1)
+			// If there are before messages, we keep them in the same group
+			if (before.length) {
+				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].messages = before
+				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].nextMessageId = message.id
+			}
+			// We create a new group for the edited message
+			this.messagesGroupedByDateByAuthor[dateGroupId][message.id] = {
+				id: message.id,
+				messages: [message],
+				token: this.token,
+				dateTimestamp: dateGroupId,
+				previousMessageId: before.length ? before.at(-1).id : group.previousMessageId,
+				nextMessageId: after.length ? after[0].id : nextMessageId,
+				isSystemMessagesGroup: message.systemMessage.length !== 0,
+			}
+			// If there are after messages, we create a new group for them
+			if (after.length) {
+				const newGroupId = after[0].id
+				this.messagesGroupedByDateByAuthor[dateGroupId][newGroupId] = {
+					id: newGroupId,
+					messages: after,
+					token: this.token,
+					dateTimestamp: dateGroupId,
+					previousMessageId: message.id,
+					nextMessageId,
+					isSystemMessagesGroup: message.systemMessage.length !== 0,
+				}
+			}
 		},
 
 		/**
