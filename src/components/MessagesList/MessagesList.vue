@@ -35,23 +35,23 @@ get the messagesList array and loop through the list to generate the messages.
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
 
-		<ul v-for="item of dateSeparatorsOrdered"
+		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
+			:key="`section_${dateTimestamp}`"
 			class="dates-group-wrapper">
-			<div :key="item" class="messages-group__date">
+			<li :key="dateTimestamp" class="messages-group__date">
 				<span class="messages-group__date-text" role="heading" aria-level="3">
-					{{ item }}
+					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
-			</div>
-			<li v-for="group of Object.values(messagesGroupedByDateByAuthor[item])" :key="`${item}-${group.id}`">
-				<component :is="messagesGroupComponent(group)"
-					:key="group.id"
-					ref="messagesGroup"
-					class="messages-group"
-					:token="token"
-					:messages="group.messages"
-					:previous-message-id="group.previousMessageId"
-					:next-message-id="group.nextMessageId" />
 			</li>
+			<component :is="messagesGroupComponent(group)"
+				v-for="group in list"
+				:key="group.id"
+				ref="messagesGroup"
+				class="messages-group"
+				:token="token"
+				:messages="group.messages"
+				:previous-message-id="group.previousMessageId"
+				:next-message-id="group.nextMessageId" />
 		</ul>
 
 		<template v-if="showLoadingAnimation">
@@ -177,7 +177,11 @@ export default {
 
 			stopFetchingOldMessages: false,
 
-			dateSeparatorsList: [],
+			isScrolling: false,
+
+			stickyDate: null,
+
+			dateSeparatorLabels: {},
 		}
 	},
 
@@ -253,11 +257,8 @@ export default {
 			return this.token + ':' + this.isParticipant + ':' + this.viewId
 		},
 
-		dateSeparatorsOrdered() {
-			const orderedList = this.dateSeparatorsList.sort((a, b) => {
-				return moment(a.date, 'YYYY-DDD').diff(moment(b.date, 'YYYY-DDD'))
-			})
-			return orderedList.map(item => item.dateSeparator)
+		currentDay() {
+			return moment().startOf('day').unix()
 		},
 	},
 
@@ -289,12 +290,18 @@ export default {
 
 		messagesList: {
 			immediate: true,
-			handler(messages) {
-				// Clear the date separators list
-				this.dateSeparatorsList = []
-
-				const groups = this.prepareMessagesGroups(messages)
-				this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, groups)
+			handler(newMessages, oldMessages) {
+				// token watcher will handle the conversations change
+				if (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token) {
+					return
+				}
+				const newGroups = this.prepareMessagesGroups(newMessages)
+				// messages were just loaded
+				if (!oldMessages) {
+					this.messagesGroupedByDateByAuthor = newGroups
+				} else {
+					this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
+				}
 			},
 		},
 	},
@@ -352,25 +359,33 @@ export default {
 			let prevGroupMap = {}
 			const groupsByDate = {}
 			let lastMessage = null
-			let dateSeparator = null
 			let groupId = null
+			let dateTimestamp = null
 			for (const message of messages) {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
-					// If the message should be grouped, we create a new group
-					dateSeparator = this.generateDateSeparator(message)
 					groupId = message.id
-
-					if (!groupsByDate[dateSeparator]) {
-						groupsByDate[dateSeparator] = {}
+					if (message.timestamp === 0) {
+						// This is a temporary message, the timestamp is today
+						dateTimestamp = this.currentDay
+					} else {
+						dateTimestamp = moment(message.timestamp * 1000).startOf('day').unix()
 					}
 
-					groupsByDate[dateSeparator][groupId] = {
+					if (!this.dateSeparatorLabels[dateTimestamp]) {
+						this.dateSeparatorLabels[dateTimestamp] = this.generateDateSeparator(dateTimestamp)
+					}
+
+					if (!groupsByDate[dateTimestamp]) {
+						groupsByDate[dateTimestamp] = {}
+					}
+
+					groupsByDate[dateTimestamp][groupId] = {
 						id: message.id,
 						messages: [message],
 						token: this.token,
-						dateSeparator,
-						previousMessageId: prevGroupMap.length
-							? groupsByDate[prevGroupMap.date][prevGroupMap.groupId].id
+						dateTimestamp,
+						previousMessageId: Object.keys(prevGroupMap).length
+							? groupsByDate[prevGroupMap.date][prevGroupMap.groupId].messages.at(-1).id
 							: 0,
 						nextMessageId: 0,
 						isSystemMessagesGroup: message.systemMessage.length !== 0,
@@ -383,7 +398,7 @@ export default {
 
 					// Update the previous group map points
 					prevGroupMap = {
-						date: dateSeparator,
+						date: dateTimestamp,
 						groupId: message.id,
 					}
 				} else {
@@ -410,13 +425,13 @@ export default {
 
 			const oldGroupsMap = new Map(Object.entries(oldGroups))
 			// Check if we have this group in the old list already and it is unchanged
-			return Object.keys(newGroups).forEach(date => {
-				if (oldGroupsMap.has(date)) {
+			return Object.keys(newGroups).forEach(dateTimestamp => {
+				if (oldGroupsMap.has(dateTimestamp)) {
 					// the group by date has changed, we update its content (groups by author)
-					this.softUpdateAuthorGroups(oldGroupsMap.get(date), newGroups[date])
+					this.softUpdateAuthorGroups(oldGroupsMap.get(dateTimestamp), newGroups[dateTimestamp])
 				} else {
 					// the group is new
-					this.messagesGroupedByDateByAuthor[date] = newGroups[date]
+					this.messagesGroupedByDateByAuthor[dateTimestamp] = newGroups[dateTimestamp]
 				}
 			})
 		},
@@ -424,10 +439,23 @@ export default {
 		softUpdateAuthorGroups(oldGroups, newGroups) {
 			const oldGroupsMap = new Map(Object.entries(oldGroups))
 			Object.entries(newGroups).forEach(([id, newGroup]) => {
-				if (!oldGroupsMap.has(id) || !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id))) {
-					this.messagesGroupedByDateByAuthor[newGroup.dateSeparator][id] = newGroup
+				if (!oldGroupsMap.has(id) || (oldGroupsMap.has(id) && !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id)))) {
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
 				}
 			})
+
+			// Remove temporary messages that are not in the new list
+			if (+dateTimestamp === this.currentDay) {
+				const newGroupsMap = new Map(Object.entries(newGroups))
+				for (const id of Object.keys(oldGroups).reverse()) {
+					if (!id.toString().startsWith('temp-')) {
+						break
+					}
+					if (!newGroupsMap.has(id)) {
+						delete this.messagesGroupedByDateByAuthor[dateTimestamp][id]
+					}
+				}
+			}
 		},
 
 		areGroupsIdentical(group1, group2) {
@@ -523,33 +551,29 @@ export default {
 				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
 		},
 
+		getRelativePrefix(date) {
+			const diffDays = moment().startOf('day').diff(date, 'days')
+			switch (diffDays) {
+			case 0:
+				return t('spreed', 'Today')
+			case 1:
+				return t('spreed', 'Yesterday')
+			default:
+				return t('spreed', '{n} days ago', { n: diffDays })
+			}
+		},
+
 		/**
 		 * Generate the date header between the messages
 		 *
-		 * @param {object} message The message object
-		 * @param {string} message.id The ID of the message
-		 * @param {number} message.timestamp Timestamp of the message
+		 * @param {number} dateTimestamp The day and year timestamp
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
-		generateDateSeparator(message) {
-			const date = this.getDateOfMessage(message)
-			const dayOfYear = date.format('YYYY-DDD')
-			let relativePrefix = date.fromNow()
-
-			// Use the relative day for today and yesterday
-			const dayOfYearToday = moment().format('YYYY-DDD')
-			if (dayOfYear === dayOfYearToday) {
-				relativePrefix = t('spreed', 'Today')
-			} else {
-				const dayOfYearYesterday = moment().subtract(1, 'days').format('YYYY-DDD')
-				if (dayOfYear === dayOfYearYesterday) {
-					relativePrefix = t('spreed', 'Yesterday')
-				}
-			}
-
+		generateDateSeparator(dateTimestamp) {
+			const date = moment.unix(dateTimestamp).startOf('day')
 			// <Today>, <November 11th, 2019>
 			return t('spreed', '{relativeDate}, {absoluteDate}', {
-				relativeDate: relativePrefix,
+				relativeDate: this.getRelativePrefix(date),
 				// 'LL' formats a localized date including day of month, month
 				// name and year
 				absoluteDate: date.format('LL'),
@@ -1277,6 +1301,7 @@ export default {
 		display: flex;
 		justify-content: center;
 		z-index: 2;
+		margin-bottom: 5px;
 	}
 
 	&__date-text {

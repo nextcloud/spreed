@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<li class="wrapper">
 		<div class="messages__avatar">
 			<AvatarWrapper :id="actorId"
 				:name="actorDisplayName"
@@ -47,7 +47,7 @@
 				:actor-type="actorType"
 				:actor-id="actorId" />
 		</ul>
-	</div>
+	</li>
 </template>
 
 <script>
