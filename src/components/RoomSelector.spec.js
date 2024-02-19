@@ -6,15 +6,33 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
 
 import { CONVERSATION } from '../constants.js'
+import { generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),
 }))
 
-describe('RoomSelector.vue', () => {
+const ConversationsSearchListVirtualStub = {
+	props: {
+		conversations: Array,
+		isSearchResult: Boolean,
+	},
+	components: {
+		ConversationSearchResult,
+	},
+	template: `<ul>
+		<ConversationSearchResult v-for="conversation in conversations"
+			:key="conversation.token"
+			:item="conversation"
+			@click="$emit('select', $event)"/>
+	</ul>`,
+}
+
+describe('RoomSelector', () => {
 	let conversations
 
 	beforeEach(() => {
@@ -29,6 +47,7 @@ describe('RoomSelector.vue', () => {
 			token: 'token-1',
 			displayName: 'conversation one',
 			type: CONVERSATION.TYPE.PUBLIC,
+			listable: CONVERSATION.LISTABLE.USERS,
 			lastActivity: 1,
 			isFavorite: true,
 			readOnly: CONVERSATION.STATE.READ_WRITE,
@@ -36,6 +55,7 @@ describe('RoomSelector.vue', () => {
 			token: 'token-2',
 			displayName: 'abc',
 			type: CONVERSATION.TYPE.GROUP,
+			listable: CONVERSATION.LISTABLE.USERS,
 			lastActivity: 2,
 			isFavorite: false,
 			readOnly: CONVERSATION.STATE.READ_ONLY,
@@ -69,82 +89,161 @@ describe('RoomSelector.vue', () => {
 				},
 			},
 		}
-
-		axios.get.mockResolvedValue({
-			data: {
-				ocs: {
-					data: conversations,
-				},
-			},
-		})
 	})
+
 	afterEach(() => {
 		jest.clearAllMocks()
 	})
 
-	test('renders sorted conversation list fetched from server', async () => {
-		const wrapper = shallowMount(RoomSelector)
-
-		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room'),
-			{ params: { includeStatus: true } }
-		)
-
-		// need to wait for re-render, otherwise the list is not rendered yet
-		await flushPromises()
-
-		const list = wrapper.findAll('li')
-		expect(list.length).toBe(3)
-		expect(list.at(0).text()).toBe('conversation one')
-		expect(list.at(1).text()).toBe('zzz')
-		expect(list.at(2).text()).toBe('abc')
-	})
-	test('excludes non-postable conversations', async () => {
-		const wrapper = shallowMount(RoomSelector, {
-			propsData: {
-				showPostableOnly: true,
-			},
+	const mountRoomSelector = async (props) => {
+		const payload = conversations.filter(conv => {
+			return !props?.listOpenConversations || conv.listable === CONVERSATION.LISTABLE.USERS
 		})
-		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room'),
-			{ params: { includeStatus: true } }
-		)
 
+		axios.get.mockResolvedValue(generateOCSResponse({ payload }))
+
+		const wrapper = shallowMount(RoomSelector, {
+			stubs: {
+				ConversationsSearchListVirtual: ConversationsSearchListVirtualStub,
+				ConversationSearchResult,
+			},
+			propsData: props,
+		})
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await flushPromises()
 
-		const list = wrapper.findAll('li')
-		expect(list.length).toBe(2)
-		expect(list.at(0).text()).toBe('conversation one')
-		expect(list.at(1).text()).toBe('zzz')
+		return wrapper
+	}
+
+	describe('rendering', () => {
+		it('renders sorted conversations list fetched from server', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector()
+			expect(axios.get).toHaveBeenCalledWith(
+				generateOcsUrl('/apps/spreed/api/v4/room'),
+				{ params: { includeStatus: true } }
+			)
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(3)
+			expect(list.at(0).props('name')).toBe(conversations[1].displayName)
+			expect(list.at(1).props('name')).toBe(conversations[0].displayName)
+			expect(list.at(2).props('name')).toBe(conversations[2].displayName)
+		})
+
+		it('renders open conversations list fetched from server', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector({ listOpenConversations: true })
+			expect(axios.get).toHaveBeenCalledWith(
+				generateOcsUrl('/apps/spreed/api/v4/listed-room'),
+				{ params: { searchTerm: '' } }
+			)
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(2)
+			expect(list.at(0).props('name')).toBe(conversations[1].displayName)
+			expect(list.at(1).props('name')).toBe(conversations[2].displayName)
+		})
+
+		it('excludes non-postable conversations', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector({ showPostableOnly: true })
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(2)
+			expect(list.at(0).props('name')).toBe(conversations[1].displayName)
+			expect(list.at(1).props('name')).toBe(conversations[0].displayName)
+		})
+
+		it('filters conversations by displayName', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector()
+
+			// Act: type 'conversation'
+			const input = wrapper.findComponent({ name: 'NcTextField' })
+			await input.vm.$emit('update:value', 'conversation')
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(1)
+			expect(list.at(0).props('name')).toBe(conversations[1].displayName)
+		})
+
+		it('shows empty content if no conversations matches', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector()
+
+			// Act: type 'conversation'
+			const input = wrapper.findComponent({ name: 'NcTextField' })
+			await input.vm.$emit('update:value', 'qwerty')
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(0)
+		})
+
+		it('shows empty content if no open conversations matches', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector({ listOpenConversations: true })
+
+			// Act: type 'conversation'
+			const input = wrapper.findComponent({ name: 'NcTextField' })
+			await input.vm.$emit('update:value', 'qwerty')
+
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(0)
+		})
 	})
-	test('emits select event on select', async () => {
-		const wrapper = shallowMount(RoomSelector)
 
-		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room'),
-			{ params: { includeStatus: true } }
-		)
-		await flushPromises()
+	describe('actions', () => {
+		it('clears input field', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector()
+			const input = wrapper.findComponent({ name: 'NcTextField' })
+			await input.vm.$emit('update:value', 'conversation')
 
-		const eventHandler = jest.fn()
-		wrapper.vm.$root.$on('select', eventHandler)
+			// Act: click trailing button
+			await input.vm.$emit('trailing-button-click')
 
-		const list = wrapper.findAll('li')
-		await list.at(1).trigger('click')
-		await wrapper.findComponent(NcButton).vm.$emit('click')
+			// Assert
+			const list = wrapper.findAllComponents({ name: 'NcListItem' })
+			expect(list).toHaveLength(3)
+		})
 
-		expect(eventHandler).toHaveBeenCalledWith('token-3')
-	})
+		it('emits select event on select', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector()
+			const eventHandler = jest.fn()
+			wrapper.vm.$root.$on('select', eventHandler)
 
-	test('emits close event', async () => {
-		const wrapper = shallowMount(RoomSelector)
+			// Act: click on second item, then click 'Select conversation'
+			const list = wrapper.findComponent({ name: 'ConversationsSearchListVirtual' })
+			const items = wrapper.findAllComponents(ConversationSearchResult)
+			await items.at(1).vm.$emit('click', items.at(1).props('item'))
+			expect(items.at(1).emitted('click')[0][0]).toMatchObject(conversations[0])
+			expect(list.emitted('select')[0][0]).toMatchObject(conversations[0])
+			await wrapper.findComponent(NcButton).vm.$emit('click')
 
-		const eventHandler = jest.fn()
-		wrapper.vm.$root.$on('close', eventHandler)
+			// Assert
+			expect(eventHandler).toHaveBeenCalledWith('token-3')
+		})
 
-		await wrapper.findComponent({ name: 'NcModal' }).vm.$emit('close')
+		it('emits close event', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector()
+			const eventHandler = jest.fn()
+			wrapper.vm.$root.$on('close', eventHandler)
 
-		expect(eventHandler).toHaveBeenCalled()
+			// Act: close modal
+			const modal = wrapper.findComponent({ name: 'NcModal' })
+			await modal.vm.$emit('close')
+
+			// Assert
+			expect(eventHandler).toHaveBeenCalled()
+		})
 	})
 })

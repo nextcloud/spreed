@@ -297,7 +297,7 @@ import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import Conversation from './ConversationsList/Conversation.vue'
-import ConversationsListVirtual from './ConversationsListVirtual.vue'
+import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 import ConversationIcon from '../ConversationIcon.vue'
