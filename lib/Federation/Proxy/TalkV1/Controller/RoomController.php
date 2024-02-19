@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
  *
@@ -33,12 +32,14 @@ use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 
 /**
- * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
+ * @psalm-import-type TalkParticipant from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
-class ChatController {
+class RoomController {
 	public function __construct(
 		protected ProxyRequest  $proxy,
 		protected UserConverter $userConverter,
@@ -46,20 +47,20 @@ class ChatController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
+	 * @param bool $includeStatus Include the user statuses
+	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>
 	 * @throws CannotReachRemoteException
 	 * @throws RemoteClientException
 	 *
-	 *  200: List of mention suggestions returned
+	 * 200: Participants returned
+	 * 403: Missing permissions for getting participants
 	 */
-	public function mentions(Room $room, Participant $participant, string $search, int $limit, bool $includeStatus): DataResponse {
+	public function getParticipants(Room $room, Participant $participant, bool $includeStatus = false): DataResponse {
 		$proxy = $this->proxy->get(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
-			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/mentions',
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/participants',
 			[
-				'search' => $search,
-				'limit' => $limit,
 				'includeStatus' => $includeStatus,
 			],
 		);
@@ -74,10 +75,17 @@ class ChatController {
 			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
 		}
 
-		/** @var TalkChatMentionSuggestion[] $data */
+		/** @var TalkParticipant[] $data */
 		$data = $responseData['ocs']['data'] ?? [];
 
 		// FIXME post-load status information
-		return new DataResponse($this->userConverter->convertAttendees($room, $data, 'source', 'id', 'label'));
+		/** @var TalkParticipant[] $data */
+		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'displayName');
+		$headers = [];
+		if ($proxy->getHeader('X-Nextcloud-Has-User-Statuses')) {
+			$headers['X-Nextcloud-Has-User-Statuses'] = (bool)$proxy->getHeader('X-Nextcloud-Has-User-Statuses');
+		}
+
+		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
 }

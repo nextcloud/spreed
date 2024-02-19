@@ -1157,10 +1157,9 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequireReadWriteConversation]
 	public function mentions(string $search, int $limit = 20, bool $includeStatus = false): DataResponse {
 		if ($this->room->getRemoteServer()) {
-			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\ChatController::class);
-			return new DataResponse(
-				$proxy->mentions($this->room, $this->participant, $search, $limit, $includeStatus)
-			);
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->mentions($this->room, $this->participant, $search, $limit, $includeStatus);
 		}
 		$this->searchPlugin->setContext([
 			'itemType' => 'chat',

@@ -837,6 +837,12 @@ class RoomController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
+		if ($this->room->getRemoteServer()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+			return $proxy->getParticipants($this->room, $this->participant, $includeStatus);
+		}
+
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
@@ -1010,6 +1016,8 @@ class RoomController extends AEnvironmentAwareController {
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GROUPS) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();

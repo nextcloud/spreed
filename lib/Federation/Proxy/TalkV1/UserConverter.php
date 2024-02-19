@@ -50,9 +50,11 @@ class UserConverter {
 				} elseif ($entry[$typeField] === Attendee::ACTOR_FEDERATED_USERS) {
 					$localParticipants = $this->getLocalParticipants($room);
 					if (isset($localParticipants[$entry[$idField]])) {
+						$local = $localParticipants[$entry[$idField]];
+
 						$entry[$typeField] = Attendee::ACTOR_USERS;
-						$entry[$idField] = $localParticipants[$entry[$idField]]['userId'];
-						$entry[$displayNameField] = $localParticipants[$entry[$idField]]['displayName'];
+						$entry[$idField] = $local['userId'];
+						$entry[$displayNameField] = $local['displayName'];
 					}
 				}
 				return $entry;

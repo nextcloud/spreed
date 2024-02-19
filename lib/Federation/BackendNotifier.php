@@ -118,7 +118,7 @@ class BackendNotifier {
 			}
 		}
 
-		/** @var IUser|null $roomOwner */
+		/** @var IUser $roomOwner */
 		$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
 
 		$invitedCloudId = $user . '@' . $remote;
