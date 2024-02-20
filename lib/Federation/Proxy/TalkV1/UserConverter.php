@@ -41,24 +41,26 @@ class UserConverter {
 	) {
 	}
 
+	public function convertAttendee(Room $room, array $entry, string $typeField, string $idField, string $displayNameField): array {
+		if ($entry[$typeField] === Attendee::ACTOR_USERS) {
+			$entry[$typeField] = Attendee::ACTOR_FEDERATED_USERS;
+			$entry[$idField] .= '@' . $room->getRemoteServer();
+		} elseif ($entry[$typeField] === Attendee::ACTOR_FEDERATED_USERS) {
+			$localParticipants = $this->getLocalParticipants($room);
+			if (isset($localParticipants[$entry[$idField]])) {
+				$local = $localParticipants[$entry[$idField]];
+
+				$entry[$typeField] = Attendee::ACTOR_USERS;
+				$entry[$idField] = $local['userId'];
+				$entry[$displayNameField] = $local['displayName'];
+			}
+		}
+		return $entry;
+	}
+
 	public function convertAttendees(Room $room, array $entries, string $typeField, string $idField, string $displayNameField): array {
 		return array_map(
-			function (array $entry) use ($room, $typeField, $idField, $displayNameField): array {
-				if ($entry[$typeField] === Attendee::ACTOR_USERS) {
-					$entry[$typeField] = Attendee::ACTOR_FEDERATED_USERS;
-					$entry[$idField] .= '@' . $room->getRemoteServer();
-				} elseif ($entry[$typeField] === Attendee::ACTOR_FEDERATED_USERS) {
-					$localParticipants = $this->getLocalParticipants($room);
-					if (isset($localParticipants[$entry[$idField]])) {
-						$local = $localParticipants[$entry[$idField]];
-
-						$entry[$typeField] = Attendee::ACTOR_USERS;
-						$entry[$idField] = $local['userId'];
-						$entry[$displayNameField] = $local['displayName'];
-					}
-				}
-				return $entry;
-			},
+			fn (array $entry): array => $this->convertAttendee($room, $entry, $typeField, $idField, $displayNameField),
 			$entries
 		);
 	}

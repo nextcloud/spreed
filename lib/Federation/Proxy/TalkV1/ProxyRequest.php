@@ -30,6 +30,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RemoteClientException;
+use OCP\AppFramework\Http;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IConfig;
@@ -42,6 +43,18 @@ class ProxyRequest {
 		protected IClientService $clientService,
 		protected LoggerInterface $logger,
 	) {
+	}
+
+	/**
+	 * @return Http::STATUS_BAD_REQUEST
+	 */
+	public function logUnexpectedStatusCode(string $method, int $statusCode): int {
+		if ($this->config->getSystemValueBool('debug')) {
+			$this->logger->error('Unexpected status code ' . $statusCode . ' returned for ' . $method);
+		} else {
+			$this->logger->debug('Unexpected status code ' . $statusCode . ' returned for ' . $method);
+		}
+		return Http::STATUS_BAD_REQUEST;
 	}
 
 	protected function generateDefaultRequestOptions(
@@ -82,6 +95,47 @@ class ProxyRequest {
 
 		try {
 			return $this->clientService->newClient()->get($url, $requestOptions);
+		} catch (ClientException $e) {
+			$status = $e->getResponse()->getStatusCode();
+
+			try {
+				$body = $e->getResponse()->getBody()->getContents();
+				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+				if (!is_array($data)) {
+					throw new \RuntimeException('JSON response is not an array');
+				}
+			} catch (\Throwable $e) {
+				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
+			}
+
+			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
+			$this->logger->error('Client error from remote', ['exception' => $clientException]);
+			throw $clientException;
+		} catch (ServerException|\Throwable $e) {
+			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
+			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
+			throw $serverException;
+		}
+	}
+
+	/**
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 */
+	public function post(
+		string $cloudId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $url,
+		array $parameters = [],
+	): IResponse {
+		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
+		if (!empty($parameters)) {
+			$requestOptions['json'] = $parameters;
+		}
+
+		try {
+			return $this->clientService->newClient()->post($url, $requestOptions);
 		} catch (ClientException $e) {
 			$status = $e->getResponse()->getStatusCode();
 

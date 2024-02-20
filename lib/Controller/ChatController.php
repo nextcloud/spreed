@@ -132,6 +132,9 @@ class ChatController extends AEnvironmentAwareController {
 	protected function getActorInfo(string $actorDisplayName = ''): array {
 		$remoteCloudId = $this->federationAuthenticator->getCloudId();
 		if ($remoteCloudId !== '') {
+			if ($actorDisplayName) {
+				$this->participantService->updateDisplayNameForActor(Attendee::ACTOR_FEDERATED_USERS, $remoteCloudId, $actorDisplayName);
+			}
 			return [Attendee::ACTOR_FEDERATED_USERS, $remoteCloudId];
 		}
 
@@ -202,6 +205,12 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+		if ($this->room->getRemoteServer()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent);
+		}
+
 		if (trim($message) === '') {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
