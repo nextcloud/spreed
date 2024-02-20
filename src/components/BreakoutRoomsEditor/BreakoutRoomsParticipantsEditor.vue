@@ -385,9 +385,4 @@ export default {
 .delete {
 	margin-right: auto;
 }
-
-// TODO remove after https://github.com/nextcloud-libraries/nextcloud-vue/issues/5228
-:deep(.modal-wrapper--small .modal-container) {
-	width: 400px !important;
-}
 </style>

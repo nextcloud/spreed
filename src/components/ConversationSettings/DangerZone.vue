@@ -235,11 +235,6 @@ h4 {
 		color: var(--color-text-maxcontrast);
 	}
 	&__dialog {
-		// TODO remove after https://github.com/nextcloud-libraries/nextcloud-vue/issues/5228
-		:deep(.modal-wrapper--small .modal-container) {
-			width: 400px !important;
-		}
-
 		:deep(.modal-container) {
 			padding-block: 4px 8px;
 			padding-inline: 12px 8px;
