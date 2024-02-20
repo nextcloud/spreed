@@ -73,6 +73,7 @@ import cloneDeep from 'lodash/cloneDeep.js'
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -193,17 +194,28 @@ export default {
 		},
 
 		openConversation() {
+			const isTalkApp = IS_DESKTOP || window.location.pathname.includes('/apps/spreed') || window.location.pathname.includes('/call/')
 
-			this.$router.push({
-				name: 'conversation',
-				hash: `#message_${this.forwardedMessageID}`,
-				params: {
-					token: `${this.selectedConversationToken}`,
-				},
-			})
-				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			if (!isTalkApp) {
+				// Native redirect to Talk from Files sidebar
+				const url = generateUrl('/call/{token}#message_{messageId}', {
+					token: this.selectedConversationToken,
+					messageId: this.forwardedMessageID,
+				})
+				window.open(url, '_blank').focus()
+			} else {
+				this.$router.push({
+					name: 'conversation',
+					hash: `#message_${this.forwardedMessageID}`,
+					params: {
+						token: `${this.selectedConversationToken}`,
+					},
+				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			}
+
 			this.showForwardedConfirmation = false
 			this.forwardedMessageID = ''
+			this.$emit('close')
 		},
 
 		handleClose() {
