@@ -28,8 +28,6 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
-import RoomSelector from './components/RoomSelector.vue'
-
 import { postRichObjectToConversation } from './services/messagesService.js'
 
 (function(OC, OCA, t, n) {
@@ -82,13 +80,15 @@ import { postRichObjectToConversation } from './services/messagesService.js'
 				const body = document.getElementById('body-user')
 				body.appendChild(container)
 
-				const ComponentVM = Vue.extend(RoomSelector)
-				const vm = new ComponentVM({
+				const RoomSelector = () => import('./components/RoomSelector.vue')
+				const vm = new Vue({
 					el: container,
-					propsData: {
-						dialogTitle: t('spreed', 'Post to conversation'),
-						showPostableOnly: true,
-					},
+					render: h => h(RoomSelector, {
+						props: {
+							dialogTitle: t('spreed', 'Post to conversation'),
+							showPostableOnly: true,
+						},
+					}),
 				})
 
 				vm.$root.$on('close', () => {
