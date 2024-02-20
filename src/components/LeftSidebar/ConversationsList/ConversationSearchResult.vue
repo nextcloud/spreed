@@ -24,7 +24,7 @@
 	<NcListItem :key="item.token"
 		:name="item.displayName"
 		:title="item.displayName"
-		:active="item.token === selectedRoom"
+		:active="item.token === selectedRoom?.token"
 		:bold="exposeMessages && !!item.unreadMessages"
 		:counter-number="exposeMessages ? item.unreadMessages : 0"
 		:counter-type="counterType"

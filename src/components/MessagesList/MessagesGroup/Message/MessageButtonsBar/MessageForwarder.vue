@@ -59,6 +59,7 @@
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -93,6 +94,7 @@ export default {
 	data() {
 		return {
 			selectedConversationToken: null,
+			selectedConversationName: null,
 			showForwardedConfirmation: false,
 			forwardedMessageID: '',
 		}
@@ -110,16 +112,12 @@ export default {
 		dialogSubtitle() {
 			return t('spreed', 'Choose a conversation to forward the selected message.')
 		},
-
-		selectedConversationName() {
-			return this.$store.getters?.conversation(this.selectedConversationToken).displayName
-		},
-
 	},
 
 	methods: {
-		async setSelectedConversationToken(token) {
-			this.selectedConversationToken = token
+		async setSelectedConversationToken(conversation) {
+			this.selectedConversationToken = conversation.token
+			this.selectedConversationName = conversation.displayName
 			try {
 				const response = await this.$store.dispatch('forwardMessage', {
 					targetToken: this.selectedConversationToken,
@@ -134,17 +132,26 @@ export default {
 		},
 
 		openConversation() {
+			if (window.location.href.includes('/apps/files')) {
+				// Native redirect to Talk from Files sidebar
+				const url = generateUrl('/call/{token}#message_{messageId}', {
+					token: this.selectedConversationToken,
+					messageId: this.forwardedMessageID,
+				})
+				window.open(url, '_blank').focus()
+			} else {
+				this.$router.push({
+					name: 'conversation',
+					hash: `#message_${this.forwardedMessageID}`,
+					params: {
+						token: `${this.selectedConversationToken}`,
+					},
+				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			}
 
-			this.$router.push({
-				name: 'conversation',
-				hash: `#message_${this.forwardedMessageID}`,
-				params: {
-					token: `${this.selectedConversationToken}`,
-				},
-			})
-				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.showForwardedConfirmation = false
 			this.forwardedMessageID = ''
+			this.$emit('close')
 		},
 
 		handleClose() {

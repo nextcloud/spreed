@@ -218,7 +218,7 @@ describe('RoomSelector', () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
 			const eventHandler = jest.fn()
-			wrapper.vm.$root.$on('select', eventHandler)
+			wrapper.vm.$on('select', eventHandler)
 
 			// Act: click on second item, then click 'Select conversation'
 			const list = wrapper.findComponent({ name: 'ConversationsSearchListVirtual' })
@@ -229,12 +229,26 @@ describe('RoomSelector', () => {
 			await wrapper.findComponent(NcButton).vm.$emit('click')
 
 			// Assert
-			expect(eventHandler).toHaveBeenCalledWith('token-3')
+			expect(eventHandler).toHaveBeenCalledWith(conversations[0])
 		})
 
 		it('emits close event', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
+			const eventHandler = jest.fn()
+			wrapper.vm.$on('close', eventHandler)
+
+			// Act: close modal
+			const modal = wrapper.findComponent({ name: 'NcModal' })
+			await modal.vm.$emit('close')
+
+			// Assert
+			expect(eventHandler).toHaveBeenCalled()
+		})
+
+		it('emits close event on $root as plugin', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector({ isPlugin: true })
 			const eventHandler = jest.fn()
 			wrapper.vm.$root.$on('close', eventHandler)
 
