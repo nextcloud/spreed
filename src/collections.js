@@ -41,8 +41,10 @@ import Vue from 'vue'
 				container.id = 'spreed-room-select'
 				const body = document.getElementById('body-user')
 				body.appendChild(container)
+
 				const RoomSelector = () => import('./components/RoomSelector.vue')
 				const ComponentVM = new Vue({
+					el: container,
 					render: h => h(RoomSelector, {
 						props: {
 							// Even if it is used from Talk the Collections menu is
@@ -52,7 +54,7 @@ import Vue from 'vue'
 						},
 					}),
 				})
-				ComponentVM.$mount(container)
+
 				ComponentVM.$root.$on('close', () => {
 					ComponentVM.$el.remove()
 					ComponentVM.$destroy()
