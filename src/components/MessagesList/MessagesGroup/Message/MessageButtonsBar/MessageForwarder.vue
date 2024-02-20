@@ -59,6 +59,7 @@
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -130,17 +131,26 @@ export default {
 		},
 
 		openConversation() {
+			if (window.location.href.includes('/apps/files')) {
+				// Native redirect to Talk from Files sidebar
+				const url = generateUrl('/call/{token}#message_{messageId}', {
+					token: this.selectedConversationToken,
+					messageId: this.forwardedMessageID,
+				})
+				window.open(url, '_blank').focus()
+			} else {
+				this.$router.push({
+					name: 'conversation',
+					hash: `#message_${this.forwardedMessageID}`,
+					params: {
+						token: `${this.selectedConversationToken}`,
+					},
+				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			}
 
-			this.$router.push({
-				name: 'conversation',
-				hash: `#message_${this.forwardedMessageID}`,
-				params: {
-					token: `${this.selectedConversationToken}`,
-				},
-			})
-				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.showForwardedConfirmation = false
 			this.forwardedMessageID = ''
+			this.$emit('close')
 		},
 
 		handleClose() {
