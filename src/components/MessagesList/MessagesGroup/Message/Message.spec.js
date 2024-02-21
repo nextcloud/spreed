@@ -1,4 +1,4 @@
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
@@ -8,7 +8,6 @@ import Vuex, { Store } from 'vuex'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
@@ -40,7 +39,7 @@ const RichTextStub = {
 }
 
 const NcPopoverStub = {
-	template: '<slot name="trigger" /><slot/>',
+	template: '<div><slot name="trigger" /><slot/></div>',
 }
 
 describe('Message.vue', () => {
@@ -593,9 +592,12 @@ describe('Message.vue', () => {
 
 		test('Buttons bar is rendered on mouse over', async () => {
 			messageProps.sendingFailure = 'timeout'
-			const wrapper = mount(Message, {
+			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
+				stubs: {
+					MessageButtonsBar,
+				},
 				propsData: messageProps,
 				provide: injected,
 			})
@@ -628,11 +630,10 @@ describe('Message.vue', () => {
 			jest.spyOn(global.Date, 'now')
 				.mockImplementation(() => mockDate)
 
-			const wrapper = mount(Message, {
+			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
 				stubs: {
-					NcActionButton,
 					MessageButtonsBar,
 				},
 				propsData: messageProps,

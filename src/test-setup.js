@@ -116,15 +116,6 @@ global.BroadcastChannel = jest.fn(() => ({
 	addEventListener: jest.fn(),
 }))
 
-const originalConsoleError = console.error
-console.error = function(error) {
-	if (error?.message?.includes('Could not parse CSS stylesheet')) {
-		console.debug(error?.message)
-	} else {
-		originalConsoleError(error)
-	}
-}
-
 // Work around missing "URL.createObjectURL" (which is used in the code but not
 // relevant for the tests) in jsdom: https://github.com/jsdom/jsdom/issues/1721
 window.URL.createObjectURL = jest.fn()
