@@ -267,3 +267,10 @@ export const AVATAR = {
 		FULL: 512,
 	},
 }
+
+export const FEDERATION = {
+	STATE: {
+		PENDING: 0,
+		ACCEPTED: 1,
+	},
+}
