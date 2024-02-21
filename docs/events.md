@@ -193,6 +193,7 @@ Dispatch this event in your app to install a bot on this server
 
 * Event: `OCA\Talk\Events\BotInstallEvent`
 * Since: 17.0.0
+* Since: 19.0.0 - Features flag was added
 
 ### Bot uninstall
 

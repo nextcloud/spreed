@@ -108,6 +108,7 @@ class BotListener implements IEventListener {
 			$bot->setUrl($event->getUrl());
 			$bot->setUrlHash(sha1($event->getUrl()));
 			$bot->setState(Bot::STATE_ENABLED);
+			$bot->setFeatures($event->getFeatures());
 			$this->botServerMapper->insert($bot);
 		}
 	}
