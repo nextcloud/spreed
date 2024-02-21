@@ -27,12 +27,17 @@ describe('RemoteVideoBlocker', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers()
+		console.error = jest.fn()
 
 		callParticipantModel = {
 			setVideoBlocked: jest.fn(),
 		}
 
 		remoteVideoBlocker = new RemoteVideoBlocker(callParticipantModel)
+	})
+
+	afterEach(() => {
+		jest.clearAllMocks()
 	})
 
 	test('blocks the video by default if not shown in some seconds', () => {

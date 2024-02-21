@@ -252,7 +252,10 @@ describe('Reactions.vue', () => {
 			const responseAdded = generateOCSResponse({ payload: addedReaction })
 			addReactionToMessage.mockResolvedValue(responseAdded)
 
-			const removedReaction = [...reactionsStored['🔥'].filter(obj => obj.actorId !== 'admin')] // remove the current user
+			const removedReaction = {
+				...reactionsStored,
+				'🔥': [...reactionsStored['🔥'].filter(obj => obj.actorId !== 'admin')] // remove the current user
+			}
 			const responseRemoved = generateOCSResponse({ payload: removedReaction })
 			removeReactionFromMessage.mockResolvedValue(responseRemoved)
 

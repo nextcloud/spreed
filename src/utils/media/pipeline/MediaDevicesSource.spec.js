@@ -150,9 +150,11 @@ describe('MediaDevicesSource', () => {
 		getUserMediaVideoTrack = null
 		expectedAudioTrack = null
 		expectedVideoTrack = null
+		console.debug = jest.fn()
 	})
 
 	afterEach(() => {
+		jest.clearAllMocks()
 		mediaDevicesManager.getUserMedia.mockRestore()
 	})
 
