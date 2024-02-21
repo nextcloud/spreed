@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Controller\AEnvironmentAwareController;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -316,6 +317,14 @@ class InjectionMiddleware extends Middleware {
 				}
 
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
+			}
+
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
+		}
+
+		if ($exception instanceof CannotReachRemoteException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_UNPROCESSABLE_ENTITY);
 			}
 
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());
