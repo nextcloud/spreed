@@ -43,8 +43,7 @@
 						<FilterIcon :size="15" />
 					</template>
 					<NcActionButton close-after-click
-						class="filter-actions__button"
-						:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
+						:model-value="isFiltered === 'mentions'"
 						@click="handleFilter('mentions')">
 						<template #icon>
 							<AtIcon :size="20" />
@@ -53,8 +52,7 @@
 					</NcActionButton>
 
 					<NcActionButton close-after-click
-						class="filter-actions__button"
-						:class="{'filter-actions__button--active': isFiltered === 'unread'}"
+						:model-value="isFiltered === 'unread'"
 						@click="handleFilter('unread')">
 						<template #icon>
 							<MessageBadge :size="20" />
@@ -999,16 +997,6 @@ export default {
 	:deep(.input-field) {
 		margin-block-start: 0;
 	}
-}
-
-.filter-actions__button--active {
-	background-color: var(--color-primary-element-light);
-	border-radius: 6px;
-
-	:deep(.action-button__longtext) {
-		font-weight: bold;
-	}
-
 }
 
 :deep(.empty-content) {
