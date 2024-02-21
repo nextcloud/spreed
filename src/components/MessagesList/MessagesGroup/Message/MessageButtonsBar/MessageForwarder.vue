@@ -131,7 +131,9 @@ export default {
 		},
 
 		openConversation() {
-			if (window.location.href.includes('/apps/files')) {
+			const isTalkApp = IS_DESKTOP || window.location.pathname.includes('/apps/spreed') || window.location.pathname.includes('/call/')
+
+			if (!isTalkApp) {
 				// Native redirect to Talk from Files sidebar
 				const url = generateUrl('/call/{token}#message_{messageId}', {
 					token: this.selectedConversationToken,
