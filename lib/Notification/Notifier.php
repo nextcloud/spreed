@@ -798,10 +798,10 @@ class Notifier implements INotifier {
 		}
 
 		if ($notification->getObjectType() === 'reminder') {
-			$notification = $this->addActionButton($notification, $l->t('View message'));
+			$notification = $this->addActionButton($notification, 'message_view', $l->t('View message'));
 
 			$action = $notification->createAction();
-			$action->setLabel($l->t('Dismiss reminder'))
+			$action->setLabel('reminder_dismiss')
 				->setParsedLabel($l->t('Dismiss reminder'))
 				->setLink(
 					$this->url->linkToOCSRouteAbsolute(
@@ -817,7 +817,7 @@ class Notifier implements INotifier {
 
 			$notification->addParsedAction($action);
 		} else {
-			$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+			$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
 		}
 
 		if ($richSubjectParameters['user'] === null) {
@@ -900,9 +900,9 @@ class Notifier implements INotifier {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$subject = $l->t('{user} invited you to a private conversation');
 			if ($this->participantService->hasActiveSessionsInCall($room)) {
-				$notification = $this->addActionButton($notification, $l->t('Join call'), true, true);
+				$notification = $this->addActionButton($notification, 'call_view', $l->t('Join call'), true, true);
 			} else {
-				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+				$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
 			}
 
 			$notification
@@ -926,9 +926,9 @@ class Notifier implements INotifier {
 		} elseif (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			$subject = $l->t('{user} invited you to a group conversation: {call}');
 			if ($this->participantService->hasActiveSessionsInCall($room)) {
-				$notification = $this->addActionButton($notification, $l->t('Join call'), true, true);
+				$notification = $this->addActionButton($notification, 'call_view', $l->t('Join call'), true, true);
 			} else {
-				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+				$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
 			}
 
 			$notification
@@ -976,10 +976,10 @@ class Notifier implements INotifier {
 			$userDisplayName = $this->userManager->getDisplayName($calleeId);
 			if ($userDisplayName !== null) {
 				if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {
-					$notification = $this->addActionButton($notification, $l->t('Answer call'), true, true);
+					$notification = $this->addActionButton($notification, 'call_view', $l->t('Answer call'), true, true);
 					$subject = $l->t('{user} would like to talk with you');
 				} else {
-					$notification = $this->addActionButton($notification, $l->t('Call back'));
+					$notification = $this->addActionButton($notification, 'call_view', $l->t('Call back'));
 					$subject = $l->t('You missed a call from {user}');
 				}
 
@@ -1006,10 +1006,10 @@ class Notifier implements INotifier {
 			}
 		} elseif (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {
-				$notification = $this->addActionButton($notification, $l->t('Join call'), true, true);
+				$notification = $this->addActionButton($notification, 'call_view', $l->t('Join call'), true, true);
 				$subject = $l->t('A group call has started in {call}');
 			} else {
-				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+				$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
 				$subject = $l->t('You missed a group call in {call}');
 			}
 
@@ -1064,9 +1064,9 @@ class Notifier implements INotifier {
 
 		$callIsActive = $this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room);
 		if ($callIsActive) {
-			$notification = $this->addActionButton($notification, $l->t('Answer call'), true, true);
+			$notification = $this->addActionButton($notification, 'call_view', $l->t('Answer call'), true, true);
 		} else {
-			$notification = $this->addActionButton($notification, $l->t('Call back'));
+			$notification = $this->addActionButton($notification, 'call_view', $l->t('Call back'));
 		}
 
 		if ($share->getShareType() === IShare::TYPE_EMAIL) {
@@ -1103,14 +1103,14 @@ class Notifier implements INotifier {
 		return $notification;
 	}
 
-	protected function addActionButton(INotification $notification, string $label, bool $primary = true, bool $directCallLink = false): INotification {
+	protected function addActionButton(INotification $notification, string $labelKey, string $label, bool $primary = true, bool $directCallLink = false): INotification {
 		$link = $notification->getLink();
 		if ($directCallLink) {
 			$link .= '#direct-call';
 		}
 
 		$action = $notification->createAction();
-		$action->setLabel($label)
+		$action->setLabel($labelKey)
 			->setParsedLabel($label)
 			->setLink($link, IAction::TYPE_WEB)
 			->setPrimary($primary);
