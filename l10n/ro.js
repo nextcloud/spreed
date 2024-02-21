@@ -475,6 +475,7 @@ OC.L10N.register(
     "Users" : "Utilizatori",
     "Federation" : "Federare",
     "Beta" : "Beta",
+    "Permissions" : "Permisiuni",
     "All messages" : "Toate mesajele",
     "Off" : "Oprit",
     "Language" : "Limba",
@@ -564,7 +565,6 @@ OC.L10N.register(
     "Always show the device preview screen before joining a call in this conversation." : "Arată întotdeauna o previzualizare a ecranului dispozitvului înainte de a participa la această conversație.",
     "Moderation" : "Moderare",
     "Meeting" : "Videoconferință",
-    "Permissions" : "Permisiuni",
     "Leave conversation" : "Părăsiți conversația",
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Odată ce ați părăsit o conversație, pentru a vă realătura aveți nevoie de o invitație. Conversațiile deschise pot fi accesate oricând.",
     "Delete conversation" : "Șterge conversația",
@@ -854,7 +854,7 @@ OC.L10N.register(
     "{actor} added {user0} and {user1}" : "{actor} a adăugat pe {user0} și pe {user1}",
     "You: {lastMessage}" : "Tu: {lastMessage}",
     "Deck card has been posted to {conversation}" : "Cardul Deck a fost postat la conversația {conversation}",
-    "Share to a conversation" : "Partajare la o conversație",
+    "Post to conversation" : "Postare în conversație",
     "Share to conversation" : "Partajare la conversație",
     "Error while sharing file" : "Eroare la partajarea fișierului",
     "Conversation link copied to clipboard" : "Linkul conversației a fost copiat",
@@ -921,7 +921,7 @@ OC.L10N.register(
     "Mention room" : "Menționează camera",
     "An error occurred while posting deck card to conversation" : "Eroare la postarea cardului Deck în conversație",
     "Post to a conversation" : "Postare într-o conversație",
-    "Post to conversation" : "Postare în conversație",
+    "Share to a conversation" : "Partajare la o conversație",
     "Setup summary" : "Sumar configurație"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

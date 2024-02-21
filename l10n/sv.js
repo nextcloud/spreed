@@ -684,6 +684,7 @@ OC.L10N.register(
     "Users" : "Användare",
     "Federation" : "Federation",
     "Beta" : "Beta",
+    "Permissions" : "Behörigheter",
     "General settings" : "Allmänna inställningar",
     "Default notification settings" : "Standardinställningar meddelanden",
     "Default group notification" : "Standard gruppmeddelande",
@@ -761,7 +762,6 @@ OC.L10N.register(
     "Conversation settings" : "Konversationsinställningar",
     "Personal" : "Personligt",
     "Meeting" : "Möte",
-    "Permissions" : "Behörigheter",
     "Danger zone" : "Riskzon",
     "Leave conversation" : "Lämna konversationen",
     "Delete conversation" : "Ta bort konversationen",
@@ -983,7 +983,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk uppdaterades, ladda om sidan igen",
-    "Share to a conversation" : "Dela till en konversation",
     "Share to conversation" : "Dela till konversation",
     "Error while sharing file" : "Fel vid delning av fil",
     "An error occurred while fetching the participants" : "Ett fel uppstod när deltagarna hämtades",
@@ -1035,6 +1034,7 @@ OC.L10N.register(
     "Toggle fullscreen" : "Växla helskärm",
     "Rename conversation" : "Byt namn på konversation",
     "Mention room" : "Nämn rum",
+    "Share to a conversation" : "Dela till en konversation",
     "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande."
 },
 "nplurals=2; plural=(n != 1);");
