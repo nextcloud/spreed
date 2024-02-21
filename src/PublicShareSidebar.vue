@@ -46,6 +46,7 @@
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
+				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
 		</aside>
@@ -63,6 +64,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
+import PollViewer from './components/PollViewer/PollViewer.vue'
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/TransitionWrapper.vue'
@@ -83,12 +85,13 @@ export default {
 	name: 'PublicShareSidebar',
 
 	components: {
-		NcButton,
 		CallButton,
 		CallView,
 		ChatView,
-		PreventUnload,
 		MediaSettings,
+		NcButton,
+		PollViewer,
+		PreventUnload,
 		TopBar,
 		TransitionWrapper,
 	},

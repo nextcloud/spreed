@@ -9,6 +9,7 @@
 					<CallView :token="token" />
 				</template>
 			</TransitionWrapper>
+			<PollViewer />
 		</template>
 	</div>
 </template>
@@ -17,6 +18,7 @@
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
+import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import TransitionWrapper from '../components/TransitionWrapper.vue'
 
@@ -25,10 +27,11 @@ import { useIsInCall } from '../composables/useIsInCall.js'
 export default {
 	name: 'MainView',
 	components: {
+		CallView,
 		ChatView,
 		LobbyScreen,
+		PollViewer,
 		TopBar,
-		CallView,
 		TransitionWrapper,
 	},
 

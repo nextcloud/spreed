@@ -225,6 +225,23 @@ export const FLOW = {
 	},
 }
 
+export const POLL = {
+	STATUS: {
+		OPEN: 0,
+		CLOSED: 1,
+	},
+
+	MODE: {
+		PUBLIC: 0,
+		HIDDEN: 1,
+	},
+
+	ANSWER_TYPE: {
+		MULTIPLE: 0,
+		SINGLE: 1,
+	},
+}
+
 export const PRIVACY = {
 	PUBLIC: 0,
 	PRIVATE: 1,
