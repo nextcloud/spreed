@@ -682,6 +682,7 @@
     "Users" : "Användare",
     "Federation" : "Federation",
     "Beta" : "Beta",
+    "Permissions" : "Behörigheter",
     "General settings" : "Allmänna inställningar",
     "Default notification settings" : "Standardinställningar meddelanden",
     "Default group notification" : "Standard gruppmeddelande",
@@ -759,7 +760,6 @@
     "Conversation settings" : "Konversationsinställningar",
     "Personal" : "Personligt",
     "Meeting" : "Möte",
-    "Permissions" : "Behörigheter",
     "Danger zone" : "Riskzon",
     "Leave conversation" : "Lämna konversationen",
     "Delete conversation" : "Ta bort konversationen",
@@ -981,7 +981,6 @@
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk uppdaterades, ladda om sidan igen",
-    "Share to a conversation" : "Dela till en konversation",
     "Share to conversation" : "Dela till konversation",
     "Error while sharing file" : "Fel vid delning av fil",
     "An error occurred while fetching the participants" : "Ett fel uppstod när deltagarna hämtades",
@@ -1033,6 +1032,7 @@
     "Toggle fullscreen" : "Växla helskärm",
     "Rename conversation" : "Byt namn på konversation",
     "Mention room" : "Nämn rum",
+    "Share to a conversation" : "Dela till en konversation",
     "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
