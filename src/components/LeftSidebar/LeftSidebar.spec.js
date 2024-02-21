@@ -42,6 +42,9 @@ describe('LeftSidebar.vue', () => {
 			localVue,
 			router,
 			store,
+			provide: {
+				'NcContent:setHasAppNavigation': () => {}
+			},
 			stubs: {
 				// to prevent user status fetching
 				NcAvatar: true,

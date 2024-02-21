@@ -261,6 +261,7 @@ describe('reactionsStore', () => {
 			const errorResponse = generateOCSErrorResponse({ status: 500, payload: [] })
 			removeReactionFromMessage.mockResolvedValue(errorResponse)
 			jest.spyOn(vuexStore, 'commit')
+			console.error = jest.fn()
 
 			const message = {
 				actorId: 'admin',
