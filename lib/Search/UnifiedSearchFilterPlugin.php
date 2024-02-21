@@ -4,6 +4,9 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2024 Fon E. Noel NFEBE <me@nfebe.com>
  *
+ * @author Fon E. Noel NFEBE <me@nfebe.com>
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,10 +26,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Search;
 
+use OCA\Talk\Config;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IRequest;
+use OCP\IUserSession;
 use OCP\Util;
 
 /**
@@ -35,7 +39,8 @@ use OCP\Util;
 class UnifiedSearchFilterPlugin implements IEventListener {
 
 	public function __construct(
-		private IRequest $request,
+		protected Config $talkConfig,
+		protected IUserSession $userSession,
 	) {
 	}
 
@@ -44,7 +49,8 @@ class UnifiedSearchFilterPlugin implements IEventListener {
 			return;
 		}
 
-		if (!$event->isLoggedIn()) {
+		$currentUser = $this->userSession->getUser();
+		if ($currentUser === null || $this->talkConfig->isDisabledForUser($currentUser)) {
 			return;
 		}
 
