@@ -547,6 +547,7 @@
     "Moderators" : "Moderators",
     "Users" : "Utilizaires",
     "Beta" : "Bèta",
+    "Permissions" : "Autorizacions",
     "General settings" : "Paramètres generals",
     "Default notification settings" : "Paramètres de notificacion per defaut",
     "Default group notification" : "Notificacion de grop per defaut",
@@ -680,7 +681,6 @@
     "Personal" : "Personal",
     "Always show the device preview screen before joining a call in this conversation." : "Totjorn mostrar l’ecran d’apercebut abans de rejónher una sonada d’aquesta conversacion.",
     "Meeting" : "Reünion",
-    "Permissions" : "Autorizacions",
     "Matterbridge" : "Matterbridge",
     "Danger zone" : "Zòna perilhosa",
     "Be careful, these actions cannot be undone." : "Fasètz atencion, aquelas accions pòdon pas èsser anulladas.",
@@ -1092,8 +1092,7 @@
     "You: {lastMessage}" : "Vos : {lastMessage}",
     "{actor}: {lastMessage}" : "{actor} : {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk foguèt mes a jorn, mercés de tornar cargar la pagina",
-    "An error occurred while posting location to conversation" : "Error en publicant la localizacion dins la conversacion",
-    "Share to a conversation" : "Partejar dins una conversacion",
+    "Post to conversation" : "Publicar a la conversacion",
     "Share to conversation" : "Partejar dins una conversacion",
     "Error while sharing file" : "Error pendent lo partiment del fichièr",
     "Error while clearing conversation history" : "Error pendent escafament de l’istoric de la conversacion",
@@ -1171,7 +1170,8 @@
     "Fullscreen (F)" : "Plen ecran (F)",
     "Mention room" : "Mencionar la sala",
     "Post to a conversation" : "Publicar dins una conversacion",
-    "Post to conversation" : "Publicar a la conversacion",
+    "An error occurred while posting location to conversation" : "Error en publicant la localizacion dins la conversacion",
+    "Share to a conversation" : "Partejar dins una conversacion",
     "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

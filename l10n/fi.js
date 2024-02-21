@@ -532,6 +532,7 @@ OC.L10N.register(
     "Users" : "Käyttäjät",
     "Federation" : "Federaatio",
     "Beta" : "Beta",
+    "Permissions" : "Oikeudet",
     "General settings" : "Yleiset asetukset",
     "Default notification settings" : "Ilmoitusten oletusasetukset",
     "Default group notification" : "Ryhmän oletusilmoitus",
@@ -700,7 +701,6 @@ OC.L10N.register(
     "Personal" : "Henkilökohtainen",
     "Always show the device preview screen before joining a call in this conversation." : "Näytä aina laitteen esikatselunäkymä ennen liittymistä puheluun tässä keskustelussa.",
     "Meeting" : "Kokous",
-    "Permissions" : "Oikeudet",
     "Breakout Rooms" : "Pienryhmätilat",
     "Matterbridge" : "Matterbridge",
     "Bots" : "Botit",
@@ -1194,8 +1194,8 @@ OC.L10N.register(
     "You: {lastMessage}" : "Sinä: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk päivitettiin, lataa sivu uudelleen",
+    "Post to conversation" : "Lähetä keskusteluun",
     "The recording failed. Please contact your administrator." : "Tallennus epäonnistui. Ole yhteydessä ylläpitoon.",
-    "Share to a conversation" : "Jaa keskusteluun",
     "Share to conversation" : "Jaa keskusteluun",
     "Error while sharing file" : "Virhe tiedostoa jakaessa",
     "Conversation link copied to clipboard" : "Keskustelulinkki kopioitu leikepöydälle",
@@ -1273,6 +1273,6 @@ OC.L10N.register(
     "Fullscreen (F)" : "Koko näyttö (F)",
     "Mention room" : "Mainitse huone",
     "Post to a conversation" : "Lähetä keskusteluun",
-    "Post to conversation" : "Lähetä keskusteluun"
+    "Share to a conversation" : "Jaa keskusteluun"
 },
 "nplurals=2; plural=(n != 1);");
