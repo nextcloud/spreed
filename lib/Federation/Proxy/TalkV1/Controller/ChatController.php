@@ -48,9 +48,11 @@ class ChatController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\ChatController::sendMessage()
+	 *
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 * @throws RemoteClientException
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array<empty>, array{}>
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
@@ -117,11 +119,13 @@ class ChatController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\ChatController::mentions()
+	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
 	 * @throws CannotReachRemoteException
 	 * @throws RemoteClientException
 	 *
-	 *  200: List of mention suggestions returned
+	 * 200: List of mention suggestions returned
 	 */
 	public function mentions(Room $room, Participant $participant, string $search, int $limit, bool $includeStatus): DataResponse {
 		$proxy = $this->proxy->get(
@@ -135,6 +139,10 @@ class ChatController {
 			],
 		);
 
+		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+		}
+
 		try {
 			$content = $proxy->getBody();
 			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
@@ -147,8 +155,9 @@ class ChatController {
 
 		/** @var TalkChatMentionSuggestion[] $data */
 		$data = $responseData['ocs']['data'] ?? [];
+		$data = $this->userConverter->convertAttendees($room, $data, 'source', 'id', 'label');
 
 		// FIXME post-load status information
-		return new DataResponse($this->userConverter->convertAttendees($room, $data, 'source', 'id', 'label'));
+		return new DataResponse($data, Http::STATUS_OK);
 	}
 }

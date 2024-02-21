@@ -47,11 +47,13 @@ class AvatarController {
 	}
 
 	/**
-	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 * @see \OCA\Talk\Controller\AvatarController::getAvatar()
 	 *
-	 *  200: Room avatar returned
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
 	 * @throws RemoteClientException
 	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Room avatar returned
 	 */
 	public function getAvatar(Room $room, Participant $participant, bool $darkTheme): FileDisplayResponse {
 		$proxy = $this->proxy->get(
@@ -59,6 +61,10 @@ class AvatarController {
 			$participant->getAttendee()->getAccessToken(),
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/room/' . $room->getRemoteToken() . '/avatar' . ($darkTheme ? '/dark' : ''),
 		);
+
+		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+		}
 
 		$content = $proxy->getBody();
 		if ($content === '') {

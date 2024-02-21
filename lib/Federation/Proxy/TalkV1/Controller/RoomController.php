@@ -48,6 +48,8 @@ class RoomController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\RoomController::getParticipants()
+	 *
 	 * @param bool $includeStatus Include the user statuses
 	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>
 	 * @throws CannotReachRemoteException
@@ -65,6 +67,10 @@ class RoomController {
 				'includeStatus' => $includeStatus,
 			],
 		);
+
+		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+		}
 
 		try {
 			$content = $proxy->getBody();
@@ -91,6 +97,8 @@ class RoomController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\RoomController::getCapabilities()
+	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
 	 * @throws CannotReachRemoteException
 	 * @throws RemoteClientException
@@ -103,6 +111,10 @@ class RoomController {
 			$participant->getAttendee()->getAccessToken(),
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/capabilities',
 		);
+
+		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+		}
 
 		try {
 			$content = $proxy->getBody();
