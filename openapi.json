@@ -78,6 +78,170 @@
                     }
                 }
             },
+            "Capabilities": {
+                "type": "object",
+                "required": [
+                    "features",
+                    "config",
+                    "version"
+                ],
+                "properties": {
+                    "features": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "config": {
+                        "type": "object",
+                        "required": [
+                            "attachments",
+                            "call",
+                            "chat",
+                            "conversations",
+                            "previews",
+                            "signaling"
+                        ],
+                        "properties": {
+                            "attachments": {
+                                "type": "object",
+                                "required": [
+                                    "allowed"
+                                ],
+                                "properties": {
+                                    "allowed": {
+                                        "type": "boolean"
+                                    },
+                                    "folder": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "call": {
+                                "type": "object",
+                                "required": [
+                                    "enabled",
+                                    "breakout-rooms",
+                                    "recording",
+                                    "recording-consent",
+                                    "supported-reactions",
+                                    "predefined-backgrounds",
+                                    "can-upload-background",
+                                    "sip-enabled",
+                                    "sip-dialout-enabled",
+                                    "can-enable-sip"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "breakout-rooms": {
+                                        "type": "boolean"
+                                    },
+                                    "recording": {
+                                        "type": "boolean"
+                                    },
+                                    "recording-consent": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "supported-reactions": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "predefined-backgrounds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "can-upload-background": {
+                                        "type": "boolean"
+                                    },
+                                    "sip-enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "sip-dialout-enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "can-enable-sip": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "chat": {
+                                "type": "object",
+                                "required": [
+                                    "max-length",
+                                    "read-privacy",
+                                    "has-translation-providers",
+                                    "typing-privacy"
+                                ],
+                                "properties": {
+                                    "max-length": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "read-privacy": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "has-translation-providers": {
+                                        "type": "boolean"
+                                    },
+                                    "typing-privacy": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            },
+                            "conversations": {
+                                "type": "object",
+                                "required": [
+                                    "can-create"
+                                ],
+                                "properties": {
+                                    "can-create": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "previews": {
+                                "type": "object",
+                                "required": [
+                                    "max-gif-size"
+                                ],
+                                "properties": {
+                                    "max-gif-size": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            },
+                            "signaling": {
+                                "type": "object",
+                                "required": [
+                                    "session-ping-limit"
+                                ],
+                                "properties": {
+                                    "session-ping-limit": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "hello-v2-token-key": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "version": {
+                        "type": "string"
+                    }
+                }
+            },
             "ChatMentionSuggestion": {
                 "type": "object",
                 "required": [
@@ -533,168 +697,7 @@
                         ],
                         "properties": {
                             "spreed": {
-                                "type": "object",
-                                "required": [
-                                    "features",
-                                    "config",
-                                    "version"
-                                ],
-                                "properties": {
-                                    "features": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "config": {
-                                        "type": "object",
-                                        "required": [
-                                            "attachments",
-                                            "call",
-                                            "chat",
-                                            "conversations",
-                                            "previews",
-                                            "signaling"
-                                        ],
-                                        "properties": {
-                                            "attachments": {
-                                                "type": "object",
-                                                "required": [
-                                                    "allowed"
-                                                ],
-                                                "properties": {
-                                                    "allowed": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "folder": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            },
-                                            "call": {
-                                                "type": "object",
-                                                "required": [
-                                                    "enabled",
-                                                    "breakout-rooms",
-                                                    "recording",
-                                                    "recording-consent",
-                                                    "supported-reactions",
-                                                    "predefined-backgrounds",
-                                                    "can-upload-background",
-                                                    "sip-enabled",
-                                                    "sip-dialout-enabled",
-                                                    "can-enable-sip"
-                                                ],
-                                                "properties": {
-                                                    "enabled": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "breakout-rooms": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "recording": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "recording-consent": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "supported-reactions": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "predefined-backgrounds": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "can-upload-background": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "sip-enabled": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "sip-dialout-enabled": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "can-enable-sip": {
-                                                        "type": "boolean"
-                                                    }
-                                                }
-                                            },
-                                            "chat": {
-                                                "type": "object",
-                                                "required": [
-                                                    "max-length",
-                                                    "read-privacy",
-                                                    "has-translation-providers",
-                                                    "typing-privacy"
-                                                ],
-                                                "properties": {
-                                                    "max-length": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "read-privacy": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "has-translation-providers": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "typing-privacy": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    }
-                                                }
-                                            },
-                                            "conversations": {
-                                                "type": "object",
-                                                "required": [
-                                                    "can-create"
-                                                ],
-                                                "properties": {
-                                                    "can-create": {
-                                                        "type": "boolean"
-                                                    }
-                                                }
-                                            },
-                                            "previews": {
-                                                "type": "object",
-                                                "required": [
-                                                    "max-gif-size"
-                                                ],
-                                                "properties": {
-                                                    "max-gif-size": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    }
-                                                }
-                                            },
-                                            "signaling": {
-                                                "type": "object",
-                                                "required": [
-                                                    "session-ping-limit"
-                                                ],
-                                                "properties": {
-                                                    "session-ping-limit": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "hello-v2-token-key": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "version": {
-                                        "type": "string"
-                                    }
-                                }
+                                "$ref": "#/components/schemas/Capabilities"
                             }
                         }
                     },
@@ -4994,6 +4997,7 @@
                     "chat"
                 ],
                 "security": [
+                    {},
                     {
                         "bearer_auth": []
                     },
@@ -5241,6 +5245,7 @@
                     "chat"
                 ],
                 "security": [
+                    {},
                     {
                         "bearer_auth": []
                     },
@@ -5472,6 +5477,34 @@
                     },
                     "405": {
                         "description": "Editing this message type is not allowed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "413": {
+                        "description": "Message too long",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -15181,6 +15214,104 @@
                                                             "type": "string"
                                                         }
                                                     }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/capabilities": {
+            "get": {
+                "operationId": "room-get-capabilities",
+                "summary": "Get capabilities for a room",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get capabilities successfully",
+                        "headers": {
+                            "X-Nextcloud-Talk-Hash": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "oneOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/Capabilities"
+                                                        },
+                                                        {
+                                                            "type": "array",
+                                                            "maxLength": 0
+                                                        }
+                                                    ]
                                                 }
                                             }
                                         }
