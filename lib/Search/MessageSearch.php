@@ -26,6 +26,7 @@ namespace OCA\Talk\Search;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -39,6 +40,7 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Search\FilterDefinition;
 use OCP\Search\IFilter;
 use OCP\Search\IFilteringProvider;
@@ -61,6 +63,8 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		protected ITimeFactory $timeFactory,
 		protected IURLGenerator $url,
 		protected IL10N $l,
+		protected Config $talkConfig,
+		protected IUserSession $userSession,
 	) {
 	}
 
@@ -82,6 +86,11 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	 * @inheritDoc
 	 */
 	public function getOrder(string $route, array $routeParameters): ?int {
+		$currentUser = $this->userSession->getUser();
+		if ($currentUser && $this->talkConfig->isDisabledForUser($currentUser)) {
+			return null;
+		}
+
 		if (str_starts_with($route, Application::APP_ID . '.')) {
 			// Active app, prefer Talk results
 			return -2;
