@@ -760,11 +760,6 @@ export default {
 			const possibleMentions = response.data.ocs.data
 
 			possibleMentions.forEach(possibleMention => {
-				// TODO fix backend for userMention
-				if (!possibleMention.title && possibleMention.label) {
-					possibleMention.title = possibleMention.label
-				}
-
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-user-forced-white'
