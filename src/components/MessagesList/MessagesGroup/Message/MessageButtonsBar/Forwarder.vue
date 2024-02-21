@@ -21,7 +21,7 @@
 
 <template>
 	<div class="forwarder">
-		<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}')">
+		<NcEmptyContent :description="description">
 			<template #icon>
 				<Check :size="64" />
 			</template>
@@ -50,7 +50,7 @@
 		<NcModal v-else
 			:container="container"
 			@close="handleClose">
-			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
+			<NcEmptyContent :description="description">
 				<template #icon>
 					<Check :size="64" />
 				</template>
@@ -124,7 +124,15 @@ export default {
 		},
 
 		selectedConversationName() {
-			return this.$store.getters?.conversation(this.selectedConversationToken).displayName
+			return this.$store.getters?.conversation(this.selectedConversationToken)?.displayName
+		},
+
+		description() {
+			return this.selectedConversationName
+				? t('spreed', 'The message has been forwarded to {selectedConversationName}',
+					{ selectedConversationName: this.selectedConversationName },
+				)
+				: t('spreed', 'The message has been forwarded')
 		},
 
 		/**
