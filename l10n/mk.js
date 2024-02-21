@@ -527,6 +527,7 @@ OC.L10N.register(
     "Users" : "Корисници",
     "Federation" : "Федерација",
     "Beta" : "Бета",
+    "Permissions" : "Дозволи",
     "General settings" : "Општи параметри",
     "Default notification settings" : "Стандардни поставки за известување",
     "Default group notification" : "Стандардни групни известувања",
@@ -629,7 +630,6 @@ OC.L10N.register(
     "Personal" : "Лично",
     "Always show the device preview screen before joining a call in this conversation." : "Секогаш прикажувај го екранот за преглед на уредот пред да се придружите на повик во овој разговор. ",
     "Meeting" : "Средба",
-    "Permissions" : "Дозволи",
     "Danger zone" : "Опасна зона",
     "Be careful, these actions cannot be undone." : "Бидете внимателни, овие дејства не можат да повратат.",
     "Leave conversation" : "Напушти разговор",
@@ -947,9 +947,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Ти: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Разговорот е ажуриран, повторно вчитајте ја страната",
-    "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Локацијата е објавена во овој избраниот <a href=\"{link}\">разговор</a>",
-    "An error occurred while posting location to conversation" : "Настана грешка при обид за објава на локација во разговор",
-    "Share to a conversation" : "Сподели во разговор",
+    "Post to conversation" : "Објава во разговор",
     "Share to conversation" : "Споделено во разговор",
     "Error while sharing file" : "Грешка при споделување на датотека",
     "Error while clearing conversation history" : "Грешка при чистење на историјата во разговорот",
@@ -1015,6 +1013,8 @@ OC.L10N.register(
     "Fullscreen (F)" : "Приказ на цел екран (F)",
     "Mention room" : "Спомни соба",
     "Post to a conversation" : "Објави во разговор",
-    "Post to conversation" : "Објава во разговор"
+    "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Локацијата е објавена во овој избраниот <a href=\"{link}\">разговор</a>",
+    "An error occurred while posting location to conversation" : "Настана грешка при обид за објава на локација во разговор",
+    "Share to a conversation" : "Сподели во разговор"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

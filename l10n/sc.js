@@ -539,6 +539,7 @@ OC.L10N.register(
     "Users" : "Utentes",
     "Federation" : "Federatzione",
     "Beta" : "Beta",
+    "Permissions" : "Permissos",
     "General settings" : "Impostatziones generales",
     "Default notification settings" : "Impostatziones de notìfica predefinidas",
     "Default group notification" : "Notìfica de grupu predefinida",
@@ -673,7 +674,6 @@ OC.L10N.register(
     "Conversation settings" : "Impostatziones de sa resonada",
     "Personal" : "Personale",
     "Meeting" : "Atòbiu",
-    "Permissions" : "Permissos",
     "Matterbridge" : "Matterbridge",
     "Danger zone" : "Zona de perìgulu",
     "Be careful, these actions cannot be undone." : "Atentzione, custas atziones non si podent annullare",
@@ -1012,6 +1012,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Tue: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud est istadu agiornadu, torra a carrigare sa pàgina",
+    "Post to conversation" : "Pùblica in sa resonada",
     "Error while sharing file" : "Errore in sa cumpartzidura de s'archìviu",
     "Error while clearing conversation history" : "Errore limpiende s'istòria de sa resonada",
     "Error while uploading file \"{fileName}\"" : "Errore carrighende s'archìviu \"{fileName}\"",
@@ -1083,7 +1084,6 @@ OC.L10N.register(
     "Fullscreen (F)" : "Totu ischermu (F)",
     "Mention room" : "Mentova s'aposentu",
     "Post to a conversation" : "Pùblica in una resonada",
-    "Post to conversation" : "Pùblica in sa resonada",
     "Sending signaling message has failed." : "No at fatu a imbiare su messàgiu de signalatzione."
 },
 "nplurals=2; plural=(n != 1);");

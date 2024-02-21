@@ -553,6 +553,7 @@
     "Users" : "Korisnici",
     "Federation" : "Udruženje",
     "Beta" : "Beta",
+    "Permissions" : "Dopuštenja",
     "General settings" : "Opće postavke",
     "Default notification settings" : "Zadane postavke obavijesti",
     "Default group notification" : "Zadane obavijesti grupe",
@@ -693,7 +694,6 @@
     "Personal" : "Osobno",
     "Always show the device preview screen before joining a call in this conversation." : "Uvijek prikažite zaslon za pretpregled uređaja prije pridruživanja pozivu u ovom razgovoru.",
     "Meeting" : "Sastanak",
-    "Permissions" : "Dopuštenja",
     "Matterbridge" : "Matterbridge",
     "Danger zone" : "Zona opasnosti",
     "Be careful, these actions cannot be undone." : "Pažljivo nastavite jer ove radnje nije moguće poništiti.",
@@ -1053,6 +1053,7 @@
     "You: {lastMessage}" : "Vi: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu",
+    "Post to conversation" : "Objavi u razgovoru",
     "Error while sharing file" : "Pogreška pri dijeljenju datoteke",
     "Error while clearing conversation history" : "Pogreška pri brisanju povijesti razgovora",
     "Error while uploading file \"{fileName}\"" : "Pogreška pri otpremanju datoteke „{fileName}”",
@@ -1126,7 +1127,6 @@
     "Fullscreen (F)" : "Cijeli zaslon (F)",
     "Mention room" : "Spomeni sobu",
     "Post to a conversation" : "Objavite u razgovoru",
-    "Post to conversation" : "Objavi u razgovoru",
     "Sending signaling message has failed." : "Nije uspjelo slanje signalne poruke.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Potrebno je ažurirati konfigurirani signalni poslužitelj kako bi bio kompatibilan s ovom inačicom aplikacije Talk. Obratite se svom administratoru."
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"

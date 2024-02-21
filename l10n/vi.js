@@ -693,6 +693,7 @@ OC.L10N.register(
     "Show all files" : "Hiện tất cả tệp",
     "You: {lastMessage}" : "Bạn: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "vWorkspace Talk đã được cập nhật, vui lòng tải lại trang",
+    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Error while sharing file" : "Lỗi khi chia sẻ tệp",
     "Error while uploading file \"{fileName}\"" : "Lỗi khi tải lên tệp \"{fileName}\"",
     "Not enough free space to upload file \"{fileName}\"" : "Không đủ dung lượng trống để tải lên tệp \"{fileName}\"",
@@ -760,7 +761,6 @@ OC.L10N.register(
     "Rename conversation" : "Đổi tên cuộc đàm thoại",
     "Mention room" : "Nhắc đến phòng",
     "Post to a conversation" : "Đăng lên một cuộc trò chuyện",
-    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Sending signaling message has failed." : "Gửi tin nhắn báo hiệu không thành công."
 },
 "nplurals=1; plural=0;");
