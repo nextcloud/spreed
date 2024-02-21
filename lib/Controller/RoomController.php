@@ -28,6 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
@@ -89,6 +90,7 @@ use OCP\UserStatus\IUserStatus;
 use Psr\Log\LoggerInterface;
 
 /**
+ * @psalm-import-type TalkCapabilities from ResponseDefinitions
  * @psalm-import-type TalkParticipant from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
@@ -122,6 +124,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
+		protected Capabilities $capabilities,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -2147,5 +2150,28 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse();
+	}
+
+	/**
+	 * Get capabilities for a room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
+	 *
+	 * 200: Get capabilities successfully
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireParticipant]
+	public function getCapabilities(): DataResponse {
+		if ($this->room->getRemoteServer()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+			return $proxy->getCapabilities($this->room, $this->participant);
+		}
+
+		$capabilities = $this->capabilities->getCapabilities();
+		return new DataResponse($capabilities['spreed'] ?? [], Http::STATUS_OK, [
+			'X-Nextcloud-Talk-Hash' => sha1(json_encode($capabilities)),
+		]);
 	}
 }

@@ -120,5 +120,7 @@ return [
 		['name' => 'Room#setRecordingConsent', 'url' => '/api/{apiVersion}/room/{token}/recording-consent', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setMessageExpiration() */
 		['name' => 'Room#setMessageExpiration', 'url' => '/api/{apiVersion}/room/{token}/message-expiration', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::getCapabilities() */
+		['name' => 'Room#getCapabilities', 'url' => '/api/{apiVersion}/room/{token}/capabilities', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
 	],
 ];

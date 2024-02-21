@@ -38,6 +38,9 @@ use OCP\IUserSession;
 use OCP\Translation\ITranslationManager;
 use OCP\Util;
 
+/**
+ * @psalm-import-type TalkCapabilities from ResponseDefinitions
+ */
 class Capabilities implements IPublicCapability {
 	protected ICache $talkCache;
 
@@ -55,44 +58,7 @@ class Capabilities implements IPublicCapability {
 
 	/**
 	 * @return array{
-	 *      spreed: array{
-	 *          features: string[],
-	 *          config: array{
-	 *              attachments: array{
-	 *                  allowed: bool,
-	 *                  folder?: string,
-	 *              },
-	 *              call: array{
-	 *                  enabled: bool,
-	 *                  breakout-rooms: bool,
-	 *                  recording: bool,
-	 *                  recording-consent: int,
-	 *                  supported-reactions: string[],
-	 *                  predefined-backgrounds: string[],
-	 *                  can-upload-background: bool,
-	 *                  sip-enabled: bool,
-	 *                  sip-dialout-enabled: bool,
-	 *                  can-enable-sip: bool,
-	 *              },
-	 *              chat: array{
-	 *                  max-length: int,
-	 *                  read-privacy: int,
-	 *                  has-translation-providers: bool,
-	 *                  typing-privacy: int,
-	 *              },
-	 *              conversations: array{
-	 *                  can-create: bool,
-	 *              },
-	 *              previews: array{
-	 *                  max-gif-size: int,
-	 *              },
-	 *              signaling: array{
-	 *                  session-ping-limit: int,
-	 *                  hello-v2-token-key?: string,
-	 *              },
-	 *          },
-	 *          version: string,
-	 *       },
+	 *      spreed: TalkCapabilities,
 	 * }|array<empty>
 	 */
 	public function getCapabilities(): array {

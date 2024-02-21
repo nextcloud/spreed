@@ -36,6 +36,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 
 /**
+ * @psalm-import-type TalkCapabilities from ResponseDefinitions
  * @psalm-import-type TalkParticipant from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
@@ -85,6 +86,38 @@ class RoomController {
 		if ($proxy->getHeader('X-Nextcloud-Has-User-Statuses')) {
 			$headers['X-Nextcloud-Has-User-Statuses'] = (bool)$proxy->getHeader('X-Nextcloud-Has-User-Statuses');
 		}
+
+		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 *
+	 * 200: Get capabilities successfully
+	 */
+	public function getCapabilities(Room $room, Participant $participant): DataResponse {
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/capabilities',
+		);
+
+		try {
+			$content = $proxy->getBody();
+			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+			if (!is_array($responseData)) {
+				throw new \RuntimeException('JSON response is not an array');
+			}
+		} catch (\Throwable $e) {
+			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
+		}
+
+		/** @var TalkCapabilities|array<empty> $data */
+		$data = $responseData['ocs']['data'] ?? [];
+
+		$headers = ['X-Nextcloud-Talk-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash')];
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
