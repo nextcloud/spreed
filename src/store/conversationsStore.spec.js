@@ -103,6 +103,8 @@ describe('conversationsStore', () => {
 
 		addParticipantOnceAction = jest.fn()
 		testStoreConfig.modules.participantsStore.actions.addParticipantOnce = addParticipantOnceAction
+
+		console.debug = jest.fn()
 	})
 
 	afterEach(() => {
