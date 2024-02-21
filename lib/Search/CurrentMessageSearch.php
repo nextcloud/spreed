@@ -48,6 +48,11 @@ class CurrentMessageSearch extends MessageSearch {
 	 * @inheritDoc
 	 */
 	public function getOrder(string $route, array $routeParameters): ?int {
+		$currentUser = $this->userSession->getUser();
+		if ($currentUser && $this->talkConfig->isDisabledForUser($currentUser)) {
+			return null;
+		}
+
 		if ($route === 'spreed.Page.showCall') {
 			// In conversation, prefer this search results
 			return -3;

@@ -26,12 +26,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Search;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
@@ -44,6 +46,8 @@ class ConversationSearch implements IProvider {
 		protected Manager $manager,
 		protected IURLGenerator $url,
 		protected IL10N $l,
+		protected Config $talkConfig,
+		protected IUserSession $userSession,
 	) {
 	}
 
@@ -64,7 +68,12 @@ class ConversationSearch implements IProvider {
 	/**
 	 * @inheritDoc
 	 */
-	public function getOrder(string $route, array $routeParameters): int {
+	public function getOrder(string $route, array $routeParameters): ?int {
+		$currentUser = $this->userSession->getUser();
+		if ($currentUser && $this->talkConfig->isDisabledForUser($currentUser)) {
+			return null;
+		}
+
 		if (strpos($route, Application::APP_ID . '.') === 0) {
 			// Active app, prefer Talk results
 			return -1;
