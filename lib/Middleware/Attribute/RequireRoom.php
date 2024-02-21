@@ -26,7 +26,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware\Attribute;
 
 use Attribute;
+use OCA\Talk\Middleware\InjectionMiddleware;
 
+/**
+ * @see InjectionMiddleware::getRoom()
+ */
 #[Attribute(Attribute::TARGET_METHOD)]
 class RequireRoom {
 }
