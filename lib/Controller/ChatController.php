@@ -34,6 +34,7 @@ use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
@@ -199,6 +200,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * 413: Message too long
 	 * 429: Mention rate limit exceeded (guests only)
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
@@ -1159,6 +1161,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * 200: List of mention suggestions returned
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]

@@ -29,6 +29,7 @@ use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -38,6 +39,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversat
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
+use OCA\Talk\Middleware\Exceptions\FederationUnsupportedFeatureException;
 use OCA\Talk\Middleware\Exceptions\LobbyException;
 use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
@@ -76,6 +78,7 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
+	 * @throws FederationUnsupportedFeatureException
 	 * @throws LobbyException
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
@@ -115,6 +118,11 @@ class InjectionMiddleware extends Middleware {
 
 		if (!empty($reflectionMethod->getAttributes(RequireRoom::class))) {
 			$this->getRoom($controller);
+		}
+
+		if (empty($reflectionMethod->getAttributes(FederationSupported::class))) {
+			// When federation is not supported, the room needs to be local
+			$this->checkFederationSupport($controller);
 		}
 
 		if (!empty($reflectionMethod->getAttributes(RequireReadWriteConversation::class))) {
@@ -216,6 +224,17 @@ class InjectionMiddleware extends Middleware {
 
 	/**
 	 * @param AEnvironmentAwareController $controller
+	 * @throws FederationUnsupportedFeatureException
+	 */
+	protected function checkFederationSupport(AEnvironmentAwareController $controller): void {
+		$room = $controller->getRoom();
+		if ($room instanceof Room && $room->getRemoteServer() !== '') {
+			throw new FederationUnsupportedFeatureException();
+		}
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
 	 * @throws ReadOnlyException
 	 */
 	protected function checkReadOnlyState(AEnvironmentAwareController $controller): void {
@@ -297,6 +316,14 @@ class InjectionMiddleware extends Middleware {
 				}
 
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
+			}
+
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
+		}
+
+		if ($exception instanceof FederationUnsupportedFeatureException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_NOT_ACCEPTABLE);
 			}
 
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());
