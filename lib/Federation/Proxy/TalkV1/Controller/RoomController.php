@@ -68,22 +68,8 @@ class RoomController {
 			],
 		);
 
-		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
-			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
-		}
-
-		try {
-			$content = $proxy->getBody();
-			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
-			if (!is_array($responseData)) {
-				throw new \RuntimeException('JSON response is not an array');
-			}
-		} catch (\Throwable $e) {
-			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-		}
-
 		/** @var TalkParticipant[] $data */
-		$data = $responseData['ocs']['data'] ?? [];
+		$data = $this->proxy->getOCSData($proxy);
 
 		// FIXME post-load status information
 		/** @var TalkParticipant[] $data */
@@ -112,22 +98,8 @@ class RoomController {
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/capabilities',
 		);
 
-		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
-			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
-		}
-
-		try {
-			$content = $proxy->getBody();
-			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
-			if (!is_array($responseData)) {
-				throw new \RuntimeException('JSON response is not an array');
-			}
-		} catch (\Throwable $e) {
-			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-		}
-
 		/** @var TalkCapabilities|array<empty> $data */
-		$data = $responseData['ocs']['data'] ?? [];
+		$data = $this->proxy->getOCSData($proxy);
 
 		$headers = ['X-Nextcloud-Talk-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash')];
 

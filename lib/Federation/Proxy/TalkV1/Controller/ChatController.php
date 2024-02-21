@@ -74,28 +74,27 @@ class ChatController {
 			],
 		);
 
-		try {
-			$content = $proxy->getBody();
-			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
-			if (!is_array($responseData)) {
-				throw new \RuntimeException('JSON response is not an array');
-			}
-		} catch (\Throwable $e) {
-			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-		}
-
 		/** @var Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS $statusCode */
-		$statusCode = match ($proxy->getStatusCode()) {
-			Http::STATUS_CREATED,
-			Http::STATUS_BAD_REQUEST,
-			Http::STATUS_NOT_FOUND,
-			Http::STATUS_REQUEST_ENTITY_TOO_LARGE,
-			Http::STATUS_TOO_MANY_REQUESTS => $proxy->getStatusCode(),
-			default => $this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode()),
-		};
+		$statusCode = $proxy->getStatusCode();
 
 		if ($statusCode !== Http::STATUS_CREATED) {
+			if (in_array($statusCode, [
+				Http::STATUS_BAD_REQUEST,
+				Http::STATUS_NOT_FOUND,
+				Http::STATUS_REQUEST_ENTITY_TOO_LARGE,
+				Http::STATUS_TOO_MANY_REQUESTS,
+			], true)) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+			}
 			return new DataResponse([], $statusCode);
+		}
+
+		/** @var ?TalkChatMessageWithParent $data */
+		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_CREATED]);
+		if (!empty($data)) {
+			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+		} else {
+			$data = null;
 		}
 
 		$headers = [];
@@ -103,17 +102,9 @@ class ChatController {
 			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
 		}
 
-		/** @var ?TalkChatMessageWithParent $data */
-		$data = $responseData['ocs']['data'] ?? null;
-
-		if ($data !== null) {
-			/** @var ?TalkChatMessageWithParent $data */
-			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
-		}
-
 		return new DataResponse(
 			$data,
-			$statusCode,
+			Http::STATUS_CREATED,
 			$headers
 		);
 	}
@@ -139,22 +130,8 @@ class ChatController {
 			],
 		);
 
-		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
-			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
-		}
-
-		try {
-			$content = $proxy->getBody();
-			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
-			if (!is_array($responseData)) {
-				throw new \RuntimeException('JSON response is not an array');
-			}
-		} catch (\Throwable $e) {
-			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-		}
-
 		/** @var TalkChatMentionSuggestion[] $data */
-		$data = $responseData['ocs']['data'] ?? [];
+		$data = $this->proxy->getOCSData($proxy);
 		$data = $this->userConverter->convertAttendees($room, $data, 'source', 'id', 'label');
 
 		// FIXME post-load status information

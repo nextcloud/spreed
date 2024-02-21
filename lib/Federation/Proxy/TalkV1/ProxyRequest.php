@@ -158,4 +158,27 @@ class ProxyRequest {
 			throw $serverException;
 		}
 	}
+
+	/**
+	 * @param list<int> $allowedStatusCodes
+	 * @throws CannotReachRemoteException
+	 */
+	public function getOCSData(IResponse $response, array $allowedStatusCodes = [Http::STATUS_OK]): array {
+		if (!in_array($response->getStatusCode(), $allowedStatusCodes, true)) {
+			$this->logUnexpectedStatusCode(__METHOD__, $response->getStatusCode());
+		}
+
+		try {
+			$content = $response->getBody();
+			$responseData = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+			if (!is_array($responseData)) {
+				throw new \RuntimeException('JSON response is not an array');
+			}
+		} catch (\Throwable $e) {
+			$this->logger->error('Error parsing JSON response', ['exception' => $e]);
+			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
+		}
+
+		return $responseData['ocs']['data'] ?? [];
+	}
 }
