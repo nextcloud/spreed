@@ -310,7 +310,7 @@
 				<template #icon>
 					<Delete :size="20" />
 				</template>
-				{{ isGroup ? t('spreed', 'Remove group and members') : t('spreed', 'Remove participant') }}
+				{{ removeParticipantLabel }}
 			</NcActionButton>
 		</NcActions>
 
@@ -760,10 +760,6 @@ export default {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
 		},
 
-		isGroup() {
-			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
-		},
-
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
 		},
@@ -774,6 +770,18 @@ export default {
 				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
+		},
+
+		removeParticipantLabel() {
+			switch (this.participant.actorType) {
+			case ATTENDEE.ACTOR_TYPE.GROUPS:
+				return t('spreed', 'Remove group and members')
+			case ATTENDEE.ACTOR_TYPE.CIRCLES:
+				return t('spreed', 'Remove circle and members')
+			case ATTENDEE.ACTOR_TYPE.USERS:
+			default:
+				return t('spreed', 'Remove participant')
+			}
 		},
 
 		showModeratorLabel() {
