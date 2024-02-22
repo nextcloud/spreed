@@ -159,6 +159,7 @@ OC.L10N.register(
     "Favorite" : "Hacer favorito",
     "Disable" : "Deshabilitar",
     "Enable" : "Activar",
+    "The file must be a PNG or JPG" : "El archivo debe ser PNG o JPG",
     "Choose" : "Seleccionar",
     "Restricted" : "Restringido",
     "Personal" : "Personal",
