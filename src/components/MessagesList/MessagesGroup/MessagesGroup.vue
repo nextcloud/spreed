@@ -131,7 +131,7 @@ export default {
 		},
 
 		getLastEditor() {
-			if (!this.lastEditTimestamp) {
+			if (!this.lastEditTimestamp || this.messages[0].messageType === 'comment_deleted') {
 				return ''
 			} else if (this.messages[0].lastEditActorId === this.actorId
 				&& this.messages[0].lastEditActorType === this.actorType) {
