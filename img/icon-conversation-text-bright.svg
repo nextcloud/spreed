@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="16" width="16" version="1.1">
-	<circle r="16" cx="16" cy="16" fill="#DBDBDB"/>
-	<g transform="translate(8.000000, 8.000000)">
-		<path fill="#fff" d="m2.5 1c-0.28 0-0.5 0.22-0.5 0.5v13c0 0.28 0.22 0.5 0.5 0.5h11c0.28 0 0.5-0.22 0.5-0.5v-10.5l-3-3h-8.5zm1.5 2h6v1h-6v-1zm0 3h5v1h-5v-1zm0 3h8v1h-8v-1zm0 3h4v1h-4v-1z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" height="22" width="22" version="1.1">
+	<circle r="22" cx="22" cy="22" fill="#6B6B6B"/>
+	<g transform="translate(10.000000, 10.000000)">
+		<path fill="#fff" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z"/>
 	</g>
 </svg>

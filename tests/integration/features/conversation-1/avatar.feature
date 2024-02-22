@@ -149,8 +149,8 @@ Feature: conversation/avatar
     And the avatar svg of room "room" contains the string "123456"
     Then user "participant1" sets emoji "🍏" with color "null" as avatar of room "room" with 200 (v1)
     And the avatar svg of room "room" contains the string "🍏"
-    And the avatar svg of room "room" contains the string "DBDBDB"
-    And the avatar svg of room "room" not contains the string "3B3B3B"
+    And the avatar svg of room "room" contains the string "6B6B6B"
+    And the avatar svg of room "room" not contains the string "999999"
     And the dark avatar svg of room "room" contains the string "🍏"
-    And the dark avatar svg of room "room" not contains the string "DBDBDB"
-    And the dark avatar svg of room "room" contains the string "3B3B3B"
+    And the dark avatar svg of room "room" not contains the string "6B6B6B"
+    And the dark avatar svg of room "room" contains the string "999999"

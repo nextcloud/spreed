@@ -167,7 +167,10 @@ export default {
 		iconClass() {
 			if (this.item.isDummyConversation) {
 				// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
-				return 'icon-contacts'
+				// Also used in new conversation dialog
+				const type = this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-conversation-public' : 'icon-conversation-group'
+				const theme = isDarkTheme ? 'dark' : 'bright'
+				return `${type} icon--dummy icon--${theme}`
 			}
 
 			if (!supportsAvatar) {
@@ -201,11 +204,6 @@ export default {
 				return 'icon-contacts'
 			}
 
-			if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				// Public icon for new conversation dialog
-				return 'icon-public'
-			}
-
 			// Fall-through for other conversation suggestions to user-avatar handling
 			return undefined
 		},
@@ -215,7 +213,7 @@ export default {
 		},
 
 		avatarUrl() {
-			if (!supportsAvatar) {
+			if (!supportsAvatar || this.item.isDummyConversation) {
 				return undefined
 			}
 
@@ -242,7 +240,11 @@ export default {
 		height: var(--icon-size);
 		line-height: var(--icon-size);
 		background-size: calc(var(--icon-size) / 2);
-		background-color: var(--color-background-darker);
+		background-color: var(--color-text-maxcontrast);
+
+		&--dummy {
+			background-size: var(--icon-size);
+		}
 
 		&.icon-changelog {
 			background-size: cover !important;
