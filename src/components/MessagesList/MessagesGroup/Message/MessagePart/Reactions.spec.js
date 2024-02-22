@@ -282,6 +282,7 @@ describe('Reactions.vue', () => {
 		test('fetches reactions details when they are not available', async () => {
 			// Arrange
 			reactionsStore.resetReactions(token, messageId)
+			console.debug = jest.fn()
 			jest.spyOn(reactionsStore, 'fetchReactions')
 
 			const wrapper = shallowMount(Reactions, {
