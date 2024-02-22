@@ -42,6 +42,7 @@ use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -55,6 +56,7 @@ use OCP\Server;
 class Manager {
 
 	protected ICommentsManager $commentsManager;
+	protected ICache $cache;
 
 	public function __construct(
 		protected IDBConnection $db,
@@ -73,8 +75,10 @@ class Manager {
 		protected ITimeFactory $timeFactory,
 		protected IHasher $hasher,
 		protected IL10N $l,
+		ICacheFactory $cacheFactory,
 	) {
 		$this->commentsManager = $commentsManager;
+		$this->cache = $cacheFactory->createDistributed('talk/usertokens');
 	}
 
 	public function forAllRooms(callable $callback): void {
@@ -430,6 +434,8 @@ class Manager {
 				$roomService->setReadOnly($room, Room::READ_ONLY);
 			}
 		}
+
+		$this->cache->remove($user->getUID());
 	}
 
 	/**
@@ -437,6 +443,11 @@ class Manager {
 	 * @return string[]
 	 */
 	public function getRoomTokensForUser(string $userId): array {
+		$cachedTokens = $this->cache->get($userId);
+		if ($cachedTokens !== null) {
+			return $cachedTokens;
+		}
+
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.token')
 			->from('talk_attendees', 'a')
@@ -455,6 +466,8 @@ class Manager {
 			$roomTokens[] = $row['token'];
 		}
 		$result->closeCursor();
+
+		$this->cache->set($userId, $roomTokens, 300);
 
 		return $roomTokens;
 	}

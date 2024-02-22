@@ -38,6 +38,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\ICacheFactory;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -132,7 +133,8 @@ class BackendNotifierTest extends TestCase {
 			$dispatcher,
 			$timeFactory,
 			$this->createMock(IHasher::class),
-			$this->createMock(IL10N::class)
+			$this->createMock(IL10N::class),
+			$this->createMock(ICacheFactory::class),
 		);
 	}
 

@@ -76,6 +76,7 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
+use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -92,6 +93,7 @@ class ParticipantService {
 	protected array $actorCache;
 	/** @var array<int, array<string, Participant>> */
 	protected array $sessionCache;
+	protected ICache $cache;
 
 	public function __construct(
 		protected IConfig $serverConfig,
@@ -512,6 +514,9 @@ class ParticipantService {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();
 					}
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+					$cache = $this->cacheFactory->createDistributed('talk/usertokens');
+					$cache->remove($attendee->getActorId());
 				}
 			} catch (Exception $e) {
 				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
