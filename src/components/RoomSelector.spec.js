@@ -134,7 +134,7 @@ describe('RoomSelector.vue', () => {
 		await list.at(1).trigger('click')
 		await wrapper.findComponent(NcButton).vm.$emit('click')
 
-		expect(eventHandler).toHaveBeenCalledWith('token-3')
+		expect(eventHandler).toHaveBeenCalledWith(conversations[1])
 	})
 
 	test('emits close event', async () => {
