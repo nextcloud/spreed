@@ -67,6 +67,7 @@ describe('reactionsStore', () => {
 		// Arrange
 		const response = generateOCSResponse({ payload: reactions })
 		getReactionsDetails.mockResolvedValue(response)
+		console.debug = jest.fn()
 
 		// Act
 		reactionsStore.fetchReactions()
@@ -74,7 +75,7 @@ describe('reactionsStore', () => {
 		// Assert
 		expect(reactionsStore.getReactions(token, messageId)).toEqual(reactions)
 	})
-	it('updates reactions from the store', () => {
+	it('does not update reactions in the store twice', () => {
 		// Arrange
 		const newReactions = {
 			'🎄': [
@@ -90,6 +91,11 @@ describe('reactionsStore', () => {
 			]
 		}
 		// Act
+		reactionsStore.updateReactions({
+			token,
+			messageId,
+			reactionsDetails: newReactions
+		})
 		reactionsStore.updateReactions({
 			token,
 			messageId,
@@ -183,6 +189,7 @@ describe('reactionsStore', () => {
 		getReactionsDetails.mockResolvedValue(response)
 		jest.spyOn(reactionsStore, 'removeReaction')
 		jest.spyOn(reactionsStore, 'fetchReactions')
+		console.debug = jest.fn()
 
 		// Act
 		await reactionsStore.processReaction(token, message)

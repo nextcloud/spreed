@@ -24,6 +24,8 @@
 import 'regenerator-runtime/runtime'
 import Vue from 'vue'
 
+import { translate, translatePlural } from '@nextcloud/l10n'
+
 jest.mock('extendable-media-recorder', () => ({
 	MediaRecorder: jest.fn(),
 	register: jest.fn(),
@@ -125,9 +127,8 @@ global.BroadcastChannel = jest.fn(() => ({
 window.URL.createObjectURL = jest.fn()
 window.URL.revokeObjectURL = jest.fn()
 
-// TODO: use nextcloud-l10n lib once https://github.com/nextcloud/nextcloud-l10n/issues/271 is solved
-global.t = jest.fn().mockImplementation((app, text) => text)
-global.n = jest.fn().mockImplementation((app, text) => text)
+global.t = translate
+global.n = translatePlural
 
 Vue.prototype.t = global.t
 Vue.prototype.n = global.n

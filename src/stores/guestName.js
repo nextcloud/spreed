@@ -123,7 +123,7 @@ export const useGuestNameStore = defineStore('guestName', {
 					actorId,
 					actorDisplayName: previousName,
 				}, { noUpdate: false })
-				console.debug(error)
+				console.error(error)
 			}
 		},
 	},

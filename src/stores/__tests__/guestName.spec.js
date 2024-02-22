@@ -106,12 +106,6 @@ describe('guestNameStore', () => {
 		expect(store.getGuestName('token-1', 'actor-id1')).toBe('Guest')
 	})
 
-	test('translates default guest name', () => {
-
-		expect(store.getGuestName('token-1', 'actor-id0')).toBe('Guest')
-		expect(global.t).toHaveBeenCalledWith('spreed', 'Guest')
-	})
-
 	test('gets suffix with guest display name', () => {
 		// Arrange
 		const actor1 = {
@@ -123,8 +117,7 @@ describe('guestNameStore', () => {
 		store.addGuestName(actor1, { noUpdate: false })
 
 		// Assert
-		expect(store.getGuestNameWithGuestSuffix('token-1', 'actor-id1')).toBe('{guest} (guest)')
-		expect(global.t).toHaveBeenCalledWith('spreed', '{guest} (guest)', { guest: 'actor-display-name-one' })
+		expect(store.getGuestNameWithGuestSuffix('token-1', 'actor-id1')).toBe('actor-display-name-one (guest)')
 	})
 
 	test('does not get suffix for translatable default guest name', () => {
@@ -139,7 +132,6 @@ describe('guestNameStore', () => {
 
 		// Assert
 		expect(store.getGuestNameWithGuestSuffix('token-1', 'actor-id1')).toBe('Guest')
-		expect(global.t).toHaveBeenCalledWith('spreed', 'Guest')
 	})
 
 	test('stores the display name when guest submits it', async () => {
@@ -196,6 +188,7 @@ describe('guestNameStore', () => {
 			actorId: 'actor-id1',
 			actorDisplayName: 'old actor 1',
 		}
+		console.error = jest.fn()
 
 		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
 		store.addGuestName(actor1, { noUpdate: false })
