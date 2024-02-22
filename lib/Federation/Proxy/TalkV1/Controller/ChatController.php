@@ -110,6 +110,113 @@ class ChatController {
 	}
 
 	/**
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 *
+	 *  200: Messages returned
+	 *  304: No messages
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::getMessageContext()
+	 */
+	public function receiveMessages(
+		Room $room,
+		Participant $participant,
+		int $lookIntoFuture,
+		int $limit,
+		int $lastKnownMessageId,
+		int $lastCommonReadId,
+		int $timeout,
+		int $setReadMarker,
+		int $includeLastKnown,
+		int $noStatusUpdate,
+		int $markNotificationsAsRead): DataResponse {
+
+		// FIXME
+		// Poor-mans timeout, should later on cancel/trigger earlier,
+		// when we received a OCM message notifying us about a chat message
+		sleep($timeout);
+
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken(),
+			[
+				'lookIntoFuture' => $lookIntoFuture,
+				'limit' => $limit,
+				'lastKnownMessageId' => $lastKnownMessageId,
+				'lastCommonReadId' => $lastCommonReadId,
+				'timeout' => 0,
+				'setReadMarker' => $setReadMarker,
+				'includeLastKnown' => $includeLastKnown,
+				'noStatusUpdate' => $noStatusUpdate,
+				'markNotificationsAsRead' => $markNotificationsAsRead,
+			],
+		);
+
+		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
+			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+		}
+
+
+		$headers = [];
+		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
+			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+		}
+		if ($proxy->getHeader('X-Chat-Last-Given')) {
+			$headers['X-Chat-Last-Given'] = (string) (int) $proxy->getHeader('X-Chat-Last-Given');
+		}
+
+		/** @var TalkChatMessageWithParent[] $data */
+		$data = $this->proxy->getOCSData($proxy);
+		/** @var TalkChatMessageWithParent[] $data */
+		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+
+		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 *
+	 * 200: Message context returned
+	 * 304: No messages
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::getMessageContext()
+	 */
+	public function getMessageContext(Room $room, Participant $participant, int $messageId, int $limit): DataResponse {
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/' . $messageId . '/context',
+			[
+				'limit' => $limit,
+			],
+		);
+
+		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
+			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+		}
+
+
+		$headers = [];
+		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
+			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+		}
+		if ($proxy->getHeader('X-Chat-Last-Given')) {
+			$headers['X-Chat-Last-Given'] = (string) (int) $proxy->getHeader('X-Chat-Last-Given');
+		}
+
+		/** @var TalkChatMessageWithParent[] $data */
+		$data = $this->proxy->getOCSData($proxy);
+		/** @var TalkChatMessageWithParent[] $data */
+		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+
+		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
 	 * @see \OCA\Talk\Controller\ChatController::mentions()
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>

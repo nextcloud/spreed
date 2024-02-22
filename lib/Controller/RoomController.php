@@ -1462,7 +1462,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
-		$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
+		$isTalkFederation = $this->federationAuthenticator->isFederationRequest();
 		try {
 			// The participant is just joining, so enforce to not load any session
 			if (!$isTalkFederation) {
