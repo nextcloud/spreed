@@ -47,8 +47,8 @@
 						</span>
 					</div>
 					<NcButton type="tertiary"
-						aria-label="t('spreed', 'Decline invitation')"
-						title="t('spreed', 'Decline invitation')"
+						:aria-label="t('spreed', 'Decline invitation')"
+						:title="t('spreed', 'Decline invitation')"
 						:disabled="isLoading"
 						@click="rejectShare(item.id)">
 						<template #icon>
@@ -57,7 +57,8 @@
 						</template>
 					</NcButton>
 					<NcButton type="primary"
-						aria-label="t('spreed', 'Accept invitation')"
+						:aria-label="t('spreed', 'Accept invitation')"
+						:title="t('spreed', 'Accept invitation')"
 						:disabled="isLoading"
 						@click="acceptShare(item.id)">
 						<template #icon>
@@ -121,6 +122,7 @@ export default {
 				.map(item => ({
 					...item,
 					type: CONVERSATION.TYPE.GROUP,
+					isDummyConversation: true,
 				}))
 		},
 	},
@@ -201,6 +203,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			margin-right: auto;
+			padding-left: 4px;
 
 			&__name {
 				font-weight: bold;
