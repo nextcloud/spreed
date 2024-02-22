@@ -495,6 +495,7 @@ class ChatManager {
 	 * @param \DateTime $editTime
 	 * @param string $message
 	 * @return IComment
+	 * @throws MessageTooLongException
 	 * @throws \InvalidArgumentException When the message is empty or the shared object is not a file share with caption
 	 */
 	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {

@@ -122,6 +122,88 @@ class ProxyRequest {
 	 * @throws CannotReachRemoteException
 	 * @throws RemoteClientException
 	 */
+	public function put(
+		string $cloudId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $url,
+		array $parameters = [],
+	): IResponse {
+		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
+		if (!empty($parameters)) {
+			$requestOptions['json'] = $parameters;
+		}
+
+		try {
+			return $this->clientService->newClient()->put($url, $requestOptions);
+		} catch (ClientException $e) {
+			$status = $e->getResponse()->getStatusCode();
+
+			try {
+				$body = $e->getResponse()->getBody()->getContents();
+				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+				if (!is_array($data)) {
+					throw new \RuntimeException('JSON response is not an array');
+				}
+			} catch (\Throwable $e) {
+				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
+			}
+
+			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
+			$this->logger->error('Client error from remote', ['exception' => $clientException]);
+			throw $clientException;
+		} catch (ServerException|\Throwable $e) {
+			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
+			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
+			throw $serverException;
+		}
+	}
+
+	/**
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 */
+	public function delete(
+		string $cloudId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $url,
+		array $parameters = [],
+	): IResponse {
+		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
+		if (!empty($parameters)) {
+			$requestOptions['json'] = $parameters;
+		}
+
+		try {
+			return $this->clientService->newClient()->delete($url, $requestOptions);
+		} catch (ClientException $e) {
+			$status = $e->getResponse()->getStatusCode();
+
+			try {
+				$body = $e->getResponse()->getBody()->getContents();
+				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+				if (!is_array($data)) {
+					throw new \RuntimeException('JSON response is not an array');
+				}
+			} catch (\Throwable $e) {
+				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
+			}
+
+			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
+			$this->logger->error('Client error from remote', ['exception' => $clientException]);
+			throw $clientException;
+		} catch (ServerException|\Throwable $e) {
+			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
+			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
+			throw $serverException;
+		}
+	}
+
+	/**
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 */
 	public function post(
 		string $cloudId,
 		#[SensitiveParameter]

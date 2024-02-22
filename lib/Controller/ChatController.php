@@ -35,6 +35,7 @@ use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
+use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
@@ -721,12 +722,23 @@ class ChatController extends AEnvironmentAwareController {
 	 * 404: Message not found
 	 * 405: Deleting this message type is not allowed
 	 */
-	#[NoAdminRequired]
+	#[FederationSupported]
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
-	#[RequireParticipant]
+	#[RequireAuthenticatedParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function deleteMessage(int $messageId): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->deleteMessage(
+				$this->room,
+				$this->participant,
+				$messageId,
+			);
+		}
+
 		try {
 			$message = $this->chatManager->getComment($this->room, (string) $messageId);
 		} catch (NotFoundException $e) {
@@ -792,7 +804,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $messageId ID of the message
 	 * @param string $message the message to send
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
 	 *
 	 * 200: Message edited successfully
 	 * 202: Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services
@@ -800,13 +812,26 @@ class ChatController extends AEnvironmentAwareController {
 	 * 403: Missing permissions to edit message
 	 * 404: Message not found
 	 * 405: Editing this message type is not allowed
+	 * 413: Message too long
 	 */
-	#[NoAdminRequired]
+	#[FederationSupported]
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
-	#[RequireParticipant]
+	#[RequireAuthenticatedParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function editMessage(int $messageId, string $message): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->editMessage(
+				$this->room,
+				$this->participant,
+				$messageId,
+				$message,
+			);
+		}
+
 		try {
 			$comment = $this->chatManager->getComment($this->room, (string) $messageId);
 		} catch (NotFoundException $e) {
@@ -847,6 +872,8 @@ class ChatController extends AEnvironmentAwareController {
 				$this->timeFactory->getDateTime(),
 				$message
 			);
+		} catch (MessageTooLongException) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\InvalidArgumentException $e) {
 			if ($e->getMessage() === 'object_share') {
 				return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);

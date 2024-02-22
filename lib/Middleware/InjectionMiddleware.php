@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
+use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -96,6 +97,10 @@ class InjectionMiddleware extends Middleware {
 
 		$apiVersion = $this->request->getParam('apiVersion');
 		$controller->setAPIVersion((int) substr($apiVersion, 1));
+
+		if (!empty($reflectionMethod->getAttributes(RequireAuthenticatedParticipant::class))) {
+			$this->getLoggedInOrGuest($controller, false, requireFederationWhenNotLoggedIn: true);
+		}
 
 		if (!empty($reflectionMethod->getAttributes(RequireLoggedInParticipant::class))) {
 			$this->getLoggedIn($controller, false);
@@ -179,7 +184,11 @@ class InjectionMiddleware extends Middleware {
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired, bool $requireListedWhenNoParticipant = false): void {
+	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired, bool $requireListedWhenNoParticipant = false, bool $requireFederationWhenNotLoggedIn = false): void {
+		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isFederationRequest()) {
+			throw new ParticipantNotFoundException();
+		}
+
 		$room = $controller->getRoom();
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');

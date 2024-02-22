@@ -217,6 +217,121 @@ class ChatController {
 	}
 
 	/**
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 *
+	 * 200: Message edited successfully
+	 * 202: Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services
+	 * 400: Editing message is not possible, e.g. when the new message is empty or the message is too old
+	 * 403: Missing permissions to edit message
+	 * 404: Message not found
+	 * 405: Editing this message type is not allowed
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::editMessage()
+	 */
+	public function editMessage(Room $room, Participant $participant, int $messageId, string $message): DataResponse {
+		$proxy = $this->proxy->put(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/' . $messageId,
+			[
+				'message' => $message,
+			],
+		);
+
+		/** @var Http::STATUS_OK|Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE $statusCode */
+		$statusCode = $proxy->getStatusCode();
+
+		if ($statusCode !== Http::STATUS_OK && $statusCode !== Http::STATUS_ACCEPTED) {
+			if (in_array($statusCode, [
+				Http::STATUS_BAD_REQUEST,
+				Http::STATUS_FORBIDDEN,
+				Http::STATUS_NOT_FOUND,
+				Http::STATUS_REQUEST_ENTITY_TOO_LARGE,
+			], true)) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+			}
+			return new DataResponse([], $statusCode);
+		}
+
+		/** @var ?TalkChatMessageWithParent $data */
+		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
+		if (!empty($data)) {
+			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+		} else {
+			$data = null;
+		}
+
+		$headers = [];
+		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
+			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+		}
+
+		return new DataResponse(
+			$data,
+			$statusCode,
+			$headers
+		);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @throws CannotReachRemoteException
+	 * @throws RemoteClientException
+	 *
+	 * 200: Message deleted successfully
+	 * 202: Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere
+	 * 400: Deleting message is not possible
+	 * 403: Missing permissions to delete message
+	 * 404: Message not found
+	 * 405: Deleting this message type is not allowed
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::deleteMessage()
+	 */
+	public function deleteMessage(Room $room, Participant $participant, int $messageId): DataResponse {
+		$proxy = $this->proxy->delete(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/' . $messageId,
+		);
+
+		/** @var Http::STATUS_OK|Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE $statusCode */
+		$statusCode = $proxy->getStatusCode();
+
+		if ($statusCode !== Http::STATUS_OK && $statusCode !== Http::STATUS_ACCEPTED) {
+			if (in_array($statusCode, [
+				Http::STATUS_BAD_REQUEST,
+				Http::STATUS_FORBIDDEN,
+				Http::STATUS_NOT_FOUND,
+				Http::STATUS_REQUEST_ENTITY_TOO_LARGE,
+			], true)) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+			}
+			return new DataResponse([], $statusCode);
+		}
+
+		/** @var ?TalkChatMessageWithParent $data */
+		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
+		if (!empty($data)) {
+			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+		} else {
+			$data = null;
+		}
+
+		$headers = [];
+		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
+			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+		}
+
+		return new DataResponse(
+			$data,
+			$statusCode,
+			$headers
+		);
+	}
+
+	/**
 	 * @see \OCA\Talk\Controller\ChatController::mentions()
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
