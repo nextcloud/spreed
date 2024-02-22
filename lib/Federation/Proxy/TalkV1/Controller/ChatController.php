@@ -171,6 +171,7 @@ class ChatController {
 		$data = $this->proxy->getOCSData($proxy);
 		/** @var TalkChatMessageWithParent[] $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+		$data = $this->userConverter->convertAttendees($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
@@ -212,6 +213,7 @@ class ChatController {
 		$data = $this->proxy->getOCSData($proxy);
 		/** @var TalkChatMessageWithParent[] $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+		$data = $this->userConverter->convertAttendees($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
@@ -259,6 +261,7 @@ class ChatController {
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
 		if (!empty($data)) {
 			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+			$data = $this->userConverter->convertAttendee($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
 		} else {
 			$data = null;
 		}
@@ -315,6 +318,7 @@ class ChatController {
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
 		if (!empty($data)) {
 			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+			$data = $this->userConverter->convertAttendee($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
 		} else {
 			$data = null;
 		}
