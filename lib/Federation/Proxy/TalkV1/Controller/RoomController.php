@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
 use OCA\Talk\Exceptions\CannotReachRemoteException;
-use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Participant;
@@ -53,7 +52,6 @@ class RoomController {
 	 * @param bool $includeStatus Include the user statuses
 	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 200: Participants returned
 	 * 403: Missing permissions for getting participants
@@ -87,7 +85,6 @@ class RoomController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 200: Get capabilities successfully
 	 */

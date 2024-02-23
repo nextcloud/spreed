@@ -28,6 +28,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use OC\Http\Client\Response;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RemoteClientException;
 use OCP\AppFramework\Http;
@@ -78,8 +79,49 @@ class ProxyRequest {
 	}
 
 	/**
+	 * @param 'get'|'post'|'put'|'delete' $verb
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
+	 */
+	protected function request(
+		string $verb,
+		string $cloudId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $url,
+		array $parameters,
+	): IResponse {
+		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
+		if (!empty($parameters)) {
+			$requestOptions['json'] = $parameters;
+		}
+
+		try {
+			return $this->clientService->newClient()->{$verb}($url, $requestOptions);
+		} catch (ClientException $e) {
+			$status = $e->getResponse()->getStatusCode();
+
+			try {
+				$body = $e->getResponse()->getBody()->getContents();
+				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+				if (!is_array($data)) {
+					throw new \RuntimeException('JSON response is not an array');
+				}
+			} catch (\Throwable $e) {
+				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
+			}
+
+			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
+			$this->logger->debug('Client error from remote', ['exception' => $clientException]);
+			return new Response($e->getResponse(), false);
+		} catch (ServerException|\Throwable $e) {
+			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
+			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
+			throw $serverException;
+		}
+	}
+
+	/**
+	 * @throws CannotReachRemoteException
 	 */
 	public function get(
 		string $cloudId,
@@ -88,39 +130,17 @@ class ProxyRequest {
 		string $url,
 		array $parameters = [],
 	): IResponse {
-		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
-		if (!empty($parameters)) {
-			$requestOptions['json'] = $parameters;
-		}
-
-		try {
-			return $this->clientService->newClient()->get($url, $requestOptions);
-		} catch (ClientException $e) {
-			$status = $e->getResponse()->getStatusCode();
-
-			try {
-				$body = $e->getResponse()->getBody()->getContents();
-				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
-				if (!is_array($data)) {
-					throw new \RuntimeException('JSON response is not an array');
-				}
-			} catch (\Throwable $e) {
-				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-			}
-
-			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
-			$this->logger->error('Client error from remote', ['exception' => $clientException]);
-			throw $clientException;
-		} catch (ServerException|\Throwable $e) {
-			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
-			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
-			throw $serverException;
-		}
+		return $this->request(
+			'get',
+			$cloudId,
+			$accessToken,
+			$url,
+			$parameters,
+		);
 	}
 
 	/**
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 */
 	public function put(
 		string $cloudId,
@@ -129,39 +149,17 @@ class ProxyRequest {
 		string $url,
 		array $parameters = [],
 	): IResponse {
-		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
-		if (!empty($parameters)) {
-			$requestOptions['json'] = $parameters;
-		}
-
-		try {
-			return $this->clientService->newClient()->put($url, $requestOptions);
-		} catch (ClientException $e) {
-			$status = $e->getResponse()->getStatusCode();
-
-			try {
-				$body = $e->getResponse()->getBody()->getContents();
-				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
-				if (!is_array($data)) {
-					throw new \RuntimeException('JSON response is not an array');
-				}
-			} catch (\Throwable $e) {
-				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-			}
-
-			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
-			$this->logger->error('Client error from remote', ['exception' => $clientException]);
-			throw $clientException;
-		} catch (ServerException|\Throwable $e) {
-			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
-			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
-			throw $serverException;
-		}
+		return $this->request(
+			'put',
+			$cloudId,
+			$accessToken,
+			$url,
+			$parameters,
+		);
 	}
 
 	/**
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 */
 	public function delete(
 		string $cloudId,
@@ -170,39 +168,17 @@ class ProxyRequest {
 		string $url,
 		array $parameters = [],
 	): IResponse {
-		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
-		if (!empty($parameters)) {
-			$requestOptions['json'] = $parameters;
-		}
-
-		try {
-			return $this->clientService->newClient()->delete($url, $requestOptions);
-		} catch (ClientException $e) {
-			$status = $e->getResponse()->getStatusCode();
-
-			try {
-				$body = $e->getResponse()->getBody()->getContents();
-				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
-				if (!is_array($data)) {
-					throw new \RuntimeException('JSON response is not an array');
-				}
-			} catch (\Throwable $e) {
-				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-			}
-
-			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
-			$this->logger->error('Client error from remote', ['exception' => $clientException]);
-			throw $clientException;
-		} catch (ServerException|\Throwable $e) {
-			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
-			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
-			throw $serverException;
-		}
+		return $this->request(
+			'delete',
+			$cloudId,
+			$accessToken,
+			$url,
+			$parameters,
+		);
 	}
 
 	/**
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 */
 	public function post(
 		string $cloudId,
@@ -211,34 +187,13 @@ class ProxyRequest {
 		string $url,
 		array $parameters = [],
 	): IResponse {
-		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
-		if (!empty($parameters)) {
-			$requestOptions['json'] = $parameters;
-		}
-
-		try {
-			return $this->clientService->newClient()->post($url, $requestOptions);
-		} catch (ClientException $e) {
-			$status = $e->getResponse()->getStatusCode();
-
-			try {
-				$body = $e->getResponse()->getBody()->getContents();
-				$data = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
-				if (!is_array($data)) {
-					throw new \RuntimeException('JSON response is not an array');
-				}
-			} catch (\Throwable $e) {
-				throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
-			}
-
-			$clientException = new RemoteClientException($e->getMessage(), $status, $e, $data);
-			$this->logger->error('Client error from remote', ['exception' => $clientException]);
-			throw $clientException;
-		} catch (ServerException|\Throwable $e) {
-			$serverException = new CannotReachRemoteException($e->getMessage(), $e->getCode(), $e);
-			$this->logger->error('Could not reach remote', ['exception' => $serverException]);
-			throw $serverException;
-		}
+		return $this->request(
+			'post',
+			$cloudId,
+			$accessToken,
+			$url,
+			$parameters,
+		);
 	}
 
 	/**

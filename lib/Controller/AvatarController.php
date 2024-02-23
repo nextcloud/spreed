@@ -29,7 +29,6 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
-use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversation;
@@ -144,7 +143,7 @@ class AvatarController extends AEnvironmentAwareController {
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
 			try {
 				return $proxy->getAvatar($this->room, $this->participant, $darkTheme);
-			} catch (RemoteClientException|CannotReachRemoteException) {
+			} catch (CannotReachRemoteException) {
 				// Falling back to a local "globe" avatar for indicating the federation
 			}
 		}

@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
 use OCA\Talk\Exceptions\CannotReachRemoteException;
-use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Participant;
@@ -52,7 +51,6 @@ class ChatController {
 	 *
 	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
@@ -74,11 +72,9 @@ class ChatController {
 			],
 		);
 
-		/** @var Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS $statusCode */
 		$statusCode = $proxy->getStatusCode();
-
 		if ($statusCode !== Http::STATUS_CREATED) {
-			if (in_array($statusCode, [
+			if (!in_array($statusCode, [
 				Http::STATUS_BAD_REQUEST,
 				Http::STATUS_NOT_FOUND,
 				Http::STATUS_REQUEST_ENTITY_TOO_LARGE,
@@ -112,7 +108,6 @@ class ChatController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 *  200: Messages returned
 	 *  304: No messages
@@ -158,7 +153,6 @@ class ChatController {
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
 
-
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
 			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
@@ -179,7 +173,6 @@ class ChatController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 200: Message context returned
 	 * 304: No messages
@@ -199,7 +192,6 @@ class ChatController {
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
-
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
@@ -221,7 +213,6 @@ class ChatController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 200: Message edited successfully
 	 * 202: Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services
@@ -281,7 +272,6 @@ class ChatController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 200: Message deleted successfully
 	 * 202: Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere
@@ -340,7 +330,6 @@ class ChatController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
 	 * @throws CannotReachRemoteException
-	 * @throws RemoteClientException
 	 *
 	 * 200: List of mention suggestions returned
 	 */

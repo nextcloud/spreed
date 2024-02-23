@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
 use OCA\Talk\Exceptions\CannotReachRemoteException;
-use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
@@ -50,7 +49,6 @@ class AvatarController {
 	 * @see \OCA\Talk\Controller\AvatarController::getAvatar()
 	 *
 	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
-	 * @throws RemoteClientException
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Room avatar returned
@@ -64,6 +62,7 @@ class AvatarController {
 
 		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
 			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			throw new CannotReachRemoteException('Avatar request had unexpected status code');
 		}
 
 		$content = $proxy->getBody();

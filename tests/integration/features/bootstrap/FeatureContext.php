@@ -1946,6 +1946,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
 		$message = substr($message, 1, -1);
 		$message = str_replace('\n', "\n", $message);
+
+		if ($message === '413 Payload Too Large') {
+			$message .= "\n" . str_repeat('1', 32000);
+		}
+
 		if ($sendingMode === 'silent sends') {
 			$body = new TableNode([['message', $message], ['silent', true]]);
 		} else {

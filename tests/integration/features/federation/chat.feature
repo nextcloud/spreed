@@ -125,3 +125,28 @@ Feature: federation/chat
       | room | actorType       | actorId                  | actorDisplayName         | message                   | messageParameters | parentMessage             |
       | room | users           | participant2             | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}}                | Message deleted by author |
       | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |                           |
+
+  Scenario: Error handling of chatting (posting a too long message)
+    Given the following "spreed" app config is set
+      | federation_enabled | yes |
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant3" to room "room" with 200 (v4)
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 2    | LOCAL        | room        |
+    And user "participant3" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant3" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 2    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type |
+      | room | 2    |
+    And user "participant2" sends message "413 Payload Too Large" to room "LOCAL::room" with 413
