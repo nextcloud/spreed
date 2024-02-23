@@ -67,7 +67,7 @@ jobs:
           - 4444:3306/tcp
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
-        options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 5
+        options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 10
 
     steps:
       - name: Set app env
