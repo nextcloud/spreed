@@ -516,8 +516,7 @@ const actions = {
 	/**
 	 * Adds message to the store.
 	 *
-	 * If the message has a parent message object,
-	 * first it adds the parent to the store.
+	 * If the message has a parent message presented in the store, updates it as well.
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} payload payload;
@@ -533,9 +532,9 @@ const actions = {
 				|| message.systemMessage === 'reaction_deleted'
 				|| message.systemMessage === 'reaction_revoked'
 				|| message.systemMessage === 'message_edited')) {
-			// If parent message is presented in store already, we update it
+			// If parent message is presented in store and is different, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
-			if (Object.keys(parentInStore).length !== 0) {
+			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
 				context.commit('addMessage', { token, message: message.parent })
 				if (message.systemMessage === 'message_edited') {
 					EventBus.$emit('message-edited')
@@ -553,7 +552,7 @@ const actions = {
 			// Check existing messages for having a deleted message as parent, and update them
 			if (message.systemMessage === 'message_deleted') {
 				context.getters.messagesList(token)
-					.filter(storedMessage => storedMessage.parent?.id === message.parent.id)
+					.filter(storedMessage => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach(storedMessage => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
 					})
