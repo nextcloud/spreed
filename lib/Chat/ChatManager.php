@@ -469,6 +469,17 @@ class ChatManager {
 			])
 		);
 		$comment->setVerb(self::VERB_MESSAGE_DELETED);
+
+		$metaData = $comment->getMetaData() ?? [];
+		if (isset($metaData['last_edited_by_type'])) {
+			unset(
+				$metaData['last_edited_by_type'],
+				$metaData['last_edited_by_id'],
+				$metaData['last_edited_time']
+			);
+			$comment->setMetaData($metaData);
+		}
+
 		$this->commentsManager->save($comment);
 
 		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
