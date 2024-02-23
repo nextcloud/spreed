@@ -853,7 +853,7 @@ const actions = {
 					await context.dispatch('confirmForceJoinConversation', { token })
 				}
 			} else {
-				console.debug(error)
+				console.error(error)
 				showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
 			}
 		}
