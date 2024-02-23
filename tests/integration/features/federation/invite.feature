@@ -180,7 +180,7 @@ Feature: federation/invite
     And user "federation/participant2" sends message "Message 1" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | room |federated_users | participant2@http://localhost:8180 | participant2@http://localhost:8180 | Message 1   | []                |               |
+      | room |federated_users | participant2@http://localhost:8180 | participant2@localhost:8180 | Message 1   | []                |               |
 
   Scenario: Federate conversation meta data
     Given the following "spreed" app config is set
