@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\AutoComplete;
 
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -32,8 +33,6 @@ use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
-use OCP\IGroup;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
 
@@ -43,13 +42,13 @@ class SearchPlugin implements ISearchPlugin {
 
 	public function __construct(
 		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
 		protected GuestManager $guestManager,
 		protected TalkSession $talkSession,
 		protected ParticipantService $participantService,
 		protected Util $util,
 		protected ?string $userId,
 		protected IL10N $l,
+		protected Authenticator $federationAuthenticator,
 	) {
 	}
 
@@ -69,16 +68,28 @@ class SearchPlugin implements ISearchPlugin {
 		if ($this->room->getObjectType() === 'file') {
 			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
 			if (!empty($usersWithFileAccess)) {
-				$this->searchUsers($search, $usersWithFileAccess, $searchResult);
+				$users = [];
+				foreach ($usersWithFileAccess as $userId) {
+					$users[$userId] = $this->userManager->getDisplayName($userId) ?? $userId;
+				}
+				$this->searchUsers($search, $users, $searchResult);
 			}
 		}
 
-		$userIds = $groupIds = $guestAttendees = [];
+		/** @var array<string, string> $userIds */
+		$userIds = [];
+		/** @var array<string, string> $groupIds */
+		$groupIds = [];
+		/** @var array<string, string> $cloudIds */
+		$cloudIds = [];
+		/** @var list<Attendee> $guestAttendees */
+		$guestAttendees = [];
+
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
 			$participants = json_decode($this->room->getName(), true);
 			foreach ($participants as $userId) {
-				$userIds[] = $userId;
+				$userIds[$userId] = $this->userManager->getDisplayName($userId) ?? $userId;
 			}
 		} else {
 			$participants = $this->participantService->getParticipantsForRoom($this->room);
@@ -87,9 +98,11 @@ class SearchPlugin implements ISearchPlugin {
 				if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
 					$guestAttendees[] = $attendee;
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_USERS) {
-					$userIds[] = $attendee->getActorId();
+					$userIds[$attendee->getActorId()] = $attendee->getDisplayName();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+					$cloudIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
-					$groupIds[] = $attendee->getActorId();
+					$groupIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				}
 			}
 		}
@@ -97,17 +110,22 @@ class SearchPlugin implements ISearchPlugin {
 		$this->searchUsers($search, $userIds, $searchResult);
 		$this->searchGroups($search, $groupIds, $searchResult);
 		$this->searchGuests($search, $guestAttendees, $searchResult);
+		$this->searchFederatedUsers($search, $cloudIds, $searchResult);
 
 		return false;
 	}
 
-	protected function searchUsers(string $search, array $userIds, ISearchResult $searchResult): void {
+	/**
+	 * @param array<string|int, string> $users
+	 */
+	protected function searchUsers(string $search, array $users, ISearchResult $searchResult): void {
 		$search = strtolower($search);
 
 		$type = new SearchResultType('users');
 
 		$matches = $exactMatches = [];
-		foreach ($userIds as $userId) {
+		foreach ($users as $userId => $displayName) {
+			$userId = (string) $userId;
 			if ($this->userId !== '' && $this->userId === $userId) {
 				// Do not suggest the current user
 				continue;
@@ -118,32 +136,31 @@ class SearchPlugin implements ISearchPlugin {
 			}
 
 			if ($search === '') {
-				$matches[] = $this->createResult('user', $userId, '');
+				$matches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
 
 			if (strtolower($userId) === $search) {
-				$exactMatches[] = $this->createResult('user', $userId, '');
+				$exactMatches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
 
 			if (stripos($userId, $search) !== false) {
-				$matches[] = $this->createResult('user', $userId, '');
+				$matches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
 
-			$userDisplayName = $this->userManager->getDisplayName($userId);
-			if ($userDisplayName === null) {
+			if ($displayName === '') {
 				continue;
 			}
 
-			if (strtolower($userDisplayName) === $search) {
-				$exactMatches[] = $this->createResult('user', $userId, $userDisplayName);
+			if (strtolower($displayName) === $search) {
+				$exactMatches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
 
-			if (stripos($userDisplayName, $search) !== false) {
-				$matches[] = $this->createResult('user', $userId, $userDisplayName);
+			if (stripos($displayName, $search) !== false) {
+				$matches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
 		}
@@ -151,44 +168,99 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
-	protected function searchGroups(string $search, array $groupIds, ISearchResult $searchResult): void {
+	/**
+	 * @param array<string, string> $cloudIds
+	 */
+	protected function searchFederatedUsers(string $search, array $cloudIds, ISearchResult $searchResult): void {
+		$search = strtolower($search);
+
+		$type = new SearchResultType('federated_users');
+
+		$matches = $exactMatches = [];
+		foreach ($cloudIds as $cloudId => $displayName) {
+			if ($this->federationAuthenticator->getCloudId() === $cloudId) {
+				// Do not suggest the current user
+				continue;
+			}
+
+			if ($searchResult->hasResult($type, $cloudId)) {
+				continue;
+			}
+
+			if ($search === '') {
+				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				continue;
+			}
+
+			if (strtolower($cloudId) === $search) {
+				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				continue;
+			}
+
+			if (stripos($cloudId, $search) !== false) {
+				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				continue;
+			}
+
+			if ($displayName === '') {
+				continue;
+			}
+
+			if (strtolower($displayName) === $search) {
+				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				continue;
+			}
+
+			if (stripos($displayName, $search) !== false) {
+				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				continue;
+			}
+		}
+
+		$searchResult->addResultSet($type, $matches, $exactMatches);
+	}
+
+	/**
+	 * @param array<string|int, string> $groups
+	 */
+	protected function searchGroups(string $search, array $groups, ISearchResult $searchResult): void {
 		$search = strtolower($search);
 
 		$type = new SearchResultType('groups');
 
 		$matches = $exactMatches = [];
-		foreach ($groupIds as $groupId) {
+		foreach ($groups as $groupId => $displayName) {
+			if ($displayName === '') {
+				continue;
+			}
+
+			$groupId = (string) $groupId;
 			if ($searchResult->hasResult($type, $groupId)) {
 				continue;
 			}
 
 			if ($search === '') {
-				$matches[] = $this->createGroupResult($groupId);
+				$matches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
 			if (strtolower($groupId) === $search) {
-				$exactMatches[] = $this->createGroupResult($groupId);
+				$exactMatches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
 			if (stripos($groupId, $search) !== false) {
-				$matches[] = $this->createGroupResult($groupId);
+				$matches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
-			$group = $this->groupManager->get($groupId);
-			if (!$group instanceof IGroup) {
+			if (strtolower($displayName) === $search) {
+				$exactMatches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
-			if (strtolower($group->getDisplayName()) === $search) {
-				$exactMatches[] = $this->createGroupResult($group->getGID(), $group->getDisplayName());
-				continue;
-			}
-
-			if (stripos($group->getDisplayName(), $search) !== false) {
-				$matches[] = $this->createGroupResult($group->getGID(), $group->getDisplayName());
+			if (stripos($displayName, $search) !== false) {
+				$matches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 		}
@@ -198,7 +270,7 @@ class SearchPlugin implements ISearchPlugin {
 
 	/**
 	 * @param string $search
-	 * @param Attendee[] $attendees
+	 * @param list<Attendee> $attendees
 	 * @param ISearchResult $searchResult
 	 */
 	protected function searchGuests(string $search, array $attendees, ISearchResult $searchResult): void {
@@ -257,16 +329,7 @@ class SearchPlugin implements ISearchPlugin {
 		];
 	}
 
-	protected function createGroupResult(string $groupId, string $name = ''): array {
-		if ($name === '') {
-			$group = $this->groupManager->get($groupId);
-			if ($group instanceof IGroup) {
-				$name = $group->getDisplayName();
-			} else {
-				$name = $groupId;
-			}
-		}
-
+	protected function createGroupResult(string $groupId, string $name): array {
 		return [
 			'label' => $name,
 			'value' => [

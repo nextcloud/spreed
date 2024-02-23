@@ -84,6 +84,7 @@
 
 ### Attendee types
 * `users` - Logged-in users
+* `federated_users` - Federated users invited by their CloudID
 * `groups` - Groups
 * `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `guests` - Guest without a login
@@ -111,6 +112,7 @@
 * `bots` - Used by bots, commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 * `deleted_users` - Former logged-in users that got deleted (actor id is hardcoded to `deleted_users` and the display name is empty)
+* `federated_users` - Federated users
 
 ### Session states
 * `0` - Inactive (Notifications should still be sent, even though the user has this session in the room)

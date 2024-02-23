@@ -28,6 +28,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversation;
 use OCA\Talk\ResponseDefinitions;
@@ -38,7 +40,6 @@ use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
-use OCP\AppFramework\Http\Response;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
@@ -132,10 +133,20 @@ class AvatarController extends AEnvironmentAwareController {
 	 *
 	 * 200: Room avatar returned
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[RequireParticipantOrLoggedInAndListedConversation]
-	public function getAvatar(bool $darkTheme = false): Response {
+	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
+		if ($this->room->getRemoteServer()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
+			try {
+				return $proxy->getAvatar($this->room, $this->participant, $darkTheme);
+			} catch (CannotReachRemoteException) {
+				// Falling back to a local "globe" avatar for indicating the federation
+			}
+		}
 		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $darkTheme);
 
 		$response = new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => $file->getMimeType()]);
@@ -151,6 +162,7 @@ class AvatarController extends AEnvironmentAwareController {
 	 *
 	 * 200: Room avatar returned
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[RequireParticipantOrLoggedInAndListedConversation]

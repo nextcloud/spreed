@@ -492,6 +492,9 @@ class ParticipantService {
 			if (isset($participant['phoneNumber'])) {
 				$attendee->setPhoneNumber($participant['phoneNumber']);
 			}
+			if (isset($participant['invitedCloudId'])) {
+				$attendee->setInvitedCloudId($participant['invitedCloudId']);
+			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);

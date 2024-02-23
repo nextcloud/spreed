@@ -1,9 +1,8 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -21,16 +20,16 @@ declare(strict_types=1);
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
-namespace OCA\Talk\Middleware\Attribute;
+namespace OCA\Talk\Middleware\Exceptions;
 
-use Attribute;
-use OCA\Talk\Middleware\InjectionMiddleware;
+use OCP\AppFramework\Http;
 
-/**
- * @see InjectionMiddleware::getRoom()
- */
-#[Attribute(Attribute::TARGET_METHOD)]
-class RequireRoom {
+class FederationUnsupportedFeatureException extends \Exception {
+	public function __construct(
+	) {
+		parent::__construct('Feature is unsupported for federation', Http::STATUS_UPGRADE_REQUIRED);
+	}
 }

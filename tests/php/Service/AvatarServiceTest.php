@@ -39,6 +39,9 @@ use OCP\Server;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
+/**
+ * @group DB
+ */
 class AvatarServiceTest extends TestCase {
 	private AvatarService $service;
 	/** @var IAppData|MockObject */

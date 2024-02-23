@@ -28,6 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
@@ -37,9 +38,11 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -87,6 +90,7 @@ use OCP\UserStatus\IUserStatus;
 use Psr\Log\LoggerInterface;
 
 /**
+ * @psalm-import-type TalkCapabilities from ResponseDefinitions
  * @psalm-import-type TalkParticipant from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
@@ -119,6 +123,8 @@ class RoomController extends AEnvironmentAwareController {
 		protected IPhoneNumberUtil $phoneNumberUtil,
 		protected IThrottler $throttler,
 		protected LoggerInterface $logger,
+		protected Authenticator $federationAuthenticator,
+		protected Capabilities $capabilities,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -356,17 +362,26 @@ class RoomController extends AEnvironmentAwareController {
 				}
 			} else {
 				$action = 'talkFederationAccess';
-				$room = $this->manager->getRoomByRemoteAccess(
-					$token,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-					$this->getRemoteAccessToken(),
-				);
-				$participant = $this->participantService->getParticipantByActor(
-					$room,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-				);
+				try {
+					$room = $this->federationAuthenticator->getRoom();
+				} catch (RoomNotFoundException) {
+					$room = $this->manager->getRoomByRemoteAccess(
+						$token,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+						$this->federationAuthenticator->getAccessToken(),
+					);
+				}
+				try {
+					$participant = $this->federationAuthenticator->getParticipant();
+				} catch (ParticipantNotFoundException) {
+					$participant = $this->participantService->getParticipantByActor(
+						$room,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+					);
+					$this->federationAuthenticator->authenticated($room, $participant);
+				}
 			}
 
 			$statuses = [];
@@ -822,10 +837,17 @@ class RoomController extends AEnvironmentAwareController {
 	 * 200: Participants returned
 	 * 403: Missing permissions for getting participants
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
+		if ($this->room->getRemoteServer()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+			return $proxy->getParticipants($this->room, $this->participant, $includeStatus);
+		}
+
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
@@ -1000,6 +1022,8 @@ class RoomController extends AEnvironmentAwareController {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 				if ($this->talkConfig->isSIPConfigured()
@@ -1026,7 +1050,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Add a participant to a room
 	 *
 	 * @param string $newParticipant New participant
-	 * @param 'users'|'groups'|'circles'|'emails'|'remotes'|'phones' $source Source of the participant
+	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones' $source Source of the participant
 	 * @return DataResponse<Http::STATUS_OK, array{type: int}|array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Participant successfully added
@@ -1114,7 +1138,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			return new DataResponse($data);
-		} elseif ($source === 'remotes') {
+		} elseif ($source === 'federated_users') {
 			if (!$this->talkConfig->isFederationEnabled()) {
 				return new DataResponse([], Http::STATUS_NOT_IMPLEMENTED);
 			}
@@ -1438,7 +1462,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
-		$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
+		$isTalkFederation = $this->federationAuthenticator->isFederationRequest();
 		try {
 			// The participant is just joining, so enforce to not load any session
 			if (!$isTalkFederation) {
@@ -1446,12 +1470,16 @@ class RoomController extends AEnvironmentAwareController {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
 			} else {
 				$action = 'talkFederationAccess';
-				$room = $this->manager->getRoomByRemoteAccess(
-					$token,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-					$this->getRemoteAccessToken(),
-				);
+				try {
+					$room = $this->federationAuthenticator->getRoom();
+				} catch (RoomNotFoundException) {
+					$room = $this->manager->getRoomByRemoteAccess(
+						$token,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+						$this->federationAuthenticator->getAccessToken(),
+					);
+				}
 			}
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -1500,7 +1528,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoom($this->roomService, $room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
 			} elseif ($isTalkFederation) {
-				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessCloudId());
+				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 			}
@@ -1749,17 +1777,27 @@ class RoomController extends AEnvironmentAwareController {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 			} else {
-				$room = $this->manager->getRoomByRemoteAccess(
-					$token,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-					$this->getRemoteAccessToken(),
-				);
-				$participant = $this->participantService->getParticipantByActor(
-					$room,
-					Attendee::ACTOR_FEDERATED_USERS,
-					$this->getRemoteAccessCloudId(),
-				);
+				try {
+					$room = $this->federationAuthenticator->getRoom();
+				} catch (RoomNotFoundException) {
+					$room = $this->manager->getRoomByRemoteAccess(
+						$token,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+						$this->federationAuthenticator->getAccessToken(),
+					);
+				}
+
+				try {
+					$participant = $this->federationAuthenticator->getParticipant();
+				} catch (ParticipantNotFoundException) {
+					$participant = $this->participantService->getParticipantByActor(
+						$room,
+						Attendee::ACTOR_FEDERATED_USERS,
+						$this->federationAuthenticator->getCloudId(),
+					);
+					$this->federationAuthenticator->authenticated($room, $participant);
+				}
 			}
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {
@@ -2112,5 +2150,28 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse();
+	}
+
+	/**
+	 * Get capabilities for a room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
+	 *
+	 * 200: Get capabilities successfully
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireParticipant]
+	public function getCapabilities(): DataResponse {
+		if ($this->room->getRemoteServer()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+			return $proxy->getCapabilities($this->room, $this->participant);
+		}
+
+		$capabilities = $this->capabilities->getCapabilities();
+		return new DataResponse($capabilities['spreed'] ?? [], Http::STATUS_OK, [
+			'X-Nextcloud-Talk-Hash' => sha1(json_encode($capabilities)),
+		]);
 	}
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -32,5 +32,5 @@ use OCA\Talk\Middleware\InjectionMiddleware;
  * @see InjectionMiddleware::getRoom()
  */
 #[Attribute(Attribute::TARGET_METHOD)]
-class RequireRoom {
+class FederationSupported {
 }

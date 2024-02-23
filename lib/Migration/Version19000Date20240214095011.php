@@ -35,7 +35,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Add inviter information to the invites for rendering them outside of notifications later
  */
-class Version19000Date20240212155937 extends SimpleMigrationStep {
+class Version19000Date20240214095011 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
 	 * @param Closure(): ISchemaWrapper $schemaClosure
@@ -46,19 +46,26 @@ class Version19000Date20240212155937 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('talk_invitations');
-		if (!$table->hasColumn('inviter_cloud_id')) {
-			$table->addColumn('inviter_cloud_id', Types::STRING, [
+		$changed = false;
+
+		$table = $schema->getTable('talk_attendees');
+		if (!$table->hasColumn('invited_cloud_id')) {
+			$table->addColumn('invited_cloud_id', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
-			$table->addColumn('inviter_display_name', Types::STRING, [
-				'notnull' => false,
-				'length' => 255,
-			]);
-			return $schema;
+			$changed = true;
 		}
 
-		return null;
+		$table = $schema->getTable('talk_invitations');
+		if (!$table->hasColumn('local_cloud_id')) {
+			$table->addColumn('local_cloud_id', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
+			]);
+			$changed = true;
+		}
+
+		return $changed ? $schema : null;
 	}
 }

@@ -28,6 +28,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Controller\ChatController;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
@@ -111,6 +112,7 @@ class ChatControllerTest extends TestCase {
 	protected $trustedDomainHelper;
 	/** @var IL10N|MockObject */
 	private $l;
+	private Authenticator|MockObject $federationAuthenticator;
 
 	/** @var Room|MockObject */
 	protected $room;
@@ -148,6 +150,7 @@ class ChatControllerTest extends TestCase {
 		$this->richObjectValidator = $this->createMock(IValidator::class);
 		$this->trustedDomainHelper = $this->createMock(ITrustedDomainHelper::class);
 		$this->l = $this->createMock(IL10N::class);
+		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -189,7 +192,8 @@ class ChatControllerTest extends TestCase {
 			$this->eventDispatcher,
 			$this->richObjectValidator,
 			$this->trustedDomainHelper,
-			$this->l
+			$this->l,
+			$this->federationAuthenticator,
 		);
 	}
 

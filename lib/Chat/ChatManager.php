@@ -469,6 +469,17 @@ class ChatManager {
 			])
 		);
 		$comment->setVerb(self::VERB_MESSAGE_DELETED);
+
+		$metaData = $comment->getMetaData() ?? [];
+		if (isset($metaData['last_edited_by_type'])) {
+			unset(
+				$metaData['last_edited_by_type'],
+				$metaData['last_edited_by_id'],
+				$metaData['last_edited_time']
+			);
+			$comment->setMetaData($metaData);
+		}
+
 		$this->commentsManager->save($comment);
 
 		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
@@ -495,6 +506,7 @@ class ChatManager {
 	 * @param \DateTime $editTime
 	 * @param string $message
 	 * @return IComment
+	 * @throws MessageTooLongException
 	 * @throws \InvalidArgumentException When the message is empty or the shared object is not a file share with caption
 	 */
 	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {

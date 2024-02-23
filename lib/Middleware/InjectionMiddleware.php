@@ -24,10 +24,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Controller\AEnvironmentAwareController;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
+use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -37,6 +41,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversat
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
+use OCA\Talk\Middleware\Exceptions\FederationUnsupportedFeatureException;
 use OCA\Talk\Middleware\Exceptions\LobbyException;
 use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
@@ -61,9 +66,6 @@ use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\Bruteforce\MaxDelayReached;
 
 class InjectionMiddleware extends Middleware {
-	protected bool $isTalkFederation = false;
-	protected ?string $federationCloudId = null;
-
 	public function __construct(
 		protected IRequest $request,
 		protected ParticipantService $participantService,
@@ -72,11 +74,13 @@ class InjectionMiddleware extends Middleware {
 		protected ICloudIdManager $cloudIdManager,
 		protected IThrottler $throttler,
 		protected IURLGenerator $url,
+		protected Authenticator $federationAuthenticator,
 		protected ?string $userId,
 	) {
 	}
 
 	/**
+	 * @throws FederationUnsupportedFeatureException
 	 * @throws LobbyException
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
@@ -89,15 +93,14 @@ class InjectionMiddleware extends Middleware {
 			return;
 		}
 
-		$this->isTalkFederation = (bool) $this->request->getHeader('X-Nextcloud-Federation');
-		if ($this->isTalkFederation) {
-			$controller->setRemoteAccess($this->getRemoteAccessActorId(), $this->getRemoteAccessToken());
-		}
-
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 
 		$apiVersion = $this->request->getParam('apiVersion');
 		$controller->setAPIVersion((int) substr($apiVersion, 1));
+
+		if (!empty($reflectionMethod->getAttributes(RequireAuthenticatedParticipant::class))) {
+			$this->getLoggedInOrGuest($controller, false, requireFederationWhenNotLoggedIn: true);
+		}
 
 		if (!empty($reflectionMethod->getAttributes(RequireLoggedInParticipant::class))) {
 			$this->getLoggedIn($controller, false);
@@ -121,6 +124,11 @@ class InjectionMiddleware extends Middleware {
 
 		if (!empty($reflectionMethod->getAttributes(RequireRoom::class))) {
 			$this->getRoom($controller);
+		}
+
+		if (empty($reflectionMethod->getAttributes(FederationSupported::class))) {
+			// When federation is not supported, the room needs to be local
+			$this->checkFederationSupport($controller);
 		}
 
 		if (!empty($reflectionMethod->getAttributes(RequireReadWriteConversation::class))) {
@@ -176,18 +184,23 @@ class InjectionMiddleware extends Middleware {
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired, bool $requireListedWhenNoParticipant = false): void {
+	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired, bool $requireListedWhenNoParticipant = false, bool $requireFederationWhenNotLoggedIn = false): void {
+		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isFederationRequest()) {
+			throw new ParticipantNotFoundException();
+		}
+
 		$room = $controller->getRoom();
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
 			$sessionId = $this->talkSession->getSessionForRoom($token);
-			if (!$this->isTalkFederation) {
+			if (!$this->federationAuthenticator->isFederationRequest()) {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			} else {
-				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessActorId(), $this->getRemoteAccessToken());
+				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $this->federationAuthenticator->getAccessToken());
 
-				// Get and set the participant already so we don't retry public access
-				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessActorId());
+				// Get and set the participant already, so we don't retry public access
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
+				$this->federationAuthenticator->authenticated($room, $participant);
 				$controller->setParticipant($participant);
 			}
 			$controller->setRoom($room);
@@ -219,25 +232,15 @@ class InjectionMiddleware extends Middleware {
 		}
 	}
 
-	protected function getRemoteAccessActorId(): string {
-		if ($this->federationCloudId !== null) {
-			return $this->federationCloudId;
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 * @throws FederationUnsupportedFeatureException
+	 */
+	protected function checkFederationSupport(AEnvironmentAwareController $controller): void {
+		$room = $controller->getRoom();
+		if ($room instanceof Room && $room->getRemoteServer() !== '') {
+			throw new FederationUnsupportedFeatureException();
 		}
-		$authUser = $this->request->server['PHP_AUTH_USER'] ?? '';
-		$authUser = urldecode($authUser);
-
-		try {
-			$cloudId = $this->cloudIdManager->resolveCloudId($authUser);
-			$this->federationCloudId = $cloudId->getId();
-		} catch (\InvalidArgumentException) {
-			$this->federationCloudId = '';
-		}
-
-		return $this->federationCloudId;
-	}
-
-	protected function getRemoteAccessToken(): string {
-		return $this->request->server['PHP_AUTH_PW'] ?? '';
 	}
 
 	/**
@@ -323,6 +326,22 @@ class InjectionMiddleware extends Middleware {
 				}
 
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
+			}
+
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
+		}
+
+		if ($exception instanceof CannotReachRemoteException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_UNPROCESSABLE_ENTITY);
+			}
+
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
+		}
+
+		if ($exception instanceof FederationUnsupportedFeatureException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_NOT_ACCEPTABLE);
 			}
 
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());

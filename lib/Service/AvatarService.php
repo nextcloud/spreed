@@ -304,6 +304,9 @@ class AvatarService {
 		if ($room->getObjectType() === Room::OBJECT_TYPE_PHONE) {
 			return __DIR__ . '/../../img/icon-conversation-phone-' . $colorTone . '.svg';
 		}
+		if ($room->getRemoteServer() !== '') {
+			return __DIR__ . '/../../img/icon-conversation-federation-' . $colorTone . '.svg';
+		}
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return __DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg';
 		}

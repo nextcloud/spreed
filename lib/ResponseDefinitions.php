@@ -103,6 +103,7 @@ namespace OCA\Talk;
  *     accessToken: string,
  *     id: int,
  *     state: int,
+ *     localCloudId: string,
  *     localRoomId: int,
  *     remoteAttendeeId: int,
  *     remoteServerUrl: string,
@@ -263,6 +264,45 @@ namespace OCA\Talk;
  *     ticket: string,
  *     turnservers: array{urls: string[], username: string, credential: mixed}[],
  *     userId: ?string,
+ * }
+ *
+ * @psalm-type TalkCapabilities = array{
+ *     features: string[],
+ *     config: array{
+ *         attachments: array{
+ *             allowed: bool,
+ *             folder?: string,
+ *         },
+ *         call: array{
+ *             enabled: bool,
+ *             breakout-rooms: bool,
+ *             recording: bool,
+ *             recording-consent: int,
+ *             supported-reactions: string[],
+ *             predefined-backgrounds: string[],
+ *             can-upload-background: bool,
+ *             sip-enabled: bool,
+ *             sip-dialout-enabled: bool,
+ *             can-enable-sip: bool,
+ *         },
+ *         chat: array{
+ *             max-length: int,
+ *             read-privacy: int,
+ *             has-translation-providers: bool,
+ *             typing-privacy: int,
+ *         },
+ *         conversations: array{
+ *             can-create: bool,
+ *         },
+ *         previews: array{
+ *             max-gif-size: int,
+ *         },
+ *         signaling: array{
+ *             session-ping-limit: int,
+ *             hello-v2-token-key?: string,
+ *         },
+ *     },
+ *     version: string,
  * }
  */
 class ResponseDefinitions {

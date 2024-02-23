@@ -28,6 +28,7 @@ use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -1001,7 +1002,8 @@ class SignalingControllerTest extends TestCase {
 			$dispatcher,
 			$this->timeFactory,
 			$this->createMock(IHasher::class),
-			$this->createMock(IL10N::class)
+			$this->createMock(IL10N::class),
+			$this->createMock(Authenticator::class),
 		);
 		$this->recreateSignalingController();
 

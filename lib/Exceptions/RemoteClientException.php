@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -21,16 +21,22 @@ declare(strict_types=1);
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
-namespace OCA\Talk\Middleware\Attribute;
+namespace OCA\Talk\Exceptions;
 
-use Attribute;
-use OCA\Talk\Middleware\InjectionMiddleware;
+class RemoteClientException extends \Exception {
+	public function __construct(
+		string $message = '',
+		int $code = 0,
+		?\Throwable $previous = null,
+		protected array $responseData = [],
+	) {
+		parent::__construct($message, $code, $previous);
+	}
 
-/**
- * @see InjectionMiddleware::getRoom()
- */
-#[Attribute(Attribute::TARGET_METHOD)]
-class RequireRoom {
+	public function getResponseData(): array {
+		return $this->responseData;
+	}
 }

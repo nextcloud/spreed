@@ -46,6 +46,7 @@ use OCP\IUserManager;
 class MessageParser {
 
 	protected array $guestNames = [];
+	protected array $federatedUsersNames = [];
 	protected array $bots = [];
 	protected array $botNames = [];
 
@@ -154,8 +155,18 @@ class MessageParser {
 				}
 			}
 		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
-			// FIXME Read from some addressbooks?
-			$displayName = $actorId;
+			if (isset($this->federatedUsersNames[$actorId])) {
+				$displayName = $this->federatedUsersNames[$actorId];
+			} else {
+				$displayName = $actorId;
+				try {
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_FEDERATED_USERS, $actorId);
+					$displayName = $participant->getAttendee()->getDisplayName();
+				} catch (ParticipantNotFoundException) {
+					// FIXME Read from some addressbooks?
+				}
+				$this->federatedUsersNames[$actorId] = $displayName;
+			}
 		}
 
 		return [

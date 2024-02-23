@@ -540,6 +540,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($formData) {
 			if ($status === 200) {
+				if (!isset(self::$tokenToIdentifier[$response['token']])) {
+					self::$identifierToToken[$server . '::' . $roomName] = $response['token'];
+				}
+
 				$this->assertRooms([$response], $formData);
 			} else {
 				Assert::assertSame($formData->getRowsHash(), $response);
@@ -1658,7 +1662,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" adds (user|group|email|circle|remote|phone) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" adds (user|group|email|circle|federated_user|phone) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $newType
@@ -1670,7 +1674,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
-		if ($newType === 'remote') {
+		if ($newType === 'federated_user') {
 			$newId .= '@' . $this->baseRemoteUrl;
 		}
 
@@ -1942,6 +1946,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
 		$message = substr($message, 1, -1);
 		$message = str_replace('\n', "\n", $message);
+
+		if ($message === '413 Payload Too Large') {
+			$message .= "\n" . str_repeat('1', 32000);
+		}
+
 		if ($sendingMode === 'silent sends') {
 			$body = new TableNode([['message', $message], ['silent', true]]);
 		} else {
@@ -2648,6 +2657,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			$expected[$i]['message'] = str_replace('\n', "\n", $expected[$i]['message']);
 
+
+			if (str_ends_with($expected[$i]['actorId'], '@{$BASE_URL}')) {
+				$expected[$i]['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['actorId']);
+			}
+			if (str_ends_with($expected[$i]['actorId'], '@{$REMOTE_URL}')) {
+				$expected[$i]['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['actorId']);
+			}
+
+			if (isset($expected[$i]['lastEditActorId'])) {
+				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$BASE_URL}')) {
+					$expected[$i]['lastEditActorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['lastEditActorId']);
+				}
+				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$REMOTE_URL}')) {
+					$expected[$i]['lastEditActorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['lastEditActorId']);
+				}
+			}
+
 			if ($expected[$i]['actorType'] === 'bots') {
 				$result = preg_match('/BOT\(([^)]+)\)/', $expected[$i]['actorId'], $matches);
 				if ($result && isset(self::$botNameToHash[$matches[1]])) {
@@ -2676,6 +2702,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				'message' => $message['message'],
 				'messageParameters' => json_encode($message['messageParameters']),
 			];
+
 			if ($includeParents) {
 				$data['parentMessage'] = $message['parent']['message'] ?? '';
 			}
@@ -2703,6 +2730,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['lastEditActorId'] = self::$sessionIdToUser[$message['lastEditActorId']];
 				}
 			}
+
+
 			return $data;
 		}, $messages, $expected));
 	}
@@ -2823,7 +2852,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
+		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match' . "\n" . json_encode($mentions, JSON_PRETTY_PRINT));
 
 		usort($mentions, function ($a, $b) {
 			if ($a['source'] === $b['source']) {
@@ -2844,6 +2873,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if ($row['id'] === 'GUEST_ID') {
 				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
+			}
+			if (str_ends_with($row['id'], '@{$BASE_URL}')) {
+				$row['id'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $row['id']);
+			}
+			if (str_ends_with($row['id'], '@{$REMOTE_URL}')) {
+				$row['id'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['id']);
 			}
 			if (array_key_exists('avatar', $row)) {
 				Assert::assertRegExp('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
