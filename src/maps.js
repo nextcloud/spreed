@@ -20,6 +20,7 @@
  *
  */
 
+import escapeHtml from 'escape-html'
 import Vue from 'vue'
 
 import { getRequestToken } from '@nextcloud/auth'
@@ -27,17 +28,16 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
-import RoomSelector from './components/RoomSelector.vue'
-
 import { postRichObjectToConversation } from './services/messagesService.js'
 
 (function(OC, OCA, t, n) {
 	/**
 	 * @param {object} location Geo location object
-	 * @param {string} token Conversation token to be posted to
-	 * @return {Promise<void>}
+	 * @param {object} conversation The conversation object given by the RoomSelector
+	 * @param {string} conversation.token The conversation token
+	 * @param {string} conversation.displayName The conversation display name
 	 */
-	async function postLocationToRoom(location, token) {
+	async function postLocationToRoom(location, { token, displayName }) {
 		try {
 			const response = await postRichObjectToConversation(token, {
 				objectType: 'geo-location',
@@ -46,9 +46,10 @@ import { postRichObjectToConversation } from './services/messagesService.js'
 			})
 			const messageId = response.data.ocs.data.id
 			const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
-			showSuccess(t('spreed', 'Location has been posted to the selected <a href="{link}">conversation</a>', {
-				link: targetUrl,
-			}), {
+
+			showSuccess(t('spreed', 'Location has been posted to {conversation}')
+				.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
+			{
 				isHTML: true,
 			})
 		} catch (exception) {
@@ -78,24 +79,26 @@ import { postRichObjectToConversation } from './services/messagesService.js'
 				const body = document.getElementById('body-user')
 				body.appendChild(container)
 
-				const ComponentVM = Vue.extend(RoomSelector)
-				const vm = new ComponentVM({
+				const RoomSelector = () => import('./components/RoomSelector.vue')
+				const vm = new Vue({
 					el: container,
-					propsData: {
-						dialogTitle: t('spreed', 'Share to conversation'),
-						showPostableOnly: true,
-					},
+					render: h => h(RoomSelector, {
+						props: {
+							dialogTitle: t('spreed', 'Share to conversation'),
+							showPostableOnly: true,
+						},
+					}),
 				})
 
 				vm.$root.$on('close', () => {
 					vm.$el.remove()
 					vm.$destroy()
 				})
-				vm.$root.$on('select', (token) => {
+				vm.$root.$on('select', (conversation) => {
 					vm.$el.remove()
 					vm.$destroy()
 
-					postLocationToRoom(location, token)
+					postLocationToRoom(location, conversation)
 				})
 			},
 		})
