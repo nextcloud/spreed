@@ -2652,6 +2652,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			$expected[$i]['message'] = str_replace('\n', "\n", $expected[$i]['message']);
 
+
+			if (str_ends_with($expected[$i]['actorId'], '@{$BASE_URL}')) {
+				$expected[$i]['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['actorId']);
+			}
+			if (str_ends_with($expected[$i]['actorId'], '@{$REMOTE_URL}')) {
+				$expected[$i]['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['actorId']);
+			}
+
+			if (isset($expected[$i]['lastEditActorId'])) {
+				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$BASE_URL}')) {
+					$expected[$i]['lastEditActorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['lastEditActorId']);
+				}
+				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$REMOTE_URL}')) {
+					$expected[$i]['lastEditActorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['lastEditActorId']);
+				}
+			}
+
 			if ($expected[$i]['actorType'] === 'bots') {
 				$result = preg_match('/BOT\(([^)]+)\)/', $expected[$i]['actorId'], $matches);
 				if ($result && isset(self::$botNameToHash[$matches[1]])) {
@@ -2680,6 +2697,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				'message' => $message['message'],
 				'messageParameters' => json_encode($message['messageParameters']),
 			];
+
 			if ($includeParents) {
 				$data['parentMessage'] = $message['parent']['message'] ?? '';
 			}
@@ -2707,6 +2725,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['lastEditActorId'] = self::$sessionIdToUser[$message['lastEditActorId']];
 				}
 			}
+
+
 			return $data;
 		}, $messages, $expected));
 	}
