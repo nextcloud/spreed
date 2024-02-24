@@ -1762,6 +1762,7 @@ OC.L10N.register(
     "Creating your conversation" : "正在建立對話",
     "All set" : "都準備好了",
     "Conversation name" : "對話名稱",
+    "The message has been forwarded" : "已轉寄訊息",
     "Poll ・ You voted already" : "投票 ・ 您已投票",
     "Poll ・ Click to vote" : "投票 ・ 點擊以投票",
     "Poll ・ Ended" : "投票 ・ 已結束",
