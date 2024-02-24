@@ -1177,6 +1177,7 @@ OC.L10N.register(
     "Joined via phone" : "Присъединен по телефона",
     "Raised their hand" : "Вдигнаха ръка",
     "Remove group and members" : "Премахване на групата и на членовете",
+    "Remove circle and members" : "Премахване на кръга и на членовете",
     "Remove participant" : "Премахване на участник",
     "Invitation was sent to {actorId}" : "Беше изпратена покана до {actorId}",
     "Could not send invitation to {actorId}" : "Не можа да се изпрати покана до {actorId}",

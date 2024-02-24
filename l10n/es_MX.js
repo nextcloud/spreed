@@ -12,6 +12,7 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n otro","otros %n","otros %n"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Fuiste invitado a una<strong>conversación</strong> o tuviste una <strong>llamada</strong>",
+    "Other activities" : "Otras actividades",
     "Talk" : "Hablar",
     "Guest" : "Invitado",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge y Safari ahora pueden ser usados para participar en llamdas de audio y video llamadas",
