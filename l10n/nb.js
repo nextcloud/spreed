@@ -1762,6 +1762,7 @@ OC.L10N.register(
     "Creating your conversation" : "Opprett din samtale",
     "All set" : "Alt klart",
     "Conversation name" : "Samtalenavn",
+    "The message has been forwarded" : "Meldingen er videresendt",
     "Poll ・ You voted already" : "Avstemning ・ Du har allerede stemt",
     "Poll ・ Click to vote" : "Avstemning ・ Klikk for å stemme",
     "Poll ・ Ended" : "Avstemning ・ Avsluttet",
