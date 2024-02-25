@@ -70,6 +70,7 @@ OC.L10N.register(
     "{actor} demoted you from moderator" : "{actor} te degradó de moderador",
     "{actor} shared a file which is no longer available" : "{actor} compartió un archivo que ya no está disponible",
     "You shared a file which is no longer available" : "Compartiste un archivo que ya no está disponible",
+    "Message deleted by author" : "Mensaje eliminado por el autor",
     "%s (guest)" : "%s (invitado)",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Llamada con %n invitado (Duración {duration})","Llamada con %n invitados (Duración {duration})","Llamada con %n invitados (Duración {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Llamada con {user1} y {user2} (Duración {duration})",
