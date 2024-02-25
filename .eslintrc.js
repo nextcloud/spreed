@@ -1,6 +1,7 @@
 module.exports = {
 	extends: [
 		'@nextcloud',
+		'@nextcloud/eslint-config/typescript',
 	],
 	globals: {
 		// @nextcloud/webpack-vue-config globals
@@ -12,6 +13,7 @@ module.exports = {
 	rules: {
 		'comma-dangle': 'off',
 		'jsdoc/no-defaults': 'off',
+		'@typescript-eslint/no-unused-vars': 'off',
 		'import/newline-after-import': 'warn',
 		'import/no-named-as-default-member': 'off',
 		'import/order': [

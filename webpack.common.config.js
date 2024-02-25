@@ -31,6 +31,7 @@ module.exports = mergeWithRules({
 			test: 'match',
 			loader: 'replace',
 			options: 'replace',
+			use: 'replace',
 		},
 	},
 })({
@@ -61,6 +62,17 @@ module.exports = mergeWithRules({
 					'tributejs',
 					'webdav',
 				]),
+			},
+			{
+				test: /\.tsx?$/,
+				use: [{
+					loader: 'esbuild-loader',
+					options: {
+						// Implicitly set as TS loader so only <script lang="ts"> Vue SFCs will be transpiled
+						loader: 'ts',
+						target: 'es2020',
+					},
+				}]
 			},
 			{
 				test: /\.wasm$/i,
