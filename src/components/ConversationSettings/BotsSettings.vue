@@ -56,7 +56,7 @@ import Vue from 'vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { BOT } from '../../constants.js'
-import { useBotsStore } from '../../stores/bots.js'
+import { useBotsStore } from '../../stores/bots.ts'
 
 export default {
 	name: 'BotsSettings',

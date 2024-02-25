@@ -106,7 +106,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { BOT } from '../../constants.js'
-import { getAllBots } from '../../services/botsService.js'
+import { getAllBots } from '../../services/botsService.ts'
 
 export default {
 	name: 'BotsSettings',

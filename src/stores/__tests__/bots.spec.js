@@ -4,11 +4,11 @@ import {
 	getConversationBots,
 	disableBotForConversation,
 	enableBotForConversation,
-} from '../../services/botsService.js'
+} from '../../services/botsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
-import { useBotsStore } from '../bots.js'
+import { useBotsStore } from '../bots.ts'
 
-jest.mock('../../services/botsService', () => ({
+jest.mock('../../services/botsService.ts', () => ({
 	getConversationBots: jest.fn(),
 	disableBotForConversation: jest.fn(),
 	enableBotForConversation: jest.fn(),
