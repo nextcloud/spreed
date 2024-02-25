@@ -849,6 +849,7 @@ OC.L10N.register(
     "Translate from" : "Översätt från",
     "Contact" : "Kontakt",
     "{stack} in {board}" : "{stack} i {board}",
+    "Copy code block" : "Kopiera kodblock",
     "You are not allowed to share files" : "Du tillåẗs inte dela filer",
     "No messages" : "Inga meddelanden",
     "Today" : "Idag",
