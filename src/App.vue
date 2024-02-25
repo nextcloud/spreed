@@ -38,6 +38,7 @@
 
 <script>
 import debounce from 'debounce'
+import { provide } from 'vue'
 import PreventUnload from 'vue-prevent-unload'
 
 import { getCurrentUser } from '@nextcloud/auth'
@@ -81,6 +82,9 @@ export default {
 	},
 
 	setup() {
+		// Add provided value to check if we're in the main app or plugin
+		provide('Talk:isMainApp', true)
+
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
