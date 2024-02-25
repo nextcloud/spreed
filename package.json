@@ -9,6 +9,8 @@
     "dev": "webpack --node-env development --progress",
     "watch": "webpack --node-env development --progress --watch",
     "serve": "webpack serve --node-env development --progress --allowed-hosts all",
+    "typescript:check": "tsc --noEmit",
+    "typescript:generate": "npx openapi-typescript \"./openapi*.json\" --immutable -t -o src/types/openapi/",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
