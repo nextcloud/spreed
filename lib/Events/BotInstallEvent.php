@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
+use OCA\Talk\Model\Bot;
 use OCP\EventDispatcher\Event;
 
 class BotInstallEvent extends Event {
@@ -33,6 +34,7 @@ class BotInstallEvent extends Event {
 		protected string $secret,
 		protected string $url,
 		protected string $description = '',
+		protected int $features = Bot::FEATURE_WEBHOOK | Bot::FEATURE_RESPONSE,
 	) {
 		parent::__construct();
 	}
@@ -51,5 +53,9 @@ class BotInstallEvent extends Event {
 
 	public function getDescription(): string {
 		return $this->description;
+	}
+
+	public function getFeatures(): int {
+		return $this->features;
 	}
 }
