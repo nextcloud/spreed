@@ -2216,6 +2216,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected['status'] = 1;
 		}
 
+		if (str_ends_with($expected['actorId'], '@{$BASE_URL}')) {
+			$expected['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected['actorId']);
+		}
+		if (str_ends_with($expected['actorId'], '@{$REMOTE_URL}')) {
+			$expected['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected['actorId']);
+		}
+
+		if (isset($expected['details'])) {
+			if (str_contains($expected['details'], '@{$BASE_URL}')) {
+				$expected['details'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected['details']);
+			}
+			if (str_contains($expected['details'], '@{$REMOTE_URL}')) {
+				$expected['details'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected['details']);
+			}
+		}
+
 		if ($expected['votedSelf'] === 'not voted') {
 			$expected['votedSelf'] = [];
 		} else {

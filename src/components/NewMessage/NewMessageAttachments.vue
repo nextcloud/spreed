@@ -26,6 +26,7 @@
 		:container="container"
 		:boundaries-element="boundariesElement"
 		:disabled="disabled"
+		:force-menu="true"
 		:aria-label="t('spreed', 'Share files to the conversation')"
 		:aria-haspopup="true">
 		<template #icon>

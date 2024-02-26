@@ -4,6 +4,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Create a poll in a conversation
 
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/poll/{token}`
 * Data:
@@ -31,6 +32,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Get state or result of a poll
 
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/poll/{token}/{pollId}`
 
@@ -48,6 +50,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Vote on a poll
 
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/poll/{token}/{pollId}`
 * Data:
@@ -72,6 +75,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Close a poll
 
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/poll/{token}/{pollId}`
 

@@ -30,6 +30,7 @@ namespace OCA\Talk\Controller;
 use JsonException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
@@ -80,12 +81,19 @@ class PollController extends AEnvironmentAwareController {
 	 * 201: Poll created successfully
 	 * 400: Creating poll is not possible
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes);
+		}
+
 		if ($this->room->getType() !== Room::TYPE_GROUP
 			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -140,10 +148,17 @@ class PollController extends AEnvironmentAwareController {
 	 * 200: Poll returned
 	 * 404: Poll not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function showPoll(int $pollId): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->showPoll($this->room, $this->participant, $pollId);
+		}
+
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException $e) {
@@ -171,10 +186,17 @@ class PollController extends AEnvironmentAwareController {
 	 * 400: Voting is not possible
 	 * 404: Poll not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function votePoll(int $pollId, array $optionIds = []): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->votePoll($this->room, $this->participant, $pollId, $optionIds);
+		}
+
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (\Exception $e) {
@@ -225,10 +247,17 @@ class PollController extends AEnvironmentAwareController {
 	 * 403: Missing permissions to close poll
 	 * 404: Poll not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function closePoll(int $pollId): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->closePoll($this->room, $this->participant, $pollId);
+		}
+
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (\Exception $e) {
