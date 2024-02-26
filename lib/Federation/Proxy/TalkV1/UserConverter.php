@@ -42,6 +42,10 @@ class UserConverter {
 	}
 
 	public function convertAttendee(Room $room, array $entry, string $typeField, string $idField, string $displayNameField): array {
+		if (!isset($entry[$typeField])) {
+			return $entry;
+		}
+
 		if ($entry[$typeField] === Attendee::ACTOR_USERS) {
 			$entry[$typeField] = Attendee::ACTOR_FEDERATED_USERS;
 			$entry[$idField] .= '@' . $room->getRemoteServer();
