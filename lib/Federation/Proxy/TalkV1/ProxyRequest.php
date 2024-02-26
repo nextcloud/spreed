@@ -49,11 +49,11 @@ class ProxyRequest {
 	/**
 	 * @return Http::STATUS_BAD_REQUEST
 	 */
-	public function logUnexpectedStatusCode(string $method, int $statusCode): int {
+	public function logUnexpectedStatusCode(string $method, int $statusCode, string $logDetails = ''): int {
 		if ($this->config->getSystemValueBool('debug')) {
-			$this->logger->error('Unexpected status code ' . $statusCode . ' returned for ' . $method);
+			$this->logger->error('Unexpected status code ' . $statusCode . ' returned for ' . $method . ($logDetails !== '' ? "\n" . $logDetails : ''));
 		} else {
-			$this->logger->debug('Unexpected status code ' . $statusCode . ' returned for ' . $method);
+			$this->logger->debug('Unexpected status code ' . $statusCode . ' returned for ' . $method . ($logDetails !== '' ? "\n" . $logDetails : ''));
 		}
 		return Http::STATUS_BAD_REQUEST;
 	}
@@ -212,7 +212,7 @@ class ProxyRequest {
 				throw new \RuntimeException('JSON response is not an array');
 			}
 		} catch (\Throwable $e) {
-			$this->logger->error('Error parsing JSON response', ['exception' => $e]);
+			$this->logger->error('Error parsing JSON response: ' . ($content ?? 'no-data'), ['exception' => $e]);
 			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
 		}
 

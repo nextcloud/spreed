@@ -130,7 +130,7 @@ class ChatController {
 		// FIXME
 		// Poor-mans timeout, should later on cancel/trigger earlier,
 		// when we received a OCM message notifying us about a chat message
-		sleep($timeout);
+		sleep(max(0, $timeout - 5));
 
 		$proxy = $this->proxy->get(
 			$participant->getAttendee()->getInvitedCloudId(),

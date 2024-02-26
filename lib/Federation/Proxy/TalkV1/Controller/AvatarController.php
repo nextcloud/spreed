@@ -61,7 +61,7 @@ class AvatarController {
 		);
 
 		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
-			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string) $proxy->getBody());
 			throw new CannotReachRemoteException('Avatar request had unexpected status code');
 		}
 
