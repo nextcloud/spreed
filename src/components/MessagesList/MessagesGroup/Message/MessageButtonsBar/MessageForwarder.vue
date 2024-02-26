@@ -56,6 +56,8 @@
 
 <script>
 
+import { inject } from 'vue'
+
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { showError } from '@nextcloud/dialogs'
@@ -90,6 +92,12 @@ export default {
 	},
 
 	emits: ['close'],
+
+	setup() {
+		return {
+			isTalkMainApp: inject('Talk:isMainApp', false)
+		}
+	},
 
 	data() {
 		return {
@@ -132,9 +140,7 @@ export default {
 		},
 
 		openConversation() {
-			const isTalkApp = IS_DESKTOP || window.location.pathname.includes('/apps/spreed') || window.location.pathname.includes('/call/')
-
-			if (!isTalkApp) {
+			if (!this.isTalkMainApp) {
 				// Native redirect to Talk from Files sidebar
 				const url = generateUrl('/call/{token}#message_{messageId}', {
 					token: this.selectedConversationToken,
