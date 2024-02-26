@@ -567,6 +567,7 @@ export default {
 				})
 
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
+					let startingMessageId = 0
 					// first time load, initialize important properties
 					if (this.loadChatInLegacyMode || focusMessageId === null) {
 						// Start from unread marker
@@ -574,6 +575,7 @@ export default {
 							token: this.token,
 							id: this.conversation.lastReadMessage,
 						})
+						startingMessageId = this.conversation.lastReadMessage
 						this.$store.dispatch('setLastKnownMessageId', {
 							token: this.token,
 							id: this.conversation.lastReadMessage,
@@ -584,6 +586,7 @@ export default {
 							token: this.token,
 							id: focusMessageId,
 						})
+						startingMessageId = focusMessageId
 						this.$store.dispatch('setLastKnownMessageId', {
 							token: this.token,
 							id: focusMessageId,
@@ -599,7 +602,6 @@ export default {
 
 					} else {
 						// Get chat messages before last read message and after it
-						const startingMessageId = this.$store.getters.getFirstKnownMessageId(this.token)
 						await this.getMessageContext(startingMessageId)
 						const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
 
