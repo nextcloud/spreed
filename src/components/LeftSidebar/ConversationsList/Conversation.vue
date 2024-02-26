@@ -46,11 +46,6 @@
 					{{ conversationInformation }}
 				</template>
 			</template>
-			<template v-if="isFederated || isPublic || isGroup" #details>
-				<WebIcon v-if="isFederated" :size="16" />
-				<LinkIcon v-else-if="isPublic" :size="16" />
-				<AccountMultipleIcon v-else-if="isGroup" :size="16" />
-			</template>
 			<template v-if="!isSearchResult" #actions>
 				<NcActionButton v-if="canFavorite"
 					:close-after-click="true"
@@ -178,16 +173,13 @@ export default {
 		NcListItem,
 		Fragment,
 		// Icons
-		AccountMultipleIcon,
 		ArrowRight,
 		Cog,
 		Delete,
 		ExitToApp,
 		EyeOffOutline,
 		EyeOutline,
-		LinkIcon,
 		Star,
-		WebIcon,
 	},
 
 	props: {
@@ -240,18 +232,6 @@ export default {
 
 		canFavorite() {
 			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
-		},
-
-		isFederated() {
-			return !!this.item.remoteServer
-		},
-
-		isPublic() {
-			return this.item.type === CONVERSATION.TYPE.PUBLIC
-		},
-
-		isGroup() {
-			return this.item.type === CONVERSATION.TYPE.GROUP
 		},
 
 		labelFavorite() {
