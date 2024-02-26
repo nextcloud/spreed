@@ -1,11 +1,10 @@
 /**
  * Calculates the stopwatch string given the time (ms)
  *
- * @param {number} time the time in ms
- * @param {boolean} [condensed=false] the format of string to show
- * @return {string} The formatted time
+ * @param time the time in ms
+ * @param [condensed=false] the format of string to show
  */
-function formattedTime(time, condensed = false) {
+function formattedTime(time: number, condensed: boolean = false): string {
 	if (!time) {
 		return condensed ? '--:--' : '-- : --'
 	}
