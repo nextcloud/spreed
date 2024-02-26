@@ -69,7 +69,7 @@ export default {
 
 	computed: {
 		isGuest() {
-			return this.$store.getters.getActorType() === 'guests'
+			return this.$store.getters.isActorGuest()
 		},
 
 		externalTypingSignals() {

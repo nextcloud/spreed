@@ -26,6 +26,7 @@ import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@next
 import { emit } from '@nextcloud/event-bus'
 
 import {
+	ATTENDEE,
 	CALL,
 	CONVERSATION,
 	PARTICIPANT,
@@ -668,8 +669,8 @@ const actions = {
 		 * 3. It's not a reaction or deletion of a reaction
 		 * 3. It's not a deletion of a message
 		 */
-		if ((lastMessage.actorType !== 'bots'
-				|| lastMessage.actorId === 'changelog')
+		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
+				|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
 			&& lastMessage.systemMessage !== 'reaction'
 			&& lastMessage.systemMessage !== 'poll_voted'
 			&& lastMessage.systemMessage !== 'reaction_deleted'
@@ -774,7 +775,7 @@ const actions = {
 		const lastMessage = {
 			token,
 			id: 'temp' + activeSince,
-			actorType: 'guests',
+			actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			actorId: 'unknown',
 			actorDisplayName: t('spreed', 'Guest'),
 			message: notification.subjectRich,

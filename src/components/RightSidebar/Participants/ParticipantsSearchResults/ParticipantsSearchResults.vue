@@ -104,6 +104,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import Hint from '../../../Hint.vue'
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 
+import { ATTENDEE } from '../../../../constants'
 import { useIntegrationsStore } from '../../../../stores/integrations.js'
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
@@ -211,27 +212,27 @@ export default {
 		},
 
 		addableUsers() {
-			return this.searchResults.filter(item => item.source === 'users')
+			return this.searchResults.filter(item => item.source === ATTENDEE.ACTOR_TYPE.USERS)
 				.filter(user => !this.participants.some(participant => user.id === participant.userId))
 		},
 		addableGroups() {
-			return this.searchResults.filter((item) => item.source === 'groups')
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.GROUPS)
 		},
 		addableEmails() {
-			return this.searchResults.filter((item) => item.source === 'emails')
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 		addableCircles() {
-			return this.searchResults.filter((item) => item.source === 'circles')
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
 		},
 		addableRemotes() {
-			return this.searchResults.filter((item) => item.source === 'remotes')
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS)
 				// TODO remove when Federation feature is ready
 				.concat(OC.debug
 					? this.addableUsers.map(user => ({
 						...user,
 						id: user.id + '@' + window.location.host,
 						label: user.id + '@' + window.location.host,
-						source: 'remotes',
+						source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
 					}))
 					: [])
 		},

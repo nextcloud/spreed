@@ -123,13 +123,13 @@ export default {
 			if (this.isRemoteUser) {
 				return 'icon-user'
 			}
-			if (this.source === 'emails') {
+			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
 				return 'icon-mail'
 			}
-			if (this.source === 'phones') {
+			if (this.source === ATTENDEE.ACTOR_TYPE.PHONES) {
 				return 'icon-phone'
 			}
-			if (this.source === 'bots' && this.id === 'changelog') {
+			if (this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id === ATTENDEE.CHANGELOG_BOT_ID) {
 				return 'icon-changelog'
 			}
 			// source: groups, circles
@@ -149,16 +149,16 @@ export default {
 			}
 		},
 		isUser() {
-			return this.source === 'users' || this.source === ATTENDEE.ACTOR_TYPE.BRIDGED
+			return this.source === ATTENDEE.ACTOR_TYPE.USERS || this.source === ATTENDEE.ACTOR_TYPE.BRIDGED
 		},
 		isRemoteUser() {
-			return this.source === 'federated_users'
+			return this.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 		},
 		isBot() {
-			return this.source === 'bots' && this.id !== 'changelog'
+			return this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id !== ATTENDEE.CHANGELOG_BOT_ID
 		},
 		isGuest() {
-			return this.source === 'guests'
+			return this.source === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
 		isDeletedUser() {
 			return this.source === 'deleted_users'

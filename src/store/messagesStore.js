@@ -70,13 +70,13 @@ function hasMentionToSelf(context, message) {
 			return true
 		}
 		if (param.type === 'guest'
-			&& context.getters.getActorType() === ATTENDEE.ACTOR_TYPE.GUESTS
+			&& context.getters.isActorGuest()
 			&& param.id === ('guest/' + context.getters.getActorId())
 		) {
 			return true
 		}
 		if (param.type === 'user'
-			&& context.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
+			&& context.getters.isActorUser()
 			&& param.id === context.getters.getUserId()
 		) {
 			return true

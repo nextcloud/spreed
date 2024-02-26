@@ -218,7 +218,7 @@ import NewMessagePollEditor from './NewMessagePollEditor.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import Quote from '../Quote.vue'
 
-import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
+import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -878,10 +878,10 @@ export default {
 						token: this.token,
 					})
 					possibleMention.subline = t('spreed', 'Everyone')
-				} else if (possibleMention.source === 'groups') {
+				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
 					possibleMention.icon = 'icon-group-forced-white'
 					possibleMention.subline = t('spreed', 'Group')
-				} else if (possibleMention.source === 'guests') {
+				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
 					possibleMention.icon = 'icon-user-forced-white'
 					possibleMention.subline = t('spreed', 'Guest')
 				} else {
