@@ -192,7 +192,7 @@ const getters = {
 	},
 
 	getFirstKnownMessageId: (state) => (token) => {
-		if (state.firstKnown[token]) {
+		if (state.firstKnown[token] !== undefined) {
 			return state.firstKnown[token]
 		}
 		return null
