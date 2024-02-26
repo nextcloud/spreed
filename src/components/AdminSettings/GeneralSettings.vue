@@ -109,9 +109,9 @@ export default {
 			this.loadingDefaultGroupNotification = true
 
 			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.defaultGroupNotification.value, {
-				success: function() {
+				success: () => {
 					this.loadingDefaultGroupNotification = false
-				}.bind(this),
+				},
 			})
 		},
 		saveConversationsFiles(checked) {
@@ -119,19 +119,19 @@ export default {
 			this.conversationsFiles = checked
 
 			OCP.AppConfig.setValue('spreed', 'conversations_files', this.conversationsFiles ? '1' : '0', {
-				success: function() {
+				success: () => {
 					if (!this.conversationsFiles) {
 						// When the file integration is disabled, the share integration is also disabled
 						OCP.AppConfig.setValue('spreed', 'conversations_files_public_shares', '0', {
-							success: function() {
+							success: () => {
 								this.conversationsFilesPublicShares = false
 								this.loadingConversationsFiles = false
-							}.bind(this),
+							},
 						})
 					} else {
 						this.loadingConversationsFiles = false
 					}
-				}.bind(this),
+				},
 			})
 		},
 		saveConversationsFilesPublicShares(checked) {
@@ -139,9 +139,9 @@ export default {
 			this.conversationsFilesPublicShares = checked
 
 			OCP.AppConfig.setValue('spreed', 'conversations_files_public_shares', this.conversationsFilesPublicShares ? '1' : '0', {
-				success: function() {
+				success: () => {
 					this.loadingConversationsFiles = false
-				}.bind(this),
+				},
 			})
 		},
 	},

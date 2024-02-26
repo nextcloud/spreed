@@ -162,10 +162,10 @@ export default {
 			this.loading = true
 
 			OCP.AppConfig.setValue('spreed', 'federation_enabled', value ? 'yes' : 'no', {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.isFederationEnabled = value
-				}.bind(this),
+				},
 			})
 		},
 
@@ -173,10 +173,10 @@ export default {
 			this.loading = true
 
 			OCP.AppConfig.setValue('spreed', 'federation_incoming_enabled', value ? '1' : '0', {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.isFederationIncomingEnabled = value
-				}.bind(this),
+				},
 			})
 		},
 
@@ -184,10 +184,10 @@ export default {
 			this.loading = true
 
 			OCP.AppConfig.setValue('spreed', 'federation_outgoing_enabled', value ? '1' : '0', {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.isFederationOutgoingEnabled = value
-				}.bind(this),
+				},
 			})
 		},
 
@@ -195,10 +195,10 @@ export default {
 			this.loading = true
 
 			OCP.AppConfig.setValue('spreed', 'federation_only_trusted_servers', value ? '1' : '0', {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.isFederationOnlyTrustedServersEnabled = value
-				}.bind(this),
+				},
 			})
 		},
 
@@ -232,14 +232,14 @@ export default {
 			const groups = this.allowedGroups.map(group => typeof group === 'object' ? group.id : group)
 
 			OCP.AppConfig.setValue('spreed', 'federation_allowed_groups', JSON.stringify(groups), {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.loadingGroups = false
 					this.saveLabelAllowedGroups = t('spreed', 'Saved!')
-					setTimeout(function() {
+					setTimeout(() => {
 						this.saveLabelAllowedGroups = t('spreed', 'Save changes')
-					}.bind(this), 5000)
-				}.bind(this),
+					}, 5000)
+				},
 			})
 		},
 	},

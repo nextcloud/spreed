@@ -264,10 +264,10 @@ export default {
 			const candidates = []
 
 			const pc = new RTCPeerConnection(config)
-			const timeout = setTimeout(function() {
+			const timeout = setTimeout(() => {
 				this.notifyTurnResult(candidates, timeout)
 				pc.close()
-			}.bind(this), 10000)
+			}, 10000)
 			pc.onicecandidate = this.iceCallback.bind(this, pc, candidates, timeout)
 			pc.onicegatheringstatechange = this.gatheringStateChange.bind(this, pc, candidates, timeout)
 
@@ -279,14 +279,14 @@ export default {
 			pc.createOffer(
 				offerOptions,
 			).then(
-				function(description) {
+				(description) => {
 					pc.setLocalDescription(description)
 				},
-				function(error) {
+				(error) => {
 					console.error('Error creating offer', error)
 					this.notifyTurnResult(candidates, timeout)
 					pc.close()
-				}.bind(this),
+				},
 			)
 		},
 

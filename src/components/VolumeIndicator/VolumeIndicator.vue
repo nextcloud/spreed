@@ -39,7 +39,7 @@
 	</span>
 </template>
 
-<script>
+<script lang="ts">
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 
@@ -103,13 +103,13 @@ export default {
 			return this.size / 8
 		},
 
-		iconPrimaryHeight() {
+		iconPrimaryHeight(): number {
 			return this.audioPreviewAvailable
 				? this.size - this.iconOffsetBottom - this.currentVolumeIndicatorHeight
 				: this.size
 		},
 
-		iconOverlayHeight() {
+		iconOverlayHeight(): number {
 			return this.iconOffsetBottom / 2 + this.currentVolumeIndicatorHeight
 		},
 
@@ -137,9 +137,7 @@ export default {
 		computeVolumeLevel() {
 			const computedLevel = (this.volumeThreshold - this.currentVolume) / (this.volumeThreshold - this.overloadLimit)
 
-			if (computedLevel < 0) return 0
-			else if (computedLevel > 1) return 1
-			else return computedLevel
+			return Math.min(1, Math.max(0, computedLevel))
 		},
 	},
 }

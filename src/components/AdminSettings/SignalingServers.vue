@@ -152,14 +152,13 @@ export default {
 		},
 
 		updateHideWarning() {
-			const self = this
-			self.loading = true
+			this.loading = true
 
 			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
-				success() {
+				success: () => {
 					showSuccess(t('spreed', 'Missing high-performance backend warning hidden'))
-					self.loading = false
-					self.toggleSave()
+					this.loading = false
+					this.toggleSave()
 				},
 			})
 		},
@@ -174,15 +173,14 @@ export default {
 
 			this.servers = this.servers.filter(server => server.server.trim() !== '')
 
-			const self = this
 			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
 				servers: this.servers,
 				secret: this.secret,
 			}), {
-				success() {
+				success: () => {
 					showSuccess(t('spreed', 'High-performance backend settings saved'))
-					self.loading = false
-					self.toggleSave()
+					this.loading = false
+					this.toggleSave()
 				},
 			})
 		},

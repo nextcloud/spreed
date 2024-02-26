@@ -1,1 +1,2 @@
-declare module '@nextcloud/vue/dist/Directives/Tooltip.vue';
+declare module '@nextcloud/vue/dist/*.js'
+declare module '@nextcloud/vue/dist/*.vue'

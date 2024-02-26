@@ -376,7 +376,7 @@ import {
 	callSIPUnmutePhone,
 	callSIPSendDTMF,
 } from '../../../../../services/callsService.js'
-import { formattedTime } from '../../../../../utils/formattedTime.js'
+import { formattedTime } from '../../../../../utils/formattedTime.ts'
 import { readableNumber } from '../../../../../utils/readableNumber.js'
 import { getStatusMessage } from '../../../../../utils/userStatus.js'
 

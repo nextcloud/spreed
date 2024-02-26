@@ -86,6 +86,12 @@ module.exports = {
 	},
 
 	transform: {
+		'\\.ts$': ['ts-jest', {
+			useESM: true,
+			tsconfig: {
+				verbatimModuleSyntax: false,
+			},
+		}],
 		'\\.js$': 'babel-jest',
 		'\\.vue$': '@vue/vue2-jest',
 		'\\.tflite$': 'jest-transform-stub',

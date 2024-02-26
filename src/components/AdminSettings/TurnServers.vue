@@ -148,14 +148,12 @@ export default {
 				servers.push(data)
 			})
 
-			const self = this
-
 			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'turn_servers', JSON.stringify(servers), {
-				success() {
+				success: () => {
 					showSuccess(t('spreed', 'TURN settings saved'))
-					self.loading = false
-					self.toggleSave()
+					this.loading = false
+					this.toggleSave()
 				},
 			})
 		},

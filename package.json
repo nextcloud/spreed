@@ -91,6 +91,7 @@
     "jest-mock-console": "^2.0.0",
     "jest-transform-stub": "^2.0.0",
     "regenerator-runtime": "^0.14.1",
+    "ts-jest": "^29.1.2",
     "vue-template-compiler": "^2.7.16",
     "wasm-check": "^2.1.2",
     "webpack-bundle-analyzer": "^4.10.1",

@@ -81,7 +81,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { CALL } from '../../constants.js'
-import { formattedTime } from '../../utils/formattedTime.js'
+import { formattedTime } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'CallTime',
