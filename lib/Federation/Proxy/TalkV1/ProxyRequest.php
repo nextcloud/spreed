@@ -78,6 +78,13 @@ class ProxyRequest {
 		];
 	}
 
+	protected function prependProtocolIfNotAvailable(string $url): string {
+		if (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
+			$url = 'https://' . $url;
+		}
+		return $url;
+	}
+
 	/**
 	 * @param 'get'|'post'|'put'|'delete' $verb
 	 * @throws CannotReachRemoteException
@@ -96,7 +103,10 @@ class ProxyRequest {
 		}
 
 		try {
-			return $this->clientService->newClient()->{$verb}($url, $requestOptions);
+			return $this->clientService->newClient()->{$verb}(
+				$this->prependProtocolIfNotAvailable($url),
+				$requestOptions
+			);
 		} catch (ClientException $e) {
 			$status = $e->getResponse()->getStatusCode();
 
