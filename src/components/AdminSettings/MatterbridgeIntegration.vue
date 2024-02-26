@@ -130,11 +130,11 @@ export default {
 		saveMatterbridgeEnabled() {
 			this.matterbridgeEnabled = !this.matterbridgeEnabled
 			OCP.AppConfig.setValue('spreed', 'enable_matterbridge', this.matterbridgeEnabled ? '1' : '0', {
-				success: function() {
+				success: () => {
 					if (!this.matterbridgeEnabled) {
 						stopAllBridges()
 					}
-				}.bind(this),
+				},
 			})
 		},
 

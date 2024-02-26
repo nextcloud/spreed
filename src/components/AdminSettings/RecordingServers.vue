@@ -193,15 +193,14 @@ export default {
 
 			this.servers = this.servers.filter(server => server.server.trim() !== '')
 
-			const self = this
 			OCP.AppConfig.setValue('spreed', 'recording_servers', JSON.stringify({
 				servers: this.servers,
 				secret: this.secret,
 			}), {
-				success() {
+				success: () => {
 					showSuccess(t('spreed', 'Recording backend settings saved'))
-					self.loading = false
-					self.toggleSave()
+					this.loading = false
+					this.toggleSave()
 				},
 			})
 		},
@@ -209,9 +208,9 @@ export default {
 		setRecordingConsent(value) {
 			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'recording_consent', value, {
-				success: function() {
+				success: () => {
 					this.loading = false
-				}.bind(this),
+				},
 			})
 		},
 

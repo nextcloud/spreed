@@ -212,14 +212,14 @@ export default {
 			})
 
 			OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(groups), {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.loadingGroups = false
 					this.saveLabelAllowedGroups = t('spreed', 'Saved!')
-					setTimeout(function() {
+					setTimeout(() => {
 						this.saveLabelAllowedGroups = t('spreed', 'Save changes')
-					}.bind(this), 5000)
-				}.bind(this),
+					}, 5000)
+				},
 			})
 		},
 
@@ -233,14 +233,14 @@ export default {
 			})
 
 			OCP.AppConfig.setValue('spreed', 'start_conversations', JSON.stringify(groups), {
-				success: function() {
+				success: () => {
 					this.loading = false
 					this.loadingGroups = false
 					this.saveLabelStartConversations = t('spreed', 'Saved!')
-					setTimeout(function() {
+					setTimeout(() => {
 						this.saveLabelStartConversations = t('spreed', 'Save changes')
-					}.bind(this), 5000)
-				}.bind(this),
+					}, 5000)
+				},
 			})
 		},
 
@@ -248,9 +248,9 @@ export default {
 			this.loadingStartCalls = true
 
 			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
-				success: function() {
+				success: () => {
 					this.loadingStartCalls = false
-				}.bind(this),
+				},
 			})
 		},
 	},

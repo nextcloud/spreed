@@ -133,13 +133,12 @@ export default {
 			})
 
 			this.servers = servers
-			const self = this
 
 			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
-				success() {
+				success: () => {
 					showSuccess(t('spreed', 'STUN settings saved'))
-					self.loading = false
-					self.toggleSave()
+					this.loading = false
+					this.toggleSave()
 				},
 			})
 		},
