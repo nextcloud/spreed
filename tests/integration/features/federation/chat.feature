@@ -22,15 +22,15 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                       |
-      | calls           | all                        | room                        |
-      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 |
-      | users           | participant3               | participant3-displayname    |
+      | source          | id                         | label                       | mentionId                                  |
+      | calls           | all                        | room                        | all                                        |
+      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 | federated_user/participant2@{$REMOTE_URL}  |
+      | users           | participant3               | participant3-displayname    | participant3                               |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    |
-      | calls           | all                      | room                     |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname |
-      | federated_users | participant3@{$BASE_URL} | participant3-displayname |
+      | source          | id                       | label                    | mentionId    |
+      | calls           | all                      | room                     | all          |
+      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1 |
+      | federated_users | participant3@{$BASE_URL} | participant3-displayname | participant3 |
 
   Scenario: Get mention suggestions (translating federated users of the same server to local users)
     Given the following "spreed" app config is set
@@ -56,15 +56,15 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                       |
-      | calls           | all                        | room                        |
-      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 |
-      | federated_users | participant3@{$REMOTE_URL} | participant3@localhost:8180 |
+      | source          | id                         | label                       | mentionId                                 |
+      | calls           | all                        | room                        | all                                       |
+      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 | federated_user/participant2@{$REMOTE_URL} |
+      | federated_users | participant3@{$REMOTE_URL} | participant3@localhost:8180 | federated_user/participant3@{$REMOTE_URL} |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    |
-      | calls           | all                      | room                     |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname |
-      | users           | participant3             | participant3-displayname |
+      | source          | id                       | label                    | mentionId                                 |
+      | calls           | all                      | room                     | all                                       |
+      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1                              |
+      | users           | participant3             | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
 
   Scenario: Basic chatting including posting, getting, editing and deleting
     Given the following "spreed" app config is set

@@ -1279,6 +1279,7 @@ class ChatController extends AEnvironmentAwareController {
 					'id' => $result['value']['shareWith'],
 					'label' => $result['label'],
 					'source' => $type,
+					'mentionId' => $this->createMentionString($type, $result['value']['shareWith']),
 				];
 
 				if ($type === Attendee::ACTOR_USERS && isset($statuses[$data['id']])) {
@@ -1292,5 +1293,14 @@ class ChatController extends AEnvironmentAwareController {
 			}
 		}
 		return $output;
+	}
+
+	protected function createMentionString(string $type, string $id): string {
+		if ($type !== Attendee::ACTOR_FEDERATED_USERS) {
+			return $id;
+		}
+
+		// We want "federated_user/admin@example.tld" so we have to strip off the trailing "s" from the type "federated_users"
+		return substr($type, 0, -1) . '/' . $id;
 	}
 }

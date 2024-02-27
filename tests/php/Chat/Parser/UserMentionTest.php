@@ -35,6 +35,8 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\Federation\ICloudId;
+use OCP\Federation\ICloudIdManager;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
@@ -52,6 +54,7 @@ class UserMentionTest extends TestCase {
 	protected $guestManager;
 	/** @var AvatarService|MockObject */
 	protected $avatarService;
+	protected ICloudIdManager|MockObject $cloudIdManager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var IL10N|MockObject */
@@ -67,6 +70,7 @@ class UserMentionTest extends TestCase {
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->l = $this->createMock(IL10N::class);
 
@@ -76,8 +80,10 @@ class UserMentionTest extends TestCase {
 			$this->groupManager,
 			$this->guestManager,
 			$this->avatarService,
+			$this->cloudIdManager,
 			$this->participantService,
-			$this->l);
+			$this->l,
+		);
 	}
 
 	/**
@@ -439,6 +445,47 @@ class UserMentionTest extends TestCase {
 		];
 
 		$this->assertEquals('Mention to {mention-call1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	public function testGetRichMessageWithFederatedUserMention(): void {
+		$mentions = [
+			['type' => 'federated_user', 'id' => 'testUser@example.tld'],
+		];
+		$comment = $this->newComment($mentions);
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @"federated_user/testUser@example.tld"', []);
+
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getUser')
+			->willReturn('testUser');
+		$cloudId->method('getRemote')
+			->willReturn('example.tld');
+		$cloudId->method('getDisplayId')
+			->willReturn('Display Id');
+		$this->cloudIdManager->method('resolveCloudId')
+			->with('testUser@example.tld')
+			->willReturn($cloudId);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-federated-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'Display Id',
+				'server' => 'example.tld',
+			]
+		];
+
+		$this->assertEquals('Mention to {mention-federated-user1}', $chatMessage->getMessage());
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 

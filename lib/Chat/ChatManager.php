@@ -920,6 +920,7 @@ class ChatManager {
 				'id' => 'all',
 				'label' => $roomDisplayName,
 				'source' => 'calls',
+				'mentionId' => 'all',
 			]);
 		}
 		return $results;

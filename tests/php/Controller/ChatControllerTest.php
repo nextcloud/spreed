@@ -1106,18 +1106,28 @@ class ChatControllerTest extends TestCase {
 	public static function dataMentions() {
 		return [
 			['tes', 10, ['exact' => []], []],
-			['foo', 20, [
-				'exact' => [
+			[
+				'foo',
+				20,
+				[
+					'exact' => [
+						'users' => [
+							['label' => 'Foo Bar', 'value' => ['shareWith' => 'foo', 'shareType' => 'user']],
+						]
+					],
 					'users' => [
-						['label' => 'Foo Bar', 'value' => ['shareWith' => 'foo', 'shareType' => 'user']],
+						['label' => 'FooBar', 'value' => ['shareWith' => 'foobar', 'shareType' => 'user']],
+					],
+					'federated_users' => [
+						['label' => 'Fedi User', 'value' => ['shareWith' => 'foobar@example.tld', 'shareType' => 'federated_user']],
 					]
 				],
-				'users' => [
-					['label' => 'FooBar', 'value' => ['shareWith' => 'foobar', 'shareType' => 'user']],
-				]], [
-					['id' => 'foo', 'label' => 'Foo Bar', 'source' => 'users'],
-					['id' => 'foobar', 'label' => 'FooBar', 'source' => 'users'],
-				]],
+				[
+					['id' => 'foo', 'label' => 'Foo Bar', 'source' => 'users', 'mentionId' => 'foo'],
+					['id' => 'foobar', 'label' => 'FooBar', 'source' => 'users', 'mentionId' => 'foobar'],
+					['id' => 'foobar@example.tld', 'label' => 'Fedi User', 'source' => 'federated_users', 'mentionId' => 'federated_user/foobar@example.tld'],
+				]
+			],
 		];
 	}
 
