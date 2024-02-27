@@ -31,14 +31,18 @@ get the messagesList array and loop through the list to generate the messages.
 	<div ref="scroller"
 		:key="token"
 		class="scroller messages-list__scroller"
-		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
-		@scroll="debounceHandleScroll">
+		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom,
+			'scroller--isScrolling': isScrolling}"
+		@scroll="onScroll"
+		@scrollend="endScroll">
 		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
 
 		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
 			:key="`section_${dateTimestamp}`"
-			class="dates-group-wrapper">
-			<li :key="dateTimestamp" class="messages-group__date">
+			:ref="`dateGroup-${token}`"
+			:data-date-timestamp="dateTimestamp"
+			:class="{'has-sticky': dateTimestamp === stickyDate}">
+			<li class="messages-group__date">
 				<span class="messages-group__date-text" role="heading" aria-level="3">
 					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
@@ -138,7 +142,6 @@ export default {
 			/**
 			 * A list of messages grouped by same day and then by author and time.
 			 */
-
 			messagesGroupedByDateByAuthor: {},
 
 			viewId: null,
@@ -182,6 +185,8 @@ export default {
 			stickyDate: null,
 
 			dateSeparatorLabels: {},
+
+			endScrollTimeout: () => {},
 		}
 	},
 
@@ -909,6 +914,38 @@ export default {
 			}, 500)
 		},
 
+		checkSticky() {
+			const ulElements = this.$refs['dateGroup-' + this.token]
+			if (!ulElements) {
+				return
+			}
+
+			const scrollerRect = this.$refs.scroller.getBoundingClientRect()
+			ulElements.forEach((element) => {
+				const rect = element.getBoundingClientRect()
+				if (rect.top <= scrollerRect.top && rect.bottom >= scrollerRect.top) {
+					this.stickyDate = element.getAttribute('data-date-timestamp')
+				}
+			})
+		},
+
+		onScroll() {
+			// handle scrolling status
+			if (this.isScrolling) {
+				clearTimeout(this.endScrollTimeout)
+			}
+			this.isScrolling = true
+			this.endScrollTimeout = setTimeout(this.endScroll, 3000)
+			// handle sticky date
+			if (this.$refs.scroller.scrollTop === 0) {
+				this.stickyDate = null
+			} else {
+				this.checkSticky()
+			}
+			// handle scroll event
+			this.debounceHandleScroll()
+		},
+
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
@@ -971,6 +1008,11 @@ export default {
 
 			this.previousScrollTopValue = this.$refs.scroller.scrollTop
 			this.debounceUpdateReadMarkerPosition()
+		},
+
+		endScroll() {
+			this.isScrolling = false
+			clearTimeout(this.endScrollTimeout)
 		},
 
 		/**
@@ -1324,11 +1366,10 @@ export default {
 
 	&__loading {
 		position: absolute;
-		top: 10px;
+		top: 17px;
 		left: 50%;
 		height: 40px;
-		width: 40px;
-		transform: translatex(-64px);
+		transform: translatex(-380px);
 	}
 }
 
@@ -1361,5 +1402,16 @@ export default {
 	&:last-child {
 		margin-bottom: 16px;
 	}
+}
+
+.has-sticky .messages-group__date {
+	transition: opacity 0.3s ease-in-out;
+	transition-delay: 2s;
+	opacity: 0;
+}
+
+.scroller--isScrolling .has-sticky .messages-group__date {
+	opacity: 1;
+	transition: opacity 0s;
 }
 </style>
