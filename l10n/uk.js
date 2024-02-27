@@ -957,6 +957,7 @@ OC.L10N.register(
     "Dismiss" : "Припинити",
     "Translate from" : "Перекласти з",
     "Contact" : "Контакт",
+    "Copy code block" : "Копіювати блок коду",
     "No messages" : "Відсутні повідомлення",
     "Today" : "Сьогодні",
     "Yesterday" : "Вчора",
