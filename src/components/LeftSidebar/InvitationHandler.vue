@@ -34,7 +34,7 @@
 				<li v-for="item of invitations"
 					:key="`invitation_${item.id}`"
 					class="inbox__item">
-					<ConversationIcon :item="item" />
+					<ConversationIcon :item="item" hide-user-status />
 					<div class="inbox__item-desc">
 						<span class="inbox__item-desc__name">
 							{{ item.roomName }}
@@ -122,6 +122,7 @@ export default {
 				.map(item => ({
 					...item,
 					type: CONVERSATION.TYPE.GROUP,
+					isFederatedConversation: true,
 					isDummyConversation: true,
 				}))
 		},

@@ -23,17 +23,26 @@
 	<div class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
-		<div v-if="iconClass"
-			class="avatar icon"
-			:class="iconClass" />
-		<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
-		<img v-else-if="!isOneToOne"
-			:key="avatarUrl"
-			:src="avatarUrl"
-			:width="size"
-			:height="size"
-			:alt="item.displayName"
-			class="avatar icon">
+		<template v-if="!isOneToOne">
+			<div v-if="iconClass"
+				class="avatar icon"
+				:class="iconClass" />
+			<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
+			<img v-else
+				:key="avatarUrl"
+				:src="avatarUrl"
+				:width="size"
+				:height="size"
+				:alt="item.displayName"
+				class="avatar icon">
+			<span v-if="!hideUserStatus && conversationType"
+				class="conversation-icon__type"
+				role="img"
+				aria-hidden="false"
+				:aria-label="conversationType.label">
+				<component :is="conversationType.icon" :size="14" />
+			</span>
+		</template>
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
 		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
 		<!-- TODO: Check if props update support in NcAvatar is more performant -->
@@ -60,8 +69,10 @@
 </template>
 
 <script>
+import LinkVariantIcon from 'vue-material-design-icons/LinkVariant.vue'
 import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
+import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -167,10 +178,11 @@ export default {
 		iconClass() {
 			if (this.item.isDummyConversation) {
 				// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
-				// Also used in new conversation dialog
+				// Also used in new conversation / invitation handler dialog
+				const isFed = this.item.isFederatedConversation && 'icon-conversation-federation'
 				const type = this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-conversation-public' : 'icon-conversation-group'
 				const theme = isDarkTheme ? 'dark' : 'bright'
-				return `${type} icon--dummy icon--${theme}`
+				return `${isFed || type} icon--dummy icon--${theme}`
 			}
 
 			if (!supportsAvatar) {
@@ -212,6 +224,15 @@ export default {
 			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
+		conversationType() {
+			if (this.item.remoteServer) {
+				return { icon: WebIcon, label: t('spreed', 'Federated conversation') }
+			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
+				return { icon: LinkVariantIcon, label: t('spreed', 'Public conversation') }
+			}
+			return null
+		},
+
 		avatarUrl() {
 			if (!supportsAvatar || this.item.isDummyConversation) {
 				return undefined
@@ -240,7 +261,7 @@ export default {
 		height: var(--icon-size);
 		line-height: var(--icon-size);
 		background-size: calc(var(--icon-size) / 2);
-		background-color: var(--color-text-maxcontrast);
+		background-color: var(--color-text-maxcontrast-default);
 
 		&--dummy {
 			background-size: var(--icon-size);
@@ -249,6 +270,17 @@ export default {
 		&.icon-changelog {
 			background-size: cover !important;
 		}
+	}
+
+	&__type {
+		position: absolute;
+		right: -4px;
+		bottom: -4px;
+		height: 18px;
+		width: 18px;
+		border: 2px solid var(--color-main-background);
+		background-color: var(--color-main-background);
+		border-radius: 50%;
 	}
 
 	.overlap-icon {

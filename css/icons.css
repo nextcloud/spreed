@@ -111,7 +111,7 @@
 	filter: var(--background-invert-if-dark);
 }
 
-/* To be used in new conversation dialog */
+/* To be used in new conversation / invitation handler dialogs */
 .conversation-icon .icon-conversation-group.icon--dark {
 	background-image: url('../img/icon-conversation-group-dark.svg')
 }
@@ -126,4 +126,12 @@
 
 .conversation-icon .icon-conversation-public.icon--bright {
 	background-image: url('../img/icon-conversation-public-bright.svg')
+}
+
+.conversation-icon .icon-conversation-federation.icon--dark {
+	background-image: url('../img/icon-conversation-federation-dark.svg')
+}
+
+.conversation-icon .icon-conversation-federation.icon--bright {
+	background-image: url('../img/icon-conversation-federation-bright.svg')
 }
