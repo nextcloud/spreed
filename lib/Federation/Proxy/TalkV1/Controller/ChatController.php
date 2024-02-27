@@ -233,7 +233,7 @@ class ChatController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Message edited successfully
@@ -255,28 +255,29 @@ class ChatController {
 			],
 		);
 
-		/** @var Http::STATUS_OK|Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE $statusCode */
 		$statusCode = $proxy->getStatusCode();
-
 		if ($statusCode !== Http::STATUS_OK && $statusCode !== Http::STATUS_ACCEPTED) {
-			if (in_array($statusCode, [
+			if (!in_array($statusCode, [
 				Http::STATUS_BAD_REQUEST,
 				Http::STATUS_FORBIDDEN,
 				Http::STATUS_NOT_FOUND,
+				Http::STATUS_METHOD_NOT_ALLOWED,
 				Http::STATUS_REQUEST_ENTITY_TOO_LARGE,
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+				$data = ['error' => 'status'];
+			} elseif ($statusCode === Http::STATUS_BAD_REQUEST) {
+				/** @var array{error: string} $data */
+				$data = $this->proxy->getOCSData($proxy, [Http::STATUS_BAD_REQUEST]);
+			} else {
+				$data = [];
 			}
-			return new DataResponse([], $statusCode);
+			return new DataResponse($data, $statusCode);
 		}
 
-		/** @var ?TalkChatMessageWithParent $data */
+		/** @var TalkChatMessageWithParent $data */
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
-		if (!empty($data)) {
-			$data = $this->userConverter->convertMessage($room, $data);
-		} else {
-			$data = null;
-		}
+		$data = $this->userConverter->convertMessage($room, $data);
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
