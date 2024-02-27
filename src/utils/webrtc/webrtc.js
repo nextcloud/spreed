@@ -1594,25 +1594,21 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	webrtc.on('channelMessage', function(peer, label, data) {
-		if (label === 'status' || label === 'JanusDataChannel') {
-			if (data.type === 'audioOn') {
-				webrtc.emit('unmute', { id: peer.id, name: 'audio' })
-			} else if (data.type === 'audioOff') {
-				webrtc.emit('mute', { id: peer.id, name: 'audio' })
-			} else if (data.type === 'videoOn') {
-				webrtc.emit('unmute', { id: peer.id, name: 'video' })
-			} else if (data.type === 'videoOff') {
-				webrtc.emit('mute', { id: peer.id, name: 'video' })
-			} else if (data.type === 'nickChanged') {
-				const name = typeof (data.payload) === 'string' ? data.payload : data.payload.name
-				webrtc.emit('nick', { id: peer.id, name })
-			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
-				// Valid known messages, handled by CallParticipantModel.js
-			} else {
-				console.debug('Unknown message type %s from %s datachannel', data.type, label, data, peer.id, peer)
-			}
+		if (data.type === 'audioOn') {
+			webrtc.emit('unmute', { id: peer.id, name: 'audio' })
+		} else if (data.type === 'audioOff') {
+			webrtc.emit('mute', { id: peer.id, name: 'audio' })
+		} else if (data.type === 'videoOn') {
+			webrtc.emit('unmute', { id: peer.id, name: 'video' })
+		} else if (data.type === 'videoOff') {
+			webrtc.emit('mute', { id: peer.id, name: 'video' })
+		} else if (data.type === 'nickChanged') {
+			const name = typeof (data.payload) === 'string' ? data.payload : data.payload.name
+			webrtc.emit('nick', { id: peer.id, name })
+		} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
+			// Valid known messages, handled by CallParticipantModel.js
 		} else {
-			console.debug('Unknown message from %s datachannel', label, data, peer.id, peer)
+			console.debug('Unknown message type %s from %s datachannel', data.type, label, data, peer.id, peer)
 		}
 	})
 
