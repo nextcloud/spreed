@@ -27,9 +27,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation\Proxy\TalkV1;
 
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 
+/**
+ * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
+ */
 class UserConverter {
 	/**
 	 * @var array<string, array<string, array{userId: string, displayName: string}>>
@@ -66,6 +70,57 @@ class UserConverter {
 		return array_map(
 			fn (array $entry): array => $this->convertAttendee($room, $entry, $typeField, $idField, $displayNameField),
 			$entries
+		);
+	}
+
+	protected function convertMessageParameter(Room $room, array $parameter): array {
+		if ($parameter['type'] === 'user') { // RichObjectDefinition, not Attendee::ACTOR_USERS
+			if (!isset($parameter['server'])) {
+				$parameter['server'] = $room->getRemoteServer();
+			} elseif ($parameter['server']) {
+				$localParticipants = $this->getLocalParticipants($room);
+				$cloudId = $parameter['id'] . '@' . $parameter['server'];
+				if (isset($localParticipants[$cloudId])) {
+					unset($parameter['server']);
+					$parameter['name'] = $localParticipants[$cloudId]['displayName'];
+				}
+			}
+		}
+		return $parameter;
+	}
+
+	protected function convertMessageParameters(Room $room, array $message): array {
+		$message['messageParameters'] = array_map(
+			fn (array $message): array => $this->convertMessageParameter($room, $message),
+			$message['messageParameters']
+		);
+		return $message;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param TalkChatMessageWithParent $message
+	 * @return TalkChatMessageWithParent
+	 */
+	public function convertMessage(Room $room, array $message): array {
+		$message = $this->convertAttendee($room, $message, 'actorType', 'actorId', 'actorDisplayName');
+		$message = $this->convertAttendee($room, $message, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
+		$message = $this->convertMessageParameters($room, $message);
+		if (isset($message['parent'])) {
+			$message['parent'] = $this->convertMessage($room, $message['parent']);
+		}
+		return $message;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param TalkChatMessageWithParent[] $messages
+	 * @return TalkChatMessageWithParent[]
+	 */
+	public function convertMessages(Room $room, array $messages): array {
+		return array_map(
+			fn (array $message): array => $this->convertMessage($room, $message),
+			$messages
 		);
 	}
 

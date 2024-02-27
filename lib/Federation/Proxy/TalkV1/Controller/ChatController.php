@@ -94,7 +94,7 @@ class ChatController {
 		/** @var ?TalkChatMessageWithParent $data */
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_CREATED]);
 		if (!empty($data)) {
-			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
+			$data = $this->userConverter->convertMessage($room, $data);
 		} else {
 			$data = null;
 		}
@@ -188,8 +188,7 @@ class ChatController {
 		/** @var TalkChatMessageWithParent[] $data */
 		$data = $this->proxy->getOCSData($proxy);
 		/** @var TalkChatMessageWithParent[] $data */
-		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'actorDisplayName');
-		$data = $this->userConverter->convertAttendees($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
+		$data = $this->userConverter->convertMessages($room, $data);
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
@@ -228,8 +227,7 @@ class ChatController {
 		/** @var TalkChatMessageWithParent[] $data */
 		$data = $this->proxy->getOCSData($proxy);
 		/** @var TalkChatMessageWithParent[] $data */
-		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'actorDisplayName');
-		$data = $this->userConverter->convertAttendees($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
+		$data = $this->userConverter->convertMessages($room, $data);
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
@@ -275,8 +273,7 @@ class ChatController {
 		/** @var ?TalkChatMessageWithParent $data */
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
 		if (!empty($data)) {
-			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
-			$data = $this->userConverter->convertAttendee($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
+			$data = $this->userConverter->convertMessage($room, $data);
 		} else {
 			$data = null;
 		}
