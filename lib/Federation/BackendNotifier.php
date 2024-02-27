@@ -276,6 +276,36 @@ class BackendNotifier {
 	}
 
 	/**
+	 * Send information to remote participants that a message was posted
+	 * Sent from Host server to Remote participant server
+	 */
+	public function sendMessageUpdate(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		array $messageData,
+	): void {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_MESSAGE_POSTED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'messageData' => $messageData,
+			],
+		);
+
+		$this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
 	 * @param string $remote
 	 * @param array{notificationType: string, resourceType: string, providerId: string, notification: array} $data
 	 * @param int $try

@@ -958,7 +958,7 @@ class SystemMessage implements IEventListener {
 		}
 	}
 
-	protected function parseMissedCall(Room $room, array $parameters, string $currentActorId): array {
+	protected function parseMissedCall(Room $room, array $parameters, ?string $currentActorId): array {
 		if ($parameters['users'][0] !== $currentActorId) {
 			return [
 				$this->l->t('You missed a call from {user}'),

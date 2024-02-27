@@ -84,7 +84,8 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
-use OCA\Talk\Federation\Listener as FederationListener;
+use OCA\Talk\Federation\Proxy\TalkV1\Notifier\MessageSentListener as TalkV1MessageSentListener;
+use OCA\Talk\Federation\Proxy\TalkV1\Notifier\RoomModifiedListener as TalkV1RoomModifiedListener;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
@@ -278,7 +279,10 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
 
 		// Federation listeners
-		$context->registerEventListener(RoomModifiedEvent::class, FederationListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
+		$context->registerEventListener(ChatMessageSentEvent::class, TalkV1MessageSentListener::class);
+		$context->registerEventListener(SystemMessageSentEvent::class, TalkV1MessageSentListener::class);
+		$context->registerEventListener(SystemMessagesMultipleSentEvent::class, TalkV1MessageSentListener::class);
 
 		// Signaling listeners (External)
 		$context->registerEventListener(AttendeesAddedEvent::class, SignalingListener::class);

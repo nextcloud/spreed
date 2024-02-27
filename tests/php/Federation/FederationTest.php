@@ -33,6 +33,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
+use OCA\Talk\Model\ProxyCacheMessagesMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -45,6 +46,7 @@ use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
 use OCP\Federation\ICloudIdManager;
+use OCP\ICacheFactory;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -91,6 +93,9 @@ class FederationTest extends TestCase {
 	/** @var AttendeeMapper|MockObject */
 	protected $attendeeMapper;
 
+	protected ProxyCacheMessagesMapper|MockObject $proxyCacheMessageMapper;
+	protected ICacheFactory|MockObject $cacheFactory;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -105,6 +110,8 @@ class FederationTest extends TestCase {
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->url = $this->createMock(IURLGenerator::class);
+		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessagesMapper::class);
+		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 
 		$this->backendNotifier = new BackendNotifier(
 			$this->cloudFederationFactory,
@@ -137,7 +144,9 @@ class FederationTest extends TestCase {
 			$this->createMock(Manager::class),
 			$this->createMock(ISession::class),
 			$this->createMock(IEventDispatcher::class),
-			$this->logger
+			$this->logger,
+			$this->proxyCacheMessageMapper,
+			$this->cacheFactory,
 		);
 	}
 

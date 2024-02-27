@@ -38,6 +38,8 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
+use OCA\Talk\Model\ProxyCacheMessages;
+use OCA\Talk\Model\ProxyCacheMessagesMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -55,6 +57,8 @@ use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
 use OCP\Federation\ICloudIdManager;
 use OCP\HintException;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -64,6 +68,7 @@ use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
 class CloudFederationProviderTalk implements ICloudFederationProvider {
+	protected ?ICache $proxyCacheMessages;
 
 	public function __construct(
 		private ICloudIdManager $cloudIdManager,
@@ -81,7 +86,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private ISession $session,
 		private IEventDispatcher $dispatcher,
 		private LoggerInterface $logger,
+		private ProxyCacheMessagesMapper $proxyCacheMessagesMapper,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
 	}
 
 	/**
@@ -185,6 +193,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				return $this->shareUnshared((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
 				return $this->roomModified((int) $providerId, $notification);
+			case FederationManager::NOTIFICATION_MESSAGE_POSTED:
+				return $this->messagePosted((int) $providerId, $notification);
 		}
 
 		throw new BadRequestException([$notificationType]);
@@ -292,6 +302,53 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->roomService->setType($room, $notification['newValue']);
 		} else {
 			$this->logger->debug('Update of room property "' . $notification['changedProperty'] . '" is not handled and should not be send via federation');
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param int $remoteAttendeeId
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string}} $notification
+	 * @return array
+	 * @throws ActionNotSupportedException
+	 * @throws AuthenticationFailedException
+	 * @throws ShareNotFound
+	 */
+	private function messagePosted(int $remoteAttendeeId, array $notification): array {
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound();
+		}
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedRemoteRoom()) {
+			throw new ShareNotFound();
+		}
+
+		$message = new ProxyCacheMessages();
+		$message->setLocalToken($room->getToken());
+		$message->setRemoteServerUrl($notification['remoteServerUrl']);
+		$message->setRemoteToken($notification['remoteToken']);
+		$message->setRemoteMessageId($notification['messageData']['remoteMessageId']);
+		$message->setActorType($notification['messageData']['actorType']);
+		$message->setActorId($notification['messageData']['actorId']);
+		$message->setActorDisplayName($notification['messageData']['actorDisplayName']);
+		$message->setMessageType($notification['messageData']['messageType']);
+		$message->setSystemMessage($notification['messageData']['systemMessage']);
+		$message->setExpirationDateTime(new \DateTimeImmutable($notification['messageData']['expirationDatetime']));
+		$message->setMessage($notification['messageData']['message']);
+		$message->setMessageParameters($notification['messageData']['messageParameter']);
+		$this->proxyCacheMessagesMapper->insert($message);
+
+		if ($this->proxyCacheMessages instanceof ICache) {
+			$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));
+			$cacheData = $this->proxyCacheMessages->get($cacheKey);
+			if ($cacheData === null || $cacheData < $notification['messageData']['remoteMessageId']) {
+				$this->proxyCacheMessages->set($cacheKey, $notification['messageData']['remoteMessageId'], 300);
+			}
 		}
 
 		return [];
