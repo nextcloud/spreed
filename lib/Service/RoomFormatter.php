@@ -362,7 +362,7 @@ class RoomFormatter {
 		}
 
 		$lastMessage = $room->getLastMessage();
-		if ($lastMessage instanceof IComment) {
+		if ($room->getRemoteServer() === '' && $lastMessage instanceof IComment) {
 			$roomData['lastMessage'] = $this->formatLastMessage(
 				$responseFormat,
 				$room,
