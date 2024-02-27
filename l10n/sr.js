@@ -1762,6 +1762,7 @@ OC.L10N.register(
     "Creating your conversation" : "Ваш разговор се креира",
     "All set" : "Све је постављено",
     "Conversation name" : "Назив разговора",
+    "The message has been forwarded" : "Порука је прослеђена",
     "Poll ・ You voted already" : "Гласање ・ Већ сте гласали",
     "Poll ・ Click to vote" : "Гласање ・ Кликните да гласате",
     "Poll ・ Ended" : "Гласање ・ Завршено",
