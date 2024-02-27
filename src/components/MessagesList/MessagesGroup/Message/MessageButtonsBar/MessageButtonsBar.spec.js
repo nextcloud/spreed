@@ -23,6 +23,8 @@ describe('MessageButtonsBar.vue', () => {
 	let injected
 	let conversationProps
 	let getActorTypeMock
+	let isActorUserMock
+	let isActorGuestMock
 
 	beforeEach(() => {
 		localVue = createLocalVue()
@@ -45,7 +47,11 @@ describe('MessageButtonsBar.vue', () => {
 		testStoreConfig.modules.actorStore.getters.getActorId
 			= jest.fn().mockReturnValue(() => 'user-id-1')
 		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
+		isActorUserMock = jest.fn().mockReturnValue(() => true)
+		isActorGuestMock = jest.fn().mockReturnValue(() => false)
 		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
+		testStoreConfig.modules.actorStore.getters.isActorUser = isActorUserMock
+		testStoreConfig.modules.actorStore.getters.isActorGuest = isActorGuestMock
 
 		messageProps = {
 			message: 'test message',
@@ -222,6 +228,8 @@ describe('MessageButtonsBar.vue', () => {
 			test('hides private reply action when current user is a guest', async () => {
 				messageProps.actorId = 'another-user'
 				getActorTypeMock.mockClear().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
+				isActorUserMock.mockClear().mockReturnValue(() => false)
+				isActorGuestMock.mockClear().mockReturnValue(() => true)
 				testPrivateReplyActionVisible(false)
 			})
 		})

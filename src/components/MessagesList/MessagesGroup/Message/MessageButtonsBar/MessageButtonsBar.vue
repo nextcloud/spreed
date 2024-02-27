@@ -545,7 +545,7 @@ export default {
 					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
 				&& !this.isMyMsg
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
-				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
+				&& this.$store.getters.isActorUser()
 		},
 
 		linkToFile() {
@@ -570,7 +570,7 @@ export default {
 		},
 
 		isCurrentGuest() {
-			return this.$store.getters.getActorType() === 'guests'
+			return this.$store.getters.isActorGuest()
 		},
 
 		isMyMsg() {

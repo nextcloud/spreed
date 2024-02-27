@@ -323,7 +323,7 @@ import NewConversationDialog from '../NewConversationDialog/NewConversationDialo
 import TransitionWrapper from '../TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
-import { CONVERSATION } from '../../constants.js'
+import { ATTENDEE, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	createPrivateConversation,
@@ -697,12 +697,12 @@ export default {
 
 				this.searchResults = response?.data?.ocs?.data || []
 				this.searchResultsUsers = this.searchResults.filter((match) => {
-					return match.source === 'users'
+					return match.source === ATTENDEE.ACTOR_TYPE.USERS
 						&& match.id !== this.$store.getters.getUserId()
 						&& !this.hasOneToOneConversationWith(match.id)
 				})
-				this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
-				this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
+				this.searchResultsGroups = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.GROUPS)
+				this.searchResultsCircles = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
 				this.contactsLoading = false
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
@@ -753,7 +753,7 @@ export default {
 		 * @param {string} item.source The source of the target (e.g. users, groups, circle)
 		 */
 		async createAndJoinConversation(item) {
-			if (item.source === 'users') {
+			if (item.source === ATTENDEE.ACTOR_TYPE.USERS) {
 				// Create one-to-one conversation directly
 				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
 				this.abortSearch()
@@ -956,7 +956,7 @@ export default {
 		},
 
 		iconData(item) {
-			if (item.source === 'users') {
+			if (item.source === ATTENDEE.ACTOR_TYPE.USERS) {
 				return {
 					type: CONVERSATION.TYPE.ONE_TO_ONE,
 					displayName: item.label,

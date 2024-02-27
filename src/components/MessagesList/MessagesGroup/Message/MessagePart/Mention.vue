@@ -89,7 +89,7 @@ export default {
 			// while storing them as "… @id …" in chat messages.
 			// So when comparing a guest we have to prefix "guest/"
 			// when comparing the id
-			return this.$store.getters.getActorType() === 'guests'
+			return this.$store.getters.isActorGuest()
 				&& this.id === ('guest/' + this.$store.getters.getActorId())
 		},
 		isCurrentUser() {
@@ -98,7 +98,7 @@ export default {
 				return false
 			}
 
-			return this.$store.getters.getActorType() === 'users'
+			return this.$store.getters.isActorUser()
 				&& this.id === this.$store.getters.getUserId()
 		},
 		isCurrentUserGroup() {

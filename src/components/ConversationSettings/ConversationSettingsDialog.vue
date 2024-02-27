@@ -188,7 +188,7 @@ export default {
 		},
 
 		isGuest() {
-			return this.$store.getters.getActorType() === 'guests'
+			return this.$store.getters.isActorGuest()
 		},
 
 		token() {

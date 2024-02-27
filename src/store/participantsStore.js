@@ -27,7 +27,7 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
-import { PARTICIPANT } from '../constants.js'
+import { ATTENDEE, PARTICIPANT } from '../constants.js'
 import {
 	joinCall,
 	leaveCall,
@@ -59,7 +59,7 @@ import CancelableRequest from '../utils/cancelableRequest.js'
  * @param {object} participant - a participant object
  */
 function emitUserStatusUpdated(participant) {
-	if (participant.actorType === 'users') {
+	if (participant.actorType === ATTENDEE.ACTOR_TYPE.USERS) {
 		emit('user_status:status.updated', {
 			status: participant.status,
 			message: participant.statusMessage,
@@ -269,7 +269,7 @@ const getters = {
 		if (state.attendees[token] && userId) {
 			let foundAttendee = null
 			Object.keys(state.attendees[token]).forEach((attendeeId) => {
-				if (state.attendees[token][attendeeId].actorType === 'users'
+				if (state.attendees[token][attendeeId].actorType === ATTENDEE.ACTOR_TYPE.USERS
 					&& state.attendees[token][attendeeId].actorId === userId) {
 					foundAttendee = attendeeId
 				}

@@ -27,7 +27,7 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
-import { PARTICIPANT } from '../constants.js'
+import { ATTENDEE, PARTICIPANT } from '../constants.js'
 
 const state = {
 	userId: null,
@@ -53,6 +53,12 @@ const getters = {
 	},
 	getActorType: (state) => () => {
 		return state.actorType
+	},
+	isActorUser: (state) => () => {
+		return state.actorType === ATTENDEE.ACTOR_TYPE.USERS
+	},
+	isActorGuest: (state) => () => {
+		return state.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 	},
 	getDisplayName: (state) => () => {
 		return state.displayName
@@ -138,7 +144,7 @@ const actions = {
 	setCurrentUser(context, user) {
 		context.commit('setUserId', user.uid)
 		context.commit('setDisplayName', user.displayName || user.uid)
-		context.commit('setActorType', 'users')
+		context.commit('setActorType', ATTENDEE.ACTOR_TYPE.USERS)
 		context.commit('setActorId', user.uid)
 	},
 
@@ -159,7 +165,7 @@ const actions = {
 		if (participant.participantType === PARTICIPANT.TYPE.GUEST
 			|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
 			context.commit('setUserId', null)
-			context.commit('setActorType', 'guests')
+			context.commit('setActorType', ATTENDEE.ACTOR_TYPE.GUESTS)
 			context.commit('setActorId', participant.actorId)
 			// FIXME context.commit('setDisplayName', '')
 		}

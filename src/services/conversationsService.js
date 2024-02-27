@@ -24,7 +24,7 @@ import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import { CONVERSATION, SHARE } from '../constants.js'
+import { ATTENDEE, CONVERSATION, SHARE } from '../constants.js'
 
 /**
  * Fetches the conversations from the server.
@@ -134,7 +134,7 @@ const createGroupConversation = async function(invite, source) {
 		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
 			roomType: CONVERSATION.TYPE.GROUP,
 			invite,
-			source: source || 'groups'
+			source: source || ATTENDEE.ACTOR_TYPE.GROUPS
 		})
 	} catch (error) {
 		console.debug('Error creating new group conversation: ', error)

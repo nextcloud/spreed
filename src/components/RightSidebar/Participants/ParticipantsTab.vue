@@ -85,6 +85,7 @@ import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 import { useGetParticipants } from '../../../composables/useGetParticipants.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
+import { ATTENDEE } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
@@ -162,7 +163,7 @@ export default {
 
 			return this.participants.filter(participant => {
 				return isMatch(participant.displayName)
-					|| (participant.actorType !== 'guests' && isMatch(participant.actorId))
+					|| (participant.actorType !== ATTENDEE.ACTOR_TYPE.GUESTS && isMatch(participant.actorId))
 			})
 		},
 
@@ -314,7 +315,7 @@ export default {
 				this.$store.dispatch('updateUser', {
 					token: this.token,
 					participantIdentifier: {
-						actorType: 'users',
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
 						actorId: state.userId,
 					},
 					updatedData: {

@@ -1085,6 +1085,8 @@ describe('messagesStore', () => {
 		let conversationMock
 		let getActorIdMock
 		let getActorTypeMock
+		let isActorUserMock
+		let isActorGuestMock
 		let getUserIdMock
 
 		beforeEach(() => {
@@ -1094,10 +1096,14 @@ describe('messagesStore', () => {
 			conversationMock = jest.fn()
 			getActorIdMock = jest.fn()
 			getActorTypeMock = jest.fn()
+			isActorUserMock = jest.fn()
+			isActorGuestMock = jest.fn()
 			getUserIdMock = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
 			testStoreConfig.getters.getActorId = jest.fn().mockReturnValue(getActorIdMock)
 			testStoreConfig.getters.getActorType = jest.fn().mockReturnValue(getActorTypeMock)
+			testStoreConfig.getters.isActorUser = jest.fn().mockReturnValue(isActorUserMock)
+			testStoreConfig.getters.isActorGuest = jest.fn().mockReturnValue(isActorGuestMock)
 			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
 
 			updateConversationLastMessageAction = jest.fn()
@@ -1425,6 +1431,8 @@ describe('messagesStore', () => {
 				test('updates unread mention flag for guest mention', async () => {
 					getActorIdMock.mockReturnValue('me_as_guest')
 					getActorTypeMock.mockReturnValue(ATTENDEE.ACTOR_TYPE.GUESTS)
+					isActorUserMock.mockReturnValue(false)
+					isActorGuestMock.mockReturnValue(true)
 					await testMentionFlag({
 						'mention-0': {
 							type: 'user',
@@ -1452,6 +1460,8 @@ describe('messagesStore', () => {
 					getUserIdMock.mockReturnValue('me_as_user')
 					getActorIdMock.mockReturnValue('me_as_user')
 					getActorTypeMock.mockReturnValue(ATTENDEE.ACTOR_TYPE.USERS)
+					isActorUserMock.mockReturnValue(true)
+					isActorGuestMock.mockReturnValue(false)
 					await testMentionFlag({
 						'mention-0': {
 							type: 'user',

@@ -78,7 +78,7 @@ import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
-import { AVATAR } from '../constants.js'
+import { ATTENDEE, AVATAR } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 
@@ -171,7 +171,7 @@ export default {
 		getDisplayName() {
 			const displayName = this.actorDisplayName.trim()
 
-			if (displayName === '' && this.actorType === 'guests') {
+			if (displayName === '' && this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return t('spreed', 'Guest')
 			}
 
