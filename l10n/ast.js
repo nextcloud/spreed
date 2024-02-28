@@ -280,6 +280,7 @@ OC.L10N.register(
     "Blur" : "Emborrinar",
     "Upload" : "Xunir",
     "Files" : "Ficheros",
+    "Invalid path selected" : "Seleicionóse un camín inválidu",
     "Set reminder" : "Configurar un recordatoriu",
     "Dismiss" : "Escartar",
     "The message could not be translated" : "Nun se pudo traducir el mensaxe",
