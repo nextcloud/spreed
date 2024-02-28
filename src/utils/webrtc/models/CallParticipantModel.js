@@ -226,10 +226,6 @@ CallParticipantModel.prototype = {
 			return
 		}
 
-		if (label !== 'status' && label !== 'JanusDataChannel') {
-			return
-		}
-
 		if (data.type === 'speaking') {
 			this.set('speaking', true)
 		} else if (data.type === 'stoppedSpeaking') {
