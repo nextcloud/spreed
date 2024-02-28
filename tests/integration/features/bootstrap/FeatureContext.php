@@ -2657,12 +2657,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			$expected[$i]['message'] = str_replace('\n', "\n", $expected[$i]['message']);
 
-
 			if (str_ends_with($expected[$i]['actorId'], '@{$BASE_URL}')) {
 				$expected[$i]['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['actorId']);
 			}
 			if (str_ends_with($expected[$i]['actorId'], '@{$REMOTE_URL}')) {
 				$expected[$i]['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['actorId']);
+			}
+
+			if (str_contains($expected[$i]['messageParameters'], '{$BASE_URL}')) {
+				$expected[$i]['messageParameters'] = str_replace('{$BASE_URL}', str_replace('/', '\/', rtrim($this->baseUrl, '/')), $expected[$i]['messageParameters']);
+			}
+			if (str_contains($expected[$i]['messageParameters'], '{$REMOTE_URL}')) {
+				$expected[$i]['messageParameters'] = str_replace('{$REMOTE_URL}', str_replace('/', '\/', rtrim($this->baseRemoteUrl, '/')), $expected[$i]['messageParameters']);
 			}
 
 			if (isset($expected[$i]['lastEditActorId'])) {

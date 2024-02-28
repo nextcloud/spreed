@@ -117,14 +117,14 @@ Feature: federation/chat
     And user "participant2" deletes message "Message 1-1 - Edit 1" from room "LOCAL::room" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType       | actorId                    | actorDisplayName         | message                   | messageParameters | parentMessage          |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} | Message deleted by you |
-      | room | users           | participant1               | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |                        |
+      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"{$REMOTE_URL}"}} | Message deleted by you |
+      | room | users           | participant1               | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                          |                        |
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
       | room | actorType       | actorId                  | actorDisplayName         | message                   | messageParameters | parentMessage             |
-      | room | users           | participant2             | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}}                | Message deleted by author |
-      | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |                           |
+      | room | users           | participant2             | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
+      | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$BASE_URL}"}} |                           |
 
   Scenario: Error handling of chatting (posting a too long message)
     Given the following "spreed" app config is set

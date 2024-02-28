@@ -28,6 +28,7 @@ use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -77,6 +78,9 @@ class SystemMessage implements IEventListener {
 	/** @var array<string, array<string, string>> */
 	protected array $phoneNames = [];
 
+
+	protected array $currentFederatedUserDetails = [];
+
 	public function __construct(
 		protected IUserManager $userManager,
 		protected IGroupManager $groupManager,
@@ -89,6 +93,7 @@ class SystemMessage implements IEventListener {
 		protected ICloudIdManager $cloudIdManager,
 		protected IURLGenerator $url,
 		protected FilesMetadataCache $metadataCache,
+		protected Authenticator $federationAuthenticator,
 	) {
 	}
 
@@ -135,6 +140,19 @@ class SystemMessage implements IEventListener {
 		if ($participant === null) {
 			$currentActorId = null;
 			$currentUserIsActor = false;
+		} elseif ($this->federationAuthenticator->isFederationRequest()) {
+			if (empty($this->currentFederatedUserDetails)) {
+				$cloudId = $this->cloudIdManager->resolveCloudId($this->federationAuthenticator->getCloudId());
+				$this->currentFederatedUserDetails = [
+					'user' => $cloudId->getUser(),
+					'server' => $cloudId->getRemote(),
+				];
+			}
+
+			$currentUserIsActor = isset($parsedParameters['actor']['server']) &&
+				$parsedParameters['actor']['type'] === 'user' &&
+				$this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id'] &&
+				$this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
 		} elseif (!$participant->isGuest()) {
 			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
@@ -338,7 +356,7 @@ class SystemMessage implements IEventListener {
 				}
 			}
 		} elseif ($message === 'federated_user_added') {
-			$parsedParameters['federated_user'] = $this->getRemoteUser($parameters['federated_user']);
+			$parsedParameters['federated_user'] = $this->getRemoteUser($room, $parameters['federated_user']);
 			$parsedMessage = $this->l->t('{actor} invited {federated_user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You invited {federated_user}');
@@ -348,7 +366,7 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('{federated_user} accepted the invitation');
 			}
 		} elseif ($message === 'federated_user_removed') {
-			$parsedParameters['federated_user'] = $this->getRemoteUser($parameters['federated_user']);
+			$parsedParameters['federated_user'] = $this->getRemoteUser($room, $parameters['federated_user']);
 			$parsedMessage = $this->l->t('{actor} removed {federated_user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You removed {federated_user}');
@@ -647,6 +665,19 @@ class SystemMessage implements IEventListener {
 
 		if ($participant === null) {
 			$currentUserIsActor = false;
+		} elseif ($this->federationAuthenticator->isFederationRequest()) {
+			if (empty($this->currentFederatedUserDetails)) {
+				$cloudId = $this->cloudIdManager->resolveCloudId($this->federationAuthenticator->getCloudId());
+				$this->currentFederatedUserDetails = [
+					'user' => $cloudId->getUser(),
+					'server' => $cloudId->getRemote(),
+				];
+			}
+
+			$currentUserIsActor = isset($parsedParameters['actor']['server']) &&
+				$parsedParameters['actor']['type'] === 'user' &&
+				$this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id'] &&
+				$this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
 		} elseif (!$participant->isGuest()) {
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
@@ -797,7 +828,7 @@ class SystemMessage implements IEventListener {
 			return $this->getPhone($room, $actorId, '');
 		}
 		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
-			return $this->getRemoteUser($actorId);
+			return $this->getRemoteUser($room, $actorId);
 		}
 
 		return $this->getUser($actorId);
@@ -827,13 +858,19 @@ class SystemMessage implements IEventListener {
 		];
 	}
 
-	protected function getRemoteUser(string $federationId): array {
+	protected function getRemoteUser(Room $room, string $federationId): array {
 		$cloudId = $this->cloudIdManager->resolveCloudId($federationId);
+		$displayName = $cloudId->getDisplayId();
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $federationId);
+			$displayName = $participant->getAttendee()->getDisplayName();
+		} catch (ParticipantNotFoundException) {
+		}
 
 		return [
 			'type' => 'user',
 			'id' => $cloudId->getUser(),
-			'name' => $cloudId->getDisplayId(),
+			'name' => $displayName,
 			'server' => $cloudId->getRemote(),
 		];
 	}

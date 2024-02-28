@@ -25,6 +25,7 @@ use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -78,6 +79,7 @@ class SystemMessageTest extends TestCase {
 	protected $cloudIdManager;
 	/** @var FilesMetadataCache|MockObject */
 	protected $filesMetadataCache;
+	protected Authenticator|MockObject $federationAuthenticator;
 	/** @var IL10N|MockObject */
 	protected $l;
 
@@ -95,6 +97,7 @@ class SystemMessageTest extends TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
+		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
 			->willReturnCallback(function ($text, $parameters = []) {
@@ -126,6 +129,7 @@ class SystemMessageTest extends TestCase {
 					$this->cloudIdManager,
 					$this->url,
 					$this->filesMetadataCache,
+					$this->federationAuthenticator,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -144,6 +148,7 @@ class SystemMessageTest extends TestCase {
 			$this->cloudIdManager,
 			$this->url,
 			$this->filesMetadataCache,
+			$this->federationAuthenticator,
 		);
 	}
 
