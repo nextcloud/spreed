@@ -35,7 +35,7 @@
 			:display-name="name"
 			:menu-container="menuContainerWithFallback"
 			:disable-tooltip="disableTooltip"
-			:disable-menu="isDisabledMenu"
+			:disable-menu="disableMenu"
 			:show-user-status="showUserStatus"
 			:show-user-status-compact="showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
@@ -172,11 +172,6 @@ export default {
 		},
 		menuContainerWithFallback() {
 			return this.menuContainer ?? this.$store.getters.getMainContainerSelector()
-		},
-		isDisabledMenu() {
-			// NcAvatarMenu doesn't work on Desktop
-			// See: https://github.com/nextcloud/talk-desktop/issues/34
-			return IS_DESKTOP || this.disableMenu
 		},
 	},
 }
