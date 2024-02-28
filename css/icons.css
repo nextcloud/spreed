@@ -93,12 +93,16 @@
  * not accept several classes. */
 .user-bubble__avatar .avatar-class-icon.icon-group-forced-white,
 .tribute-container .icon-group-forced-white {
+	background-color: var(--color-text-maxcontrast-default);
 	background-image: url(../img/icon-contacts-white.svg);
+	background-size: 75%;
 }
 
 .user-bubble__avatar .avatar-class-icon.icon-user-forced-white,
 .tribute-container .icon-user-forced-white {
-	background-image: url(../img/icon-user-white.svg)
+	background-color: var(--color-text-maxcontrast-default);
+	background-image: url(../img/icon-user-white.svg);
+	background-size: 75%;
 }
 
 /* Needed to use white color also in dark mode. */
