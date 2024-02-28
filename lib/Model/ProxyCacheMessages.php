@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -47,14 +48,16 @@ use OCP\AppFramework\Db\Entity;
  * @method string getMessageType()
  * @method void setSystemMessage(?string $systemMessage)
  * @method string|null getSystemMessage()
- * @method void setExpirationDateTime(?\DateTimeImmutable $expirationDateTime)
- * @method \DateTimeImmutable|null getExpirationDateTime()
+ * @method void setExpirationDatetime(?\DateTimeImmutable $expirationDatetime)
+ * @method \DateTimeImmutable|null getExpirationDatetime()
  * @method void setMessage(?string $message)
  * @method string|null getMessage()
  * @method void setMessageParameters(?string $messageParameters)
  * @method string|null getMessageParameters()
+ *
+ * @psalm-import-type TalkRoomProxyMessage from ResponseDefinitions
  */
-class ProxyCacheMessages extends Entity {
+class ProxyCacheMessages extends Entity implements \JsonSerializable {
 
 	protected string $localToken = '';
 	protected string $remoteServerUrl = '';
@@ -82,5 +85,26 @@ class ProxyCacheMessages extends Entity {
 		$this->addType('expirationDatetime', 'datetime');
 		$this->addType('message', 'string');
 		$this->addType('messageParameters', 'string');
+	}
+
+	/**
+	 * @return TalkRoomProxyMessage
+	 */
+	public function jsonSerialize(): array {
+		$expirationTimestamp = 0;
+		if ($this->getExpirationDatetime()) {
+			$expirationTimestamp = $this->getExpirationDatetime()->getTimestamp();
+		}
+
+		return [
+			'actorType' => $this->getActorType(),
+			'actorId' => $this->getActorId(),
+			'actorDisplayName' => $this->getActorDisplayName(),
+			'expirationTimestamp' => $expirationTimestamp,
+			'messageType' => $this->getMessageType(),
+			'systemMessage' => $this->getSystemMessage() ?? '',
+			'message' => $this->getMessage() ?? '',
+			'messageParameters' => json_decode($this->getMessageParameters() ?? '[]', true),
+		];
 	}
 }

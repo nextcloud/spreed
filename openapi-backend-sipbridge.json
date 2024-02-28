@@ -478,7 +478,7 @@
                     "lastMessage": {
                         "oneOf": [
                             {
-                                "$ref": "#/components/schemas/ChatMessage"
+                                "$ref": "#/components/schemas/RoomLastMessage"
                             },
                             {
                                 "type": "array",
@@ -586,6 +586,62 @@
                     "unreadMessages": {
                         "type": "integer",
                         "format": "int64"
+                    }
+                }
+            },
+            "RoomLastMessage": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    {
+                        "$ref": "#/components/schemas/RoomProxyMessage"
+                    }
+                ]
+            },
+            "RoomProxyMessage": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "expirationTimestamp",
+                    "message",
+                    "messageParameters",
+                    "messageType",
+                    "systemMessage"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string"
+                    },
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "expirationTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "messageParameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "messageType": {
+                        "type": "string"
+                    },
+                    "systemMessage": {
+                        "type": "string"
                     }
                 }
             }
