@@ -33,7 +33,7 @@ PORT_FED=8180
 export PORT_FED
 
 echo "" > phpserver_fed.log
-php -S localhost:${PORT_FED} -t ${ROOT_DIR} &> phpserver_fed.log &
+PHP_CLI_SERVER_WORKERS=3 php -S localhost:${PORT_FED} -t ${ROOT_DIR} &> phpserver_fed.log &
 PHPPID2=$!
 echo -e "Running on process ID: \033[1;35m$PHPPID2\033[0m"
 

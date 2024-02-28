@@ -21,10 +21,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Federation;
+namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
@@ -34,7 +35,7 @@ use OCP\Federation\ICloudIdManager;
 /**
  * @template-implements IEventListener<Event>
  */
-class Listener implements IEventListener {
+class RoomModifiedListener implements IEventListener {
 	public function __construct(
 		protected BackendNotifier $backendNotifier,
 		protected ParticipantService $participantService,

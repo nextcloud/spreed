@@ -34,16 +34,22 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\ICache;
+use OCP\ICacheFactory;
 
 /**
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  */
 class ChatController {
+	protected ?ICache $proxyCacheMessages;
+
 	public function __construct(
 		protected ProxyRequest  $proxy,
 		protected UserConverter $userConverter,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
 	}
 
 	/**
@@ -126,11 +132,23 @@ class ChatController {
 		int $includeLastKnown,
 		int $noStatusUpdate,
 		int $markNotificationsAsRead): DataResponse {
+		$cacheKey = sha1(json_encode([$room->getRemoteServer(), $room->getRemoteToken()]));
 
-		// FIXME
-		// Poor-mans timeout, should later on cancel/trigger earlier,
-		// when we received a OCM message notifying us about a chat message
-		sleep(max(0, $timeout - 5));
+		if ($lookIntoFuture) {
+			if ($this->proxyCacheMessages instanceof ICache) {
+				for ($i = 0; $i <= $timeout; $i++) {
+					$cacheData = (int) $this->proxyCacheMessages->get($cacheKey);
+					if ($lastKnownMessageId !== $cacheData) {
+						break;
+					}
+					sleep(1);
+				}
+			} else {
+				// Poor-mans timeout, should later on cancel/trigger earlier,
+				// by checking the PCM database table
+				sleep(max(0, $timeout - 5));
+			}
+		}
 
 		$proxy = $this->proxy->get(
 			$participant->getAttendee()->getInvitedCloudId(),
@@ -159,6 +177,12 @@ class ChatController {
 		}
 		if ($proxy->getHeader('X-Chat-Last-Given')) {
 			$headers['X-Chat-Last-Given'] = (string) (int) $proxy->getHeader('X-Chat-Last-Given');
+			if ($this->proxyCacheMessages instanceof ICache) {
+				$cacheData = $this->proxyCacheMessages->get($cacheKey);
+				if ($cacheData === null || $cacheData < $headers['X-Chat-Last-Given']) {
+					$this->proxyCacheMessages->set($cacheKey, (int) $headers['X-Chat-Last-Given'], 300);
+				}
+			}
 		}
 
 		/** @var TalkChatMessageWithParent[] $data */
