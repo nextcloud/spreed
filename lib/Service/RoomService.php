@@ -874,6 +874,18 @@ class RoomService {
 		$room->setLastActivity($message->getCreationDateTime());
 	}
 
+	public function setLastMessageInfo(Room $room, int $messageId, \DateTime $dateTime): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_message', $update->createNamedParameter($messageId))
+			->set('last_activity', $update->createNamedParameter($dateTime, 'datetime'))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setLastMessageId($messageId);
+		$room->setLastActivity($dateTime);
+	}
+
 	public function setLastActivity(Room $room, \DateTime $now): void {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')

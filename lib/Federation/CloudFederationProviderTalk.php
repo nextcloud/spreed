@@ -340,11 +340,18 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$message->setMessageType($notification['messageData']['messageType']);
 		$message->setSystemMessage($notification['messageData']['systemMessage']);
 		if ($notification['messageData']['expirationDatetime']) {
-			$message->setExpirationDateTime(new \DateTimeImmutable($notification['messageData']['expirationDatetime']));
+			$message->setExpirationDatetime(new \DateTimeImmutable($notification['messageData']['expirationDatetime']));
 		}
 		$message->setMessage($notification['messageData']['message']);
 		$message->setMessageParameters($notification['messageData']['messageParameter']);
+		// FIXME catch unique constraint violation
 		$this->proxyCacheMessagesMapper->insert($message);
+
+		$lastMessageId = $room->getLastMessageId();
+		if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
+			$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
+		}
+		$this->roomService->setLastMessageInfo($room, $lastMessageId, new \DateTime());
 
 		if ($this->proxyCacheMessages instanceof ICache) {
 			$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));
