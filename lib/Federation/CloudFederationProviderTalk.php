@@ -344,20 +344,29 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 		$message->setMessage($notification['messageData']['message']);
 		$message->setMessageParameters($notification['messageData']['messageParameter']);
-		// FIXME catch unique constraint violation
-		$this->proxyCacheMessagesMapper->insert($message);
+		try {
+			$this->proxyCacheMessagesMapper->insert($message);
 
-		$lastMessageId = $room->getLastMessageId();
-		if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
-			$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
-		}
-		$this->roomService->setLastMessageInfo($room, $lastMessageId, new \DateTime());
+			$lastMessageId = $room->getLastMessageId();
+			if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
+				$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
+			}
+			$this->roomService->setLastMessageInfo($room, $lastMessageId, new \DateTime());
 
-		if ($this->proxyCacheMessages instanceof ICache) {
-			$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));
-			$cacheData = $this->proxyCacheMessages->get($cacheKey);
-			if ($cacheData === null || $cacheData < $notification['messageData']['remoteMessageId']) {
-				$this->proxyCacheMessages->set($cacheKey, $notification['messageData']['remoteMessageId'], 300);
+			if ($this->proxyCacheMessages instanceof ICache) {
+				$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));
+				$cacheData = $this->proxyCacheMessages->get($cacheKey);
+				if ($cacheData === null || $cacheData < $notification['messageData']['remoteMessageId']) {
+					$this->proxyCacheMessages->set($cacheKey, $notification['messageData']['remoteMessageId'], 300);
+				}
+			}
+		} catch (DBException $e) {
+			// DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION happens when
+			// multiple users are in the same conversation. We are therefore
+			// informed multiple times about the same remote message.
+			if ($e->getCode() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+				$this->logger->error('Error saving proxy cache message failed: ' . $e->getMessage(), ['exception' => $e]);
+				throw $e;
 			}
 		}
 
