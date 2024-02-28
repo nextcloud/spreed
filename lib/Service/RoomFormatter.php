@@ -329,6 +329,13 @@ class RoomFormatter {
 					&& $currentParticipant->hasModeratorPermissions(false)
 					&& $this->talkConfig->canUserEnableSIP($currentUser);
 			}
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$lastReadMessage = $attendee->getLastReadMessage();
+			$lastMention = $attendee->getLastMentionMessage();
+			$lastMentionDirect = $attendee->getLastMentionDirect();
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 		} else {
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}

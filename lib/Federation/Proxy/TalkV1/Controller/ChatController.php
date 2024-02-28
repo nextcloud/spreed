@@ -32,6 +32,8 @@ use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\ICache;
@@ -40,6 +42,7 @@ use OCP\ICacheFactory;
 /**
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class ChatController {
 	protected ?ICache $proxyCacheMessages;
@@ -47,6 +50,8 @@ class ChatController {
 	public function __construct(
 		protected ProxyRequest  $proxy,
 		protected UserConverter $userConverter,
+		protected ParticipantService $participantService,
+		protected RoomFormatter $roomFormatter,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
@@ -345,6 +350,49 @@ class ChatController {
 			$statusCode,
 			$headers
 		);
+	}
+
+	/**
+	 * @see \OCA\Talk\Controller\ChatController::setReadMarker()
+	 *
+	 * @param 'json'|'xml' $responseFormat
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: List of mention suggestions returned
+	 */
+	public function setReadMarker(Room $room, Participant $participant, string $responseFormat, int $lastReadMessage): DataResponse {
+		$proxy = $this->proxy->post(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/read',
+			[
+				'lastReadMessage' => $lastReadMessage,
+			],
+		);
+
+		/** @var TalkRoom $data */
+		$data = $this->proxy->getOCSData($proxy);
+
+		$this->participantService->updateUnreadInfoForProxyParticipant(
+			$participant,
+			$data['unreadMessages'],
+			$data['unreadMention'],
+			$data['unreadMentionDirect'],
+		);
+
+		$headers = $lastCommonRead = [];
+		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
+			$lastCommonRead[$room->getId()] = (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string) $lastCommonRead[$room->getId()];
+		}
+
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$responseFormat,
+			$lastCommonRead,
+			$room,
+			$participant,
+		), Http::STATUS_OK, $headers);
 	}
 
 	/**

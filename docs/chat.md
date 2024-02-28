@@ -426,6 +426,10 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         + `404 Not Found` When the room could not be found for the participant,
         or the participant is a guest.
 
+    - Data in case of `200 OK`:
+        + **Without** `federation-v1` capability empty
+        + **With** `federation-v1` capability, see array definition in [Get user´s conversations](conversation.md#get-user-s-conversations)
+
     - Header:
 
 | field                     | type | Description                                                                                                                                                                                                     |
