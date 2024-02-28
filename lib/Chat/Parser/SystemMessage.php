@@ -360,6 +360,9 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} invited {federated_user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You invited {federated_user}');
+				if ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
+					$parsedMessage = $this->l->t('You accepted the invitation');
+				}
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator invited {federated_user}');
 			} elseif ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
