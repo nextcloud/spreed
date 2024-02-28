@@ -177,17 +177,20 @@ class ChatManager {
 			if ($sendNotifications) {
 				/** @var ?IComment $captionComment */
 				$captionComment = null;
-				$alreadyNotifiedUsers = $usersDirectlyMentioned = [];
+				$alreadyNotifiedUsers = $usersDirectlyMentioned = $federatedUsersDirectlyMentioned = [];
 				if ($messageType === 'file_shared') {
 					if (isset($messageDecoded['parameters']['metaData']['caption'])) {
 						$captionComment = clone $comment;
 						$captionComment->setMessage($messageDecoded['parameters']['metaData']['caption'], self::MAX_CHAT_LENGTH);
 						$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($captionComment);
+						$federatedUsersDirectlyMentioned = $this->notifier->getMentionedCloudIds($captionComment);
 					}
 					if ($replyTo instanceof IComment) {
 						$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent);
 						if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
 							$usersDirectlyMentioned[] = $replyTo->getActorId();
+						} elseif ($replyTo->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+							$federatedUsersDirectlyMentioned[] = $replyTo->getActorId();
 						}
 					}
 				}
@@ -195,7 +198,10 @@ class ChatManager {
 				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $captionComment ?? $comment, $alreadyNotifiedUsers, $silent);
 				if (!empty($alreadyNotifiedUsers)) {
 					$userIds = array_column($alreadyNotifiedUsers, 'id');
-					$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+				}
+				if (!empty($federatedUsersDirectlyMentioned)) {
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int) $comment->getId(), $federatedUsersDirectlyMentioned);
 				}
 
 				$this->notifier->notifyOtherParticipant($chat, $comment, [], $silent);
@@ -326,17 +332,23 @@ class ChatManager {
 
 			$alreadyNotifiedUsers = [];
 			$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($comment);
+			$federatedUsersDirectlyMentioned = $this->notifier->getMentionedCloudIds($comment);
 			if ($replyTo instanceof IComment) {
 				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent);
 				if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
 					$usersDirectlyMentioned[] = $replyTo->getActorId();
+				} elseif ($replyTo->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+					$federatedUsersDirectlyMentioned[] = $replyTo->getActorId();
 				}
 			}
 
 			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers, $silent);
 			if (!empty($alreadyNotifiedUsers)) {
 				$userIds = array_column($alreadyNotifiedUsers, 'id');
-				$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+			}
+			if (!empty($federatedUsersDirectlyMentioned)) {
+				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int) $comment->getId(), $federatedUsersDirectlyMentioned);
 			}
 
 			// User was not mentioned, send a normal notification
@@ -561,12 +573,16 @@ class ChatManager {
 
 			if (!empty($addedMentions)) {
 				$usersDirectlyMentionedAfter = $this->notifier->getMentionedUserIds($comment);
+				$federatedUsersDirectlyMentionedAfter = $this->notifier->getMentionedCloudIds($comment);
 				$addedUsersDirectMentioned = array_diff($usersDirectlyMentionedAfter, $usersDirectlyMentionedBefore);
 
 				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $usersToNotifyBefore, silent: false);
 				if (!empty($alreadyNotifiedUsers)) {
 					$userIds = array_column($alreadyNotifiedUsers, 'id');
-					$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+				}
+				if (!empty($federatedUsersDirectlyMentionedAfter)) {
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentionedAfter, (int) $comment->getId(), $federatedUsersDirectlyMentionedAfter);
 				}
 			}
 		}
