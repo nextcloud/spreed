@@ -35,7 +35,9 @@ get the messagesList array and loop through the list to generate the messages.
 			'scroller--isScrolling': isScrolling}"
 		@scroll="onScroll"
 		@scrollend="endScroll">
-		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+		<TransitionWrapper name="fade">
+			<ul v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+		</TransitionWrapper>
 
 		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
 			:key="`section_${dateTimestamp}`"
@@ -89,6 +91,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'
@@ -100,6 +103,7 @@ export default {
 		LoadingPlaceholder,
 		Message,
 		NcEmptyContent,
+		TransitionWrapper
 	},
 
 	provide() {
@@ -822,9 +826,6 @@ export default {
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
 		async getOldMessages(includeLastKnown) {
-			if (this.stopFetchingOldMessages) {
-				return
-			}
 			// Make the request
 			this.loadingOldMessages = true
 			try {
@@ -990,7 +991,7 @@ export default {
 			this.setChatScrolledToBottom(false)
 
 			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue) {
-				if (this.loadingOldMessages) {
+				if (this.loadingOldMessages || this.stopFetchingOldMessages) {
 					// already loading, don't do it twice
 					return
 				}
@@ -999,9 +1000,9 @@ export default {
 				this.displayMessagesLoader = false
 
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
-					// scroll to previous position + added height
+					// scroll to previous position + added height - loading spinner height
 					this.$refs.scroller.scrollTo({
-						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight) - 40,
 					})
 				}
 			}
@@ -1365,11 +1366,8 @@ export default {
 	}
 
 	&__loading {
-		position: absolute;
-		top: 17px;
-		left: 50%;
 		height: 40px;
-		transform: translatex(-380px);
+		transform: translatex(-64px);
 	}
 }
 
