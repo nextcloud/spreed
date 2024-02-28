@@ -48,6 +48,11 @@ class Authenticator {
 
 	protected function readHeaders(): void {
 		$this->isFederationRequest = (bool) $this->request->getHeader('X-Nextcloud-Federation');
+		if (!$this->isFederationRequest) {
+			$this->federationCloudId = '';
+			$this->accessToken = '';
+			return;
+		}
 
 		$authUser = $this->request->server['PHP_AUTH_USER'] ?? '';
 		$authUser = urldecode($authUser);
