@@ -35,7 +35,7 @@ const fetchConversations = async function(options) {
 	options = options || {}
 	options.params = options.params || {}
 	options.params.includeStatus = true
-	return await axios.get(generateOcsUrl('apps/spreed/api/v4/room'), options)
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room'), options)
 }
 
 /**
@@ -54,11 +54,12 @@ const fetchConversation = async function(token) {
  * @param {object} options options
  */
 const searchListedConversations = async function({ searchText }, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v4/listed-room'), Object.assign(options, {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/listed-room'), {
+		...options,
 		params: {
 			searchTerm: searchText,
 		},
-	}))
+	})
 }
 
 /**
@@ -81,46 +82,36 @@ const fetchNoteToSelfConversation = async function() {
 const searchPossibleConversations = async function({ searchText, token, onlyUsers }, options) {
 	token = token || 'new'
 	onlyUsers = !!onlyUsers
+
 	const shareTypes = [
 		SHARE.TYPE.USER,
-	]
+		!onlyUsers ? SHARE.TYPE.GROUP : null,
+		!onlyUsers ? SHARE.TYPE.CIRCLE : null,
+		(!onlyUsers && token !== 'new') ? SHARE.TYPE.EMAIL : null,
+		(!onlyUsers && token !== 'new' && loadState('spreed', 'federation_enabled')) ? SHARE.TYPE.REMOTE : null,
+	].filter(type => type !== null)
 
-	if (!onlyUsers) {
-		shareTypes.push(SHARE.TYPE.GROUP)
-		shareTypes.push(SHARE.TYPE.CIRCLE)
-		if (token !== 'new') {
-			shareTypes.push(SHARE.TYPE.EMAIL)
-
-			if (loadState('spreed', 'federation_enabled')) {
-				shareTypes.push(SHARE.TYPE.REMOTE)
-			}
-		}
-	}
-
-	return axios.get(generateOcsUrl('core/autocomplete/get'), Object.assign(options, {
+	return axios.get(generateOcsUrl('core/autocomplete/get'), {
+		...options,
 		params: {
 			search: searchText,
 			itemType: 'call',
 			itemId: token,
 			shareTypes,
 		},
-	}))
+	})
 }
 
 /**
  * Create a new one to one conversation with the specified user.
  *
- * @param {string} userId The ID of the user with wich the new conversation will be opened.
+ * @param {string} userId The ID of the user with which the new conversation will be opened.
  */
 const createOneToOneConversation = async function(userId) {
-	try {
-		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-			roomType: CONVERSATION.TYPE.ONE_TO_ONE,
-			invite: userId
-		})
-	} catch (error) {
-		console.debug('Error creating new one to one conversation: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+		roomType: CONVERSATION.TYPE.ONE_TO_ONE,
+		invite: userId,
+	})
 }
 
 /**
@@ -130,15 +121,11 @@ const createOneToOneConversation = async function(userId) {
  * @param {string} source The source of the invite ID (defaults to groups)
  */
 const createGroupConversation = async function(invite, source) {
-	try {
-		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-			roomType: CONVERSATION.TYPE.GROUP,
-			invite,
-			source: source || ATTENDEE.ACTOR_TYPE.GROUPS
-		})
-	} catch (error) {
-		console.debug('Error creating new group conversation: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+		roomType: CONVERSATION.TYPE.GROUP,
+		invite,
+		source: source || ATTENDEE.ACTOR_TYPE.GROUPS,
+	})
 }
 
 /**
@@ -148,15 +135,11 @@ const createGroupConversation = async function(invite, source) {
  * @param {string} [objectType] The conversation object type
  */
 const createPrivateConversation = async function(conversationName, objectType) {
-	try {
-		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-			roomType: CONVERSATION.TYPE.GROUP,
-			roomName: conversationName,
-			objectType,
-		})
-	} catch (error) {
-		console.debug('Error creating new private conversation: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+		roomType: CONVERSATION.TYPE.GROUP,
+		roomName: conversationName,
+		objectType,
+	})
 }
 
 /**
@@ -166,15 +149,11 @@ const createPrivateConversation = async function(conversationName, objectType) {
  * @param {string} [objectType] The conversation object type
  */
 const createPublicConversation = async function(conversationName, objectType) {
-	try {
-		return await axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
-			roomType: CONVERSATION.TYPE.PUBLIC,
-			roomName: conversationName,
-			objectType,
-		})
-	} catch (error) {
-		console.debug('Error creating new public conversation: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room'), {
+		roomType: CONVERSATION.TYPE.PUBLIC,
+		roomName: conversationName,
+		objectType,
+	})
 }
 
 /**
@@ -184,10 +163,9 @@ const createPublicConversation = async function(conversationName, objectType) {
  * @param {string} password the password to be set
  */
 const setConversationPassword = async function(token, password) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/password', { token }), {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/password', { token }), {
 		password,
 	})
-	return response
 }
 
 /**
@@ -197,10 +175,21 @@ const setConversationPassword = async function(token, password) {
  * @param {string} name the name to be set
  */
 const setConversationName = async function(token, name) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }), {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }), {
 		roomName: name,
 	})
-	return response
+}
+
+/**
+ * Set a conversation's description
+ *
+ * @param {string} token the conversation's token
+ * @param {string} description the description to be set
+ */
+const setConversationDescription = async function(token, description) {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/description', { token }), {
+		description,
+	})
 }
 
 /**
@@ -209,12 +198,7 @@ const setConversationName = async function(token, name) {
  * @param {string} token The token of the conversation to be deleted.
  */
 const deleteConversation = async function(token) {
-	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }))
-		return response
-	} catch (error) {
-		console.debug('Error while deleting the conversation: ', error)
-	}
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }))
 }
 
 /**
@@ -223,8 +207,7 @@ const deleteConversation = async function(token) {
  * @param {string} token The token of the conversation to be deleted.
  */
 const clearConversationHistory = async function(token) {
-	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }))
-	return response
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }))
 }
 
 /**
@@ -233,12 +216,7 @@ const clearConversationHistory = async function(token) {
  * @param {string} token The token of the conversation to be set as unread
  */
 const setConversationUnread = async function(token) {
-	try {
-		const response = axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }))
-		return response
-	} catch (error) {
-		console.debug('Error while setting the conversation as unread: ', error)
-	}
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }))
 }
 
 /**
@@ -247,12 +225,7 @@ const setConversationUnread = async function(token) {
  * @param {string} token The token of the conversation to be favorites
  */
 const addToFavorites = async function(token) {
-	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/favorite', { token }))
-		return response
-	} catch (error) {
-		console.debug('Error while adding the conversation to favorites: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/favorite', { token }))
 }
 
 /**
@@ -261,12 +234,7 @@ const addToFavorites = async function(token) {
  * @param {string} token The token of the conversation to be removed from favorites
  */
 const removeFromFavorites = async function(token) {
-	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/favorite', { token }))
-		return response
-	} catch (error) {
-		console.debug('Error while removing the conversation from favorites: ', error)
-	}
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/favorite', { token }))
 }
 
 /**
@@ -276,12 +244,7 @@ const removeFromFavorites = async function(token) {
  * @param {number} level The notification level to set.
  */
 const setNotificationLevel = async function(token, level) {
-	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/notify', { token }), { level })
-		return response
-	} catch (error) {
-		console.debug('Error while setting the notification level: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/notify', { token }), { level })
 }
 
 /**
@@ -291,12 +254,7 @@ const setNotificationLevel = async function(token, level) {
  * @param {number} level The call notification level.
  */
 const setNotificationCalls = async function(token, level) {
-	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/notify-calls', { token }), { level })
-		return response
-	} catch (error) {
-		console.debug('Error while setting the call notification level: ', error)
-	}
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/notify-calls', { token }), { level })
 }
 
 /**
@@ -304,13 +262,8 @@ const setNotificationCalls = async function(token, level) {
  *
  * @param {string} token The token of the conversation to be removed from favorites
  */
-const makePublic = async function(token) {
-	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }))
-		return response
-	} catch (error) {
-		console.debug('Error while making the conversation public: ', error)
-	}
+const makeConversationPublic = async function(token) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }))
 }
 
 /**
@@ -318,13 +271,8 @@ const makePublic = async function(token) {
  *
  * @param {string} token The token of the conversation to be removed from favorites
  */
-const makePrivate = async function(token) {
-	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }))
-		return response
-	} catch (error) {
-		console.debug('Error while making the conversation private: ', error)
-	}
+const makeConversationPrivate = async function(token) {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }))
 }
 
 /**
@@ -356,18 +304,13 @@ const setRecordingConsent = async function(token, newState) {
  *
  * @param {string} token The token of the conversation to be modified
  * @param {number} newState The new lobby state to set
- * @param {number} timestamp The UNIX timestamp (in seconds) to set, if any
+ * @param {number} [timestamp] The UNIX timestamp (in seconds) to set, if any
  */
 const changeLobbyState = async function(token, newState, timestamp) {
-	try {
-		const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/webinar/lobby', { token }), {
-			state: newState,
-			timer: timestamp,
-		})
-		return response
-	} catch (error) {
-		console.debug('Error while updating webinar lobby: ', error)
-	}
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/webinar/lobby', { token }), {
+		state: newState,
+		timer: timestamp,
+	})
 }
 
 /**
@@ -377,14 +320,9 @@ const changeLobbyState = async function(token, newState, timestamp) {
  * @param {number} readOnly The new read-only state to set
  */
 const changeReadOnlyState = async function(token, readOnly) {
-	try {
-		const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/read-only', { token }), {
-			state: readOnly,
-		})
-		return response
-	} catch (error) {
-		console.debug('Error while updating read-only state: ', error)
-	}
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/read-only', { token }), {
+		state: readOnly,
+	})
 }
 
 /**
@@ -394,17 +332,9 @@ const changeReadOnlyState = async function(token, readOnly) {
  * @param {number} listable The new listable scope to set
  */
 const changeListable = async function(token, listable) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/listable', { token }), {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/listable', { token }), {
 		scope: listable,
 	})
-	return response
-}
-
-const setConversationDescription = async function(token, description) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/description', { token }), {
-		description,
-	})
-	return response
 }
 
 /**
@@ -416,10 +346,9 @@ const setConversationDescription = async function(token, description) {
  * 'PUBLISH_AUDIO', 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
  */
 const setConversationPermissions = async (token, permissions) => {
-	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/permissions/default', { token }),
-		{
-			permissions,
-		})
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/permissions/default', { token }), {
+		permissions,
+	})
 }
 
 /**
@@ -432,10 +361,9 @@ const setConversationPermissions = async (token, permissions) => {
  * 'PUBLISH_AUDIO', 'PUBLISH_VIDEO', 'PUBLISH_SCREEN'.
  */
 const setCallPermissions = async (token, permissions) => {
-	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/permissions/call', { token }),
-		{
-			permissions,
-		})
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/permissions/call', { token }), {
+		permissions,
+	})
 }
 
 /**
@@ -445,14 +373,8 @@ const setCallPermissions = async (token, permissions) => {
  * @param {number} seconds the seconds for the message expiration, 0 to disable
  */
 const setMessageExpiration = async (token, seconds) => {
-	return await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/message-expiration', { token }), {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/message-expiration', { token }), {
 		seconds,
-	})
-}
-
-const validatePassword = async (password) => {
-	return await axios.post(generateOcsUrl('apps/password_policy/api/v1/validate'), {
-		password,
 	})
 }
 
@@ -483,8 +405,8 @@ export {
 	removeFromFavorites,
 	setNotificationLevel,
 	setNotificationCalls,
-	makePublic,
-	makePrivate,
+	makeConversationPublic,
+	makeConversationPrivate,
 	setSIPEnabled,
 	setRecordingConsent,
 	changeLobbyState,
@@ -498,7 +420,6 @@ export {
 	setConversationPermissions,
 	setCallPermissions,
 	setMessageExpiration,
-	validatePassword,
 	setConversationAvatar,
 	setConversationEmojiAvatar,
 	deleteConversationAvatar,

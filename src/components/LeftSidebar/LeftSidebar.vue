@@ -777,9 +777,13 @@ export default {
 		},
 
 		async createConversation(name) {
-			const response = await createPrivateConversation(name)
-			const conversation = response.data.ocs.data
-			this.switchToConversation(conversation)
+			try {
+				const response = await createPrivateConversation(name)
+				const conversation = response.data.ocs.data
+				this.switchToConversation(conversation)
+			} catch (error) {
+				console.error('Error creating new private conversation: ', error)
+			}
 		},
 
 		async restoreNoteToSelfConversation() {

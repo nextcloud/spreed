@@ -308,7 +308,7 @@ export default {
 					await this.createConversation(PRIVACY.PRIVATE)
 				}
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 				this.isLoading = false
 				this.error = true
 				// Stop the execution of the method on exceptions.
@@ -321,7 +321,7 @@ export default {
 					listable: this.listable,
 				})
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 				this.isLoading = false
 				this.error = true
 				// Stop the execution of the method on exceptions.
@@ -332,7 +332,7 @@ export default {
 				try {
 					await addParticipant(this.newConversation.token, participant.id, participant.source)
 				} catch (exception) {
-					console.debug(exception)
+					console.error(exception)
 					this.isLoading = false
 					this.error = true
 					// Stop the execution of the method on exceptions.
@@ -360,20 +360,24 @@ export default {
 		 * @param {number} flag choose to send a request with private or public flag
 		 */
 		async createConversation(flag) {
-			let response
-			if (flag === PRIVACY.PRIVATE) {
-				response = await createPrivateConversation(this.conversationName)
-			} else if (flag === PRIVACY.PUBLIC) {
-				response = await createPublicConversation(this.conversationName)
-			}
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.newConversation.token = conversation.token
-			if (this.isAvatarEdited) {
-				this.$refs.setupPage.$refs.conversationAvatar.saveAvatar()
-			}
-			if (this.newConversation.description) {
-				this.handleUpdateDescription()
+			try {
+				let response
+				if (flag === PRIVACY.PRIVATE) {
+					response = await createPrivateConversation(this.conversationName)
+				} else if (flag === PRIVACY.PUBLIC) {
+					response = await createPublicConversation(this.conversationName)
+				}
+				const conversation = response.data.ocs.data
+				this.$store.dispatch('addConversation', conversation)
+				this.newConversation.token = conversation.token
+				if (this.isAvatarEdited) {
+					this.$refs.setupPage.$refs.conversationAvatar.saveAvatar()
+				}
+				if (this.newConversation.description) {
+					this.handleUpdateDescription()
+				}
+			} catch (error) {
+				console.error('Error creating new conversation: ', error)
 			}
 		},
 		pushNewRoute() {
