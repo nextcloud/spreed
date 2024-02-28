@@ -169,6 +169,8 @@ export default {
 			debounceUpdateReadMarkerPosition: () => {},
 
 			debounceHandleScroll: () => {},
+
+			stopFetchingOldMessages: false,
 		}
 	},
 
@@ -268,6 +270,7 @@ export default {
 		token(newToken, oldToken) {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
+			this.stopFetchingOldMessages = false
 		},
 
 		messagesList: {
@@ -689,6 +692,9 @@ export default {
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
 		async getOldMessages(includeLastKnown) {
+			if (this.stopFetchingOldMessages) {
+				return
+			}
 			// Make the request
 			this.loadingOldMessages = true
 			try {
@@ -698,13 +704,26 @@ export default {
 					includeLastKnown,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
-
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
+				if (exception?.response?.status === 304) {
+					// 304 - Not modified
+					this.stopFetchingOldMessages = true
+				}
 			}
 			this.loadingOldMessages = false
+
+			if (!this.stopFetchingOldMessages) {
+				// Stop fetching old messages, if this is the beginning of the chat
+				const firstMessage = this.messagesList?.at(0)
+				const ChatBeginFlag = firstMessage?.messageType === 'system'
+					&& ['conversation_created', 'history_cleared'].includes(firstMessage.systemMessage)
+				if (ChatBeginFlag) {
+					this.stopFetchingOldMessages = true
+				}
+			}
 		},
 
 		/**
