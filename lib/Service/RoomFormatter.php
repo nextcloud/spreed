@@ -287,7 +287,13 @@ class RoomFormatter {
 
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
-			if ($currentUser instanceof IUser) {
+			if ($room->getRemoteServer() !== '') {
+				// For proxy conversations the information is the real counter,
+				// not the message ID requiring math afterward.
+				$roomData['unreadMessages'] = $attendee->getLastReadMessage();
+				$roomData['unreadMention'] = (bool) $attendee->getLastMentionMessage();
+				$roomData['unreadMentionDirect'] = (bool) $attendee->getLastMentionDirect();
+			} elseif ($currentUser instanceof IUser) {
 				$lastReadMessage = $attendee->getLastReadMessage();
 				if ($lastReadMessage === -1) {
 					/*

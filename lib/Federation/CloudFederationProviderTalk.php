@@ -32,6 +32,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -309,7 +310,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string}} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool}} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
@@ -338,7 +339,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$message->setActorDisplayName($notification['messageData']['actorDisplayName']);
 		$message->setMessageType($notification['messageData']['messageType']);
 		$message->setSystemMessage($notification['messageData']['systemMessage']);
-		$message->setExpirationDateTime(new \DateTimeImmutable($notification['messageData']['expirationDatetime']));
+		if ($notification['messageData']['expirationDatetime']) {
+			$message->setExpirationDateTime(new \DateTimeImmutable($notification['messageData']['expirationDatetime']));
+		}
 		$message->setMessage($notification['messageData']['message']);
 		$message->setMessageParameters($notification['messageData']['messageParameter']);
 		$this->proxyCacheMessagesMapper->insert($message);
@@ -350,6 +353,19 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				$this->proxyCacheMessages->set($cacheKey, $notification['messageData']['remoteMessageId'], 300);
 			}
 		}
+
+		try {
+			$participant = $this->participantService->getParticipant($room, $invite->getUserId(), false);
+		} catch (ParticipantNotFoundException) {
+			throw new ShareNotFound();
+		}
+
+		$this->participantService->updateUnreadInfoForProxyParticipant(
+			$participant,
+			$notification['unreadInfo']['unreadMessages'],
+			$notification['unreadInfo']['unreadMention'],
+			$notification['unreadInfo']['unreadMentionDirect'],
+		);
 
 		return [];
 	}

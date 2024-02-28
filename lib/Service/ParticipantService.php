@@ -249,6 +249,14 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function updateUnreadInfoForProxyParticipant(Participant $participant, int $unreadMessageCount, bool $hasMention, bool $hadDirectMention): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setLastReadMessage($unreadMessageCount);
+		$attendee->setLastMentionMessage($hasMention ? 1 : 0);
+		$attendee->setLastMentionDirect($hadDirectMention ? 1 : 0);
+		$this->attendeeMapper->update($attendee);
+	}
+
 	public function updateFavoriteStatus(Participant $participant, bool $isFavorite): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setFavorite($isFavorite);

@@ -48,6 +48,7 @@ class MessageSentListener implements IEventListener {
 		protected ICloudIdManager $cloudIdManager,
 		protected MessageParser $messageParser,
 		protected IFactory $l10nFactory,
+		protected ChatManager $chatManager,
 	) {
 	}
 
@@ -90,15 +91,20 @@ class MessageSentListener implements IEventListener {
 			'messageParameter' => json_encode($chatMessage->getMessageParameters()),
 		];
 
-		$notifiedServers = [];
 		$participants = $this->participantService->getParticipantsByActorType($event->getRoom(), Attendee::ACTOR_FEDERATED_USERS);
 		foreach ($participants as $participant) {
-			$cloudId = $this->cloudIdManager->resolveCloudId($participant->getAttendee()->getActorId());
+			$attendee = $participant->getAttendee();
+			$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
 
-			if (isset($notifiedServers[$cloudId->getRemote()])) {
-				continue;
-			}
-			$notifiedServers[$cloudId->getRemote()] = true;
+			$lastReadMessage = $attendee->getLastReadMessage();
+			$lastMention = $attendee->getLastMentionMessage();
+			$lastMentionDirect = $attendee->getLastMentionDirect();
+
+			$unreadInfo = [
+				'unreadMessages' => $this->chatManager->getUnreadCount($event->getRoom(), $lastReadMessage),
+				'unreadMention' => $lastMention !== 0 && $lastReadMessage < $lastMention,
+				'unreadMentionDirect' => $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect
+			];
 
 			$this->backendNotifier->sendMessageUpdate(
 				$cloudId->getRemote(),
@@ -106,6 +112,7 @@ class MessageSentListener implements IEventListener {
 				$participant->getAttendee()->getAccessToken(),
 				$event->getRoom()->getToken(),
 				$messageData,
+				$unreadInfo,
 			);
 		}
 	}
