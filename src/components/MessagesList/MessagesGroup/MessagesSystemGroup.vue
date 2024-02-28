@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="wrapper wrapper--system">
+	<li class="wrapper wrapper--system">
 		<div v-for="messagesCollapsed in messagesGroupedBySystemMessage"
 			:key="messagesCollapsed.id"
 			class="messages-group__system">
@@ -45,7 +45,7 @@
 					:previous-message-id="getPrevMessageId(message)" />
 			</ul>
 		</div>
-	</div>
+	</li>
 </template>
 
 <script>

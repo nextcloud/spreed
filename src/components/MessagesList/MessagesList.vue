@@ -29,26 +29,36 @@ get the messagesList array and loop through the list to generate the messages.
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div ref="scroller"
+		:key="token"
 		class="scroller messages-list__scroller"
-		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
-		@scroll="debounceHandleScroll">
-		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom,
+			'scroller--isScrolling': isScrolling}"
+		@scroll="onScroll"
+		@scrollend="endScroll">
+		<TransitionWrapper name="fade">
+			<ul v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+		</TransitionWrapper>
 
-		<template v-for="item of messagesGroupedByAuthor">
-			<div v-if="item.dateSeparator" :key="`date_${item.id}`" class="messages-group__date">
+		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
+			:key="`section_${dateTimestamp}`"
+			:ref="`dateGroup-${token}`"
+			:data-date-timestamp="dateTimestamp"
+			:class="{'has-sticky': dateTimestamp === stickyDate}">
+			<li class="messages-group__date">
 				<span class="messages-group__date-text" role="heading" aria-level="3">
-					{{ item.dateSeparator }}
+					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
-			</div>
-			<component :is="messagesGroupComponent(item)"
-				:key="item.id"
+			</li>
+			<component :is="messagesGroupComponent(group)"
+				v-for="group in list"
+				:key="group.id"
 				ref="messagesGroup"
 				class="messages-group"
 				:token="token"
-				:messages="item.messages"
-				:previous-message-id="item.previousMessageId"
-				:next-message-id="item.nextMessageId" />
-		</template>
+				:messages="group.messages"
+				:previous-message-id="group.previousMessageId"
+				:next-message-id="group.nextMessageId" />
+		</ul>
 
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
@@ -81,6 +91,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'
@@ -92,6 +103,7 @@ export default {
 		LoadingPlaceholder,
 		Message,
 		NcEmptyContent,
+		TransitionWrapper
 	},
 
 	provide() {
@@ -132,9 +144,9 @@ export default {
 	data() {
 		return {
 			/**
-			 * An array of messages grouped in nested arrays by same author.
+			 * A list of messages grouped by same day and then by author and time.
 			 */
-			messagesGroupedByAuthor: [],
+			messagesGroupedByDateByAuthor: {},
 
 			viewId: null,
 
@@ -171,6 +183,14 @@ export default {
 			debounceHandleScroll: () => {},
 
 			stopFetchingOldMessages: false,
+
+			isScrolling: false,
+
+			stickyDate: null,
+
+			dateSeparatorLabels: {},
+
+			endScrollTimeout: () => {},
 		}
 	},
 
@@ -195,11 +215,11 @@ export default {
 
 		showLoadingAnimation() {
 			return !this.$store.getters.isMessageListPopulated(this.token)
-				&& !this.messagesGroupedByAuthor.length
+				&& !this.messagesList.length
 		},
 
 		showEmptyContent() {
-			return !this.messagesGroupedByAuthor.length
+			return !this.messagesList.length
 		},
 
 		/**
@@ -245,6 +265,10 @@ export default {
 		chatIdentifier() {
 			return this.token + ':' + this.isParticipant + ':' + this.viewId
 		},
+
+		currentDay() {
+			return moment().startOf('day').unix()
+		},
 	},
 
 	watch: {
@@ -271,13 +295,23 @@ export default {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
 			this.stopFetchingOldMessages = false
+			this.messagesGroupedByDateByAuthor = this.prepareMessagesGroups(this.messagesList)
 		},
 
 		messagesList: {
 			immediate: true,
-			handler(messages) {
-				const groups = this.prepareMessagesGroups(messages)
-				this.messagesGroupedByAuthor = this.softUpdateMessagesGroups(this.messagesGroupedByAuthor, groups)
+			handler(newMessages, oldMessages) {
+				// token watcher will handle the conversations change
+				if (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token) {
+					return
+				}
+				const newGroups = this.prepareMessagesGroups(newMessages)
+				// messages were just loaded
+				if (!oldMessages) {
+					this.messagesGroupedByDateByAuthor = newGroups
+				} else {
+					this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
+				}
 			},
 		},
 	},
@@ -332,40 +366,92 @@ export default {
 
 	methods: {
 		prepareMessagesGroups(messages) {
-			const groups = []
+			let prevGroupMap = null
+			const groupsByDate = {}
 			let lastMessage = null
+			let groupId = null
+			let dateTimestamp = null
 			for (const message of messages) {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
-					if (groups.at(-1)) {
-						groups.at(-1).nextMessageId = message.id
+					groupId = message.id
+					if (message.timestamp === 0) {
+						// This is a temporary message, the timestamp is today
+						dateTimestamp = this.currentDay
+					} else {
+						dateTimestamp = moment(message.timestamp * 1000).startOf('day').unix()
 					}
 
-					groups.push({
+					if (!this.dateSeparatorLabels[dateTimestamp]) {
+						this.dateSeparatorLabels[dateTimestamp] = this.generateDateSeparator(dateTimestamp)
+					}
+
+					if (!groupsByDate[dateTimestamp]) {
+						groupsByDate[dateTimestamp] = {}
+					}
+
+					groupsByDate[dateTimestamp][groupId] = {
 						id: message.id,
 						messages: [message],
-						dateSeparator: this.generateDateSeparator(message, lastMessage),
-						previousMessageId: groups.at(-1)?.messages.at(-1).id ?? 0,
+						token: this.token,
+						dateTimestamp,
+						previousMessageId: lastMessage?.id || 0,
 						nextMessageId: 0,
 						isSystemMessagesGroup: message.systemMessage.length !== 0,
-					})
+					}
+
+					// Update the previous group with the next message id
+					if (prevGroupMap) {
+						groupsByDate[prevGroupMap.date][prevGroupMap.groupId].nextMessageId = message.id
+					}
+
+					// Update the previous group map points
+					prevGroupMap = {
+						date: dateTimestamp,
+						groupId: message.id,
+					}
 				} else {
-					groups.at(-1).messages.push(message)
+					// Group is the same, so we just append the message to the array of messages
+					groupsByDate[prevGroupMap.date][prevGroupMap.groupId].messages.push(message)
 				}
 				lastMessage = message
 			}
-
-			return groups
+			return groupsByDate
 		},
 
-		softUpdateMessagesGroups(oldGroups, newGroups) {
-			const oldGroupsMap = new Map(oldGroups.map(group => [group.id, group]))
-
+		softUpdateByDateGroups(oldGroups, newGroups) {
+			const oldGroupsMap = new Map(Object.entries(oldGroups))
 			// Check if we have this group in the old list already and it is unchanged
-			return newGroups.map(newGroup => oldGroupsMap.has(newGroup.id)
-				&& this.areGroupsIdentical(newGroup, oldGroupsMap.get(newGroup.id))
-				? oldGroupsMap.get(newGroup.id)
-				: newGroup
-			).sort((a, b) => a.id - b.id)
+			Object.keys(newGroups).forEach(dateTimestamp => {
+				if (oldGroupsMap.has(dateTimestamp)) {
+					// the group by date has changed, we update its content (groups by author)
+					this.softUpdateAuthorGroups(oldGroupsMap.get(dateTimestamp), newGroups[dateTimestamp], dateTimestamp)
+				} else {
+					// the group is new
+					this.messagesGroupedByDateByAuthor[dateTimestamp] = newGroups[dateTimestamp]
+				}
+			})
+		},
+
+		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
+			const oldGroupsMap = new Map(Object.entries(oldGroups))
+			Object.entries(newGroups).forEach(([id, newGroup]) => {
+				if (!oldGroupsMap.has(id) || (oldGroupsMap.has(id) && !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id)))) {
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
+				}
+			})
+
+			// Remove temporary messages that are not in the new list
+			if (+dateTimestamp === this.currentDay) {
+				const newGroupsMap = new Map(Object.entries(newGroups))
+				for (const id of Object.keys(oldGroups).reverse()) {
+					if (!id.toString().startsWith('temp-')) {
+						break
+					}
+					if (!newGroupsMap.has(id)) {
+						delete this.messagesGroupedByDateByAuthor[dateTimestamp][id]
+					}
+				}
+			}
 		},
 
 		areGroupsIdentical(group1, group2) {
@@ -461,38 +547,29 @@ export default {
 				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
 		},
 
+		getRelativePrefix(date) {
+			const diffDays = moment().startOf('day').diff(date, 'days')
+			switch (diffDays) {
+			case 0:
+				return t('spreed', 'Today')
+			case 1:
+				return t('spreed', 'Yesterday')
+			default:
+				return t('spreed', '{n} days ago', { n: diffDays })
+			}
+		},
+
 		/**
 		 * Generate the date header between the messages
 		 *
-		 * @param {object} message The message object
-		 * @param {string} message.id The ID of the message
-		 * @param {number} message.timestamp Timestamp of the message
-		 * @param {object} lastMessage The previous message object
+		 * @param {number} dateTimestamp The day and year timestamp
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
-		generateDateSeparator(message, lastMessage) {
-			if (!this.messagesHaveDifferentDate(message, lastMessage)) {
-				return ''
-			}
-
-			const date = this.getDateOfMessage(message)
-			const dayOfYear = date.format('YYYY-DDD')
-			let relativePrefix = date.fromNow()
-
-			// Use the relative day for today and yesterday
-			const dayOfYearToday = moment().format('YYYY-DDD')
-			if (dayOfYear === dayOfYearToday) {
-				relativePrefix = t('spreed', 'Today')
-			} else {
-				const dayOfYearYesterday = moment().subtract(1, 'days').format('YYYY-DDD')
-				if (dayOfYear === dayOfYearYesterday) {
-					relativePrefix = t('spreed', 'Yesterday')
-				}
-			}
-
+		generateDateSeparator(dateTimestamp) {
+			const date = moment.unix(dateTimestamp).startOf('day')
 			// <Today>, <November 11th, 2019>
 			return t('spreed', '{relativeDate}, {absoluteDate}', {
-				relativeDate: relativePrefix,
+				relativeDate: this.getRelativePrefix(date),
 				// 'LL' formats a localized date including day of month, month
 				// name and year
 				absoluteDate: date.format('LL'),
@@ -648,8 +725,65 @@ export default {
 			}
 		},
 
-		handleMessageEdited(id) {
-			this.messagesGroupedByAuthor = this.prepareMessagesGroups(this.messagesList)
+		handleMessageEdited(message) {
+			// soft edit for a message in the list
+			// find the corresponding date group id (dateTimeStamp)
+			const dateGroupId = moment(message.timestamp * 1000).startOf('day').unix()
+			const groups = this.messagesGroupedByDateByAuthor[dateGroupId]
+			if (!groups) {
+				// Message was edited already and this is message loading phase
+				return
+			}
+			// find the corresponding messages group in the list
+			const group = Object.values(groups).find(group => group.id <= message.id && (group.nextMessageId > message.id || group.nextMessageId === 0))
+
+			if (!group) {
+				// Messages were not loaded yet
+				return
+			}
+
+			if (group.messages.length === 1 && group.id === message.id) {
+				// Nothing to split
+				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].messages = [message]
+				return
+			}
+
+			// we split the group in 3 part,
+			// 1. the messages before the edited message (if any)
+			// 2. the edited message
+			// 3. the messages after the edited message (if any)
+			const nextMessageId = group.nextMessageId
+			const index = group.messages.findIndex(m => m.id === message.id)
+			const before = group.messages.slice(0, index)
+			const after = group.messages.slice(index + 1)
+			// If there are before messages, we keep them in the same group
+			if (before.length) {
+				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].messages = before
+				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].nextMessageId = message.id
+			}
+			// We create a new group for the edited message
+			this.messagesGroupedByDateByAuthor[dateGroupId][message.id] = {
+				id: message.id,
+				messages: [message],
+				token: this.token,
+				dateTimestamp: dateGroupId,
+				previousMessageId: before.length ? before.at(-1).id : group.previousMessageId,
+				nextMessageId: after.length ? after[0].id : nextMessageId,
+				isSystemMessagesGroup: message.systemMessage.length !== 0,
+			}
+			// If there are after messages, we create a new group for them
+			if (after.length) {
+				const newGroupId = after[0].id
+				this.messagesGroupedByDateByAuthor[dateGroupId][newGroupId] = {
+					id: newGroupId,
+					messages: after,
+					token: this.token,
+					dateTimestamp: dateGroupId,
+					previousMessageId: message.id,
+					nextMessageId,
+					isSystemMessagesGroup: message.systemMessage.length !== 0,
+				}
+			}
 		},
 
 		/**
@@ -692,9 +826,6 @@ export default {
 		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
 		async getOldMessages(includeLastKnown) {
-			if (this.stopFetchingOldMessages) {
-				return
-			}
 			// Make the request
 			this.loadingOldMessages = true
 			try {
@@ -784,6 +915,38 @@ export default {
 			}, 500)
 		},
 
+		checkSticky() {
+			const ulElements = this.$refs['dateGroup-' + this.token]
+			if (!ulElements) {
+				return
+			}
+
+			const scrollerRect = this.$refs.scroller.getBoundingClientRect()
+			ulElements.forEach((element) => {
+				const rect = element.getBoundingClientRect()
+				if (rect.top <= scrollerRect.top && rect.bottom >= scrollerRect.top) {
+					this.stickyDate = element.getAttribute('data-date-timestamp')
+				}
+			})
+		},
+
+		onScroll() {
+			// handle scrolling status
+			if (this.isScrolling) {
+				clearTimeout(this.endScrollTimeout)
+			}
+			this.isScrolling = true
+			this.endScrollTimeout = setTimeout(this.endScroll, 3000)
+			// handle sticky date
+			if (this.$refs.scroller.scrollTop === 0) {
+				this.stickyDate = null
+			} else {
+				this.checkSticky()
+			}
+			// handle scroll event
+			this.debounceHandleScroll()
+		},
+
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
@@ -828,7 +991,7 @@ export default {
 			this.setChatScrolledToBottom(false)
 
 			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue) {
-				if (this.loadingOldMessages) {
+				if (this.loadingOldMessages || this.stopFetchingOldMessages) {
 					// already loading, don't do it twice
 					return
 				}
@@ -837,15 +1000,20 @@ export default {
 				this.displayMessagesLoader = false
 
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
-					// scroll to previous position + added height
+					// scroll to previous position + added height - loading spinner height
 					this.$refs.scroller.scrollTo({
-						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
+						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight) - 40,
 					})
 				}
 			}
 
 			this.previousScrollTopValue = this.$refs.scroller.scrollTop
 			this.debounceUpdateReadMarkerPosition()
+		},
+
+		endScroll() {
+			this.isScrolling = false
+			clearTimeout(this.endScrollTimeout)
 		},
 
 		/**
@@ -1198,11 +1366,7 @@ export default {
 	}
 
 	&__loading {
-		position: absolute;
-		top: 10px;
-		left: 50%;
 		height: 40px;
-		width: 40px;
 		transform: translatex(-64px);
 	}
 }
@@ -1215,11 +1379,12 @@ export default {
 
 .messages-group {
 	&__date {
-		display: block;
-		text-align: center;
-		padding-top: 20px;
-		position: relative;
-		margin: 20px 0;
+		position: sticky;
+		top: 0;
+		display: flex;
+		justify-content: center;
+		z-index: 2;
+		margin-bottom: 5px;
 	}
 
 	&__date-text {
@@ -1235,5 +1400,16 @@ export default {
 	&:last-child {
 		margin-bottom: 16px;
 	}
+}
+
+.has-sticky .messages-group__date {
+	transition: opacity 0.3s ease-in-out;
+	transition-delay: 2s;
+	opacity: 0;
+}
+
+.scroller--isScrolling .has-sticky .messages-group__date {
+	opacity: 1;
+	transition: opacity 0s;
 }
 </style>
