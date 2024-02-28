@@ -41,6 +41,7 @@ import '@nextcloud/dialogs/style.css'
 		console.debug('Initializing unified search plugin-filters from talk')
 		OCP.UnifiedSearch.registerFilterAction({
 			id: 'talk-message',
+			appId: 'spreed',
 			label: t('spreed', 'In conversation'),
 			icon: imagePath('spreed', 'app.svg'),
 			callback: () => {
