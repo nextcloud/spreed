@@ -25,7 +25,7 @@
 			class="conversation-icon"
 			:offline="isPeerInactive"
 			:item="conversation"
-			:disable-menu="disableMenu"
+			:disable-menu="false"
 			show-user-online-status
 			:hide-favorite="false"
 			:hide-call="false" />
@@ -299,12 +299,6 @@ export default {
 
 		participantsInCallAriaLabel() {
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
-		},
-
-		disableMenu() {
-			// NcAvatarMenu doesn't work on Desktop
-			// See: https://github.com/nextcloud/talk-desktop/issues/34
-			return IS_DESKTOP
 		},
 
 		supportedReactions() {
