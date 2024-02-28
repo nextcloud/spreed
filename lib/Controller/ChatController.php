@@ -1082,13 +1082,20 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * Mark a chat as unread
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
 	 * 200: Read marker set successfully
 	 */
-	#[NoAdminRequired]
-	#[RequireParticipant]
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireAuthenticatedParticipant]
 	public function markUnread(): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->markUnread($this->room, $this->participant, $this->getResponseFormat());
+		}
+
 		$message = $this->room->getLastMessage();
 		$unreadId = 0;
 

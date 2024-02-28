@@ -6179,6 +6179,7 @@
                     "chat"
                 ],
                 "security": [
+                    {},
                     {
                         "bearer_auth": []
                     },
@@ -6247,7 +6248,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }

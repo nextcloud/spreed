@@ -396,6 +396,46 @@ class ChatController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\ChatController::markUnread()
+	 *
+	 * @param 'json'|'xml' $responseFormat
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: List of mention suggestions returned
+	 */
+	public function markUnread(Room $room, Participant $participant, string $responseFormat): DataResponse {
+		$proxy = $this->proxy->delete(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/read',
+		);
+
+		/** @var TalkRoom $data */
+		$data = $this->proxy->getOCSData($proxy);
+
+		$this->participantService->updateUnreadInfoForProxyParticipant(
+			$participant,
+			$data['unreadMessages'],
+			$data['unreadMention'],
+			$data['unreadMentionDirect'],
+		);
+
+		$headers = $lastCommonRead = [];
+		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
+			$lastCommonRead[$room->getId()] = (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string) $lastCommonRead[$room->getId()];
+		}
+
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$responseFormat,
+			$lastCommonRead,
+			$room,
+			$participant,
+		), Http::STATUS_OK, $headers);
+	}
+
+	/**
 	 * @see \OCA\Talk\Controller\ChatController::mentions()
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkChatMentionSuggestion[], array{}>
