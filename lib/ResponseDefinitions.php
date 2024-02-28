@@ -60,6 +60,7 @@ namespace OCA\Talk;
  *     id: string,
  *     label: string,
  *     source: string,
+ *     mentionId: string,
  *     status: ?string,
  *     statusClearAt: ?int,
  *     statusIcon: ?string,

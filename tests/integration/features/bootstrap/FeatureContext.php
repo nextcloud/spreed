@@ -2657,12 +2657,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			$expected[$i]['message'] = str_replace('\n', "\n", $expected[$i]['message']);
 
-
 			if (str_ends_with($expected[$i]['actorId'], '@{$BASE_URL}')) {
 				$expected[$i]['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['actorId']);
 			}
 			if (str_ends_with($expected[$i]['actorId'], '@{$REMOTE_URL}')) {
 				$expected[$i]['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['actorId']);
+			}
+
+			if (str_contains($expected[$i]['messageParameters'], '{$BASE_URL}')) {
+				$expected[$i]['messageParameters'] = str_replace('{$BASE_URL}', str_replace('/', '\/', rtrim($this->baseUrl, '/')), $expected[$i]['messageParameters']);
+			}
+			if (str_contains($expected[$i]['messageParameters'], '{$REMOTE_URL}')) {
+				$expected[$i]['messageParameters'] = str_replace('{$REMOTE_URL}', str_replace('/', '\/', rtrim($this->baseRemoteUrl, '/')), $expected[$i]['messageParameters']);
 			}
 
 			if (isset($expected[$i]['lastEditActorId'])) {
@@ -2874,17 +2880,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
 			}
+			if ($row['mentionId'] === 'GUEST_ID') {
+				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['mentionId']);
+				$mentions[$key]['mentionId'] = 'GUEST_ID';
+			}
 			if (str_ends_with($row['id'], '@{$BASE_URL}')) {
 				$row['id'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $row['id']);
 			}
 			if (str_ends_with($row['id'], '@{$REMOTE_URL}')) {
 				$row['id'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['id']);
 			}
+			if (str_ends_with($row['mentionId'], '@{$BASE_URL}')) {
+				$row['mentionId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $row['mentionId']);
+			}
+			if (str_ends_with($row['mentionId'], '@{$REMOTE_URL}')) {
+				$row['mentionId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['mentionId']);
+			}
 			if (array_key_exists('avatar', $row)) {
 				Assert::assertRegExp('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
 				unset($row['avatar']);
 			}
-			unset($mentions[$key]['avatar'], );
+			unset($mentions[$key]['avatar']);
 			Assert::assertEquals($row, $mentions[$key]);
 		}
 	}

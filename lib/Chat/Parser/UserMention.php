@@ -39,6 +39,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Federation\ICloudIdManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -56,6 +57,7 @@ class UserMention implements IEventListener {
 		protected IGroupManager $groupManager,
 		protected GuestManager $guestManager,
 		protected AvatarService $avatarService,
+		protected ICloudIdManager $cloudIdManager,
 		protected ParticipantService $participantService,
 		protected IL10N $l,
 	) {
@@ -125,20 +127,29 @@ class UserMention implements IEventListener {
 			$mentionTypeCount[$mention['type']]++;
 
 			$search = $mention['id'];
-			if ($mention['type'] === 'group') {
-				$search = 'group/' . $mention['id'];
+			if (
+				$mention['type'] === 'group' ||
+				// $mention['type'] === 'federated_group' ||
+				// $mention['type'] === 'team' ||
+				// $mention['type'] === 'federated_team' ||
+				$mention['type'] === 'federated_user') {
+				$search = $mention['type'] . '/' . $mention['id'];
 			}
 
 			// To keep a limited character set in parameter IDs ([a-zA-Z0-9-])
 			// the mention parameter ID does not include the mention ID (which
 			// could contain characters like '@' for user IDs) but a one-based
 			// index of the mentions of that type.
-			$mentionParameterId = 'mention-' . $mention['type'] . $mentionTypeCount[$mention['type']];
+			$mentionParameterId = 'mention-' . str_replace('_', '-', $mention['type']) . $mentionTypeCount[$mention['type']];
 
 			$message = str_replace('@"' . $search . '"', '{' . $mentionParameterId . '}', $message);
 			if (!str_contains($search, ' ')
 				&& !str_starts_with($search, 'guest/')
-				&& !str_starts_with($search, 'group/')) {
+				&& !str_starts_with($search, 'group/')
+				// && !str_starts_with($search, 'federated_group/')
+				// && !str_starts_with($search, 'team/')
+				// && !str_starts_with($search, 'federated_team/')
+				&& !str_starts_with($search, 'federated_user/')) {
 				$message = str_replace('@' . $search, '{' . $mentionParameterId . '}', $message);
 			}
 
@@ -167,6 +178,26 @@ class UserMention implements IEventListener {
 					'type' => $mention['type'],
 					'id' => $mention['id'],
 					'name' => $displayName,
+				];
+			} elseif ($mention['type'] === 'federated_user') {
+				try {
+					$cloudId = $this->cloudIdManager->resolveCloudId($mention['id']);
+				} catch (\Throwable) {
+					continue;
+				}
+
+				try {
+					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_FEDERATED_USERS, $mention['id']);
+					$displayName = $participant->getAttendee()->getDisplayName() ?: $cloudId->getDisplayId();
+				} catch (ParticipantNotFoundException) {
+					$displayName = $mention['id'];
+				}
+
+				$messageParameters[$mentionParameterId] = [
+					'type' => 'user',
+					'id' => $cloudId->getUser(),
+					'name' => $displayName,
+					'server' => $cloudId->getRemote()
 				];
 			} elseif ($mention['type'] === 'group') {
 				$group = $this->groupManager->get($mention['id']);

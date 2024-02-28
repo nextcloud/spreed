@@ -248,6 +248,7 @@
                     "id",
                     "label",
                     "source",
+                    "mentionId",
                     "status",
                     "statusClearAt",
                     "statusIcon",
@@ -261,6 +262,9 @@
                         "type": "string"
                     },
                     "source": {
+                        "type": "string"
+                    },
+                    "mentionId": {
                         "type": "string"
                     },
                     "status": {

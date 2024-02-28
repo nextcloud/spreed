@@ -22,15 +22,15 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                       |
-      | calls           | all                        | room                        |
-      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 |
-      | users           | participant3               | participant3-displayname    |
+      | source          | id                         | label                       | mentionId                                  |
+      | calls           | all                        | room                        | all                                        |
+      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 | federated_user/participant2@{$REMOTE_URL}  |
+      | users           | participant3               | participant3-displayname    | participant3                               |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    |
-      | calls           | all                      | room                     |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname |
-      | federated_users | participant3@{$BASE_URL} | participant3-displayname |
+      | source          | id                       | label                    | mentionId    |
+      | calls           | all                      | room                     | all          |
+      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1 |
+      | federated_users | participant3@{$BASE_URL} | participant3-displayname | participant3 |
 
   Scenario: Get mention suggestions (translating federated users of the same server to local users)
     Given the following "spreed" app config is set
@@ -56,15 +56,15 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                       |
-      | calls           | all                        | room                        |
-      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 |
-      | federated_users | participant3@{$REMOTE_URL} | participant3@localhost:8180 |
+      | source          | id                         | label                       | mentionId                                 |
+      | calls           | all                        | room                        | all                                       |
+      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 | federated_user/participant2@{$REMOTE_URL} |
+      | federated_users | participant3@{$REMOTE_URL} | participant3@localhost:8180 | federated_user/participant3@{$REMOTE_URL} |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    |
-      | calls           | all                      | room                     |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname |
-      | users           | participant3             | participant3-displayname |
+      | source          | id                       | label                    | mentionId                                 |
+      | calls           | all                      | room                     | all                                       |
+      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1                              |
+      | users           | participant3             | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
 
   Scenario: Basic chatting including posting, getting, editing and deleting
     Given the following "spreed" app config is set
@@ -117,14 +117,14 @@ Feature: federation/chat
     And user "participant2" deletes message "Message 1-1 - Edit 1" from room "LOCAL::room" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType       | actorId                    | actorDisplayName         | message                   | messageParameters | parentMessage          |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} | Message deleted by you |
-      | room | users           | participant1               | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |                        |
+      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"{$REMOTE_URL}"}} | Message deleted by you |
+      | room | users           | participant1               | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                          |                        |
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
       | room | actorType       | actorId                  | actorDisplayName         | message                   | messageParameters | parentMessage             |
-      | room | users           | participant2             | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}}                | Message deleted by author |
-      | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                |                           |
+      | room | users           | participant2             | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
+      | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$BASE_URL}"}} |                           |
 
   Scenario: Error handling of chatting (posting a too long message)
     Given the following "spreed" app config is set
