@@ -39,7 +39,7 @@
 	</span>
 </template>
 
-<script lang="ts">
+<script>
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 
@@ -103,13 +103,13 @@ export default {
 			return this.size / 8
 		},
 
-		iconPrimaryHeight(): number {
+		iconPrimaryHeight() {
 			return this.audioPreviewAvailable
 				? this.size - this.iconOffsetBottom - this.currentVolumeIndicatorHeight
 				: this.size
 		},
 
-		iconOverlayHeight(): number {
+		iconOverlayHeight() {
 			return this.iconOffsetBottom / 2 + this.currentVolumeIndicatorHeight
 		},
 

@@ -24,32 +24,35 @@ import { defineStore } from 'pinia'
 import Vue from 'vue'
 
 import { BOT } from '../constants.js'
-import { disableBotForConversation, enableBotForConversation, getConversationBots } from '../services/botsService.js'
+import { disableBotForConversation, enableBotForConversation, getConversationBots } from '../services/botsService.ts'
+import type { Bot } from '../types'
 
+type State = {
+	bots: Record<string, Record<number, Bot>>
+}
 export const useBotsStore = defineStore('bots', {
-	state: () => ({
+	state: (): State => ({
 		bots: {},
 	}),
 
 	actions: {
-		getConversationBots(token) {
+		getConversationBots(token: string): Bot[] {
 			return this.bots[token] ? Object.values(this.bots[token]) : []
 		},
 
 		/**
 		 * Fetch a list of available bots for conversation and save them to store
 		 *
-		 * @param {string} token The conversation token
-		 * @return {Array} An array of bots ids
+		 * @param token The conversation token
 		 */
-		async loadConversationBots(token) {
+		async loadConversationBots(token: string): Promise<Bot['id'][]> {
 			if (!this.bots[token]) {
 				Vue.set(this.bots, token, {})
 			}
 
 			const response = await getConversationBots(token)
 
-			return response.data.ocs.data.map((bot) => {
+			return response.data.ocs.data.map((bot: Bot) => {
 				Vue.set(this.bots[token], bot.id, bot)
 				return bot.id
 			})
@@ -58,16 +61,15 @@ export const useBotsStore = defineStore('bots', {
 		/**
 		 * Enable or disable a bot for conversation
 		 *
-		 * @param {string} token The conversation token
-		 * @param {object} bot The bot to toggle state
+		 * @param token The conversation token
+		 * @param bot The bot to toggle state
 		 */
-		async toggleBotState(token, bot) {
+		async toggleBotState(token: string, bot: Bot): Promise<void> {
 			const response = bot.state === BOT.STATE.ENABLED
 				? await disableBotForConversation(token, bot.id)
 				: await enableBotForConversation(token, bot.id)
 
 			Vue.set(this.bots[token], bot.id, response.data.ocs.data)
 		},
-
 	},
 })
