@@ -926,6 +926,8 @@ OC.L10N.register(
     "Drop your files to upload" : "افلت الملفات لرفعها",
     "Remove participant {name}" : "إزالة المشارك {name}",
     "Favorite" : "المفضلة",
+    "Federated conversation" : "محادثة اتحادية",
+    "Public conversation" : "محادثة عمومية",
     "Enter a name for this conversation" : "أدخِل اسماً لهذه المحادثة",
     "Edit conversation name" : "عدّل اسم المحادثة",
     "Edit conversation description" : "تحرير وصف المحادثة",

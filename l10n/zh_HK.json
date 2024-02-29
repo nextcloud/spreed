@@ -924,6 +924,8 @@
     "Drop your files to upload" : "拖放您的文件以上傳",
     "Remove participant {name}" : "移除參與者 {name}",
     "Favorite" : "我的最愛",
+    "Federated conversation" : "聯合對話",
+    "Public conversation" : "公開對話",
     "Enter a name for this conversation" : "輸入此對話名稱",
     "Edit conversation name" : "編輯對話名稱",
     "Edit conversation description" : "編輯對話描述",
