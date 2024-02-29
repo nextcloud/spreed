@@ -1,5 +1,6 @@
 import { setActivePinia, createPinia } from 'pinia'
 
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.js'
 import { getUserAbsence } from '../../services/participantsService.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
@@ -103,6 +104,7 @@ describe('chatExtrasStore', () => {
 
 			// Assert
 			expect(chatExtrasStore.getChatInput('token-1')).toStrictEqual('message-1')
+			expect(BrowserStorage.getItem('chatInput_token-1')).toBe('message-1')
 		})
 
 		it('clears current input message', () => {
@@ -114,6 +116,25 @@ describe('chatExtrasStore', () => {
 
 			// Assert
 			expect(chatExtrasStore.chatInput['token-1']).not.toBeDefined()
+			expect(chatExtrasStore.getChatInput('token-1')).toBe('')
+			expect(BrowserStorage.getItem('chatInput_token-1')).toBe(null)
+		})
+
+		it('restores chat input from the browser storage if any', () => {
+			// Arrange
+			BrowserStorage.setItem('chatInput_token-1', 'message draft')
+
+			// Act
+			chatExtrasStore.restoreChatInput('token-1')
+
+			// Assert
+			expect(chatExtrasStore.getChatInput('token-1')).toStrictEqual('message draft')
+
+			// Arrange 2 - no chat input in the browser storage
+			chatExtrasStore.removeChatInput('token-1')
+			// Act
+			chatExtrasStore.restoreChatInput('token-1')
+			// Assert
 			expect(chatExtrasStore.getChatInput('token-1')).toBe('')
 		})
 	})

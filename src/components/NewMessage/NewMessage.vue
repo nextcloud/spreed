@@ -192,6 +192,8 @@
 </template>
 
 <script>
+import debounce from 'debounce'
+
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
@@ -333,6 +335,7 @@ export default {
 			clipboardTimeStamp: null,
 			typingInterval: null,
 			wasTypingWithinInterval: false,
+			debouncedUpdateChatInput: debounce(this.updateChatInput, 200)
 		}
 	},
 
@@ -459,6 +462,10 @@ export default {
 			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
 
+		chatInput() {
+			return this.chatExtrasStore.getChatInput(this.token)
+		},
+
 		chatEditInput() {
 			return this.chatExtrasStore.getChatEditInput(this.token)
 		},
@@ -475,15 +482,7 @@ export default {
 		},
 
 		text(newValue) {
-			if (this.messageToEdit) {
-				this.chatExtrasStore.setChatEditInput({
-					token: this.token,
-					text: newValue,
-					parameters: this.messageToEdit.messageParameters
-				})
-			} else {
-				this.chatExtrasStore.setChatInput({ token: this.token, text: newValue })
-			}
+			this.debouncedUpdateChatInput(newValue)
 		},
 
 		messageToEdit(newValue) {
@@ -491,7 +490,7 @@ export default {
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 			} else {
-				this.text = this.chatExtrasStore.getChatInput(this.token)
+				this.text = this.chatInput
 			}
 		},
 
@@ -512,8 +511,8 @@ export default {
 			handler(token) {
 				if (token) {
 					this.text = this.messageToEdit
-						? this.chatExtrasStore.getChatEditInput(token)
-						: this.chatExtrasStore.getChatInput(token)
+						? this.chatEditInput
+						: this.chatInput
 				} else {
 					this.text = ''
 				}
@@ -529,7 +528,6 @@ export default {
 		EventBus.$on('upload-start', this.handleUploadSideEffects)
 		EventBus.$on('upload-discard', this.handleUploadSideEffects)
 		EventBus.$on('retry-message', this.handleRetryMessage)
-		this.text = this.chatExtrasStore.getChatInput(this.token)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -581,13 +579,25 @@ export default {
 			}
 		},
 
+		updateChatInput(text) {
+			if (this.messageToEdit) {
+				this.chatExtrasStore.setChatEditInput({
+					token: this.token,
+					text,
+					parameters: this.messageToEdit.messageParameters
+				})
+			} else if (text && text !== this.chatInput) {
+				this.chatExtrasStore.setChatInput({ token: this.token, text })
+			} else if (!text && this.chatInput) {
+				this.chatExtrasStore.removeChatInput(this.token)
+			}
+		},
+
 		handleUploadSideEffects() {
 			if (this.upload) {
 				return
 			}
 			this.$nextTick(() => {
-				// reset or fill main input in chat view from the store
-				this.text = this.chatExtrasStore.getChatInput(this.token)
 				// refocus input as the user might want to type further
 				this.focusInput()
 			})
@@ -622,9 +632,11 @@ export default {
 				this.text = parseSpecialSymbols(this.text)
 			}
 
+			// Clear input content from store
+			this.chatExtrasStore.removeChatInput(this.token)
+
 			if (this.upload) {
-				// Clear input content from store and remove Quote component
-				this.chatExtrasStore.setChatInput({ token: this.token, text: '' })
+				// remove Quote component
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
 				if (this.$store.getters.getInitialisedUploads(this.$store.getters.currentUploadId).length) {

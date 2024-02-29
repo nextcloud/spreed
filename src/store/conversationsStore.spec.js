@@ -63,6 +63,7 @@ jest.mock('@nextcloud/event-bus')
 jest.mock('../services/BrowserStorage.js', () => ({
 	getItem: jest.fn(),
 	setItem: jest.fn(),
+	removeItem: jest.fn(),
 }))
 
 describe('conversationsStore', () => {
