@@ -106,6 +106,8 @@ class UserConverter {
 		$message = $this->convertAttendee($room, $message, 'actorType', 'actorId', 'actorDisplayName');
 		$message = $this->convertAttendee($room, $message, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
 		$message = $this->convertMessageParameters($room, $message);
+		$message['token'] = $room->getToken();
+
 		if (isset($message['parent'])) {
 			$message['parent'] = $this->convertMessage($room, $message['parent']);
 		}
