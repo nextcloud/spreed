@@ -265,8 +265,14 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		$this->invitationMapper->delete($invite);
-		$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $invite->getUserId());
-		$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $invite->getUserId());
+			$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+		} catch (ParticipantNotFoundException) {
+			// Never accepted the invite
+		}
+
 		return [];
 	}
 
@@ -373,7 +379,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			$participant = $this->participantService->getParticipant($room, $invite->getUserId(), false);
 		} catch (ParticipantNotFoundException) {
-			throw new ShareNotFound();
+			// Not accepted the invite yet
+			return [];
 		}
 
 		$this->participantService->updateUnreadInfoForProxyParticipant(
