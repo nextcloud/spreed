@@ -265,8 +265,14 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		$this->invitationMapper->delete($invite);
-		$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $invite->getUserId());
-		$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $invite->getUserId());
+			$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+		} catch (ParticipantNotFoundException) {
+			// Never accepted the invite
+		}
+
 		return [];
 	}
 
@@ -364,7 +370,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			// DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION happens when
 			// multiple users are in the same conversation. We are therefore
 			// informed multiple times about the same remote message.
-			if ($e->getCode() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+			if ($e->getReason() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				$this->logger->error('Error saving proxy cache message failed: ' . $e->getMessage(), ['exception' => $e]);
 				throw $e;
 			}
@@ -373,7 +379,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			$participant = $this->participantService->getParticipant($room, $invite->getUserId(), false);
 		} catch (ParticipantNotFoundException) {
-			throw new ShareNotFound();
+			// Not accepted the invite yet
+			return [];
 		}
 
 		$this->participantService->updateUnreadInfoForProxyParticipant(

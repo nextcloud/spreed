@@ -38,6 +38,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -46,6 +47,7 @@ use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
 use OCP\Federation\ICloudIdManager;
+use OCP\Http\Client\IResponse;
 use OCP\ICacheFactory;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -227,7 +229,7 @@ class FederationTest extends TestCase {
 			->willReturn($cloudShare);
 
 		$this->cloudFederationProviderManager->expects($this->once())
-			->method('sendShare')
+			->method('sendCloudShare')
 			->with($cloudShare);
 
 		$this->addressHandler->expects($this->once())
@@ -396,10 +398,13 @@ class FederationTest extends TestCase {
 			->with()
 			->willReturn($notification);
 
+		$response = $this->createMock(IResponse::class);
+		$response->method('getStatusCode')
+			->willReturn(Http::STATUS_CREATED);
 		$this->cloudFederationProviderManager->expects($this->once())
-			->method('sendNotification')
+			->method('sendCloudNotification')
 			->with($remote, $notification)
-			->willReturn([]);
+			->willReturn($response);
 
 		$this->addressHandler->method('urlContainProtocol')
 			->with($remote)
@@ -438,10 +443,13 @@ class FederationTest extends TestCase {
 			->with()
 			->willReturn($notification);
 
+		$response = $this->createMock(IResponse::class);
+		$response->method('getStatusCode')
+			->willReturn(Http::STATUS_CREATED);
 		$this->cloudFederationProviderManager->expects($this->once())
-			->method('sendNotification')
+			->method('sendCloudNotification')
 			->with($remote, $notification)
-			->willReturn([]);
+			->willReturn($response);
 
 		$this->addressHandler->method('urlContainProtocol')
 			->with($remote)

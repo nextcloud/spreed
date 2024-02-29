@@ -76,7 +76,7 @@ class RetryJob extends Job {
 
 	protected function run($argument): void {
 		$remote = $argument['remote'];
-		$data = json_decode($argument['data'], true);
+		$data = json_decode($argument['data'], true, flags: JSON_THROW_ON_ERROR);
 		$try = (int)$argument['try'] + 1;
 
 		$this->backendNotifier->sendUpdateDataToRemote($remote, $data, $try);
