@@ -1,45 +1,92 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.4 – 2024-02-29
+### Added
+- feat(desktop): Allow using the avatar menu in the desktop client
+  [#11679](https://github.com/nextcloud/spreed/issues/11679)
+
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(webrtc): Ignore label of data channel when processing received messages for Janus 1.x compatibility
+  [#11667](https://github.com/nextcloud/spreed/issues/11667)
+- fix(notifications): Fix notification action label length with utf8 languages
+  [#11621](https://github.com/nextcloud/spreed/issues/11621)
+- fix(chat): Fix forwarding messages from conversations in the right sidebar
+  [#11606](https://github.com/nextcloud/spreed/issues/11606)
+- fix(search): Hide search providers when not allowed to use Talk
+  [#11623](https://github.com/nextcloud/spreed/issues/11623)
+- fix(UI): Fix nesting of modals
+  [#11580](https://github.com/nextcloud/spreed/issues/11580)
+- fix(participants): Add a key to the elements force re-rendering on changes
+  [#11558](https://github.com/nextcloud/spreed/issues/11558)
+
+## 17.1.6 – 2024-02-29
+### Changed
+- Update translations
+
+### Fixed
+- fix(webrtc): Ignore label of data channel when processing received messages for Janus 1.x compatibility
+  [#11668](https://github.com/nextcloud/spreed/issues/11668)
+- fix(notifications): Fix notification action label length with utf8 languages
+  [#11620](https://github.com/nextcloud/spreed/issues/11620)
+- fix(chat): Fix forwarding messages from conversations in the right sidebar
+  [#11609](https://github.com/nextcloud/spreed/issues/11609)
+
+## 16.0.11 – 2024-02-29
+### Changed
+- Update translations
+
+### Fixed
+- fix(webrtc): Ignore label of data channel when processing received messages for Janus 1.x compatibility
+  [#11669](https://github.com/nextcloud/spreed/issues/11669)
+- fix(notifications): Fix notification action label length with utf8 languages
+  [#11619](https://github.com/nextcloud/spreed/issues/11619)
+- fix(chat): Fix forwarding messages from conversations in the right sidebar
+  [#11611](https://github.com/nextcloud/spreed/issues/11611)
+
 ## 18.0.3 – 2024-01-31
 ### Changed
 - Update translations
 - Update several dependencies
 
 ### Fixed
--  fix(chat): Fix scrolling behaviour when loading older messages
-   [#11481](https://github.com/nextcloud/spreed/issues/11481)
--  fix(chat): Fix showing mention and emoji suggestions when writing a caption
-   [#11458](https://github.com/nextcloud/spreed/issues/11458)
--  fix(chat): Show mention chips when inserting a suggested mention
-   [#11493](https://github.com/nextcloud/spreed/issues/11493)
+- fix(chat): Fix scrolling behaviour when loading older messages
+  [#11481](https://github.com/nextcloud/spreed/issues/11481)
+- fix(chat): Fix showing mention and emoji suggestions when writing a caption
+  [#11458](https://github.com/nextcloud/spreed/issues/11458)
+- fix(chat): Show mention chips when inserting a suggested mention
+  [#11493](https://github.com/nextcloud/spreed/issues/11493)
 
 ## 18.0.2 – 2024-01-25
 ### Fixed
--  fix(calls): Device preview not visible when editing, uploading or viewing a file
-   [#11222](https://github.com/nextcloud/spreed/issues/11222)
--  fix(conversation): Make description input multi line when creating a conversation
-   [#11376](https://github.com/nextcloud/spreed/issues/11376)
--  fix(bot): Don't allow empty chat messages from bots
-   [#11353](https://github.com/nextcloud/spreed/issues/11353)
--  fix(breakout): Stop breakout rooms when they are started while deleting them
-   [#11409](https://github.com/nextcloud/spreed/issues/11409)
--  fix(attachments): Allow to retry failed uploads
-   [#11256](https://github.com/nextcloud/spreed/issues/11256)
--  fix(attachments): Fix uploading from local device
-   [#11331](https://github.com/nextcloud/spreed/issues/11331)
--  fix(attachments): Don't allow selecting shared folders as attachment folder
-   [#11427](https://github.com/nextcloud/spreed/issues/11427)
+- fix(calls): Device preview not visible when editing, uploading or viewing a file
+  [#11222](https://github.com/nextcloud/spreed/issues/11222)
+- fix(conversation): Make description input multi line when creating a conversation
+  [#11376](https://github.com/nextcloud/spreed/issues/11376)
+- fix(bot): Don't allow empty chat messages from bots
+  [#11353](https://github.com/nextcloud/spreed/issues/11353)
+- fix(breakout): Stop breakout rooms when they are started while deleting them
+  [#11409](https://github.com/nextcloud/spreed/issues/11409)
+- fix(attachments): Allow to retry failed uploads
+  [#11256](https://github.com/nextcloud/spreed/issues/11256)
+- fix(attachments): Fix uploading from local device
+  [#11331](https://github.com/nextcloud/spreed/issues/11331)
+- fix(attachments): Don't allow selecting shared folders as attachment folder
+  [#11427](https://github.com/nextcloud/spreed/issues/11427)
 
 ## 17.1.5 – 2024-01-25
 ### Fixed
--  fix(attachments): Don't allow selecting shared folders as attachment folder
-   [#11430](https://github.com/nextcloud/spreed/issues/11430)
+- fix(attachments): Don't allow selecting shared folders as attachment folder
+  [#11430](https://github.com/nextcloud/spreed/issues/11430)
 
 ## 16.0.10 – 2024-01-25
 ### Fixed
--  fix(attachments): Don't allow selecting shared folders as attachment folder
-   [#11431](https://github.com/nextcloud/spreed/issues/11431)
+- fix(attachments): Don't allow selecting shared folders as attachment folder
+  [#11431](https://github.com/nextcloud/spreed/issues/11431)
 
 ## 17.1.4 – 2023-12-19
 ### Fixed
