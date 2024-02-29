@@ -926,6 +926,8 @@ OC.L10N.register(
     "Drop your files to upload" : "Drop your files to upload",
     "Remove participant {name}" : "Remove participant {name}",
     "Favorite" : "Favourite",
+    "Federated conversation" : "Federated conversation",
+    "Public conversation" : "Public conversation",
     "Enter a name for this conversation" : "Enter a name for this conversation",
     "Edit conversation name" : "Edit conversation name",
     "Edit conversation description" : "Edit conversation description",
