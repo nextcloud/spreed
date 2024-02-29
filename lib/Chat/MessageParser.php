@@ -29,6 +29,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BotService;
@@ -51,15 +52,34 @@ class MessageParser {
 	protected array $botNames = [];
 
 	public function __construct(
-		protected IEventDispatcher   $dispatcher,
-		protected IUserManager       $userManager,
+		protected IEventDispatcher $dispatcher,
+		protected IUserManager $userManager,
 		protected ParticipantService $participantService,
-		protected BotService         $botService,
+		protected BotService $botService,
 	) {
 	}
 
 	public function createMessage(Room $room, ?Participant $participant, IComment $comment, IL10N $l): Message {
 		return new Message($room, $participant, $comment, $l);
+	}
+
+	public function createMessageFromProxyCache(Room $room, ?Participant $participant, ProxyCacheMessage $proxy, IL10N $l): Message {
+		$message = new Message($room, $participant, null, $l, $proxy);
+
+		$message->setActor(
+			$proxy->getActorType(),
+			$proxy->getActorId(),
+			$proxy->getActorDisplayName(),
+		);
+
+		$message->setMessageType($proxy->getMessageType());
+
+		$message->setMessage(
+			$proxy->getMessage(),
+			$proxy->getParsedMessageParameters()
+		);
+
+		return $message;
 	}
 
 	public function parseMessage(Message $message): void {

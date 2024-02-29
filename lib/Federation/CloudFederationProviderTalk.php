@@ -34,13 +34,15 @@ use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
-use OCA\Talk\Model\ProxyCacheMessages;
-use OCA\Talk\Model\ProxyCacheMessagesMapper;
+use OCA\Talk\Model\ProxyCacheMessage;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
+use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -87,7 +89,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private ISession $session,
 		private IEventDispatcher $dispatcher,
 		private LoggerInterface $logger,
-		private ProxyCacheMessagesMapper $proxyCacheMessagesMapper,
+		private ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private FederationChatNotifier $federationChatNotifier,
+		private UserConverter $userConverter,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
@@ -316,7 +320,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool}} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool}} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
@@ -335,7 +339,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			throw new ShareNotFound();
 		}
 
-		$message = new ProxyCacheMessages();
+		$message = new ProxyCacheMessage();
 		$message->setLocalToken($room->getToken());
 		$message->setRemoteServerUrl($notification['remoteServerUrl']);
 		$message->setRemoteToken($notification['remoteToken']);
@@ -346,12 +350,25 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$message->setMessageType($notification['messageData']['messageType']);
 		$message->setSystemMessage($notification['messageData']['systemMessage']);
 		if ($notification['messageData']['expirationDatetime']) {
-			$message->setExpirationDatetime(new \DateTimeImmutable($notification['messageData']['expirationDatetime']));
+			$message->setExpirationDatetime(new \DateTime($notification['messageData']['expirationDatetime']));
 		}
+
+		// We transform the parameters when storing in the PCM, so we only have
+		// to do it once for each message.
+		$convertedParameters = $this->userConverter->convertMessageParameters($room, [
+			'message' => $notification['messageData']['message'],
+			'messageParameters' => json_decode($notification['messageData']['messageParameter'], true, flags: JSON_THROW_ON_ERROR),
+		]);
+		$notification['messageData']['message'] = $convertedParameters['message'];
+		$notification['messageData']['messageParameter'] = json_encode($convertedParameters['messageParameters'], JSON_THROW_ON_ERROR);
+
 		$message->setMessage($notification['messageData']['message']);
 		$message->setMessageParameters($notification['messageData']['messageParameter']);
+		$message->setCreationDatetime(new \DateTime($notification['messageData']['creationDatetime']));
+		$message->setMetaData($notification['messageData']['metaData']);
+
 		try {
-			$this->proxyCacheMessagesMapper->insert($message);
+			$this->proxyCacheMessageMapper->insert($message);
 
 			$lastMessageId = $room->getLastMessageId();
 			if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
@@ -374,6 +391,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				$this->logger->error('Error saving proxy cache message failed: ' . $e->getMessage(), ['exception' => $e]);
 				throw $e;
 			}
+
+			$message = $this->proxyCacheMessageMapper->findByRemote(
+				$notification['remoteServerUrl'],
+				$notification['remoteToken'],
+				$notification['messageData']['remoteMessageId'],
+			);
 		}
 
 		try {
@@ -389,6 +412,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$notification['unreadInfo']['unreadMention'],
 			$notification['unreadInfo']['unreadMentionDirect'],
 		);
+
+		$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);
 
 		return [];
 	}

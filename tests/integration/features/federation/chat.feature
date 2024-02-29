@@ -150,3 +150,32 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant2" sends message "413 Payload Too Large" to room "LOCAL::room" with 413
+
+  Scenario: Mentioning a federated user triggers a notification for them
+    Given the following "spreed" app config is set
+      | federation_enabled | yes |
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 2    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type |
+      | room | 2    |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "LOCAL::room" with 200 (v4)
+    Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
+    And user "participant2" sends message "Message 1" to room "LOCAL::room" with 201
+    When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "room" with 201
+    And user "participant1" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
+    And user "participant1" sends message 'Hi @all bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                | subject                                                                | message     |
+      | spreed | chat        | room/Hi @all bye         | participant1-displayname mentioned everyone in conversation room       | Hi room bye |
+      | spreed | chat        | room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | room/Message 1-1         | participant1-displayname replied to your message in conversation room  | Message 1-1 |

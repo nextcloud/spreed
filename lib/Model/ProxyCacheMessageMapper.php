@@ -32,24 +32,36 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
- * @method ProxyCacheMessages mapRowToEntity(array $row)
- * @method ProxyCacheMessages findEntity(IQueryBuilder $query)
- * @method ProxyCacheMessages[] findEntities(IQueryBuilder $query)
- * @template-extends QBMapper<ProxyCacheMessages>
+ * @method ProxyCacheMessage mapRowToEntity(array $row)
+ * @method ProxyCacheMessage findEntity(IQueryBuilder $query)
+ * @method ProxyCacheMessage[] findEntities(IQueryBuilder $query)
+ * @template-extends QBMapper<ProxyCacheMessage>
  */
-class ProxyCacheMessagesMapper extends QBMapper {
+class ProxyCacheMessageMapper extends QBMapper {
 	use TTransactional;
 
 	public function __construct(
 		IDBConnection $db,
 	) {
-		parent::__construct($db, 'talk_proxy_messages', ProxyCacheMessages::class);
+		parent::__construct($db, 'talk_proxy_messages', ProxyCacheMessage::class);
 	}
 
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findByRemote(string $remoteServerUrl, string $remoteToken, int $remoteMessageId): ProxyCacheMessages {
+	public function findById(int $proxyId): ProxyCacheMessage {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($proxyId, IQueryBuilder::PARAM_INT)));
+
+		return $this->findEntity($query);
+	}
+
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function findByRemote(string $remoteServerUrl, string $remoteToken, int $remoteMessageId): ProxyCacheMessage {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
