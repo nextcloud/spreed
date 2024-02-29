@@ -364,7 +364,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			// DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION happens when
 			// multiple users are in the same conversation. We are therefore
 			// informed multiple times about the same remote message.
-			if ($e->getCode() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+			if ($e->getReason() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				$this->logger->error('Error saving proxy cache message failed: ' . $e->getMessage(), ['exception' => $e]);
 				throw $e;
 			}
