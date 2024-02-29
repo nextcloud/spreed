@@ -33,6 +33,7 @@ use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\BackgroundJob\IJobList;
 use OCP\DB\Exception;
@@ -43,6 +44,7 @@ use OCP\HintException;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\OCM\Exceptions\OCMProviderException;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
@@ -146,13 +148,22 @@ class BackendNotifier {
 		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;
 		$share->setProtocol($protocol);
 
-		$response = $this->federationProviderManager->sendShare($share);
-		if (is_array($response)) {
-			return true;
-		}
-		$this->logger->info("Failed sharing $roomToken with $shareWith");
+		try {
+			$response = $this->federationProviderManager->sendCloudShare($share);
+			if ($response->getStatusCode() === Http::STATUS_CREATED) {
+				return true;
+			}
 
-		return false;
+			$this->logger->warning("Failed sharing $roomToken with $shareWith, received status code {code}\n{body}", [
+				'code' => $response->getStatusCode(),
+				'body' => (string) $response->getBody(),
+			]);
+
+			return false;
+		} catch (OCMProviderException $e) {
+			$this->logger->error("Failed sharing $roomToken with $shareWith, received OCMProviderException", ['exception' => $e]);
+			return false;
+		}
 	}
 
 	/**
@@ -178,13 +189,25 @@ class BackendNotifier {
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'message' => 'Recipient accepted the share',
+			]
+		);
+
+		try {
+			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
+			if ($response->getStatusCode() === Http::STATUS_CREATED) {
+				return true;
+			}
+
+			$this->logger->warning("Failed to send share accepted notification for share from $remote, received status code {code}\n{body}", [
+				'code' => $response->getStatusCode(),
+				'body' => (string) $response->getBody(),
 			]);
-		$response = $this->federationProviderManager->sendNotification($remote, $notification);
-		if (!is_array($response)) {
-			$this->logger->info("Failed to send share accepted notification for share from $remote");
+
+			return false;
+		} catch (OCMProviderException $e) {
+			$this->logger->error("Failed to send share accepted notification for share from $remote, received OCMProviderException", ['exception' => $e]);
 			return false;
 		}
-		return true;
 	}
 
 	/**
@@ -210,12 +233,23 @@ class BackendNotifier {
 				'message' => 'Recipient declined the share',
 			]
 		);
-		$response = $this->federationProviderManager->sendNotification($remote, $notification);
-		if (!is_array($response)) {
-			$this->logger->info("Failed to send share declined notification for share from $remote");
+
+		try {
+			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
+			if ($response->getStatusCode() === Http::STATUS_CREATED) {
+				return true;
+			}
+
+			$this->logger->warning("Failed to send share declined notification for share from $remote, received status code {code}\n{body}", [
+				'code' => $response->getStatusCode(),
+				'body' => (string) $response->getBody(),
+			]);
+
+			return false;
+		} catch (OCMProviderException $e) {
+			$this->logger->error("Failed to send share declined notification for share from $remote, received OCMProviderException", ['exception' => $e]);
 			return false;
 		}
-		return true;
 	}
 
 	public function sendRemoteUnShare(
@@ -328,18 +362,28 @@ class BackendNotifier {
 	}
 
 	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0): void {
-		\OC::$server->getLogger()->error('sendUpdateToRemote');
-		\OC::$server->getLogger()->error(json_encode($notification->getMessage()));
-		$response = $this->federationProviderManager->sendNotification($remote, $notification);
-		if (!is_array($response)) {
-			$this->jobList->add(RetryJob::class,
-				[
-					'remote' => $remote,
-					'data' => json_encode($notification->getMessage()),
-					'try' => $try,
-				]
-			);
+		try {
+			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
+			if ($response->getStatusCode() === Http::STATUS_CREATED) {
+				return;
+			}
+
+			$this->logger->warning("Failed to send notification for share from $remote, received status code {code}\n{body}", [
+				'code' => $response->getStatusCode(),
+				'body' => (string) $response->getBody(),
+			]);
+		} catch (OCMProviderException $e) {
+			$this->logger->error("Failed to send notification for share from $remote, received OCMProviderException", ['exception' => $e]);
 		}
+
+		$this->jobList->add(
+			RetryJob::class,
+			[
+				'remote' => $remote,
+				'data' => json_encode($notification->getMessage(), JSON_THROW_ON_ERROR),
+				'try' => $try,
+			]
+		);
 	}
 
 	protected function prepareRemoteUrl(string $remote): string {
