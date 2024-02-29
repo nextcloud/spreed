@@ -1,10 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.11 – 2024-02-29
+### Changed
+- Update translations
+
+### Fixed
+- fix(webrtc): Ignore label of data channel when processing received messages for Janus 1.x compatibility
+  [#11669](https://github.com/nextcloud/spreed/issues/11669)
+- fix(notifications): Fix notification action label length with utf8 languages
+  [#11619](https://github.com/nextcloud/spreed/issues/11619)
+- fix(chat): Fix forwarding messages from conversations in the right sidebar
+  [#11611](https://github.com/nextcloud/spreed/issues/11611)
+
 ## 16.0.10 – 2024-01-25
 ### Fixed
--  fix(attachments): Don't allow selecting shared folders as attachment folder
-   [#11431](https://github.com/nextcloud/spreed/issues/11431)
+- fix(attachments): Don't allow selecting shared folders as attachment folder
+  [#11431](https://github.com/nextcloud/spreed/issues/11431)
 
 ## 16.0.9 – 2023-12-19
 ### Fixed
