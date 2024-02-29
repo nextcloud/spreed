@@ -926,6 +926,8 @@ OC.L10N.register(
     "Drop your files to upload" : "Отпустите фајлове за отпремање",
     "Remove participant {name}" : "Уклони учесника {name}",
     "Favorite" : "Омиљени",
+    "Federated conversation" : "Федерисани разговор",
+    "Public conversation" : "Јавни разговор",
     "Enter a name for this conversation" : "Унесите назив овог разговора",
     "Edit conversation name" : "Уреди назив разговора",
     "Edit conversation description" : "Уреди опис разговора",

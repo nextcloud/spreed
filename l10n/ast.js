@@ -286,6 +286,7 @@ OC.L10N.register(
     "The message could not be translated" : "Nun se pudo traducir el mensaxe",
     "Translation copied to clipboard" : "La traducción copióse al cartafueyu",
     "Translation could not be copied" : "Nun se pudo copiar la traducción",
+    "Contact" : "Contautu",
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
     "Close" : "Zarrar",
