@@ -343,7 +343,7 @@ describe('LeftSidebar.vue', () => {
 				)
 
 				// Check all captions
-				const captionList = ['Conversations', 'Open conversations', 'Users', 'Groups', 'Circles']
+				const captionList = ['Conversations', 'Open conversations', 'Users', 'Groups', 'Teams']
 				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
 				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
@@ -498,7 +498,7 @@ describe('LeftSidebar.vue', () => {
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users, groups and circles',
+					'Users, groups and teams',
 				)
 			})
 			test('displays all types in caption when only listed conversations were found', async () => {
@@ -510,7 +510,7 @@ describe('LeftSidebar.vue', () => {
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users, groups and circles',
+					'Users, groups and teams',
 				)
 			})
 			test('displays all types minus circles when nothing was found but circles is disabled', async () => {
@@ -570,7 +570,7 @@ describe('LeftSidebar.vue', () => {
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Groups and circles',
+					'Groups and teams',
 				)
 			})
 			test('displays caption for users and circles not found', async () => {
@@ -582,7 +582,7 @@ describe('LeftSidebar.vue', () => {
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users and circles',
+					'Users and teams',
 				)
 			})
 		})

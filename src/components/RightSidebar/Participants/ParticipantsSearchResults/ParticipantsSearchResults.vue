@@ -40,7 +40,7 @@
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add circles')" />
+			<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
 			<ParticipantsList :items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
@@ -187,21 +187,21 @@ export default {
 			if (!this.addableUsers.length) {
 				if (!this.addableGroups.length) {
 					return this.circlesWithoutResults
-						? t('spreed', 'Add users, groups or circles')
+						? t('spreed', 'Add users, groups or teams')
 						: t('spreed', 'Add users or groups')
 				} else {
 					return this.circlesWithoutResults
-						? t('spreed', 'Add users or circles')
+						? t('spreed', 'Add users or teams')
 						: t('spreed', 'Add users')
 				}
 			} else {
 				if (!this.addableGroups.length) {
 					return this.circlesWithoutResults
-						? t('spreed', 'Add groups or circles')
+						? t('spreed', 'Add groups or teams')
 						: t('spreed', 'Add groups')
 				} else {
 					return this.circlesWithoutResults
-						? t('spreed', 'Add circles')
+						? t('spreed', 'Add teams')
 						: t('spreed', 'Add other sources')
 				}
 			}
