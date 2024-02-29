@@ -138,6 +138,7 @@ class SystemMessage implements IEventListener {
 
 		$participant = $chatMessage->getParticipant();
 		if ($participant === null) {
+			$currentActorType = null;
 			$currentActorId = null;
 			$currentUserIsActor = false;
 		} elseif ($this->federationAuthenticator->isFederationRequest()) {
@@ -149,16 +150,20 @@ class SystemMessage implements IEventListener {
 				];
 			}
 
+			$currentActorType = $participant->getAttendee()->getActorType();
+			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = isset($parsedParameters['actor']['server']) &&
 				$parsedParameters['actor']['type'] === 'user' &&
 				$this->currentFederatedUserDetails['user'] === $parsedParameters['actor']['id'] &&
 				$this->currentFederatedUserDetails['server'] === $parsedParameters['actor']['server'];
 		} elseif (!$participant->isGuest()) {
+			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
 				$currentActorId === $parsedParameters['actor']['id'];
 		} else {
+			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
 				$participant->getAttendee()->getActorType() === 'guest' &&
@@ -227,7 +232,7 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('You left the call');
 			}
 		} elseif ($message === 'call_missed') {
-			[$parsedMessage, $parsedParameters, $message] = $this->parseMissedCall($room, $parameters, $currentActorId);
+			[$parsedMessage, $parsedParameters, $message] = $this->parseMissedCall($room, $parameters, $currentActorType === Attendee::ACTOR_FEDERATED_USERS ? null : $currentActorId);
 		} elseif ($message === 'call_ended' || $message === 'call_ended_everyone') {
 			[$parsedMessage, $parsedParameters] = $this->parseCall($message, $parameters, $parsedParameters);
 		} elseif ($message === 'read_only_off') {
@@ -326,7 +331,7 @@ class SystemMessage implements IEventListener {
 				}
 			} elseif ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
 				$parsedMessage = $this->l->t('{actor} added you');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator added you');
@@ -346,7 +351,7 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+				} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 					if ($cliIsActor) {
 						$parsedMessage = $this->l->t('An administrator removed you');
@@ -431,7 +436,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator promoted you to moderator');
@@ -444,7 +449,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator demoted you from moderator');
@@ -457,7 +462,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} elseif ($participant && $participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator promoted you to moderator');
@@ -470,7 +475,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} elseif ($participant && $participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator demoted you from moderator');
@@ -817,6 +822,15 @@ class SystemMessage implements IEventListener {
 		}
 
 		return $data;
+	}
+
+	protected function isCurrentParticipantChangedUser(?string $currentActorType, ?string $currentActorId, array $parameter): bool {
+		if (isset($parameter['server']) && $currentActorType === Attendee::ACTOR_FEDERATED_USERS) {
+			return $this->currentFederatedUserDetails['user'] === $parameter['id']
+				&& $this->currentFederatedUserDetails['server'] === $parameter['server'];
+		}
+
+		return $currentActorType === Attendee::ACTOR_USERS && $currentActorId === $parameter['id'];
 	}
 
 	protected function getActorFromComment(Room $room, IComment $comment): array {
