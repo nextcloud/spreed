@@ -103,10 +103,10 @@ class UserConverter {
 	 * @return TalkChatMessageWithParent
 	 */
 	public function convertMessage(Room $room, array $message): array {
+		$message['token'] = $room->getToken();
 		$message = $this->convertAttendee($room, $message, 'actorType', 'actorId', 'actorDisplayName');
 		$message = $this->convertAttendee($room, $message, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
 		$message = $this->convertMessageParameters($room, $message);
-		$message['token'] = $room->getToken();
 
 		if (isset($message['parent'])) {
 			$message['parent'] = $this->convertMessage($room, $message['parent']);
