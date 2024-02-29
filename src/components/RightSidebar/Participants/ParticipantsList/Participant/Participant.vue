@@ -777,7 +777,7 @@ export default {
 			case ATTENDEE.ACTOR_TYPE.GROUPS:
 				return t('spreed', 'Remove group and members')
 			case ATTENDEE.ACTOR_TYPE.CIRCLES:
-				return t('spreed', 'Remove circle and members')
+				return t('spreed', 'Remove team and members')
 			case ATTENDEE.ACTOR_TYPE.USERS:
 			default:
 				return t('spreed', 'Remove participant')

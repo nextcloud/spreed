@@ -246,7 +246,7 @@
 
 						<!-- New conversations: Circles -->
 						<template v-if="searchResultsCircles.length !== 0">
-							<NcAppNavigationCaption :name="t('spreed', 'Circles')" />
+							<NcAppNavigationCaption :name="t('spreed', 'Teams')" />
 							<NcListItem v-for="item of searchResultsCircles"
 								:key="`circle_${item.id}`"
 								:data-nav-id="`circle_${item.id}`"
@@ -535,21 +535,21 @@ export default {
 			if (hasNoResultsUsers) {
 				if (hasNoResultsGroups) {
 					return (hasNoResultsCircles)
-						? t('spreed', 'Users, groups and circles')
+						? t('spreed', 'Users, groups and teams')
 						: t('spreed', 'Users and groups')
 				} else {
 					return (hasNoResultsCircles)
-						? t('spreed', 'Users and circles')
+						? t('spreed', 'Users and teams')
 						: t('spreed', 'Users')
 				}
 			} else {
 				if (hasNoResultsGroups) {
 					return (hasNoResultsCircles)
-						? t('spreed', 'Groups and circles')
+						? t('spreed', 'Groups and teams')
 						: t('spreed', 'Groups')
 				} else {
 					return (hasNoResultsCircles)
-						? t('spreed', 'Circles')
+						? t('spreed', 'Teams')
 						: t('spreed', 'Other sources')
 				}
 			}
