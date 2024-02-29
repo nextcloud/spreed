@@ -926,6 +926,8 @@ OC.L10N.register(
     "Drop your files to upload" : "Dropp filer for å laste opp",
     "Remove participant {name}" : "Fjern deltaker {name}",
     "Favorite" : "Merk som favoritt",
+    "Federated conversation" : "Forent samtale",
+    "Public conversation" : "Offentlig samtale",
     "Enter a name for this conversation" : "Skriv inn et navn for denne samtalen",
     "Edit conversation name" : "Rediger samtalenavn",
     "Edit conversation description" : "Rediger samtalebeskrivelse",
