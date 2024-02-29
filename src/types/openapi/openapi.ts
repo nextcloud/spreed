@@ -624,7 +624,7 @@ export type components = {
       lastActivity: number;
       /** Format: int64 */
       lastCommonReadMessage: number;
-      lastMessage: components["schemas"]["ChatMessage"] | unknown[];
+      lastMessage: components["schemas"]["RoomLastMessage"] | unknown[];
       /** Format: int64 */
       lastPing: number;
       /** Format: int64 */
@@ -669,6 +669,22 @@ export type components = {
       unreadMentionDirect: boolean;
       /** Format: int64 */
       unreadMessages: number;
+    };
+    RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["RoomProxyMessage"];
+    RoomProxyMessage: {
+      actorDisplayName: string;
+      actorId: string;
+      actorType: string;
+      /** Format: int64 */
+      expirationTimestamp: number;
+      message: string;
+      messageParameters: {
+        [key: string]: {
+          [key: string]: Record<string, never>;
+        };
+      };
+      messageType: string;
+      systemMessage: string;
     };
     SignalingSession: {
       /** Format: int64 */
@@ -2274,7 +2290,7 @@ export type operations = {
           "application/json": {
             ocs: {
               meta: components["schemas"]["OCSMeta"];
-              data: unknown;
+              data: components["schemas"]["Room"];
             };
           };
         };
@@ -2303,7 +2319,7 @@ export type operations = {
           "application/json": {
             ocs: {
               meta: components["schemas"]["OCSMeta"];
-              data: unknown;
+              data: components["schemas"]["Room"];
             };
           };
         };
