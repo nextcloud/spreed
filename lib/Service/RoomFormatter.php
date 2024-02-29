@@ -28,6 +28,7 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
+use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\ProxyCacheMessagesMapper;
@@ -64,6 +65,7 @@ class RoomFormatter {
 		protected IManager $userStatusManager,
 		protected IUserManager $userManager,
 		protected ProxyCacheMessagesMapper $proxyCacheMessagesMapper,
+		protected UserConverter $userConverter,
 		protected IL10N $l10n,
 		protected ?string $userId,
 	) {
@@ -393,7 +395,7 @@ class RoomFormatter {
 					$room->getRemoteToken(),
 					$room->getLastMessageId(),
 				);
-				$roomData['lastMessage'] = $cachedMessage->jsonSerialize();
+				$roomData['lastMessage'] = $this->userConverter->convertAttendee($room, $cachedMessage->jsonSerialize(), 'actorType', 'actorId', 'actorDisplayName');
 			} catch (DoesNotExistException $e) {
 			}
 		}
