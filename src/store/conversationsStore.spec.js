@@ -15,8 +15,8 @@ import {
 } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
 import {
-	makePublic,
-	makePrivate,
+	makeConversationPublic,
+	makeConversationPrivate,
 	addToFavorites,
 	removeFromFavorites,
 	changeLobbyState,
@@ -38,8 +38,8 @@ import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 
 jest.mock('../services/conversationsService', () => ({
-	makePublic: jest.fn(),
-	makePrivate: jest.fn(),
+	makeConversationPublic: jest.fn(),
+	makeConversationPrivate: jest.fn(),
 	addToFavorites: jest.fn(),
 	removeFromFavorites: jest.fn(),
 	changeLobbyState: jest.fn(),
@@ -643,14 +643,14 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			makePublic.mockResolvedValue()
+			makeConversationPublic.mockResolvedValue()
 
 			await store.dispatch('toggleGuests', {
 				token: testToken,
 				allowGuests: true,
 			})
 
-			expect(makePublic).toHaveBeenCalledWith(testToken)
+			expect(makeConversationPublic).toHaveBeenCalledWith(testToken)
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.type).toEqual(CONVERSATION.TYPE.PUBLIC)
@@ -661,14 +661,14 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			makePrivate.mockResolvedValue()
+			makeConversationPrivate.mockResolvedValue()
 
 			await store.dispatch('toggleGuests', {
 				token: testToken,
 				allowGuests: false,
 			})
 
-			expect(makePrivate).toHaveBeenCalledWith(testToken)
+			expect(makeConversationPrivate).toHaveBeenCalledWith(testToken)
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.type).toEqual(CONVERSATION.TYPE.GROUP)

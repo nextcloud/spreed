@@ -20,133 +20,119 @@
 -->
 
 <template>
-	<Fragment>
-		<NcListItem ref="listItem"
-			:key="item.token"
-			:name="item.displayName"
-			:title="item.displayName"
-			class="conversation-item"
-			:class="{'unread-mention-conversation': item.unreadMention}"
-			:data-nav-id="`conversation_${item.token}`"
-			:actions-aria-label="t('spreed', 'Conversation actions')"
-			:to="to"
-			:bold="!!item.unreadMessages"
-			:counter-number="item.unreadMessages"
-			:counter-type="counterType"
-			@click="onClick">
-			<template #icon>
-				<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
-			</template>
-			<template #subname>
-				<strong v-if="item.unreadMessages"
-					class="subtitle">
-					{{ conversationInformation }}
-				</strong>
-				<template v-else>
-					{{ conversationInformation }}
+	<NcListItem ref="listItem"
+		:key="item.token"
+		:name="item.displayName"
+		:title="item.displayName"
+		:data-nav-id="`conversation_${item.token}`"
+		:actions-aria-label="t('spreed', 'Conversation actions')"
+		:to="to"
+		:bold="!!item.unreadMessages"
+		:counter-number="item.unreadMessages"
+		:counter-type="counterType"
+		@click="onClick">
+		<template #icon>
+			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
+		</template>
+		<template #subname>
+			{{ conversationInformation }}
+		</template>
+		<template v-if="!isSearchResult" #actions>
+			<NcActionButton v-if="canFavorite"
+				key="toggle-favorite"
+				close-after-click
+				@click="toggleFavoriteConversation">
+				<template #icon>
+					<Star :size="20" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
 				</template>
-			</template>
-			<template v-if="!isSearchResult" #actions>
-				<NcActionButton v-if="canFavorite"
-					:close-after-click="true"
-					@click="toggleFavoriteConversation">
-					<template #icon>
-						<Star v-if="item.isFavorite" :size="20" />
-						<Star v-else :size="20" :fill-color="'#FFCC00'" />
-					</template>
-					{{ labelFavorite }}
-				</NcActionButton>
-				<NcActionButton icon="icon-clippy"
-					@click.stop="handleCopyLink">
-					{{ t('spreed', 'Copy link') }}
-				</NcActionButton>
-				<NcActionButton v-if="item.unreadMessages"
-					:close-after-click="true"
-					@click="markConversationAsRead">
-					<template #icon>
-						<EyeOutline :size="16" />
-					</template>
-					{{ t('spreed', 'Mark as read') }}
-				</NcActionButton>
-				<NcActionButton v-else
-					:close-after-click="true"
-					@click="markConversationAsUnread">
-					<template #icon>
-						<EyeOffOutline :size="16" />
-					</template>
-					{{ t('spreed', 'Mark as unread') }}
-				</NcActionButton>
-				<NcActionButton :close-after-click="true"
-					@click="showConversationSettings">
-					<template #icon>
-						<Cog :size="20" />
-					</template>
-					{{ t('spreed', 'Conversation settings') }}
-				</NcActionButton>
-				<NcActionButton v-if="canLeaveConversation"
-					:close-after-click="true"
-					@click="leaveConversation">
-					<template #icon>
-						<ExitToApp :size="16" />
-					</template>
-					{{ t('spreed', 'Leave conversation') }}
-				</NcActionButton>
-				<NcActionButton v-if="canDeleteConversation"
-					:close-after-click="true"
-					class="critical"
-					@click="showDialog">
-					<template #icon>
-						<Delete :size="16" />
-					</template>
-					{{ t('spreed', 'Delete conversation') }}
-				</NcActionButton>
-			</template>
-			<template v-else-if="item.token" #actions>
-				<NcActionButton close-after-click @click="onActionClick">
-					<template #icon>
-						<ArrowRight :size="16" />
-					</template>
-					{{ t('spreed', 'Join conversation') }}
-				</NcActionButton>
-				<NcActionButton icon="icon-clippy"
-					@click.stop="handleCopyLink">
-					{{ t('spreed', 'Copy link') }}
-				</NcActionButton>
-			</template>
-		</NcListItem>
+				{{ labelFavorite }}
+			</NcActionButton>
+
+			<NcActionButton key="copy-link" icon="icon-clippy" @click.stop="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcActionButton>
+
+			<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
+				<template #icon>
+					<EyeOutline v-if="item.unreadMessages" :size="16" />
+					<EyeOffOutline v-else :size="16" />
+				</template>
+				{{ labelRead }}
+			</NcActionButton>
+
+			<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
+				<template #icon>
+					<Cog :size="20" />
+				</template>
+				{{ t('spreed', 'Conversation settings') }}
+			</NcActionButton>
+
+			<NcActionButton v-if="item.canLeaveConversation"
+				key="leave-conversation"
+				close-after-click
+				@click="leaveConversation">
+				<template #icon>
+					<ExitToApp :size="16" />
+				</template>
+				{{ t('spreed', 'Leave conversation') }}
+			</NcActionButton>
+
+			<NcActionButton v-if="item.canDeleteConversation"
+				key="delete-conversation"
+				close-after-click
+				class="critical"
+				@click="isDialogOpen = true">
+				<template #icon>
+					<Delete :size="16" />
+				</template>
+				{{ t('spreed', 'Delete conversation') }}
+			</NcActionButton>
+		</template>
+
+		<template v-else-if="item.token" #actions>
+			<NcActionButton key="join-conversation" close-after-click @click="onActionClick">
+				<template #icon>
+					<ArrowRight :size="16" />
+				</template>
+				{{ t('spreed', 'Join conversation') }}
+			</NcActionButton>
+
+			<NcActionButton key="copy-link" icon="icon-clippy" @click.stop="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcActionButton>
+		</template>
+
 		<!-- confirmation required to delete conversation -->
-		<NcDialog :open.sync="isDialogOpen"
-			:name="t('spreed','Delete Conversation')"
-			:message="dialogMessage"
-			:container="container">
-			<template #actions>
-				<NcButton type="tertiary" @click="closeDialog">
-					{{ t('spreed', 'No') }}
-				</NcButton>
-				<NcButton type="error" @click="deleteConversation">
-					{{ t('spreed', 'Yes') }}
-				</NcButton>
-			</template>
-		</NcDialog>
-	</Fragment>
+		<template v-if="isDialogOpen" #extra>
+			<NcDialog :open.sync="isDialogOpen"
+				:name="t('spreed','Delete Conversation')"
+				:message="dialogMessage"
+				:container="container">
+				<template #actions>
+					<NcButton type="tertiary" @click="isDialogOpen = false">
+						{{ t('spreed', 'No') }}
+					</NcButton>
+					<NcButton type="error" @click="deleteConversation">
+						{{ t('spreed', 'Yes') }}
+					</NcButton>
+				</template>
+			</NcDialog>
+		</template>
+	</NcListItem>
 </template>
 
 <script>
 
 import { toRefs } from 'vue'
-import { Fragment } from 'vue-frag'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
-import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
-import LinkIcon from 'vue-material-design-icons/Link.vue'
 import Star from 'vue-material-design-icons/Star.vue'
-import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -159,7 +145,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
-import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { PARTICIPANT } from '../../../constants.js'
 import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
 export default {
@@ -171,7 +157,6 @@ export default {
 		NcActionButton,
 		NcDialog,
 		NcListItem,
-		Fragment,
 		// Icons
 		ArrowRight,
 		Cog,
@@ -202,6 +187,8 @@ export default {
 					isFavorite: false,
 					notificationLevel: 0,
 					lastMessage: {},
+					canDeleteConversation: false,
+					canLeaveConversation: false,
 				}
 			},
 		},
@@ -234,16 +221,12 @@ export default {
 			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
 		},
 
+		labelRead() {
+			return this.item.unreadMessages ? t('spreed', 'Mark as read') : t('spreed', 'Mark as unread')
+		},
+
 		labelFavorite() {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
-		},
-
-		canDeleteConversation() {
-			return this.item.canDeleteConversation
-		},
-
-		canLeaveConversation() {
-			return this.item.canLeaveConversation
 		},
 
 		dialogMessage() {
@@ -255,12 +238,13 @@ export default {
 
 		to() {
 			return this.item?.token
-				? {
-					name: 'conversation',
-					params: { token: this.item.token },
-				}
-				: ''
+				? { name: 'conversation', params: { token: this.item.token } }
+				: null
 		},
+
+		isActive() {
+			return this.$route?.params?.token === this.item.token
+		}
 	},
 
 	methods: {
@@ -268,12 +252,12 @@ export default {
 			copyConversationLinkToClipboard(this.item.token)
 		},
 
-		markConversationAsRead() {
-			this.$store.dispatch('clearLastReadMessage', { token: this.item.token })
-		},
-
-		markConversationAsUnread() {
-			this.$store.dispatch('markConversationUnread', { token: this.item.token })
+		toggleReadConversation() {
+			if (this.item.unreadMessages) {
+				this.$store.dispatch('clearLastReadMessage', { token: this.item.token })
+			} else {
+				this.$store.dispatch('markConversationUnread', { token: this.item.token })
+			}
 		},
 
 		showConversationSettings() {
@@ -286,12 +270,14 @@ export default {
 		async deleteConversation() {
 			try {
 				this.isDialogOpen = false
+				if (this.isActive) {
+					await this.$store.dispatch('leaveConversation', { token: this.item.token })
+					await this.$router.push({ name: 'root' })
+						.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
+				}
 				await this.$store.dispatch('deleteConversationFromServer', { token: this.item.token })
-				await this.$store.dispatch('leaveConversation', { token: this.item.token })
-				await this.$router.push({ name: 'root' })
-					.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
 			} catch (error) {
-				console.debug(`error while deleting conversation ${error}`)
+				console.error(`Error while deleting conversation ${error}`)
 				showError(t('spreed', 'Error while deleting conversation'))
 			}
 		},
@@ -301,17 +287,21 @@ export default {
 		 */
 		async leaveConversation() {
 			try {
+				if (this.isActive) {
+					await this.$store.dispatch('leaveConversation', { token: this.item.token })
+					await this.$router.push({ name: 'root' })
+						.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
+				}
 				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.item.token })
-				await this.$store.dispatch('leaveConversation', { token: this.item.token })
-				await this.$router.push({ name: 'root' })
 			} catch (error) {
 				if (error?.response?.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
 				} else {
-					console.debug(`error while removing yourself from conversation ${error}`)
+					console.error(`Error while removing yourself from conversation ${error}`)
 				}
 			}
 		},
+
 		async toggleFavoriteConversation() {
 			this.$store.dispatch('toggleFavorite', this.item)
 		},
@@ -339,42 +329,20 @@ export default {
 		onActionClick() {
 			this.onClick()
 			// NcActionButton is not a RouterLink, so we should route user manually
-			this.$router.push({
-				name: 'conversation',
-				params: { token: this.item.token },
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			this.$router.push(this.to)
+				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
-
-		showDialog() {
-			this.isDialogOpen = true
-		},
-
-		closeDialog() {
-			this.isDialogOpen = false
-		}
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.conversation-item {
-	padding-left: 2px;
-	padding-right: 2px;
-}
-
-.subtitle {
-	font-weight: bold;
-}
-
-.critical {
-	:deep(.action-button) {
-		color: var(--color-error) !important;
-	}
+.critical > :deep(.action-button) {
+	color: var(--color-error);
 }
 
 :deep(.dialog) {
 	padding-block: 0 8px;
 	padding-inline: 12px 8px;
 }
-
 </style>

@@ -71,6 +71,10 @@ describe('conversationsService', () => {
 	})
 
 	test('searchPossibleConversations with other share types', () => {
+		loadStateSettings = {
+			federation_enabled: true,
+		}
+
 		testSearchPossibleConversations(
 			'conversation-token',
 			false,
@@ -79,6 +83,7 @@ describe('conversationsService', () => {
 				SHARE.TYPE.GROUP,
 				SHARE.TYPE.CIRCLE,
 				SHARE.TYPE.EMAIL,
+				SHARE.TYPE.REMOTE,
 			],
 		)
 	})

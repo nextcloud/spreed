@@ -34,8 +34,8 @@ import {
 } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
 import {
-	makePublic,
-	makePrivate,
+	makeConversationPublic,
+	makeConversationPrivate,
 	setSIPEnabled,
 	setRecordingConsent,
 	changeLobbyState,
@@ -443,10 +443,14 @@ const actions = {
 	 * @param {string} data.token the token of the conversation to be deleted;
 	 */
 	async deleteConversationFromServer(context, { token }) {
-		await deleteConversation(token)
-		// upon success, also delete from store
-		await context.dispatch('deleteConversation', token)
-		talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
+		try {
+			await deleteConversation(token)
+			// upon success, also delete from store
+			await context.dispatch('deleteConversation', token)
+			talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
+		} catch (error) {
+			console.error('Error while deleting the conversation: ', error)
+		}
 	},
 
 	/**
@@ -467,9 +471,7 @@ const actions = {
 			context.dispatch('purgeMessagesStore', token)
 			return response
 		} catch (error) {
-			console.debug(
-				t('spreed', 'Error while clearing conversation history'),
-				error)
+			console.error(t('spreed', 'Error while clearing conversation history'), error)
 		}
 	},
 
@@ -478,16 +480,19 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (allowGuests) {
-			await makePublic(token)
-			conversation.type = CONVERSATION.TYPE.PUBLIC
-		} else {
-			await makePrivate(token)
-			conversation.type = CONVERSATION.TYPE.GROUP
+		try {
+			const conversation = Object.assign({}, getters.conversations[token])
+			if (allowGuests) {
+				await makeConversationPublic(token)
+				conversation.type = CONVERSATION.TYPE.PUBLIC
+			} else {
+				await makeConversationPrivate(token)
+				conversation.type = CONVERSATION.TYPE.GROUP
+			}
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while changing the conversation public status: ', error)
 		}
-
-		commit('addConversation', conversation)
 	},
 
 	async toggleFavorite({ commit, getters }, { token, isFavorite }) {
@@ -495,16 +500,19 @@ const actions = {
 			return
 		}
 
-		// FIXME: logic is reversed
-		if (isFavorite) {
-			await removeFromFavorites(token)
-		} else {
-			await addToFavorites(token)
+		try {
+			if (isFavorite) {
+				await removeFromFavorites(token)
+			} else {
+				await addToFavorites(token)
+			}
+
+			const conversation = Object.assign({}, getters.conversations[token], { isFavorite: !isFavorite })
+
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while changing the conversation favorite status: ', error)
 		}
-
-		const conversation = Object.assign({}, getters.conversations[token], { isFavorite: !isFavorite })
-
-		commit('addConversation', conversation)
 	},
 
 	async toggleLobby({ commit, getters }, { token, enableLobby }) {
@@ -512,16 +520,19 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (enableLobby) {
-			await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS)
-			conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
-		} else {
-			await changeLobbyState(token, WEBINAR.LOBBY.NONE)
-			conversation.lobbyState = WEBINAR.LOBBY.NONE
+		try {
+			const conversation = Object.assign({}, getters.conversations[token])
+			if (enableLobby) {
+				await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS)
+				conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
+			} else {
+				await changeLobbyState(token, WEBINAR.LOBBY.NONE)
+				conversation.lobbyState = WEBINAR.LOBBY.NONE
+			}
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while updating webinar lobby: ', error)
 		}
-
-		commit('addConversation', conversation)
 	},
 
 	async setConversationName({ commit, getters }, { token, name }) {
@@ -529,37 +540,44 @@ const actions = {
 			return
 		}
 
-		await setConversationName(token, name)
-
-		const conversation = Object.assign({}, getters.conversations[token], { displayName: name })
-
-		commit('addConversation', conversation)
+		try {
+			await setConversationName(token, name)
+			const conversation = Object.assign({}, getters.conversations[token], { displayName: name })
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while setting a name for conversation: ', error)
+		}
 	},
 
 	async setConversationDescription({ commit }, { token, description }) {
-		await setConversationDescription(token, description)
-		commit('setConversationDescription', { token, description })
+		try {
+			await setConversationDescription(token, description)
+			commit('setConversationDescription', { token, description })
+		} catch (error) {
+			console.error('Error while setting a description for conversation: ', error)
+		}
 	},
 
 	async setConversationPassword({ commit }, { token, newPassword }) {
-		await setConversationPassword(token, newPassword)
-
-		commit('setConversationHasPassword', {
-			token,
-			hasPassword: !!newPassword,
-		})
+		try {
+			await setConversationPassword(token, newPassword)
+			commit('setConversationHasPassword', { token, hasPassword: !!newPassword })
+		} catch (error) {
+			console.error('Error while setting a password for conversation: ', error)
+		}
 	},
 
 	async setReadOnlyState({ commit, getters }, { token, readOnly }) {
 		if (!getters.conversations[token]) {
 			return
 		}
-
-		await changeReadOnlyState(token, readOnly)
-
-		const conversation = Object.assign({}, getters.conversations[token], { readOnly })
-
-		commit('addConversation', conversation)
+		try {
+			await changeReadOnlyState(token, readOnly)
+			const conversation = Object.assign({}, getters.conversations[token], { readOnly })
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while updating read-only state: ', error)
+		}
 	},
 
 	async setListable({ commit, getters }, { token, listable }) {
@@ -567,11 +585,13 @@ const actions = {
 			return
 		}
 
-		await changeListable(token, listable)
-
-		const conversation = Object.assign({}, getters.conversations[token], { listable })
-
-		commit('addConversation', conversation)
+		try {
+			await changeListable(token, listable)
+			const conversation = Object.assign({}, getters.conversations[token], { listable })
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while updating listable state: ', error)
+		}
 	},
 
 	async setLobbyTimer({ commit, getters }, { token, timestamp }) {
@@ -579,12 +599,14 @@ const actions = {
 			return
 		}
 
-		const conversation = Object.assign({}, getters.conversations[token], { lobbyTimer: timestamp })
-
-		// The backend requires the state and timestamp to be set together.
-		await changeLobbyState(token, conversation.lobbyState, timestamp)
-
-		commit('addConversation', conversation)
+		try {
+			const conversation = Object.assign({}, getters.conversations[token], { lobbyTimer: timestamp })
+			// The backend requires the state and timestamp to be set together.
+			await changeLobbyState(token, conversation.lobbyState, timestamp)
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while updating webinar lobby: ', error)
+		}
 	},
 
 	async setSIPEnabled({ commit, getters }, { token, state }) {
@@ -592,11 +614,13 @@ const actions = {
 			return
 		}
 
-		await setSIPEnabled(token, state)
-
-		const conversation = Object.assign({}, getters.conversations[token], { sipEnabled: state })
-
-		commit('addConversation', conversation)
+		try {
+			await setSIPEnabled(token, state)
+			const conversation = Object.assign({}, getters.conversations[token], { sipEnabled: state })
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while changing the SIP state for conversation: ', error)
+		}
 	},
 
 	async setRecordingConsent({ commit, getters }, { token, state }) {
@@ -604,11 +628,13 @@ const actions = {
 			return
 		}
 
-		await setRecordingConsent(token, state)
-
-		const conversation = Object.assign({}, getters.conversations[token], { recordingConsent: state })
-
-		commit('addConversation', conversation)
+		try {
+			await setRecordingConsent(token, state)
+			const conversation = Object.assign({}, getters.conversations[token], { recordingConsent: state })
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while changing the recording consent state for conversation: ', error)
+		}
 	},
 
 	async setConversationProperties({ commit, getters }, { token, properties }) {
@@ -634,9 +660,13 @@ const actions = {
 			return
 		}
 
-		await setConversationUnread(token)
-		commit('updateUnreadMessages', { token, unreadMessages: 1 })
-		await dispatch('fetchConversation', { token })
+		try {
+			await setConversationUnread(token)
+			commit('updateUnreadMessages', { token, unreadMessages: 1 })
+			await dispatch('fetchConversation', { token })
+		} catch (error) {
+			console.error('Error while setting the conversation as unread: ', error)
+		}
 	},
 
 	async updateLastCommonReadMessage({ commit, getters }, { token, lastCommonReadMessage }) {
@@ -866,15 +896,21 @@ const actions = {
 	},
 
 	async setNotificationLevel({ commit }, { token, notificationLevel }) {
-		await setNotificationLevel(token, notificationLevel)
-
-		commit('setNotificationLevel', { token, notificationLevel })
+		try {
+			await setNotificationLevel(token, notificationLevel)
+			commit('setNotificationLevel', { token, notificationLevel })
+		} catch (error) {
+			console.error('Error while setting the notification level: ', error)
+		}
 	},
 
 	async setNotificationCalls({ commit }, { token, notificationCalls }) {
-		await setNotificationCalls(token, notificationCalls)
-
-		commit('setNotificationCalls', { token, notificationCalls })
+		try {
+			await setNotificationCalls(token, notificationCalls)
+			commit('setNotificationCalls', { token, notificationCalls })
+		} catch (error) {
+			console.error('Error while setting the call notification level: ', error)
+		}
 	},
 
 	/**
@@ -885,26 +921,40 @@ const actions = {
 	 * @param {string} actorId actor id;
 	 */
 	async createOneToOneConversation(context, actorId) {
-		const response = await createOneToOneConversation(actorId)
-		const conversation = response.data.ocs.data
-		context.dispatch('addConversation', conversation)
-
-		return conversation
+		try {
+			const response = await createOneToOneConversation(actorId)
+			await context.dispatch('addConversation', response.data.ocs.data)
+			return response.data.ocs.data
+		} catch (error) {
+			console.error('Error creating new one to one conversation: ', error)
+		}
 	},
 
 	async setConversationPermissions(context, { token, permissions }) {
-		await setConversationPermissions(token, permissions)
-		context.commit('setConversationPermissions', { token, permissions })
+		try {
+			await setConversationPermissions(token, permissions)
+			context.commit('setConversationPermissions', { token, permissions })
+		} catch (error) {
+			console.error('Error while updating conversation permissions: ', error)
+		}
 	},
 
 	async setMessageExpiration({ commit }, { token, seconds }) {
-		await setMessageExpiration(token, seconds)
-		commit('setMessageExpiration', { token, seconds })
+		try {
+			await setMessageExpiration(token, seconds)
+			commit('setMessageExpiration', { token, seconds })
+		} catch (error) {
+			console.error('Error while setting conversation message expiration: ', error)
+		}
 	},
 
 	async setCallPermissions(context, { token, permissions }) {
-		await setCallPermissions(token, permissions)
-		context.commit('setCallPermissions', { token, permissions })
+		try {
+			await setCallPermissions(token, permissions)
+			context.commit('setCallPermissions', { token, permissions })
+		} catch (error) {
+			console.error('Error while updating call permissions: ', error)
+		}
 	},
 
 	async startCallRecording(context, { token, callRecording }) {
