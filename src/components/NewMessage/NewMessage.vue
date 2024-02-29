@@ -226,7 +226,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
-import { parseSpecialSymbols } from '../../utils/textParse.js'
+import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined

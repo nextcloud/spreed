@@ -87,7 +87,7 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import { parseSpecialSymbols } from '../../utils/textParse.js'
+import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 export default {
 	name: 'EditableTextField',

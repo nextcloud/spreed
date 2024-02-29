@@ -26,7 +26,7 @@ import Vue from 'vue'
 
 import { EventBus } from '../services/EventBus.js'
 import { getUserAbsence } from '../services/participantsService.js'
-import { parseSpecialSymbols, parseMentions } from '../utils/textParse.js'
+import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
 
 /**
  * @typedef {string} Token
