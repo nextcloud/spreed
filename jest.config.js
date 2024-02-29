@@ -69,13 +69,14 @@ module.exports = {
 	globalSetup: resolve(__dirname, 'jest.global.setup.js'),
 
 	collectCoverageFrom: [
-		'<rootDir>/src/**/*.{js,vue}',
+		'<rootDir>/src/**/*.{js,ts,vue}',
 	],
 
 	testEnvironment: 'jest-environment-jsdom',
 
 	moduleFileExtensions: [
 		'js',
+		'ts',
 		'vue',
 	],
 

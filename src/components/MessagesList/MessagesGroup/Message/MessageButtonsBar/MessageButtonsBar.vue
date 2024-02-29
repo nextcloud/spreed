@@ -307,7 +307,7 @@ import { getMessageReminder, removeMessageReminder, setMessageReminder } from '.
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
-import { parseMentions } from '../../../../../utils/textParse.js'
+import { parseMentions } from '../../../../../utils/textParse.ts'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
