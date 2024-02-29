@@ -825,12 +825,18 @@ class SystemMessage implements IEventListener {
 	}
 
 	protected function isCurrentParticipantChangedUser(?string $currentActorType, ?string $currentActorId, array $parameter): bool {
-		if (isset($parameter['server']) && $currentActorType === Attendee::ACTOR_FEDERATED_USERS) {
+		if ($currentActorType === Attendee::ACTOR_GUESTS) {
+			return $parameter['type'] === 'guest' && $currentActorId === $parameter['id'];
+		}
+
+		if (isset($parameter['server'])
+			&& $currentActorType === Attendee::ACTOR_FEDERATED_USERS
+			&& $parameter['type'] === 'user') {
 			return $this->currentFederatedUserDetails['user'] === $parameter['id']
 				&& $this->currentFederatedUserDetails['server'] === $parameter['server'];
 		}
 
-		return $currentActorType === Attendee::ACTOR_USERS && $currentActorId === $parameter['id'];
+		return $currentActorType === Attendee::ACTOR_USERS && $parameter['type'] === 'user' && $currentActorId === $parameter['id'];
 	}
 
 	protected function getActorFromComment(Room $room, IComment $comment): array {
