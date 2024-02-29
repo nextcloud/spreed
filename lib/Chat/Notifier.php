@@ -202,9 +202,19 @@ class Notifier {
 	 * @psalm-return array<int, array{id: string, type: string, reason: string}>
 	 */
 	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo, bool $silent): array {
-		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS) {
-			// No reply notification when the replyTo-author was not a user
+		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS && $replyTo->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
+			// No reply notification when the replyTo-author was not a user or federated user
 			return [];
+		}
+
+		if ($replyTo->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			return [
+				[
+					'id' => $replyTo->getActorId(),
+					'type' => $replyTo->getActorType(),
+					'reason' => 'reply',
+				],
+			];
 		}
 
 		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment, $chat)) {
@@ -408,6 +418,19 @@ class Notifier {
 	}
 
 	/**
+	 * Returns the cloud IDs of the federated users mentioned in the given comment.
+	 *
+	 * @param IComment $comment
+	 * @return string[] the mentioned cloud IDs
+	 */
+	public function getMentionedCloudIds(IComment $comment): array {
+		$mentionedFederatedUsers = $this->getMentionedFederatedUsers($comment);
+		return array_map(static function ($mentionedUser) {
+			return $mentionedUser['id'];
+		}, $mentionedFederatedUsers);
+	}
+
+	/**
 	 * @param IComment $comment
 	 * @return array[]
 	 * @psalm-return array<int, array{type: string, id: string, reason: string}>
@@ -427,7 +450,34 @@ class Notifier {
 
 			$mentionedUsers[] = [
 				'id' => $mention['id'],
-				'type' => 'users',
+				'type' => Attendee::ACTOR_USERS,
+				'reason' => 'direct',
+			];
+		}
+		return $mentionedUsers;
+	}
+
+	/**
+	 * @param IComment $comment
+	 * @return array[]
+	 * @psalm-return array<int, array{type: string, id: string, reason: string}>
+	 */
+	private function getMentionedFederatedUsers(IComment $comment): array {
+		$mentions = $comment->getMentions();
+
+		if (empty($mentions)) {
+			return [];
+		}
+
+		$mentionedUsers = [];
+		foreach ($mentions as $mention) {
+			if ($mention['type'] !== 'federated_user') {
+				continue;
+			}
+
+			$mentionedUsers[] = [
+				'id' => $mention['id'],
+				'type' => Attendee::ACTOR_FEDERATED_USERS,
 				'reason' => 'direct',
 			];
 		}

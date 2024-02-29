@@ -55,6 +55,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ReminderService;
+use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
@@ -90,6 +91,7 @@ use OCP\UserStatus\IUserStatus;
  * @psalm-import-type TalkChatMessage from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  * @psalm-import-type TalkChatReminder from ResponseDefinitions
+ * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class ChatController extends AEnvironmentAwareController {
 	/** @var string[] */
@@ -102,6 +104,7 @@ class ChatController extends AEnvironmentAwareController {
 		private IUserManager $userManager,
 		private IAppManager $appManager,
 		private ChatManager $chatManager,
+		private RoomFormatter $roomFormatter,
 		private ReactionManager $reactionManager,
 		private ParticipantService $participantService,
 		private SessionService $sessionService,
@@ -1045,31 +1048,54 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param int $lastReadMessage ID if the last read message
 	 * @psalm-param non-negative-int $lastReadMessage
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
 	 * 200: Read marker set successfully
 	 */
-	#[NoAdminRequired]
-	#[RequireParticipant]
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireAuthenticatedParticipant]
 	public function setReadMarker(int $lastReadMessage): DataResponse {
-		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
-		$headers = [];
-		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->setReadMarker($this->room, $this->participant, $this->getResponseFormat(), $lastReadMessage);
 		}
-		return new DataResponse([], Http::STATUS_OK, $headers);
+
+		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
+		$attendee = $this->participant->getAttendee();
+
+		$headers = $lastCommonRead = [];
+		if ($attendee->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$lastCommonRead[$this->room->getId()] = $this->chatManager->getLastCommonReadMessage($this->room);
+			$headers = ['X-Chat-Last-Common-Read' => (string) $lastCommonRead[$this->room->getId()]];
+		}
+
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			$lastCommonRead,
+			$this->room,
+			$this->participant,
+		), Http::STATUS_OK, $headers);
 	}
 
 	/**
 	 * Mark a chat as unread
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
 	 * 200: Read marker set successfully
 	 */
-	#[NoAdminRequired]
-	#[RequireParticipant]
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireAuthenticatedParticipant]
 	public function markUnread(): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->markUnread($this->room, $this->participant, $this->getResponseFormat());
+		}
+
 		$message = $this->room->getLastMessage();
 		$unreadId = 0;
 

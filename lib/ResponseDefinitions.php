@@ -91,6 +91,19 @@ namespace OCA\Talk;
  *     silent?: bool,
  * }
  *
+ * @psalm-type TalkRoomProxyMessage = array{
+ *     actorDisplayName: string,
+ *     actorId: string,
+ *     actorType: string,
+ *     expirationTimestamp: int,
+ *     message: string,
+ *     messageParameters: array<string, array<string, mixed>>,
+ *     messageType: string,
+ *     systemMessage: string,
+ * }
+ *
+ * @psalm-type TalkRoomLastMessage = TalkChatMessage|TalkRoomProxyMessage
+ *
  * @psalm-type TalkChatMessageWithParent = TalkChatMessage&array{parent?: TalkChatMessage}
  *
  * @psalm-type TalkChatReminder = array{
@@ -208,7 +221,7 @@ namespace OCA\Talk;
  *     isFavorite: bool,
  *     lastActivity: int,
  *     lastCommonReadMessage: int,
- *     lastMessage: TalkChatMessage|array<empty>,
+ *     lastMessage: TalkRoomLastMessage|array<empty>,
  *     lastPing: int,
  *     lastReadMessage: int,
  *     listable: int,

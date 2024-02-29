@@ -342,8 +342,16 @@ class Room {
 		$this->lastActivity = $now;
 	}
 
+	public function getLastMessageId(): int {
+		return $this->lastMessageId;
+	}
+
+	public function setLastMessageId(int $lastMessageId): void {
+		$this->lastMessageId = $lastMessageId;
+	}
+
 	public function getLastMessage(): ?IComment {
-		if ($this->lastMessageId && $this->lastMessage === null) {
+		if ($this->lastMessageId && $this->lastMessage === null && $this->getRemoteServer() === '') {
 			$this->lastMessage = $this->manager->loadLastCommentInfo($this->lastMessageId);
 			if ($this->lastMessage === null) {
 				$this->lastMessageId = 0;

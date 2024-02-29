@@ -278,6 +278,8 @@ class BackendNotifier {
 	/**
 	 * Send information to remote participants that a message was posted
 	 * Sent from Host server to Remote participant server
+	 *
+	 * @param array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool} $unreadInfo
 	 */
 	public function sendMessageUpdate(
 		string $remoteServer,
@@ -286,6 +288,7 @@ class BackendNotifier {
 		string $accessToken,
 		string $localToken,
 		array $messageData,
+		array $unreadInfo,
 	): void {
 		$remote = $this->prepareRemoteUrl($remoteServer);
 
@@ -299,6 +302,7 @@ class BackendNotifier {
 				'sharedSecret' => $accessToken,
 				'remoteToken' => $localToken,
 				'messageData' => $messageData,
+				'unreadInfo' => $unreadInfo,
 			],
 		);
 
@@ -324,6 +328,8 @@ class BackendNotifier {
 	}
 
 	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0): void {
+		\OC::$server->getLogger()->error('sendUpdateToRemote');
+		\OC::$server->getLogger()->error(json_encode($notification->getMessage()));
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
 		if (!is_array($response)) {
 			$this->jobList->add(RetryJob::class,

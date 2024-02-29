@@ -249,6 +249,14 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function updateUnreadInfoForProxyParticipant(Participant $participant, int $unreadMessageCount, bool $hasMention, bool $hadDirectMention): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setLastReadMessage($unreadMessageCount);
+		$attendee->setLastMentionMessage($hasMention ? 1 : 0);
+		$attendee->setLastMentionDirect($hadDirectMention ? 1 : 0);
+		$this->attendeeMapper->update($attendee);
+	}
+
 	public function updateFavoriteStatus(Participant $participant, bool $isFavorite): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setFavorite($isFavorite);
@@ -1275,28 +1283,26 @@ class ParticipantService {
 	}
 
 	/**
-	 * @param Room $room
-	 * @param string[] $userIds
-	 * @param int $messageId
+	 * @param string[] $actorIds
 	 * @param string[] $usersDirectlyMentioned
 	 */
-	public function markUsersAsMentioned(Room $room, array $userIds, int $messageId, array $usersDirectlyMentioned): void {
+	public function markUsersAsMentioned(Room $room, string $actorType, array $actorIds, int $messageId, array $actorsDirectlyMentioned): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_attendees')
 			->set('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)))
+			->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($actorIds, IQueryBuilder::PARAM_STR_ARRAY)))
 			->andWhere($update->expr()->lt('last_mention_message', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
-		if (!empty($usersDirectlyMentioned)) {
+		if (!empty($actorsDirectlyMentioned)) {
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_attendees')
 				->set('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 				->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter(Attendee::ACTOR_USERS)))
-				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($usersDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)))
+				->andWhere($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+				->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($actorsDirectlyMentioned, IQueryBuilder::PARAM_STR_ARRAY)))
 				->andWhere($update->expr()->lt('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
 			$update->executeStatement();
 		}

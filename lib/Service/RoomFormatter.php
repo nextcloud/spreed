@@ -30,12 +30,14 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\ProxyCacheMessagesMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
@@ -46,7 +48,7 @@ use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
 /**
- * @psalm-import-type TalkChatMessage from ResponseDefinitions
+ * @psalm-import-type TalkRoomLastMessage from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class RoomFormatter {
@@ -61,6 +63,7 @@ class RoomFormatter {
 		protected IAppManager $appManager,
 		protected IManager $userStatusManager,
 		protected IUserManager $userManager,
+		protected ProxyCacheMessagesMapper $proxyCacheMessagesMapper,
 		protected IL10N $l10n,
 		protected ?string $userId,
 	) {
@@ -287,7 +290,13 @@ class RoomFormatter {
 
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
-			if ($currentUser instanceof IUser) {
+			if ($room->getRemoteServer() !== '') {
+				// For proxy conversations the information is the real counter,
+				// not the message ID requiring math afterward.
+				$roomData['unreadMessages'] = $attendee->getLastReadMessage();
+				$roomData['unreadMention'] = (bool) $attendee->getLastMentionMessage();
+				$roomData['unreadMentionDirect'] = (bool) $attendee->getLastMentionDirect();
+			} elseif ($currentUser instanceof IUser) {
 				$lastReadMessage = $attendee->getLastReadMessage();
 				if ($lastReadMessage === -1) {
 					/*
@@ -323,6 +332,13 @@ class RoomFormatter {
 					&& $currentParticipant->hasModeratorPermissions(false)
 					&& $this->talkConfig->canUserEnableSIP($currentUser);
 			}
+		} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$lastReadMessage = $attendee->getLastReadMessage();
+			$lastMention = $attendee->getLastMentionMessage();
+			$lastMentionDirect = $attendee->getLastMentionDirect();
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 		} else {
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
@@ -361,6 +377,7 @@ class RoomFormatter {
 			}
 		}
 
+		$roomData['lastMessage'] = [];
 		$lastMessage = $room->getLastMessage();
 		if ($room->getRemoteServer() === '' && $lastMessage instanceof IComment) {
 			$roomData['lastMessage'] = $this->formatLastMessage(
@@ -369,15 +386,23 @@ class RoomFormatter {
 				$currentParticipant,
 				$lastMessage,
 			);
-		} else {
-			$roomData['lastMessage'] = [];
+		} elseif ($room->getRemoteServer() !== '') {
+			try {
+				$cachedMessage = $this->proxyCacheMessagesMapper->findByRemote(
+					$room->getRemoteServer(),
+					$room->getRemoteToken(),
+					$room->getLastMessageId(),
+				);
+				$roomData['lastMessage'] = $cachedMessage->jsonSerialize();
+			} catch (DoesNotExistException $e) {
+			}
 		}
 
 		return $roomData;
 	}
 
 	/**
-	 * @return TalkChatMessage|array<empty>
+	 * @return TalkRoomLastMessage|array<empty>
 	 */
 	public function formatLastMessage(
 		string $responseFormat,
