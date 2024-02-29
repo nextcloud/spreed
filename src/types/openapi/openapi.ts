@@ -447,6 +447,7 @@ export type components = {
       id: string;
       label: string;
       source: string;
+      mentionId: string;
       status: string | null;
       /** Format: int64 */
       statusClearAt: number | null;
