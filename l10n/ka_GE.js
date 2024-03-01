@@ -91,7 +91,6 @@ OC.L10N.register(
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Add to favorites" : "რჩეულებში დამატება",
     "Groups" : "ჯგუფები",
-    "Circles" : "წრეები",
     "Loading" : "იტვირთება",
     "Devices" : "მოწყობილობები",
     "Upload" : "ატვირთვა",
@@ -148,6 +147,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
+    "Circles" : "წრეები",
     "Conversation name" : "საუბრის სახელწოდება"
 },
 "nplurals=2; plural=(n!=1);");
