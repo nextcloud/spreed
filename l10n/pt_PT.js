@@ -282,7 +282,6 @@ OC.L10N.register(
     "Remove from favorites" : "Remover de favoritos",
     "Add to favorites" : "Adicionar aos favoritos",
     "Groups" : "Grupos",
-    "Circles" : "Círculos",
     "Loading" : "A carregar",
     "Upload" : "Enviar",
     "Files" : "Ficheiros",
@@ -343,6 +342,7 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bem-vindo ao Nextcloud Talk!\nNesta conversa será informado sobre novas funcionalidades disponíveis no Nextcloud Talk.",
+    "Circles" : "Círculos",
     "Conversation name" : "Nome da conversação",
     "Rename conversation" : "Renomear conversação"
 },

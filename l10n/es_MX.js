@@ -183,7 +183,6 @@ OC.L10N.register(
     "Add to favorites" : "Agregar a favoritos",
     "Unread mentions" : "Menciones sin leer",
     "Groups" : "Grupos",
-    "Circles" : "Círculos",
     "Loading" : "Cargando",
     "Devices" : "Dispositivos",
     "No audio" : "Sin audio",
@@ -260,6 +259,7 @@ OC.L10N.register(
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bienvenido a Nextcloud Talk!\nEn esta conversación se te informará sobre nuevas características disponibles en Nextcloud Talk.",
+    "Circles" : "Círculos",
     "Conversation name" : "Nombre de la conversación",
     "Rename conversation" : "Renombrar conversación",
     "Exit fullscreen (F)" : "Salir de pantalla completa (F)"

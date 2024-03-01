@@ -306,7 +306,6 @@ OC.L10N.register(
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
     "Groups" : "Grupoj",
-    "Circles" : "Rondoj",
     "Loading" : "Ŝargado",
     "Devices" : "Aparatoj",
     "Upload" : "Alŝuti",
@@ -342,6 +341,7 @@ OC.L10N.register(
     "Default" : "Defaŭlta",
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
-    "iOS app" : "iOS-aplikaĵo"
+    "iOS app" : "iOS-aplikaĵo",
+    "Circles" : "Rondoj"
 },
 "nplurals=2; plural=(n != 1);");
