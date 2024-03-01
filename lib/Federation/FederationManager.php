@@ -144,7 +144,7 @@ class FederationManager {
 				'actorId' => $user->getUID(),
 				'displayName' => $user->getDisplayName(),
 				'accessToken' => $invitation->getAccessToken(),
-				'remoteId' => $invitation->getRemoteAttendeeId(), // FIXME this seems unnecessary
+				'remoteId' => $invitation->getRemoteAttendeeId(),
 				'invitedCloudId' => $invitation->getLocalCloudId(),
 			]
 		];

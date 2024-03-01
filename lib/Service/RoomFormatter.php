@@ -400,6 +400,10 @@ class RoomFormatter {
 			}
 		}
 
+		if ($room->getRemoteServer() !== '') {
+			$roomData['attendeeId'] = (int) $attendee->getRemoteId();
+		}
+
 		return $roomData;
 	}
 
