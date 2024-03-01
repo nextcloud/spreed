@@ -49,7 +49,7 @@
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
 					:open.sync="isDeleteConversationDialogOpen"
-					:name="t('spreed','Delete Conversation')"
+					:name="t('spreed','Delete conversation')"
 					:message="deleteConversationDialogMessage"
 					container=".danger-zone">
 					<template #actions>
