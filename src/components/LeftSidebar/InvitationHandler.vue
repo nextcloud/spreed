@@ -31,8 +31,8 @@
 				{{ t('spreed', 'Join conversations from remote Nextcloud servers') }}
 			</p>
 			<ul class="inbox__list">
-				<li v-for="item of invitations"
-					:key="`invitation_${item.id}`"
+				<li v-for="(item, id) in invitations"
+					:key="`invitation_${id}`"
 					class="inbox__item">
 					<ConversationIcon :item="item" hide-user-status />
 					<div class="inbox__item-desc">
@@ -49,20 +49,20 @@
 					<NcButton type="tertiary"
 						:aria-label="t('spreed', 'Decline invitation')"
 						:title="t('spreed', 'Decline invitation')"
-						:disabled="isLoading"
-						@click="rejectShare(item.id)">
+						:disabled="!!item.loading"
+						@click="rejectShare(id)">
 						<template #icon>
-							<NcLoadingIcon v-if="isLoading" :size="20" />
+							<NcLoadingIcon v-if="item.loading === 'reject'" :size="20" />
 							<CancelIcon v-else :size="20" />
 						</template>
 					</NcButton>
 					<NcButton type="primary"
 						:aria-label="t('spreed', 'Accept invitation')"
 						:title="t('spreed', 'Accept invitation')"
-						:disabled="isLoading"
-						@click="acceptShare(item.id)">
+						:disabled="!!item.loading"
+						@click="acceptShare(id)">
 						<template #icon>
-							<NcLoadingIcon v-if="isLoading" :size="20" />
+							<NcLoadingIcon v-if="item.loading === 'accept'" :size="20" />
 							<CheckIcon v-else :size="20" />
 						</template>
 						{{ t('spreed', 'Accept') }}
@@ -108,7 +108,6 @@ export default {
 	data() {
 		return {
 			modal: false,
-			isLoading: false,
 		}
 	},
 
@@ -118,13 +117,15 @@ export default {
 		},
 
 		invitations() {
-			return Object.values(this.federationStore.pendingShares)
-				.map(item => ({
-					...item,
+			const pendingShares = this.federationStore.pendingShares
+			for (const id in pendingShares) {
+				pendingShares[id] = Object.assign({}, pendingShares[id], {
 					type: CONVERSATION.TYPE.GROUP,
 					isFederatedConversation: true,
 					isDummyConversation: true,
-				}))
+				})
+			}
+			return pendingShares
 		},
 	},
 
@@ -140,20 +141,17 @@ export default {
 		},
 
 		async acceptShare(id) {
-			this.isLoading = true
 			const conversation = await this.federationStore.acceptShare(id)
-			this.isLoading = false
 			if (conversation?.token) {
 				this.$store.dispatch('addConversation', conversation)
-				this.$router.push({ name: 'conversation', params: { token: conversation.token } })
+			}
+			if (this.invitations.length === 0) {
 				this.closeModal()
 			}
 		},
 
 		async rejectShare(id) {
-			this.isLoading = true
 			await this.federationStore.rejectShare(id)
-			this.isLoading = false
 			if (this.invitations.length === 0) {
 				this.closeModal()
 			}

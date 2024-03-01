@@ -118,6 +118,7 @@ export const useFederationStore = defineStore('federation', {
 			if (!this.pendingShares[id]) {
 				return
 			}
+			Vue.delete(this.pendingShares[id], 'loading')
 			Vue.set(this.acceptedShares, id, {
 				...this.pendingShares[id],
 				accessToken: conversation.remoteAccessToken,
@@ -138,6 +139,7 @@ export const useFederationStore = defineStore('federation', {
 				return
 			}
 			try {
+				Vue.set(this.pendingShares[id], 'loading', 'accept')
 				const response = await acceptShare(id)
 				this.markInvitationAccepted(id, response.data.ocs.data)
 				return response.data.ocs.data
@@ -157,6 +159,7 @@ export const useFederationStore = defineStore('federation', {
 				return
 			}
 			try {
+				Vue.set(this.pendingShares[id], 'loading', 'reject')
 				await rejectShare(id)
 				Vue.delete(this.pendingShares, id)
 			} catch (error) {
