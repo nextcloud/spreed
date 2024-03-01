@@ -2,8 +2,10 @@
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
+  - @author Dorra Jaouad <dorra.jaoued1@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -18,12 +20,6 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<docs>
-
-This component is a wrapper for the list of messages. It's main purpose it to
-get the messagesList array and loop through the list to generate the messages.
-
-</docs>
 
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
