@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\PollMapper;
 use OCA\Talk\Model\Vote;
@@ -46,6 +47,9 @@ class PollService {
 	) {
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {
 		$question = trim($question);
 

@@ -112,6 +112,9 @@ class MessageParser {
 		}
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	protected function getActorInformation(Message $message, string $actorType, string $actorId, string $displayName = ''): array {
 		if ($actorType === Attendee::ACTOR_USERS) {
 			$tempDisplayName = $this->userManager->getDisplayName($actorId);

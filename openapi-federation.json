@@ -20,6 +20,24 @@
             }
         },
         "schemas": {
+            "ActorType": {
+                "type": "string",
+                "enum": [
+                    "bot-",
+                    "bots",
+                    "bridged",
+                    "changelog",
+                    "circles",
+                    "cli",
+                    "emails",
+                    "federated_users",
+                    "groups",
+                    "guests",
+                    "phones",
+                    "system",
+                    "users"
+                ]
+            },
             "Capabilities": {
                 "type": "object",
                 "required": [
@@ -211,7 +229,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "deleted": {
                         "type": "boolean",
@@ -462,7 +480,14 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ActorType"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     },
                     "attendeeId": {
                         "type": "integer",
@@ -693,7 +718,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "expirationTimestamp": {
                         "type": "integer",

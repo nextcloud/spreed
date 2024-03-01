@@ -55,8 +55,11 @@ class Message {
 	/** @var array */
 	protected $parameters = [];
 
-	/** @var string */
-	protected $actorType = '';
+	/**
+	 * @var string
+	 * @psalm-var Attendee::ACTOR_*
+	 */
+	protected $actorType;
 
 	/** @var string */
 	protected $actorId = '';
@@ -148,6 +151,9 @@ class Message {
 		return $this->type;
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $type
+	 */
 	public function setActor(string $type, string $id, string $displayName): void {
 		$this->actorType = $type;
 		$this->actorId = $id;
@@ -161,6 +167,9 @@ class Message {
 		$this->lastEditTimestamp = $timestamp;
 	}
 
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
 	public function getActorType(): string {
 		return $this->actorType;
 	}

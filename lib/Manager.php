@@ -318,7 +318,7 @@ class Manager {
 	}
 
 	/**
-	 * @param string $actorType
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
 	 * @param array $sessionIds A list of talk sessions to consider for loading (otherwise no session is loaded)
 	 * @param bool $includeLastMessage

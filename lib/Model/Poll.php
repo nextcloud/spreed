@@ -40,8 +40,6 @@ use OCP\AppFramework\Db\Entity;
  * @method string getVotes()
  * @method void setNumVoters(int $numVoters)
  * @method int getNumVoters()
- * @method void setActorType(string $actorType)
- * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setDisplayName(string $displayName)
@@ -67,7 +65,10 @@ class Poll extends Entity {
 	protected string $options = '';
 	protected string $votes = '';
 	protected int $numVoters = 0;
-	protected string $actorType = '';
+	/**
+	 * @psalm-var Attendee::ACTOR_*
+	 */
+	protected string $actorType;
 	protected string $actorId = '';
 	protected ?string $displayName = null;
 	protected int $status = self::STATUS_OPEN;
@@ -86,6 +87,20 @@ class Poll extends Entity {
 		$this->addType('status', 'int');
 		$this->addType('resultMode', 'int');
 		$this->addType('maxVotes', 'int');
+	}
+
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
+	public function setActorType(string $actorType): void {
+		$this->actorType = $actorType;
+	}
+
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
+	public function getActorType(): string {
+		return $this->actorType;
 	}
 
 	/**

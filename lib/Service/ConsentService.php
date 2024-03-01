@@ -39,6 +39,9 @@ class ConsentService {
 	) {
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	public function storeConsent(Room $room, string $actorType, string $actorId): Consent {
 		$consent = new Consent();
 		$consent->setToken($room->getToken());

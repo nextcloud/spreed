@@ -20,6 +20,24 @@
             }
         },
         "schemas": {
+            "ActorType": {
+                "type": "string",
+                "enum": [
+                    "bot-",
+                    "bots",
+                    "bridged",
+                    "changelog",
+                    "circles",
+                    "cli",
+                    "emails",
+                    "federated_users",
+                    "groups",
+                    "guests",
+                    "phones",
+                    "system",
+                    "users"
+                ]
+            },
             "Bot": {
                 "type": "object",
                 "required": [
@@ -61,7 +79,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "displayName": {
                         "type": "string"
@@ -313,7 +331,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "deleted": {
                         "type": "boolean",
@@ -542,7 +560,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "attendeeId": {
                         "type": "integer",
@@ -630,7 +648,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "details": {
                         "type": "array",
@@ -699,7 +717,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "optionId": {
                         "type": "integer",
@@ -742,7 +760,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "timestamp": {
                         "type": "integer",
@@ -809,7 +827,14 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ActorType"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     },
                     "attendeeId": {
                         "type": "integer",
@@ -1040,7 +1065,7 @@
                         "type": "string"
                     },
                     "actorType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/ActorType"
                     },
                     "expirationTimestamp": {
                         "type": "integer",

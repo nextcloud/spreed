@@ -63,6 +63,7 @@ class ConsentMapper extends QBMapper {
 	}
 
 	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @return Consent[]
 	 */
 	public function findForActor(string $actorType, string $actorId): array {
@@ -75,6 +76,9 @@ class ConsentMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	public function deleteByActor(string $actorType, string $actorId): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
@@ -85,6 +89,7 @@ class ConsentMapper extends QBMapper {
 	}
 
 	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @return Consent[]
 	 */
 	public function findForTokenByActor(string $token, string $actorType, string $actorId): array {

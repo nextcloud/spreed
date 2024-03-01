@@ -35,8 +35,6 @@ use OCP\AppFramework\Db\Entity;
  * @method int getPollId()
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
- * @method void setActorType(string $actorType)
- * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setDisplayName(string $displayName)
@@ -49,7 +47,10 @@ use OCP\AppFramework\Db\Entity;
 class Vote extends Entity {
 	protected int $pollId = 0;
 	protected int $roomId = 0;
-	protected string $actorType = '';
+	/**
+	 * @psalm-var Attendee::ACTOR_*
+	 */
+	protected string $actorType;
 	protected string $actorId = '';
 	protected ?string $displayName = null;
 	protected ?int $optionId = null;
@@ -61,6 +62,20 @@ class Vote extends Entity {
 		$this->addType('actorId', 'string');
 		$this->addType('displayName', 'string');
 		$this->addType('optionId', 'int');
+	}
+
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
+	public function setActorType(string $actorType): void {
+		$this->actorType = $actorType;
+	}
+
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
+	public function getActorType(): string {
+		return $this->actorType;
 	}
 
 	/**

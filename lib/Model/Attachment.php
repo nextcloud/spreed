@@ -34,8 +34,6 @@ use OCP\AppFramework\Db\Entity;
  * @method int getMessageTime()
  * @method void setObjectType(string $objectType)
  * @method string getObjectType()
- * @method void setActorType(string $actorType)
- * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  */
@@ -62,7 +60,10 @@ class Attachment extends Entity {
 	/** @var string */
 	protected $objectType;
 
-	/** @var string */
+	/**
+	 * @var string
+	 * @psalm-var Attendee::ACTOR_*
+	 */
 	protected $actorType;
 
 	/** @var string */
@@ -75,6 +76,20 @@ class Attachment extends Entity {
 		$this->addType('objectType', 'string');
 		$this->addType('actorType', 'string');
 		$this->addType('actorId', 'string');
+	}
+
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
+	public function setActorType(string $actorType): void {
+		$this->actorType = $actorType;
+	}
+
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
+	public function getActorType(): string {
+		return $this->actorType;
 	}
 
 	/**

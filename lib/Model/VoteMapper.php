@@ -56,7 +56,7 @@ class VoteMapper extends QBMapper {
 
 	/**
 	 * @param int $pollId
-	 * @param string $actorType
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
 	 * @return Vote[]
 	 */
@@ -89,6 +89,9 @@ class VoteMapper extends QBMapper {
 		$query->executeStatement();
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	public function deleteVotesByActor(int $pollId, string $actorType, string $actorId): void {
 		$query = $this->db->getQueryBuilder();
 

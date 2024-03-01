@@ -116,6 +116,7 @@ class ChatManager {
 	/**
 	 * Sends a new message to the given chat.
 	 *
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param bool $shouldSkipLastMessageUpdate If multiple messages will be posted
 	 *             (e.g. when adding multiple users to a room) we can skip the last
 	 *             message and last activity update until the last entry was created

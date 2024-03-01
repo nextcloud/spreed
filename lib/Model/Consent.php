@@ -30,8 +30,6 @@ use OCP\AppFramework\Db\Entity;
 /**
  * @method void setToken(string $token)
  * @method string getToken()
- * @method void setActorType(string $actorType)
- * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setDateTime(\DateTime $dateTime)
@@ -39,7 +37,10 @@ use OCP\AppFramework\Db\Entity;
  */
 class Consent extends Entity implements \JsonSerializable {
 	protected string $token = '';
-	protected string $actorType = '';
+	/**
+	 * @psalm-var Attendee::ACTOR_*
+	 */
+	protected string $actorType;
 	protected string $actorId = '';
 	protected ?\DateTime $dateTime = null;
 
@@ -48,6 +49,20 @@ class Consent extends Entity implements \JsonSerializable {
 		$this->addType('actorType', 'string');
 		$this->addType('actorId', 'string');
 		$this->addType('dateTime', 'datetime');
+	}
+
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
+	public function setActorType(string $actorType): void {
+		$this->actorType = $actorType;
+	}
+
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
+	public function getActorType(): string {
+		return $this->actorType;
 	}
 
 	public function jsonSerialize(): array {

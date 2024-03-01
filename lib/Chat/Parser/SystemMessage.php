@@ -843,6 +843,9 @@ class SystemMessage implements IEventListener {
 		return $this->getActor($room, $comment->getActorType(), $comment->getActorId());
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	protected function getActor(Room $room, string $actorType, string $actorId): array {
 		if ($actorType === Attendee::ACTOR_GUESTS || $actorType === Attendee::ACTOR_EMAILS) {
 			return $this->getGuest($room, $actorType, $actorId);

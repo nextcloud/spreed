@@ -382,6 +382,8 @@ export type webhooks = Record<string, never>;
 
 export type components = {
   schemas: {
+    /** @enum {string} */
+    ActorType: "bot-" | "bots" | "bridged" | "changelog" | "circles" | "cli" | "emails" | "federated_users" | "groups" | "guests" | "phones" | "system" | "users";
     Bot: {
       description: string | null;
       /** Format: int64 */
@@ -392,7 +394,7 @@ export type components = {
     };
     CallPeer: {
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       displayName: string;
       /** Format: int64 */
       lastPing: number;
@@ -457,7 +459,7 @@ export type components = {
     ChatMessage: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** @enum {boolean} */
       deleted?: true;
       /** Format: int64 */
@@ -524,7 +526,7 @@ export type components = {
     };
     Participant: {
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** Format: int64 */
       attendeeId: number;
       /** Format: int64 */
@@ -552,7 +554,7 @@ export type components = {
     Poll: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       details?: components["schemas"]["PollVote"][];
       /** Format: int64 */
       id: number;
@@ -574,7 +576,7 @@ export type components = {
     PollVote: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** Format: int64 */
       optionId: number;
     };
@@ -584,13 +586,13 @@ export type components = {
     Reaction: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** Format: int64 */
       timestamp: number;
     };
     Room: {
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"] | string;
       /** Format: int64 */
       attendeeId: number;
       /** Format: int64 */
@@ -677,7 +679,7 @@ export type components = {
     RoomProxyMessage: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** Format: int64 */
       expirationTimestamp: number;
       message: string;

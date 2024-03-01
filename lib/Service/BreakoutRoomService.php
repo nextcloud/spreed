@@ -556,7 +556,7 @@ class BreakoutRoomService {
 
 	/**
 	 * @param Room $parent
-	 * @param string $actorType
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
 	 * @param bool $throwOnModerator
 	 * @return void

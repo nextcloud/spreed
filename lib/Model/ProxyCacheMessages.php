@@ -39,8 +39,6 @@ use OCP\AppFramework\Db\Entity;
  * @method string getRemoteToken()
  * @method void setRemoteMessageId(int $remoteMessageId)
  * @method int getRemoteMessageId()
- * @method void setActorType(string $actorType)
- * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setActorDisplayName(string $actorDisplayName)
@@ -62,7 +60,10 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 	protected string $remoteServerUrl = '';
 	protected string $remoteToken = '';
 	protected int $remoteMessageId = 0;
-	protected string $actorType = '';
+	/**
+	 * @psalm-var Attendee::ACTOR_*
+	 */
+	protected string $actorType;
 	protected string $actorId = '';
 	protected ?string $actorDisplayName = null;
 	/**
@@ -102,6 +103,20 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 	 */
 	public function getMessageType(): string {
 		return $this->messageType;
+	}
+
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
+	public function setActorType(string $actorType): void {
+		$this->actorType = $actorType;
+	}
+
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
+	public function getActorType(): string {
+		return $this->actorType;
 	}
 
 	/**

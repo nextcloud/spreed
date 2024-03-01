@@ -46,7 +46,7 @@ class AttendeeMapper extends QBMapper {
 
 	/**
 	 * @param int $roomId
-	 * @param string $actorType
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
 	 * @return Attendee
 	 * @throws DoesNotExistException

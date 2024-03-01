@@ -51,6 +51,9 @@ class DisplayNameListener implements IEventListener {
 		}
 	}
 
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
 	protected function updateCachedName(string $actorType, string $actorId, string $newName): void {
 		$this->participantService->updateDisplayNameForActor(
 			$actorType,

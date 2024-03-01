@@ -28,8 +28,6 @@ use OCP\AppFramework\Db\Entity;
 /**
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
- * @method void setActorType(string $actorType)
- * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setDisplayName(string $displayName)
@@ -111,7 +109,10 @@ class Attendee extends Entity {
 	/** @var int */
 	protected $roomId;
 
-	/** @var string */
+	/**
+	 * @var string
+	 * @psalm-var Attendee::ACTOR_*
+	 */
 	protected $actorType;
 
 	/** @var string */
@@ -189,6 +190,20 @@ class Attendee extends Entity {
 		$this->addType('invitedCloudId', 'string');
 		$this->addType('phoneNumber', 'string');
 		$this->addType('callId', 'string');
+	}
+
+	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
+	 */
+	public function setActorType(string $actorType): void {
+		$this->actorType = $actorType;
+	}
+
+	/**
+	 * @psalm-return Attendee::ACTOR_*
+	 */
+	public function getActorType(): string {
+		return $this->actorType;
 	}
 
 	public function getDisplayName(): string {

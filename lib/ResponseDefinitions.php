@@ -47,9 +47,11 @@ namespace OCA\Talk;
  *     secret: string,
  * }
  *
+ * @psalm-type TalkActorType = 'bot-'|'bots'|'bridged'|'changelog'|'circles'|'cli'|'emails'|'federated_users'|'groups'|'guests'|'phones'|'system'|'users'
+ *
  * @psalm-type TalkCallPeer = array{
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     displayName: string,
  *     lastPing: int,
  *     sessionId: string,
@@ -72,7 +74,7 @@ namespace OCA\Talk;
  * @psalm-type TalkChatMessage = array{
  *     actorDisplayName: string,
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     deleted?: true,
  *     expirationTimestamp: int,
  *     id: int,
@@ -96,7 +98,7 @@ namespace OCA\Talk;
  * @psalm-type TalkRoomProxyMessage = array{
  *     actorDisplayName: string,
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     expirationTimestamp: int,
  *     message: string,
  *     messageParameters: array<string, array<string, mixed>>,
@@ -147,7 +149,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkParticipant = array{
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     attendeeId: int,
  *     attendeePermissions: int,
  *     attendeePin: string,
@@ -169,14 +171,14 @@ namespace OCA\Talk;
  * @psalm-type TalkPollVote = array{
  *     actorDisplayName: string,
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     optionId: int,
  *  }
  *
  * @psalm-type TalkPoll = array{
  *     actorDisplayName: string,
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     details?: TalkPollVote[],
  *     id: int,
  *     maxVotes: int,
@@ -192,13 +194,13 @@ namespace OCA\Talk;
  * @psalm-type TalkReaction = array{
  *     actorDisplayName: string,
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType,
  *     timestamp: int,
  * }
  *
  * @psalm-type TalkRoom = array{
  *     actorId: string,
- *     actorType: string,
+ *     actorType: TalkActorType|'',
  *     attendeeId: int,
  *     attendeePermissions: int,
  *     attendeePin: ?string,

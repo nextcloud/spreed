@@ -35,6 +35,8 @@ export type webhooks = Record<string, never>;
 
 export type components = {
   schemas: {
+    /** @enum {string} */
+    ActorType: "bot-" | "bots" | "bridged" | "changelog" | "circles" | "cli" | "emails" | "federated_users" | "groups" | "guests" | "phones" | "system" | "users";
     Capabilities: {
       features: string[];
       config: {
@@ -82,7 +84,7 @@ export type components = {
     ChatMessage: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** @enum {boolean} */
       deleted?: true;
       /** Format: int64 */
@@ -145,7 +147,7 @@ export type components = {
     }, unknown[]]>;
     Room: {
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"] | string;
       /** Format: int64 */
       attendeeId: number;
       /** Format: int64 */
@@ -232,7 +234,7 @@ export type components = {
     RoomProxyMessage: {
       actorDisplayName: string;
       actorId: string;
-      actorType: string;
+      actorType: components["schemas"]["ActorType"];
       /** Format: int64 */
       expirationTimestamp: number;
       message: string;

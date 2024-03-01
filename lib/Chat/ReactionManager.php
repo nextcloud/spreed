@@ -28,6 +28,7 @@ namespace OCA\Talk\Chat;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
 use OCA\Talk\Exceptions\ReactionOutOfContextException;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -56,7 +57,7 @@ class ReactionManager {
 	 * Add reaction
 	 *
 	 * @param Room $chat
-	 * @param string $actorType
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
 	 * @param integer $messageId
 	 * @param string $reaction
@@ -99,7 +100,7 @@ class ReactionManager {
 	 * Delete reaction
 	 *
 	 * @param Room $chat
-	 * @param string $actorType
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
 	 * @param integer $messageId
 	 * @param string $reaction
@@ -159,8 +160,10 @@ class ReactionManager {
 			$message = $this->messageParser->createMessage($chat, $participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
+			/** @var Attendee::ACTOR_* $actorType */
+			$actorType = $comment->getActorType();
 			$reactions[$comment->getMessage()][] = [
-				'actorType' => $comment->getActorType(),
+				'actorType' => $actorType,
 				'actorId' => $comment->getActorId(),
 				'actorDisplayName' => $message->getActorDisplayName(),
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),

@@ -364,6 +364,7 @@ class ParticipantService {
 	}
 
 	/**
+	 * @psalm-param Attendee::ACTOR_* $actorType
 	 * @throws UnauthorizedException
 	 */
 	public function joinRoomAsFederatedUser(Room $room, string $actorType, string $actorId): Participant {
