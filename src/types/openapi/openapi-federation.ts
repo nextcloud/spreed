@@ -97,7 +97,7 @@ export type components = {
           [key: string]: Record<string, never>;
         };
       };
-      messageType: string;
+      messageType: components["schemas"]["MessageType"];
       reactions: {
         [key: string]: number;
       };
@@ -131,6 +131,8 @@ export type components = {
       inviterCloudId: string;
       inviterDisplayName: string;
     };
+    /** @enum {string} */
+    MessageType: "command" | "comment" | "comment_deleted" | "object_shared" | "reaction" | "reaction_deleted" | "record-audio" | "record-video" | "system" | "voice-message";
     OCSMeta: {
       status: string;
       statuscode: number;
@@ -239,7 +241,7 @@ export type components = {
           [key: string]: Record<string, never>;
         };
       };
-      messageType: string;
+      messageType: components["schemas"]["MessageType"];
       systemMessage: string;
     };
   };

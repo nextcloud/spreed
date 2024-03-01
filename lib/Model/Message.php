@@ -40,8 +40,11 @@ class Message {
 	/** @var bool */
 	protected $visible = true;
 
-	/** @var string */
-	protected $type = '';
+	/**
+	 * @var string
+	 * @psalm-var ChatManager::VERB_*
+	 */
+	protected $type;
 
 	/** @var string */
 	protected $message = '';
@@ -131,10 +134,16 @@ class Message {
 		return $this->rawMessage;
 	}
 
+	/**
+	 * @psalm-param ChatManager::VERB_* $type
+	 */
 	public function setMessageType(string $type): void {
 		$this->type = $type;
 	}
 
+	/**
+	 * @return ChatManager::VERB_* $type
+	 */
 	public function getMessageType(): string {
 		return $this->type;
 	}

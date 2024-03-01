@@ -490,11 +490,11 @@ class SystemMessage implements IEventListener {
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
 					if ($metaData['messageType'] === 'voice-message') {
-						$chatMessage->setMessageType('voice-message');
+						$chatMessage->setMessageType(ChatManager::VERB_VOICE_MESSAGE);
 					} elseif ($metaData['messageType'] === 'record-audio') {
-						$chatMessage->setMessageType('record-audio');
+						$chatMessage->setMessageType(ChatManager::VERB_RECORD_AUDIO);
 					} elseif ($metaData['messageType'] === 'record-video') {
-						$chatMessage->setMessageType('record-video');
+						$chatMessage->setMessageType(ChatManager::VERB_RECORD_VIDEO);
 					} else {
 						$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 					}

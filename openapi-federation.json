@@ -246,7 +246,7 @@
                         }
                     },
                     "messageType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/MessageType"
                     },
                     "reactions": {
                         "type": "object",
@@ -344,6 +344,21 @@
                         "type": "string"
                     }
                 }
+            },
+            "MessageType": {
+                "type": "string",
+                "enum": [
+                    "command",
+                    "comment",
+                    "comment_deleted",
+                    "object_shared",
+                    "reaction",
+                    "reaction_deleted",
+                    "record-audio",
+                    "record-video",
+                    "system",
+                    "voice-message"
+                ]
             },
             "OCSMeta": {
                 "type": "object",
@@ -697,7 +712,7 @@
                         }
                     },
                     "messageType": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/MessageType"
                     },
                     "systemMessage": {
                         "type": "string"

@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
@@ -44,8 +45,6 @@ use OCP\AppFramework\Db\Entity;
  * @method string getActorId()
  * @method void setActorDisplayName(string $actorDisplayName)
  * @method string getActorDisplayName()
- * @method void setMessageType(string $messageType)
- * @method string getMessageType()
  * @method void setSystemMessage(?string $systemMessage)
  * @method string|null getSystemMessage()
  * @method void setExpirationDatetime(?\DateTimeImmutable $expirationDatetime)
@@ -66,7 +65,11 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected ?string $actorDisplayName = null;
-	protected ?string $messageType = null;
+	/**
+	 * @var string
+	 * @psalm-var ChatManager::VERB_*
+	 */
+	protected string $messageType;
 	protected ?string $systemMessage = null;
 	protected ?\DateTimeImmutable $expirationDatetime = null;
 	protected ?string $message = null;
@@ -85,6 +88,20 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 		$this->addType('expirationDatetime', 'datetime');
 		$this->addType('message', 'string');
 		$this->addType('messageParameters', 'string');
+	}
+
+	/**
+	 * @psalm-param ChatManager::VERB_* $type
+	 */
+	public function setMessageType(string $type): void {
+		$this->messageType = $type;
+	}
+
+	/**
+	 * @return ChatManager::VERB_* $type
+	 */
+	public function getMessageType(): string {
+		return $this->messageType;
 	}
 
 	/**

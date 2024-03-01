@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\AttachmentMapper;
 use OCA\Talk\Room;
@@ -38,6 +39,9 @@ class AttachmentService {
 	) {
 	}
 
+	/**
+	 * @param ChatManager::VERB_* $messageType
+	 */
 	public function createAttachmentEntry(Room $room, IComment $comment, string $messageType, array $parameters): void {
 		$attachment = new Attachment();
 		$attachment->setRoomId($room->getId());

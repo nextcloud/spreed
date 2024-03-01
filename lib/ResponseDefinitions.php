@@ -67,6 +67,8 @@ namespace OCA\Talk;
  *     statusMessage: ?string,
  * }
  *
+ * @psalm-type TalkMessageType = 'command'|'comment'|'comment_deleted'|'object_shared'|'reaction'|'reaction_deleted'|'record-audio'|'record-video'|'system'|'voice-message'
+ *
  * @psalm-type TalkChatMessage = array{
  *     actorDisplayName: string,
  *     actorId: string,
@@ -78,7 +80,7 @@ namespace OCA\Talk;
  *     markdown: bool,
  *     message: string,
  *     messageParameters: array<string, array<string, mixed>>,
- *     messageType: string,
+ *     messageType: TalkMessageType,
  *     reactions: array<string, integer>|\stdClass,
  *     referenceId: string,
  *     systemMessage: string,
@@ -98,7 +100,7 @@ namespace OCA\Talk;
  *     expirationTimestamp: int,
  *     message: string,
  *     messageParameters: array<string, array<string, mixed>>,
- *     messageType: string,
+ *     messageType: TalkMessageType,
  *     systemMessage: string,
  * }
  *
