@@ -13,6 +13,8 @@
     "Message deleted by author" : "L'autor desanició'l mensaxe",
     "File is too big" : "El ficheru ye mui grande",
     "Invalid file provided" : "Fornióse un ficheru inválidu",
+    "Invalid image" : "La imaxe ye inválida",
+    "Unknown filetype" : "El tipu de ficheru ye inválidu",
     "Accept" : "Aceptar",
     "Decline" : "Refugar",
     "{user} invited you to a private conversation" : "{user} convidóte a una conversación privada",
@@ -233,6 +235,8 @@
     "Saving …" : "Guardando…",
     "Name" : "Nome",
     "Description" : "Descripción",
+    "User" : "Usuariu",
+    "Users" : "Usuarios",
     "Federation" : "Federación",
     "Beta" : "Beta",
     "Permissions" : "Permisos",
@@ -254,6 +258,7 @@
     "Picture" : "Semeya",
     "The file must be a PNG or JPG" : "El ficheru a ser PNG o JPG",
     "Choose" : "Escoyer",
+    "Personal" : "Personal",
     "No" : "Non",
     "Yes" : "Sí",
     "Submit" : "Unviar",
@@ -264,6 +269,7 @@
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Desaniciar",
+    "Talk conversation" : "Conversación de Talk",
     "Password" : "Contraseña",
     "API token" : "Pase de l'API",
     "Nickname" : "Nomatu",
@@ -271,7 +277,7 @@
     "Remove from favorites" : "Quitar de Favoritos",
     "Add to favorites" : "Meter en Favoritos",
     "Groups" : "Grupos",
-    "Circles" : "Círculos",
+    "Teams" : "Equipos",
     "An error occurred while performing the search" : "Prodúxose un error mentanto se facía la busca",
     "Search …" : "Buscar…",
     "Devices" : "Preseos",
@@ -301,6 +307,7 @@
     "Audio" : "Audiu",
     "An error occurred while requesting assistance" : "Prodúxose un error mentanto se solicitaba l'asistencia",
     "Do not disturb" : "Nun molestar",
-    "Away" : "Ausente"
+    "Away" : "Ausente",
+    "Circles" : "Círculos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
