@@ -414,24 +414,32 @@ export default {
 			return groupsByDate
 		},
 
-		softUpdateByDateGroups(oldGroups, newGroups) {
-			const oldGroupsMap = new Map(Object.entries(oldGroups))
+		softUpdateByDateGroups(oldDateGroups, newDateGroups) {
 			// Check if we have this group in the old list already and it is unchanged
-			Object.keys(newGroups).forEach(dateTimestamp => {
-				if (oldGroupsMap.has(dateTimestamp)) {
+			Object.keys(newDateGroups).forEach(dateTimestamp => {
+				if (oldDateGroups[dateTimestamp]) {
 					// the group by date has changed, we update its content (groups by author)
-					this.softUpdateAuthorGroups(oldGroupsMap.get(dateTimestamp), newGroups[dateTimestamp], dateTimestamp)
+					this.softUpdateAuthorGroups(oldDateGroups[dateTimestamp], newDateGroups[dateTimestamp], dateTimestamp)
 				} else {
 					// the group is new
-					this.messagesGroupedByDateByAuthor[dateTimestamp] = newGroups[dateTimestamp]
+					this.messagesGroupedByDateByAuthor[dateTimestamp] = newDateGroups[dateTimestamp]
 				}
 			})
 		},
 
 		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
-			const oldGroupsMap = new Map(Object.entries(oldGroups))
+			const oldKeys = Object.keys(oldGroups)
 			Object.entries(newGroups).forEach(([id, newGroup]) => {
-				if (!oldGroupsMap.has(id) || (oldGroupsMap.has(id) && !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id)))) {
+				if (!oldGroups[id]) {
+					const oldId = oldKeys.find(key => id < key && oldGroups[key].nextMessageId <= newGroup.nextMessageId)
+					if (oldId) {
+						// newGroup includes oldGroup and more old messages, remove oldGroup
+						delete this.messagesGroupedByDateByAuthor[dateTimestamp][oldId]
+					}
+					// newGroup is not presented in the list, add it
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
+				} else if (!this.areGroupsIdentical(newGroup, oldGroups[id])) {
+					// newGroup includes oldGroup and more recent messages
 					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
 				}
 			})
