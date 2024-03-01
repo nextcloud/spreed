@@ -58,6 +58,7 @@
     "util": "^0.12.5",
     "vue": "^2.7.16",
     "vue-cropperjs": "^4.2.0",
+    "vue-draggable-resizable": "^1.7.5",
     "vue-frag": "^1.4.3",
     "vue-material-design-icons": "^5.3.0",
     "vue-observe-visibility": "^1.0.0",
