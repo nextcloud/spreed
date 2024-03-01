@@ -29,6 +29,10 @@ export type paths = {
      */
     get: operations["federation-get-shares"];
   };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
+    /** Fake join a room on the host server to verify the federated user is still part of it */
+    post: operations["room-join-federated-room"];
+  };
 };
 
 export type webhooks = Record<string, never>;
@@ -390,6 +394,47 @@ export type operations = {
             ocs: {
               meta: components["schemas"]["OCSMeta"];
               data: components["schemas"]["FederationInvite"][];
+            };
+          };
+        };
+      };
+    };
+  };
+  /** Fake join a room on the host server to verify the federated user is still part of it */
+  "room-join-federated-room": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v4";
+        /** @description Token of the room */
+        token: string;
+      };
+    };
+    responses: {
+      /** @description Federated user is still part of the room */
+      200: {
+        headers: {
+          "X-Nextcloud-Talk-Hash"?: string;
+        };
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      /** @description Room not found */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
             };
           };
         };

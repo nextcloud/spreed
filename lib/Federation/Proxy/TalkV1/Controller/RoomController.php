@@ -81,6 +81,33 @@ class RoomController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\RoomController::joinFederatedRoom()
+	 *
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{X-Nextcloud-Talk-Proxy-Hash: string}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Federated user is still part of the room
+	 * 404: Room not found
+	 */
+	public function joinFederatedRoom(Room $room, Participant $participant): DataResponse {
+		$proxy = $this->proxy->post(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/federation/active',
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_NOT_FOUND], true)) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			throw new CannotReachRemoteException();
+		}
+
+		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash')];
+
+		return new DataResponse([], $statusCode, $headers);
+	}
+
+	/**
 	 * @see \OCA\Talk\Controller\RoomController::getCapabilities()
 	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
@@ -98,7 +125,9 @@ class RoomController {
 		/** @var TalkCapabilities|array<empty> $data */
 		$data = $this->proxy->getOCSData($proxy);
 
-		$headers = ['X-Nextcloud-Talk-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash')];
+		$headers = [
+			'X-Nextcloud-Talk-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash'),
+		];
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
