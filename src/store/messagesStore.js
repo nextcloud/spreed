@@ -295,7 +295,7 @@ const mutations = {
 		}
 		if (state.messages[token][message.id]) {
 			Vue.set(state.messages[token], message.id,
-				Object.assign(state.messages[token][message.id], message)
+				Object.assign({}, state.messages[token][message.id], message)
 			)
 		} else {
 			Vue.set(state.messages[token], message.id, message)
@@ -325,6 +325,9 @@ const mutations = {
 	 * @param {string} payload.placeholder Placeholder message until deleting finished
 	 */
 	markMessageAsDeleting(state, { token, id, placeholder }) {
+		if (!state.messages[token][id]) {
+			return
+		}
 		Vue.set(state.messages[token][id], 'messageType', 'comment_deleted')
 		Vue.set(state.messages[token][id], 'message', placeholder)
 	},
@@ -536,10 +539,6 @@ const actions = {
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
 				context.commit('addMessage', { token, message: message.parent })
-				if (message.systemMessage === 'message_edited') {
-					EventBus.$emit('message-edited', message.parent)
-					return
-				}
 			}
 
 			const reactionsStore = useReactionsStore()
