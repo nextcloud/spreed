@@ -458,7 +458,6 @@ OC.L10N.register(
     "Clear filter" : "Hreinsa síu",
     "No matches found" : "Engar samsvaranir fundust",
     "Groups" : "Hópar",
-    "Circles" : "Hringir",
     "Loading" : "Hleð inn",
     "No search results" : "Engar leitarniðurstöður",
     "You are currently waiting in the lobby" : "You are currently waiting in the lobby",
@@ -568,6 +567,7 @@ OC.L10N.register(
     "iOS app" : "iOS-forrit",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkomin í Nextcloud Talk-spjallforritið!\nÍ þessum spjallþræði verður þú upplýst/ur um nýja eigileika sem tiltækir eru í Nextcloud Talk.",
     "Path is already shared with this room" : "Slóðinni er þegar deilt með þessu spjallsvæði",
+    "Circles" : "Hringir",
     "Conversation name" : "Heiti samtals",
     "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
     "Rename conversation" : "Endurnefna samtal"
