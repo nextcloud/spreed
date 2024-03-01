@@ -13435,6 +13435,13 @@
                 "responses": {
                     "200": {
                         "description": "Room joined successfully",
+                        "headers": {
+                            "X-Nextcloud-Talk-Proxy-Hash": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -15345,6 +15352,11 @@
                         "description": "Get capabilities successfully",
                         "headers": {
                             "X-Nextcloud-Talk-Hash": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            "X-Nextcloud-Talk-Proxy-Hash": {
                                 "schema": {
                                     "type": "string"
                                 }

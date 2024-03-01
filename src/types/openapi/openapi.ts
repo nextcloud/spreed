@@ -4466,6 +4466,9 @@ export type operations = {
     responses: {
       /** @description Room joined successfully */
       200: {
+        headers: {
+          "X-Nextcloud-Talk-Proxy-Hash"?: string;
+        };
         content: {
           "application/json": {
             ocs: {
@@ -5127,6 +5130,7 @@ export type operations = {
       200: {
         headers: {
           "X-Nextcloud-Talk-Hash"?: string;
+          "X-Nextcloud-Talk-Proxy-Hash"?: string;
         };
         content: {
           "application/json": {

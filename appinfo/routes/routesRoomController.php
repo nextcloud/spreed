@@ -82,6 +82,8 @@ return [
 		['name' => 'Room#setAllAttendeesPermissions', 'url' => '/api/{apiVersion}/room/{token}/attendees/permissions/all', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::joinRoom() */
 		['name' => 'Room#joinRoom', 'url' => '/api/{apiVersion}/room/{token}/participants/active', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::joinFederatedRoom() */
+		['name' => 'Room#joinFederatedRoom', 'url' => '/api/{apiVersion}/room/{token}/federation/active', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::resendInvitations() */
 		['name' => 'Room#resendInvitations', 'url' => '/api/{apiVersion}/room/{token}/participants/resend-invitations', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::leaveRoom() */

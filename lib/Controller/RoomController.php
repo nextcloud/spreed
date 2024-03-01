@@ -453,7 +453,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @return TalkRoom
 	 */
-	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {
+	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false, array $remoteRoomData = []): array {
 		return $this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
 			$this->commonReadMessages,
@@ -1449,7 +1449,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $token Token of the room
 	 * @param string $password Password of the room
 	 * @param bool $force Create a new session if necessary
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Proxy-Hash?: string}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
 	 *
 	 * 200: Room joined successfully
 	 * 403: Joining room is not allowed
@@ -1521,9 +1521,34 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+		$headers = [];
+		if ($room->getRemoteServer() !== '') {
+			$participant = $this->participantService->getParticipant($room, $this->userId);
+
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+			$response = $proxy->joinFederatedRoom($room, $participant);
+
+			if ($response->getStatus() === Http::STATUS_NOT_FOUND) {
+				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$proxyHeaders = $response->getHeaders();
+			if (isset($proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'])) {
+				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'];
+			}
+
+			// Skip password checking
+			$result = [
+				'result' => true,
+			];
+		} else {
+			$result = $this->roomService->verifyPassword($room, (string) $this->session->getPasswordForRoom($token));
+		}
+
 		$user = $this->userManager->get($this->userId);
 		try {
-			$result = $this->roomService->verifyPassword($room, (string) $this->session->getPasswordForRoom($token));
 			if ($user instanceof IUser) {
 				$participant = $this->participantService->joinRoom($this->roomService, $room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
@@ -1551,7 +1576,51 @@ class RoomController extends AEnvironmentAwareController {
 			$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 		}
 
-		return new DataResponse($this->formatRoom($room, $participant));
+		return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * Fake join a room on the host server to verify the federated user is still part of it
+	 *
+	 * @param string $token Token of the room
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: Federated user is still part of the room
+	 * 404: Room not found
+	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
+	public function joinFederatedRoom(string $token): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		try {
+			try {
+				$this->federationAuthenticator->getRoom();
+			} catch (RoomNotFoundException) {
+				$this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->federationAuthenticator->getCloudId(),
+					$this->federationAuthenticator->getAccessToken(),
+				);
+			}
+
+			// Let the clients know if they need to reload capabilities
+			$capabilities = $this->capabilities->getCapabilities();
+			return new DataResponse([], Http::STATUS_OK, [
+				'X-Nextcloud-Talk-Hash' => sha1(json_encode($capabilities)),
+			]);
+		} catch (RoomNotFoundException) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token, 'action' => 'talkFederationAccess']);
+			return $response;
+		}
 	}
 
 	/**
@@ -1771,9 +1840,8 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
 			// The participant is just joining, so enforce to not load any session
-			if (!$isTalkFederation) {
+			if (!$this->federationAuthenticator->isFederationRequest()) {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 			} else {
@@ -2155,7 +2223,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Get capabilities for a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash: string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash?: string, X-Nextcloud-Talk-Proxy-Hash?: string}>
 	 *
 	 * 200: Get capabilities successfully
 	 */
@@ -2163,15 +2231,22 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireParticipant]
 	public function getCapabilities(): DataResponse {
+		$headers = [];
 		if ($this->room->getRemoteServer()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
-			return $proxy->getCapabilities($this->room, $this->participant);
+			$response = $proxy->getCapabilities($this->room, $this->participant);
+
+			$data = $response->getData();
+			if ($response->getHeaders()['X-Nextcloud-Talk-Hash']) {
+				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $response->getHeaders()['X-Nextcloud-Talk-Hash'];
+			}
+		} else {
+			$capabilities = $this->capabilities->getCapabilities();
+			$data = $capabilities['spreed'] ?? [];
+			$headers['X-Nextcloud-Talk-Hash'] = sha1(json_encode($capabilities));
 		}
 
-		$capabilities = $this->capabilities->getCapabilities();
-		return new DataResponse($capabilities['spreed'] ?? [], Http::STATUS_OK, [
-			'X-Nextcloud-Talk-Hash' => sha1(json_encode($capabilities)),
-		]);
+		return new DataResponse($data, Http::STATUS_OK, $headers);
 	}
 }
