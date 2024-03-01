@@ -402,6 +402,7 @@ class RoomFormatter {
 
 		if ($room->getRemoteServer() !== '') {
 			$roomData['attendeeId'] = (int) $attendee->getRemoteId();
+			$roomData['canLeaveConversation'] = true;
 		}
 
 		return $roomData;
