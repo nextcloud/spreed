@@ -958,7 +958,6 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "一旦离开对话，要重新加入已关闭的谈话，需要一个邀请。公开对话可以在任何时候重新加入。",
     "Delete conversation" : "删除对话",
     "Permanently delete this conversation." : "永久删除此对话。",
-    "Delete Conversation" : "删除对话",
     "No" : "否",
     "Yes" : "是",
     "Delete chat messages" : "删除聊天消息",
@@ -1719,6 +1718,7 @@
     "Sending signaling message has failed." : "发送信令消息失败。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "需要更新配置的信令服务器，使其与该版本的通话应用兼容。请与管理员联系。",
     "Setup summary" : "设置概览",
+    "Delete Conversation" : "删除对话",
     "Remove circle and members" : "删除圈子和成员",
     "Phone number could not be hanged up" : "电话挂断失败",
     "Phone number could not be putted on hold" : "设置呼叫保持失败"

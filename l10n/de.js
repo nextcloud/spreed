@@ -963,7 +963,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Nachdem du eine Unterhaltung verlassen hast, ist eine Einladung erforderlich, um einer bereits geschlossenen Unterhaltung wieder beizutreten. Einer noch geöffneter Unterhaltung kannst du jederzeit wieder beitreten.",
     "Delete conversation" : "Unterhaltung löschen",
     "Permanently delete this conversation." : "Die Unterhaltung endgültig löschen.",
-    "Delete Conversation" : "Unterhaltung löschen",
     "No" : "Nein",
     "Yes" : "Ja",
     "Delete chat messages" : "Chatnachrichten löschen",
@@ -1736,6 +1735,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "Das Senden der Signaling-Nachricht ist fehlgeschlagen.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Der eingerichtete Signalisierungsserver muss aktualisiert werden, damit er mit dieser Version von Talk kompatibel ist. Bitte wende dich an deinen Administrator",
     "Setup summary" : "Einstellungszusammenfassung",
+    "Delete Conversation" : "Unterhaltung löschen",
     "Phone number could not be hanged up" : "Telefonnummer konnte nicht aufgelegt werden",
     "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden"
 },

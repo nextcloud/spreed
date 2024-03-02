@@ -929,7 +929,6 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Ha elhagyott egy beszélgetést, akkor a zárt beszélgetésekhez visszacsatlakozáshoz meghívóra lesz szüksége. A nyílt beszélgetésekhez bármikor visszacsatlakozhat.",
     "Delete conversation" : "Beszélgetés törlése",
     "Permanently delete this conversation." : "Beszélgetés végleges törlése",
-    "Delete Conversation" : "Beszélgetés törlése",
     "No" : "Nem",
     "Yes" : "Igen",
     "Delete chat messages" : "Csevegési üzenetek törlése",
@@ -1632,6 +1631,7 @@
     "Sending signaling message has failed." : "A jelző üzenet küldése sikertelen.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Frissíteni kell a beállított jelzőkiszolgálót, hogy kompatibilis legyen a Beszélgetés ezen verziójával. Lépjen kapcsolatba a rendszergazdával.",
     "Setup summary" : "Telepítés összegzés",
+    "Delete Conversation" : "Beszélgetés törlése",
     "Remove circle and members" : "Kör és tagok eltávolítása"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
