@@ -2,8 +2,10 @@
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
+  - @author Dorra Jaouad <dorra.jaoued1@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -18,12 +20,6 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<docs>
-
-This component is a wrapper for the list of messages. It's main purpose it to
-get the messagesList array and loop through the list to generate the messages.
-
-</docs>
 
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
@@ -327,7 +323,6 @@ export default {
 		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$on('focus-message', this.focusMessage)
 		EventBus.$on('route-change', this.onRouteChange)
-		EventBus.$on('message-edited', this.handleMessageEdited)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -350,7 +345,6 @@ export default {
 		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$off('focus-message', this.focusMessage)
 		EventBus.$off('route-change', this.onRouteChange)
-		EventBus.$off('message-edited', this.handleMessageEdited)
 
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
@@ -418,24 +412,32 @@ export default {
 			return groupsByDate
 		},
 
-		softUpdateByDateGroups(oldGroups, newGroups) {
-			const oldGroupsMap = new Map(Object.entries(oldGroups))
+		softUpdateByDateGroups(oldDateGroups, newDateGroups) {
 			// Check if we have this group in the old list already and it is unchanged
-			Object.keys(newGroups).forEach(dateTimestamp => {
-				if (oldGroupsMap.has(dateTimestamp)) {
+			Object.keys(newDateGroups).forEach(dateTimestamp => {
+				if (oldDateGroups[dateTimestamp]) {
 					// the group by date has changed, we update its content (groups by author)
-					this.softUpdateAuthorGroups(oldGroupsMap.get(dateTimestamp), newGroups[dateTimestamp], dateTimestamp)
+					this.softUpdateAuthorGroups(oldDateGroups[dateTimestamp], newDateGroups[dateTimestamp], dateTimestamp)
 				} else {
 					// the group is new
-					this.messagesGroupedByDateByAuthor[dateTimestamp] = newGroups[dateTimestamp]
+					this.messagesGroupedByDateByAuthor[dateTimestamp] = newDateGroups[dateTimestamp]
 				}
 			})
 		},
 
 		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
-			const oldGroupsMap = new Map(Object.entries(oldGroups))
+			const oldKeys = Object.keys(oldGroups)
 			Object.entries(newGroups).forEach(([id, newGroup]) => {
-				if (!oldGroupsMap.has(id) || (oldGroupsMap.has(id) && !this.areGroupsIdentical(newGroup, oldGroupsMap.get(id)))) {
+				if (!oldGroups[id]) {
+					const oldId = oldKeys.find(key => id < key && oldGroups[key].nextMessageId <= newGroup.nextMessageId)
+					if (oldId) {
+						// newGroup includes oldGroup and more old messages, remove oldGroup
+						delete this.messagesGroupedByDateByAuthor[dateTimestamp][oldId]
+					}
+					// newGroup is not presented in the list, add it
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
+				} else if (!this.areGroupsIdentical(newGroup, oldGroups[id])) {
+					// newGroup includes oldGroup and more recent messages
 					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
 				}
 			})
@@ -722,67 +724,6 @@ export default {
 				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
-			}
-		},
-
-		handleMessageEdited(message) {
-			// soft edit for a message in the list
-			// find the corresponding date group id (dateTimeStamp)
-			const dateGroupId = moment(message.timestamp * 1000).startOf('day').unix()
-			const groups = this.messagesGroupedByDateByAuthor[dateGroupId]
-			if (!groups) {
-				// Message was edited already and this is message loading phase
-				return
-			}
-			// find the corresponding messages group in the list
-			const group = Object.values(groups).find(group => group.id <= message.id && (group.nextMessageId > message.id || group.nextMessageId === 0))
-
-			if (!group) {
-				// Messages were not loaded yet
-				return
-			}
-
-			if (group.messages.length === 1 && group.id === message.id) {
-				// Nothing to split
-				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].messages = [message]
-				return
-			}
-
-			// we split the group in 3 part,
-			// 1. the messages before the edited message (if any)
-			// 2. the edited message
-			// 3. the messages after the edited message (if any)
-			const nextMessageId = group.nextMessageId
-			const index = group.messages.findIndex(m => m.id === message.id)
-			const before = group.messages.slice(0, index)
-			const after = group.messages.slice(index + 1)
-			// If there are before messages, we keep them in the same group
-			if (before.length) {
-				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].messages = before
-				this.messagesGroupedByDateByAuthor[dateGroupId][group.id].nextMessageId = message.id
-			}
-			// We create a new group for the edited message
-			this.messagesGroupedByDateByAuthor[dateGroupId][message.id] = {
-				id: message.id,
-				messages: [message],
-				token: this.token,
-				dateTimestamp: dateGroupId,
-				previousMessageId: before.length ? before.at(-1).id : group.previousMessageId,
-				nextMessageId: after.length ? after[0].id : nextMessageId,
-				isSystemMessagesGroup: message.systemMessage.length !== 0,
-			}
-			// If there are after messages, we create a new group for them
-			if (after.length) {
-				const newGroupId = after[0].id
-				this.messagesGroupedByDateByAuthor[dateGroupId][newGroupId] = {
-					id: newGroupId,
-					messages: after,
-					token: this.token,
-					dateTimestamp: dateGroupId,
-					previousMessageId: message.id,
-					nextMessageId,
-					isSystemMessagesGroup: message.systemMessage.length !== 0,
-				}
 			}
 		},
 

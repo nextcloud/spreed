@@ -223,7 +223,7 @@ describe('messagesStore', () => {
 				message: 'hello',
 			}
 
-			store.dispatch('processMessage', { token: TOKEN, message })
+			store.dispatch('processMessage', { token: TOKEN, message: cloneDeep(message) })
 		})
 
 		test('deletes from server and replaces deleted message with response', async () => {
@@ -271,9 +271,9 @@ describe('messagesStore', () => {
 			const response = generateOCSResponse({ payload })
 			deleteMessage.mockResolvedValueOnce(response)
 
-			const status = await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
+			const status = await store.dispatch('deleteMessage', { token: TOKEN, id: 9, placeholder: 'placeholder-text' })
 
-			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id })
+			expect(deleteMessage).toHaveBeenCalledWith({ token: TOKEN, id: 9 })
 			expect(status).toBe(200)
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
