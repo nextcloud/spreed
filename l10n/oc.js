@@ -690,7 +690,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Un còp quitada, per tornar a un conversacion tampada, cal un convit. Una conversacion dubèrta es totjorn accessibla.",
     "Delete conversation" : "Suprimir la conversacion",
     "Permanently delete this conversation." : "Suprimir permanent aquesta conversacion",
-    "Delete Conversation" : "Suprimir la conversacion",
     "No" : "Non",
     "Yes" : "Òc",
     "Delete chat messages" : "Suprimir los messatges del chat",
@@ -1174,6 +1173,7 @@ OC.L10N.register(
     "Post to a conversation" : "Publicar dins una conversacion",
     "An error occurred while posting location to conversation" : "Error en publicant la localizacion dins la conversacion",
     "Share to a conversation" : "Partejar dins una conversacion",
-    "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit."
+    "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit.",
+    "Delete Conversation" : "Suprimir la conversacion"
 },
 "nplurals=2; plural=(n > 1);");

@@ -963,7 +963,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Un cop acabada una conversa, per tornar a unir-se a una conversa tancada, cal una invitació. Es pot unir de nou a una conversa oberta en qualsevol moment.",
     "Delete conversation" : "Suprimeix la conversa",
     "Permanently delete this conversation." : "Suprimeix permanentment aquesta conversa.",
-    "Delete Conversation" : "Suprimeix conversa",
     "No" : "No",
     "Yes" : "Sí",
     "Delete chat messages" : "Suprimeix els missatges de xat",
@@ -1737,6 +1736,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "No s'ha pogut enviar el missatge de senyalització.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "El servidor de senyalització configurat s'ha d'actualitzar perquè sigui compatible amb aquesta versió de Talk. Poseu-vos en contacte amb el vostre administrador.",
     "Setup summary" : "Resum de la configuració",
+    "Delete Conversation" : "Suprimeix conversa",
     "Remove circle and members" : "Suprimeix el cercle i els membres",
     "Phone number could not be hanged up" : "No s'ha pogut penjar el número de telèfon",
     "Phone number could not be putted on hold" : "El número de telèfon no s'ha pogut posar en espera"

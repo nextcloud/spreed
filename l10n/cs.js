@@ -965,7 +965,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Jakmile opustíte konverzaci, budete v případě těch uzavřených potřebovat k opětovnému připojení pozvánku. K otevřené konverzaci se můžete znovu připojit kdykoli.",
     "Delete conversation" : "Smazat konverzaci",
     "Permanently delete this conversation." : "Nadobro smazat tuto konverzaci.",
-    "Delete Conversation" : "Smazat konverzaci",
     "No" : "Ne",
     "Yes" : "Ano",
     "Delete chat messages" : "Smazat zprávy chatu",
@@ -1743,6 +1742,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "Odeslání signálové zprávy se nezdařilo.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Nastavený signální server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk. Obraťte se na svého správce.",
     "Setup summary" : "Souhrn uspořádání",
+    "Delete Conversation" : "Smazat konverzaci",
     "Remove circle and members" : "Odebrat kruh a členy",
     "Phone number could not be hanged up" : "Hovor na telefonní číslo se nepodařilo zavěsit",
     "Phone number could not be putted on hold" : "Hovor na telefonní číslo se nepodařilo pozastavit"

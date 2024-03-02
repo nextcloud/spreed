@@ -979,7 +979,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "会話から退出したら、クローズな会話に再び参加するには、招待が必要です。オープンな会話はいつでも再参加できます。",
     "Delete conversation" : "会話を削除",
     "Permanently delete this conversation." : "この会話を完全に削除する",
-    "Delete Conversation" : "会話を削除",
     "No" : "いいえ",
     "Yes" : "はい",
     "Delete chat messages" : "メッセージを削除する",
@@ -1784,6 +1783,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "シグナリングメッセージの送信に失敗しました。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "このバージョンのTalkと互換性を持たせるには、設定済みのシグナルサーバーの更新が必要です。管理者にお問い合わせください。",
     "Setup summary" : "セットアップ概要",
+    "Delete Conversation" : "会話を削除",
     "Remove circle and members" : "サークルとメンバーを削除",
     "Phone number could not be hanged up" : "電話が切れませんでした",
     "Phone number could not be putted on hold" : "電話を保留にできませんでした"

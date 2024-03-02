@@ -569,7 +569,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Odată ce ați părăsit o conversație, pentru a vă realătura aveți nevoie de o invitație. Conversațiile deschise pot fi accesate oricând.",
     "Delete conversation" : "Șterge conversația",
     "Permanently delete this conversation." : "Șterge permanent conversația",
-    "Delete Conversation" : "Șterge conversația",
     "No" : "Nu",
     "Yes" : "Da",
     "Delete chat messages" : "Șterge mesajele de chat",
@@ -922,6 +921,7 @@ OC.L10N.register(
     "An error occurred while posting deck card to conversation" : "Eroare la postarea cardului Deck în conversație",
     "Post to a conversation" : "Postare într-o conversație",
     "Share to a conversation" : "Partajare la o conversație",
-    "Setup summary" : "Sumar configurație"
+    "Setup summary" : "Sumar configurație",
+    "Delete Conversation" : "Șterge conversația"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
