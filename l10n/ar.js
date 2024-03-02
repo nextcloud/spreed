@@ -982,7 +982,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "عند ترك المحادثة،ولإعادة الانضمام مرة أخرى إلى المحادثة المغلقة، فإن ذلك يتطلبدعوة. ويمكن إعادة الانضمام إلى المحادثة المفتوحة في أي وقت.",
     "Delete conversation" : "احذف المحادثة",
     "Permanently delete this conversation." : "حذف هذه المحادثة بشكل دائم.",
-    "Delete Conversation" : "حذف المحادثة",
     "No" : "لا",
     "Yes" : "نعم",
     "Delete chat messages" : "حذف رسائل الدردشة",
@@ -1790,6 +1789,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "فشل إرسال رسالة التشوير ",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. الرجاء الاتصال بالمسؤول الخاص بك.",
     "Setup summary" : "ملخص الإعداد",
+    "Delete Conversation" : "حذف المحادثة",
     "Remove circle and members" : "حذف الدائرة circle و الأعضاء",
     "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
     "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار"

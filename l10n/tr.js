@@ -972,7 +972,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Bir görüşmeden çıktıktan sonra, kapalı bir sohbete yeniden katılmak için çağrı gerekir. Açık bir sohbete herhangi bir zamanda yeniden katılabilirsiniz.",
     "Delete conversation" : "Görüşmeyi sil",
     "Permanently delete this conversation." : "Bu görüşmeyi kalıcı olarak sil.",
-    "Delete Conversation" : "Görüşmeyi sil",
     "No" : "Hayır",
     "Yes" : "Evet",
     "Delete chat messages" : "Sohbet iletilerini sil",
@@ -1766,6 +1765,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "Signaling iletisi gönderilemedi.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Bu Talk sürümü ile uyumlu olması için yapılandırılmış signalling sunucusunun güncellenmesi gerekiyor. Lütfen BT yöneticiniz ile görüşün.",
     "Setup summary" : "Kurulum özeti",
+    "Delete Conversation" : "Görüşmeyi sil",
     "Remove circle and members" : "Çevreyi ve üyelerini sil",
     "Phone number could not be hanged up" : "Telefon numarası kapatılamadı",
     "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı"

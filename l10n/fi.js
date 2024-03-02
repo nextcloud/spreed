@@ -710,7 +710,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Kun olet kerran poistunut suljetusta keskustelusta, tarvitset kutsun liittyäksesi uudelleen siihen. Avoimeen keskusteluun on mahdollista liittyä milloin hyvänsä.",
     "Delete conversation" : "Poista keskustelu",
     "Permanently delete this conversation." : "Poista tämä keskustelu pysyvästi.",
-    "Delete Conversation" : "Poista keskustelu",
     "No" : "Ei",
     "Yes" : "Kyllä",
     "Delete chat messages" : "Poista keskustelun viestit",
@@ -1274,6 +1273,7 @@ OC.L10N.register(
     "Mention room" : "Mainitse huone",
     "Post to a conversation" : "Lähetä keskusteluun",
     "Share to a conversation" : "Jaa keskusteluun",
+    "Delete Conversation" : "Poista keskustelu",
     "Remove circle and members" : "Poista piiri ja jäsenet"
 },
 "nplurals=2; plural=(n != 1);");
