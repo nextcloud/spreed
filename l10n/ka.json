@@ -961,7 +961,6 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.",
     "Delete conversation" : "Delete conversation",
     "Permanently delete this conversation." : "Permanently delete this conversation.",
-    "Delete Conversation" : "Delete Conversation",
     "No" : "No",
     "Yes" : "Yes",
     "Delete chat messages" : "Delete chat messages",
@@ -1735,6 +1734,7 @@
     "Sending signaling message has failed." : "Sending signaling message has failed.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.",
     "Setup summary" : "Setup summary",
+    "Delete Conversation" : "Delete Conversation",
     "Phone number could not be hanged up" : "Phone number could not be hanged up",
     "Phone number could not be putted on hold" : "Phone number could not be putted on hold"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"

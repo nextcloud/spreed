@@ -982,7 +982,6 @@ OC.L10N.register(
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "離開封閉式對話後，您需要收到邀請才能重新加入。 您可以隨時重新加入公開對話。",
     "Delete conversation" : "刪除對話",
     "Permanently delete this conversation." : "永久刪除此對話",
-    "Delete Conversation" : "刪除對話",
     "No" : "否",
     "Yes" : "是",
     "Delete chat messages" : "刪除聊天訊息",
@@ -1798,6 +1797,7 @@ OC.L10N.register(
     "Sending signaling message has failed." : "傳送訊號訊息失敗。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "需要更新設定好的訊號伺服器，使其與此版本的 Talk 相容。請聯絡您的管理員。",
     "Setup summary" : "設定摘要",
+    "Delete Conversation" : "刪除對話",
     "Remove circle and members" : "移除小圈圈與成員",
     "Phone number could not be hanged up" : "無法掛斷電話號碼",
     "Phone number could not be putted on hold" : "無法保留電話號碼"

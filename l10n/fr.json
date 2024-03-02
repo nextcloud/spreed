@@ -980,7 +980,6 @@
     "Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time." : "Après avoir quitté la conversation, une invitation est nécessaire pour rejoindre une conversation privée. Une conversation ouverte peut être rejointe à tout moment.",
     "Delete conversation" : "Supprimer la conversation",
     "Permanently delete this conversation." : "Supprimer définitivement cette conversation",
-    "Delete Conversation" : "Supprimer la conversation",
     "No" : "Non",
     "Yes" : "Oui",
     "Delete chat messages" : "Supprimer les messages instantanés",
@@ -1788,6 +1787,7 @@
     "Sending signaling message has failed." : "L'envoi du message de signalement a échoué.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Le serveur de signalement configuré doit être mis à jour pour être compatible avec cette version de Talk. Merci de contacter votre administrateur.",
     "Setup summary" : "Configurer le résumé",
+    "Delete Conversation" : "Supprimer la conversation",
     "Remove circle and members" : "Supprimer le cercle et ses membres",
     "Phone number could not be hanged up" : "Impossible de raccrocher le numéro de téléphone",
     "Phone number could not be putted on hold" : "Impossible de mettre en attente le numéro de téléphone"
