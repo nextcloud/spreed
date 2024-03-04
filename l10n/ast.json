@@ -296,8 +296,10 @@
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
     "Close" : "Zarrar",
+    "Group" : "Grupu",
     "Question" : "Entruga",
     "Settings" : "Configuración",
+    "Join" : "Xunise",
     "Integrations" : "Integraciones",
     "Searching …" : "Buscando…",
     "Participants" : "Participantes",
@@ -305,11 +307,14 @@
     "Privacy" : "Privacidá",
     "Keyboard shortcuts" : "Atayos del tecláu",
     "Search" : "Buscar",
+    "Stop recording" : "Parar la grabación",
     "Open sidebar" : "Abrir la barra llateral",
+    "Start recording" : "Aniciar la grabación",
     "Audio" : "Audiu",
     "An error occurred while requesting assistance" : "Prodúxose un error mentanto se solicitaba l'asistencia",
     "Do not disturb" : "Nun molestar",
     "Away" : "Ausente",
+    "No matches" : "Nun hai nenguna coincidencia",
     "Circles" : "Círculos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
