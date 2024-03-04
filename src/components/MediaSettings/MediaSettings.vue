@@ -160,32 +160,27 @@
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
-				<NcActions v-if="showSilentCallOption"
-					:container="container"
-					:force-menu="true">
-					<template v-if="!silentCall">
-						<NcActionButton :close-after-click="true"
-							icon="icon-upload"
-							:name="t('spreed', 'Call without notification')"
-							@click="silentCall= true">
-							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
-							<template #icon>
-								<BellOff :size="16" />
-							</template>
-						</NcActionButton>
-					</template>
-					<template v-else>
-						<NcActionButton :close-after-click="true"
-							icon="icon-upload"
-							:name="t('spreed', 'Normal call')"
-							@click="silentCall= false">
-							{{ t('spreed', 'The conversation participants will be notified about this call') }}
-							<template #icon>
-								<Bell :size="16" />
-							</template>
-						</NcActionButton>
-					</template>
+				<NcActions v-if="showSilentCallOption" :container="container" force-menu>
+					<NcActionButton v-if="!silentCall"
+						:name="t('spreed', 'Call without notification')"
+						close-after-click
+						@click="setSilentCall(true)">
+						{{ t('spreed', 'The conversation participants will not be notified about this call') }}
+						<template #icon>
+							<BellOff :size="16" />
+						</template>
+					</NcActionButton>
+					<NcActionButton v-else
+						:name="t('spreed', 'Normal call')"
+						close-after-click
+						@click="setSilentCall(false)">
+						<template #icon>
+							<Bell :size="16" />
+						</template>
+						{{ t('spreed', 'The conversation participants will be notified about this call') }}
+					</NcActionButton>
 				</NcActions>
+
 				<!-- Join call -->
 				<CallButton v-if="!isInCall"
 					class="call-button"
@@ -448,6 +443,7 @@ export default {
 			if (newValue) {
 				this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 				this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
+				this.silentCall = !!BrowserStorage.getItem('silentCall_' + this.token)
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
@@ -533,6 +529,15 @@ export default {
 				this.videoOn = false
 			}
 			this.videoDeviceStateChanged = !this.videoDeviceStateChanged
+		},
+
+		setSilentCall(value) {
+			this.silentCall = value
+			if (value) {
+				BrowserStorage.setItem('silentCall_' + this.token, 'true')
+			} else {
+				BrowserStorage.removeItem('silentCall_' + this.token)
+			}
 		},
 
 		closeModalAndApplySettings() {
