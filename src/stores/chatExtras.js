@@ -24,6 +24,7 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.js'
 import { getUserAbsence } from '../services/participantsService.js'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
@@ -61,10 +62,6 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			}
 		},
 
-		getChatInput: (state) => (token) => {
-			return state.chatInput[token] ?? ''
-		},
-
 		getChatEditInput: (state) => (token) => {
 			return state.chatEditInput[token] ?? ''
 		},
@@ -75,6 +72,19 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	},
 
 	actions: {
+		/**
+		 * Fetch an absence status for user and save to store
+		 *
+		 * @param {string} token The conversation token
+		 * @return {string} The input text
+		 */
+		getChatInput(token) {
+			if (!this.chatInput[token]) {
+				this.restoreChatInput(token)
+			}
+			return this.chatInput[token] ?? ''
+		},
+
 		/**
 		 * Fetch an absence status for user and save to store
 		 *
@@ -131,6 +141,18 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		},
 
 		/**
+		 * Restore chat input from the browser storage and save to store
+		 *
+		 * @param {string} token The conversation token
+		 */
+		restoreChatInput(token) {
+			const chatInput = BrowserStorage.getItem('chatInput_' + token)
+			if (chatInput) {
+				Vue.set(this.chatInput, token, chatInput)
+			}
+		},
+
+		/**
 		 * Add a current input value to the store for a given conversation token
 		 *
 		 * @param {object} payload action payload
@@ -139,6 +161,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 */
 		setChatInput({ token, text }) {
 			const parsedText = parseSpecialSymbols(text)
+			BrowserStorage.setItem('chatInput_' + token, parsedText)
 			Vue.set(this.chatInput, token, parsedText)
 		},
 
@@ -186,6 +209,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		 * @param {string} token The conversation token
 		 */
 		removeChatInput(token) {
+			BrowserStorage.removeItem('chatInput_' + token)
 			Vue.delete(this.chatInput, token)
 		},
 
