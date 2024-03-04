@@ -244,6 +244,8 @@ async function signalingJoinCall(token, flags, silent, recordingConsent) {
 			const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + token)
 			const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + token)
 
+			localMediaModel.set('token', token)
+
 			if (enableAudio) {
 				localMediaModel.enableAudio()
 			} else {
