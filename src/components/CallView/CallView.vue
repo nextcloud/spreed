@@ -675,7 +675,15 @@ export default {
 				return
 			}
 
-			this.$store.dispatch('startPresentation')
+			if (this.$store.getters.presentationStarted) {
+				this.$store.dispatch('setCallViewMode', {
+					isGrid: false,
+					isStripeOpen: false,
+					clearLast: false,
+				})
+			} else {
+				this.$store.dispatch('startPresentation')
+			}
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.screens.splice(index, 1)
 			this.screens.unshift(id)
