@@ -302,6 +302,7 @@ OC.L10N.register(
     "Question" : "Entruga",
     "Settings" : "Configuración",
     "Join" : "Xunise",
+    "guest" : "convidáu",
     "Integrations" : "Integraciones",
     "Searching …" : "Buscando…",
     "Participants" : "Participantes",
