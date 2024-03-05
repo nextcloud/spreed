@@ -2268,9 +2268,9 @@ export type operations = {
   /** Set the read marker to a specific message */
   "chat-set-read-marker": {
     parameters: {
-      query: {
-        /** @description ID if the last read message */
-        lastReadMessage: number;
+      query?: {
+        /** @description ID if the last read message (Optional only with `chat-read-last` capability) */
+        lastReadMessage?: number | null;
       };
       header: {
         /** @description Required to be true for the API request to pass */

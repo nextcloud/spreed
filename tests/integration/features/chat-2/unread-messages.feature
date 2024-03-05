@@ -73,6 +73,10 @@ Feature: chat-2/unread-messages
     Then user "participant2" is participant of room "group room" (v4)
       | unreadMessages |
       | 1              |
+    When user "participant2" reads message "NULL" in room "group room" with 200
+    Then user "participant2" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 0              |
 
 
 

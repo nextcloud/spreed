@@ -2365,7 +2365,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/read',
-			new TableNode([['lastReadMessage', self::$textToMessageId[$message]]])
+			$message === 'NULL' ? null : new TableNode([['lastReadMessage', self::$textToMessageId[$message]]]),
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}

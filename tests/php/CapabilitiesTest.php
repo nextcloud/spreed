@@ -147,6 +147,7 @@ class CapabilitiesTest extends TestCase {
 			'delete-messages-unlimited',
 			'edit-messages',
 			'silent-send-state',
+			'chat-read-last',
 			'message-expiration',
 			'reactions',
 		];
