@@ -197,6 +197,8 @@ const actions = {
 		audio.load()
 		audio.volume = 0.5
 		audio.play()
+
+		return audio
 	},
 
 	/**
