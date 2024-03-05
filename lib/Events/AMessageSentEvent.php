@@ -33,6 +33,7 @@ abstract class AMessageSentEvent extends ARoomEvent {
 		protected IComment $comment,
 		protected ?Participant $participant = null,
 		protected bool $silent = false,
+		protected ?IComment $parent = null,
 	) {
 		parent::__construct(
 			$room,
@@ -49,5 +50,9 @@ abstract class AMessageSentEvent extends ARoomEvent {
 
 	public function isSilentMessage(): bool {
 		return $this->silent;
+	}
+
+	public function getParent(): ?IComment {
+		return $this->parent;
 	}
 }

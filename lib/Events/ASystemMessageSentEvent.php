@@ -33,13 +33,15 @@ abstract class ASystemMessageSentEvent extends AMessageSentEvent {
 		IComment $comment,
 		?Participant $participant = null,
 		bool $silent = false,
+		?IComment $parent = null,
 		protected bool $skipLastActivityUpdate = false,
 	) {
 		parent::__construct(
 			$room,
 			$comment,
 			$participant,
-			$silent
+			$silent,
+			$parent,
 		);
 	}
 

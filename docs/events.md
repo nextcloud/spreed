@@ -134,6 +134,7 @@ Used to parse mentions, replace parameters in messages with rich objects, transf
 * Before event: `OCA\Talk\Events\BeforeChatMessageSentEvent`
 * After event: `OCA\Talk\Events\ChatMessageSentEvent`
 * Since: 18.0.0
+* Since: 19.0.0 - Method `getParent()` was added
 
 ### Duplicate share sent
 
@@ -153,6 +154,7 @@ listen to the `OCA\Talk\Events\SystemMessagesMultipleSentEvent` event instead.
 * After event: `OCA\Talk\Events\SystemMessageSentEvent`
 * Final event: `OCA\Talk\Events\SystemMessagesMultipleSentEvent` - Only sent once as per above explanation
 * Since: 18.0.0
+* Since: 19.0.0 - Method `getParent()` was added
 
 ### Deprecated events
 

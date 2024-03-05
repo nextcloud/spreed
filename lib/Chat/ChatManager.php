@@ -173,7 +173,7 @@ class ChatManager {
 
 		$shouldFlush = $this->notificationManager->defer();
 
-		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
+		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate, parent: $replyTo);
 		$this->dispatcher->dispatchTyped($event);
 		try {
 			$this->commentsManager->save($comment);
@@ -228,7 +228,7 @@ class ChatManager {
 				}
 			}
 
-			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
+			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate, parent: $replyTo);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
 		}
@@ -326,7 +326,7 @@ class ChatManager {
 			]);
 		}
 
-		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent);
+		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 		$this->dispatcher->dispatchTyped($event);
 
 		$shouldFlush = $this->notificationManager->defer();
@@ -371,7 +371,7 @@ class ChatManager {
 			// User was not mentioned, send a normal notification
 			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers, $silent);
 
-			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent);
+			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
 		}
