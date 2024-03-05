@@ -2728,15 +2728,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['reactionsSelf'] = null;
 				}
 			}
+
 			if ($includeLastEdit) {
 				$data['lastEditActorType'] = $message['lastEditActorType'] ?? '';
 				$data['lastEditActorDisplayName'] = $message['lastEditActorDisplayName'] ?? '';
 				$data['lastEditActorId'] = $message['lastEditActorId'] ?? '';
-				if ($message['lastEditActorType'] === 'guests') {
+				if (($message['lastEditActorType'] ?? '') === 'guests') {
 					$data['lastEditActorId'] = self::$sessionIdToUser[$message['lastEditActorId']];
 				}
 			}
-
 
 			return $data;
 		}, $messages, $expected));
