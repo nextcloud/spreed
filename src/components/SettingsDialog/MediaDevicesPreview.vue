@@ -1,7 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2020, Daniel Calviño Sánchez (danxuliu@gmail.com)
+  - @copyright Copyright (c) 2020 Daniel Calviño Sánchez (danxuliu@gmail.com)
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -86,10 +86,10 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
-import MediaDevicesSelector from './MediaDevicesSelector.vue'
-import VolumeIndicator from './VolumeIndicator/VolumeIndicator.vue'
+import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
+import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 
-import { useDevices } from '../composables/useDevices.js'
+import { useDevices } from '../../composables/useDevices.js'
 
 export default {
 

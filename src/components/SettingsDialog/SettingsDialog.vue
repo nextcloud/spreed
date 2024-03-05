@@ -191,7 +191,7 @@ import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSe
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
-import MediaDevicesPreview from '../MediaDevicesPreview.vue'
+import MediaDevicesPreview from './MediaDevicesPreview.vue'
 
 import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'

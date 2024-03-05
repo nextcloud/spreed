@@ -112,6 +112,7 @@
 					:devices="devices"
 					:device-id="videoInputId"
 					@update:deviceId="videoInputId = $event" />
+				<MediaDevicesSpeakerTest />
 			</div>
 
 			<!-- Background selection -->
@@ -221,10 +222,11 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import MediaDevicesSelector from './MediaDevicesSelector.vue'
+import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
-import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 
@@ -260,6 +262,7 @@ export default {
 		NcModal,
 		NcNoteCard,
 		MediaDevicesSelector,
+		MediaDevicesSpeakerTest,
 		VideoBackground,
 		VideoIcon,
 		VideoOff,
