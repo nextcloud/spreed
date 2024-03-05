@@ -84,8 +84,7 @@
 		<TopBarMediaControls v-if="isInCall"
 			:token="token"
 			:model="localMediaModel"
-			:show-actions="!isSidebar"
-			:screen-sharing-button-hidden="isSidebar"
+			:is-sidebar="isSidebar"
 			:local-call-participant-model="localCallParticipantModel" />
 
 		<!-- TopBar menu -->
