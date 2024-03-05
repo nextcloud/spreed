@@ -70,7 +70,7 @@
 			:model="model"
 			type="tertiary" />
 
-		<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
+		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
 			v-tooltip="toggleVirtualBackgroundButtonLabel"
 			type="tertiary"
 			:aria-label="toggleVirtualBackgroundButtonLabel"
@@ -82,7 +82,7 @@
 			</template>
 		</NcButton>
 
-		<NcActions v-if="!screenSharingButtonHidden && isScreensharing"
+		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
 			v-tooltip="screenSharingButtonTooltip"
 			type="error"
@@ -92,11 +92,9 @@
 			:boundaries-element="boundaryElement"
 			:container="container"
 			:open.sync="screenSharingMenuOpen">
-			<!-- Actions button icon -->
 			<template #icon>
-				<MonitorOff v-if="isScreensharing" :size="20" />
+				<MonitorOff :size="20" />
 			</template>
-			<!-- /Actions button icon -->
 			<!-- Actions -->
 			<NcActionButton close-after-click @click="showScreen">
 				<template #icon>
@@ -111,7 +109,7 @@
 				{{ t('spreed', 'Stop screensharing') }}
 			</NcActionButton>
 		</NcActions>
-		<NcButton v-else-if="!screenSharingButtonHidden"
+		<NcButton v-else-if="!isSidebar"
 			v-tooltip="screenSharingButtonTooltip"
 			type="tertiary"
 			@click.stop="toggleScreenSharingMenu">
@@ -186,18 +184,6 @@ export default {
 			type: Object,
 			required: true,
 		},
-		screenSharingButtonHidden: {
-			type: Boolean,
-			default: false,
-		},
-		showActions: {
-			type: Boolean,
-			default: true,
-		},
-
-		/**
-		 * In the sidebar the conversation settings are hidden
-		 */
 		isSidebar: {
 			type: Boolean,
 			default: false,
@@ -205,8 +191,9 @@ export default {
 	},
 
 	setup() {
-		const isInCall = useIsInCall()
-		return { isInCall }
+		return {
+			isInCall: useIsInCall(),
+		}
 	},
 
 	data() {
