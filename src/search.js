@@ -29,17 +29,17 @@ import { generateFilePath, imagePath } from '@nextcloud/router'
 
 import '@nextcloud/dialogs/style.css'
 
-(function(OC, OCP, t, n) {
+(function(OC, OCA, t, n) {
 
 	/**
 	 *
 	 */
 	function init() {
-		if (!OCP.UnifiedSearch) {
+		if (!OCA.UnifiedSearch) {
 			return
 		}
 		console.debug('Initializing unified search plugin-filters from talk')
-		OCP.UnifiedSearch.registerFilterAction({
+		OCA.UnifiedSearch.registerFilterAction({
 			id: 'talk-message',
 			appId: 'spreed',
 			label: t('spreed', 'In conversation'),
@@ -94,8 +94,8 @@ import '@nextcloud/dialogs/style.css'
 	Vue.prototype.t = translate
 	Vue.prototype.n = translatePlural
 	Vue.prototype.OC = OC
-	Vue.prototype.OCP = OCP
+	Vue.prototype.OCA = OCA
 
 	document.addEventListener('DOMContentLoaded', init)
 
-})(window.OC, window.OCP, t, n)
+})(window.OC, window.OCA, t, n)
