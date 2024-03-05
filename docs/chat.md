@@ -416,9 +416,9 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Endpoint: `/chat/{token}/read`
 * Data:
 
-| field             | type | Description              |
-|-------------------|------|--------------------------|
-| `lastReadMessage` | int  | The last read message ID |
+| field             | type     | Description                                                          |
+|-------------------|----------|----------------------------------------------------------------------|
+| `lastReadMessage` | int/null | The last read message ID (Optional with `chat-read-last` capability) |
 
 * Response:
     - Status code:

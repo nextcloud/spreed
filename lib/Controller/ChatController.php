@@ -1046,8 +1046,8 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * Set the read marker to a specific message
 	 *
-	 * @param int $lastReadMessage ID if the last read message
-	 * @psalm-param non-negative-int $lastReadMessage
+	 * @param int|null $lastReadMessage ID if the last read message (Optional only with `chat-read-last` capability)
+	 * @psalm-param non-negative-int|null $lastReadMessage
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 *
 	 * 200: Read marker set successfully
@@ -1055,13 +1055,14 @@ class ChatController extends AEnvironmentAwareController {
 	#[FederationSupported]
 	#[PublicPage]
 	#[RequireAuthenticatedParticipant]
-	public function setReadMarker(int $lastReadMessage): DataResponse {
+	public function setReadMarker(?int $lastReadMessage = null): DataResponse {
 		if ($this->room->getRemoteServer() !== '') {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->setReadMarker($this->room, $this->participant, $this->getResponseFormat(), $lastReadMessage);
 		}
 
+		$lastReadMessage = $lastReadMessage ?? $this->room->getLastMessageId();
 		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
 		$attendee = $this->participant->getAttendee();
 

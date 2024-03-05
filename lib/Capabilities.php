@@ -139,6 +139,7 @@ class Capabilities implements IPublicCapability {
 				'delete-messages-unlimited',
 				'edit-messages',
 				'silent-send-state',
+				'chat-read-last',
 			],
 			'config' => [
 				'attachments' => [

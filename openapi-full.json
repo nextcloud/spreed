@@ -6266,11 +6266,11 @@
                     {
                         "name": "lastReadMessage",
                         "in": "query",
-                        "description": "ID if the last read message",
-                        "required": true,
+                        "description": "ID if the last read message (Optional only with `chat-read-last` capability)",
                         "schema": {
                             "type": "integer",
                             "format": "int64",
+                            "nullable": true,
                             "minimum": 0
                         }
                     },
