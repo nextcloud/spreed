@@ -529,12 +529,15 @@ const actions = {
 	processMessage(context, { token, message }) {
 		const sharedItemsStore = useSharedItemsStore()
 
-		if (message.parent && message.systemMessage
-			&& (message.systemMessage === 'message_deleted'
+		if (message.systemMessage === 'message_deleted'
 				|| message.systemMessage === 'reaction'
 				|| message.systemMessage === 'reaction_deleted'
 				|| message.systemMessage === 'reaction_revoked'
-				|| message.systemMessage === 'message_edited')) {
+				|| message.systemMessage === 'message_edited') {
+			if (!message.parent) {
+				return
+			}
+
 			// If parent message is presented in store and is different, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
@@ -544,17 +547,14 @@ const actions = {
 			const reactionsStore = useReactionsStore()
 			if (message.systemMessage === 'message_deleted') {
 				reactionsStore.resetReactions(token, message.parent.id)
-			} else {
-				reactionsStore.processReaction(token, message)
-			}
-
-			// Check existing messages for having a deleted message as parent, and update them
-			if (message.systemMessage === 'message_deleted') {
+				// Check existing messages for having a deleted message as parent, and update them
 				context.getters.messagesList(token)
 					.filter(storedMessage => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach(storedMessage => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
 					})
+			} else {
+				reactionsStore.processReaction(token, message)
 			}
 
 			// Quit processing

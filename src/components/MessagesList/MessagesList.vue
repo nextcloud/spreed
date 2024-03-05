@@ -144,7 +144,7 @@ export default {
 			 */
 			messagesGroupedByDateByAuthor: {},
 
-			viewId: null,
+			viewId: uniqueId('messagesList'),
 
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
@@ -316,7 +316,6 @@ export default {
 		this.debounceUpdateReadMarkerPosition = debounce(this.updateReadMarkerPosition, 1000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
-		this.viewId = uniqueId('messagesList')
 		this.scrollToBottom()
 		EventBus.$on('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
