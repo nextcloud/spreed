@@ -31,6 +31,7 @@ use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeSystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
+use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Poll;
@@ -59,6 +60,7 @@ use OCP\Security\RateLimiting\IRateLimitExceededException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 /**
  * Basic polling chat manager.
@@ -105,6 +107,7 @@ class ChatManager {
 		protected IReferenceManager $referenceManager,
 		protected ILimiter $rateLimiter,
 		protected IRequest $request,
+		protected LoggerInterface $logger,
 	) {
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
@@ -118,6 +121,7 @@ class ChatManager {
 	 *             message and last activity update until the last entry was created
 	 *             and then update with those values.
 	 *             This will replace O(n) with 1 database update.
+	 * @throws MessagingNotAllowedException
 	 */
 	public function addSystemMessage(
 		Room $chat,
@@ -131,6 +135,12 @@ class ChatManager {
 		bool $shouldSkipLastMessageUpdate = false,
 		bool $silent = false,
 	): IComment {
+		if ($chat->getRemoteServer() !== '') {
+			$e = new MessagingNotAllowedException();
+			$this->logger->error('Attempt to post system message into proxy conversation', ['exception' => $e]);
+			throw $e;
+		}
+
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
@@ -272,8 +282,15 @@ class ChatManager {
 	 *
 	 * @throws IRateLimitExceededException Only when $rateLimitGuestMentions is true and the author is a guest participant
 	 * @throws MessageTooLongException
+	 * @throws MessagingNotAllowedException
 	 */
 	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo = null, string $referenceId = '', bool $silent = false, bool $rateLimitGuestMentions = true): IComment {
+		if ($chat->getRemoteServer() !== '') {
+			$e = new MessagingNotAllowedException();
+			$this->logger->error('Attempt to post system message into proxy conversation', ['exception' => $e]);
+			throw $e;
+		}
+
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
