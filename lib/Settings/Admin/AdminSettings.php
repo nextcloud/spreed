@@ -31,6 +31,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -49,6 +50,7 @@ class AdminSettings implements ISettings {
 	public function __construct(
 		private Config $talkConfig,
 		private IConfig $serverConfig,
+		private IAppConfig $appConfig,
 		private CommandService $commandService,
 		private IInitialState $initialState,
 		private ICacheFactory $memcacheFactory,
@@ -111,11 +113,11 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initFederation(): void {
-		$this->initialState->provideInitialState('federation_enabled', $this->serverConfig->getAppValue('spreed', 'federation_enabled', 'no'));
-		$this->initialState->provideInitialState('federation_incoming_enabled', $this->serverConfig->getAppValue('spreed', 'federation_incoming_enabled', '1'));
-		$this->initialState->provideInitialState('federation_outgoing_enabled', $this->serverConfig->getAppValue('spreed', 'federation_outgoing_enabled', '1'));
-		$this->initialState->provideInitialState('federation_only_trusted_servers', $this->serverConfig->getAppValue('spreed', 'federation_only_trusted_servers', '0'));
-		$this->initialState->provideInitialState('federation_allowed_groups', $this->serverConfig->getAppValue('spreed', 'federation_allowed_groups', '[]'));
+		$this->initialState->provideInitialState('federation_enabled', $this->talkConfig->isFederationEnabled());
+		$this->initialState->provideInitialState('federation_incoming_enabled', $this->appConfig->getAppValueBool('federation_incoming_enabled', true));
+		$this->initialState->provideInitialState('federation_outgoing_enabled', $this->appConfig->getAppValueBool('federation_outgoing_enabled', true));
+		$this->initialState->provideInitialState('federation_only_trusted_servers', $this->appConfig->getAppValueBool('federation_only_trusted_servers'));
+		$this->initialState->provideInitialState('federation_allowed_groups', $this->appConfig->getAppValueArray('federation_allowed_groups'));
 	}
 
 	protected function initMatterbridge(): void {

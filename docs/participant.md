@@ -7,6 +7,7 @@
 
 ## Get list of participants in a conversation
 
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/room/{token}/participants`
 * Data:
@@ -108,6 +109,7 @@
 
 ## Remove yourself from a conversation
 
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/self`
 
@@ -119,6 +121,7 @@
 
 ## Join a conversation (available for call and chat)
 
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/room/{token}/participants/active`
 * Data:
@@ -165,6 +168,7 @@
 ## Set session state
 
 * Required capability: `session-state`
+* Federation capability: `federation-v1`
 * Method: `PUT`
 * Endpoint: `/room/{token}/participants/state`
 
@@ -176,6 +180,7 @@
 
 ## Leave a conversation (not available for call and chat anymore)
 
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/active`
 

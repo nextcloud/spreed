@@ -5,6 +5,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 ## React to a message
 
 * Required capability: `reactions`
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
@@ -33,6 +34,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 ## Delete a reaction
 
 * Required capability: `reactions`
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
@@ -60,6 +62,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 ## Retrieve reactions of a message by type
 
 * Required capability: `reactions`
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:

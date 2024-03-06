@@ -31,6 +31,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -44,6 +45,7 @@ use Test\TestCase;
 class CapabilitiesTest extends TestCase {
 	protected IConfig|MockObject $serverConfig;
 	protected Config|MockObject $talkConfig;
+	protected IAppConfig|MockObject $appConfig;
 	protected CommentsManager|MockObject $commentsManager;
 	protected IUserSession|MockObject $userSession;
 	protected IAppManager|MockObject $appManager;
@@ -56,6 +58,7 @@ class CapabilitiesTest extends TestCase {
 		parent::setUp();
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
@@ -148,6 +151,7 @@ class CapabilitiesTest extends TestCase {
 			'edit-messages',
 			'silent-send-state',
 			'chat-read-last',
+			'federation-v1',
 			'message-expiration',
 			'reactions',
 		];
@@ -157,6 +161,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
@@ -223,6 +228,12 @@ class CapabilitiesTest extends TestCase {
 					'conversations' => [
 						'can-create' => false,
 					],
+					'federation' => [
+						'enabled' => false,
+						'incoming-enabled' => false,
+						'outgoing-enabled' => false,
+						'only-trusted-servers' => true,
+					],
 					'previews' => [
 						'max-gif-size' => 200000,
 					],
@@ -255,6 +266,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
@@ -351,6 +363,12 @@ class CapabilitiesTest extends TestCase {
 					'conversations' => [
 						'can-create' => $canCreate,
 					],
+					'federation' => [
+						'enabled' => false,
+						'incoming-enabled' => false,
+						'outgoing-enabled' => false,
+						'only-trusted-servers' => true,
+					],
 					'previews' => [
 						'max-gif-size' => 200000,
 					],
@@ -382,6 +400,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
@@ -407,6 +426,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
@@ -429,6 +449,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
@@ -455,6 +476,7 @@ class CapabilitiesTest extends TestCase {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
