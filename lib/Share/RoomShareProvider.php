@@ -739,15 +739,17 @@ class RoomShareProvider implements IShareProvider {
 			$query = $qb->select('*')
 				->from('share')
 				->where($qb->expr()->in('parent', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
-				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)))
-				->andWhere($qb->expr()->orX(
-					$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
-					$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
-				));
+				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)));
 
 			$stmt = $query->executeQuery();
 
 			while ($data = $stmt->fetch()) {
+				if ($data['item_type'] !== 'file' && $data['item_type'] !== 'folder') {
+					continue;
+				}
+				if ($data['share_type'] !== self::SHARE_TYPE_USERROOM) {
+					continue;
+				}
 				$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
 				$shareMap[$data['parent']]->setTarget($data['file_target']);
 			}
@@ -819,12 +821,12 @@ class RoomShareProvider implements IShareProvider {
 			)
 				->selectAlias('st.id', 'storage_string_id')
 				->from('share', 's')
-				->orderBy('s.id', 'ASC')
 				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
 				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
 
 			if ($limit !== -1) {
-				$qb->setMaxResults($limit);
+				$qb->orderBy('s.id', 'ASC')
+					->setMaxResults($limit);
 			}
 
 			// Filter by node if provided
@@ -836,11 +838,7 @@ class RoomShareProvider implements IShareProvider {
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
 					$rooms,
 					IQueryBuilder::PARAM_STR_ARRAY
-				)))
-				->andWhere($qb->expr()->orX(
-					$qb->expr()->eq('s.item_type', $qb->createNamedParameter('file')),
-					$qb->expr()->eq('s.item_type', $qb->createNamedParameter('folder'))
-				));
+				)));
 
 			$cursor = $qb->executeQuery();
 			while ($data = $cursor->fetch()) {
@@ -864,6 +862,10 @@ class RoomShareProvider implements IShareProvider {
 	}
 
 	private function isAccessibleResult(array $data): bool {
+		if ($data['item_type'] !== 'file' && $data['item_type'] !== 'folder') {
+			return false;
+		}
+
 		// exclude shares leading to deleted file entries
 		if ($data['fileid'] === null || $data['path'] === null) {
 			return false;
@@ -972,18 +974,18 @@ class RoomShareProvider implements IShareProvider {
 			$types[] = self::SHARE_TYPE_USERROOM;
 		}
 
-		$qb->select('id', 'parent', 'share_type', 'share_with', 'file_source', 'file_target', 'permissions')
+		$qb->select('id', 'parent', 'share_type', 'share_with', 'file_source', 'file_target', 'permissions', 'item_type')
 			->from('share')
 			->where($qb->expr()->in('share_type', $qb->createNamedParameter($types, IQueryBuilder::PARAM_INT_ARRAY)))
-			->andWhere($qb->expr()->in('file_source', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
-			->andWhere($qb->expr()->orX(
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
-			));
+			->andWhere($qb->expr()->in('file_source', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 		$cursor = $qb->executeQuery();
 
 		$users = [];
 		while ($row = $cursor->fetch()) {
+			if ($row['item_type'] !== 'file' && $row['item_type'] !== 'folder') {
+				continue;
+			}
+
 			$type = (int)$row['share_type'];
 			if ($type === IShare::TYPE_ROOM) {
 				$roomToken = $row['share_with'];
