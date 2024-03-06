@@ -27,6 +27,7 @@ use OCA\Talk\Config;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Service\CommandService;
 use OCA\Talk\Settings\Admin\AdminSettings;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -43,6 +44,7 @@ class AdminSettingsTest extends TestCase {
 	protected $talkConfig;
 	/** @var IConfig|MockObject */
 	protected $serverConfig;
+	protected IAppConfig|MockObject $appConfig;
 	/** @var CommandService|MockObject */
 	protected $commandService;
 	/** @var IInitialState|MockObject */
@@ -66,6 +68,7 @@ class AdminSettingsTest extends TestCase {
 
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->commandService = $this->createMock(CommandService::class);
 		$this->initialState = $this->createMock(IInitialState::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
@@ -87,6 +90,7 @@ class AdminSettingsTest extends TestCase {
 			return new AdminSettings(
 				$this->talkConfig,
 				$this->serverConfig,
+				$this->appConfig,
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
@@ -102,6 +106,7 @@ class AdminSettingsTest extends TestCase {
 			->setConstructorArgs([
 				$this->talkConfig,
 				$this->serverConfig,
+				$this->appConfig,
 				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,

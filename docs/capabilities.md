@@ -144,3 +144,8 @@
 * `edit-messages` - Whether messages can be edited (restricted to 24 hours after posting)
 * `silent-send-state` - Whether messages contain a flag that they were sent silently
 * `chat-read-last` - Whether chat can be marked read without giving a message ID (will fall back to the conversations last message ID)
+* `federation-v1` - Whether basic chatting is possible with federation
+* `config => federation => enabled` - Boolean, whether federation is enabled on instance
+* `config => federation => incoming-enabled` - Boolean, whether users are allowed to be invited into federated conversations on other servers
+* `config => federation => outgoing-enabled` - Boolean, whether users are allowed to invited federated users of other servers into conversations
+* `config => federation => only-trusted-servers` - Boolean, whether federation invites are limited to trusted servers

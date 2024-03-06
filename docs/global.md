@@ -40,3 +40,19 @@ From time to time it is unavoidable to break compatibility. In such cases we try
        + `426 Upgrade Required`
     - Body:
        + `ocs.meta.message` contains the minimum required version of the used client
+
+## Federation - Not supported
+
+Endpoints without a "Federation capability: `federation-vX`" will return a `406 Not Acceptable` status code, when called with tokens that actually refer to a so-called proxy conversation on the local server.
+
+* Response:
+    - Status code:
+       + `406 Not Acceptable`
+
+## Federation - Remote error
+
+When a request is performed on a proxy conversation and the host can not be reached `422 Unprocessable Content` will be returned. The only exception will be leaving the room, where the request will still execute it's part locally so the user is no longer bothered. A background job will be queued to retry informing the remote server about the leave automatically.
+
+* Response:
+    - Status code:
+       + `422 Unprocessable Content`

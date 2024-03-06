@@ -365,6 +365,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 ## Add conversation to favorites
 
 * Required capability: `favorites`
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/room/{token}/favorite`
 
@@ -377,6 +378,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 ## Remove conversation from favorites
 
 * Required capability: `favorites`
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/favorite`
 
@@ -389,6 +391,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 ## Set notification level
 
 * Required capability: `notification-levels`
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/room/{token}/notify`
 * Data:
@@ -478,3 +481,23 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
+
+## Get conversation capabilities
+
+* Required capability: `federation-v1`
+* Method: `GET`
+* Endpoint: `/room/{token}/capabilities`
+
+* Response:
+    - Status code:
+        + `200 OK` Get capabilities
+        + `404 Not Found` When the conversation could not be found for the participant
+
+    - Header:
+
+| field                         | type   | Description                                                                                |
+|-------------------------------|--------|--------------------------------------------------------------------------------------------|
+| `X-Nextcloud-Talk-Proxy-Hash` | string | Sha1 value over the capabilities in case the conversation is hosted **on another server**. |
+| `X-Nextcloud-Talk-Hash`       | string | Sha1 value over the capabilities in case the conversation is hosted **on this server**.    |
+
+    - Data: Server capabilities limited to the `spreed` sub-array or an empty array in case the app is disabled (for the user)

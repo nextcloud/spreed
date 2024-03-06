@@ -107,11 +107,11 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
-const FEDERATION_ENABLED = loadState('spreed', 'federation_enabled', 'no') === 'yes'
-const FEDERATION_INCOMING_ENABLED = loadState('spreed', 'federation_incoming_enabled', '0') === '1'
-const FEDERATION_OUTGOING_ENABLED = loadState('spreed', 'federation_outgoing_enabled', '0') === '1'
-const FEDERATION_ONLY_TRUSTED_SERVERS = loadState('spreed', 'federation_only_trusted_servers', '0') === '1'
-const FEDERATION_ALLOWED_GROUPS = JSON.parse(loadState('spreed', 'federation_allowed_groups', '[]'))
+const FEDERATION_ENABLED = loadState('spreed', 'federation_enabled', false)
+const FEDERATION_INCOMING_ENABLED = loadState('spreed', 'federation_incoming_enabled', true)
+const FEDERATION_OUTGOING_ENABLED = loadState('spreed', 'federation_outgoing_enabled', true)
+const FEDERATION_ONLY_TRUSTED_SERVERS = loadState('spreed', 'federation_only_trusted_servers', false)
+const FEDERATION_ALLOWED_GROUPS = loadState('spreed', 'federation_allowed_groups', [])
 
 export default {
 	name: 'Federation',

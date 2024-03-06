@@ -10,6 +10,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
     It is therefor recommended to use `format=json` or send the `Accept: application/json` header,
     to receive a JSON response.
 
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/chat/{token}`
 * Data:
@@ -90,6 +91,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
     to receive a JSON response.
 
 * Required capability: `chat-get-context`
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/chat/{token}/{messageId}/context`
 * Data:
@@ -115,6 +117,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 
 ## Sending a new chat message
 
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/chat/{token}`
 * Data:
@@ -284,6 +287,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Deleting a chat message
 
 * Required capability: `delete-messages` - `rich-object-delete` indicates if shared objects can be deleted from the chat
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/chat/{token}/{messageId}`
 
@@ -313,6 +317,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Editing a chat message
 
 * Required capability: `edit-messages`
+* Federation capability: `federation-v1`
 * Method: `PUT`
 * Endpoint: `/chat/{token}/{messageId}`
 * Data:
@@ -412,6 +417,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Mark chat as read
 
 * Required capability: `chat-read-marker`
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/chat/{token}/read`
 * Data:
@@ -439,6 +445,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Mark chat as unread
 
 * Required capability: `chat-unread`
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/chat/{token}/read`
 
@@ -460,6 +467,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 ## Get mention autocomplete suggestions
 
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/chat/{token}/mentions`
 * Data:

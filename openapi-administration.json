@@ -108,6 +108,7 @@
                             "call",
                             "chat",
                             "conversations",
+                            "federation",
                             "previews",
                             "signaling"
                         ],
@@ -213,6 +214,29 @@
                                 ],
                                 "properties": {
                                     "can-create": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "federation": {
+                                "type": "object",
+                                "required": [
+                                    "enabled",
+                                    "incoming-enabled",
+                                    "outgoing-enabled",
+                                    "only-trusted-servers"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "incoming-enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "outgoing-enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "only-trusted-servers": {
                                         "type": "boolean"
                                     }
                                 }

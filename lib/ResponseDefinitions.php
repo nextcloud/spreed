@@ -308,6 +308,12 @@ namespace OCA\Talk;
  *         conversations: array{
  *             can-create: bool,
  *         },
+ *         federation: array{
+ *             enabled: bool,
+ *             incoming-enabled: bool,
+ *             outgoing-enabled: bool,
+ *             only-trusted-servers: bool,
+ *         },
  *         previews: array{
  *             max-gif-size: int,
  *         },

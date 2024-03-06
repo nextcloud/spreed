@@ -72,6 +72,12 @@ export type components = {
         conversations: {
           "can-create": boolean;
         };
+        federation: {
+          enabled: boolean;
+          "incoming-enabled": boolean;
+          "outgoing-enabled": boolean;
+          "only-trusted-servers": boolean;
+        };
         previews: {
           /** Format: int64 */
           "max-gif-size": number;

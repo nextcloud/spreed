@@ -70,6 +70,7 @@
 ## Get conversations avatar (binary)
 
 * Required capability: `avatar`
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/room/{token}/avatar`
 
@@ -82,6 +83,7 @@
 ## Get dark mode conversations avatar (binary)
 
 * Required capability: `avatar`
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/room/{token}/avatar/dark`
 

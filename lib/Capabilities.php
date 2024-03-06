@@ -28,6 +28,7 @@ namespace OCA\Talk;
 
 use OCA\Talk\Chat\ChatManager;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
 use OCP\Comments\ICommentsManager;
 use OCP\ICache;
@@ -47,6 +48,7 @@ class Capabilities implements IPublicCapability {
 	public function __construct(
 		protected IConfig $serverConfig,
 		protected Config $talkConfig,
+		protected IAppConfig $appConfig,
 		protected ICommentsManager $commentsManager,
 		protected IUserSession $userSession,
 		protected IAppManager $appManager,
@@ -140,6 +142,7 @@ class Capabilities implements IPublicCapability {
 				'edit-messages',
 				'silent-send-state',
 				'chat-read-last',
+				'federation-v1',
 			],
 			'config' => [
 				'attachments' => [
@@ -163,6 +166,12 @@ class Capabilities implements IPublicCapability {
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
 				],
+				'federation' => [
+					'enabled' => false,
+					'incoming-enabled' => false,
+					'outgoing-enabled' => false,
+					'only-trusted-servers' => true,
+				],
 				'previews' => [
 					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728'),
 				],
@@ -173,6 +182,7 @@ class Capabilities implements IPublicCapability {
 			'version' => $this->appManager->getAppVersion('spreed'),
 		];
 
+
 		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
 			$capabilities['features'][] = 'message-expiration';
 		}
@@ -182,6 +192,15 @@ class Capabilities implements IPublicCapability {
 		}
 
 		if ($user instanceof IUser) {
+			if ($this->talkConfig->isFederationEnabled() && $this->talkConfig->isFederationEnabledForUserId($user)) {
+				$capabilities['config']['federation'] = [
+					'enabled' => true,
+					'incoming-enabled' => $this->appConfig->getAppValueBool('federation_incoming_enabled', true),
+					'outgoing-enabled' => $this->appConfig->getAppValueBool('federation_outgoing_enabled', true),
+					'only-trusted-servers' => $this->appConfig->getAppValueBool('federation_only_trusted_servers'),
+				];
+			}
+
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 			$capabilities['config']['chat']['read-privacy'] = $this->talkConfig->getUserReadPrivacy($user->getUID());
 			$capabilities['config']['chat']['typing-privacy'] = $this->talkConfig->getUserTypingPrivacy($user->getUID());
