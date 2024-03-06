@@ -45,6 +45,26 @@ class UserConverter {
 	) {
 	}
 
+	/**
+	 * @return array{type: string, id: string}
+	 */
+	public function convertTypeAndId(Room $room, string $type, string $id): array {
+		if ($type === Attendee::ACTOR_USERS) {
+			$type = Attendee::ACTOR_FEDERATED_USERS;
+			$id .= '@' . $room->getRemoteServer();
+		} elseif ($type === Attendee::ACTOR_FEDERATED_USERS) {
+			$localParticipants = $this->getLocalParticipants($room);
+			if (isset($localParticipants[$id])) {
+				$local = $localParticipants[$id];
+
+				$type = Attendee::ACTOR_USERS;
+				$id = $local['userId'];
+			}
+		}
+
+		return ['type' => $type, 'id' => $id];
+	}
+
 	public function convertAttendee(Room $room, array $entry, string $typeField, string $idField, string $displayNameField): array {
 		if (!isset($entry[$typeField])) {
 			return $entry;
@@ -89,7 +109,7 @@ class UserConverter {
 		return $parameter;
 	}
 
-	protected function convertMessageParameters(Room $room, array $message): array {
+	public function convertMessageParameters(Room $room, array $message): array {
 		$message['messageParameters'] = array_map(
 			fn (array $message): array => $this->convertMessageParameter($room, $message),
 			$message['messageParameters']
