@@ -32,7 +32,9 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Service\ParticipantService;
+use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Federation\ICloudIdManager;
@@ -78,6 +80,14 @@ class MessageSentListener implements IEventListener {
 		}
 
 		$expireDate = $event->getComment()->getExpireDate();
+		$creationDate = $event->getComment()->getCreationDateTime();
+
+		$metaData = $event->getComment()->getMetaData() ?? [];
+		$parent = $event->getParent();
+		if ($parent instanceof IComment) {
+			$metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE] = $parent->getActorType();
+			$metaData[ProxyCacheMessage::METADATA_REPLYTO_ID] = $parent->getActorId();
+		}
 
 		$messageData = [
 			'remoteMessageId' => (int) $event->getComment()->getId(),
@@ -88,7 +98,9 @@ class MessageSentListener implements IEventListener {
 			'systemMessage' => $chatMessage->getMessageType() === ChatManager::VERB_SYSTEM ? $chatMessage->getMessageRaw() : '',
 			'expirationDatetime' => $expireDate ? $expireDate->format(\DateTime::ATOM) : '',
 			'message' => $chatMessage->getMessage(),
-			'messageParameter' => json_encode($chatMessage->getMessageParameters()),
+			'messageParameter' => json_encode($chatMessage->getMessageParameters(), JSON_THROW_ON_ERROR),
+			'creationDatetime' => $creationDate->format(\DateTime::ATOM),
+			'metaData' => json_encode($metaData, JSON_THROW_ON_ERROR),
 		];
 
 		$participants = $this->participantService->getParticipantsByActorType($event->getRoom(), Attendee::ACTOR_FEDERATED_USERS);

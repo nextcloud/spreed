@@ -313,6 +313,7 @@ class BackendNotifier {
 	 * Send information to remote participants that a message was posted
 	 * Sent from Host server to Remote participant server
 	 *
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string} $messageData
 	 * @param array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool} $unreadInfo
 	 */
 	public function sendMessageUpdate(

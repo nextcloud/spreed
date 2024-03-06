@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -48,16 +48,23 @@ use OCP\AppFramework\Db\Entity;
  * @method string getMessageType()
  * @method void setSystemMessage(?string $systemMessage)
  * @method string|null getSystemMessage()
- * @method void setExpirationDatetime(?\DateTimeImmutable $expirationDatetime)
- * @method \DateTimeImmutable|null getExpirationDatetime()
+ * @method void setExpirationDatetime(?\DateTime $expirationDatetime)
+ * @method \DateTime|null getExpirationDatetime()
  * @method void setMessage(?string $message)
  * @method string|null getMessage()
  * @method void setMessageParameters(?string $messageParameters)
  * @method string|null getMessageParameters()
+ * @method void setCreationDatetime(?\DateTime $creationDatetime)
+ * @method \DateTime|null getCreationDatetime()
+ * @method void setMetaData(?string $metaData)
+ * @method string|null getMetaData()
  *
  * @psalm-import-type TalkRoomProxyMessage from ResponseDefinitions
  */
-class ProxyCacheMessages extends Entity implements \JsonSerializable {
+class ProxyCacheMessage extends Entity implements \JsonSerializable {
+	public const METADATA_REPLYTO_TYPE = 'replyToActorType';
+	public const METADATA_REPLYTO_ID = 'replyToActorId';
+
 
 	protected string $localToken = '';
 	protected string $remoteServerUrl = '';
@@ -68,9 +75,11 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 	protected ?string $actorDisplayName = null;
 	protected ?string $messageType = null;
 	protected ?string $systemMessage = null;
-	protected ?\DateTimeImmutable $expirationDatetime = null;
+	protected ?\DateTime $expirationDatetime = null;
 	protected ?string $message = null;
 	protected ?string $messageParameters = null;
+	protected ?\DateTime $creationDatetime = null;
+	protected ?string $metaData = null;
 
 	public function __construct() {
 		$this->addType('localToken', 'string');
@@ -85,6 +94,16 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 		$this->addType('expirationDatetime', 'datetime');
 		$this->addType('message', 'string');
 		$this->addType('messageParameters', 'string');
+		$this->addType('creationDatetime', 'datetime');
+		$this->addType('metaData', 'string');
+	}
+
+	public function getParsedMessageParameters(): array {
+		return json_decode($this->getMessageParameters() ?? '[]', true);
+	}
+
+	public function getParsedMetaData(): array {
+		return json_decode($this->getMetaData() ?? '[]', true);
 	}
 
 	/**
@@ -100,11 +119,12 @@ class ProxyCacheMessages extends Entity implements \JsonSerializable {
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
 			'actorDisplayName' => $this->getActorDisplayName(),
+			'timestamp' => $this->getCreationDatetime()->getTimestamp(),
 			'expirationTimestamp' => $expirationTimestamp,
 			'messageType' => $this->getMessageType(),
 			'systemMessage' => $this->getSystemMessage() ?? '',
 			'message' => $this->getMessage() ?? '',
-			'messageParameters' => json_decode($this->getMessageParameters() ?? '[]', true),
+			'messageParameters' => $this->getParsedMessageParameters(),
 		];
 	}
 }

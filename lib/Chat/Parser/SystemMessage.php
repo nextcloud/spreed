@@ -207,7 +207,7 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'call_started') {
 			$metaData = $comment->getMetaData() ?? [];
-			$silentCall = $metaData['silent'] ?? false;
+			$silentCall = $metaData[Message::METADATA_SILENT] ?? false;
 			if ($silentCall) {
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You started a silent call');

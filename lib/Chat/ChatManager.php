@@ -34,6 +34,7 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -165,7 +166,7 @@ class ChatManager {
 
 		if ($silent) {
 			$comment->setMetaData([
-				'silent' => true,
+				Message::METADATA_SILENT => true,
 			]);
 		}
 
@@ -173,7 +174,7 @@ class ChatManager {
 
 		$shouldFlush = $this->notificationManager->defer();
 
-		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
+		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate, parent: $replyTo);
 		$this->dispatcher->dispatchTyped($event);
 		try {
 			$this->commentsManager->save($comment);
@@ -228,7 +229,7 @@ class ChatManager {
 				}
 			}
 
-			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
+			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate, parent: $replyTo);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
 		}
@@ -322,11 +323,11 @@ class ChatManager {
 
 		if ($silent) {
 			$comment->setMetaData([
-				'silent' => true,
+				Message::METADATA_SILENT => true,
 			]);
 		}
 
-		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent);
+		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 		$this->dispatcher->dispatchTyped($event);
 
 		$shouldFlush = $this->notificationManager->defer();
@@ -371,7 +372,7 @@ class ChatManager {
 			// User was not mentioned, send a normal notification
 			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers, $silent);
 
-			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent);
+			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
 		}
@@ -500,11 +501,11 @@ class ChatManager {
 		$comment->setVerb(self::VERB_MESSAGE_DELETED);
 
 		$metaData = $comment->getMetaData() ?? [];
-		if (isset($metaData['last_edited_by_type'])) {
+		if (isset($metaData[Message::METADATA_LAST_EDITED_BY_TYPE])) {
 			unset(
-				$metaData['last_edited_by_type'],
-				$metaData['last_edited_by_id'],
-				$metaData['last_edited_time']
+				$metaData[Message::METADATA_LAST_EDITED_BY_TYPE],
+				$metaData[Message::METADATA_LAST_EDITED_BY_ID],
+				$metaData[Message::METADATA_LAST_EDITED_TIME],
 			);
 			$comment->setMetaData($metaData);
 		}
@@ -557,12 +558,12 @@ class ChatManager {
 		}
 
 		$metaData = $comment->getMetaData() ?? [];
-		$metaData['last_edited_by_type'] = $participant->getAttendee()->getActorType();
-		$metaData['last_edited_by_id'] = $participant->getAttendee()->getActorId();
-		$metaData['last_edited_time'] = $editTime->getTimestamp();
+		$metaData[Message::METADATA_LAST_EDITED_BY_TYPE] = $participant->getAttendee()->getActorType();
+		$metaData[Message::METADATA_LAST_EDITED_BY_ID] = $participant->getAttendee()->getActorId();
+		$metaData[Message::METADATA_LAST_EDITED_TIME] = $editTime->getTimestamp();
 		$comment->setMetaData($metaData);
 
-		$wasSilent = $metaData['silent'] ?? false;
+		$wasSilent = $metaData[Message::METADATA_SILENT] ?? false;
 
 		if (!$wasSilent) {
 			$mentionsBefore = $comment->getMentions();

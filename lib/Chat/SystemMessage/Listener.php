@@ -43,6 +43,7 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -425,8 +426,8 @@ class Listener implements IEventListener {
 			}
 		}
 
-		if (isset($metaData['silent'])) {
-			$silent = (bool) $metaData['silent'];
+		if (isset($metaData[Message::METADATA_SILENT])) {
+			$silent = (bool) $metaData[Message::METADATA_SILENT];
 		} else {
 			$silent = false;
 		}

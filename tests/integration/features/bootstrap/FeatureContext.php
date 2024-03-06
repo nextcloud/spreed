@@ -1946,6 +1946,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
 		$message = substr($message, 1, -1);
 		$message = str_replace('\n', "\n", $message);
+		$message = str_replace('{$BASE_URL}', $this->baseUrl, $message);
+		$message = str_replace('{$REMOTE_URL}', $this->baseRemoteUrl, $message);
 
 		if ($message === '413 Payload Too Large') {
 			$message .= "\n" . str_repeat('1', 32000);
@@ -2728,15 +2730,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['reactionsSelf'] = null;
 				}
 			}
+
 			if ($includeLastEdit) {
 				$data['lastEditActorType'] = $message['lastEditActorType'] ?? '';
 				$data['lastEditActorDisplayName'] = $message['lastEditActorDisplayName'] ?? '';
 				$data['lastEditActorId'] = $message['lastEditActorId'] ?? '';
-				if ($message['lastEditActorType'] === 'guests') {
+				if (($message['lastEditActorType'] ?? '') === 'guests') {
 					$data['lastEditActorId'] = self::$sessionIdToUser[$message['lastEditActorId']];
 				}
 			}
-
 
 			return $data;
 		}, $messages, $expected));
@@ -3285,7 +3287,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedNotification['object_id'])) {
 				if (strpos($notification['object_id'], '/') !== false) {
 					[$roomToken, $message] = explode('/', $notification['object_id']);
-					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
+					$messageText = self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
+
+					$messageText = str_replace($this->baseUrl, '{$BASE_URL}', $messageText);
+					$messageText = str_replace($this->baseRemoteUrl, '{$REMOTE_URL}', $messageText);
+
+					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . $messageText;
 				} elseif (strpos($expectedNotification['object_id'], 'INVITE_ID') !== false) {
 					$data['object_id'] = 'INVITE_ID(' . self::$inviteIdToRemote[$notification['object_id']] . ')';
 				} else {

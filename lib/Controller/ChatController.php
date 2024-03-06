@@ -530,7 +530,7 @@ class ChatController extends AEnvironmentAwareController {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
-			$expireDate = $message->getComment()->getExpireDate();
+			$expireDate = $message->getExpirationDateTime();
 			if ($expireDate instanceof \DateTime && $expireDate < $now) {
 				$commentIdToIndex[$id] = null;
 				continue;

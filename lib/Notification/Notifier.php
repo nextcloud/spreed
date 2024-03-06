@@ -36,6 +36,8 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
@@ -83,6 +85,7 @@ class Notifier implements INotifier {
 		protected AvatarService $avatarService,
 		protected INotificationManager $notificationManager,
 		CommentsManager $commentManager,
+		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
 		protected MessageParser $messageParser,
 		protected IRootFolder $rootFolder,
 		protected ITimeFactory $timeFactory,
@@ -517,42 +520,51 @@ class Notifier implements INotifier {
 		];
 
 		$messageParameters = $notification->getMessageParameters();
-		if (!isset($messageParameters['commentId'])) {
+		if (!isset($messageParameters['commentId']) && !isset($messageParameters['proxyId'])) {
 			throw new AlreadyProcessedException();
 		}
 
-		if (!$this->notificationManager->isPreparingPushNotification()
-			&& $notification->getObjectType() === 'chat'
-			/**
-			 * Notification only contains the message id of the target comment
-			 * not the one of the reaction, so we can't determine if it was read.
-			 * @see Listener::markReactionNotificationsRead()
-			 */
-			&& $notification->getSubject() !== 'reaction'
-			&& ((int) $messageParameters['commentId']) <= $participant->getAttendee()->getLastReadMessage()) {
-			// Mark notifications of messages that are read as processed
-			throw new AlreadyProcessedException();
-		}
+		if (isset($messageParameters['commentId'])) {
+			if (!$this->notificationManager->isPreparingPushNotification()
+				&& $notification->getObjectType() === 'chat'
+				/**
+				 * Notification only contains the message id of the target comment
+				 * not the one of the reaction, so we can't determine if it was read.
+				 * @see Listener::markReactionNotificationsRead()
+				 */
+				&& $notification->getSubject() !== 'reaction'
+				&& ((int) $messageParameters['commentId']) <= $participant->getAttendee()->getLastReadMessage()) {
+				// Mark notifications of messages that are read as processed
+				throw new AlreadyProcessedException();
+			}
 
-		try {
-			$comment = $this->commentManager->get($messageParameters['commentId']);
-		} catch (NotFoundException $e) {
-			throw new AlreadyProcessedException();
-		}
+			try {
+				$comment = $this->commentManager->get($messageParameters['commentId']);
+			} catch (NotFoundException $e) {
+				throw new AlreadyProcessedException();
+			}
 
-		$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
-		$this->messageParser->parseMessage($message);
+			$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
+			$this->messageParser->parseMessage($message);
 
-		if (!$message->getVisibility()) {
-			throw new AlreadyProcessedException();
+			if (!$message->getVisibility()) {
+				throw new AlreadyProcessedException();
+			}
+		} else {
+			try {
+				$proxy = $this->proxyCacheMessageMapper->findById($messageParameters['proxyId']);
+				$message = $this->messageParser->createMessageFromProxyCache($room, $participant, $proxy, $l);
+			} catch (DoesNotExistException) {
+				throw new AlreadyProcessedException();
+			}
 		}
 
 		// Set the link to the specific message
-		$notification->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]) . '#message_' . $comment->getId());
+		$notification->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]) . '#message_' . $message->getMessageId());
 
 		$now = $this->timeFactory->getDateTime();
-		$expireDate = $message->getComment()->getExpireDate();
-		if ($expireDate instanceof \DateTime && $expireDate < $now) {
+		$expireDate = $message->getExpirationDateTime();
+		if ($expireDate instanceof \DateTimeInterface && $expireDate < $now) {
 			throw new AlreadyProcessedException();
 		}
 
@@ -576,7 +588,7 @@ class Notifier implements INotifier {
 			$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
 
 			// Forward the message ID as well to the clients, so they can quote the message on replies
-			$notification->setObject($notification->getObjectType(), $notification->getObjectId() . '/' . $comment->getId());
+			$notification->setObject($notification->getObjectType(), $notification->getObjectId() . '/' . $message->getMessageId());
 		}
 
 		$richSubjectParameters = [

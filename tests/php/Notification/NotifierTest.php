@@ -33,6 +33,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -81,6 +82,7 @@ class NotifierTest extends TestCase {
 	protected $notificationManager;
 	/** @var CommentsManager|MockObject */
 	protected $commentsManager;
+	protected ProxyCacheMessageMapper|MockObject $proxyCacheMessageMapper;
 	/** @var MessageParser|MockObject */
 	protected $messageParser;
 	/** @var IRootFolder|MockObject */
@@ -112,6 +114,7 @@ class NotifierTest extends TestCase {
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
+		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessageMapper::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -133,6 +136,7 @@ class NotifierTest extends TestCase {
 			$this->avatarService,
 			$this->notificationManager,
 			$this->commentsManager,
+			$this->proxyCacheMessageMapper,
 			$this->messageParser,
 			$this->rootFolder,
 			$this->timeFactory,

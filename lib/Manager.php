@@ -1096,10 +1096,6 @@ class Manager {
 			return $this->l->t('Talk updates ✅');
 		}
 
-		if ($forceName) {
-			return $room->getName();
-		}
-
 		if ($this->federationAuthenticator->isFederationRequest()) {
 			try {
 				$authenticatedRoom = $this->federationAuthenticator->getRoom();
@@ -1110,7 +1106,7 @@ class Manager {
 			}
 		}
 
-		if ($userId === '' && $room->getType() !== Room::TYPE_PUBLIC) {
+		if (!$forceName && $userId === '' && $room->getType() !== Room::TYPE_PUBLIC) {
 			return $this->l->t('Private conversation');
 		}
 
@@ -1149,6 +1145,10 @@ class Manager {
 			}
 
 			return $otherParticipant;
+		}
+
+		if ($forceName) {
+			return $room->getName();
 		}
 
 		if (!$this->isRoomListableByUser($room, $userId)) {

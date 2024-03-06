@@ -28,12 +28,14 @@ use OCA\Talk\Config;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
-use OCA\Talk\Model\ProxyCacheMessagesMapper;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
+use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -95,7 +97,9 @@ class FederationTest extends TestCase {
 	/** @var AttendeeMapper|MockObject */
 	protected $attendeeMapper;
 
-	protected ProxyCacheMessagesMapper|MockObject $proxyCacheMessageMapper;
+	protected ProxyCacheMessageMapper|MockObject $proxyCacheMessageMapper;
+	protected FederationChatNotifier|MockObject $federationChatNotifier;
+	protected UserConverter|MockObject $userConverter;
 	protected ICacheFactory|MockObject $cacheFactory;
 
 	public function setUp(): void {
@@ -112,7 +116,7 @@ class FederationTest extends TestCase {
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->url = $this->createMock(IURLGenerator::class);
-		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessagesMapper::class);
+		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessageMapper::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 
 		$this->backendNotifier = new BackendNotifier(
@@ -130,6 +134,8 @@ class FederationTest extends TestCase {
 
 		$this->federationManager = $this->createMock(FederationManager::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
+		$this->federationChatNotifier = $this->createMock(FederationChatNotifier::class);
+		$this->userConverter = $this->createMock(UserConverter::class);
 
 		$this->cloudFederationProvider = new CloudFederationProviderTalk(
 			$this->cloudIdManager,
@@ -148,6 +154,8 @@ class FederationTest extends TestCase {
 			$this->createMock(IEventDispatcher::class),
 			$this->logger,
 			$this->proxyCacheMessageMapper,
+			$this->federationChatNotifier,
+			$this->userConverter,
 			$this->cacheFactory,
 		);
 	}

@@ -36,6 +36,10 @@ use OCP\IL10N;
  * @psalm-import-type TalkChatMessage from ResponseDefinitions
  */
 class Message {
+	public const METADATA_LAST_EDITED_BY_TYPE = 'last_edited_by_type';
+	public const METADATA_LAST_EDITED_BY_ID = 'last_edited_by_id';
+	public const METADATA_LAST_EDITED_TIME = 'last_edited_time';
+	public const METADATA_SILENT = 'silent';
 
 	/** @var bool */
 	protected $visible = true;
@@ -76,8 +80,9 @@ class Message {
 	public function __construct(
 		protected Room $room,
 		protected ?Participant $participant,
-		protected IComment $comment,
+		protected ?IComment $comment,
 		protected IL10N $l,
+		protected ?ProxyCacheMessage $proxy = null,
 	) {
 	}
 
@@ -89,7 +94,7 @@ class Message {
 		return $this->room;
 	}
 
-	public function getComment(): IComment {
+	public function getComment(): ?IComment {
 		return $this->comment;
 	}
 
@@ -104,6 +109,14 @@ class Message {
 	/*
 	 * Parsed message information
 	 */
+
+	public function getMessageId(): int {
+		return $this->comment ? (int) $this->comment->getId() : $this->proxy->getRemoteMessageId();
+	}
+
+	public function getExpirationDateTime(): ?\DateTimeInterface {
+		return $this->comment ? $this->comment->getExpireDate() : $this->proxy->getExpirationDatetime();
+	}
 
 	public function setVisibility(bool $visible): void {
 		$this->visible = $visible;
@@ -226,8 +239,8 @@ class Message {
 		}
 
 		$metaData = $this->comment->getMetaData() ?? [];
-		if (!empty($metaData['silent'])) {
-			$data['silent'] = true;
+		if (!empty($metaData[self::METADATA_SILENT])) {
+			$data[self::METADATA_SILENT] = true;
 		}
 
 		return $data;

@@ -162,7 +162,7 @@ class UserMention implements IEventListener {
 				$messageParameters[$mentionParameterId] = [
 					'type' => $mention['type'],
 					'id' => $chatMessage->getRoom()->getToken(),
-					'name' => $chatMessage->getRoom()->getDisplayName($userId),
+					'name' => $chatMessage->getRoom()->getDisplayName($userId, true),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
 					'icon-url' => $this->avatarService->getAvatarUrl($chatMessage->getRoom()),
 				];
