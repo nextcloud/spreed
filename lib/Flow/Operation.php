@@ -113,6 +113,11 @@ class Operation implements IOperation {
 					continue;
 				}
 
+				if ($room->getRemoteServer() !== '') {
+					// Ignore conversation because it is a proxy conversation
+					continue;
+				}
+
 				$participant = $this->participantService->getParticipant($room, $uid, false);
 				if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 					// Ignore conversation because the user has no permissions

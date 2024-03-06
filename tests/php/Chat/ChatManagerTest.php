@@ -50,6 +50,7 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 /**
@@ -84,6 +85,7 @@ class ChatManagerTest extends TestCase {
 	protected $rateLimiter;
 	/** @var IRequest|MockObject */
 	protected $request;
+	protected LoggerInterface|MockObject $logger;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -103,6 +105,7 @@ class ChatManagerTest extends TestCase {
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
 		$this->rateLimiter = $this->createMock(ILimiter::class);
 		$this->request = $this->createMock(IRequest::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->chatManager = $this->getManager();
 	}
@@ -133,6 +136,7 @@ class ChatManagerTest extends TestCase {
 					$this->referenceManager,
 					$this->rateLimiter,
 					$this->request,
+					$this->logger,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -155,6 +159,7 @@ class ChatManagerTest extends TestCase {
 			$this->referenceManager,
 			$this->rateLimiter,
 			$this->request,
+			$this->logger,
 		);
 	}
 

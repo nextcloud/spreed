@@ -164,6 +164,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutConversationCreated(RoomCreatedEvent $event): void {
+		if ($event->getRoom()->getRemoteServer() !== '') {
+			return;
+		}
+
 		if ($event->getRoom()->getType() === Room::TYPE_CHANGELOG || $this->isCreatingNoteToSelfAutomatically($event)) {
 			$this->sendSystemMessage($event->getRoom(), 'conversation_created', forceSystemAsActor: true);
 		} else {
@@ -177,6 +181,11 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($event->getRoom()->getRemoteServer() !== '') {
+			return;
+		}
+
+
 		$this->sendSystemMessage($event->getRoom(), 'conversation_renamed', [
 			'newName' => $event->getNewValue(),
 			'oldName' => $event->getOldValue(),
@@ -184,6 +193,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutRoomDescriptionChanges(RoomModifiedEvent $event): void {
+		if ($event->getRoom()->getRemoteServer() !== '') {
+			return;
+		}
+
 		if ($event->getNewValue() !== '') {
 			if ($this->isCreatingNoteToSelf($event)) {
 				return;
@@ -198,6 +211,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutRoomPassword(RoomModifiedEvent $event): void {
+		if ($event->getRoom()->getRemoteServer() !== '') {
+			return;
+		}
+
 		if ($event->getNewValue() !== '') {
 			$this->sendSystemMessage($event->getRoom(), 'password_set');
 		} else {
@@ -221,6 +238,10 @@ class Listener implements IEventListener {
 		$room = $event->getRoom();
 
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
+			return;
+		}
+
+		if ($room->getRemoteServer() !== '') {
 			return;
 		}
 
@@ -272,6 +293,10 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($room->getRemoteServer() !== '') {
+			return;
+		}
+
 		$userJoinedFileRoom = $room->getObjectType() === Room::OBJECT_TYPE_FILE && $attendee->getParticipantType() !== Participant::USER_SELF_JOINED;
 
 		// add a message "X joined the conversation", whenever user $userId:
@@ -305,6 +330,10 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($room->getRemoteServer() !== '') {
+			return;
+		}
+
 		if ($event->getReason() === AAttendeeRemovedEvent::REASON_LEFT
 			&& $event->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 			// Self-joined user closes the tab/window or leaves via the menu
@@ -319,6 +348,10 @@ class Listener implements IEventListener {
 		$attendee = $event->getParticipant()->getAttendee();
 
 		if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+			return;
+		}
+
+		if ($event->getRoom()->getRemoteServer() !== '') {
 			return;
 		}
 
@@ -367,6 +400,11 @@ class Listener implements IEventListener {
 			return;
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
+		if ($room->getRemoteServer() !== '') {
+			// FIXME this should be blocked up front
+			return;
+		}
+
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);
 		$metaData = is_array($metaData) ? $metaData : [];
@@ -397,6 +435,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
+		if ($event->getRoom()->getRemoteServer() !== '') {
+			return;
+		}
+
 		foreach ($event->getAttendees() as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 				$this->sendSystemMessage($event->getRoom(), 'group_added', ['group' => $attendee->getActorId()]);
@@ -413,6 +455,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesRemovedEvent(AttendeesRemovedEvent $event): void {
+		if ($event->getRoom()->getRemoteServer() !== '') {
+			return;
+		}
+
 		foreach ($event->getAttendees() as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 				$this->sendSystemMessage($event->getRoom(), 'group_removed', ['group' => $attendee->getActorId()]);
