@@ -32,6 +32,11 @@ import {
 	PARTICIPANT,
 	WEBINAR,
 } from '../constants.js'
+import {
+	setConversationAvatar,
+	setConversationEmojiAvatar,
+	deleteConversationAvatar,
+} from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import {
 	makeConversationPublic,
@@ -57,9 +62,6 @@ import {
 	setCallPermissions,
 	setMessageExpiration,
 	setConversationPassword,
-	setConversationAvatar,
-	setConversationEmojiAvatar,
-	deleteConversationAvatar,
 } from '../services/conversationsService.js'
 import {
 	startCallRecording,

@@ -1,6 +1,7 @@
-import type { components, paths } from './openapi/openapi-full.ts'
+import type { components, operations } from './openapi/openapi-full.ts'
 
 // General
+type ApiOptions<T> = { params: T }
 type ApiResponse<T> = Promise<{ data: T }>
 
 // Conversations
@@ -33,11 +34,17 @@ export type ChatMessage = Omit<components['schemas']['ChatMessage'], 'messagePar
 	messageParameters: MessageParameters
 }
 
+// Avatars
+export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
+export type setEmojiAvatarParams = ApiOptions<operations['avatar-emoji-avatar']['parameters']['query']>
+export type setEmojiAvatarResponse = ApiResponse<operations['avatar-emoji-avatar']['responses'][200]['content']['application/json']>
+export type deleteAvatarResponse = ApiResponse<operations['avatar-delete-avatar']['responses'][200]['content']['application/json']>
+
 // Bots
 export type Bot = components['schemas']['Bot']
 export type BotWithDetails = components['schemas']['BotWithDetails']
 
-export type getBotsResponse = ApiResponse<paths['/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}']['get']['responses'][200]['content']['application/json']>
-export type getBotsAdminResponse = ApiResponse<paths['/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/admin']['get']['responses'][200]['content']['application/json']>
-export type enableBotResponse = ApiResponse<paths['/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/{botId}']['post']['responses'][201]['content']['application/json']>
-export type disableBotResponse = ApiResponse<paths['/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/{botId}']['delete']['responses'][200]['content']['application/json']>
+export type getBotsResponse = ApiResponse<operations['bot-list-bots']['responses'][200]['content']['application/json']>
+export type getBotsAdminResponse = ApiResponse<operations['settings-admin-list-bots']['responses'][200]['content']['application/json']>
+export type enableBotResponse = ApiResponse<operations['bot-enable-bot']['responses'][201]['content']['application/json']>
+export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['responses'][200]['content']['application/json']>
