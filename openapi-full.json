@@ -514,7 +514,6 @@
             "FederationInvite": {
                 "type": "object",
                 "required": [
-                    "accessToken",
                     "id",
                     "state",
                     "localCloudId",
@@ -528,9 +527,6 @@
                     "inviterDisplayName"
                 ],
                 "properties": {
-                    "accessToken": {
-                        "type": "string"
-                    },
                     "id": {
                         "type": "integer",
                         "format": "int64"

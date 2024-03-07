@@ -156,32 +156,6 @@ Feature: federation/invite
       | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
-  Scenario: Authenticate as a federation user
-    Given the following "spreed" app config is set
-      | federation_enabled | yes |
-    Given user "participant1" creates room "room" (v4)
-      | roomType | 2 |
-      | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
-    And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
-    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 2    | LOCAL        | room        |
-    And user "participant2" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 1     | participant1@http://localhost:8080 | participant1-displayname |
-    Then user "participant2" is participant of the following rooms (v4)
-      | id   | type |
-      | room | 2    |
-    Then user "federation/participant2" gets room "room" with 200 (v4)
-    Then user "federation/participant2" joins room "room" with 200 (v4)
-    And user "federation/participant2" sends message "Message 1" to room "room" with 201
-    Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | room |federated_users | participant2@http://localhost:8180 | participant2@localhost:8180 | Message 1   | []                |               |
-
   Scenario: Federate conversation meta data
     Given the following "spreed" app config is set
       | federation_enabled | yes |

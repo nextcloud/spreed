@@ -348,7 +348,6 @@ class RoomFormatter {
 		if ($room->getRemoteServer() && $room->getRemoteToken()) {
 			$roomData['remoteServer'] = $room->getRemoteServer();
 			$roomData['remoteToken'] = $room->getRemoteToken();
-			$roomData['remoteAccessToken'] = $attendee->getAccessToken();
 		}
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …

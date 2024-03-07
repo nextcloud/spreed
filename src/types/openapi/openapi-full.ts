@@ -659,7 +659,6 @@ export type components = {
       userId: string;
     };
     FederationInvite: {
-      accessToken: string;
       /** Format: int64 */
       id: number;
       /** Format: int64 */
