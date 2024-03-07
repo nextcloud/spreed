@@ -353,6 +353,12 @@ class BotController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function enableBot(int $botId): DataResponse {
+		if ($this->room->getRemoteServer() !== '') {
+			return new DataResponse([
+				'error' => 'room',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$bot = $this->botServerMapper->findById($botId);
 		} catch (DoesNotExistException) {

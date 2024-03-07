@@ -134,6 +134,10 @@ class Listener implements IEventListener {
 			return $results;
 		}
 
+		if ($this->room->getRemoteServer() !== '') {
+			return $results;
+		}
+
 		if (!empty($results['groups'])) {
 			$results['groups'] = array_filter($results['groups'], [$this, 'filterParticipantGroupResult']);
 		}

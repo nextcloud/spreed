@@ -79,7 +79,12 @@ class Setup extends Base {
 		$returnCode = 0;
 		foreach ($tokens as $token) {
 			try {
-				$this->roomManager->getRoomByToken($token);
+				$room = $this->roomManager->getRoomByToken($token);
+
+				if ($room->getRemoteServer() !== '') {
+					$output->writeln('<error>Federated conversations can not have bots: ' . $token . '</error>');
+					$returnCode = 2;
+				}
 			} catch (RoomNotFoundException) {
 				$output->writeln('<error>Conversation could not be found by token: ' . $token . '</error>');
 				$returnCode = 2;
