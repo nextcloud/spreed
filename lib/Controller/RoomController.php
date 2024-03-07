@@ -39,6 +39,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
+use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -125,6 +126,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
 		protected Capabilities $capabilities,
+		protected BackendNotifier $federationBackendNotifier,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1249,6 +1251,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 400: Removing participant is not possible
 	 * 404: Participant not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function removeSelfFromRoom(): DataResponse {
@@ -1259,6 +1262,14 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
+		if ($room->getRemoteServer() !== '') {
+			$this->federationBackendNotifier->sendShareDeclined(
+				$room->getRemoteServer(),
+				(int) $participant->getAttendee()->getRemoteId(),
+				$participant->getAttendee()->getAccessToken(),
+			);
+		}
+
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 			if ($participant->hasModeratorPermissions(false)
 				&& $this->participantService->getNumberOfUsers($room) > 1

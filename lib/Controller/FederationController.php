@@ -156,7 +156,7 @@ class FederationController extends OCSController {
 	 *
 	 * 🚧 Draft: Still work in progress
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkFederationInvite[], array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkFederationInvite>, array{}>
 	 *
 	 * 200: Get list of received federation invites successfully
 	 */
@@ -169,8 +169,8 @@ class FederationController extends OCSController {
 		}
 		$invitations = $this->federationManager->getRemoteRoomShares($user);
 
-		/** @var TalkFederationInvite[] $data */
-		$data = array_filter(array_map([$this, 'enrichInvite'], $invitations));
+		/** @var list<TalkFederationInvite> $data */
+		$data = array_values(array_filter(array_map([$this, 'enrichInvite'], $invitations)));
 
 		return new DataResponse($data);
 	}
