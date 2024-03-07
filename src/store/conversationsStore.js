@@ -646,6 +646,11 @@ const actions = {
 		}
 
 		const conversation = Object.assign({}, getters.conversations[token])
+		if (conversation.lastMessage.id === parseInt(messageId, 10)
+			|| conversation.lastMessage.timestamp >= Date.parse(notification.datetime) / 1000) {
+			// Already updated from other source, skipping
+			return
+		}
 
 		const actor = notification.subjectRichParameters.user || notification.subjectRichParameters.guest || {
 			type: 'guest',
