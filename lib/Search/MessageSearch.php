@@ -170,6 +170,10 @@ class MessageSearch implements IProvider, IFilteringProvider {
 				}
 			}
 
+			if ($room->getRemoteServer() !== '') {
+				continue;
+			}
+
 			$roomMap[(string) $room->getId()] = $room;
 		}
 

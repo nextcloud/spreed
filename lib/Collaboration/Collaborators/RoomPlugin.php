@@ -62,6 +62,10 @@ class RoomPlugin implements ISearchPlugin {
 				continue;
 			}
 
+			if ($room->getRemoteServer() !== '') {
+				continue;
+			}
+
 			$participant = $this->participantService->getParticipant($room, $userId, false);
 			if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 				// No chat permissions is like read-only

@@ -202,6 +202,10 @@ class Operation implements IOperation {
 			throw new UnexpectedValueException('Room not found', $e->getCode(), $e);
 		}
 
+		if ($room->getRemoteServer() !== '') {
+			throw new UnexpectedValueException('Room is a proxy conversation');
+		}
+
 		if ($mode === self::MESSAGE_MODES['ROOM_MENTION']) {
 			try {
 				$participant = $this->participantService->getParticipant($room, $uid, false);

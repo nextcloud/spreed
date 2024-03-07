@@ -96,6 +96,10 @@ class CurrentMessageSearch extends MessageSearch {
 			return SearchResult::complete($title, []);
 		}
 
+		if ($room->getRemoteServer() !== '') {
+			return SearchResult::complete($title, []);
+		}
+
 		return $this->performSearch($user, $query, $this->l->t('Messages'), [$room], true);
 	}
 }
