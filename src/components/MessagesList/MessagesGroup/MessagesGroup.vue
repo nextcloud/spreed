@@ -23,6 +23,7 @@
 	<li class="wrapper">
 		<div class="messages__avatar">
 			<AvatarWrapper :id="actorId"
+				:token="token"
 				:name="actorDisplayName"
 				:source="actorType"
 				:size="AVATAR.SIZE.SMALL"

@@ -29,6 +29,13 @@
 		<div v-else-if="isBot" class="avatar bot">
 			{{ '>_' }}
 		</div>
+		<img v-else-if="isRemoteUser && token"
+			:key="avatarUrl"
+			:src="avatarUrl"
+			:width="size"
+			:height="size"
+			:alt="name"
+			class="avatar icon">
 		<NcAvatar v-else
 			:key="id"
 			:user="id"
@@ -47,6 +54,8 @@
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { ATTENDEE, AVATAR } from '../../constants.js'
+import { getUserProxyAvatarOcsUrl } from '../../services/avatarService'
+import { isDarkTheme } from '../../utils/isDarkTheme'
 
 export default {
 
@@ -57,6 +66,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			default: null,
+		},
 		name: {
 			type: String,
 			required: true,
@@ -117,7 +130,7 @@ export default {
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.isUser || this.isBot || this.isGuest || this.isDeletedUser) {
+			if (!this.source || this.isUser || (this.isRemoteUser && this.token) || this.isBot || this.isGuest || this.isDeletedUser) {
 				return ''
 			}
 			if (this.isRemoteUser) {
@@ -172,6 +185,9 @@ export default {
 		},
 		menuContainerWithFallback() {
 			return this.menuContainer ?? this.$store.getters.getMainContainerSelector()
+		},
+		avatarUrl() {
+			return getUserProxyAvatarOcsUrl(this.token, this.id, isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
 		},
 	},
 }

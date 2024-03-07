@@ -36,6 +36,7 @@
 		@keydown.enter="handleClick">
 		<!-- Participant's avatar -->
 		<AvatarWrapper :id="computedId"
+			:token="token"
 			:name="computedName"
 			:source="participant.source || participant.actorType"
 			:disable-menu="isSearched"

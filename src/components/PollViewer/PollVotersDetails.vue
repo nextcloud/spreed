@@ -43,6 +43,7 @@
 				:key="index"
 				class="poll-voters-details__list-item">
 				<AvatarWrapper :id="item.actorId"
+					:token="token"
 					:name="getDisplayName(item)"
 					:source="item.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
@@ -74,6 +75,11 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+
 		details: {
 			type: Array,
 			required: true,

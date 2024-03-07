@@ -43,6 +43,7 @@
 				:display-name="displayName"
 				:user="userId" />
 			<AvatarWrapper :id="userId"
+				:token="token"
 				:name="displayName"
 				:source="actorType"
 				:size="avatarSize"

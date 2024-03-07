@@ -35,7 +35,7 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
-import { getConversationAvatarOcsUrl } from '../../../../../services/avatarService'
+import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService'
 import { isDarkTheme } from '../../../../../utils/isDarkTheme.js'
 
 export default {
@@ -46,6 +46,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		type: {
 			type: String,
 			required: true,
@@ -111,9 +115,13 @@ export default {
 				|| (this.isMentionToGuest && this.isCurrentGuest)
 		},
 		avatarUrl() {
-			if (this.isGroupMention) {
+			if (this.isRemoteUser) {
+				return this.token
+					? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, isDarkTheme, 64)
+					: 'icon-user-forced-white'
+			} else if (this.isGroupMention) {
 				return 'icon-group-forced-white'
-			} else if (this.isMentionToGuest || this.isRemoteUser) {
+			} else if (this.isMentionToGuest) {
 				return 'icon-user-forced-white'
 			} else if (!this.isMentionToAll) {
 				return undefined

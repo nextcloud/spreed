@@ -41,6 +41,7 @@
 					<VideoBackground :display-name="displayName"
 						:user="userId" />
 					<AvatarWrapper :id="userId"
+						:token="token"
 						:name="displayName"
 						:source="actorType"
 						:size="AVATAR.SIZE.EXTRA_LARGE"

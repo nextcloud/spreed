@@ -62,6 +62,7 @@
 					<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
 						class="results__option__details">
 						<PollVotersDetails v-if="poll.details"
+							:token="token"
 							:container="container"
 							:details="getFilteredDetails(index)" />
 						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">

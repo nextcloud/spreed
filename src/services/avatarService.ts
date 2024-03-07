@@ -34,6 +34,10 @@ const getConversationAvatarOcsUrl = function(token: string, isDarkTheme: boolean
 	return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '') + (avatarVersion ? '?v={avatarVersion}' : ''), { token, avatarVersion })
 }
 
+const getUserProxyAvatarOcsUrl = function(token: string, cloudId: string, isDarkTheme: boolean, size: 64 | 512 = 512): string {
+	return generateOcsUrl('apps/spreed/api/v1/proxy/{token}/user-avatar/{size}' + (isDarkTheme ? '/dark' : '') + '?cloudId={cloudId}', { token, cloudId, size })
+}
+
 const setConversationAvatar = async function(token: string, file: File): setFileAvatarResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }), file)
 }
@@ -51,6 +55,7 @@ const deleteConversationAvatar = async function(token: string): deleteAvatarResp
 
 export {
 	getConversationAvatarOcsUrl,
+	getUserProxyAvatarOcsUrl,
 	setConversationAvatar,
 	setConversationEmojiAvatar,
 	deleteConversationAvatar,

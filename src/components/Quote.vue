@@ -35,6 +35,7 @@ components.
 				role="heading"
 				aria-level="4">
 				<AvatarWrapper :id="actorId"
+					:token="token"
 					:name="getDisplayName"
 					:source="actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
