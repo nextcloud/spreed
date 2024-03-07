@@ -331,14 +331,9 @@ class ChatController {
 			return new DataResponse([], $statusCode);
 		}
 
-		/** @var ?TalkChatMessageWithParent $data */
+		/** @var TalkChatMessageWithParent $data */
 		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_ACCEPTED]);
-		if (!empty($data)) {
-			$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'actorDisplayName');
-			$data = $this->userConverter->convertAttendee($room, $data, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
-		} else {
-			$data = null;
-		}
+		$data = $this->userConverter->convertMessage($room, $data);
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
