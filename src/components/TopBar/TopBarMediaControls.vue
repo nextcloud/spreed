@@ -70,7 +70,7 @@
 			:model="model"
 			color="#ffffff" />
 
-		<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
+		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
 			v-tooltip="toggleVirtualBackgroundButtonLabel"
 			type="tertiary-no-background"
 			:aria-label="toggleVirtualBackgroundButtonLabel"
@@ -82,44 +82,41 @@
 			</template>
 		</NcButton>
 
-		<NcActions v-if="!screenSharingButtonHidden"
+		<NcActions v-if="!isSidebar && model.attributes.localScreen"
 			id="screensharing-button"
 			v-tooltip="screenSharingButtonTooltip"
+			type="tertiary-no-background"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
 			:container="container"
 			:open.sync="screenSharingMenuOpen">
-			<!-- Actions button icon -->
 			<template #icon>
-				<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
-				<PresentToAll v-else :size="20" fill-color="#ffffff" />
+				<CancelPresentation :size="20" fill-color="#ffffff" />
 			</template>
-			<!-- /Actions button icon -->
 			<!-- Actions -->
-			<NcActionButton v-if="!screenSharingMenuOpen"
-				@click.stop="toggleScreenSharingMenu">
+			<NcActionButton close-after-click @click="showScreen">
 				<template #icon>
-					<PresentToAll :size="20" fill-color="#ffffff" />
+					<Monitor :size="20" />
 				</template>
-				{{ screenSharingButtonTooltip }}
+				{{ t('spreed', 'Show your screen') }}
 			</NcActionButton>
-			<template v-if="model.attributes.localScreen">
-				<NcActionButton close-after-click @click="showScreen">
-					<template #icon>
-						<Monitor :size="20" />
-					</template>
-					{{ t('spreed', 'Show your screen') }}
-				</NcActionButton>
-				<NcActionButton close-after-click @click="stopScreen">
-					<template #icon>
-						<CancelPresentation :size="20" />
-					</template>
-					{{ t('spreed', 'Stop screensharing') }}
-				</NcActionButton>
-			</template>
+			<NcActionButton close-after-click @click="stopScreen">
+				<template #icon>
+					<CancelPresentation :size="20" />
+				</template>
+				{{ t('spreed', 'Stop screensharing') }}
+			</NcActionButton>
 		</NcActions>
+		<NcButton v-else-if="!isSidebar"
+			v-tooltip="screenSharingButtonTooltip"
+			type="tertiary-no-background"
+			@click.stop="toggleScreenSharingMenu">
+			<template #icon>
+				<PresentToAll :size="20" fill-color="#ffffff" />
+			</template>
+		</NcButton>
 	</div>
 </template>
 
@@ -186,18 +183,6 @@ export default {
 			type: Object,
 			required: true,
 		},
-		screenSharingButtonHidden: {
-			type: Boolean,
-			default: false,
-		},
-		showActions: {
-			type: Boolean,
-			default: true,
-		},
-
-		/**
-		 * In the sidebar the conversation settings are hidden
-		 */
 		isSidebar: {
 			type: Boolean,
 			default: false,
@@ -205,8 +190,9 @@ export default {
 	},
 
 	setup() {
-		const isInCall = useIsInCall()
-		return { isInCall }
+		return {
+			isInCall: useIsInCall(),
+		}
 	},
 
 	data() {

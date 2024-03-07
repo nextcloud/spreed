@@ -87,8 +87,7 @@
 			class="local-media-controls dark-hover"
 			:token="token"
 			:model="localMediaModel"
-			:show-actions="!isSidebar"
-			:screen-sharing-button-hidden="isSidebar"
+			:is-sidebar="isSidebar"
 			:local-call-participant-model="localCallParticipantModel" />
 
 		<!-- TopBar menu -->
