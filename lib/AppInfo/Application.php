@@ -122,6 +122,7 @@ use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
+use OCA\Talk\Team\TalkTeamResourceProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -331,6 +332,8 @@ class Application extends App implements IBootstrap {
 		$context->registerReferenceProvider(TalkReferenceProvider::class);
 
 		$context->registerTalkBackend(TalkBackend::class);
+
+		$context->registerTeamResourceProvider(TalkTeamResourceProvider::class);
 	}
 
 	public function boot(IBootContext $context): void {
