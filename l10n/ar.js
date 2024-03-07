@@ -1175,6 +1175,8 @@ OC.L10N.register(
     "Select microphone" : "اختر مايك",
     "No camera available" : "لا توجد كاميرا متاحة",
     "Select camera" : "اختر كاميرا",
+    "Playing …" : "قيد التشغيل ...",
+    "Test speakers" : "اختبار مكبرات الصوت",
     "Media settings" : "إعدادات الوسائط",
     "Devices" : "الأجهزة",
     "Backgrounds" : "الخلفيّات",

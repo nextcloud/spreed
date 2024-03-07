@@ -1175,6 +1175,8 @@ OC.L10N.register(
     "Select microphone" : "Velg mikrofon",
     "No camera available" : "Ingen kamera tilgjengelig",
     "Select camera" : "Velg kamera",
+    "Playing …" : "Spiller...",
+    "Test speakers" : "Test høyttalere",
     "Media settings" : "Innstillinger for media",
     "Devices" : "Enheter",
     "Backgrounds" : "Bakgrunner",

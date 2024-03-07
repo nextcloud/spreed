@@ -1175,6 +1175,8 @@ OC.L10N.register(
     "Select microphone" : "選取麥克風",
     "No camera available" : "沒有可用的網路攝影機",
     "Select camera" : "選取網路攝影機",
+    "Playing …" : "正在播放……",
+    "Test speakers" : "測試喇叭",
     "Media settings" : "媒體設定",
     "Devices" : "裝置",
     "Backgrounds" : "背景",

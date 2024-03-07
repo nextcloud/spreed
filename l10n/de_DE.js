@@ -1175,6 +1175,8 @@ OC.L10N.register(
     "Select microphone" : "Mikrofon auswählen",
     "No camera available" : "Keine Kamera verfügbar",
     "Select camera" : "Kamera auswählen",
+    "Playing …" : "Testound ausgeben …",
+    "Test speakers" : "Lautsprecher testen",
     "Media settings" : "Medien-Einstellungen",
     "Devices" : "Geräte",
     "Backgrounds" : "Hintergründe",

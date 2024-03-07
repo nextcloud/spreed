@@ -1175,6 +1175,8 @@ OC.L10N.register(
     "Select microphone" : "Изаберите микрофон",
     "No camera available" : "Нема доступне камере",
     "Select camera" : "Изаберите камеру",
+    "Playing …" : "Пушта се",
+    "Test speakers" : "Тест звучника",
     "Media settings" : "Подешавања медија",
     "Devices" : "Уређаји",
     "Backgrounds" : "Позадине",
