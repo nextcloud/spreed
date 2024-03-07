@@ -845,7 +845,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($this->room->getRemoteServer()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
-			return $proxy->getParticipants($this->room, $this->participant, $includeStatus);
+			return $proxy->getParticipants($this->room, $this->participant);
 		}
 
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
