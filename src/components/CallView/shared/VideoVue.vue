@@ -52,6 +52,7 @@
 				class="avatar-container">
 				<VideoBackground :display-name="participantName" :user="participantUserId" />
 				<AvatarWrapper :id="participantUserId"
+					:token="token"
 					:name="participantName"
 					:source="participantActorType"
 					:size="avatarSize"

@@ -24,6 +24,7 @@
 	<NcNoteCard type="info" class="absence-reminder">
 		<template #icon>
 			<AvatarWrapper :id="userAbsence.userId"
+				:token="token"
 				:name="displayName"
 				source="users"
 				disable-menu
@@ -86,6 +87,10 @@ export default {
 	},
 
 	computed: {
+		token() {
+			return this.$store.getters.getToken()
+		},
+
 		userAbsenceCaption() {
 			return t('spreed', '{user} is out of office and might not respond.', { user: this.displayName })
 		},

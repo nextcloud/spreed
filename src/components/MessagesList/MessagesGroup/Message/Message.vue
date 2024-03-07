@@ -371,7 +371,10 @@ export default {
 				if (type === 'user' || type === 'call' || type === 'guest' || type === 'user-group' || type === 'group') {
 					richParameters[p] = {
 						component: Mention,
-						props: this.messageParameters[p],
+						props: {
+							...this.messageParameters[p],
+							token: this.token,
+						},
 					}
 				} else if (type === 'file' && mimetype !== 'text/vcard') {
 					richParameters[p] = {

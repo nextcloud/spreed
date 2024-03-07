@@ -203,7 +203,7 @@ import Send from 'vue-material-design-icons/Send.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
-import { generateOcsUrl } from '@nextcloud/router'
+import { generateUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -221,6 +221,7 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import Quote from '../Quote.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
+import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -886,9 +887,7 @@ export default {
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.iconUrl = generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : ''), {
-						token: this.token,
-					})
+					possibleMention.iconUrl = getConversationAvatarOcsUrl(this.token, isDarkTheme)
 					possibleMention.subline = t('spreed', 'Everyone')
 				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
 					possibleMention.icon = 'icon-group-forced-white'
@@ -896,11 +895,17 @@ export default {
 				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
 					possibleMention.icon = 'icon-user-forced-white'
 					possibleMention.subline = t('spreed', 'Guest')
+				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
+					possibleMention.icon = 'icon-user-forced-white'
+					possibleMention.iconUrl = getUserProxyAvatarOcsUrl(this.token, possibleMention.id, isDarkTheme, 64)
 				} else {
 					// The avatar is automatically shown for users, but an icon
 					// is nevertheless required as fallback.
 					possibleMention.icon = 'icon-user-forced-white'
-
+					if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
+						// Prevent local users avatars in federated room to be overwritten
+						possibleMention.iconUrl = generateUrl('avatar/{userId}/64' + (isDarkTheme ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
+					}
 					// Convert status properties to an object.
 					if (possibleMention.status) {
 						possibleMention.status = {

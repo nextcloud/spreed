@@ -75,11 +75,11 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { generateOcsUrl } from '@nextcloud/router'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { AVATAR, CONVERSATION } from '../constants.js'
+import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { isDarkTheme } from '../utils/isDarkTheme.js'
 
 const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
@@ -238,12 +238,7 @@ export default {
 				return undefined
 			}
 
-			const avatarEndpoint = 'apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '')
-
-			return generateOcsUrl(avatarEndpoint + '?v={avatarVersion}', {
-				token: this.item.token,
-				avatarVersion: this.item.avatarVersion,
-			})
+			return getConversationAvatarOcsUrl(this.item.token, isDarkTheme, this.item.avatarVersion)
 		},
 	},
 }

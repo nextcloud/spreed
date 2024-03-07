@@ -26,6 +26,7 @@
 				<AvatarWrapper v-for="(participant, index) in visibleParticipants"
 					:id="participant.actorId"
 					:key="index"
+					:token="token"
 					:name="participant.displayName"
 					:source="participant.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
