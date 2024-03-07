@@ -117,15 +117,16 @@ export default {
 		},
 
 		invitations() {
-			const pendingShares = this.federationStore.pendingShares
-			for (const id in pendingShares) {
-				pendingShares[id] = Object.assign({}, pendingShares[id], {
+			const invitations = {}
+			for (const id in this.federationStore.pendingShares) {
+				invitations[id] = {
+					...this.federationStore.pendingShares[id],
 					type: CONVERSATION.TYPE.GROUP,
 					isFederatedConversation: true,
 					isDummyConversation: true,
-				})
+				}
 			}
-			return pendingShares
+			return invitations
 		},
 	},
 
@@ -145,17 +146,19 @@ export default {
 			if (conversation?.token) {
 				this.$store.dispatch('addConversation', conversation)
 			}
-			if (this.invitations.length === 0) {
-				this.closeModal()
-			}
+			this.checkIfNoMoreInvitations()
 		},
 
 		async rejectShare(id) {
 			await this.federationStore.rejectShare(id)
-			if (this.invitations.length === 0) {
+			this.checkIfNoMoreInvitations()
+		},
+
+		checkIfNoMoreInvitations() {
+			if (Object.keys(this.invitations).length === 0) {
 				this.closeModal()
 			}
-		},
+		}
 	},
 }
 </script>
