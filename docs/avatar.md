@@ -92,3 +92,39 @@
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
     - Body: the image file
+
+## Get federated user avatar (binary)
+
+* Required capability: `federation-v1`
+* Method: `GET`
+* Endpoint: `/proxy/{token}/user-avatar/{size}`
+* Data:
+
+| field     | type   | Description                              |
+|-----------|--------|------------------------------------------|
+| `size`    | int    | Only 64 and 512 are supported            |
+| `cloudId` | string | Federation CloudID to get the avatar for |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+    - Body: the image file
+
+## Get dark mode federated user avatar (binary)
+
+* Required capability: `federation-v1`
+* Method: `GET`
+* Endpoint: `/proxy/{token}/user-avatar/{size}/dark`
+* Data:
+
+| field     | type   | Description                              |
+|-----------|--------|------------------------------------------|
+| `size`    | int    | Only 64 and 512 are supported            |
+| `cloudId` | string | Federation CloudID to get the avatar for |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+    - Body: the image file

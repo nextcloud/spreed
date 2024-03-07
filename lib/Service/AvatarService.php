@@ -237,6 +237,11 @@ class AvatarService {
 		return new InMemoryFile($token, file_get_contents($this->getAvatarPath($room, $darkTheme)));
 	}
 
+	public function getPersonPlaceholder(bool $darkTheme = false): ISimpleFile {
+		$colorTone = $darkTheme ? 'dark' : 'bright';
+		return new InMemoryFile('fallback', file_get_contents(__DIR__ . '/../../img/icon-conversation-user-' . $colorTone . '.svg'));
+	}
+
 	protected function getEmojiAvatar(string $emoji, string $fillColor): string {
 		return str_replace([
 			'{letter}',

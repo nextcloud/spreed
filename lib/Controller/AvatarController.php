@@ -30,16 +30,21 @@ namespace OCA\Talk\Controller;
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversation;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
+use OCP\Federation\ICloudIdManager;
+use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
@@ -57,6 +62,8 @@ class AvatarController extends AEnvironmentAwareController {
 		protected IUserSession $userSession,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
+		protected ICloudIdManager $cloudIdManager,
+		protected IAvatarManager $avatarManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -138,7 +145,7 @@ class AvatarController extends AEnvironmentAwareController {
 	#[NoCSRFRequired]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
-		if ($this->room->getRemoteServer()) {
+		if ($this->room->getRemoteServer() !== '') {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
 			try {
@@ -168,6 +175,106 @@ class AvatarController extends AEnvironmentAwareController {
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatarDark(): FileDisplayResponse {
 		return $this->getAvatar(true);
+	}
+
+	/**
+	 * Get the avatar of a cloudId user
+	 *
+	 * @param int $size Avatar size
+	 * @psalm-param 64|512 $size
+	 * @param string $cloudId Federation CloudID to get the avatar for
+	 * @param bool $darkTheme Theme used for background
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: User avatar returned
+	 */
+	#[FederationSupported]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireLoggedInParticipant]
+	public function getUserProxyAvatar(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
+		try {
+			$resolvedCloudId = $this->cloudIdManager->resolveCloudId($cloudId);
+		} catch (\InvalidArgumentException) {
+			return $this->getPlaceholderResponse($darkTheme);
+		}
+
+		$ownId = $this->cloudIdManager->getCloudId($this->userSession->getUser()->getCloudId(), null);
+
+		/**
+		 * Reach out to the remote server to get the avatar
+		 */
+		if ($ownId->getRemote() !== $resolvedCloudId->getRemote()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
+			try {
+				return $proxy->getUserProxyAvatar($resolvedCloudId->getRemote(), $resolvedCloudId->getUser(), $size, $darkTheme);
+			} catch (CannotReachRemoteException) {
+				// Falling back to a local "user" avatar
+				return $this->getPlaceholderResponse($darkTheme);
+			}
+		}
+
+		/**
+		 * We are the server that hosts the user, so getting it from the avatar manager
+		 */
+		try {
+			$avatar = $this->avatarManager->getAvatar($resolvedCloudId->getUser());
+			$avatarFile = $avatar->getFile($size, $darkTheme);
+		} catch (\Exception) {
+			return $this->getPlaceholderResponse($darkTheme);
+		}
+
+		$response = new FileDisplayResponse(
+			$avatarFile,
+			Http::STATUS_OK,
+			['Content-Type' => $avatarFile->getMimeType()],
+		);
+		// Cache for 1 day
+		$response->cacheFor(60 * 60 * 24, false, true);
+		return $response;
+	}
+
+	/**
+	 * Get the dark mode avatar of a cloudId user
+	 *
+	 * @param int $size Avatar size
+	 * @psalm-param 64|512 $size
+	 * @param string $cloudId Federation CloudID to get the avatar for
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: User avatar returned
+	 */
+	#[FederationSupported]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireLoggedInParticipant]
+	public function getUserProxyAvatarDark(int $size, string $cloudId): FileDisplayResponse {
+		return $this->getUserProxyAvatar($size, $cloudId, true);
+	}
+
+	/**
+	 * Get the placeholder avatar
+	 *
+	 * @param bool $darkTheme Theme used for background
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: User avatar returned
+	 */
+	protected function getPlaceholderResponse(bool $darkTheme): FileDisplayResponse {
+		$file = $this->avatarService->getPersonPlaceholder($darkTheme);
+		$response = new FileDisplayResponse(
+			$file,
+			Http::STATUS_OK,
+			['Content-Type' => $file->getMimeType()],
+		);
+		$response->cacheFor(60 * 60 * 24, false, true);
+		return $response;
+
 	}
 
 	/**

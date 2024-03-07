@@ -10,6 +10,14 @@ type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> &
 type OneOf<T extends any[]> = T extends [infer Only] ? Only : T extends [infer A, infer B, ...infer Rest] ? OneOf<[XOR<A, B>, ...Rest]> : never;
 
 export type paths = {
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}": {
+    /** Get the avatar of a cloudId user */
+    get: operations["avatar-get-user-proxy-avatar"];
+  };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}/dark": {
+    /** Get the dark mode avatar of a cloudId user */
+    get: operations["avatar-get-user-proxy-avatar-dark"];
+  };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
     /**
      * Accept a federation invites
@@ -266,6 +274,62 @@ export type external = Record<string, never>;
 
 export type operations = {
 
+  /** Get the avatar of a cloudId user */
+  "avatar-get-user-proxy-avatar": {
+    parameters: {
+      query: {
+        /** @description Federation CloudID to get the avatar for */
+        cloudId: string;
+        /** @description Theme used for background */
+        darkTheme?: 0 | 1;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+        /** @description Avatar size */
+        size: 64 | 512;
+      };
+    };
+    responses: {
+      /** @description User avatar returned */
+      200: {
+        content: {
+          "*/*": string;
+        };
+      };
+    };
+  };
+  /** Get the dark mode avatar of a cloudId user */
+  "avatar-get-user-proxy-avatar-dark": {
+    parameters: {
+      query: {
+        /** @description Federation CloudID to get the avatar for */
+        cloudId: string;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+        /** @description Avatar size */
+        size: 64 | 512;
+      };
+    };
+    responses: {
+      /** @description User avatar returned */
+      200: {
+        content: {
+          "*/*": string;
+        };
+      };
+    };
+  };
   /**
    * Accept a federation invites
    * @description 🚧 Draft: Still work in progress
