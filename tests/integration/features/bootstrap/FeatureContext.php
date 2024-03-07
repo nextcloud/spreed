@@ -403,10 +403,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				self::$tokenToIdentifier[$room['token']] = $room['name'];
 			}
 
-			if (isset($room['remoteAccessToken'])) {
-				self::$remoteAuth[self::translateRemoteServer($room['remoteServer']) . '#' . self::$identifierToToken[$room['name']]] = $room['remoteAccessToken'];
-			}
-
 			$data = [];
 			if (isset($expectedRoom['id'])) {
 				$data['id'] = self::$tokenToIdentifier[$room['token']];
@@ -570,9 +566,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$data = [];
 			if (isset($expectedInvite['id'])) {
 				$data['id'] = self::$tokenToIdentifier[$invite['token']];
-			}
-			if (isset($expectedInvite['accessToken'])) {
-				$data['accessToken'] = $invite['accessToken'];
 			}
 			if (isset($expectedInvite['inviterCloudId'])) {
 				$data['inviterCloudId'] = $invite['inviterCloudId'];
@@ -3414,20 +3407,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function setCurrentUser(?string $user, ?string $identifier = null): ?string {
 		$oldUser = $this->currentUser;
-
-		if ($identifier && str_starts_with($user, 'federation/')) {
-			$user = substr($user, 11);
-
-			$authArrayKey = 'LOCAL#' . self::$identifierToToken[$identifier];
-			if (!isset(self::$remoteAuth[$authArrayKey])) {
-				throw new \Exception(
-					'No remote auth available for: ' . 'LOCAL#' . self::$identifierToToken[$identifier]
-					. '. Did you pull rooms for the recipient? (user: ' . $user . ')'
-				);
-			}
-			$user = 'federation#' . urlencode($user . '@' . 'http://localhost:8180') . '#' . self::$remoteAuth[$authArrayKey];
-		}
-
 		$this->currentUser = $user;
 		return $oldUser;
 	}
@@ -4350,11 +4329,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = array_merge($options, ['cookies' => $this->getUserCookieJar($this->currentUser)]);
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} elseif ($this->currentUser !== null && str_starts_with($this->currentUser, 'federation')) {
-			$auth = explode('#', $this->currentUser);
-			array_shift($auth);
-			$options['auth'] = $auth;
-			$headers['X-Nextcloud-Federation'] = 1;
 		} elseif ($this->currentUser !== null && !str_starts_with($this->currentUser, 'guest')) {
 			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}

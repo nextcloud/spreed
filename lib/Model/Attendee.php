@@ -216,7 +216,6 @@ class Attendee extends Entity {
 			'last_mention_direct' => $this->getLastMentionDirect(),
 			'read_privacy' => $this->getReadPrivacy(),
 			'permissions' => $this->getPermissions(),
-			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
 			'invited_cloud_id' => $this->getInvitedCloudId(),
 			'phone_number' => $this->getPhoneNumber(),

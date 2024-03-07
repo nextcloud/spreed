@@ -114,7 +114,6 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkFederationInvite = array{
- *     accessToken: string,
  *     id: int,
  *     state: int,
  *     localCloudId: string,

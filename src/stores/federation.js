@@ -121,7 +121,6 @@ export const useFederationStore = defineStore('federation', {
 			Vue.delete(this.pendingShares[id], 'loading')
 			Vue.set(this.acceptedShares, id, {
 				...this.pendingShares[id],
-				accessToken: conversation.remoteAccessToken,
 				localRoomId: conversation.id,
 				state: FEDERATION.STATE.ACCEPTED,
 			})
