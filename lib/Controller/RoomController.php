@@ -691,6 +691,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * 200: Successfully added room to favorites
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function addToFavorites(): DataResponse {
@@ -705,6 +706,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * 200: Successfully removed room from favorites
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function removeFromFavorites(): DataResponse {
@@ -722,6 +724,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 200: Notification level updated successfully
 	 * 400: Updating notification level is not possible
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function setNotificationLevel(int $level): DataResponse {
