@@ -456,6 +456,8 @@ export default {
 					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
 					}
+				} else {
+					this.clearVirtualBackground()
 				}
 
 				this.initializeDevices()

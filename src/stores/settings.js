@@ -55,6 +55,10 @@ export const useSettingsStore = defineStore('settings', {
 
 	getters: {
 		getShowMediaSettings: (state) => (token) => {
+			if (!token) {
+				return true
+			}
+
 			if (state.showMediaSettings[token] !== undefined) {
 				return state.showMediaSettings[token]
 			}
