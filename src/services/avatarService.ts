@@ -30,6 +30,10 @@ import type {
 	setFileAvatarResponse
 } from '../types'
 
+const getConversationAvatarOcsUrl = function(token: string, isDarkTheme: boolean, avatarVersion?: string): string {
+	return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '') + (avatarVersion ? '?v={avatarVersion}' : ''), { token, avatarVersion })
+}
+
 const setConversationAvatar = async function(token: string, file: File): setFileAvatarResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }), file)
 }
@@ -46,6 +50,7 @@ const deleteConversationAvatar = async function(token: string): deleteAvatarResp
 }
 
 export {
+	getConversationAvatarOcsUrl,
 	setConversationAvatar,
 	setConversationEmojiAvatar,
 	deleteConversationAvatar,

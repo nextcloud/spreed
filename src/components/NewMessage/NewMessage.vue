@@ -221,6 +221,7 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import Quote from '../Quote.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
+import { getConversationAvatarOcsUrl } from '../../services/avatarService'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -886,9 +887,7 @@ export default {
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-user-forced-white'
-					possibleMention.iconUrl = generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : ''), {
-						token: this.token,
-					})
+					possibleMention.iconUrl = getConversationAvatarOcsUrl(this.token, isDarkTheme)
 					possibleMention.subline = t('spreed', 'Everyone')
 				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
 					possibleMention.icon = 'icon-group-forced-white'

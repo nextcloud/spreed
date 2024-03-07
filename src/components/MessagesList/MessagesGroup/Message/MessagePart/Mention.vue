@@ -32,10 +32,10 @@
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
-import { generateOcsUrl } from '@nextcloud/router'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
+import { getConversationAvatarOcsUrl } from '../../../../../services/avatarService'
 import { isDarkTheme } from '../../../../../utils/isDarkTheme.js'
 
 export default {
@@ -119,9 +119,7 @@ export default {
 				return undefined
 			}
 
-			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : ''), {
-				token: this.id,
-			})
+			return getConversationAvatarOcsUrl(this.id, isDarkTheme)
 		},
 	},
 
