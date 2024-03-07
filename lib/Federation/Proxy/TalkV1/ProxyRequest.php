@@ -59,11 +59,11 @@ class ProxyRequest {
 	}
 
 	protected function generateDefaultRequestOptions(
-		string $cloudId,
+		?string $cloudId,
 		#[SensitiveParameter]
-		string $accessToken,
+		?string $accessToken,
 	): array {
-		return  [
+		$options = [
 			'verify' => !$this->config->getSystemValueBool('sharing.federation.allowSelfSignedCertificates'),
 			'nextcloud' => [
 				'allow_local_address' => $this->config->getSystemValueBool('allow_local_remote_servers'),
@@ -74,8 +74,13 @@ class ProxyRequest {
 				'OCS-APIRequest' => 'true',
 			],
 			'timeout' => 5,
-			'auth' => [urlencode($cloudId), $accessToken],
 		];
+
+		if ($cloudId !== null && $accessToken !== null) {
+			$options['auth'] = [urlencode($cloudId), $accessToken];
+		}
+
+		return $options;
 	}
 
 	protected function prependProtocolIfNotAvailable(string $url): string {
@@ -91,9 +96,9 @@ class ProxyRequest {
 	 */
 	protected function request(
 		string $verb,
-		string $cloudId,
+		?string $cloudId,
 		#[SensitiveParameter]
-		string $accessToken,
+		?string $accessToken,
 		string $url,
 		array $parameters,
 	): IResponse {
@@ -134,9 +139,9 @@ class ProxyRequest {
 	 * @throws CannotReachRemoteException
 	 */
 	public function get(
-		string $cloudId,
+		?string $cloudId,
 		#[SensitiveParameter]
-		string $accessToken,
+		?string $accessToken,
 		string $url,
 		array $parameters = [],
 	): IResponse {

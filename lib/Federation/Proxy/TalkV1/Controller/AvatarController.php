@@ -77,4 +77,39 @@ class AvatarController {
 		$response->cacheFor(60 * 60 * 24, false, true);
 		return $response;
 	}
+
+	/**
+	 * @see \OCA\Talk\Controller\AvatarController::getUserProxyAvatar()
+	 *
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: User avatar returned
+	 */
+	public function getUserProxyAvatar(string $remoteServer, string $user, int $size, bool $darkTheme): FileDisplayResponse {
+		$proxy = $this->proxy->get(
+			null,
+			null,
+			$remoteServer . '/index.php/avatar/' . $user . '/' . $size . ($darkTheme ? '/dark' : ''),
+		);
+
+		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
+			if ($proxy->getStatusCode() !== Http::STATUS_NOT_FOUND) {
+				$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string) $proxy->getBody());
+			}
+			throw new CannotReachRemoteException('Avatar request had unexpected status code');
+		}
+
+		$content = $proxy->getBody();
+		if ($content === '') {
+			throw new CannotReachRemoteException('No avatar content received');
+		}
+
+		$file = new InMemoryFile($user, $content);
+
+		$response = new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => $file->getMimeType()]);
+		// Cache for 1 day
+		$response->cacheFor(60 * 60 * 24, false, true);
+		return $response;
+	}
 }

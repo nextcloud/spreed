@@ -372,6 +372,37 @@ export type paths = {
     /** Delete your avatar as a user */
     delete: operations["user_avatar-delete-avatar"];
   };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}": {
+    /** Get the avatar of a cloudId user */
+    get: operations["avatar-get-user-proxy-avatar"];
+  };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}/dark": {
+    /** Get the dark mode avatar of a cloudId user */
+    get: operations["avatar-get-user-proxy-avatar-dark"];
+  };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
+    /**
+     * Accept a federation invites
+     * @description 🚧 Draft: Still work in progress
+     */
+    post: operations["federation-accept-share"];
+    /**
+     * Decline a federation invites
+     * @description 🚧 Draft: Still work in progress
+     */
+    delete: operations["federation-reject-share"];
+  };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
+    /**
+     * Get a list of federation invites
+     * @description 🚧 Draft: Still work in progress
+     */
+    get: operations["federation-get-shares"];
+  };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
+    /** Fake join a room on the host server to verify the federated user is still part of it */
+    post: operations["room-join-federated-room"];
+  };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/message": {
     /**
      * Sends a new chat message to the given room
@@ -448,29 +479,6 @@ export type paths = {
      * This endpoint requires admin access
      */
     get: operations["settings-get-welcome-message"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
-    /**
-     * Accept a federation invites
-     * @description 🚧 Draft: Still work in progress
-     */
-    post: operations["federation-accept-share"];
-    /**
-     * Decline a federation invites
-     * @description 🚧 Draft: Still work in progress
-     */
-    delete: operations["federation-reject-share"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
-    /**
-     * Get a list of federation invites
-     * @description 🚧 Draft: Still work in progress
-     */
-    get: operations["federation-get-shares"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
-    /** Fake join a room on the host server to verify the federated user is still part of it */
-    post: operations["room-join-federated-room"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/backend": {
     /** Update the recording status as a backend */
@@ -5506,6 +5514,243 @@ export type operations = {
       };
     };
   };
+  /** Get the avatar of a cloudId user */
+  "avatar-get-user-proxy-avatar": {
+    parameters: {
+      query: {
+        /** @description Federation CloudID to get the avatar for */
+        cloudId: string;
+        /** @description Theme used for background */
+        darkTheme?: 0 | 1;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+        /** @description Avatar size */
+        size: 64 | 512;
+      };
+    };
+    responses: {
+      /** @description User avatar returned */
+      200: {
+        content: {
+          "*/*": string;
+        };
+      };
+    };
+  };
+  /** Get the dark mode avatar of a cloudId user */
+  "avatar-get-user-proxy-avatar-dark": {
+    parameters: {
+      query: {
+        /** @description Federation CloudID to get the avatar for */
+        cloudId: string;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+        /** @description Avatar size */
+        size: 64 | 512;
+      };
+    };
+    responses: {
+      /** @description User avatar returned */
+      200: {
+        content: {
+          "*/*": string;
+        };
+      };
+    };
+  };
+  /**
+   * Accept a federation invites
+   * @description 🚧 Draft: Still work in progress
+   */
+  "federation-accept-share": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        /** @description ID of the share */
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Invite accepted successfully */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: components["schemas"]["Room"];
+            };
+          };
+        };
+      };
+      /** @description Invite can not be accepted (maybe it was accepted already) */
+      400: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error: string;
+              };
+            };
+          };
+        };
+      };
+      /** @description Invite can not be found */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error?: string;
+              };
+            };
+          };
+        };
+      };
+      /** @description Remote server could not be reached to notify about the acceptance */
+      410: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error: string;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
+   * Decline a federation invites
+   * @description 🚧 Draft: Still work in progress
+   */
+  "federation-reject-share": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        /** @description ID of the share */
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Invite declined successfully */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      /** @description Invite can not be found */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error?: string;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
+   * Get a list of federation invites
+   * @description 🚧 Draft: Still work in progress
+   */
+  "federation-get-shares": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+      };
+    };
+    responses: {
+      /** @description Get list of received federation invites successfully */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: components["schemas"]["FederationInvite"][];
+            };
+          };
+        };
+      };
+    };
+  };
+  /** Fake join a room on the host server to verify the federated user is still part of it */
+  "room-join-federated-room": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v4";
+        /** @description Token of the room */
+        token: string;
+      };
+    };
+    responses: {
+      /** @description Federated user is still part of the room */
+      200: {
+        headers: {
+          "X-Nextcloud-Talk-Hash"?: string;
+        };
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      /** @description Room not found */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+    };
+  };
   /**
    * Sends a new chat message to the given room
    * @description The author and timestamp are automatically set to the current user/guest and time.
@@ -6084,187 +6329,6 @@ export type operations = {
     responses: {
       /** @description Successfully set new SIP settings */
       200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
-      };
-    };
-  };
-  /**
-   * Accept a federation invites
-   * @description 🚧 Draft: Still work in progress
-   */
-  "federation-accept-share": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        /** @description ID of the share */
-        id: number;
-      };
-    };
-    responses: {
-      /** @description Invite accepted successfully */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: components["schemas"]["Room"];
-            };
-          };
-        };
-      };
-      /** @description Invite can not be accepted (maybe it was accepted already) */
-      400: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error: string;
-              };
-            };
-          };
-        };
-      };
-      /** @description Invite can not be found */
-      404: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error?: string;
-              };
-            };
-          };
-        };
-      };
-      /** @description Remote server could not be reached to notify about the acceptance */
-      410: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error: string;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-  /**
-   * Decline a federation invites
-   * @description 🚧 Draft: Still work in progress
-   */
-  "federation-reject-share": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        /** @description ID of the share */
-        id: number;
-      };
-    };
-    responses: {
-      /** @description Invite declined successfully */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
-      };
-      /** @description Invite can not be found */
-      404: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error?: string;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-  /**
-   * Get a list of federation invites
-   * @description 🚧 Draft: Still work in progress
-   */
-  "federation-get-shares": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-      };
-    };
-    responses: {
-      /** @description Get list of received federation invites successfully */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: components["schemas"]["FederationInvite"][];
-            };
-          };
-        };
-      };
-    };
-  };
-  /** Fake join a room on the host server to verify the federated user is still part of it */
-  "room-join-federated-room": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v4";
-        /** @description Token of the room */
-        token: string;
-      };
-    };
-    responses: {
-      /** @description Federated user is still part of the room */
-      200: {
-        headers: {
-          "X-Nextcloud-Talk-Hash"?: string;
-        };
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
-      };
-      /** @description Room not found */
-      404: {
         content: {
           "application/json": {
             ocs: {
