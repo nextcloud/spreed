@@ -26,7 +26,7 @@ jobs:
 
       - name: Get version matrix
         id: versions
-        uses: icewind1991/nextcloud-version-matrix@d594a6929da316b732c53355e52a1ead77ba36c7 # v1.2.0
+        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
 
   changes:
     runs-on: ubuntu-latest-low
