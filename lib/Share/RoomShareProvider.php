@@ -688,7 +688,7 @@ class RoomShareProvider implements IShareProvider {
 			$id = $data['id'];
 			if ($this->isAccessibleResult($data)) {
 				$share = $this->createShareObject($data);
-				$shares[] = $share;
+				$shares[(int) $share->getId()] = $share;
 			} else {
 				$share = false;
 			}
@@ -701,7 +701,7 @@ class RoomShareProvider implements IShareProvider {
 		if ($recipientId !== null) {
 			return $this->resolveSharesForRecipient($shares, $recipientId);
 		} else {
-			return $shares;
+			return array_values($shares);
 		}
 	}
 
@@ -711,59 +711,53 @@ class RoomShareProvider implements IShareProvider {
 	 * If the recipient has not modified the share the original one is returned
 	 * instead.
 	 *
-	 * @param IShare[] $shares
+	 * @param array<int, IShare> $shareMap shares indexed by share id
 	 * @param string $userId
-	 * @return IShare[]
+	 * @param bool $allRoomShares indicates that the passed in shares are all room shares for the user
+	 * @return list<IShare>
 	 */
-	private function resolveSharesForRecipient(array $shares, string $userId): array {
-		$result = [];
+	private function resolveSharesForRecipient(array $shareMap, string $userId, bool $allRoomShares = false): array {
+		$qb = $this->dbConnection->getQueryBuilder();
 
-		$start = 0;
-		while (true) {
-			/** @var IShare[] $shareSlice */
-			$shareSlice = array_slice($shares, $start, 1000);
-			$start += 1000;
+		$query = $qb->select('*')
+			->from('share')
 
-			if ($shareSlice === []) {
-				break;
-			}
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)))
+			->andWhere($qb->expr()->orX(
+				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
+				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
+			));
 
-			/** @var int[] $ids */
-			$ids = [];
-			/** @var IShare[] $shareMap */
-			$shareMap = [];
-
-			foreach ($shareSlice as $share) {
-				$ids[] = (int)$share->getId();
-				$shareMap[$share->getId()] = $share;
-			}
-
-			$qb = $this->dbConnection->getQueryBuilder();
-
-			$query = $qb->select('*')
-				->from('share')
-				->where($qb->expr()->in('parent', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
-				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)))
-				->andWhere($qb->expr()->orX(
-					$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
-					$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
-				));
-
+		if ($allRoomShares) {
 			$stmt = $query->executeQuery();
 
 			while ($data = $stmt->fetch()) {
-				$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
-				$shareMap[$data['parent']]->setTarget($data['file_target']);
+				if (isset($shareMap[$data['parent']])) {
+					$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
+					$shareMap[$data['parent']]->setTarget($data['file_target']);
+				}
 			}
 
 			$stmt->closeCursor();
+		} else {
+			$chunks = array_chunk($shareMap, 1000, true);
+			$query->andWhere($qb->expr()->in('parent', $qb->createParameter('share_ids')));
+			foreach ($chunks as $chunk) {
+				$ids = array_keys($chunk);
+				$query->setParameter('share_ids', $ids, IQueryBuilder::PARAM_INT_ARRAY);
+				$stmt = $query->executeQuery();
 
-			foreach ($shareMap as $share) {
-				$result[] = $share;
+				while ($data = $stmt->fetch()) {
+					$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
+					$shareMap[$data['parent']]->setTarget($data['file_target']);
+				}
+
+				$stmt->closeCursor();
 			}
 		}
 
-		return $result;
+		return array_values($shareMap);
 	}
 
 	/**
@@ -857,12 +851,13 @@ class RoomShareProvider implements IShareProvider {
 					continue;
 				}
 
-				$shares[] = $this->createShareObject($data);
+				$share = $this->createShareObject($data);
+				$shares[$share->getId()] = $share;
 			}
 			$cursor->closeCursor();
 		}
 
-		$shares = $this->resolveSharesForRecipient($shares, $userId);
+		$shares = $this->resolveSharesForRecipient($shares, $userId, true);
 
 		return $shares;
 	}
