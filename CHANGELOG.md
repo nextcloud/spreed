@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.5 – 2024-03-08
+### Changed
+- Update translations
+
+### Fixed
+- fix(call): Fix missing screenshare button after stopping a screenshare
+  [#11721](https://github.com/nextcloud/spreed/issues/11721)
+- fix(call): Correctly focus the screenshare after selecting in the grid view
+  [#11755](https://github.com/nextcloud/spreed/issues/11755)
+- fix(chat): Fix jumping unread counter when entering a conversation after receiving a notification
+  [#11736](https://github.com/nextcloud/spreed/issues/11736)
+
 ## 19.0.0-beta.1 – 2024-03-08
 ### Added
 - Messages can now be edited by logged-in authors and moderators for 6 hours
