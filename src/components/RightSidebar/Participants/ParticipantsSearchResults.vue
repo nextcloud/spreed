@@ -101,11 +101,11 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
-import Hint from '../../../Hint.vue'
-import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
+import ParticipantsList from './ParticipantsList.vue'
+import Hint from '../../Hint.vue'
 
-import { ATTENDEE } from '../../../../constants.js'
-import { useIntegrationsStore } from '../../../../stores/integrations.js'
+import { ATTENDEE } from '../../../constants.js'
+import { useIntegrationsStore } from '../../../stores/integrations.js'
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
 

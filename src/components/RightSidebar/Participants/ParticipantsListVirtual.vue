@@ -38,8 +38,8 @@
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
 
-import Participant from './Participant/Participant.vue'
-import LoadingPlaceholder from '../../../LoadingPlaceholder.vue'
+import Participant from './Participant.vue'
+import LoadingPlaceholder from '../../LoadingPlaceholder.vue'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 

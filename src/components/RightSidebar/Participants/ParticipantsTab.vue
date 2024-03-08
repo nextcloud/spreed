@@ -74,9 +74,9 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 
-import ParticipantsList from './ParticipantsList/ParticipantsList.vue'
-import ParticipantsListVirtual from './ParticipantsList/ParticipantsListVirtual.vue'
-import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import ParticipantsList from './ParticipantsList.vue'
+import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
+import ParticipantsSearchResults from './ParticipantsSearchResults.vue'
 import DialpadPanel from '../../DialpadPanel.vue'
 import Hint from '../../Hint.vue'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'

@@ -85,7 +85,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ContactSelectionBubble from '../ContactSelectionBubble.vue'
 import DialpadPanel from '../DialpadPanel.vue'
-import ParticipantSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import ParticipantSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults.vue'
 import SelectPhoneNumber from '../SelectPhoneNumber.vue'
 import TransitionWrapper from '../TransitionWrapper.vue'
 

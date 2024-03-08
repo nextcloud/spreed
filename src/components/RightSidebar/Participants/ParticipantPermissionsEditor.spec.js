@@ -3,10 +3,10 @@ import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
-import PermissionsEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
+import PermissionsEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 
-import { PARTICIPANT, ATTENDEE } from '../../../../../../constants.js'
-import storeConfig from '../../../../../../store/storeConfig.js'
+import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import storeConfig from '../../../store/storeConfig.js'
 
 describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
