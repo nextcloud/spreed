@@ -688,7 +688,7 @@ class RoomShareProvider implements IShareProvider {
 			$id = $data['id'];
 			if ($this->isAccessibleResult($data)) {
 				$share = $this->createShareObject($data);
-				$shares[$share->getId()] = $share;
+				$shares[(int) $share->getId()] = $share;
 			} else {
 				$share = false;
 			}
@@ -714,7 +714,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param array<int, IShare> $shareMap shares indexed by share id
 	 * @param string $userId
 	 * @param bool $allRoomShares indicates that the passed in shares are all room shares for the user
-	 * @return List<IShare>
+	 * @return list<IShare>
 	 */
 	private function resolveSharesForRecipient(array $shareMap, string $userId, bool $allRoomShares = false): array {
 		$qb = $this->dbConnection->getQueryBuilder();
