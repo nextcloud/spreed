@@ -271,7 +271,7 @@ export default {
 		},
 
 		switchToScreen() {
-			if (!this.sharedData.screenVisible) {
+			if (!this.sharedData.screenVisible || !this.isBig) {
 				emit('switch-screen-to-id', this.model.attributes.peerId)
 			}
 		},
