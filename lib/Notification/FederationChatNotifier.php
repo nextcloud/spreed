@@ -109,7 +109,7 @@ class FederationChatNotifier {
 	protected function isMentionedAll(Room $room, ProxyCacheMessage $message): bool {
 		foreach ($message->getParsedMessageParameters() as $parameter) {
 			if ($parameter['type'] === 'call' // RichObjectDefinition
-				&& $parameter['id'] === $room->getRemoteToken()) {
+				&& $parameter['id'] === $room->getToken()) {
 				return true;
 			}
 		}

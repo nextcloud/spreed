@@ -29,6 +29,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 
 /**
@@ -42,6 +43,7 @@ class UserConverter {
 
 	public function __construct(
 		protected ParticipantService $participantService,
+		protected AvatarService $avatarService,
 	) {
 	}
 
@@ -105,6 +107,9 @@ class UserConverter {
 					$parameter['name'] = $localParticipants[$cloudId]['displayName'];
 				}
 			}
+		} elseif ($parameter['type'] === 'call' && $parameter['id'] === $room->getRemoteToken()) {
+			$parameter['id'] = $room->getToken();
+			$parameter['icon-url'] = $this->avatarService->getAvatarUrl($room);
 		}
 		return $parameter;
 	}
