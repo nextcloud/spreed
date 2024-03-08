@@ -23,32 +23,34 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import type { acceptShareResponse, getSharesResponse, rejectShareResponse } from '../types'
+
 /**
  * Fetches list of shares for a current user
  *
- * @param {object} [options] options;
+ * @param [options] options;
  */
-const getShares = async function(options) {
+const getShares = async function(options?: object): getSharesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/federation/invitation', undefined, options), options)
 }
 
 /**
  * Accept an invitation by provided id.
  *
- * @param {number} id invitation id;
- * @param {object} [options] options;
+ * @param id invitation id;
+ * @param [options] options;
  */
-const acceptShare = async function(id, options) {
+const acceptShare = async function(id: number, options?: object): acceptShareResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }, options), {}, options)
 }
 
 /**
  * Reject an invitation by provided id.
  *
- * @param {number} id invitation id;
- * @param {object} [options] options;
+ * @param id invitation id;
+ * @param [options] options;
  */
-const rejectShare = async function(id, options) {
+const rejectShare = async function(id: number, options?: object): rejectShareResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }, options), options)
 }
 

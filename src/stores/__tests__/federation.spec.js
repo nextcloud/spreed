@@ -1,8 +1,8 @@
 import { setActivePinia, createPinia } from 'pinia'
 
-import { getShares, acceptShare, rejectShare } from '../../services/federationService.js'
+import { getShares, acceptShare, rejectShare } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
-import { useFederationStore } from '../federation.js'
+import { useFederationStore } from '../federation.ts'
 
 jest.mock('../../services/federationService', () => ({
 	getShares: jest.fn(),

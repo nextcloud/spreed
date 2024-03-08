@@ -84,7 +84,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import ConversationIcon from '../ConversationIcon.vue'
 
 import { CONVERSATION } from '../../constants.js'
-import { useFederationStore } from '../../stores/federation.js'
+import { useFederationStore } from '../../stores/federation.ts'
 
 export default {
 	name: 'InvitationHandler',

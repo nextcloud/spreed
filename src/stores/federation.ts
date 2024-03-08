@@ -24,38 +24,18 @@ import { defineStore } from 'pinia'
 import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { getBaseUrl } from '@nextcloud/router'
 
 import { FEDERATION } from '../constants.js'
-import { getShares, acceptShare, rejectShare } from '../services/federationService.js'
+import { getShares, acceptShare, rejectShare } from '../services/federationService.ts'
+import type { Conversation, FederationInvite, NotificationInvite } from '../types'
 
-/**
- * @typedef {object} Share
- * @property {number} id the invitation id
- * @property {number} localRoomId the invitation local room id
- * @property {number} remoteAttendeeId the invitation remote attendee id
- * @property {string} remoteServerUrl the invitation remote server URL
- * @property {string} remoteToken the invitation remote token
- * @property {string} roomName the invitation room name
- * @property {number} state the invitation state
- * @property {string} userId the invitation user id
- * @property {string} inviterCloudId the inviter cloud id
- * @property {string} inviterDisplayName the inviter display name
- */
-
-/**
- * @typedef {object} State
- * @property {{[key: string]: Share}} pendingShares - pending invitations
- * @property {{[key: string]: Share}} acceptedShares - accepted invitations
- */
-
-/**
- * Store for other app integrations (additional actions for messages, participants, e.t.c)
- *
- * @param {string} id store name
- * @param {State} options.state store state structure
- */
+type State = {
+	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>,
+	acceptedShares: Record<string, FederationInvite>,
+}
 export const useFederationStore = defineStore('federation', {
-	state: () => ({
+	state: (): State => ({
 		pendingShares: {},
 		acceptedShares: {},
 	}),
@@ -63,7 +43,6 @@ export const useFederationStore = defineStore('federation', {
 	actions: {
 		/**
 		 * Fetch pending invitations and keep them in store
-		 *
 		 */
 		async getShares() {
 			try {
@@ -83,18 +62,19 @@ export const useFederationStore = defineStore('federation', {
 		/**
 		 * Add an invitation from notification to the store.
 		 *
-		 * @param {object} notification notification object
+		 * @param notification notification object
 		 */
-		addInvitationFromNotification(notification) {
+		addInvitationFromNotification(notification: NotificationInvite) {
 			if (this.pendingShares[notification.objectId]) {
 				return
 			}
 			const [remoteServerUrl, remoteToken] = notification.messageRichParameters.roomName.id.split('::')
 			const { id, name } = notification.messageRichParameters.user1
-			const invitation = {
+			const invitation: FederationInvite = {
 				id: notification.objectId,
-				localRoomId: null,
-				remoteAttendeeId: null,
+				localRoomId: 0,
+				localCloudId: notification.user + '@' + getBaseUrl().replace('https://', ''),
+				remoteAttendeeId: 0,
 				remoteServerUrl,
 				remoteToken,
 				roomName: notification.messageRichParameters.roomName.name,
@@ -109,10 +89,10 @@ export const useFederationStore = defineStore('federation', {
 		/**
 		 * Mark an invitation as accepted in store.
 		 *
-		 * @param {number} id invitation id
-		 * @param {object} conversation conversation object
+		 * @param id invitation id
+		 * @param conversation conversation object
 		 */
-		markInvitationAccepted(id, conversation) {
+		markInvitationAccepted(id: number, conversation: Conversation) {
 			if (!this.pendingShares[id]) {
 				return
 			}
@@ -128,10 +108,9 @@ export const useFederationStore = defineStore('federation', {
 		/**
 		 * Accept an invitation by provided id.
 		 *
-		 * @param {number} id invitation id
-		 * @return {object} conversation to join
+		 * @param id invitation id
 		 */
-		async acceptShare(id) {
+		async acceptShare(id: number): Promise<Conversation | undefined> {
 			if (!this.pendingShares[id]) {
 				return
 			}
@@ -149,9 +128,9 @@ export const useFederationStore = defineStore('federation', {
 		/**
 		 * Reject an invitation by provided id.
 		 *
-		 * @param {number} id invitation id
+		 * @param id invitation id
 		 */
-		async rejectShare(id) {
+		async rejectShare(id: number) {
 			if (!this.pendingShares[id]) {
 				return
 			}
