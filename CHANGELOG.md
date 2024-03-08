@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.5 – 2024-03-08
+### Changed
+- Update translations
+
+### Fixed
+- fix(call): Fix missing screenshare button after stopping a screenshare
+  [#11721](https://github.com/nextcloud/spreed/issues/11721)
+- fix(call): Correctly focus the screenshare after selecting in the grid view
+  [#11755](https://github.com/nextcloud/spreed/issues/11755)
+- fix(chat): Fix jumping unread counter when entering a conversation after receiving a notification
+  [#11736](https://github.com/nextcloud/spreed/issues/11736)
+
 ## 18.0.4 – 2024-02-29
 ### Added
 - feat(desktop): Allow using the avatar menu in the desktop client
