@@ -30,7 +30,6 @@ import { getShares, acceptShare, rejectShare } from '../services/federationServi
 
 /**
  * @typedef {object} Share
- * @property {string} accessToken the invitation access token
  * @property {number} id the invitation id
  * @property {number} localRoomId the invitation local room id
  * @property {number} remoteAttendeeId the invitation remote attendee id
@@ -93,7 +92,6 @@ export const useFederationStore = defineStore('federation', {
 			const [remoteServerUrl, remoteToken] = notification.messageRichParameters.roomName.id.split('::')
 			const { id, name } = notification.messageRichParameters.user1
 			const invitation = {
-				accessToken: null,
 				id: notification.objectId,
 				localRoomId: null,
 				remoteAttendeeId: null,
