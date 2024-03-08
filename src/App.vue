@@ -64,7 +64,7 @@ import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
-import { useFederationStore } from './stores/federation.js'
+import { useFederationStore } from './stores/federation.ts'
 import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 

@@ -1,8 +1,8 @@
 import { setActivePinia, createPinia } from 'pinia'
 
-import { getShares, acceptShare, rejectShare } from '../../services/federationService.js'
+import { getShares, acceptShare, rejectShare } from '../../services/federationService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
-import { useFederationStore } from '../federation.js'
+import { useFederationStore } from '../federation.ts'
 
 jest.mock('../../services/federationService', () => ({
 	getShares: jest.fn(),
@@ -17,7 +17,6 @@ describe('federationStore', () => {
 			userId: 'user0',
 			state: 0,
 			localRoomId: 10,
-			accessToken: 'ACCESS_TOKEN',
 			remoteServerUrl: 'remote.nextcloud.com',
 			remoteToken: 'TOKEN_2',
 			remoteAttendeeId: 11,
@@ -30,7 +29,6 @@ describe('federationStore', () => {
 			userId: 'user0',
 			state: 1,
 			localRoomId: 9,
-			accessToken: 'ACCESS_TOKEN',
 			remoteServerUrl: 'remote.nextcloud.com',
 			remoteToken: 'TOKEN_1',
 			remoteAttendeeId: 11,
@@ -160,7 +158,6 @@ describe('federationStore', () => {
 
 		const room = {
 			id: 10,
-			remoteAccessToken: 'ACCESS_TOKEN',
 		}
 		const acceptResponse = generateOCSResponse({ payload: room })
 		acceptShare.mockResolvedValueOnce(acceptResponse)

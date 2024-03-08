@@ -333,7 +333,7 @@ import {
 } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
-import { useFederationStore } from '../../stores/federation.js'
+import { useFederationStore } from '../../stores/federation.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
