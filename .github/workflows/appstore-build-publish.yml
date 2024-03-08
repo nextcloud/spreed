@@ -9,9 +9,6 @@ on:
   release:
     types: [published]
 
-env:
-  PHP_VERSION: 8.2
-
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
@@ -56,7 +53,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v3
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -65,10 +62,16 @@ jobs:
         if: ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
-      - name: Set up php ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@6d7209f44a25a59e904b1ee9f3b0c33ab2cd888d # v2
+      - name: Get php version
+        id: php-versions
+        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
         with:
-          php-version: ${{ env.PHP_VERSION }}
+          filename: ${{ env.APP_NAME }}/appinfo/info.xml
+
+      - name: Set up php ${{ steps.php-versions.outputs.php-min }}
+        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d # v2
+        with:
+          php-version: ${{ steps.php-versions.outputs.php-min }}
           coverage: none
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -151,7 +154,7 @@ jobs:
           tar -zcvf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
 
       - name: Attach tarball to github release
-        uses: svenstaro/upload-release-action@1beeb572c19a9242f4361f4cee78f8e0d9aec5df # v2
+        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # v2
         id: attach_to_release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
