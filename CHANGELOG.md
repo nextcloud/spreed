@@ -1,6 +1,41 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-beta.1 – 2024-03-08
+### Added
+- Messages can now be edited by logged-in authors and moderators for 6 hours
+  [#1836](https://github.com/nextcloud/spreed/issues/1836)
+- Added a "In conversation" search filter
+  [#11456](https://github.com/nextcloud/spreed/issues/11456)
+- Save unsent messages in browser storage so they survive a page reload or browser restart
+  [#3055](https://github.com/nextcloud/spreed/issues/3055)
+- Allow to accept individual users when the lobby is enabled
+  [#8601](https://github.com/nextcloud/spreed/issues/8601)
+- Flavored Markdown in messages
+  [#10066](https://github.com/nextcloud/spreed/issues/10066)
+- Allow to see all reactions
+  [#11508](https://github.com/nextcloud/spreed/issues/11508)
+- Preview: Federated chatting
+  [#11231](https://github.com/nextcloud/spreed/issues/11231)
+
+### Changed
+- Update translations
+- Update several dependencies
+- Added support for Janus 1.x
+- Prepare frontend code for a migration to Vue3
+- Migrated various icons to Material Design icons
+- Deleting messages is now possible without a time limitation (was 6 hours)
+  [#11408](https://github.com/nextcloud/spreed/issues/11408)
+- Guests are now rate-limited on mentioning users
+  [#11072](https://github.com/nextcloud/spreed/issues/11072)
+- Make polls more visible in the chat when they are posted during a call
+  [#11372](https://github.com/nextcloud/spreed/issues/11372)
+- Bots can now be installed by apps with limited feature flags
+  [#11630](https://github.com/nextcloud/spreed/issues/11630)
+
+### Known issues
+- Federated chatting: Various features are still visible but not functional
+
 ## 18.0.4 – 2024-02-29
 ### Added
 - feat(desktop): Allow using the avatar menu in the desktop client
