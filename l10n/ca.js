@@ -1127,6 +1127,7 @@ OC.L10N.register(
     "No matches found" : "No s'ha trobat cap coincidència",
     "Open conversations" : "Obre les converses",
     "Groups" : "Grups",
+    "Teams" : "Equips",
     "Loading" : "Carregant",
     "No search results" : "No s'han trobat resultats",
     "Talk settings" : "Paràmetres de Converses",
