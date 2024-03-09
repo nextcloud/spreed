@@ -86,7 +86,7 @@
     "@vue/tsconfig": "^0.5.1",
     "@vue/vue2-jest": "^29.2.6",
     "babel-loader-exclude-node-modules-except": "^1.2.1",
-    "esbuild-loader": "^4.0.3",
+    "esbuild-loader": "^4.1.0",
     "flush-promises": "^1.0.2",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
