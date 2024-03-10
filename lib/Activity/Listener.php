@@ -74,6 +74,9 @@ class Listener implements IEventListener {
 	}
 
 	protected function setActive(ParticipantModifiedEvent $event): void {
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #8: ' . microtime(true));
+		}
 		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
 			return;
 		}
@@ -82,7 +85,6 @@ class Listener implements IEventListener {
 			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
 			return;
 		}
-
 		$participant = $event->getParticipant();
 		$this->roomService->setActiveSince(
 			$event->getRoom(),
@@ -90,6 +92,9 @@ class Listener implements IEventListener {
 			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED,
 			$participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
 		);
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #9: ' . microtime(true));
+		}
 	}
 
 	protected function handleParticipantModified(ParticipantModifiedEvent $event): void {

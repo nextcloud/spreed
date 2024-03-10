@@ -227,9 +227,18 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #12: ' . microtime(true));
+		}
 		$this->markCallNotificationsRead($event->getRoom());
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #13: ' . microtime(true));
+		}
 		if ($this->shouldSendCallNotification) {
 			$this->sendCallNotifications($event->getRoom());
+		}
+		if ($event->getRoom()->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #14: ' . microtime(true));
 		}
 	}
 
