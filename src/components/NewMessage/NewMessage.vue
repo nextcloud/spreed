@@ -935,7 +935,8 @@ export default {
 				}
 
 				// Caching the user id data for each possible mention
-				possibleMention.id = possibleMention.mentionId
+				// mentionId should be the default match since 'federation-v1'
+				possibleMention.id = possibleMention.mentionId ?? possibleMention.id
 				this.userData[possibleMention.id] = possibleMention
 			})
 
