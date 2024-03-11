@@ -35,6 +35,7 @@
 			@click="handleClick">
 			<template #icon>
 				<PhoneIcon v-if="isPhoneRoom" :size="20" />
+				<VideoOutlineIcon v-else-if="silentCall" :size="20" />
 				<VideoIcon v-else :size="20" />
 			</template>
 			{{ startCallLabel }}
@@ -99,6 +100,7 @@ import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+import VideoOutlineIcon from 'vue-material-design-icons/VideoOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -135,6 +137,7 @@ export default {
 		VideoBoxOff,
 		VideoIcon,
 		VideoOff,
+		VideoOutlineIcon,
 	},
 
 	props: {

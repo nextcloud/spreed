@@ -108,7 +108,7 @@
 					@tribute-active-false.native="isTributePickerActive = false"
 					@input="handleTyping"
 					@paste="handlePastedFiles"
-					@submit="handleSubmit({ silent: false })" />
+					@submit="handleSubmit" />
 			</div>
 
 			<!-- Audio recorder -->
@@ -142,29 +142,27 @@
 
 			<!-- Send buttons -->
 			<template v-else>
-				<NcActions v-if="!broadcast"
-					:container="container"
-					force-menu>
-					<!-- Silent send -->
+				<NcActions v-if="!broadcast" :container="container" force-menu>
 					<NcActionButton close-after-click
-						icon="icon-upload"
-						:name="t('spreed', 'Send without notification')"
-						@click="handleSubmit({ silent: true })">
+						:name="silentSendLabel"
+						@click="toggleSilentChat">
 						{{ silentSendInfo }}
 						<template #icon>
-							<BellOff :size="16" />
+							<BellIcon v-if="silentChat" :size="16" />
+							<BellOffIcon v-else :size="16" />
 						</template>
 					</NcActionButton>
 				</NcActions>
-				<!-- Send -->
+
 				<NcButton :disabled="disabled"
 					type="tertiary"
 					native-type="submit"
-					:title="t('spreed', 'Send message')"
-					:aria-label="t('spreed', 'Send message')"
-					@click="handleSubmit({ silent: false })">
+					:title="sendMessageLabel"
+					:aria-label="sendMessageLabel"
+					@click="handleSubmit">
 					<template #icon>
-						<Send :size="16" />
+						<SendVariantOutlineIcon v-if="silentChat" :size="18" />
+						<SendIcon v-else :size="16" />
 					</template>
 				</NcButton>
 			</template>
@@ -194,11 +192,13 @@
 <script>
 import debounce from 'debounce'
 
-import BellOff from 'vue-material-design-icons/BellOff.vue'
+import BellIcon from 'vue-material-design-icons/Bell.vue'
+import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import Send from 'vue-material-design-icons/Send.vue'
+import SendIcon from 'vue-material-design-icons/Send.vue'
+import SendVariantOutlineIcon from 'vue-material-design-icons/SendVariantOutline.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
@@ -221,7 +221,8 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import Quote from '../Quote.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
-import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService'
+import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -256,11 +257,13 @@ export default {
 		NewMessageTypingIndicator,
 		Quote,
 		// Icons
-		BellOff,
+		BellIcon,
+		BellOffIcon,
 		CheckIcon,
 		CloseIcon,
 		EmoticonOutline,
-		Send,
+		SendIcon,
+		SendVariantOutlineIcon,
 	},
 
 	props: {
@@ -324,7 +327,7 @@ export default {
 	data() {
 		return {
 			text: '',
-			conversationIsFirstInList: false,
+			silentChat: false,
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
 			showPollEditor: false,
@@ -380,6 +383,14 @@ export default {
 			}
 		},
 
+		sendMessageLabel() {
+			if (this.silentChat) {
+				return t('spreed', 'Send message silently')
+			} else {
+				return t('spreed', 'Send message')
+			}
+		},
+
 		parentMessage() {
 			const parentId = this.chatExtrasStore.getParentIdToReply(this.token)
 			return parentId && this.$store.getters.message(this.token, parentId)
@@ -426,11 +437,21 @@ export default {
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
+		silentSendLabel() {
+			return this.silentChat
+				? t('spreed', 'Send with notification')
+				: t('spreed', 'Send without notification')
+		},
+
 		silentSendInfo() {
 			if (this.isOneToOne) {
-				return t('spreed', 'The participant will not be notified about this message')
+				return this.silentChat
+					? t('spreed', 'The participant will be notified about new messages')
+					: t('spreed', 'The participant will not be notified about new messages')
 			} else {
-				return t('spreed', 'The participants will not be notified about this message')
+				return this.silentChat
+					? t('spreed', 'Participants will be notified about new messages')
+					: t('spreed', 'Participants will not be notified about new messages')
 			}
 		},
 
@@ -514,6 +535,7 @@ export default {
 					this.text = this.messageToEdit
 						? this.chatEditInput
 						: this.chatInput
+					this.silentChat = !!BrowserStorage.getItem('silentChat_' + this.token)
 				} else {
 					this.text = ''
 				}
@@ -604,13 +626,7 @@ export default {
 			})
 		},
 
-		/**
-		 * Sends the new message
-		 *
-		 * @param {object} options the submit options
-		 * @param {boolean} options.silent whether the message should trigger notifications
-		 */
-		async handleSubmit(options) {
+		async handleSubmit() {
 			// Submit event has enter key listener
 			// Handle edit here too
 			if (this.messageToEdit) {
@@ -628,6 +644,8 @@ export default {
 					return
 				}
 			}
+
+			const options = { silent: this.silentChat }
 
 			if (this.hasText) {
 				this.text = parseSpecialSymbols(this.text)
@@ -698,7 +716,7 @@ export default {
 
 				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
 				this.text = loremIpsum.slice(0, 25 + randomNumber)
-				await this.handleSubmit({ silent: false })
+				await this.handleSubmit()
 			}
 		},
 
@@ -993,6 +1011,15 @@ export default {
 
 		handleAbortEdit() {
 			this.chatExtrasStore.removeMessageIdToEdit(this.token)
+		},
+
+		toggleSilentChat() {
+			this.silentChat = !this.silentChat
+			if (this.silentChat) {
+				BrowserStorage.setItem('silentChat_' + this.token, 'true')
+			} else {
+				BrowserStorage.removeItem('silentChat_' + this.token)
+			}
 		},
 	},
 }

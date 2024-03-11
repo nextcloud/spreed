@@ -54,7 +54,7 @@
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { ATTENDEE, AVATAR } from '../../constants.js'
-import { getUserProxyAvatarOcsUrl } from '../../services/avatarService'
+import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 import { isDarkTheme } from '../../utils/isDarkTheme'
 
 export default {
