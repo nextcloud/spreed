@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="top-bar" :data-theme-dark="isInCall">
+	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -306,6 +306,12 @@ export default {
 		hasReactionSupport() {
 			return this.isInCall && this.supportedReactions?.length > 0
 		},
+
+		topBarStyle() {
+			return {
+				'--original-color-main-background': window.getComputedStyle(document.body).getPropertyValue('--color-main-background')
+			}
+		},
 	},
 
 	watch: {
@@ -464,5 +470,10 @@ export default {
 			color: var(--color-text-maxcontrast);
 		}
 	}
+}
+
+:deep(.conversation-icon__type) {
+	border-color: var(--original-color-main-background) !important;
+	background-color: var(--original-color-main-background) !important;
 }
 </style>
