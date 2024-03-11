@@ -46,7 +46,7 @@ jobs:
               - 'composer.lock'
 
   integration-oci:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     needs: changes
     if: needs.changes.outputs.src != 'false'
