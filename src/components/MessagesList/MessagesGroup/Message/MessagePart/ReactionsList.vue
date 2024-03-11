@@ -41,15 +41,22 @@
 						{{ reactionsOverview[reaction].length }}
 					</NcButton>
 				</div>
-				<div class="scrollable">
-					<NcListItemIcon v-for="item in reactionsOverview[reactionFilter]"
+				<ul class="reactions-list__scrollable">
+					<li v-for="item in reactionsOverview[reactionFilter]"
 						:key="item.actorId + item.actorType"
-						:name="item.actorDisplayName">
-						<span class="reactions-emojis">
+						class="reactions-item">
+						<AvatarWrapper :id="item.actorId"
+							:token="token"
+							:name="item.actorDisplayName"
+							:source="item.actorType"
+							:size="AVATAR.SIZE.SMALL"
+							disable-menu />
+						<span class="reactions-item__name">{{ item.actorDisplayName }}</span>
+						<span class="reactions-item__emojis">
 							{{ item.reaction?.join('') ?? reactionFilter }}
 						</span>
-					</NcListItemIcon>
-				</div>
+					</li>
+				</ul>
 			</template>
 			<NcLoadingIcon v-else :size="64" />
 		</div>
@@ -60,11 +67,12 @@
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcListItemIcon from '@nextcloud/vue/dist/Components/NcListItemIcon.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import { ATTENDEE } from '../../../../../constants.js'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+
+import { ATTENDEE, AVATAR } from '../../../../../constants.js'
 import { useGuestNameStore } from '../../../../../stores/guestName.js'
 
 export default {
@@ -72,9 +80,9 @@ export default {
 	name: 'ReactionsList',
 
 	components: {
+		AvatarWrapper,
 		NcModal,
 		NcLoadingIcon,
-		NcListItemIcon,
 		NcButton,
 		HeartOutlineIcon,
 	},
@@ -100,6 +108,7 @@ export default {
 
 	setup() {
 		return {
+			AVATAR,
 			guestNameStore: useGuestNameStore(),
 		}
 	},
@@ -198,19 +207,34 @@ export default {
 	gap: 4px;
 }
 
-.scrollable {
+.reactions-list__scrollable {
 	overflow-y: auto;
 	overflow-x: hidden;
 	height: calc(450px - 123px); // 123px is the height of the header 105px and the footer 18px
 }
 
-.reactions-emojis {
-	max-width: 180px;
-	direction: rtl;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	position: relative;
+.reactions-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 6px 0;
+
+	&__name {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&__emojis {
+		margin-left: auto;
+		max-width: 180px;
+		direction: rtl;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		position: relative;
+	}
 }
 </style>
