@@ -14,6 +14,9 @@ module.exports = {
 		'comma-dangle': 'off',
 		'jsdoc/no-defaults': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
+		// Forbid import without extension even when TS is used
+		// TODO: fix in @nextcloud/eslint-config/typescript
+		'import/extensions': 'error',
 		'import/newline-after-import': 'warn',
 		'import/no-named-as-default-member': 'off',
 		'import/order': [
