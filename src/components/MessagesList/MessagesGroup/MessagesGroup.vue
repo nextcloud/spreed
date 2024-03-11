@@ -32,10 +32,9 @@
 		</div>
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
-				{{ actorDisplayName }}
-				<div v-if="lastEditTimestamp">
-					{{ getLastEditor }}
-				</div>
+				<span class="messages__author-name">{{ actorDisplayName }}</span>
+				<span v-if="isFederatedUser" class="messages__author-server">{{ getRemoteServer }}</span>
+				<span v-if="lastEditTimestamp" class="messages__author-edit">{{ getLastEditor }}</span>
 			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
@@ -131,6 +130,14 @@ export default {
 			return displayName
 		},
 
+		isFederatedUser() {
+			return this.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+		},
+
+		getRemoteServer() {
+			return this.isFederatedUser ? '(' + this.actorId.split('@').pop() + ')' : ''
+		},
+
 		getLastEditor() {
 			if (!this.lastEditTimestamp) {
 				return ''
@@ -202,8 +209,20 @@ export default {
 	&__author {
 		display: flex;
 		gap: 4px;
+		max-width: 600px;
 		padding: 4px 0 0 8px;
 		color: var(--color-text-maxcontrast);
+
+		&-name {
+			flex-shrink: 0;
+		}
+
+		&-edit,
+		&-server {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 }
 </style>
