@@ -398,6 +398,14 @@ class Room {
 		return $this->remoteServer;
 	}
 
+	/**
+	 * Whether the conversation is a "proxy conversation" or the original hosted conversation
+	 * @return bool
+	 */
+	public function isFederatedConversation(): bool {
+		return $this->remoteServer !== '';
+	}
+
 	public function getRemoteToken(): string {
 		return $this->remoteToken;
 	}

@@ -34,6 +34,7 @@ use OCA\Talk\Service\ParticipantService;
 
 /**
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
+ * @psalm-import-type TalkReaction from ResponseDefinitions
  */
 class UserConverter {
 	/**
@@ -148,6 +149,30 @@ class UserConverter {
 		return array_map(
 			fn (array $message): array => $this->convertMessage($room, $message),
 			$messages
+		);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param TalkReaction[] $reactions
+	 * @return TalkReaction[]
+	 */
+	protected function convertReactions(Room $room, array $reactions): array {
+		return array_map(
+			fn (array $reaction): array => $this->convertAttendee($room, $reaction, 'actorType', 'actorId', 'actorDisplayName'),
+			$reactions
+		);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param array<string, TalkReaction[]> $reactionsList
+	 * @return array<string, TalkReaction[]>
+	 */
+	public function convertReactionsList(Room $room, array $reactionsList): array {
+		return array_map(
+			fn (array $reactions): array => $this->convertReactions($room, $reactions),
+			$reactionsList
 		);
 	}
 
