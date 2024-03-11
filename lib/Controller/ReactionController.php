@@ -30,6 +30,7 @@ use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
 use OCA\Talk\Exceptions\ReactionOutOfContextException;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
@@ -67,12 +68,19 @@ class ReactionController extends AEnvironmentAwareController {
 	 * 400: Adding reaction is not possible
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function react(int $messageId, string $reaction): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController::class);
+			return $proxy->react($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
+		}
+
 		try {
 			$this->reactionManager->addReactionMessage(
 				$this->getRoom(),
@@ -105,12 +113,19 @@ class ReactionController extends AEnvironmentAwareController {
 	 * 400: Deleting reaction is not possible
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function delete(int $messageId, string $reaction): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController::class);
+			return $proxy->delete($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
+		}
+
 		try {
 			$this->reactionManager->deleteReactionMessage(
 				$this->getRoom(),
@@ -140,10 +155,17 @@ class ReactionController extends AEnvironmentAwareController {
 	 * 200: Reactions returned
 	 * 404: Message or reaction not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getReactions(int $messageId, ?string $reaction): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController::class);
+			return $proxy->getReactions($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
+		}
+
 		try {
 			// Verify that messageId is part of the room
 			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
@@ -156,12 +178,11 @@ class ReactionController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
 	}
 
-
 	/**
 	 * @param array<string, TalkReaction[]> $reactions
 	 * @return array<string, TalkReaction[]>|\stdClass
 	 */
-	public function formatReactions(array $reactions): array|\stdClass {
+	protected function formatReactions(array $reactions): array|\stdClass {
 		if ($this->getResponseFormat() === 'json' && empty($reactions)) {
 			// Cheating here to make sure the reactions array is always a
 			// JSON object on the API, even when there is no reaction at all.

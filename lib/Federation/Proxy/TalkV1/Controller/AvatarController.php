@@ -41,7 +41,7 @@ use OCP\Files\SimpleFS\InMemoryFile;
  */
 class AvatarController {
 	public function __construct(
-		protected ProxyRequest  $proxy,
+		protected ProxyRequest $proxy,
 	) {
 	}
 
