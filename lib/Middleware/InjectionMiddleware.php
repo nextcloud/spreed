@@ -30,6 +30,7 @@ use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
@@ -46,12 +47,14 @@ use OCA\Talk\Middleware\Exceptions\LobbyException;
 use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -74,6 +77,7 @@ class InjectionMiddleware extends Middleware {
 		protected ICloudIdManager $cloudIdManager,
 		protected IThrottler $throttler,
 		protected IURLGenerator $url,
+		protected InvitationMapper $invitationMapper,
 		protected Authenticator $federationAuthenticator,
 		protected ?string $userId,
 	) {
@@ -97,6 +101,15 @@ class InjectionMiddleware extends Middleware {
 
 		$apiVersion = $this->request->getParam('apiVersion');
 		$controller->setAPIVersion((int) substr($apiVersion, 1));
+
+		if (!empty($reflectionMethod->getAttributes(AllowWithoutParticipantWhenPendingInvitation::class))) {
+			try {
+				$this->getRoomByInvite($controller);
+				return;
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
+				// Falling back to bellow checks
+			}
+		}
 
 		if (!empty($reflectionMethod->getAttributes(RequireAuthenticatedParticipant::class))) {
 			$this->getLoggedInOrGuest($controller, false, requireFederationWhenNotLoggedIn: true);
@@ -229,6 +242,34 @@ class InjectionMiddleware extends Middleware {
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
 			throw new NotAModeratorException();
+		}
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 * @throws RoomNotFoundException
+	 * @throws ParticipantNotFoundException
+	 */
+	protected function getRoomByInvite(AEnvironmentAwareController $controller): void {
+		if ($this->userId === null) {
+			throw new ParticipantNotFoundException('No user available');
+		}
+
+		$room = $controller->getRoom();
+		if (!$room instanceof Room) {
+			$token = $this->request->getParam('token');
+			$room = $this->manager->getRoomByToken($token);
+			$controller->setRoom($room);
+		}
+
+		$participant = $controller->getParticipant();
+		if (!$participant instanceof Participant) {
+			try {
+				$invitation = $this->invitationMapper->getInvitationsForUserByLocalRoom($room, $this->userId);
+				$controller->setInvitation($invitation);
+			} catch (DoesNotExistException $e) {
+				throw new ParticipantNotFoundException('No invite available', $e->getCode(), $e);
+			}
 		}
 	}
 

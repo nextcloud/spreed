@@ -28,6 +28,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
+use OCA\Talk\Model\Invitation;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -53,10 +54,14 @@ class AvatarController {
 	 *
 	 * 200: Room avatar returned
 	 */
-	public function getAvatar(Room $room, Participant $participant, bool $darkTheme): FileDisplayResponse {
+	public function getAvatar(Room $room, ?Participant $participant, ?Invitation $invitation, bool $darkTheme): FileDisplayResponse {
+		if ($participant === null && $invitation === null) {
+			throw new CannotReachRemoteException('Must receive either participant or invitation');
+		}
+
 		$proxy = $this->proxy->get(
-			$participant->getAttendee()->getInvitedCloudId(),
-			$participant->getAttendee()->getAccessToken(),
+			$participant ? $participant->getAttendee()->getInvitedCloudId() : $invitation->getLocalCloudId(),
+			$participant ? $participant->getAttendee()->getAccessToken() : $invitation->getAccessToken(),
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/room/' . $room->getRemoteToken() . '/avatar' . ($darkTheme ? '/dark' : ''),
 		);
 
