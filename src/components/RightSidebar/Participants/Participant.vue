@@ -363,12 +363,12 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
-import DialpadPanel from '../../../../DialpadPanel.vue'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import DialpadPanel from '../../DialpadPanel.vue'
 
-import { useIsInCall } from '../../../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../../../constants.js'
+import { useIsInCall } from '../../../composables/useIsInCall.js'
+import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../constants.js'
 import {
 	callSIPDialOut,
 	callSIPHangupPhone,
@@ -376,10 +376,10 @@ import {
 	callSIPMutePhone,
 	callSIPUnmutePhone,
 	callSIPSendDTMF,
-} from '../../../../../services/callsService.js'
-import { formattedTime } from '../../../../../utils/formattedTime.ts'
-import { readableNumber } from '../../../../../utils/readableNumber.js'
-import { getStatusMessage } from '../../../../../utils/userStatus.js'
+} from '../../../services/callsService.js'
+import { formattedTime } from '../../../utils/formattedTime.ts'
+import { readableNumber } from '../../../utils/readableNumber.js'
+import { getStatusMessage } from '../../../utils/userStatus.js'
 
 export default {
 	name: 'Participant',

@@ -11,11 +11,11 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 
 import Participant from './Participant.vue'
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
-import { ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
-import storeConfig from '../../../../../store/storeConfig.js'
-import { findNcActionButton } from '../../../../../test-helpers.js'
+import { ATTENDEE, PARTICIPANT } from '../../../constants.js'
+import storeConfig from '../../../store/storeConfig.js'
+import { findNcActionButton } from '../../../test-helpers.js'
 
 describe('Participant.vue', () => {
 	let conversation

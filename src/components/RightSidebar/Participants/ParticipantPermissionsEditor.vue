@@ -31,9 +31,9 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
-import PermissionEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
+import PermissionEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 
-import { PARTICIPANT } from '../../../../../../constants.js'
+import { PARTICIPANT } from '../../../constants.js'
 
 export default {
 	name: 'ParticipantPermissionsEditor',

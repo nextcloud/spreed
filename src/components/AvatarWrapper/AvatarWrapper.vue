@@ -29,7 +29,7 @@
 		<div v-else-if="isBot" class="avatar bot">
 			{{ '>_' }}
 		</div>
-		<img v-else-if="isRemoteUser && token"
+		<img v-else-if="isFederatedUser && token"
 			:key="avatarUrl"
 			:src="avatarUrl"
 			:width="size"
@@ -47,10 +47,20 @@
 			:show-user-status-compact="showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
+		<!-- Override user status for federated users -->
+		<span v-if="showUserStatus && isFederatedUser"
+			class="avatar-wrapper__user-status"
+			role="img"
+			aria-hidden="false"
+			:aria-label="t('spreed', 'Federated user')">
+			<WebIcon :size="14" />
+		</span>
 	</div>
 </template>
 
 <script>
+import WebIcon from 'vue-material-design-icons/Web.vue'
+
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { ATTENDEE, AVATAR } from '../../constants.js'
@@ -63,6 +73,7 @@ export default {
 
 	components: {
 		NcAvatar,
+		WebIcon,
 	},
 
 	props: {
@@ -130,10 +141,10 @@ export default {
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.isUser || (this.isRemoteUser && this.token) || this.isBot || this.isGuest || this.isDeletedUser) {
+			if (!this.source || this.isUser || (this.isFederatedUser && this.token) || this.isBot || this.isGuest || this.isDeletedUser) {
 				return ''
 			}
-			if (this.isRemoteUser) {
+			if (this.isFederatedUser) {
 				return 'icon-user'
 			}
 			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
@@ -164,7 +175,7 @@ export default {
 		isUser() {
 			return this.source === ATTENDEE.ACTOR_TYPE.USERS || this.source === ATTENDEE.ACTOR_TYPE.BRIDGED
 		},
-		isRemoteUser() {
+		isFederatedUser() {
 			return this.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 		},
 		isBot() {
@@ -195,6 +206,7 @@ export default {
 
 <style lang="scss" scoped>
 .avatar-wrapper {
+	position: relative;
 	height: var(--avatar-size);
 	width: var(--avatar-size);
 	border-radius: var(--avatar-size);
@@ -255,6 +267,17 @@ export default {
 
 	&--highlighted {
 		outline: 2px solid var(--color-primary-element);
+	}
+
+	&__user-status {
+		position: absolute;
+		right: -4px;
+		bottom: -4px;
+		height: 18px;
+		width: 18px;
+		border: 2px solid var(--color-main-background);
+		background-color: var(--color-main-background);
+		border-radius: 50%;
 	}
 }
 
