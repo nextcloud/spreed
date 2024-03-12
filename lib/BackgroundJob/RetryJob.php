@@ -63,13 +63,13 @@ class RetryJob extends Job {
 	 * @param IJobList $jobList
 	 * @param ILogger|null $logger
 	 */
-	public function execute(IJobList $jobList, ?ILogger $logger = null): void {
+	public function start(IJobList $jobList): void {
 		if (((int)$this->argument['try']) > $this->maxTry) {
 			$jobList->remove($this, $this->argument);
 			return;
 		}
 		if ($this->shouldRun($this->argument)) {
-			parent::execute($jobList, $logger);
+			parent::start($jobList);
 			$jobList->remove($this, $this->argument);
 		}
 	}
