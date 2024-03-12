@@ -3734,10 +3734,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected[$reaction][] = $row;
 		}
 
-		$actual = array_map(static function ($reaction, $list) use ($expected): array {
+		$actual = array_map(function ($reaction, $list) use ($expected): array {
 			$list = array_map(function ($reaction) {
 				unset($reaction['timestamp']);
 				$reaction['actorId'] = ($reaction['actorType'] === 'guests') ? self::$sessionIdToUser[$reaction['actorId']] : (string) $reaction['actorId'];
+				if ($reaction['actorType'] === 'federated_users') {
+					$reaction['actorId'] = str_replace(rtrim($this->baseUrl, '/'), '{$BASE_URL}', $reaction['actorId']);
+					$reaction['actorId'] = str_replace(rtrim($this->baseRemoteUrl, '/'), '{$REMOTE_URL}', $reaction['actorId']);
+				}
 				return $reaction;
 			}, $list);
 			Assert::assertArrayHasKey($reaction, $expected, 'Not expected reaction: ' . $reaction);
