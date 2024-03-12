@@ -16,7 +16,7 @@ describe('federationStore', () => {
 			id: 2,
 			userId: 'user0',
 			state: 0,
-			localRoomId: 10,
+			localToken: 'TOKEN_LOCAL_2',
 			remoteServerUrl: 'remote.nextcloud.com',
 			remoteToken: 'TOKEN_2',
 			remoteAttendeeId: 11,
@@ -28,7 +28,7 @@ describe('federationStore', () => {
 			id: 1,
 			userId: 'user0',
 			state: 1,
-			localRoomId: 9,
+			localToken: 'TOKEN_LOCAL_1',
 			remoteServerUrl: 'remote.nextcloud.com',
 			remoteToken: 'TOKEN_1',
 			remoteAttendeeId: 11,
@@ -158,6 +158,7 @@ describe('federationStore', () => {
 
 		const room = {
 			id: 10,
+			token: 'TOKEN_LOCAL_2'
 		}
 		const acceptResponse = generateOCSResponse({ payload: room })
 		acceptShare.mockResolvedValueOnce(acceptResponse)

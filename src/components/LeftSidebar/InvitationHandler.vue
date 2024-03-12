@@ -39,12 +39,10 @@
 						<span class="inbox__item-desc__name">
 							{{ item.roomName }}
 						</span>
-						<span class="inbox__item-desc__subname">
-							{{ t('spreed', 'From {user} at {remoteServer}', {
-								user: item.inviterDisplayName,
-								remoteServer: item.remoteServerUrl,
-							}) }}
-						</span>
+						<NcRichText class="inbox__item-desc__subname"
+							:text="t('spreed', 'From {user} at {remoteServer}', { remoteServer: item.remoteServer })"
+							:arguments="getRichParameters(item)"
+							:reference-limit="0" />
 					</div>
 					<NcButton type="tertiary"
 						:aria-label="t('spreed', 'Decline invitation')"
@@ -80,8 +78,10 @@ import CheckIcon from 'vue-material-design-icons/Check.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
+import Mention from '../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'
 
 import { CONVERSATION } from '../../constants.js'
 import { useFederationStore } from '../../stores/federation.ts'
@@ -90,6 +90,7 @@ export default {
 	name: 'InvitationHandler',
 
 	components: {
+		NcRichText,
 		ConversationIcon,
 		NcButton,
 		NcLoadingIcon,
@@ -119,12 +120,8 @@ export default {
 		invitations() {
 			const invitations = {}
 			for (const id in this.federationStore.pendingShares) {
-				invitations[id] = {
-					...this.federationStore.pendingShares[id],
-					type: CONVERSATION.TYPE.GROUP,
-					isFederatedConversation: true,
-					isDummyConversation: true,
-				}
+				const { localToken: token, remoteServerUrl: remoteServer, ...rest } = this.federationStore.pendingShares[id]
+				invitations[id] = { ...rest, token, remoteServer, type: CONVERSATION.TYPE.GROUP }
 			}
 			return invitations
 		},
@@ -158,7 +155,17 @@ export default {
 			if (Object.keys(this.invitations).length === 0) {
 				this.closeModal()
 			}
-		}
+		},
+
+		getRichParameters(item) {
+			const [id, server] = item.inviterCloudId.split('@')
+			return {
+				user: {
+					component: Mention,
+					props: { id, name: item.inviterDisplayName, server, token: item.token, type: 'user' }
+				}
+			}
+		},
 	},
 }
 </script>

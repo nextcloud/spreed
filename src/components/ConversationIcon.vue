@@ -179,7 +179,7 @@ export default {
 			if (this.item.isDummyConversation) {
 				// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
 				// Also used in new conversation / invitation handler dialog
-				const isFed = this.item.isFederatedConversation && 'icon-conversation-federation'
+				const isFed = this.item.remoteServer && 'icon-conversation-federation'
 				const type = this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-conversation-public' : 'icon-conversation-group'
 				const theme = isDarkTheme ? 'dark' : 'bright'
 				return `${isFed || type} icon--dummy icon--${theme}`

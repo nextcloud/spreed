@@ -72,7 +72,7 @@ export const useFederationStore = defineStore('federation', {
 			const { id, name } = notification.messageRichParameters.user1
 			const invitation: FederationInvite = {
 				id: notification.objectId,
-				localRoomId: 0,
+				localToken: '',
 				localCloudId: notification.user + '@' + getBaseUrl().replace('https://', ''),
 				remoteAttendeeId: 0,
 				remoteServerUrl,
@@ -99,7 +99,7 @@ export const useFederationStore = defineStore('federation', {
 			Vue.delete(this.pendingShares[id], 'loading')
 			Vue.set(this.acceptedShares, id, {
 				...this.pendingShares[id],
-				localRoomId: conversation.id,
+				localToken: conversation.token,
 				state: FEDERATION.STATE.ACCEPTED,
 			})
 			Vue.delete(this.pendingShares, id)
