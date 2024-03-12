@@ -80,7 +80,7 @@
 
 		<!-- Phone participant dial action -->
 		<div v-if="isInCall && canBeModerated && isPhoneActor"
-			id="participantNavigationId"
+			:id="participantNavigationId"
 			class="participant-row__dial-actions">
 			<NcButton v-if="!participant.inCall"
 				type="success"
@@ -464,8 +464,6 @@ export default {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
 			permissionsEditor: false,
-			speakingInterval: null,
-			timeSpeaking: null,
 			disabled: false,
 		}
 	},
@@ -864,22 +862,17 @@ export default {
 			}
 			return ''
 		},
-	},
-	watch: {
-		isParticipantSpeaking(speaking) {
-			if (speaking) {
-				if (!this.speakingInterval) {
-					this.speakingInterval = setInterval(this.computeElapsedTime, 1000)
-				}
-			} else {
-				if (speaking === undefined) {
-					this.timeSpeaking = 0
-				}
-				clearInterval(this.speakingInterval)
-				this.speakingInterval = null
-			}
-		},
 
+		timeSpeaking() {
+			if (!this.participantSpeakingInformation || this.isParticipantSpeaking === undefined) {
+				return 0
+			}
+
+			return this.participantSpeakingInformation.totalCountedTime
+		},
+	},
+
+	watch: {
 		phoneCallStatus(value) {
 			if (!value || !(value === 'ringing' || value === 'accepted')) {
 				this.disabled = false
@@ -1009,20 +1002,6 @@ export default {
 				}
 			} catch (error) {
 				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
-			}
-		},
-
-		computeElapsedTime() {
-			if (!this.participantSpeakingInformation) {
-				return null
-			}
-
-			const { speaking, lastTimestamp, totalCountedTime } = this.participantSpeakingInformation
-
-			if (!speaking) {
-				this.timeSpeaking = totalCountedTime
-			} else {
-				this.timeSpeaking = Date.now() - lastTimestamp + totalCountedTime
 			}
 		},
 

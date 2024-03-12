@@ -93,6 +93,7 @@ const state = {
 	 * when quickly switching to a new conversation.
 	 */
 	cancelFetchParticipants: null,
+	speakingInterval: null,
 }
 
 const getters = {
@@ -420,20 +421,50 @@ const mutations = {
 			Vue.set(state.speaking, token, {})
 		}
 		if (!state.speaking[token][attendeeId]) {
-			Vue.set(state.speaking[token], attendeeId, { speaking: null, lastTimestamp: 0, totalCountedTime: 0 })
+			Vue.set(state.speaking[token], attendeeId, { speaking, lastTimestamp: Date.now(), totalCountedTime: 0 })
+		}
+		state.speaking[token][attendeeId].speaking = speaking
+	},
+
+	/**
+	 * Tracks the interval id to update speaking information for a current call.
+	 *
+	 * @param {object} state - current store state.
+	 * @param {number} interval - interval id.
+	 */
+	setSpeakingInterval(state, interval) {
+		Vue.set(state, 'speakingInterval', interval)
+	},
+
+	/**
+	 * Update speaking information for a participant.
+	 *
+	 * @param {object} state - current store state.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - the conversation token participant is speaking in.
+	 * @param {string} data.attendeeId - the attendee ID of the participant in conversation.
+	 * @param {boolean} data.speaking - whether the participant is speaking or not
+	 */
+	updateTimeSpeaking(state, { token, attendeeId, speaking }) {
+		if (!state.speaking[token]?.[attendeeId]) {
+			return
 		}
 
 		const currentTimestamp = Date.now()
 		const currentSpeakingState = state.speaking[token][attendeeId].speaking
 
-		if (!currentSpeakingState && speaking) {
-			state.speaking[token][attendeeId].speaking = true
-			state.speaking[token][attendeeId].lastTimestamp = currentTimestamp
-		} else if (currentSpeakingState && !speaking) {
-			// when speaking has stopped, update the total talking time
-			state.speaking[token][attendeeId].speaking = false
+		if (!currentSpeakingState && !speaking) {
+			// false -> false, no updates
+			return
+		}
+
+		if (currentSpeakingState) {
+			// true -> false / true -> true, participant is still speaking or finished to speak, update total time
 			state.speaking[token][attendeeId].totalCountedTime += (currentTimestamp - state.speaking[token][attendeeId].lastTimestamp)
 		}
+
+		// false -> true / true -> false / true -> true, update timestamp of last check / signal
+		state.speaking[token][attendeeId].lastTimestamp = currentTimestamp
 	},
 
 	/**
@@ -445,7 +476,14 @@ const mutations = {
 	 * @param {string} data.token - the conversation token.
 	 */
 	purgeSpeakingStore(state, { token }) {
-		Vue.delete(state.speaking, token)
+		if (state.speaking[token]) {
+			Vue.delete(state.speaking, token)
+		}
+
+		if (state.speakingInterval) {
+			clearInterval(state.speakingInterval)
+			Vue.set(state, 'speakingInterval', null)
+		}
 	},
 
 	/**
@@ -1037,7 +1075,28 @@ const actions = {
 	},
 
 	setSpeaking(context, { token, attendeeId, speaking }) {
+		// We should update time before speaking state, to be able to check previous state
+		context.commit('updateTimeSpeaking', { token, attendeeId, speaking })
 		context.commit('setSpeaking', { token, attendeeId, speaking })
+
+		if (!context.state.speakingInterval && speaking) {
+			const interval = setInterval(() => {
+				context.dispatch('updateIntervalTimeSpeaking', { token })
+			}, 1000)
+			context.commit('setSpeakingInterval', interval)
+		}
+	},
+
+	updateIntervalTimeSpeaking(context, { token }) {
+		if (!context.state.speaking[token] || !context.state.speakingInterval) {
+			return
+		}
+
+		for (const attendeeId in context.state.speaking[token]) {
+			if (context.state.speaking[token][attendeeId].speaking) {
+				context.commit('updateTimeSpeaking', { token, attendeeId, speaking: true })
+			}
+		}
 	},
 
 	purgeSpeakingStore(context, { token }) {
