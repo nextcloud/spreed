@@ -48,6 +48,7 @@ class FederationChatNotifier {
 	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool}} $inboundNotification
 	 */
 	public function handleChatMessage(Room $room, Participant $participant, ProxyCacheMessage $message, array $inboundNotification): void {
+		/** @var array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData */
 		$metaData = json_decode($inboundNotification['messageData']['metaData'] ?? '', true, flags: JSON_THROW_ON_ERROR);
 
 		if (isset($metaData[Message::METADATA_SILENT])) {
@@ -80,8 +81,13 @@ class FederationChatNotifier {
 		}
 	}
 
+	/**
+	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData
+	 */
 	protected function isRepliedTo(Room $room, Participant $participant, array $metaData): bool {
-		if ($metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE] !== Attendee::ACTOR_FEDERATED_USERS) {
+		if (!isset($metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE])
+			|| !isset($metaData[ProxyCacheMessage::METADATA_REPLYTO_ID])
+			|| $metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE] !== Attendee::ACTOR_FEDERATED_USERS) {
 			return false;
 		}
 
