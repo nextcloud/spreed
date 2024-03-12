@@ -59,4 +59,11 @@ class RetryNotificationMapper extends QBMapper {
 
 		return $this->findEntities($query);
 	}
+
+	public function deleteByProviderId($providerId): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('provider_id', $query->createNamedParameter($providerId)));
+		$query->executeStatement();
+	}
 }
