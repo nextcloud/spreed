@@ -866,17 +866,21 @@ export default {
 		},
 	},
 	watch: {
-		isParticipantSpeaking(speaking) {
-			if (speaking) {
-				if (!this.speakingInterval) {
-					this.speakingInterval = setInterval(this.computeElapsedTime, 1000)
+		isParticipantSpeaking: {
+			immediate: true,
+			handler(speaking) {
+				this.computeElapsedTime()
+				if (speaking) {
+					if (!this.speakingInterval) {
+						this.speakingInterval = setInterval(this.computeElapsedTime, 1000)
+					}
+				} else {
+					if (speaking === undefined) {
+						this.timeSpeaking = 0
+					}
+					clearInterval(this.speakingInterval)
+					this.speakingInterval = null
 				}
-			} else {
-				if (speaking === undefined) {
-					this.timeSpeaking = 0
-				}
-				clearInterval(this.speakingInterval)
-				this.speakingInterval = null
 			}
 		},
 
