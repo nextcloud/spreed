@@ -1,6 +1,7 @@
 import { SHARED_ITEM } from '../constants.js'
+import type { ChatMessage, File } from '../types'
 
-export const getItemTypeFromMessage = function(message) {
+export const getItemTypeFromMessage = function(message: ChatMessage): string {
 	if (message.messageParameters?.object) {
 		if (message.messageParameters.object.type === 'geo-location') {
 			return SHARED_ITEM.TYPES.LOCATION
@@ -13,7 +14,7 @@ export const getItemTypeFromMessage = function(message) {
 		}
 	} else if (message.messageParameters?.file) {
 		const messageType = message.messageType || ''
-		const mimetype = message.messageParameters.file?.mimetype || ''
+		const mimetype = (message.messageParameters.file as File)?.mimetype || ''
 		if (messageType === 'record-audio' || messageType === 'record-video') {
 			return SHARED_ITEM.TYPES.RECORDING
 		} else if (messageType === 'voice-message') {

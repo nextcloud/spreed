@@ -25,7 +25,7 @@ import { defineStore } from 'pinia'
 import Vue from 'vue'
 
 import { getSharedItemsOverview, getSharedItems } from '../services/sharedItemsService.js'
-import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.js'
+import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
 /**
  * @typedef {'media'|'file'|'voice'|'audio'|'location'|'deckcard'|'other'} Type
