@@ -148,7 +148,7 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService.js'
 import { addParticipant } from '../../services/participantsService.js'
-import { copyConversationLinkToClipboard } from '../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const NEW_CONVERSATION = {
 	token: '',

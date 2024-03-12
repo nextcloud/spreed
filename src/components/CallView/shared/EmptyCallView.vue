@@ -43,7 +43,7 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
-import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 export default {
 
