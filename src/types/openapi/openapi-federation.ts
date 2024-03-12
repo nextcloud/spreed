@@ -137,8 +137,7 @@ export type components = {
       /** Format: int64 */
       state: number;
       localCloudId: string;
-      /** Format: int64 */
-      localRoomId: number;
+      localToken: string;
       /** Format: int64 */
       remoteAttendeeId: number;
       remoteServerUrl: string;

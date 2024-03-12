@@ -79,14 +79,13 @@ class Invitation extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return array{id: int, localRoomId: int, localCloudId: string, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string, inviterCloudId: string, inviterDisplayName: string}
+	 * @return array{id: int, localCloudId: string, remoteAttendeeId: int, remoteServerUrl: string, remoteToken: string, state: int, userId: string, inviterCloudId: string, inviterDisplayName: string}
 	 */
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
 			'userId' => $this->getUserId(),
 			'state' => $this->getState(),
-			'localRoomId' => $this->getLocalRoomId(),
 			'localCloudId' => $this->getLocalCloudId(),
 			'remoteServerUrl' => $this->getRemoteServerUrl(),
 			'remoteToken' => $this->getRemoteToken(),

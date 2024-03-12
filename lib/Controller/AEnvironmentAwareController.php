@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OC\AppFramework\Http\Dispatcher;
+use OCA\Talk\Model\Invitation;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\OCSController;
@@ -36,6 +37,7 @@ abstract class AEnvironmentAwareController extends OCSController {
 	protected int $apiVersion = 1;
 	protected ?Room $room = null;
 	protected ?Participant $participant = null;
+	protected ?Invitation $invitation = null;
 
 	public function setAPIVersion(int $apiVersion): void {
 		$this->apiVersion = $apiVersion;
@@ -59,6 +61,14 @@ abstract class AEnvironmentAwareController extends OCSController {
 
 	public function getParticipant(): ?Participant {
 		return $this->participant;
+	}
+
+	public function setInvitation(Invitation $invitation): void {
+		$this->invitation = $invitation;
+	}
+
+	public function getInvitation(): ?Invitation {
+		return $this->invitation;
 	}
 
 	/**

@@ -117,7 +117,7 @@ namespace OCA\Talk;
  *     id: int,
  *     state: int,
  *     localCloudId: string,
- *     localRoomId: int,
+ *     localToken: string,
  *     remoteAttendeeId: int,
  *     remoteServerUrl: string,
  *     remoteToken: string,

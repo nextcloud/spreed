@@ -29,6 +29,7 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
@@ -143,13 +144,14 @@ class AvatarController extends AEnvironmentAwareController {
 	#[FederationSupported]
 	#[PublicPage]
 	#[NoCSRFRequired]
+	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
 		if ($this->room->getRemoteServer() !== '') {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
 			try {
-				return $proxy->getAvatar($this->room, $this->participant, $darkTheme);
+				return $proxy->getAvatar($this->room, $this->participant, $this->invitation, $darkTheme);
 			} catch (CannotReachRemoteException) {
 				// Falling back to a local "globe" avatar for indicating the federation
 			}
@@ -172,6 +174,7 @@ class AvatarController extends AEnvironmentAwareController {
 	#[FederationSupported]
 	#[PublicPage]
 	#[NoCSRFRequired]
+	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatarDark(): FileDisplayResponse {
 		return $this->getAvatar(true);
@@ -193,6 +196,7 @@ class AvatarController extends AEnvironmentAwareController {
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	#[PublicPage]
 	#[NoCSRFRequired]
+	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireLoggedInParticipant]
 	public function getUserProxyAvatar(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
 		try {
@@ -252,6 +256,7 @@ class AvatarController extends AEnvironmentAwareController {
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	#[PublicPage]
 	#[NoCSRFRequired]
+	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireLoggedInParticipant]
 	public function getUserProxyAvatarDark(int $size, string $cloudId): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, true);

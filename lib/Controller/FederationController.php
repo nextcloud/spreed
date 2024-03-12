@@ -180,7 +180,6 @@ class FederationController extends OCSController {
 	 * @return TalkFederationInvite|null
 	 */
 	protected function enrichInvite(Invitation $invitation): ?array {
-
 		try {
 			$room = $this->talkManager->getRoomById($invitation->getLocalRoomId());
 		} catch (RoomNotFoundException) {
@@ -189,6 +188,7 @@ class FederationController extends OCSController {
 
 		$federationInvite = $invitation->jsonSerialize();
 		$federationInvite['roomName'] = $room->getName();
+		$federationInvite['localToken'] = $room->getToken();
 		return $federationInvite;
 	}
 }

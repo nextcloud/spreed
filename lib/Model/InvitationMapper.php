@@ -95,6 +95,20 @@ class InvitationMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function getInvitationsForUserByLocalRoom(Room $room, string $userId): Invitation {
+		$query = $this->db->getQueryBuilder();
+
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('local_room_id', $query->createNamedParameter($room->getId())));
+
+		return $this->findEntity($query);
+	}
+
 	public function countInvitationsForLocalRoom(Room $room): int {
 		$qb = $this->db->getQueryBuilder();
 
