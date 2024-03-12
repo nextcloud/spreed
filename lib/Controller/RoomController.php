@@ -39,7 +39,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\Federation\BackendNotifier;
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -126,7 +126,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
 		protected Capabilities $capabilities,
-		protected BackendNotifier $federationBackendNotifier,
+		protected FederationManager $federationManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1263,11 +1263,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->getRemoteServer() !== '') {
-			$this->federationBackendNotifier->sendShareDeclined(
-				$room->getRemoteServer(),
-				(int) $participant->getAttendee()->getRemoteId(),
-				$participant->getAttendee()->getAccessToken(),
-			);
+			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
 		}
 
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {

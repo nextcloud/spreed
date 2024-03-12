@@ -264,7 +264,7 @@ class InjectionMiddleware extends Middleware {
 		$participant = $controller->getParticipant();
 		if (!$participant instanceof Participant) {
 			try {
-				$invitation = $this->invitationMapper->getInvitationsForUserByLocalRoom($room, $this->userId);
+				$invitation = $this->invitationMapper->getInvitationForUserByLocalRoom($room, $this->userId);
 				$controller->setRoom($room);
 				$controller->setInvitation($invitation);
 			} catch (DoesNotExistException $e) {

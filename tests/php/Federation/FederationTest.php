@@ -430,7 +430,7 @@ class FederationTest extends TestCase {
 
 		$success = $this->backendNotifier->sendShareAccepted($remote, $id, $token);
 
-		$this->assertEquals(true, $success);
+		$this->assertTrue($success);
 	}
 
 	public function testSendRejectNotification() {
@@ -473,8 +473,6 @@ class FederationTest extends TestCase {
 			->with('/')
 			->willReturn('https://example.tld/index.php/');
 
-		$success = $this->backendNotifier->sendShareDeclined($remote, $id, $token);
-
-		$this->assertEquals(true, $success);
+		$this->backendNotifier->sendShareDeclined($remote, $id, $token);
 	}
 }

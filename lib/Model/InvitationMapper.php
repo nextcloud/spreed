@@ -98,7 +98,7 @@ class InvitationMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function getInvitationsForUserByLocalRoom(Room $room, string $userId): Invitation {
+	public function getInvitationForUserByLocalRoom(Room $room, string $userId): Invitation {
 		$query = $this->db->getQueryBuilder();
 
 		$query->select('*')
