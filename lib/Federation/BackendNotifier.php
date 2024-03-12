@@ -194,7 +194,7 @@ class BackendNotifier {
 			]
 		);
 
-		return $this->sendUpdateToRemote($remote, $notification, retry: false);
+		return $this->sendUpdateToRemote($remote, $notification, retry: false) === true;
 	}
 
 	/**
@@ -221,6 +221,8 @@ class BackendNotifier {
 			]
 		);
 
+		// We don't handle the return here as all local data is already deleted.
+		// If the retry ever aborts due to "unknown" we are fine with it.
 		$this->sendUpdateToRemote($remote, $notification);
 	}
 
@@ -244,6 +246,8 @@ class BackendNotifier {
 			]
 		);
 
+		// We don't handle the return here as when the retry ever
+		// aborts due to "unknown" we are fine with it.
 		$this->sendUpdateToRemote($remote, $notification);
 	}
 
@@ -260,7 +264,7 @@ class BackendNotifier {
 		string $changedProperty,
 		string|int|bool|null $newValue,
 		string|int|bool|null $oldValue,
-	): void {
+	): ?bool {
 		$remote = $this->prepareRemoteUrl($remoteServer);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -278,7 +282,7 @@ class BackendNotifier {
 			],
 		);
 
-		$this->sendUpdateToRemote($remote, $notification);
+		return $this->sendUpdateToRemote($remote, $notification);
 	}
 
 	/**
@@ -296,7 +300,7 @@ class BackendNotifier {
 		string $localToken,
 		array $messageData,
 		array $unreadInfo,
-	): void {
+	): ?bool {
 		$remote = $this->prepareRemoteUrl($remoteServer);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -313,14 +317,23 @@ class BackendNotifier {
 			],
 		);
 
-		$this->sendUpdateToRemote($remote, $notification);
+		return $this->sendUpdateToRemote($remote, $notification);
 	}
 
-	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0, bool $retry = true): bool {
+	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0, bool $retry = true): ?bool {
 		try {
 			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
 			if ($response->getStatusCode() === Http::STATUS_CREATED) {
 				return true;
+			}
+
+			if ($response->getStatusCode() === Http::STATUS_BAD_REQUEST) {
+				$ocmBody = json_decode((string) $response->getBody(), true) ?? [];
+				if (isset($ocmBody['message']) && $ocmBody['message'] === FederationManager::OCM_RESOURCE_NOT_FOUND) {
+					// Remote exists but tells us the OCM notification can not be received (invalid invite data)
+					// So we stop retrying
+					return null;
+				}
 			}
 
 			$this->logger->warning("Failed to send notification for share from $remote, received status code {code}\n{body}", [
@@ -374,6 +387,9 @@ class BackendNotifier {
 		$success = $this->sendUpdateToRemote($retryNotification->getRemoteServer(), $notification, $retryNotification->getNumAttempts());
 
 		if ($success) {
+			$this->retryNotificationMapper->delete($retryNotification);
+		} elseif ($success === null) {
+			$this->logger->error('Server signaled the OCM notification is not accepted at ' . $retryNotification->getRemoteServer() . ', giving up!');
 			$this->retryNotificationMapper->delete($retryNotification);
 		} elseif ($retryNotification->getNumAttempts() === RetryNotification::MAX_NUM_ATTEMPTS) {
 			$this->logger->error('Failed to send notification to ' . $retryNotification->getRemoteServer() . ' ' . RetryNotification::MAX_NUM_ATTEMPTS . ' times, giving up!');

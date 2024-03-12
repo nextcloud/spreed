@@ -260,12 +260,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			$room = $this->manager->getRoomById($invite->getLocalRoomId());
 		} catch (RoomNotFoundException) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
 		// Sanity check to make sure the room is a remote room
 		if (!$room->isFederatedRemoteRoom()) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
 		$this->invitationMapper->delete($invite);
@@ -293,12 +293,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			$room = $this->manager->getRoomById($invite->getLocalRoomId());
 		} catch (RoomNotFoundException) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
 		// Sanity check to make sure the room is a remote room
 		if (!$room->isFederatedRemoteRoom()) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
 		if ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_AVATAR) {
@@ -331,12 +331,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			$room = $this->manager->getRoomById($invite->getLocalRoomId());
 		} catch (RoomNotFoundException) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
 		// Sanity check to make sure the room is a remote room
 		if (!$room->isFederatedRemoteRoom()) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
 		$message = new ProxyCacheMessage();
@@ -435,10 +435,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			$attendee = $this->attendeeMapper->getById($attendeeId);
 		} catch (Exception) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 		if ($attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 		if ($attendee->getAccessToken() !== $sharedSecret) {
 			throw new AuthenticationFailedException();
@@ -468,7 +468,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		try {
 			return $this->invitationMapper->getByRemoteAndAccessToken($remoteServerUrl, $remoteAttendeeId, $sharedSecret);
 		} catch (DoesNotExistException) {
-			throw new ShareNotFound();
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 	}
 

@@ -51,6 +51,7 @@ use SensitiveParameter;
  * FederationManager handles incoming federated rooms
  */
 class FederationManager {
+	public const OCM_RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND';
 	public const TALK_ROOM_RESOURCE = 'talk-room';
 	public const TALK_PROTOCOL_NAME = 'nctalk';
 	public const NOTIFICATION_SHARE_ACCEPTED = 'SHARE_ACCEPTED';

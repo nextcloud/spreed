@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Federation\BackendNotifier;
@@ -62,7 +63,7 @@ class RoomModifiedListener implements IEventListener {
 		foreach ($participants as $participant) {
 			$cloudId = $this->cloudIdManager->resolveCloudId($participant->getAttendee()->getActorId());
 
-			$this->backendNotifier->sendRoomModifiedUpdate(
+			$success = $this->backendNotifier->sendRoomModifiedUpdate(
 				$cloudId->getRemote(),
 				$participant->getAttendee()->getId(),
 				$participant->getAttendee()->getAccessToken(),
@@ -71,6 +72,10 @@ class RoomModifiedListener implements IEventListener {
 				$event->getNewValue(),
 				$event->getOldValue(),
 			);
+
+			if ($success === null) {
+				$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
+			}
 		}
 	}
 }
