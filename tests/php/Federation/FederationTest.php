@@ -35,6 +35,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Model\ProxyCacheMessageMapper;
+use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -42,7 +43,7 @@ use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\BackgroundJob\IJobList;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
@@ -101,6 +102,8 @@ class FederationTest extends TestCase {
 	protected FederationChatNotifier|MockObject $federationChatNotifier;
 	protected UserConverter|MockObject $userConverter;
 	protected ICacheFactory|MockObject $cacheFactory;
+	protected RetryNotificationMapper|MockObject $retryNotificationMapper;
+	protected ITimeFactory|MockObject $timeFactory;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -118,18 +121,21 @@ class FederationTest extends TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessageMapper::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->retryNotificationMapper = $this->createMock(RetryNotificationMapper::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 
 		$this->backendNotifier = new BackendNotifier(
 			$this->cloudFederationFactory,
 			$this->addressHandler,
 			$this->logger,
 			$this->cloudFederationProviderManager,
-			$this->createMock(IJobList::class),
 			$this->userManager,
 			$this->url,
 			$this->appManager,
 			$this->config,
 			$this->appConfig,
+			$this->retryNotificationMapper,
+			$this->timeFactory,
 		);
 
 		$this->federationManager = $this->createMock(FederationManager::class);
