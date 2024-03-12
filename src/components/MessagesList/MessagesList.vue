@@ -412,14 +412,20 @@ export default {
 		},
 
 		softUpdateByDateGroups(oldDateGroups, newDateGroups) {
-			// Check if we have this group in the old list already and it is unchanged
-			Object.keys(newDateGroups).forEach(dateTimestamp => {
-				if (oldDateGroups[dateTimestamp]) {
-					// the group by date has changed, we update its content (groups by author)
-					this.softUpdateAuthorGroups(oldDateGroups[dateTimestamp], newDateGroups[dateTimestamp], dateTimestamp)
+			const dateTimestamps = new Set([...Object.keys(oldDateGroups), ...Object.keys(newDateGroups)])
+
+			dateTimestamps.forEach(dateTimestamp => {
+				if (newDateGroups[dateTimestamp]) {
+					if (oldDateGroups[dateTimestamp]) {
+						// the group by date has changed, we update its content (groups by author)
+						this.softUpdateAuthorGroups(oldDateGroups[dateTimestamp], newDateGroups[dateTimestamp], dateTimestamp)
+					} else {
+						// the group is new
+						this.messagesGroupedByDateByAuthor[dateTimestamp] = newDateGroups[dateTimestamp]
+					}
 				} else {
-					// the group is new
-					this.messagesGroupedByDateByAuthor[dateTimestamp] = newDateGroups[dateTimestamp]
+					// the group is not in the new list, remove it
+					delete this.messagesGroupedByDateByAuthor[dateTimestamp]
 				}
 			})
 		},
