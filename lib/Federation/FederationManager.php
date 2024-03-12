@@ -177,6 +177,11 @@ class FederationManager {
 		} catch (DoesNotExistException $e) {
 			throw new \InvalidArgumentException('invitation');
 		}
+
+		if ($invitation->getState() !== Invitation::STATE_PENDING) {
+			throw new \InvalidArgumentException('state');
+		}
+
 		if ($invitation->getUserId() !== $user->getUID()) {
 			throw new UnauthorizedException('user');
 		}

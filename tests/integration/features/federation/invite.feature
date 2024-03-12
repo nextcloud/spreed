@@ -61,6 +61,8 @@ Feature: federation/invite
       | room | room | 3    | LOCAL        | room        |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 400 (v1)
       | error | state |
+    And user "participant2" declines invite to room "room" of server "LOCAL" with 400 (v1)
+      | error | state |
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 1     | participant1@http://localhost:8080 | participant1-displayname |
