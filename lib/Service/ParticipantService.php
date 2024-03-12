@@ -835,7 +835,7 @@ class ParticipantService {
 	 * @psalm-param AAttendeeRemovedEvent::REASON_* $reason
 	 */
 	public function removeAttendee(Room $room, Participant $participant, string $reason, bool $attendeeEventIsTriggeredAlready = false): void {
-		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS && $reason !== AAttendeeRemovedEvent::REASON_LEFT) {
 			$attendee = $participant->getAttendee();
 			$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
 
