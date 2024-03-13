@@ -173,6 +173,12 @@ class ChatController {
 		);
 
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
+			if ($lookIntoFuture && $this->proxyCacheMessages instanceof ICache) {
+				$cacheData = $this->proxyCacheMessages->get($cacheKey);
+				if ($cacheData === null || $cacheData < $lastKnownMessageId) {
+					$this->proxyCacheMessages->set($cacheKey, $lastKnownMessageId, 300);
+				}
+			}
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
 
@@ -182,7 +188,7 @@ class ChatController {
 		}
 		if ($proxy->getHeader('X-Chat-Last-Given')) {
 			$headers['X-Chat-Last-Given'] = (string) (int) $proxy->getHeader('X-Chat-Last-Given');
-			if ($this->proxyCacheMessages instanceof ICache) {
+			if ($lookIntoFuture && $this->proxyCacheMessages instanceof ICache) {
 				$cacheData = $this->proxyCacheMessages->get($cacheKey);
 				if ($cacheData === null || $cacheData < $headers['X-Chat-Last-Given']) {
 					$this->proxyCacheMessages->set($cacheKey, (int) $headers['X-Chat-Last-Given'], 300);
