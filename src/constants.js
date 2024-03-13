@@ -116,6 +116,8 @@ export const ATTENDEE = {
 		BRIDGED: 'bridged',
 		FEDERATED_USERS: 'federated_users',
 		PHONES: 'phones',
+		/* @internal Only use with server APIs (like /core/autocomplete/get) and never with Talk APIs */
+		REMOTES: 'remotes',
 	},
 
 	BRIDGE_BOT_ID: 'bridge-bot',
