@@ -27,6 +27,7 @@ namespace OCA\SpreedCheats\Controller;
 
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\IShare;
@@ -86,7 +87,13 @@ class ApiController extends OCSController {
 		$delete->delete('talk_poll_votes')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_proxy_messages')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_reminders')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_retry_ocm')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_rooms')->executeStatement();
@@ -94,13 +101,19 @@ class ApiController extends OCSController {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_sessions')->executeStatement();
 
-
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('share')
 			->where($delete->expr()->orX(
 				$delete->expr()->eq('share_type', $delete->createNamedParameter(IShare::TYPE_ROOM)),
 				$delete->expr()->eq('share_type', $delete->createNamedParameter(11 /*RoomShareProvider::SHARE_TYPE_USERROOM*/))
 			))
+			->executeStatement();
+
+
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('preferences')
+			->where($delete->expr()->in('configkey', $delete->createNamedParameter(['changelog', 'note_to_self'], IQueryBuilder::PARAM_STR_ARRAY)))
+			->andWhere($delete->expr()->eq('appid', $delete->createNamedParameter('spreed')))
 			->executeStatement();
 
 		try {
