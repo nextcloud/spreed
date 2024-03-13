@@ -114,9 +114,10 @@ class MessageSentListener implements IEventListener {
 			$lastMentionDirect = $attendee->getLastMentionDirect();
 
 			$unreadInfo = [
+				'lastReadMessage' => $lastReadMessage,
 				'unreadMessages' => $this->chatManager->getUnreadCount($event->getRoom(), $lastReadMessage),
 				'unreadMention' => $lastMention !== 0 && $lastReadMessage < $lastMention,
-				'unreadMentionDirect' => $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect
+				'unreadMentionDirect' => $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect,
 			];
 
 			$success = $this->backendNotifier->sendMessageUpdate(

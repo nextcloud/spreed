@@ -45,7 +45,7 @@ class FederationChatNotifier {
 	}
 
 	/**
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool}} $inboundNotification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool, lastReadMessage: int}} $inboundNotification
 	 */
 	public function handleChatMessage(Room $room, Participant $participant, ProxyCacheMessage $message, array $inboundNotification): void {
 		/** @var array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData */

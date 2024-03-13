@@ -215,6 +215,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		if (!empty($notification['displayName'])) {
 			$attendee->setDisplayName($notification['displayName']);
+			$attendee->setState(Invitation::STATE_ACCEPTED);
 			$this->attendeeMapper->update($attendee);
 		}
 
@@ -325,7 +326,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool}} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool, lastReadMessage: int}} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
@@ -416,6 +417,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$notification['unreadInfo']['unreadMessages'],
 			$notification['unreadInfo']['unreadMention'],
 			$notification['unreadInfo']['unreadMentionDirect'],
+			$notification['unreadInfo']['lastReadMessage'],
 		);
 
 		$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);

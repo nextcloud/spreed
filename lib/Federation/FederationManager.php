@@ -147,6 +147,7 @@ class FederationManager {
 				'accessToken' => $invitation->getAccessToken(),
 				'remoteId' => $invitation->getRemoteAttendeeId(),
 				'invitedCloudId' => $invitation->getLocalCloudId(),
+				'lastReadMessage' => $room->getLastMessageId(),
 			]
 		];
 		$attendees = $this->participantService->addUsers($room, $participant, $user);

@@ -249,9 +249,10 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
-	public function updateUnreadInfoForProxyParticipant(Participant $participant, int $unreadMessageCount, bool $hasMention, bool $hadDirectMention): void {
+	public function updateUnreadInfoForProxyParticipant(Participant $participant, int $unreadMessageCount, bool $hasMention, bool $hadDirectMention, int $lastReadMessageId): void {
 		$attendee = $participant->getAttendee();
-		$attendee->setLastReadMessage($unreadMessageCount);
+		$attendee->setUnreadMessages($unreadMessageCount);
+		$attendee->setLastReadMessage($lastReadMessageId);
 		$attendee->setLastMentionMessage($hasMention ? 1 : 0);
 		$attendee->setLastMentionDirect($hadDirectMention ? 1 : 0);
 		$this->attendeeMapper->update($attendee);
@@ -505,7 +506,7 @@ class ParticipantService {
 			}
 			$attendee->setParticipantType($participant['participantType'] ?? Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
-			$attendee->setLastReadMessage($lastMessage);
+			$attendee->setLastReadMessage($participant['lastReadMessage'] ?? $lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
 			$attendees[] = $attendee;
 		}

@@ -87,6 +87,8 @@ class SelectHelper {
 			->addSelect($alias . 'invited_cloud_id')
 			->addSelect($alias . 'phone_number')
 			->addSelect($alias . 'call_id')
+			->addSelect($alias . 'state')
+			->addSelect($alias . 'unread_messages')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

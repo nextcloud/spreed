@@ -292,12 +292,11 @@ class RoomFormatter {
 
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 			$currentUser = $this->userManager->get($attendee->getActorId());
-			if ($room->getRemoteServer() !== '') {
-				// For proxy conversations the information is the real counter,
-				// not the message ID requiring math afterward.
-				$roomData['unreadMessages'] = $attendee->getLastReadMessage();
-				$roomData['unreadMention'] = (bool) $attendee->getLastMentionMessage();
-				$roomData['unreadMentionDirect'] = (bool) $attendee->getLastMentionDirect();
+			if ($room->isFederatedConversation()) {
+				$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
+				$roomData['unreadMention'] = (bool)$attendee->getLastMentionMessage();
+				$roomData['unreadMentionDirect'] = (bool)$attendee->getLastMentionDirect();
+				$roomData['unreadMessages'] = $attendee->getUnreadMessages();
 			} elseif ($currentUser instanceof IUser) {
 				$lastReadMessage = $attendee->getLastReadMessage();
 				if ($lastReadMessage === -1) {
@@ -338,6 +337,7 @@ class RoomFormatter {
 			$lastReadMessage = $attendee->getLastReadMessage();
 			$lastMention = $attendee->getLastMentionMessage();
 			$lastMentionDirect = $attendee->getLastMentionDirect();
+			$roomData['lastReadMessage'] = $lastReadMessage;
 			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
 			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
@@ -388,6 +388,7 @@ class RoomFormatter {
 				$lastMessage,
 			);
 		} elseif ($room->getRemoteServer() !== '') {
+			$roomData['lastCommonReadMessage'] = 0;
 			try {
 				$cachedMessage = $this->proxyCacheMessageMapper->findByRemote(
 					$room->getRemoteServer(),

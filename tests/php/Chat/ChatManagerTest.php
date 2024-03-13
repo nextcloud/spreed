@@ -29,6 +29,7 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\Invitation;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
@@ -446,6 +447,8 @@ class ChatManagerTest extends TestCase {
 			'phone_number' => '',
 			'call_id' => '',
 			'invited_cloud_id' => '',
+			'state' => Invitation::STATE_ACCEPTED,
+			'unread_messages' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -505,6 +508,8 @@ class ChatManagerTest extends TestCase {
 			'phone_number' => '',
 			'call_id' => '',
 			'invited_cloud_id' => '',
+			'state' => Invitation::STATE_ACCEPTED,
+			'unread_messages' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -586,6 +591,8 @@ class ChatManagerTest extends TestCase {
 			'phone_number' => '',
 			'call_id' => '',
 			'invited_cloud_id' => '',
+			'state' => Invitation::STATE_ACCEPTED,
+			'unread_messages' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
