@@ -1,5 +1,4 @@
 import axios from '@nextcloud/axios'
-import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import { searchPossibleConversations } from './conversationsService.js'
@@ -9,22 +8,16 @@ jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),
 }))
 
+jest.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: jest.fn(() => ({
+		spreed: {
+			features: ['federation-v1'],
+			config: { federation: { enabled: true, 'outgoing-enabled': true } },
+		},
+	}))
+}))
+
 describe('conversationsService', () => {
-	let loadStateSettings
-
-	beforeEach(() => {
-		loadStateSettings = {
-			federation_enabled: false,
-		}
-
-		loadState.mockImplementation((app, key) => {
-			if (app === 'spreed') {
-				return loadStateSettings[key]
-			}
-			return null
-		})
-	})
-
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
 		jest.clearAllMocks()
@@ -71,10 +64,6 @@ describe('conversationsService', () => {
 	})
 
 	test('searchPossibleConversations with other share types', () => {
-		loadStateSettings = {
-			federation_enabled: true,
-		}
-
 		testSearchPossibleConversations(
 			'conversation-token',
 			false,
