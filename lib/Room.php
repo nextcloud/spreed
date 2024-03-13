@@ -96,12 +96,16 @@ class Room {
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
+	public const HAS_FEDERATION_NONE = 0;
+	public const HAS_FEDERATION_TALKv1 = 1;
+
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
 
 	/**
 	 * @psalm-param Room::TYPE_* $type
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
+	 * @psalm-param int-mask-of<self::HAS_FEDERATION_*> $hasFederation
 	 */
 	public function __construct(
 		private Manager $manager,
@@ -138,6 +142,7 @@ class Room {
 		private int $breakoutRoomStatus,
 		private int $callRecording,
 		private int $recordingConsent,
+		private int $hasFederation,
 	) {
 	}
 
@@ -410,6 +415,9 @@ class Room {
 		return $this->remoteToken;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function isFederatedRemoteRoom(): bool {
 		return $this->remoteServer !== '';
 	}
@@ -557,5 +565,20 @@ class Room {
 	 */
 	public function setRecordingConsent(int $recordingConsent): void {
 		$this->recordingConsent = $recordingConsent;
+	}
+
+	/**
+	 * @psalm-return int-mask-of<self::HAS_FEDERATION_*>
+	 */
+	public function hasFederatedParticipants(): int {
+		return $this->hasFederation;
+	}
+
+	/**
+	 * @param int $hasFederation
+	 * @psalm-param int-mask-of<self::HAS_FEDERATION_*> $hasFederation (bit map)
+	 */
+	public function setFederatedParticipants(int $hasFederation): void {
+		$this->hasFederation = $hasFederation;
 	}
 }

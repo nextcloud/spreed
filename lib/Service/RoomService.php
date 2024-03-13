@@ -886,6 +886,19 @@ class RoomService {
 		$room->setLastActivity($dateTime);
 	}
 
+	/**
+	 * @psalm-param int-mask-of<Room::HAS_FEDERATION_*> $hasFederation
+	 */
+	public function setHasFederation(Room $room, int $hasFederation): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('has_federation', $update->createNamedParameter($hasFederation, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setFederatedParticipants($hasFederation);
+	}
+
 	public function setLastActivity(Room $room, \DateTime $now): void {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')

@@ -514,6 +514,7 @@ class ParticipantService {
 		$event = new BeforeAttendeesAddedEvent($room, $attendees);
 		$this->dispatcher->dispatchTyped($event);
 
+		$setFederationFlagAlready = $room->hasFederatedParticipants() & Room::HAS_FEDERATION_TALKv1;
 		foreach ($attendees as $attendee) {
 			try {
 				$this->attendeeMapper->insert($attendee);
@@ -523,6 +524,16 @@ class ParticipantService {
 					if (!$inviteSent) {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();
+					}
+
+					if (!$setFederationFlagAlready) {
+						$flag = $room->hasFederatedParticipants() | Room::HAS_FEDERATION_TALKv1;
+
+						/** @var RoomService $roomService */
+						$roomService = Server::get(RoomService::class);
+						$roomService->setHasFederation($room, $flag);
+
+						$setFederationFlagAlready = true;
 					}
 				}
 			} catch (Exception $e) {

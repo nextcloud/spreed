@@ -400,6 +400,7 @@ class RoomServiceTest extends TestCase {
 			BreakoutRoom::STATUS_STOPPED,
 			Room::RECORDING_NONE,
 			RecordingService::CONSENT_REQUIRED_NO,
+			Room::HAS_FEDERATION_NONE,
 		);
 
 		$verificationResult = $service->verifyPassword($room, '1234');
