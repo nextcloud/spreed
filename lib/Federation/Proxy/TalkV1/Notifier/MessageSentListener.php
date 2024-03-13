@@ -26,6 +26,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
@@ -118,7 +119,7 @@ class MessageSentListener implements IEventListener {
 				'unreadMentionDirect' => $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect
 			];
 
-			$this->backendNotifier->sendMessageUpdate(
+			$success = $this->backendNotifier->sendMessageUpdate(
 				$cloudId->getRemote(),
 				$participant->getAttendee()->getId(),
 				$participant->getAttendee()->getAccessToken(),
@@ -126,6 +127,10 @@ class MessageSentListener implements IEventListener {
 				$messageData,
 				$unreadInfo,
 			);
+
+			if ($success === null) {
+				$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
+			}
 		}
 	}
 }

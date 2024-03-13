@@ -51,6 +51,7 @@ use SensitiveParameter;
  * FederationManager handles incoming federated rooms
  */
 class FederationManager {
+	public const OCM_RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND';
 	public const TALK_ROOM_RESOURCE = 'talk-room';
 	public const TALK_PROTOCOL_NAME = 'nctalk';
 	public const NOTIFICATION_SHARE_ACCEPTED = 'SHARE_ACCEPTED';
@@ -178,16 +179,38 @@ class FederationManager {
 			throw new \InvalidArgumentException('invitation');
 		}
 
-		if ($invitation->getState() !== Invitation::STATE_PENDING) {
-			throw new \InvalidArgumentException('state');
-		}
-
 		if ($invitation->getUserId() !== $user->getUID()) {
 			throw new UnauthorizedException('user');
 		}
 
+		if ($invitation->getState() !== Invitation::STATE_PENDING) {
+			throw new \InvalidArgumentException('state');
+		}
+
+		$this->rejectInvitation($invitation, $user->getUID());
+	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 * @throws UnauthorizedException
+	 */
+	public function rejectByRemoveSelf(Room $room, string $userId): void {
+		try {
+			$invitation = $this->invitationMapper->getInvitationForUserByLocalRoom($room, $userId);
+		} catch (DoesNotExistException $e) {
+			throw new \InvalidArgumentException('invitation');
+		}
+
+		$this->rejectInvitation($invitation, $userId);
+	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 * @throws UnauthorizedException
+	 */
+	protected function rejectInvitation(Invitation $invitation, string $userId): void {
 		$this->invitationMapper->delete($invitation);
-		$this->markNotificationProcessed($user->getUID(), $shareId);
+		$this->markNotificationProcessed($userId, $invitation->getId());
 
 		$this->backendNotifier->sendShareDeclined($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken());
 	}

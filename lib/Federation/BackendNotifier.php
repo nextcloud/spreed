@@ -27,15 +27,16 @@ namespace OCA\Talk\Federation;
 
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Federation\TrustedServers;
-use OCA\Talk\BackgroundJob\RetryJob;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\RetryNotification;
+use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\BackgroundJob\IJobList;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
@@ -56,12 +57,13 @@ class BackendNotifier {
 		private AddressHandler $addressHandler,
 		private LoggerInterface $logger,
 		private ICloudFederationProviderManager $federationProviderManager,
-		private IJobList $jobList,
 		private IUserManager $userManager,
 		private IURLGenerator $url,
 		private IAppManager $appManager,
 		private Config $talkConfig,
 		private IAppConfig $appConfig,
+		private RetryNotificationMapper $retryNotificationMapper,
+		private ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -192,22 +194,7 @@ class BackendNotifier {
 			]
 		);
 
-		try {
-			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
-			if ($response->getStatusCode() === Http::STATUS_CREATED) {
-				return true;
-			}
-
-			$this->logger->warning("Failed to send share accepted notification for share from $remote, received status code {code}\n{body}", [
-				'code' => $response->getStatusCode(),
-				'body' => (string) $response->getBody(),
-			]);
-
-			return false;
-		} catch (OCMProviderException $e) {
-			$this->logger->error("Failed to send share accepted notification for share from $remote, received OCMProviderException", ['exception' => $e]);
-			return false;
-		}
+		return $this->sendUpdateToRemote($remote, $notification, retry: false) === true;
 	}
 
 	/**
@@ -219,7 +206,7 @@ class BackendNotifier {
 		int $remoteAttendeeId,
 		#[SensitiveParameter]
 		string $accessToken,
-	): bool {
+	): void {
 		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -234,22 +221,9 @@ class BackendNotifier {
 			]
 		);
 
-		try {
-			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
-			if ($response->getStatusCode() === Http::STATUS_CREATED) {
-				return true;
-			}
-
-			$this->logger->warning("Failed to send share declined notification for share from $remote, received status code {code}\n{body}", [
-				'code' => $response->getStatusCode(),
-				'body' => (string) $response->getBody(),
-			]);
-
-			return false;
-		} catch (OCMProviderException $e) {
-			$this->logger->error("Failed to send share declined notification for share from $remote, received OCMProviderException", ['exception' => $e]);
-			return false;
-		}
+		// We don't handle the return here as all local data is already deleted.
+		// If the retry ever aborts due to "unknown" we are fine with it.
+		$this->sendUpdateToRemote($remote, $notification);
 	}
 
 	public function sendRemoteUnShare(
@@ -272,6 +246,8 @@ class BackendNotifier {
 			]
 		);
 
+		// We don't handle the return here as when the retry ever
+		// aborts due to "unknown" we are fine with it.
 		$this->sendUpdateToRemote($remote, $notification);
 	}
 
@@ -288,7 +264,7 @@ class BackendNotifier {
 		string $changedProperty,
 		string|int|bool|null $newValue,
 		string|int|bool|null $oldValue,
-	): void {
+	): ?bool {
 		$remote = $this->prepareRemoteUrl($remoteServer);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -306,7 +282,7 @@ class BackendNotifier {
 			],
 		);
 
-		$this->sendUpdateToRemote($remote, $notification);
+		return $this->sendUpdateToRemote($remote, $notification);
 	}
 
 	/**
@@ -324,7 +300,7 @@ class BackendNotifier {
 		string $localToken,
 		array $messageData,
 		array $unreadInfo,
-	): void {
+	): ?bool {
 		$remote = $this->prepareRemoteUrl($remoteServer);
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
@@ -341,32 +317,23 @@ class BackendNotifier {
 			],
 		);
 
-		$this->sendUpdateToRemote($remote, $notification);
+		return $this->sendUpdateToRemote($remote, $notification);
 	}
 
-	/**
-	 * @param string $remote
-	 * @param array{notificationType: string, resourceType: string, providerId: string, notification: array} $data
-	 * @param int $try
-	 * @return void
-	 * @internal Used to send retries in background jobs
-	 */
-	public function sendUpdateDataToRemote(string $remote, array $data, int $try): void {
-		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
-		$notification->setMessage(
-			$data['notificationType'],
-			$data['resourceType'],
-			$data['providerId'],
-			$data['notification']
-		);
-		$this->sendUpdateToRemote($remote, $notification, $try);
-	}
-
-	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0): void {
+	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0, bool $retry = true): ?bool {
 		try {
 			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);
 			if ($response->getStatusCode() === Http::STATUS_CREATED) {
-				return;
+				return true;
+			}
+
+			if ($response->getStatusCode() === Http::STATUS_BAD_REQUEST) {
+				$ocmBody = json_decode((string) $response->getBody(), true) ?? [];
+				if (isset($ocmBody['message']) && $ocmBody['message'] === FederationManager::OCM_RESOURCE_NOT_FOUND) {
+					// Remote exists but tells us the OCM notification can not be received (invalid invite data)
+					// So we stop retrying
+					return null;
+				}
 			}
 
 			$this->logger->warning("Failed to send notification for share from $remote, received status code {code}\n{body}", [
@@ -377,14 +344,87 @@ class BackendNotifier {
 			$this->logger->error("Failed to send notification for share from $remote, received OCMProviderException", ['exception' => $e]);
 		}
 
-		$this->jobList->add(
-			RetryJob::class,
-			[
-				'remote' => $remote,
-				'data' => json_encode($notification->getMessage(), JSON_THROW_ON_ERROR),
-				'try' => $try,
-			]
+		if ($retry && $try === 0) {
+			$now = $this->timeFactory->getTime();
+			$now += $this->getRetryDelay(1);
+
+			// Talk data
+			$retryNotification = new RetryNotification();
+			$retryNotification->setRemoteServer($remote);
+			$retryNotification->setNumAttempts(1);
+			$retryNotification->setNextRetry($this->timeFactory->getDateTime('@' . $now));
+
+			// OCM notification data
+			$data = $notification->getMessage();
+			$retryNotification->setNotificationType($data['notificationType']);
+			$retryNotification->setResourceType($data['resourceType']);
+			$retryNotification->setProviderId($data['providerId']);
+			$retryNotification->setNotification(json_encode($data['notification']));
+
+			$this->retryNotificationMapper->insert($retryNotification);
+		}
+
+		return false;
+	}
+
+	public function retrySendingFailedNotifications(\DateTimeInterface $dueDateTime): void {
+		$retryNotifications = $this->retryNotificationMapper->getAllDue($dueDateTime);
+
+		foreach ($retryNotifications as $retryNotification) {
+			$this->retrySendingFailedNotification($retryNotification);
+		}
+	}
+
+	protected function retrySendingFailedNotification(RetryNotification $retryNotification): void {
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			$retryNotification->getNotificationType(),
+			$retryNotification->getResourceType(),
+			$retryNotification->getProviderId(),
+			json_decode($retryNotification->getNotification(), true, flags: JSON_THROW_ON_ERROR),
 		);
+
+		$success = $this->sendUpdateToRemote($retryNotification->getRemoteServer(), $notification, $retryNotification->getNumAttempts());
+
+		if ($success) {
+			$this->retryNotificationMapper->delete($retryNotification);
+		} elseif ($success === null) {
+			$this->logger->error('Server signaled the OCM notification is not accepted at ' . $retryNotification->getRemoteServer() . ', giving up!');
+			$this->retryNotificationMapper->delete($retryNotification);
+		} elseif ($retryNotification->getNumAttempts() === RetryNotification::MAX_NUM_ATTEMPTS) {
+			$this->logger->error('Failed to send notification to ' . $retryNotification->getRemoteServer() . ' ' . RetryNotification::MAX_NUM_ATTEMPTS . ' times, giving up!');
+			$this->retryNotificationMapper->delete($retryNotification);
+		} else {
+			$retryNotification->setNumAttempts($retryNotification->getNumAttempts() + 1);
+
+			$now = $this->timeFactory->getTime();
+			$now += $this->getRetryDelay($retryNotification->getNumAttempts());
+
+			$retryNotification->setNextRetry($this->timeFactory->getDateTime('@' . $now));
+			$this->retryNotificationMapper->update($retryNotification);
+		}
+	}
+
+	/**
+	 * First 5 attempts are retried on the next cron run.
+	 * Attempts 6-10 we back off to cover slightly longer maintenance/downtimes (5 minutes * per attempt)
+	 * And the last tries 11-20 are retried with ~8 hours delay
+	 *
+	 * This means the last retry is after ~84 hours so a downtime from Friday to Monday would be covered
+	 */
+	protected function getRetryDelay(int $attempt): int {
+		if ($attempt < 5) {
+			// Retry after "attempt" minutes
+			return 5 * 60;
+		}
+
+		if ($attempt > 10) {
+			// Retry after 8 hours
+			return 8 * 3600;
+		}
+
+		// Retry after "attempt" * 5 minutes
+		return $attempt * 5 * 60;
 	}
 
 	protected function prepareRemoteUrl(string $remote): string {
