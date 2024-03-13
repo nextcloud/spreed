@@ -75,8 +75,14 @@
 							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
 							is-big />
 						<!-- presenter overlay -->
-						<TransitionWrapper v-if="shouldShowPresenterOverlay"
-							name="slide-down">
+						<VueDraggableResizable v-if="shouldShowPresenterOverlay"
+							:key="presenterOverlaySize"
+							parent
+							:resizable="false"
+							:h="presenterOverlaySize"
+							:w="presenterOverlaySize"
+							:x="10"
+							:y="10">
 							<VideoVue class="presenter-overlay__video"
 								:token="token"
 								:model="shownRemoteScreenCallParticipantModel"
@@ -84,8 +90,8 @@
 								is-presenter-overlay
 								un-selectable
 								hide-bottom-bar
-								@click-video="toggleShowPresenterOverlay" />
-						</TransitionWrapper>
+								@click-presenter="toggleShowPresenterOverlay" />
+						</VueDraggableResizable>
 						<!-- presenter button when presenter overlay is collapsed -->
 						<NcButton v-else-if="isPresenterCollapsed"
 							:aria-label="t('spreed', 'Show presenter')"
@@ -153,6 +159,7 @@
 
 <script>
 import debounce from 'debounce'
+import VueDraggableResizable from 'vue-draggable-resizable'
 
 import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 
@@ -169,7 +176,6 @@ import ReactionToaster from './shared/ReactionToaster.vue'
 import Screen from './shared/Screen.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
-import TransitionWrapper from '../TransitionWrapper.vue'
 
 import { SIMULCAST } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -187,13 +193,13 @@ export default {
 		AccountBox,
 		EmptyCallView,
 		ViewerOverlayCallView,
+		VueDraggableResizable,
 		Grid,
 		LocalVideo,
 		NcButton,
 		ReactionToaster,
 		Screen,
 		VideoVue,
-		TransitionWrapper,
 	},
 
 	props: {
@@ -236,6 +242,7 @@ export default {
 			isBackgroundBlurred: true,
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
+			presenterOverlaySize: 128,
 		}
 	},
 	computed: {
@@ -372,7 +379,6 @@ export default {
 		presenterVideoBlockerEnabled() {
 			return this.sharedDatas[this.shownRemoteScreenPeerId]?.remoteVideoBlocker?.isVideoEnabled()
 		},
-
 	},
 	watch: {
 		'localCallParticipantModel.attributes.peerId'(newValue, previousValue) {
@@ -470,6 +476,8 @@ export default {
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
+
+		window.addEventListener('resize', this.updateSize)
 	},
 	beforeDestroy() {
 		this.debounceFetchPeers.clear?.()
@@ -479,6 +487,8 @@ export default {
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
 		unsubscribe('set-background-blurred', this.setBackgroundBlurred)
+
+		window.removeEventListener('resize', this.updateSize)
 	},
 	methods: {
 		/**
@@ -758,6 +768,10 @@ export default {
 				this.showPresenterOverlay = !this.showPresenterOverlay
 			}
 		},
+
+		updateSize() {
+			this.presenterOverlaySize = Math.min(Math.max(window.innerWidth * 0.1, 100), 242)
+		},
 	},
 }
 </script>
@@ -783,14 +797,15 @@ export default {
 }
 
 .presenter-overlay__video {
-	position: absolute;
-	bottom: 48px;
-	right: 8px;
+	position: relative;
 	--max-size: 242px;
+	--min-size: 100px;
 	width: 10vw;
 	height: 10vw;
 	max-width: var(--max-size);
 	max-height: var(--max-size);
+	min-width: var(--min-size);
+	min-height: var(--min-size);
 	z-index: 10;
 }
 
