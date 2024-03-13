@@ -425,6 +425,19 @@ export type operations = {
           };
         };
       };
+      /** @description Invite was already accepted, use the "Remove the current user from a room" endpoint instead */
+      400: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error?: string;
+              };
+            };
+          };
+        };
+      };
       /** @description Invite can not be found */
       404: {
         content: {

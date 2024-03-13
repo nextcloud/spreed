@@ -510,6 +510,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($invites as $data) {
 			self::$remoteToInviteId[$this->translateRemoteServer($data['remoteServerUrl']) . '::' . self::$tokenToIdentifier[$data['remoteToken']]] = $data['id'];
 			self::$inviteIdToRemote[$data['id']] = $this->translateRemoteServer($data['remoteServerUrl']) . '::' . self::$tokenToIdentifier[$data['remoteToken']];
+			self::$identifierToToken['LOCAL::' . $data['roomName']] = $data['localToken'];
 		}
 	}
 

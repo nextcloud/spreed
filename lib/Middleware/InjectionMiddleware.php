@@ -259,13 +259,13 @@ class InjectionMiddleware extends Middleware {
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
 			$room = $this->manager->getRoomByToken($token);
-			$controller->setRoom($room);
 		}
 
 		$participant = $controller->getParticipant();
 		if (!$participant instanceof Participant) {
 			try {
 				$invitation = $this->invitationMapper->getInvitationsForUserByLocalRoom($room, $this->userId);
+				$controller->setRoom($room);
 				$controller->setInvitation($invitation);
 			} catch (DoesNotExistException $e) {
 				throw new ParticipantNotFoundException('No invite available', $e->getCode(), $e);

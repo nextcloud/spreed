@@ -129,9 +129,10 @@ class FederationController extends OCSController {
 	 *
 	 * @param int $id ID of the share
 	 * @psalm-param non-negative-int $id
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Invite declined successfully
+	 * 400: Invite was already accepted, use the "Remove the current user from a room" endpoint instead
 	 * 404: Invite can not be found
 	 */
 	#[NoAdminRequired]
@@ -146,7 +147,7 @@ class FederationController extends OCSController {
 		} catch (UnauthorizedException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse();
 	}
