@@ -235,6 +235,8 @@ import { parseSpecialSymbols } from '../../utils/textParse.ts'
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
+const attachmentsAllowed = getCapabilities()?.spreed?.config?.attachments?.allowed
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'NewMessage',
@@ -407,17 +409,18 @@ export default {
 
 		canShareFiles() {
 			return !this.currentUserIsGuest
+				&& (!supportFederationV1 || !this.conversation.remoteServer)
 		},
 
 		canUploadFiles() {
-			return getCapabilities()?.spreed?.config?.attachments?.allowed
+			return attachmentsAllowed && this.canShareFiles
 				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
-				&& this.canShareFiles
 		},
 
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+				&& (!supportFederationV1 || !this.conversation.remoteServer)
 		},
 
 		currentConversationIsJoined() {

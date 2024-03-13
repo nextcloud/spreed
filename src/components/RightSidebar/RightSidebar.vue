@@ -65,7 +65,7 @@
 				:main-conversation="mainConversation"
 				:is-active="activeTab === 'breakout-rooms'" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="!getUserId || showSIPSettings"
+		<NcAppSidebarTab v-if="showDetailsTab"
 			id="details-tab"
 			:order="4"
 			:name="t('spreed', 'Details')">
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="getUserId"
+		<NcAppSidebarTab v-if="showSharedItemsTab"
 			id="shared-items"
 			ref="sharedItemsTab"
 			:order="5"
@@ -108,6 +108,7 @@ import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.v
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
@@ -124,6 +125,8 @@ import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'RightSidebar',
@@ -266,11 +269,20 @@ export default {
 
 		showBreakoutRoomsTab() {
 			return this.getUserId && !this.isOneToOne
+				&& (!supportFederationV1 || !this.conversation.remoteServer)
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 		},
 
 		showParticipantsTab() {
 			return (this.getUserId || this.isModeratorOrUser) && !this.isOneToOne && !this.isNoteToSelf
+		},
+
+		showSharedItemsTab() {
+			return this.getUserId && (!supportFederationV1 || !this.conversation.remoteServer)
+		},
+
+		showDetailsTab() {
+			return !this.getUserId || this.showSIPSettings
 		},
 
 		isNoteToSelf() {

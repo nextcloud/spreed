@@ -21,10 +21,14 @@
  */
 
 import axios from '@nextcloud/axios'
-import { loadState } from '@nextcloud/initial-state'
+import { getCapabilities } from '@nextcloud/capabilities'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import { ATTENDEE, CONVERSATION, SHARE } from '../constants.js'
+
+const canInviteToFederation = getCapabilities()?.spreed?.features?.includes('federation-v1')
+	&& getCapabilities()?.spreed?.config?.federation?.enabled
+	&& getCapabilities()?.spreed?.config?.federation?.['outgoing-enabled']
 
 /**
  * Fetches the conversations from the server.
@@ -88,7 +92,7 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
 		!onlyUsers ? SHARE.TYPE.GROUP : null,
 		!onlyUsers ? SHARE.TYPE.CIRCLE : null,
 		(!onlyUsers && token !== 'new') ? SHARE.TYPE.EMAIL : null,
-		(!onlyUsers && token !== 'new' && loadState('spreed', 'federation_enabled')) ? SHARE.TYPE.REMOTE : null,
+		(!onlyUsers && token !== 'new' && canInviteToFederation) ? SHARE.TYPE.REMOTE : null,
 	].filter(type => type !== null)
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {

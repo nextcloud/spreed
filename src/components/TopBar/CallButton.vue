@@ -102,6 +102,7 @@ import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import VideoOutlineIcon from 'vue-material-design-icons/VideoOutline.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -118,6 +119,8 @@ import { EventBus } from '../../services/EventBus.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
+
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'CallButton',
@@ -298,6 +301,7 @@ export default {
 			return this.callEnabled
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
+				&& (!supportFederationV1 || !this.conversation.remoteServer)
 				&& !this.isInCall
 		},
 
