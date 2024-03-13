@@ -172,6 +172,10 @@ class ChatController {
 			],
 		);
 
+		if ($lookIntoFuture && $setReadMarker) {
+			$this->participantService->updateUnreadInfoForProxyParticipant($participant, 0, false, false);
+		}
+
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
 			if ($lookIntoFuture && $this->proxyCacheMessages instanceof ICache) {
 				$cacheData = $this->proxyCacheMessages->get($cacheKey);
