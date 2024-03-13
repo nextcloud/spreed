@@ -84,6 +84,7 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
+use OCA\Talk\Federation\Proxy\TalkV1\Notifier\BeforeRoomDeletedListener as TalkV1BeforeRoomDeletedListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\CancelRetryOCMListener as TalkV1CancelRetryOCMListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\MessageSentListener as TalkV1MessageSentListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\RoomModifiedListener as TalkV1RoomModifiedListener;
@@ -281,6 +282,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
 
 		// Federation listeners
+		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, TalkV1MessageSentListener::class);
