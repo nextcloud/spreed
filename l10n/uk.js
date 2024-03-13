@@ -1008,6 +1008,7 @@ OC.L10N.register(
     "Remove participant" : "Вилучити учасника",
     "Add users" : "Додати користувачів",
     "Add groups" : "Додати групи",
+    "Add teams" : "Додати команду",
     "Integrations" : "Інтеграції",
     "Searching …" : "Пошук...",
     "No results" : "Немає результатів",
