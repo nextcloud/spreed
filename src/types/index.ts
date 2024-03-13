@@ -45,7 +45,7 @@ export type Mention = ParamObject & {
 	'call-type'?: string,
 	'icon-url'?: string,
 }
-type File = ParamObject & {
+export type File = ParamObject & {
 	'size': number,
 	'path': string,
 	'link': string,

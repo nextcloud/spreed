@@ -123,7 +123,7 @@ import Reactions from './MessagePart/Reactions.vue'
 import { CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
-import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.js'
+import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
 
 const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-translation-providers']
 	// Fallback for the desktop client when connecting to Talk 17

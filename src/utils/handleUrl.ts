@@ -21,19 +21,16 @@
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import type { UrlOptions } from '@nextcloud/router'
 
 /**
  * Generate a full absolute link with @nextcloud/router.generateUrl
  *
- * @see @nextcloud/router.generateUrl
- * @param {string} url - Path
- * @param {object} [params] parameters to be replaced into the address
- * @param {import('@nextcloud/router').UrlOptions} [options] options for the parameter replacement
- * @param {boolean} options.noRewrite True if you want to force index.php being added
- * @param {boolean} options.escape Set to false if parameters should not be URL encoded (default true)
- * @return {string} Full absolute URL
+ * @param url - path
+ * @param [params] parameters to be replaced into the address
+ * @param [options] options for the parameter replacement
  */
-export function generateAbsoluteUrl(url, params, options) {
+export function generateAbsoluteUrl(url: string, params?: object, options?: UrlOptions): string {
 	// TODO: add this function to @nextcloud/router?
 	const fullPath = generateUrl(url, params, options)
 	if (!IS_DESKTOP) {
@@ -45,29 +42,24 @@ export function generateAbsoluteUrl(url, params, options) {
 }
 
 /**
- * Generate full link to conversation
+ * Generate a full link to conversation
  *
- * @param {string} token - Conversation token
- * @param {string} [messageId] - messageId for message in conversation link
- * @return {string} - Absolute URL to conversation
+ * @param token - Conversation token
+ * @param [messageId] - messageId for message in conversation link
  */
-export function generateFullConversationLink(token, messageId) {
+export function generateFullConversationLink(token: string, messageId?: string): string {
 	return messageId !== undefined
-		? generateAbsoluteUrl('/call/{token}#message_{messageId}', {
-			token,
-			messageId,
-		})
+		? generateAbsoluteUrl('/call/{token}#message_{messageId}', { token, messageId })
 		: generateAbsoluteUrl('/call/{token}', { token })
 }
 
 /**
  * Try to copy conversation link to a clipboard and display the result with dialogs
  *
- * @param {string} token - conversation token
- * @param {string} [messageId] - messageId for message in conversation link
- * @return {Promise<void>}
+ * @param token - conversation token
+ * @param [messageId] - messageId for message in conversation link
  */
-export async function copyConversationLinkToClipboard(token, messageId) {
+export async function copyConversationLinkToClipboard(token: string, messageId: string) {
 	try {
 		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId))
 		showSuccess(t('spreed', 'Conversation link copied to clipboard'))

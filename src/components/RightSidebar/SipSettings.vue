@@ -35,7 +35,7 @@
 <script>
 import { loadState } from '@nextcloud/initial-state'
 
-import { readableNumber } from '../../utils/readableNumber.js'
+import { readableNumber } from '../../utils/readableNumber.ts'
 
 export default {
 	name: 'SipSettings',

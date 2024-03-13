@@ -146,7 +146,7 @@ import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
 import { PARTICIPANT } from '../../../constants.js'
-import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 export default {
 	name: 'Conversation',

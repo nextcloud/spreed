@@ -21,14 +21,14 @@
 /**
  * Copied from https://www.w3resource.com/javascript-exercises/javascript-string-exercise-17.php
  *
- * @param {string} str The string to chop
- * @param {number} size Size of the chunks
- * @return {string[]}
+ * @param str The string to chop
+ * @param size Size of the chunks
  */
-function stringChop(str, size) {
-	str = String(str)
-	size = ~~size
-	return size > 0 ? str.match(new RegExp('.{1,' + size + '}', 'g')) : [str]
+function stringChop(str: string, size: number): string[] {
+	if (size <= 0) {
+		return [str]
+	}
+	return str.match(new RegExp('.{1,' + size + '}', 'g')) ?? [str]
 }
 
 /**
@@ -39,18 +39,18 @@ function stringChop(str, size) {
  * 943267028 => 943 267 028
  * 9432670284 => 943 267 0284
  *
- * @param {string} number The number to make readable
- * @return {string}
+ * @param number The number to make readable
  */
-function readableNumber(number) {
-	const chunks = stringChop(number, 3)
+function readableNumber(number: string | number): string {
+	const chunks = stringChop(number.toString(), 3)
+
 	const lastChunk = chunks.pop()
-	if (lastChunk.length === 1) {
-		return chunks.join(' ') + lastChunk
-	}
-	return chunks.join(' ') + ' ' + lastChunk
+	const shouldConcatLastChunk = !lastChunk?.length || lastChunk.length <= 1
+
+	return [chunks.join(' '), lastChunk].join(shouldConcatLastChunk ? '' : ' ')
 }
 
 export {
 	readableNumber,
+	stringChop,
 }

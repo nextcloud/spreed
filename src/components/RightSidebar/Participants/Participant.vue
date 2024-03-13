@@ -378,7 +378,7 @@ import {
 	callSIPSendDTMF,
 } from '../../../services/callsService.js'
 import { formattedTime } from '../../../utils/formattedTime.ts'
-import { readableNumber } from '../../../utils/readableNumber.js'
+import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getStatusMessage } from '../../../utils/userStatus.js'
 
 export default {
