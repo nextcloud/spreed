@@ -22,10 +22,10 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                       | mentionId                                  |
-      | calls           | all                        | room                        | all                                        |
-      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 | federated_user/participant2@{$REMOTE_URL}  |
-      | users           | participant3               | participant3-displayname    | participant3                               |
+      | source          | id                         | label                    | mentionId                                  |
+      | calls           | all                        | room                     | all                                        |
+      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL}  |
+      | users           | participant3               | participant3-displayname | participant3                               |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
       | source          | id                       | label                    | mentionId    |
       | calls           | all                      | room                     | all          |
@@ -56,10 +56,10 @@ Feature: federation/chat
       | id   | type |
       | room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                       | mentionId                                 |
-      | calls           | all                        | room                        | all                                       |
-      | federated_users | participant2@{$REMOTE_URL} | participant2@localhost:8180 | federated_user/participant2@{$REMOTE_URL} |
-      | federated_users | participant3@{$REMOTE_URL} | participant3@localhost:8180 | federated_user/participant3@{$REMOTE_URL} |
+      | source          | id                         | label                    | mentionId                                 |
+      | calls           | all                        | room                     | all                                       |
+      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
+      | federated_users | participant3@{$REMOTE_URL} | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
       | source          | id                       | label                    | mentionId                                 |
       | calls           | all                      | room                     | all                                       |

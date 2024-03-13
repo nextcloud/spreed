@@ -404,6 +404,7 @@ class FederationTest extends TestCase {
 					'sharedSecret' => $token,
 					'message' => 'Recipient accepted the share',
 					'remoteServerUrl' => 'http://example.tld',
+					'displayName' => 'Foo Bar',
 				]
 			);
 
@@ -428,7 +429,7 @@ class FederationTest extends TestCase {
 			->with('/')
 			->willReturn('http://example.tld/index.php/');
 
-		$success = $this->backendNotifier->sendShareAccepted($remote, $id, $token);
+		$success = $this->backendNotifier->sendShareAccepted($remote, $id, $token, 'Foo Bar');
 
 		$this->assertTrue($success);
 	}

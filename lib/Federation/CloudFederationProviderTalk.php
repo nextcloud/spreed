@@ -213,6 +213,11 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private function shareAccepted(int $id, array $notification): array {
 		$attendee = $this->getLocalAttendeeAndValidate($id, $notification['sharedSecret']);
 
+		if (!empty($notification['displayName'])) {
+			$attendee->setDisplayName($notification['displayName']);
+			$this->attendeeMapper->update($attendee);
+		}
+
 		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
 		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
 		$this->session->set('talk-overwrite-actor-displayname', $attendee->getDisplayName());

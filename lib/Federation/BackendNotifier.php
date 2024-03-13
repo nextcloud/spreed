@@ -179,6 +179,7 @@ class BackendNotifier {
 		int $remoteAttendeeId,
 		#[SensitiveParameter]
 		string $accessToken,
+		string $displayName,
 	): bool {
 		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
@@ -191,6 +192,7 @@ class BackendNotifier {
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'message' => 'Recipient accepted the share',
+				'displayName' => $displayName,
 			]
 		);
 

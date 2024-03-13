@@ -134,7 +134,7 @@ class FederationManager {
 		// Add user to the room
 		$room = $this->manager->getRoomById($invitation->getLocalRoomId());
 		if (
-			!$this->backendNotifier->sendShareAccepted($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken())
+			!$this->backendNotifier->sendShareAccepted($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken(), $user->getDisplayName())
 		) {
 			throw new CannotReachRemoteException();
 		}
