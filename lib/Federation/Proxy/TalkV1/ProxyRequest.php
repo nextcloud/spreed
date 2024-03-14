@@ -35,6 +35,8 @@ use OCP\AppFramework\Http;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IConfig;
+use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
@@ -43,6 +45,8 @@ class ProxyRequest {
 		protected IConfig $config,
 		protected IClientService $clientService,
 		protected LoggerInterface $logger,
+		protected IFactory $l10nFactory,
+		protected IUserSession $userSession,
 	) {
 	}
 
@@ -72,6 +76,7 @@ class ProxyRequest {
 				'Accept' => 'application/json',
 				'X-Nextcloud-Federation' => 'true',
 				'OCS-APIRequest' => 'true',
+				'Accept-Language' => $this->l10nFactory->getUserLanguage($this->userSession->getUser()),
 			],
 			'timeout' => 5,
 		];
