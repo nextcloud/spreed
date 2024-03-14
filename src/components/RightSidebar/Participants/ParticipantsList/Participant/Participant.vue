@@ -680,7 +680,7 @@ export default {
 		},
 
 		participantSpeakingInformation() {
-			return this.$store.getters.getParticipantSpeakingInformation(this.token, this.attendeeId)
+			return this.$store.getters.getParticipantSpeakingInformation(this.attendeeId)
 		},
 
 		isParticipantSpeaking() {
