@@ -104,8 +104,6 @@
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
-					@tribute-active-true.native="isTributePickerActive = true"
-					@tribute-active-false.native="isTributePickerActive = false"
 					@input="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
@@ -335,7 +333,6 @@ export default {
 			showPollEditor: false,
 			showNewFileDialog: -1,
 			showFilePicker: false,
-			isTributePickerActive: false,
 			// Check empty template by default
 			userData: {},
 			clipboardTimeStamp: null,
@@ -960,17 +957,12 @@ export default {
 		},
 
 		handleInputEsc() {
-			if (this.messageToEdit && !this.isTributePickerActive) {
+			if (this.messageToEdit) {
 				this.handleAbortEdit()
 				this.focusInput()
 				return
 			}
-			// When the tribute picker (e.g. emoji picker or mentions) is open
-			// ESC should only close the picker but not blur
-			if (!this.isTributePickerActive) {
-				this.blurInput()
-			}
-
+			this.blurInput()
 		},
 
 		handleEditLastMessage() {
