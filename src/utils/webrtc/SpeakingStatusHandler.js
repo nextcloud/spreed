@@ -81,7 +81,7 @@ export default class SpeakingStatusHandler {
 			callParticipantModel.off('change:stoppedSpeaking', this.#handleSpeakingBound)
 		})
 
-		this.#store.dispatch('purgeSpeakingStore', { token: this.#store.getters.getToken() })
+		this.#store.dispatch('purgeSpeakingStore')
 	}
 
 	/**
@@ -114,7 +114,6 @@ export default class SpeakingStatusHandler {
 	 */
 	#handleLocalSpeaking(localMediaModel, speaking) {
 		this.#store.dispatch('setSpeaking', {
-			token: this.#store.getters.getToken(),
 			attendeeId: this.#store.getters.getAttendeeId(),
 			speaking,
 		})
@@ -126,7 +125,6 @@ export default class SpeakingStatusHandler {
 	 */
 	#handleLocalPeerId() {
 		this.#store.dispatch('setSpeaking', {
-			token: this.#store.getters.getToken(),
 			attendeeId: this.#store.getters.getAttendeeId(),
 			speaking: this.#localMediaModel.attributes.speaking,
 		})
@@ -149,7 +147,6 @@ export default class SpeakingStatusHandler {
 		}
 
 		this.#store.dispatch('setSpeaking', {
-			token: this.#store.getters.getToken(),
 			attendeeId,
 			speaking,
 		})
