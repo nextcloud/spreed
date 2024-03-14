@@ -28,11 +28,13 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import type {
 	ChatMessage,
+	clearHistoryResponse,
 	deleteMessageResponse,
 	editMessageParams,
 	editMessageResponse,
 	getMessageContextParams,
 	getMessageContextResponse,
+	markUnreadResponse,
 	postNewMessageParams,
 	postNewMessageResponse,
 	postRichObjectParams,
@@ -141,6 +143,15 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
 }
 
 /**
+ * Clears the conversation history
+ *
+ * @param token The token of the conversation to be deleted.
+ */
+const clearConversationHistory = async function(token: string): clearHistoryResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }))
+}
+
+/**
  * Deletes a message from the server.
  *
  * @param param0 The message object that is destructured
@@ -204,13 +215,24 @@ const updateLastReadMessage = async function(token: string, lastReadMessage: set
 	} as setReadMarkerParams, options)
 }
 
+/**
+ * Set conversation as unread
+ *
+ * @param token The token of the conversation to be set as unread
+ */
+const setConversationUnread = async function(token: string): markUnreadResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }))
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
 	getMessageContext,
 	postNewMessage,
+	clearConversationHistory,
 	deleteMessage,
+	editMessage,
 	postRichObjectToConversation,
 	updateLastReadMessage,
-	editMessage,
+	setConversationUnread,
 }

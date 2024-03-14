@@ -51,6 +51,7 @@ export type getMessageContextParams = ApiOptions<operations['chat-get-message-co
 export type getMessageContextResponse = ApiResponse<operations['chat-get-message-context']['responses'][200]['content']['application/json']>
 export type postNewMessageParams = ApiOptions<operations['chat-send-message']['parameters']['query']>['params']
 export type postNewMessageResponse = ApiResponse<operations['chat-send-message']['responses'][201]['content']['application/json']>
+export type clearHistoryResponse = ApiResponse<operations['chat-clear-history']['responses'][200]['content']['application/json']>
 export type deleteMessageResponse = ApiResponse<operations['chat-delete-message']['responses'][200]['content']['application/json']>
 export type editMessageParams = ApiOptions<operations['chat-edit-message']['parameters']['query']>['params']
 export type editMessageResponse = ApiResponse<operations['chat-edit-message']['responses'][200]['content']['application/json']>
@@ -58,6 +59,7 @@ export type postRichObjectParams = ApiOptions<operations['chat-share-object-to-c
 export type postRichObjectResponse = ApiResponse<operations['chat-share-object-to-chat']['responses'][201]['content']['application/json']>
 export type setReadMarkerParams = ApiOptions<operations['chat-set-read-marker']['parameters']['query']>['params']
 export type setReadMarkerResponse = ApiResponse<operations['chat-set-read-marker']['responses'][200]['content']['application/json']>
+export type markUnreadResponse = ApiResponse<operations['chat-mark-unread']['responses'][200]['content']['application/json']>
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
