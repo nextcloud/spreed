@@ -1,6 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-beta.2 – 2024-03-14
+### Added
+- Preview: Federated chatting - Implemented reactions
+  [#11772](https://github.com/nextcloud/spreed/issues/11772)
+- Preview: Federated chatting - Implemented polls
+  [#11653](https://github.com/nextcloud/spreed/issues/11653)
+
+### Changed
+- Update translations
+- Update several dependencies
+- Mark federated users as such in the participant list
+  [#11771](https://github.com/nextcloud/spreed/issues/11771)
+
+### Fixed
+- Fix retry behaviour when the host or federated instance was not reachable
+  [#11780](https://github.com/nextcloud/spreed/issues/11780)
+- Fix UI spaming chat requests when memory cache was cleared
+  [#11788](https://github.com/nextcloud/spreed/issues/11788)
+- Fix showing federated users as options when providing a cloudId
+  [#11794](https://github.com/nextcloud/spreed/issues/11794)
+- Fix read marker and unread behaviour in federated conversations
+  [#11792](https://github.com/nextcloud/spreed/issues/11792)
+- Notify federated servers when a hosted conversation is deleted
+  [#11790](https://github.com/nextcloud/spreed/issues/11790)
+- Proxy federation requests with the users language
+  [#11801](https://github.com/nextcloud/spreed/issues/11801)
+- Fix cursor resetting to the beginning of the input field after having typed a "lower than" or "greater than"
+  [#11803](https://github.com/nextcloud/spreed/issues/11803)
+- Directly update the conversation data when marking a conversation read or unread
+  [#11678](https://github.com/nextcloud/spreed/issues/11678)
+- Silent message setting is not remembered with good user experience
+  [#11591](https://github.com/nextcloud/spreed/issues/11591)
+- Silent call setting is not remembered with good user experience
+  [#8323](https://github.com/nextcloud/spreed/issues/8323)
+
+### Known issues
+- Federated chatting: Various features are still visible but not functional
+
 ## 18.0.5 – 2024-03-08
 ### Changed
 - Update translations
