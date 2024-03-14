@@ -24,6 +24,7 @@ import SHA256 from 'crypto-js/sha256.js'
 import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import {
@@ -48,6 +49,8 @@ import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+
+const markAsReadWithoutLast = getCapabilities()?.spreed?.features?.includes('chat-read-last')
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -822,7 +825,11 @@ const actions = {
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
 		const conversation = context.getters.conversation(token)
-		if (!conversation || !conversation.lastMessage) {
+		if (markAsReadWithoutLast) {
+			context.dispatch('updateLastReadMessage', { token, id: null, updateVisually })
+			return
+		}
+		if (!conversation?.lastMessage?.id) {
 			return
 		}
 		// set the id to the last message
@@ -836,7 +843,7 @@ const actions = {
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the token of the conversation to be updated;
-	 * @param {number} data.id the id of the message on which to set the read marker;
+	 * @param {number|null} data.id the id of the message on which to set the read marker;
 	 * @param {boolean} data.updateVisually whether to also update the marker visually in the UI;
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
@@ -847,6 +854,7 @@ const actions = {
 
 		if (id === 0) {
 			console.warn('updateLastReadMessage: should not set read marker with id=0')
+			return
 		}
 
 		// optimistic early commit to avoid indicator flickering
