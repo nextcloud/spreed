@@ -67,6 +67,32 @@ namespace OCA\Talk;
  *     statusMessage: ?string,
  * }
  *
+ * @psalm-type TalkRichObjectParameter = array{
+ *     type: string,
+ *     id: string,
+ *     name: string,
+ *     server?: string,
+ *     link?: string,
+ *     'call-type'?: 'one2one'|'group'|'public',
+ *     'icon-url'?: string,
+ *     'message-id'?: string,
+ *     boardname?: string,
+ *     stackname?: string,
+ *     size?: string,
+ *     path?: string,
+ *     mimetype?: string,
+ *     'preview-available'?: 'yes'|'no',
+ *     mtime?: string,
+ *     latitude?: string,
+ *     longitude?: string,
+ *     description?: string,
+ *     thumb?: string,
+ *     website?: string,
+ *     visibility?: '0'|'1',
+ *     assignable?: '0'|'1',
+ *     conversation?: string,
+ * }
+ *
  * @psalm-type TalkChatMessage = array{
  *     actorDisplayName: string,
  *     actorId: string,
@@ -77,7 +103,7 @@ namespace OCA\Talk;
  *     isReplyable: bool,
  *     markdown: bool,
  *     message: string,
- *     messageParameters: array<string, array<string, mixed>>,
+ *     messageParameters: array<string, TalkRichObjectParameter>,
  *     messageType: string,
  *     reactions: array<string, integer>|\stdClass,
  *     referenceId: string,
@@ -97,7 +123,7 @@ namespace OCA\Talk;
  *     actorType: string,
  *     expirationTimestamp: int,
  *     message: string,
- *     messageParameters: array<string, array<string, mixed>>,
+ *     messageParameters: array<string, TalkRichObjectParameter>,
  *     messageType: string,
  *     systemMessage: string,
  * }
