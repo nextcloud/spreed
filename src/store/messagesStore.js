@@ -24,6 +24,7 @@ import SHA256 from 'crypto-js/sha256.js'
 import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import {
@@ -48,6 +49,8 @@ import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+
+const markAsReadWithoutLast = getCapabilities()?.spreed?.features?.includes('chat-read-last')
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -817,17 +820,20 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation to be updated;
+	 * @param {string} data.token the token of the conversation to be updated;
 	 * @param {boolean} data.updateVisually whether to also clear the marker visually in the UI;
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
-		const conversation = context.getters.conversations[token]
-		if (!conversation || !conversation.lastMessage) {
+		const conversation = context.getters.conversation(token)
+		if (markAsReadWithoutLast) {
+			context.dispatch('updateLastReadMessage', { token, id: null, updateVisually })
+			return
+		}
+		if (!conversation?.lastMessage?.id) {
 			return
 		}
 		// set the id to the last message
 		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually })
-		context.dispatch('markConversationRead', token)
 	},
 
 	/**
@@ -836,18 +842,19 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation to be updated;
-	 * @param {number} data.id the id of the message on which to set the read marker;
+	 * @param {string} data.token the token of the conversation to be updated;
+	 * @param {number|null} data.id the id of the message on which to set the read marker;
 	 * @param {boolean} data.updateVisually whether to also update the marker visually in the UI;
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
-		const conversation = context.getters.conversations[token]
+		const conversation = context.getters.conversation(token)
 		if (!conversation || conversation.lastReadMessage === id) {
 			return
 		}
 
 		if (id === 0) {
 			console.warn('updateLastReadMessage: should not set read marker with id=0')
+			return
 		}
 
 		// optimistic early commit to avoid indicator flickering
@@ -858,7 +865,8 @@ const actions = {
 
 		if (context.getters.getUserId()) {
 			// only update on server side if there's an actual user, not guest
-			await updateLastReadMessage(token, id)
+			const response = await updateLastReadMessage(token, id)
+			context.dispatch('addConversation', response.data.ocs.data)
 		}
 	},
 

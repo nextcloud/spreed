@@ -378,10 +378,6 @@ describe('MessageButtonsBar.vue', () => {
 				id: 100,
 				updateVisually: true,
 			})
-
-			expect(fetchConversationAction).toHaveBeenCalledWith(expect.anything(), {
-				token: TOKEN,
-			})
 		})
 
 		test('copies message link', async () => {

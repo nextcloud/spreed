@@ -34,6 +34,7 @@ import {
 	setCallPermissions,
 	setConversationUnread,
 } from '../services/conversationsService.js'
+import { updateLastReadMessage } from '../services/messagesService.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 
@@ -56,6 +57,10 @@ jest.mock('../services/conversationsService', () => ({
 	setConversationPermissions: jest.fn(),
 	setCallPermissions: jest.fn(),
 	setConversationUnread: jest.fn(),
+}))
+
+jest.mock('../services/messagesService', () => ({
+	updateLastReadMessage: jest.fn(),
 }))
 
 jest.mock('@nextcloud/event-bus')
@@ -99,6 +104,7 @@ describe('conversationsStore', () => {
 			actorId: 'actor-id',
 			defaultPermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
 			callPermissions: PARTICIPANT.PERMISSIONS.CUSTOM,
+			lastMessage: { ...previousLastMessage },
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -914,34 +920,48 @@ describe('conversationsStore', () => {
 	describe('read marker', () => {
 		beforeEach(() => {
 			store = new Vuex.Store(testStoreConfig)
+			store.commit('setUserId', 'current-user')
 		})
 
-		test('marks conversation as read by clearing unread counters', () => {
+		test('marks conversation as read by clearing unread counters', async () => {
+			// Arrange
 			testConversation.unreadMessages = 1024
 			testConversation.unreadMention = true
-
 			store.dispatch('addConversation', testConversation)
 
-			store.dispatch('markConversationRead', testToken)
+			const response = generateOCSResponse({
+				payload: {
+					...testConversation,
+					unreadMessages: 0,
+					unreadMention: false,
+				}
+			})
+			updateLastReadMessage.mockResolvedValue(response)
 
+			// Act
+			store.dispatch('clearLastReadMessage', { token: testToken })
+			await flushPromises()
+
+			// Assert
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.unreadMessages).toBe(0)
 			expect(changedConversation.unreadMention).toBe(false)
 		})
 
 		test('marks conversation as unread', async () => {
+			// Arrange
 			testConversation.unreadMessages = 0
 			store.dispatch('addConversation', testConversation)
 
 			const response = generateOCSResponse({ payload: { ...testConversation, unreadMessages: 1 } })
-			fetchConversation.mockResolvedValue(response)
-			store.dispatch('markConversationUnread', { token: testToken })
+			setConversationUnread.mockResolvedValue(response)
 
+			// Act
+			store.dispatch('markConversationUnread', { token: testToken })
 			await flushPromises()
 
+			// Assert
 			expect(setConversationUnread).toHaveBeenCalledWith(testConversation.token)
-			expect(fetchConversation).toHaveBeenCalledWith(testConversation.token)
-
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.unreadMessages).toBe(1)
 		})
