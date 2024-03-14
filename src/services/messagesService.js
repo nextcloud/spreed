@@ -34,15 +34,16 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {string} data.token the conversation token;
  * @param {string} data.lastKnownMessageId last known message id;
  * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
+ * @param {number} [data.lookIntoFuture=0] direction of message fetch
  * @param {number} [data.limit=100] Number of messages to load
  * @param {object} options options;
  */
-const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit = 100 }, options) {
+const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, lookIntoFuture = 0, limit = 100 }, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		...options,
 		params: {
 			setReadMarker: 0,
-			lookIntoFuture: 0,
+			lookIntoFuture,
 			lastKnownMessageId,
 			limit,
 			includeLastKnown: includeLastKnown ? 1 : 0,

@@ -841,6 +841,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				includeLastKnown: true,
+				lookIntoFuture: 0,
 				limit: CHAT.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
@@ -889,6 +890,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				includeLastKnown: false,
+				lookIntoFuture: 0,
 				limit: CHAT.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
@@ -1066,6 +1068,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 3,
 				includeLastKnown: false,
+				lookIntoFuture: 0,
 				limit: CHAT.FETCH_LIMIT,
 			}, undefined)
 

@@ -269,7 +269,8 @@ export default {
 				// Add a new line after file to split content into different paragraphs
 				return '{file}' + '\n\n' + this.message
 			} else {
-				return this.message
+				// TODO remove
+				return this.id + ' -- ' + this.message
 			}
 		},
 

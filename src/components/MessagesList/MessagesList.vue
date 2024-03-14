@@ -68,6 +68,18 @@
 				<Message :size="64" />
 			</template>
 		</NcEmptyContent>
+
+		<div v-if="isConversationInHistoryMode" class="scroller__wrapper">
+			<p>{{ t('spreed', 'This conversation is in history mode') }}</p>
+			<div class="scroller__wrapper-content">
+				<NcButton @click="getNewMessages">
+					{{ t('spreed', 'Load recent messages') }}
+				</NcButton>
+				<NcButton type="primary" @click="clearRouterHash">
+					{{ t('spreed', 'Load current history') }}
+				</NcButton>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -82,6 +94,7 @@ import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import moment from '@nextcloud/moment'
 
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
@@ -98,6 +111,7 @@ export default {
 	components: {
 		LoadingPlaceholder,
 		Message,
+		NcButton,
 		NcEmptyContent,
 		TransitionWrapper
 	},
@@ -160,6 +174,8 @@ export default {
 			pollingErrorTimeout: 1,
 
 			loadingOldMessages: false,
+
+			loadingNewMessages: false,
 
 			isInitialisingMessages: false,
 
@@ -233,6 +249,10 @@ export default {
 
 		hasMoreMessagesToLoad() {
 			return this.$store.getters.hasMoreMessagesToLoad(this.token)
+		},
+
+		isConversationInHistoryMode() {
+			return this.$store.getters.isConversationInHistoryMode(this.token)
 		},
 
 		/**
@@ -717,8 +737,13 @@ export default {
 
 				this.isInitialisingMessages = false
 
-				// get new messages
-				await this.lookForNewMessages()
+				if (!this.isConversationInHistoryMode) {
+					// get new messages
+					await this.lookForNewMessages()
+				} else {
+					// stop polling
+					this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
+				}
 
 				if (this.loadChatInLegacyMode || focusMessageId === null) {
 					// don't scroll if lookForNewMessages was polling as we don't want
@@ -746,7 +771,7 @@ export default {
 			const followInNewMessages = this.conversation.lastMessage
 				&& this.conversation.lastReadMessage === this.conversation.lastMessage.id
 
-			await this.getNewMessages(followInNewMessages)
+			await this.getNewMessagesPolling(followInNewMessages)
 		},
 
 		async getMessageContext(messageId) {
@@ -779,6 +804,7 @@ export default {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
+					lookIntoFuture: 0,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
 			} catch (exception) {
@@ -804,11 +830,45 @@ export default {
 		},
 
 		/**
+		 * Get message history (with new messages relative to context).
+		 *
+		 * @param {boolean} [includeLastKnown] Include or exclude the last known message in the response
+		 */
+		async getNewMessages(includeLastKnown = false) {
+			// Make the request
+			this.loadingNewMessages = true
+			try {
+				await this.$store.dispatch('fetchMessages', {
+					token: this.token,
+					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
+					includeLastKnown,
+					lookIntoFuture: 1,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
+				})
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
+				}
+				// if (exception?.response?.status === 304) {
+				// 304 - Not modified
+				// }
+				console.error(exception)
+			}
+			this.loadingNewMessages = false
+
+			console.log('InHistoryMode', this.isConversationInHistoryMode)
+			if (!this.isConversationInHistoryMode) {
+				// Start polling new messages, if this is the end of the chat
+				this.getNewMessagesPolling()
+			}
+		},
+
+		/**
 		 * Creates a long polling request for a new message.
 		 *
 		 * @param {boolean} scrollToBottom Whether we should try to automatically scroll to the bottom
 		 */
-		async getNewMessages(scrollToBottom = true) {
+		async getNewMessagesPolling(scrollToBottom = true) {
 			if (this.destroying) {
 				return
 			}
@@ -838,7 +898,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages()
+						this.getNewMessagesPolling()
 					}, 500)
 					return
 				}
@@ -851,13 +911,13 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages()
+					this.getNewMessagesPolling()
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
 
 			setTimeout(() => {
-				this.getNewMessages()
+				this.getNewMessagesPolling()
 			}, 500)
 		},
 
@@ -926,8 +986,9 @@ export default {
 			const tolerance = 10
 
 			// For chats, scrolled to bottom or / and fitted in one screen
-			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance && !this.hasMoreMessagesToLoad) {
-				this.setChatScrolledToBottom(true)
+			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance
+				&& (!this.hasMoreMessagesToLoad || this.isConversationInHistoryMode)) {
+				this.setChatScrolledToBottom(!this.hasMoreMessagesToLoad)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 				this.debounceUpdateReadMarkerPosition()
@@ -1238,7 +1299,7 @@ export default {
 
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages()
+			this.getNewMessagesPolling()
 		},
 
 		async onRouteChange({ from, to }) {
@@ -1247,29 +1308,34 @@ export default {
 				&& from.token === to.token
 				&& from.hash !== to.hash) {
 
+				// the hash is cleared, need to purge messages list and load new messages
+				if (this.isConversationInHistoryMode && !to.hash) {
+					await this.$store.dispatch('purgeMessagesStore', this.token)
+					this.$nextTick(async () => {
+						// TODO just fetch last pack or start with preconditions?
+						await this.handleStartGettingMessagesPreconditions()
+					})
+				}
+
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
 					const focusedId = this.getMessageIdFromHash(to.hash)
 					if (this.messagesList.find(m => m.id === focusedId)) {
 						// need some delay (next tick is too short) to be able to run
-						// after the browser's native "scroll to anchor" from
-						// the hash
+						// after the browser's native "scroll to anchor" from the hash
 						window.setTimeout(() => {
 							// scroll to message in URL anchor
 							this.focusMessage(focusedId, true)
 						}, 2)
 					} else {
-						// Update environment around context to fill the gaps
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: focusedId,
+						// the message is far from current list, need to purge messages list and load old messages
+						// TODO delete only for 'history' mode - need to know conditions (context timestamp)
+						console.log('InHistoryMode', this.isConversationInHistoryMode)
+						this.$store.dispatch('purgeMessagesStore', this.token)
+						this.$nextTick(async () => {
+							await this.handleStartGettingMessagesPreconditions()
+							this.focusMessage(focusedId, true)
 						})
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: focusedId,
-						})
-						await this.getMessageContext(focusedId)
-						this.focusMessage(focusedId, true)
 					}
 				}
 			}
@@ -1290,6 +1356,11 @@ export default {
 
 		messagesGroupComponent(group) {
 			return group.isSystemMessagesGroup ? MessagesSystemGroup : MessagesGroup
+		},
+
+		clearRouterHash() {
+			this.$router.push({ name: 'conversation', params: { token: this.token } })
+				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }
@@ -1314,6 +1385,21 @@ export default {
 	&__loading {
 		height: 40px;
 		transform: translatex(-64px);
+	}
+
+	&__wrapper {
+		max-width: 800px;
+		padding: 8px 140px 8px 52px;
+		margin: 0 auto;
+
+		&-content {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8px;
+			margin-top: 4px;
+			color: var(--color-text-maxcontrast);
+		}
 	}
 }
 

@@ -35,6 +35,8 @@ export const SESSION = {
 export const CHAT = {
 	FETCH_LIMIT: 100,
 	MINIMUM_VISIBLE: 5,
+	HISTORY_LIMIT_TIME: 10 * 60, // 24 hours in seconds
+	HISTORY_LIMIT_AMOUNT: 20, // 300 known unread messages
 }
 
 export const CALL = {

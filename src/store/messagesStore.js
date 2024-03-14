@@ -160,6 +160,27 @@ const getters = {
 		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
 	},
 
+	/**
+	 * Returns whether the conversation is in 'history' mode, which means that the current
+	 * message list contain message context which is older than 24 hours
+	 * or amount of unread messages is larger than 300 messages.
+	 * If true, the call to "lookForNewMessages" will be blocked.
+	 *
+	 * @param {object} state the state object.
+	 * @param {object} getters the getters object.
+	 * @return {boolean} true if context is old enough, false otherwise
+	 */
+	isConversationInHistoryMode: (state, getters) => (token) => {
+		const conversation = getters.conversation(token)
+		const lastKnownMessage = getters.message(token, getters.getLastKnownMessageId(token))
+		if (!conversation || !lastKnownMessage) {
+			return false
+		}
+
+		return conversation.lastMessage.timestamp - lastKnownMessage.timestamp > CHAT.HISTORY_LIMIT_TIME
+			|| conversation.unreadMessages > CHAT.HISTORY_LIMIT_AMOUNT
+	},
+
 	isMessageListPopulated: (state) => (token) => {
 		return !!state.loadedMessages[token]
 	},
@@ -416,6 +437,9 @@ const mutations = {
 		}
 		if (state.messages[token]) {
 			Vue.delete(state.messages, token)
+		}
+		if (state.loadedMessages[token]) {
+			Vue.delete(state.loadedMessages, token)
 		}
 	},
 
@@ -881,8 +905,9 @@ const actions = {
 	 * @param {string} data.lastKnownMessageId last known message id;
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
+	 * @param {number} [data.lookIntoFuture=0] direction of message fetch
 	 */
-	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions, minimumVisible }) {
+	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions, minimumVisible, lookIntoFuture = 0 }) {
 		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
 
 		context.dispatch('cancelFetchMessages')
@@ -896,6 +921,7 @@ const actions = {
 			token,
 			lastKnownMessageId,
 			includeLastKnown,
+			lookIntoFuture,
 			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
 
@@ -929,7 +955,7 @@ const actions = {
 		})
 
 		if (response.headers['x-chat-last-given']) {
-			context.dispatch('setFirstKnownMessageId', {
+			context.dispatch(lookIntoFuture ? 'setLastKnownMessageId' : 'setFirstKnownMessageId', {
 				token,
 				id: parseInt(response.headers['x-chat-last-given'], 10),
 			})
@@ -955,6 +981,7 @@ const actions = {
 				token,
 				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
 				includeLastKnown,
+				lookIntoFuture,
 				minimumVisible,
 			})
 		}
@@ -1044,6 +1071,7 @@ const actions = {
 				token,
 				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
 				includeLastKnown: false,
+				lookIntoFuture: 0,
 				minimumVisible: minimumVisible * 2,
 			})
 		}
