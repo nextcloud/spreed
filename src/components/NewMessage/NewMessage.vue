@@ -621,6 +621,8 @@ export default {
 				return
 			}
 			this.$nextTick(() => {
+				// reset or fill main input in chat view from the store
+				this.text = this.chatInput
 				// refocus input as the user might want to type further
 				this.focusInput()
 			})
