@@ -371,14 +371,14 @@ class ChatController {
 	 *
 	 * 200: List of mention suggestions returned
 	 */
-	public function setReadMarker(Room $room, Participant $participant, string $responseFormat, int $lastReadMessage): DataResponse {
+	public function setReadMarker(Room $room, Participant $participant, string $responseFormat, ?int $lastReadMessage): DataResponse {
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/read',
-			[
+			$lastReadMessage !== null ? [
 				'lastReadMessage' => $lastReadMessage,
-			],
+			] : [],
 		);
 
 		/** @var TalkRoom $data */
