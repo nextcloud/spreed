@@ -37,6 +37,12 @@
 					:class="fitVideo ? 'video--fit' : 'video--fill'"
 					class="video"
 					@playing="updateVideoAspectRatio" />
+				<AccountOff v-if="isPresenterOverlay && mouseover"
+					class="presenter-icon__hide"
+					:aria-label="t('spreed', 'Hide presenter video')"
+					:title="t('spreed', 'Hide presenter video')"
+					:size="32"
+					@click="$emit('click-presenter')" />
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -78,7 +84,6 @@
 				:has-shadow="hasVideo"
 				:participant-name="participantName" />
 		</slot>
-		<AccountOff v-if="isPresenterOverlay && mouseover" class="presenter-icon__hide" :size="30" />
 	</div>
 </template>
 
@@ -191,7 +196,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video'],
+	emits: ['click-video', 'click-presenter'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
@@ -304,12 +309,14 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-big': this.isBig,
 				'one-to-one': this.isOneToOne,
+				'presenter-overlay': this.isPresenterOverlay
 			}
 		},
 
 		videoWrapperClass() {
 			return {
 				'icon-loading': this.isLoading,
+				'presenter-overlay': this.isPresenterOverlay
 			}
 		},
 
@@ -660,6 +667,10 @@ export default {
 	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
+.videoWrapper.presenter-overlay > video {
+	border-radius: 50%;
+}
+
 .videoWrapper.icon-loading:after {
 	height: 60px;
 	width: 60px;
@@ -703,6 +714,10 @@ export default {
 	border-radius: calc(var(--default-clickable-area) / 2);
 }
 
+.video-container.presenter-overlay::after {
+	border-radius: 50%;
+}
+
 .video-container.speaking::after {
 	content: '';
 	box-shadow: inset 0 0 0 2px white;
@@ -715,18 +730,21 @@ export default {
 }
 
 .presenter-icon__hide {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	top: 0;
-	left: 0;
+	position: relative;
 	color: white;
-}
-
-.video-container.presenter::after {
-	content: '';
+	left: 50%;
+	transform: translate(-50%, -52px);
+	opacity: 0.7;
 	background-color: rgba(0, 0, 0, 0.5);
-	cursor: pointer;
+	border-radius: 50%;
+	padding: 6px;
+	width: 44px;
+
+	&:hover {
+		cursor: pointer;
+		opacity: 0.9;
+	}
+
 }
 
 </style>
