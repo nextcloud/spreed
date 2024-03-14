@@ -45,10 +45,23 @@ export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available
 	'height': number,
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
+export type receiveMessagesParams = ApiOptions<operations['chat-receive-messages']['parameters']['query']>['params']
+export type receiveMessagesResponse = ApiResponse<operations['chat-receive-messages']['responses'][200]['content']['application/json']>
+export type getMessageContextParams = ApiOptions<operations['chat-get-message-context']['parameters']['query']>['params']
+export type getMessageContextResponse = ApiResponse<operations['chat-get-message-context']['responses'][200]['content']['application/json']>
+export type postNewMessageParams = ApiOptions<operations['chat-send-message']['parameters']['query']>['params']
+export type postNewMessageResponse = ApiResponse<operations['chat-send-message']['responses'][201]['content']['application/json']>
+export type deleteMessageResponse = ApiResponse<operations['chat-delete-message']['responses'][200]['content']['application/json']>
+export type editMessageParams = ApiOptions<operations['chat-edit-message']['parameters']['query']>['params']
+export type editMessageResponse = ApiResponse<operations['chat-edit-message']['responses'][200]['content']['application/json']>
+export type postRichObjectParams = ApiOptions<operations['chat-share-object-to-chat']['parameters']['query']>['params']
+export type postRichObjectResponse = ApiResponse<operations['chat-share-object-to-chat']['responses'][201]['content']['application/json']>
+export type setReadMarkerParams = ApiOptions<operations['chat-set-read-marker']['parameters']['query']>['params']
+export type setReadMarkerResponse = ApiResponse<operations['chat-set-read-marker']['responses'][200]['content']['application/json']>
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
-export type setEmojiAvatarParams = ApiOptions<operations['avatar-emoji-avatar']['parameters']['query']>
+export type setEmojiAvatarParams = ApiOptions<operations['avatar-emoji-avatar']['parameters']['query']>['params']
 export type setEmojiAvatarResponse = ApiResponse<operations['avatar-emoji-avatar']['responses'][200]['content']['application/json']>
 export type deleteAvatarResponse = ApiResponse<operations['avatar-delete-avatar']['responses'][200]['content']['application/json']>
 

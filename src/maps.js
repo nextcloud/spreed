@@ -28,7 +28,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
-import { postRichObjectToConversation } from './services/messagesService.js'
+import { postRichObjectToConversation } from './services/messagesService.ts'
 
 import '@nextcloud/dialogs/style.css'
 

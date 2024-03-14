@@ -34,7 +34,7 @@ import {
 	setCallPermissions,
 	setConversationUnread,
 } from '../services/conversationsService.js'
-import { updateLastReadMessage } from '../services/messagesService.js'
+import { updateLastReadMessage } from '../services/messagesService.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 

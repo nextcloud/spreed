@@ -43,7 +43,7 @@ import {
 	getMessageContext,
 	postNewMessage,
 	postRichObjectToConversation,
-} from '../services/messagesService.js'
+} from '../services/messagesService.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
