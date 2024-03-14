@@ -649,23 +649,14 @@ const actions = {
 		commit('addConversation', conversation)
 	},
 
-	async markConversationRead({ commit, getters }, token) {
-		if (!getters.conversations[token]) {
-			return
-		}
-
-		commit('updateUnreadMessages', { token, unreadMessages: 0, unreadMention: false, unreadMentionDirect: false })
-	},
-
 	async markConversationUnread({ commit, dispatch, getters }, { token }) {
 		if (!getters.conversations[token]) {
 			return
 		}
 
 		try {
-			await setConversationUnread(token)
-			commit('updateUnreadMessages', { token, unreadMessages: 1 })
-			await dispatch('fetchConversation', { token })
+			const response = await setConversationUnread(token)
+			dispatch('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while setting the conversation as unread: ', error)
 		}

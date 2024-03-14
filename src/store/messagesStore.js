@@ -817,17 +817,16 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation to be updated;
+	 * @param {string} data.token the token of the conversation to be updated;
 	 * @param {boolean} data.updateVisually whether to also clear the marker visually in the UI;
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
-		const conversation = context.getters.conversations[token]
+		const conversation = context.getters.conversation(token)
 		if (!conversation || !conversation.lastMessage) {
 			return
 		}
 		// set the id to the last message
 		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually })
-		context.dispatch('markConversationRead', token)
 	},
 
 	/**
@@ -836,12 +835,12 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation to be updated;
+	 * @param {string} data.token the token of the conversation to be updated;
 	 * @param {number} data.id the id of the message on which to set the read marker;
 	 * @param {boolean} data.updateVisually whether to also update the marker visually in the UI;
 	 */
 	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
-		const conversation = context.getters.conversations[token]
+		const conversation = context.getters.conversation(token)
 		if (!conversation || conversation.lastReadMessage === id) {
 			return
 		}
@@ -858,7 +857,8 @@ const actions = {
 
 		if (context.getters.getUserId()) {
 			// only update on server side if there's an actual user, not guest
-			await updateLastReadMessage(token, id)
+			const response = await updateLastReadMessage(token, id)
+			context.dispatch('addConversation', response.data.ocs.data)
 		}
 	},
 

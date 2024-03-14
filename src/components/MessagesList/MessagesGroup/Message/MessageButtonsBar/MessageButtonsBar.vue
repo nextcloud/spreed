@@ -722,9 +722,6 @@ export default {
 				id: this.previousMessageId,
 				updateVisually: true,
 			})
-
-			// reload conversation to update additional attributes that have computed values
-			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 
 		handleReactionClick(selectedEmoji) {

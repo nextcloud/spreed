@@ -1,6 +1,5 @@
 import { createLocalVue } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
@@ -611,14 +610,12 @@ describe('messagesStore', () => {
 	})
 
 	describe('last read message markers', () => {
-		let conversationsMock
-		let markConversationReadAction
+		let conversationMock
 		let getUserIdMock
 		let updateConversationLastReadMessageMock
 
 		beforeEach(() => {
-			const conversations = {}
-			conversations[TOKEN] = {
+			const conversation = {
 				lastMessage: {
 					id: 123,
 				},
@@ -627,15 +624,15 @@ describe('messagesStore', () => {
 			testStoreConfig = cloneDeep(messagesStore)
 
 			getUserIdMock = jest.fn()
-			conversationsMock = jest.fn().mockReturnValue(conversations)
-			markConversationReadAction = jest.fn()
+			conversationMock = jest.fn().mockReturnValue(conversation)
 			updateConversationLastReadMessageMock = jest.fn()
-			testStoreConfig.getters.conversations = conversationsMock
+			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
 			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
-			testStoreConfig.actions.markConversationRead = markConversationReadAction
 			testStoreConfig.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
+			testStoreConfig.actions.addConversation = jest.fn()
 
-			updateLastReadMessage.mockResolvedValueOnce()
+			const response = generateOCSResponse({ payload: conversation })
+			updateLastReadMessage.mockResolvedValue(response)
 
 			store = new Vuex.Store(testStoreConfig)
 		})
@@ -657,8 +654,7 @@ describe('messagesStore', () => {
 				updateVisually: false,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
-			expect(markConversationReadAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
+			expect(conversationMock).toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
@@ -678,8 +674,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
-			expect(markConversationReadAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
+			expect(conversationMock).toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
@@ -699,8 +694,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
-			expect(markConversationReadAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
+			expect(conversationMock).toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
@@ -713,6 +707,13 @@ describe('messagesStore', () => {
 
 		test('updates last read message', async () => {
 			getUserIdMock.mockReturnValue('user-1')
+			const response = generateOCSResponse({
+				payload: {
+					unreadMessages: 0,
+					unreadMention: false,
+				}
+			})
+			updateLastReadMessage.mockResolvedValue(response)
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('updateLastReadMessage', {
@@ -721,8 +722,7 @@ describe('messagesStore', () => {
 				updateVisually: false,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
-			expect(markConversationReadAction).not.toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
@@ -735,6 +735,13 @@ describe('messagesStore', () => {
 
 		test('updates last read message and update visually', async () => {
 			getUserIdMock.mockReturnValue('user-1')
+			const response = generateOCSResponse({
+				payload: {
+					unreadMessages: 0,
+					unreadMention: false,
+				}
+			})
+			updateLastReadMessage.mockResolvedValue(response)
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('updateLastReadMessage', {
@@ -743,8 +750,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
-			expect(markConversationReadAction).not.toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
@@ -765,8 +771,7 @@ describe('messagesStore', () => {
 				updateVisually: true,
 			})
 
-			expect(conversationsMock).toHaveBeenCalled()
-			expect(markConversationReadAction).not.toHaveBeenCalled()
+			expect(conversationMock).toHaveBeenCalled()
 			expect(getUserIdMock).toHaveBeenCalled()
 			expect(updateConversationLastReadMessageMock).toHaveBeenCalledWith(expect.anything(), {
 				token: TOKEN,
@@ -1538,28 +1543,30 @@ describe('messagesStore', () => {
 	describe('posting new message', () => {
 		let message1
 		let conversationMock
+		let getUserIdMock
 		let updateLastCommonReadMessageAction
-		let updateLastReadMessageAction
 		let updateConversationLastMessageAction
 		let cancelFunctionMocks
-		let restoreConsole
 
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(messagesStore)
 
 			jest.useFakeTimers()
 
-			restoreConsole = mockConsole(['error'])
+			console.error = jest.fn()
+
 			conversationMock = jest.fn()
+			getUserIdMock = jest.fn()
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
-			updateLastReadMessageAction = jest.fn()
 			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			// mock this complex local action as we already tested it elsewhere
-			testStoreConfig.actions.updateLastReadMessage = updateLastReadMessageAction
 			testStoreConfig.actions.updateConversationLastActive = updateConversationLastActiveAction
+			testStoreConfig.actions.updateConversationLastReadMessage = jest.fn()
+			testStoreConfig.actions.addConversation = jest.fn()
 
 			cancelFunctionMocks = []
 			CancelableRequest.mockImplementation((request) => {
@@ -1582,7 +1589,7 @@ describe('messagesStore', () => {
 		})
 
 		afterEach(() => {
-			restoreConsole()
+			jest.clearAllMocks()
 		})
 
 		test('posts new message', async () => {
@@ -1591,6 +1598,7 @@ describe('messagesStore', () => {
 				lastMessage: { id: 100 },
 				lastReadMessage: 50,
 			})
+			getUserIdMock.mockReturnValue('current-user')
 
 			const temporaryMessage = {
 				id: 'temp-123',
@@ -1613,6 +1621,13 @@ describe('messagesStore', () => {
 			})
 			postNewMessage.mockResolvedValueOnce(response)
 
+			const response2 = generateOCSResponse({
+				payload: {
+					unreadMessages: 0,
+					unreadMention: false,
+				}
+			})
+			updateLastReadMessage.mockResolvedValue(response2)
 			store.dispatch('postNewMessage', { token: TOKEN, temporaryMessage, options: { silent: false } }).catch(() => {
 			})
 			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage, { silent: false })
@@ -1631,11 +1646,7 @@ describe('messagesStore', () => {
 			expect(updateConversationLastMessageAction)
 				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastMessage: messageResponse })
 
-			expect(updateLastReadMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: TOKEN,
-				id: 200,
-				updateVisually: true,
-			})
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 200)
 		})
 
 		test('cancels posting new messages individually', () => {
@@ -1689,6 +1700,8 @@ describe('messagesStore', () => {
 			const response = {
 				status: statusCode,
 			}
+
+			console.error = jest.fn()
 
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
 			await expect(
