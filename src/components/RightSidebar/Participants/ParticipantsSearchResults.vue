@@ -225,7 +225,10 @@ export default {
 			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
 		},
 		addableRemotes() {
-			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS)
+			return this.searchResults.filter((item) => item.source === ATTENDEE.ACTOR_TYPE.REMOTES)
+				.map((item) => {
+					return { ...item, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS }
+				})
 				// TODO remove when Federation feature is ready
 				.concat(OC.debug
 					? this.addableUsers.map(user => ({
