@@ -16,13 +16,13 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 	getReactionsDetails,
-} from '../../../../../services/messagesService.js'
+} from '../../../../../services/reactionsService.js'
 import vuexStore from '../../../../../store/index.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generateOCSResponse } from '../../../../../test-helpers.js'
 
-jest.mock('../../../../../services/messagesService', () => ({
+jest.mock('../../../../../services/reactionsService', () => ({
 	getReactionsDetails: jest.fn(),
 	addReactionToMessage: jest.fn(),
 	removeReactionFromMessage: jest.fn(),

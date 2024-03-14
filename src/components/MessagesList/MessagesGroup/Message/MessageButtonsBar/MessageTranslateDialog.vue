@@ -91,7 +91,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
-import { getTranslationLanguages, translateText } from '../../../../../services/messagesService.js'
+import { getTranslationLanguages, translateText } from '../../../../../services/translationService.js'
 
 export default {
 	name: 'MessageTranslateDialog',

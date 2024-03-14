@@ -30,7 +30,7 @@ import {
 	getReactionsDetails,
 	addReactionToMessage,
 	removeReactionFromMessage,
-} from '../services/messagesService.js'
+} from '../services/reactionsService.js'
 import store from '../store/index.js'
 
 /**

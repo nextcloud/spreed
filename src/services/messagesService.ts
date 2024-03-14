@@ -204,37 +204,6 @@ const updateLastReadMessage = async function(token: string, lastReadMessage: set
 	} as setReadMarkerParams, options)
 }
 
-const addReactionToMessage = async function(token, messageId, selectedEmoji, options) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }, options), {
-		reaction: selectedEmoji,
-	}, options)
-}
-
-const removeReactionFromMessage = async function(token, messageId, selectedEmoji, options) {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }, options), {
-		...options,
-		params: {
-			reaction: selectedEmoji,
-		},
-	})
-}
-
-const getReactionsDetails = async function(token, messageId, options) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }, options), options)
-}
-
-const getTranslationLanguages = async function(options) {
-	return axios.get(generateOcsUrl('/translation/languages', undefined, options), options)
-}
-
-const translateText = async function(text, fromLanguage, toLanguage, options) {
-	return axios.post(generateOcsUrl('/translation/translate', undefined, options), {
-		text,
-		fromLanguage,
-		toLanguage,
-	}, options)
-}
-
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -243,10 +212,5 @@ export {
 	deleteMessage,
 	postRichObjectToConversation,
 	updateLastReadMessage,
-	addReactionToMessage,
-	removeReactionFromMessage,
-	getReactionsDetails,
 	editMessage,
-	getTranslationLanguages,
-	translateText,
 }

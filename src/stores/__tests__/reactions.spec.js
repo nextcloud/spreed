@@ -4,12 +4,12 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
-import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/messagesService.js'
+import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/reactionsService.js'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useReactionsStore } from '../reactions.js'
 
-jest.mock('../../services/messagesService', () => ({
+jest.mock('../../services/reactionsService', () => ({
 	getReactionsDetails: jest.fn(),
 	addReactionToMessage: jest.fn(),
 	removeReactionFromMessage: jest.fn(),
