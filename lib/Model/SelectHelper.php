@@ -59,6 +59,7 @@ class SelectHelper {
 			->addSelect($alias . 'breakout_room_status')
 			->addSelect($alias . 'call_recording')
 			->addSelect($alias . 'recording_consent')
+			->addSelect($alias . 'has_federation')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 
@@ -87,6 +88,8 @@ class SelectHelper {
 			->addSelect($alias . 'invited_cloud_id')
 			->addSelect($alias . 'phone_number')
 			->addSelect($alias . 'call_id')
+			->addSelect($alias . 'state')
+			->addSelect($alias . 'unread_messages')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

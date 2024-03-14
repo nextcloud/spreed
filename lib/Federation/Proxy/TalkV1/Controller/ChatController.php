@@ -173,7 +173,12 @@ class ChatController {
 		);
 
 		if ($lookIntoFuture && $setReadMarker) {
-			$this->participantService->updateUnreadInfoForProxyParticipant($participant, 0, false, false);
+			$this->participantService->updateUnreadInfoForProxyParticipant($participant,
+				0,
+				false,
+				false,
+				(int) ($proxy->getHeader('X-Chat-Last-Given') ?: $lastKnownMessageId),
+			);
 		}
 
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
@@ -384,6 +389,7 @@ class ChatController {
 			$data['unreadMessages'],
 			$data['unreadMention'],
 			$data['unreadMentionDirect'],
+			$data['lastReadMessage'],
 		);
 
 		$headers = $lastCommonRead = [];
@@ -424,6 +430,7 @@ class ChatController {
 			$data['unreadMessages'],
 			$data['unreadMention'],
 			$data['unreadMentionDirect'],
+			$data['lastReadMessage'],
 		);
 
 		$headers = $lastCommonRead = [];

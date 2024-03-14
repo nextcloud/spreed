@@ -299,6 +299,8 @@ class AttendeeMapper extends QBMapper {
 			'invited_cloud_id' => (string) $row['invited_cloud_id'],
 			'phone_number' => $row['phone_number'],
 			'call_id' => $row['call_id'],
+			'state' => (int) $row['state'],
+			'unread_messages' => (int) $row['unread_messages'],
 		]);
 	}
 }

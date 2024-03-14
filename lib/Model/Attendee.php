@@ -66,6 +66,10 @@ use OCP\AppFramework\Db\Entity;
  * @method null|string getPhoneNumber()
  * @method void setCallId(?string $callId)
  * @method null|string getCallId()
+ * @method void setState(int $state)
+ * @method int getState()
+ * @method void setUnreadMessages(int $unreadMessages)
+ * @method int getUnreadMessages()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -168,6 +172,12 @@ class Attendee extends Entity {
 	/** @var null|string */
 	protected $callId;
 
+	/** @var int */
+	protected $state;
+
+	/** @var int */
+	protected $unreadMessages;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -189,6 +199,8 @@ class Attendee extends Entity {
 		$this->addType('invitedCloudId', 'string');
 		$this->addType('phoneNumber', 'string');
 		$this->addType('callId', 'string');
+		$this->addType('state', 'int');
+		$this->addType('unreadMessages', 'int');
 	}
 
 	public function getDisplayName(): string {

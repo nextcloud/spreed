@@ -134,6 +134,7 @@ class Manager {
 			'breakout_room_status' => 0,
 			'call_recording' => 0,
 			'recording_consent' => 0,
+			'has_federation' => 0,
 		], $data));
 	}
 
@@ -202,6 +203,7 @@ class Manager {
 			(int) $row['breakout_room_status'],
 			(int) $row['call_recording'],
 			(int) $row['recording_consent'],
+			(int) $row['has_federation'],
 		);
 	}
 

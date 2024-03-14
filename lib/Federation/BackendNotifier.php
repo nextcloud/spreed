@@ -179,6 +179,7 @@ class BackendNotifier {
 		int $remoteAttendeeId,
 		#[SensitiveParameter]
 		string $accessToken,
+		string $displayName,
 	): bool {
 		$remote = $this->prepareRemoteUrl($remoteServerUrl);
 
@@ -191,6 +192,7 @@ class BackendNotifier {
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
 				'message' => 'Recipient accepted the share',
+				'displayName' => $displayName,
 			]
 		);
 
@@ -290,7 +292,7 @@ class BackendNotifier {
 	 * Sent from Host server to Remote participant server
 	 *
 	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string} $messageData
-	 * @param array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool} $unreadInfo
+	 * @param array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool, lastReadMessage: int} $unreadInfo
 	 */
 	public function sendMessageUpdate(
 		string $remoteServer,
