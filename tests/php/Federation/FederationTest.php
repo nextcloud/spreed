@@ -29,6 +29,7 @@ use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
+use OCA\Talk\Federation\RestrictionValidator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -49,6 +50,7 @@ use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
+use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IResponse;
 use OCP\ICacheFactory;
@@ -104,6 +106,7 @@ class FederationTest extends TestCase {
 	protected ICacheFactory|MockObject $cacheFactory;
 	protected RetryNotificationMapper|MockObject $retryNotificationMapper;
 	protected ITimeFactory|MockObject $timeFactory;
+	protected RestrictionValidator|MockObject $restrictionValidator;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -123,6 +126,7 @@ class FederationTest extends TestCase {
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->retryNotificationMapper = $this->createMock(RetryNotificationMapper::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->restrictionValidator = $this->createMock(RestrictionValidator::class);
 
 		$this->backendNotifier = new BackendNotifier(
 			$this->cloudFederationFactory,
@@ -131,11 +135,10 @@ class FederationTest extends TestCase {
 			$this->cloudFederationProviderManager,
 			$this->userManager,
 			$this->url,
-			$this->appManager,
-			$this->config,
-			$this->appConfig,
 			$this->retryNotificationMapper,
 			$this->timeFactory,
+			$this->cloudIdManager,
+			$this->restrictionValidator,
 		);
 
 		$this->federationManager = $this->createMock(FederationManager::class);
@@ -170,7 +173,6 @@ class FederationTest extends TestCase {
 		$cloudShare = $this->createMock(ICloudFederationShare::class);
 
 		$providerId = '3';
-		$roomId = 5;
 		$token = 'abcdefghijklmno';
 		$shareWith = 'test@https://remote.test.local';
 		$name = 'abcdefgh';
@@ -246,10 +248,16 @@ class FederationTest extends TestCase {
 			->method('sendCloudShare')
 			->with($cloudShare);
 
-		$this->addressHandler->expects($this->once())
-			->method('splitUserRemote')
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getRemote')
+			->willReturn('remote.test.local');
+		$cloudId->method('getUser')
+			->willReturn('test');
+
+		$this->cloudIdManager->expects($this->once())
+			->method('resolveCloudId')
 			->with($shareWith)
-			->willReturn(['test', 'remote.test.local']);
+			->willReturn($cloudId);
 
 		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([

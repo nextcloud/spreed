@@ -39,6 +39,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\Federation\ICloudId;
 use OCP\IUser;
 use OCP\Notification\IManager;
 use SensitiveParameter;
@@ -67,7 +68,20 @@ class FederationManager {
 		private InvitationMapper $invitationMapper,
 		private BackendNotifier $backendNotifier,
 		private IManager $notificationManager,
+		private RestrictionValidator $restrictionValidator,
 	) {
+	}
+
+	/**
+	 * Check if $sharedBy is allowed to invite $shareWith
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function isAllowedToInvite(
+		IUser $user,
+		ICloudId $cloudIdToInvite,
+	): void {
+		$this->restrictionValidator->isAllowedToInvite($user, $cloudIdToInvite);
 	}
 
 	public function addRemoteRoom(
