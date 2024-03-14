@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
-import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/reactionsService.js'
+import { getReactionsDetails, addReactionToMessage, removeReactionFromMessage } from '../../services/reactionsService.ts'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useReactionsStore } from '../reactions.js'

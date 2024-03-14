@@ -16,7 +16,7 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 	getReactionsDetails,
-} from '../../../../../services/reactionsService.js'
+} from '../../../../../services/reactionsService.ts'
 import vuexStore from '../../../../../store/index.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'

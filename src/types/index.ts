@@ -88,3 +88,11 @@ export type NotificationInvite = Notification<FederationInviteRichParameters>
 export type getSharesResponse = ApiResponse<operations['federation-get-shares']['responses'][200]['content']['application/json']>
 export type acceptShareResponse = ApiResponse<operations['federation-accept-share']['responses'][200]['content']['application/json']>
 export type rejectShareResponse = ApiResponse<operations['federation-reject-share']['responses'][200]['content']['application/json']>
+
+// Reactions
+export type getReactionsParams = ApiOptions<operations['reaction-get-reactions']['parameters']['query']>['params']
+export type getReactionsResponse = ApiResponse<operations['reaction-get-reactions']['responses'][200]['content']['application/json']>
+export type addReactionParams = ApiOptions<operations['reaction-react']['parameters']['query']>['params']
+export type addReactionResponse = ApiResponse<operations['reaction-react']['responses'][200]['content']['application/json']>
+export type deleteReactionParams = ApiOptions<operations['reaction-delete']['parameters']['query']>['params']
+export type deleteReactionResponse = ApiResponse<operations['reaction-delete']['responses'][200]['content']['application/json']>

@@ -16,7 +16,7 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 	getReactionsDetails,
-} from '../reactionsService.js'
+} from '../reactionsService.ts'
 import {
 	getTranslationLanguages,
 	translateText,
