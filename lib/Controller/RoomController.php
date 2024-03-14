@@ -1089,6 +1089,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+		/** @var IUser $addedBy */
 		$addedBy = $this->userManager->get($this->userId);
 
 		// list of participants to attempt adding,
@@ -1153,7 +1154,12 @@ class RoomController extends AEnvironmentAwareController {
 				$this->logger->error($e->getMessage(), [
 					'exception' => $e,
 				]);
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+				return new DataResponse(['error' => 'cloudId'], Http::STATUS_BAD_REQUEST);
+			}
+			try {
+				$this->federationManager->isAllowedToInvite($addedBy, $newUser);
+			} catch (\InvalidArgumentException $e) {
+				return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 			}
 
 			$participantsToAdd[] = [

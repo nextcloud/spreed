@@ -26,27 +26,23 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use OCA\FederatedFileSharing\AddressHandler;
-use OCA\Federation\TrustedServers;
-use OCA\Talk\Config;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\RetryNotification;
 use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Room;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
+use OCP\Federation\ICloudIdManager;
 use OCP\HintException;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\OCM\Exceptions\OCMProviderException;
-use OCP\Server;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
@@ -59,11 +55,10 @@ class BackendNotifier {
 		private ICloudFederationProviderManager $federationProviderManager,
 		private IUserManager $userManager,
 		private IURLGenerator $url,
-		private IAppManager $appManager,
-		private Config $talkConfig,
-		private IAppConfig $appConfig,
 		private RetryNotificationMapper $retryNotificationMapper,
 		private ITimeFactory $timeFactory,
+		private ICloudIdManager $cloudIdManager,
+		private RestrictionValidator $restrictionValidator,
 	) {
 	}
 
@@ -84,52 +79,25 @@ class BackendNotifier {
 		Room $room,
 		Attendee $roomOwnerAttendee,
 	): bool {
-		[$user, $remote] = $this->addressHandler->splitUserRemote($shareWith);
+		$invitedCloudId = $this->cloudIdManager->resolveCloudId($shareWith);
 
 		$roomName = $room->getName();
 		$roomType = $room->getType();
 		$roomToken = $room->getToken();
 
-		if (!($user && $remote)) {
-			$this->logger->info("Could not share conversation $roomToken as the recipient is invalid: $shareWith");
+		try {
+			$this->restrictionValidator->isAllowedToInvite($sharedBy, $invitedCloudId);
+		} catch (\InvalidArgumentException) {
 			return false;
-		}
-
-		if (!$this->appConfig->getAppValueBool('federation_outgoing_enabled', true)) {
-			$this->logger->info("Could not share conversation $roomToken as outgoing federation is disabled");
-			return false;
-		}
-
-		if (!$this->talkConfig->isFederationEnabledForUserId($sharedBy)) {
-			$this->logger->info('Talk federation not allowed for user ' . $sharedBy->getUID());
-			return false;
-		}
-
-		if ($this->appConfig->getAppValueBool('federation_only_trusted_servers')) {
-			if (!$this->appManager->isEnabledForUser('federation')) {
-				$this->logger->error('Federation is limited to trusted servers but the "federation" app is disabled');
-				return false;
-			}
-
-			$trustedServers = Server::get(TrustedServers::class);
-			$serverUrl = $this->addressHandler->removeProtocolFromUrl($remote);
-			if (!$trustedServers->isTrustedServer($serverUrl)) {
-				$this->logger->warning(
-					'Tried to send Talk federation invite to untrusted server {serverUrl}',
-					['serverUrl' => $serverUrl]
-				);
-				return false;
-			}
 		}
 
 		/** @var IUser $roomOwner */
 		$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
 
-		$invitedCloudId = $user . '@' . $remote;
-		$remote = $this->prepareRemoteUrl($remote);
+		$remote = $this->prepareRemoteUrl($invitedCloudId->getRemote());
 
 		$share = $this->cloudFederationFactory->getCloudFederationShare(
-			$user . '@' . $remote,
+			$invitedCloudId->getUser() . '@' . $remote,
 			$roomToken,
 			'',
 			$providerId,
@@ -144,7 +112,7 @@ class BackendNotifier {
 
 		// Put room name info in the share
 		$protocol = $share->getProtocol();
-		$protocol['invitedCloudId'] = $invitedCloudId;
+		$protocol['invitedCloudId'] = $invitedCloudId->getId();
 		$protocol['roomName'] = $roomName;
 		$protocol['roomType'] = $roomType;
 		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;
