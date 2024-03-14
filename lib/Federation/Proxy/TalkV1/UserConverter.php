@@ -34,6 +34,7 @@ use OCA\Talk\Service\ParticipantService;
 
 /**
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
+ * @psalm-import-type TalkPoll from ResponseDefinitions
  * @psalm-import-type TalkReaction from ResponseDefinitions
  */
 class UserConverter {
@@ -150,6 +151,22 @@ class UserConverter {
 			fn (array $message): array => $this->convertMessage($room, $message),
 			$messages
 		);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param TalkPoll $poll
+	 * @return TalkPoll
+	 */
+	public function convertPoll(Room $room, array $poll): array {
+		$poll = $this->convertAttendee($room, $poll, 'actorType', 'actorId', 'actorDisplayName');
+		if (isset($poll['details'])) {
+			$poll['details'] = array_map(
+				fn (array $vote): array => $this->convertAttendee($room, $vote, 'actorType', 'actorId', 'actorDisplayName'),
+				$poll['details']
+			);
+		}
+		return $poll;
 	}
 
 	/**

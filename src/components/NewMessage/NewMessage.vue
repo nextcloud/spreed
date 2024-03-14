@@ -420,7 +420,6 @@ export default {
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-				&& (!supportFederationV1 || !this.conversation.remoteServer)
 		},
 
 		currentConversationIsJoined() {
@@ -459,7 +458,7 @@ export default {
 		},
 
 		showAttachmentsMenu() {
-			return this.canShareFiles && !this.broadcast && !this.upload && !this.messageToEdit
+			return (this.canUploadFiles || this.canShareFiles || this.canCreatePoll) && !this.broadcast && !this.upload && !this.messageToEdit
 		},
 
 		showAudioRecorder() {
