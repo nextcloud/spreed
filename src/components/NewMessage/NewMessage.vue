@@ -523,7 +523,7 @@ export default {
 		},
 
 		chatInput(newValue) {
-			if (this.text !== newValue) {
+			if (parseSpecialSymbols(this.text) !== newValue) {
 				this.text = newValue
 			}
 		},
