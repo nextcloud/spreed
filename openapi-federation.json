@@ -263,10 +263,7 @@
                     "messageParameters": {
                         "type": "object",
                         "additionalProperties": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "object"
-                            }
+                            "$ref": "#/components/schemas/RichObjectParameter"
                         }
                     },
                     "messageType": {
@@ -406,6 +403,102 @@
                         "maxLength": 0
                     }
                 ]
+            },
+            "RichObjectParameter": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "server": {
+                        "type": "string"
+                    },
+                    "link": {
+                        "type": "string"
+                    },
+                    "call-type": {
+                        "type": "string",
+                        "enum": [
+                            "one2one",
+                            "group",
+                            "public"
+                        ]
+                    },
+                    "icon-url": {
+                        "type": "string"
+                    },
+                    "message-id": {
+                        "type": "string"
+                    },
+                    "boardname": {
+                        "type": "string"
+                    },
+                    "stackname": {
+                        "type": "string"
+                    },
+                    "size": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "mimetype": {
+                        "type": "string"
+                    },
+                    "preview-available": {
+                        "type": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ]
+                    },
+                    "mtime": {
+                        "type": "string"
+                    },
+                    "latitude": {
+                        "type": "string"
+                    },
+                    "longitude": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "thumb": {
+                        "type": "string"
+                    },
+                    "website": {
+                        "type": "string"
+                    },
+                    "visibility": {
+                        "type": "string",
+                        "enum": [
+                            "0",
+                            "1"
+                        ]
+                    },
+                    "assignable": {
+                        "type": "string",
+                        "enum": [
+                            "0",
+                            "1"
+                        ]
+                    },
+                    "conversation": {
+                        "type": "string"
+                    }
+                }
             },
             "Room": {
                 "type": "object",
@@ -709,10 +802,7 @@
                     "messageParameters": {
                         "type": "object",
                         "additionalProperties": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "object"
-                            }
+                            "$ref": "#/components/schemas/RichObjectParameter"
                         }
                     },
                     "messageType": {

@@ -111,9 +111,7 @@ export type components = {
       markdown: boolean;
       message: string;
       messageParameters: {
-        [key: string]: {
-          [key: string]: Record<string, never>;
-        };
+        [key: string]: components["schemas"]["RichObjectParameter"];
       };
       messageType: string;
       reactions: {
@@ -157,6 +155,35 @@ export type components = {
     PublicCapabilities: OneOf<[{
       spreed: components["schemas"]["Capabilities"];
     }, unknown[]]>;
+    RichObjectParameter: {
+      type: string;
+      id: string;
+      name: string;
+      server?: string;
+      link?: string;
+      /** @enum {string} */
+      "call-type"?: "one2one" | "group" | "public";
+      "icon-url"?: string;
+      "message-id"?: string;
+      boardname?: string;
+      stackname?: string;
+      size?: string;
+      path?: string;
+      mimetype?: string;
+      /** @enum {string} */
+      "preview-available"?: "yes" | "no";
+      mtime?: string;
+      latitude?: string;
+      longitude?: string;
+      description?: string;
+      thumb?: string;
+      website?: string;
+      /** @enum {string} */
+      visibility?: "0" | "1";
+      /** @enum {string} */
+      assignable?: "0" | "1";
+      conversation?: string;
+    };
     Room: {
       actorId: string;
       actorType: string;
@@ -251,9 +278,7 @@ export type components = {
       expirationTimestamp: number;
       message: string;
       messageParameters: {
-        [key: string]: {
-          [key: string]: Record<string, never>;
-        };
+        [key: string]: components["schemas"]["RichObjectParameter"];
       };
       messageType: string;
       systemMessage: string;
