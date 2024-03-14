@@ -104,8 +104,6 @@
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
-					@tribute-active-true.native="isTributePickerActive = true"
-					@tribute-active-false.native="isTributePickerActive = false"
 					@input="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
@@ -335,7 +333,6 @@ export default {
 			showPollEditor: false,
 			showNewFileDialog: -1,
 			showFilePicker: false,
-			isTributePickerActive: false,
 			// Check empty template by default
 			userData: {},
 			clipboardTimeStamp: null,
@@ -525,7 +522,7 @@ export default {
 		},
 
 		chatInput(newValue) {
-			if (this.text !== newValue) {
+			if (parseSpecialSymbols(this.text) !== newValue) {
 				this.text = newValue
 			}
 		},
@@ -623,6 +620,8 @@ export default {
 				return
 			}
 			this.$nextTick(() => {
+				// reset or fill main input in chat view from the store
+				this.text = this.chatInput
 				// refocus input as the user might want to type further
 				this.focusInput()
 			})
@@ -959,17 +958,12 @@ export default {
 		},
 
 		handleInputEsc() {
-			if (this.messageToEdit && !this.isTributePickerActive) {
+			if (this.messageToEdit) {
 				this.handleAbortEdit()
 				this.focusInput()
 				return
 			}
-			// When the tribute picker (e.g. emoji picker or mentions) is open
-			// ESC should only close the picker but not blur
-			if (!this.isTributePickerActive) {
-				this.blurInput()
-			}
-
+			this.blurInput()
 		},
 
 		handleEditLastMessage() {
