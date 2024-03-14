@@ -270,7 +270,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		// Sanity check to make sure the room is a remote room
-		if (!$room->isFederatedRemoteRoom()) {
+		if (!$room->isFederatedConversation()) {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
@@ -303,7 +303,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		// Sanity check to make sure the room is a remote room
-		if (!$room->isFederatedRemoteRoom()) {
+		if (!$room->isFederatedConversation()) {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
@@ -341,7 +341,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		// Sanity check to make sure the room is a remote room
-		if (!$room->isFederatedRemoteRoom()) {
+		if (!$room->isFederatedConversation()) {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 

@@ -415,13 +415,6 @@ class Room {
 		return $this->remoteToken;
 	}
 
-	/**
-	 * @deprecated
-	 */
-	public function isFederatedRemoteRoom(): bool {
-		return $this->remoteServer !== '';
-	}
-
 	public function setParticipant(?string $userId, Participant $participant): void {
 		// FIXME Also used with cloudId, need actorType checking?
 		$this->currentUser = $userId;
