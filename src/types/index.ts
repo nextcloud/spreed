@@ -12,12 +12,9 @@ type NotificationAction = {
 	primary: boolean,
 }
 
-type ParamObject = {
-	id: string,
-	name: string,
-	type: string,
-}
-export type Notification<T = Record<string, ParamObject & Record<string, unknown>>> = {
+type RichObjectParameter = components['schemas']['RichObjectParameter']
+type RichObject<T extends keyof RichObjectParameter = 'id'|'name'|'type'> = Pick<RichObjectParameter, 'id'|'name'|'type'|T>
+export type Notification<T = Record<string, RichObject & Record<string, unknown>>> = {
 	notificationId: number,
 	app: string,
 	user: string,
@@ -40,26 +37,14 @@ export type Notification<T = Record<string, ParamObject & Record<string, unknown
 export type Conversation = components['schemas']['Room']
 
 // Chats
-export type Mention = ParamObject & {
-	server?: string,
-	'call-type'?: string,
-	'icon-url'?: string,
-}
-export type File = ParamObject & {
-	'size': number,
-	'path': string,
-	'link': string,
+export type Mention = RichObject<'server'|'call-type'|'icon-url'>
+export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available'> & {
 	'etag': string,
 	'permissions': number,
-	'mimetype': string,
-	'preview-available': string,
 	'width': number,
 	'height': number,
 }
-type MessageParameters = Record<string, ParamObject | Mention | File>
-export type ChatMessage = Omit<components['schemas']['ChatMessage'], 'messageParameters'> & {
-	messageParameters: MessageParameters
-}
+export type ChatMessage = components['schemas']['ChatMessageWithParent']
 
 // Avatars
 export type setFileAvatarResponse = ApiResponse<operations['avatar-upload-avatar']['responses'][200]['content']['application/json']>
@@ -79,9 +64,9 @@ export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['resp
 // Federations
 export type FederationInvite = components['schemas']['FederationInvite']
 type FederationInviteRichParameters = {
-	user1: ParamObject & { server: string },
-	roomName: ParamObject,
-	remoteServer: ParamObject,
+	user1: RichObject<'server'>,
+	roomName: RichObject,
+	remoteServer: RichObject,
 }
 export type NotificationInvite = Notification<FederationInviteRichParameters>
 

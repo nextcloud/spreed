@@ -1,5 +1,5 @@
 import { SHARED_ITEM } from '../constants.js'
-import type { ChatMessage, File } from '../types'
+import type { ChatMessage } from '../types'
 
 export const getItemTypeFromMessage = function(message: ChatMessage): string {
 	if (message.messageParameters?.object) {
@@ -13,8 +13,8 @@ export const getItemTypeFromMessage = function(message: ChatMessage): string {
 			return SHARED_ITEM.TYPES.OTHER
 		}
 	} else if (message.messageParameters?.file) {
-		const messageType = message.messageType || ''
-		const mimetype = (message.messageParameters.file as File)?.mimetype || ''
+		const messageType = message.messageType
+		const mimetype = message.messageParameters.file.mimetype || ''
 		if (messageType === 'record-audio' || messageType === 'record-video') {
 			return SHARED_ITEM.TYPES.RECORDING
 		} else if (messageType === 'voice-message') {
