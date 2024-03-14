@@ -921,6 +921,14 @@ class RoomService {
 			}
 		}
 
+		if ($room->isFederatedConversation()) {
+			// Delete PCM messages
+			$delete = $this->db->getQueryBuilder();
+			$delete->delete('talk_proxy_messages')
+				->where($delete->expr()->eq('local_token', $delete->createNamedParameter($room->getToken())));
+			$delete->executeStatement();
+		}
+
 		// Delete attendees
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_attendees')
