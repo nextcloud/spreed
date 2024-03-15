@@ -345,6 +345,19 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
+		// We transform the parameters when storing in the PCM, so we only have
+		// to do it once for each message.
+		// Note: `messageParameters` (array during parsing) vs `messageParameter` (string during sending)
+		$notification['messageData']['messageParameters'] = json_decode($notification['messageData']['messageParameter'], true, flags: JSON_THROW_ON_ERROR);
+		unset($notification['messageData']['messageParameter']);
+		$converted = $this->userConverter->convertMessage($room, $notification['messageData']);
+		$converted['messageParameter'] = json_encode($converted['messageParameters'], JSON_THROW_ON_ERROR);
+		unset($converted['messageParameters']);
+
+		/** @var array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string} $converted */
+		$notification['messageData'] = $converted;
+
+
 		$message = new ProxyCacheMessage();
 		$message->setLocalToken($room->getToken());
 		$message->setRemoteServerUrl($notification['remoteServerUrl']);
@@ -358,16 +371,6 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		if ($notification['messageData']['expirationDatetime']) {
 			$message->setExpirationDatetime(new \DateTime($notification['messageData']['expirationDatetime']));
 		}
-
-		// We transform the parameters when storing in the PCM, so we only have
-		// to do it once for each message.
-		$convertedParameters = $this->userConverter->convertMessageParameters($room, [
-			'message' => $notification['messageData']['message'],
-			'messageParameters' => json_decode($notification['messageData']['messageParameter'], true, flags: JSON_THROW_ON_ERROR),
-		]);
-		$notification['messageData']['message'] = $convertedParameters['message'];
-		$notification['messageData']['messageParameter'] = json_encode($convertedParameters['messageParameters'], JSON_THROW_ON_ERROR);
-
 		$message->setMessage($notification['messageData']['message']);
 		$message->setMessageParameters($notification['messageData']['messageParameter']);
 		$message->setCreationDatetime(new \DateTime($notification['messageData']['creationDatetime']));

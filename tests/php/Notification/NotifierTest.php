@@ -41,6 +41,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\Federation\ICloudIdManager;
 use OCP\Files\IRootFolder;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -98,6 +99,7 @@ class NotifierTest extends TestCase {
 	protected $botServerMapper;
 	/** @var FederationManager|MockObject */
 	protected $federationManager;
+	protected ICloudIdManager|MockObject $cloudIdManager;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -122,6 +124,7 @@ class NotifierTest extends TestCase {
 		$this->addressHandler = $this->createMock(AddressHandler::class);
 		$this->botServerMapper = $this->createMock(BotServerMapper::class);
 		$this->federationManager = $this->createMock(FederationManager::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
@@ -144,6 +147,7 @@ class NotifierTest extends TestCase {
 			$this->addressHandler,
 			$this->botServerMapper,
 			$this->federationManager,
+			$this->cloudIdManager,
 		);
 	}
 
