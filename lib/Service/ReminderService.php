@@ -30,7 +30,6 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\ProxyCacheMessage;
-use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Model\Reminder;
 use OCA\Talk\Model\ReminderMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -41,7 +40,7 @@ class ReminderService {
 		protected IManager $notificationManager,
 		protected ReminderMapper $reminderMapper,
 		protected ChatManager $chatManager,
-		protected ProxyCacheMessageMapper $proxyCacheMapper,
+		protected ProxyCacheMessageService $pcmService,
 		protected Manager $manager,
 	) {
 	}
@@ -119,7 +118,7 @@ class ReminderService {
 				$key = json_encode([$room->getRemoteServer(), $room->getRemoteToken(), $reminder->getMessageId()]);
 				if (!isset($proxyMessages[$key])) {
 					try {
-						$proxyMessages[$key] = $this->proxyCacheMapper->findByRemote($room->getRemoteServer(), $room->getRemoteToken(), $reminder->getMessageId());
+						$proxyMessages[$key] = $this->pcmService->findByRemote($room->getRemoteServer(), $room->getRemoteToken(), $reminder->getMessageId());
 					} catch (DoesNotExistException) {
 					}
 				}
@@ -142,7 +141,7 @@ class ReminderService {
 				$key = json_encode([$room->getRemoteServer(), $room->getRemoteToken(), $reminder->getMessageId()]);
 				$messageList = $proxyMessages;
 				$messageParameters = [
-					'proxyId' => $reminder->getMessageId(),
+					'proxyId' => $messageList[$key]?->getId(),
 				];
 			}
 

@@ -39,6 +39,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
@@ -115,6 +116,7 @@ class ChatControllerTest extends TestCase {
 	/** @var IL10N|MockObject */
 	private $l;
 	private Authenticator|MockObject $federationAuthenticator;
+	private ProxyCacheMessageService|MockObject $pcmService;
 
 	/** @var Room|MockObject */
 	protected $room;
@@ -154,6 +156,7 @@ class ChatControllerTest extends TestCase {
 		$this->trustedDomainHelper = $this->createMock(ITrustedDomainHelper::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->federationAuthenticator = $this->createMock(Authenticator::class);
+		$this->pcmService = $this->createMock(ProxyCacheMessageService::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -198,6 +201,7 @@ class ChatControllerTest extends TestCase {
 			$this->trustedDomainHelper,
 			$this->l,
 			$this->federationAuthenticator,
+			$this->pcmService,
 		);
 	}
 

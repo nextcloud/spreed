@@ -31,7 +31,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
-use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
@@ -64,7 +63,7 @@ class RoomFormatter {
 		protected IAppManager $appManager,
 		protected IManager $userStatusManager,
 		protected IUserManager $userManager,
-		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		protected ProxyCacheMessageService $pcmService,
 		protected UserConverter $userConverter,
 		protected IL10N $l10n,
 		protected ?string $userId,
@@ -390,7 +389,7 @@ class RoomFormatter {
 		} elseif ($room->getRemoteServer() !== '') {
 			$roomData['lastCommonReadMessage'] = 0;
 			try {
-				$cachedMessage = $this->proxyCacheMessageMapper->findByRemote(
+				$cachedMessage = $this->pcmService->findByRemote(
 					$room->getRemoteServer(),
 					$room->getRemoteToken(),
 					$room->getLastMessageId(),
