@@ -71,4 +71,13 @@ class ProxyCacheMessageMapper extends QBMapper {
 
 		return $this->findEntity($query);
 	}
+
+	public function deleteExpiredMessages(\DateTimeInterface $dateTime): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->isNotNull('expire_datetime'))
+			->andWhere($query->expr()->lte('expire_datetime', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE)));
+
+		return $query->executeStatement();
+	}
 }
