@@ -966,9 +966,6 @@ class NotifierTest extends TestCase {
 		$comment->expects($this->any())
 			->method('getActorId')
 			->willReturn('random-hash');
-		$comment->expects($this->any())
-			->method('getId')
-			->willReturn('123456789');
 		$this->commentsManager->expects($this->once())
 			->method('get')
 			->with('23')
@@ -1010,6 +1007,12 @@ class NotifierTest extends TestCase {
 			->willReturn(true);
 		$chatMessage->method('getComment')
 			->willReturn($comment);
+		$chatMessage->expects($this->any())
+			->method('getMessageId')
+			->willReturn(123456789);
+		$chatMessage->expects($this->any())
+			->method('getActorId')
+			->willReturn('random-hash');
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
