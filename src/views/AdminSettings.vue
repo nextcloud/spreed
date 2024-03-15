@@ -25,8 +25,7 @@
 		<GeneralSettings />
 		<MatterbridgeIntegration />
 		<AllowedGroups />
-		<!-- TODO remove OC.debug when Federation feature is ready -->
-		<Federation v-if="OC.debug" />
+		<Federation v-if="supportFederation" />
 		<BotsSettings />
 		<Commands />
 		<WebServerSetupChecks />
@@ -40,6 +39,8 @@
 </template>
 
 <script>
+import { getCapabilities } from '@nextcloud/capabilities'
+
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Commands from '../components/AdminSettings/Commands.vue'
@@ -53,6 +54,8 @@ import SIPBridge from '../components/AdminSettings/SIPBridge.vue'
 import StunServers from '../components/AdminSettings/StunServers.vue'
 import TurnServers from '../components/AdminSettings/TurnServers.vue'
 import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
+
+const supportFederation = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'AdminSettings',
@@ -72,5 +75,9 @@ export default {
 		TurnServers,
 		WebServerSetupChecks,
 	},
+
+	setup() {
+		return { supportFederation }
+	}
 }
 </script>
