@@ -47,6 +47,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\Federation\ICloudIdManager;
 use OCP\Files\IRootFolder;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -93,6 +94,7 @@ class Notifier implements INotifier {
 		protected AddressHandler $addressHandler,
 		protected BotServerMapper $botServerMapper,
 		protected FederationManager $federationManager,
+		protected ICloudIdManager $cloudIdManager,
 	) {
 		$this->commentManager = $commentManager;
 	}
@@ -476,49 +478,6 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
-		$subjectParameters = $notification->getSubjectParameters();
-
-		$richSubjectUser = null;
-		$isGuest = false;
-		if ($subjectParameters['userType'] === Attendee::ACTOR_USERS) {
-			$userId = $subjectParameters['userId'];
-			$userDisplayName = $this->userManager->getDisplayName($userId);
-
-			if ($userDisplayName !== null) {
-				$richSubjectUser = [
-					'type' => 'user',
-					'id' => $userId,
-					'name' => $userDisplayName,
-				];
-			}
-		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
-			$botId = $subjectParameters['userId'];
-			try {
-				$bot = $this->botServerMapper->findByUrlHash(substr($botId, strlen(Attendee::ACTOR_BOT_PREFIX)));
-				$richSubjectUser = [
-					'type' => 'highlight',
-					'id' => $botId,
-					'name' => $bot->getName() . ' (Bot)',
-				];
-			} catch (DoesNotExistException $e) {
-				$richSubjectUser = [
-					'type' => 'highlight',
-					'id' => $botId,
-					'name' => 'Bot',
-				];
-			}
-		} else {
-			$isGuest = true;
-		}
-
-		$richSubjectCall = [
-			'type' => 'call',
-			'id' => $room->getId(),
-			'name' => $room->getDisplayName($notification->getUser()),
-			'call-type' => $this->getRoomType($room),
-			'icon-url' => $this->avatarService->getAvatarUrl($room),
-		];
-
 		$messageParameters = $notification->getMessageParameters();
 		if (!isset($messageParameters['commentId']) && !isset($messageParameters['proxyId'])) {
 			throw new AlreadyProcessedException();
@@ -558,6 +517,65 @@ class Notifier implements INotifier {
 				throw new AlreadyProcessedException();
 			}
 		}
+
+		$subjectParameters = $notification->getSubjectParameters();
+
+		$richSubjectUser = null;
+		$isGuest = false;
+		if ($subjectParameters['userType'] === Attendee::ACTOR_USERS) {
+			$userId = $subjectParameters['userId'];
+			$userDisplayName = $this->userManager->getDisplayName($userId);
+
+			if ($userDisplayName !== null) {
+				$richSubjectUser = [
+					'type' => 'user',
+					'id' => $userId,
+					'name' => $userDisplayName,
+				];
+			}
+		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_FEDERATED_USERS) {
+			try {
+				$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
+				$richSubjectUser = [
+					'type' => 'user',
+					'id' => $cloudId->getUser(),
+					'name' => $message->getActorDisplayName(),
+					'server' => $cloudId->getRemote(),
+				];
+			} catch (\InvalidArgumentException) {
+				$richSubjectUser = [
+					'type' => 'highlight',
+					'id' => $message->getActorId(),
+					'name' => $message->getActorId(),
+				];
+			}
+		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
+			$botId = $subjectParameters['userId'];
+			try {
+				$bot = $this->botServerMapper->findByUrlHash(substr($botId, strlen(Attendee::ACTOR_BOT_PREFIX)));
+				$richSubjectUser = [
+					'type' => 'highlight',
+					'id' => $botId,
+					'name' => $bot->getName() . ' (Bot)',
+				];
+			} catch (DoesNotExistException $e) {
+				$richSubjectUser = [
+					'type' => 'highlight',
+					'id' => $botId,
+					'name' => 'Bot',
+				];
+			}
+		} else {
+			$isGuest = true;
+		}
+
+		$richSubjectCall = [
+			'type' => 'call',
+			'id' => $room->getId(),
+			'name' => $room->getDisplayName($notification->getUser()),
+			'call-type' => $this->getRoomType($room),
+			'icon-url' => $this->avatarService->getAvatarUrl($room),
+		];
 
 		// Set the link to the specific message
 		$notification->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]) . '#message_' . $message->getMessageId());
@@ -603,7 +621,7 @@ class Notifier implements INotifier {
 			}
 			$richSubjectParameters['message'] = [
 				'type' => 'highlight',
-				'id' => $message->getComment()->getId(),
+				'id' => $message->getMessageId(),
 				'name' => $shortenMessage,
 			];
 			if ($notification->getSubject() === 'reminder') {
@@ -621,7 +639,7 @@ class Notifier implements INotifier {
 					$subject = $l->t('Reminder: Deleted user in {call}') . "\n{message}";
 				} else {
 					try {
-						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 						// TRANSLATORS Reminder for a message from a guest in conversation {call}
 						$subject = $l->t('Reminder: {guest} (guest) in {call}') . "\n{message}";
 					} catch (ParticipantNotFoundException $e) {
@@ -644,7 +662,7 @@ class Notifier implements INotifier {
 					$subject = $l->t('Deleted user reacted with {reaction} in {call}') . "\n{message}";
 				} else {
 					try {
-						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 						$subject = $l->t('{guest} (guest) reacted with {reaction} in {call}') . "\n{message}";
 					} catch (ParticipantNotFoundException $e) {
 						$subject = $l->t('Guest reacted with {reaction} in {call}') . "\n{message}";
@@ -659,7 +677,7 @@ class Notifier implements INotifier {
 					$subject = $l->t('Deleted user in {call}') . "\n{message}";
 				} else {
 					try {
-						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 						$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
 					} catch (ParticipantNotFoundException $e) {
 						$subject = $l->t('Guest in {call}') . "\n{message}";
@@ -675,7 +693,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A deleted user sent a message in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 					$subject = $l->t('{guest} (guest) sent a message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest sent a message in conversation {call}');
@@ -690,7 +708,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A deleted user replied to your message in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
@@ -715,7 +733,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('Reminder: A deleted user in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 					$subject = $l->t('Reminder: {guest} (guest) in conversation {call}');
 				} catch (ParticipantNotFoundException) {
 					$subject = $l->t('Reminder: A guest in conversation {call}');
@@ -736,7 +754,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A deleted user reacted with {reaction} to your message in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 					$subject = $l->t('{guest} (guest) reacted with {reaction} to your message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest reacted with {reaction} to your message in conversation {call}');
@@ -776,7 +794,7 @@ class Notifier implements INotifier {
 			}
 		} else {
 			try {
-				$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+				$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorId());
 				if ($notification->getSubject() === 'mention_group') {
 					$groupName = $this->groupManager->getDisplayName($subjectParameters['sourceId']) ?? $subjectParameters['sourceId'];
 					$richSubjectParameters['group'] = [
@@ -821,7 +839,7 @@ class Notifier implements INotifier {
 						[
 							'apiVersion' => 'v1',
 							'token' => $room->getToken(),
-							'messageId' => $comment->getId(),
+							'messageId' => $message->getMessageId(),
 						]
 					),
 					IAction::TYPE_DELETE

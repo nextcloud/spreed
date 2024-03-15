@@ -41,6 +41,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\Federation\ICloudIdManager;
 use OCP\Files\IRootFolder;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -98,6 +99,7 @@ class NotifierTest extends TestCase {
 	protected $botServerMapper;
 	/** @var FederationManager|MockObject */
 	protected $federationManager;
+	protected ICloudIdManager|MockObject $cloudIdManager;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -122,6 +124,7 @@ class NotifierTest extends TestCase {
 		$this->addressHandler = $this->createMock(AddressHandler::class);
 		$this->botServerMapper = $this->createMock(BotServerMapper::class);
 		$this->federationManager = $this->createMock(FederationManager::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
@@ -144,6 +147,7 @@ class NotifierTest extends TestCase {
 			$this->addressHandler,
 			$this->botServerMapper,
 			$this->federationManager,
+			$this->cloudIdManager,
 		);
 	}
 
@@ -966,9 +970,6 @@ class NotifierTest extends TestCase {
 		$comment->expects($this->any())
 			->method('getActorId')
 			->willReturn('random-hash');
-		$comment->expects($this->any())
-			->method('getId')
-			->willReturn('123456789');
 		$this->commentsManager->expects($this->once())
 			->method('get')
 			->with('23')
@@ -1010,6 +1011,12 @@ class NotifierTest extends TestCase {
 			->willReturn(true);
 		$chatMessage->method('getComment')
 			->willReturn($comment);
+		$chatMessage->expects($this->any())
+			->method('getMessageId')
+			->willReturn(123456789);
+		$chatMessage->expects($this->any())
+			->method('getActorId')
+			->willReturn('random-hash');
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
