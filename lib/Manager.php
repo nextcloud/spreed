@@ -883,6 +883,28 @@ class Manager {
 	}
 
 	/**
+	 * @param string[] $tokens
+	 * @return array<string, Room>
+	 */
+	public function getRoomsByToken(array $tokens): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
+			->where($query->expr()->in('r.token', $query->createNamedParameter($tokens, IQueryBuilder::PARAM_STR_ARRAY)));
+
+		$result = $query->executeQuery();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
+			$rooms[$room->getToken()] = $room;
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param string|null $userId
 	 * @param string|null $sessionId
 	 * @return Room

@@ -175,17 +175,10 @@ Feature: federation/chat
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
-    And user "participant1" adds federated_user "participant3" to room "room" with 200 (v4)
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 2    | LOCAL        | room        |
-    And user "participant3" has the following invitations (v1)
-      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
-    And user "participant3" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 2    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)

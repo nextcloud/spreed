@@ -31,6 +31,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
@@ -54,6 +55,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\SessionService;
@@ -127,6 +129,7 @@ class ChatController extends AEnvironmentAwareController {
 		protected ITrustedDomainHelper $trustedDomainHelper,
 		private IL10N $l,
 		protected Authenticator $federationAuthenticator,
+		protected ProxyCacheMessageService $pcmService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -914,20 +917,21 @@ class ChatController extends AEnvironmentAwareController {
 	 * @psalm-param non-negative-int $messageId
 	 * @param int $timestamp Timestamp of the reminder
 	 * @psalm-param non-negative-int $timestamp
-	 * @return DataResponse<Http::STATUS_CREATED, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 201: Reminder created successfully
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	#[UserRateLimit(limit: 60, period: 3600)]
 	public function setReminder(int $messageId, int $timestamp): DataResponse {
 		try {
-			$this->chatManager->getComment($this->room, (string) $messageId);
-		} catch (NotFoundException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$this->validateMessageExists($messageId, sync: true);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 
 		$reminder = $this->reminderService->setReminder(
@@ -945,30 +949,32 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 200: Reminder returned
 	 * 404: No reminder found
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	public function getReminder(int $messageId): DataResponse {
 		try {
-			$this->chatManager->getComment($this->room, (string) $messageId);
-		} catch (NotFoundException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$this->validateMessageExists($messageId);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 
 		try {
 			$reminder = $this->reminderService->getReminder(
 				$this->participant->getAttendee()->getActorId(),
+				$this->room->getToken(),
 				$messageId,
 			);
 			return new DataResponse($reminder->jsonSerialize(), Http::STATUS_OK);
 		} catch (DoesNotExistException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'reminder'], Http::STATUS_NOT_FOUND);
 		}
 	}
 
@@ -977,19 +983,20 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 200: Reminder deleted successfully
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	public function deleteReminder(int $messageId): DataResponse {
 		try {
-			$this->chatManager->getComment($this->room, (string) $messageId);
-		} catch (NotFoundException) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$this->validateMessageExists($messageId);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 
 		$this->reminderService->deleteReminder(
@@ -999,6 +1006,29 @@ class ChatController extends AEnvironmentAwareController {
 		);
 
 		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
+	 * @throws DoesNotExistException
+	 * @throws CannotReachRemoteException
+	 */
+	protected function validateMessageExists(int $messageId, bool $sync = false): void {
+		if ($this->room->isFederatedConversation()) {
+			try {
+				$this->pcmService->findByRemote($this->room->getRemoteServer(), $this->room->getRemoteToken(), $messageId);
+			} catch (DoesNotExistException) {
+				if ($sync) {
+					$this->pcmService->syncRemoteMessage($this->room, $this->participant, $messageId);
+				}
+			}
+			return;
+		}
+
+		try {
+			$this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException $e) {
+			throw new DoesNotExistException($e->getMessage());
+		}
 	}
 
 	/**

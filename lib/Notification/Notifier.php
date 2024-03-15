@@ -625,7 +625,7 @@ class Notifier implements INotifier {
 				'name' => $shortenMessage,
 			];
 			if ($notification->getSubject() === 'reminder') {
-				if ($comment->getActorId() === $notification->getUser()) {
+				if ($message->getActorId() === $notification->getUser()) {
 					// TRANSLATORS Reminder for a message you sent in the conversation {call}
 					$subject = $l->t('Reminder: You in {call}') . "\n{message}";
 				} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
@@ -716,7 +716,7 @@ class Notifier implements INotifier {
 			}
 		} elseif ($notification->getSubject() === 'reminder') {
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-				if ($comment->getActorId() === $notification->getUser()) {
+				if ($message->getActorId() === $notification->getUser()) {
 					$subject = $l->t('Reminder: You in private conversation {call}');
 				} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 					$subject = $l->t('Reminder: A deleted user in private conversation {call}');
@@ -724,7 +724,7 @@ class Notifier implements INotifier {
 					$subject = $l->t('Reminder: {user} in private conversation');
 				}
 			} elseif ($richSubjectUser) {
-				if ($comment->getActorId() === $notification->getUser()) {
+				if ($message->getActorId() === $notification->getUser()) {
 					$subject = $l->t('Reminder: You in conversation {call}');
 				} else {
 					$subject = $l->t('Reminder: {user} in conversation {call}');

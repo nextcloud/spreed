@@ -49,11 +49,12 @@ class ReminderMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findForUserAndMessage(string $userId, int $messageId): Reminder {
+	public function findForUserAndMessage(string $userId, string $token, int $messageId): Reminder {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('token', $query->createNamedParameter($token, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('message_id', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
