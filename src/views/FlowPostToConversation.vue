@@ -16,11 +16,14 @@
 
 <script>
 import axios from '@nextcloud/axios'
+import { getCapabilities } from '@nextcloud/capabilities'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.js'
+
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'FlowPostToConversation',
@@ -86,6 +89,7 @@ export default {
 				this.roomOptions = response.data.ocs.data.filter(function(room) {
 					return room.readOnly === CONVERSATION.STATE.READ_WRITE
 						&& (room.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+						&& (!supportFederationV1 || !room.remoteServer)
 				})
 			})
 		},
@@ -95,7 +99,7 @@ export default {
 </script>
 
 <style scoped>
-	.multiselect {
+	:deep(.v-select) {
 		width: 100%;
 		margin: auto;
 		text-align: center;
