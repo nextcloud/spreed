@@ -46,6 +46,7 @@ use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
@@ -127,6 +128,7 @@ class ChatController extends AEnvironmentAwareController {
 		protected ITrustedDomainHelper $trustedDomainHelper,
 		private IL10N $l,
 		protected Authenticator $federationAuthenticator,
+		protected ProxyCacheMessageMapper $proxyCacheMapper,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -919,14 +921,15 @@ class ChatController extends AEnvironmentAwareController {
 	 * 201: Reminder created successfully
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	#[UserRateLimit(limit: 60, period: 3600)]
 	public function setReminder(int $messageId, int $timestamp): DataResponse {
 		try {
-			$this->chatManager->getComment($this->room, (string) $messageId);
-		} catch (NotFoundException) {
+			$this->validateMessageExists($messageId);
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -951,19 +954,21 @@ class ChatController extends AEnvironmentAwareController {
 	 * 404: No reminder found
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	public function getReminder(int $messageId): DataResponse {
 		try {
-			$this->chatManager->getComment($this->room, (string) $messageId);
-		} catch (NotFoundException) {
+			$this->validateMessageExists($messageId);
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		try {
 			$reminder = $this->reminderService->getReminder(
 				$this->participant->getAttendee()->getActorId(),
+				$this->room->getToken(),
 				$messageId,
 			);
 			return new DataResponse($reminder->jsonSerialize(), Http::STATUS_OK);
@@ -982,13 +987,14 @@ class ChatController extends AEnvironmentAwareController {
 	 * 200: Reminder deleted successfully
 	 * 404: Message not found
 	 */
+	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	public function deleteReminder(int $messageId): DataResponse {
 		try {
-			$this->chatManager->getComment($this->room, (string) $messageId);
-		} catch (NotFoundException) {
+			$this->validateMessageExists($messageId);
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -999,6 +1005,19 @@ class ChatController extends AEnvironmentAwareController {
 		);
 
 		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	protected function validateMessageExists(int $messageId): void {
+		if ($this->room->isFederatedConversation()) {
+			$this->proxyCacheMapper->findByRemote($this->room->getRemoteServer(), $this->room->getRemoteToken(), $messageId);
+			return;
+		}
+
+		try {
+			$this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException $e) {
+			throw new DoesNotExistException($e->getMessage());
+		}
 	}
 
 	/**

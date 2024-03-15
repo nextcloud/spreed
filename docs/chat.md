@@ -351,6 +351,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Set reminder for chat message
 
 * Required capability: `remind-me-later`
+* Federation capability: `federation-v1`
 * Method: `POST`
 * Endpoint: `/chat/{token}/{messageId}/reminder`
 * Data:
@@ -379,6 +380,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Get reminder for chat message
 
 * Required capability: `remind-me-later`
+* Federation capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/chat/{token}/{messageId}/reminder`
 
@@ -403,6 +405,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 ## Delete reminder for chat message
 
 * Required capability: `remind-me-later`
+* Federation capability: `federation-v1`
 * Method: `DELETE`
 * Endpoint: `/chat/{token}/{messageId}/reminder`
 
