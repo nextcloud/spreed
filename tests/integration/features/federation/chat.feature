@@ -147,26 +147,26 @@ Feature: federation/chat
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 2    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | unreadMessages | unreadMention | unreadMentionDirect |
-      | room | 2    | 0              | 0             | 0                   |
+      | id   | type | lastReadMessage      | unreadMessages | unreadMention | unreadMentionDirect |
+      | room | 2    | UNKNOWN_MESSAGE      | 0              | 0             | 0                   |
     And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant1" sends message "Message 2" to room "room" with 201
     When user "participant2" marks room "LOCAL::room" as unread with 200 (v1)
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | unreadMessages | unreadMention | unreadMentionDirect |
-      | room | 2    | 1              | 0             | 0                   |
+      | id   | type | lastReadMessage      | unreadMessages | unreadMention | unreadMentionDirect |
+      | room | 2    | Message 1            | 1              | 0             | 0                   |
     When user "participant2" reads message "NULL" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | unreadMessages | unreadMention | unreadMentionDirect |
-      | room | 2    | 0              | 0             | 0                   |
+      | id   | type | lastReadMessage      | unreadMessages | unreadMention | unreadMentionDirect |
+      | room | 2    | Message 2            | 0              | 0             | 0                   |
     When user "participant2" reads message "Message 1" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | unreadMessages | unreadMention | unreadMentionDirect |
-      | room | 2    | 1              | 0             | 0                   |
+      | id   | type | lastReadMessage      | unreadMessages | unreadMention | unreadMentionDirect |
+      | room | 2    | Message 1            | 1              | 0             | 0                   |
     When user "participant2" reads message "Message 2" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | unreadMessages | unreadMention | unreadMentionDirect |
-      | room | 2    | 0              | 0             | 0                   |
+      | id   | type | lastReadMessage      | unreadMessages | unreadMention | unreadMentionDirect |
+      | room | 2    | Message 2            | 0              | 0             | 0                   |
 
   Scenario: Error handling of chatting (posting a too long message)
     Given the following "spreed" app config is set
