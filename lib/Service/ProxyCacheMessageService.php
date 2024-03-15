@@ -35,6 +35,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception as DBException;
 use Psr\Log\LoggerInterface;
 
@@ -45,6 +46,7 @@ class ProxyCacheMessageService {
 	public function __construct(
 		protected ProxyCacheMessageMapper $mapper,
 		protected LoggerInterface $logger,
+		protected ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -53,6 +55,10 @@ class ProxyCacheMessageService {
 	 */
 	public function findByRemote(string $remoteServerUrl, string $remoteToken, int $remoteMessageId): ProxyCacheMessage {
 		return $this->mapper->findByRemote($remoteServerUrl, $remoteToken, $remoteMessageId);
+	}
+
+	public function deleteExpiredMessages(): void {
+		$this->mapper->deleteExpiredMessages($this->timeFactory->getDateTime());
 	}
 
 	/**

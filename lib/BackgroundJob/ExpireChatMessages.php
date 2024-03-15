@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Service\ProxyCacheMessageService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -35,6 +36,7 @@ class ExpireChatMessages extends TimedJob {
 	public function __construct(
 		ITimeFactory $timeFactory,
 		private ChatManager $chatManager,
+		private ProxyCacheMessageService $pcmService,
 	) {
 		parent::__construct($timeFactory);
 
@@ -48,5 +50,6 @@ class ExpireChatMessages extends TimedJob {
 	 */
 	protected function run($argument): void {
 		$this->chatManager->deleteExpiredMessages();
+		$this->pcmService->deleteExpiredMessages();
 	}
 }
