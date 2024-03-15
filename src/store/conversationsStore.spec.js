@@ -32,9 +32,8 @@ import {
 	deleteConversation,
 	setConversationPermissions,
 	setCallPermissions,
-	setConversationUnread,
 } from '../services/conversationsService.js'
-import { updateLastReadMessage } from '../services/messagesService.js'
+import { updateLastReadMessage, setConversationUnread } from '../services/messagesService.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 
@@ -56,11 +55,11 @@ jest.mock('../services/conversationsService', () => ({
 	deleteConversation: jest.fn(),
 	setConversationPermissions: jest.fn(),
 	setCallPermissions: jest.fn(),
-	setConversationUnread: jest.fn(),
 }))
 
 jest.mock('../services/messagesService', () => ({
 	updateLastReadMessage: jest.fn(),
+	setConversationUnread: jest.fn(),
 }))
 
 jest.mock('@nextcloud/event-bus')

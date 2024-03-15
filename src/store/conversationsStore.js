@@ -54,8 +54,6 @@ import {
 	setConversationName,
 	setConversationDescription,
 	deleteConversation,
-	clearConversationHistory,
-	setConversationUnread,
 	setNotificationLevel,
 	setNotificationCalls,
 	setConversationPermissions,
@@ -63,6 +61,10 @@ import {
 	setMessageExpiration,
 	setConversationPassword,
 } from '../services/conversationsService.js'
+import {
+	clearConversationHistory,
+	setConversationUnread,
+} from '../services/messagesService.ts'
 import {
 	startCallRecording,
 	stopCallRecording,

@@ -46,7 +46,7 @@ const setConversationEmojiAvatar = async function(token: string, emoji: string, 
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar/emoji', { token }), {
 		emoji,
 		color,
-	} as setEmojiAvatarParams['params'])
+	} as setEmojiAvatarParams)
 }
 
 const deleteConversationAvatar = async function(token: string): deleteAvatarResponse {
