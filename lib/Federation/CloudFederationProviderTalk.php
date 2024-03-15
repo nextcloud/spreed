@@ -415,6 +415,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			return [];
 		}
 
+		$this->logger->debug('Setting unread info for local federated user ' . $invite->getUserId() . ' in ' . $room->getToken() . ' to ' . json_encode($notification['unreadInfo']), [
+			'app' => 'spreed-federation',
+		]);
+
 		$this->participantService->updateUnreadInfoForProxyParticipant(
 			$participant,
 			$notification['unreadInfo']['unreadMessages'],
