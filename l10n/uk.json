@@ -728,7 +728,7 @@
     "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Бінарний файл Matterbridge має неправильні права доступу. Переконайтеся, що файлу призначено правильного власника і права на виконання. Його можна знайти в \"/.../nextcloud/apps/talk_matterbridge/bin/\".",
     "Matterbridge binary was not found or couldn't be executed." : "Бінарний файл Matterbridge не знайдено або не вдалося виконати.",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "Ви також можете вказати шлях до бінарного файлу Matterbridge в конфігураційному файлі. Для отримання додаткової інформації зверніться до {linkstart}документації з інтеграції Matterbridge{linkend}.",
-    "Downloading …" : "Завантаження ...",
+    "Downloading …" : "Звантаження ...",
     "Install Talk Matterbridge" : "Встановіть Talk Matterbridge",
     "An error occurred while installing the Matterbridge app" : "Виникла помилка під час встановлення застосунку Matterbridge",
     "An error occurred while installing the Talk Matterbridge. Please install it manually" : "Під час інсталяції Talk Matterbridge сталася помилка. Будь ласка, встановіть його вручну",
