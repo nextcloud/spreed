@@ -294,7 +294,7 @@ export default {
 	min-height: 0 !important;
 	margin: 2px;
 	height: 26px;
-	padding: 0 6px;
+	padding: 0 6px !important;
 
 	:deep(.button-vue__text) {
 		font-weight: normal;
