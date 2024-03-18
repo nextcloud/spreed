@@ -100,6 +100,7 @@ export const CONVERSATION = {
 		EMAIL: 'emails',
 		FILE: 'file',
 		PHONE: 'phone',
+		CIRCLES: 'circles',
 		VIDEO_VERIFICATION: 'share:password',
 		BREAKOUT_ROOM: 'room',
 		DEFAULT: '',
