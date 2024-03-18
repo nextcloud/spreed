@@ -57,6 +57,10 @@ class ProxyCacheMessageService {
 		return $this->mapper->findByRemote($remoteServerUrl, $remoteToken, $remoteMessageId);
 	}
 
+	public function delete(ProxyCacheMessage $message): ProxyCacheMessage {
+		return $this->mapper->delete($message);
+	}
+
 	public function deleteExpiredMessages(): void {
 		$this->mapper->deleteExpiredMessages($this->timeFactory->getDateTime());
 	}
@@ -81,7 +85,12 @@ class ProxyCacheMessageService {
 		/** @var TalkChatMessageWithParent $messageData */
 		$messageData = $ocsResponse->getData()[0];
 
-		$proxy = new ProxyCacheMessage();
+		try {
+			$proxy = $this->mapper->findByRemote($room->getRemoteServer(), $room->getRemoteToken(), $messageId);
+		} catch (DoesNotExistException) {
+			$proxy = new ProxyCacheMessage();
+		}
+
 		$proxy->setLocalToken($room->getToken());
 		$proxy->setRemoteServerUrl($room->getRemoteServer());
 		$proxy->setRemoteToken($room->getRemoteToken());
@@ -110,6 +119,11 @@ class ProxyCacheMessageService {
 			$metaData[Message::METADATA_SILENT] = $messageData['silent'];
 		}
 		$proxy->setMetaData(json_encode($metaData));
+
+		if ($proxy->getId() !== null) {
+			$this->mapper->update($proxy);
+			return $proxy;
+		}
 
 		try {
 			$this->mapper->insert($proxy);

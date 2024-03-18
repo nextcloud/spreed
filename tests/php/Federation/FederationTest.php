@@ -40,6 +40,7 @@ use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -101,6 +102,7 @@ class FederationTest extends TestCase {
 	protected $attendeeMapper;
 
 	protected ProxyCacheMessageMapper|MockObject $proxyCacheMessageMapper;
+	protected ProxyCacheMessageService|MockObject $proxyCacheMessageService;
 	protected FederationChatNotifier|MockObject $federationChatNotifier;
 	protected UserConverter|MockObject $userConverter;
 	protected ICacheFactory|MockObject $cacheFactory;
@@ -123,6 +125,7 @@ class FederationTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessageMapper::class);
+		$this->proxyCacheMessageService = $this->createMock(ProxyCacheMessageService::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->retryNotificationMapper = $this->createMock(RetryNotificationMapper::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -163,6 +166,7 @@ class FederationTest extends TestCase {
 			$this->createMock(IEventDispatcher::class),
 			$this->logger,
 			$this->proxyCacheMessageMapper,
+			$this->proxyCacheMessageService,
 			$this->federationChatNotifier,
 			$this->userConverter,
 			$this->cacheFactory,

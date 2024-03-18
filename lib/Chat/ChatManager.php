@@ -174,7 +174,7 @@ class ChatManager {
 
 		$shouldFlush = $this->notificationManager->defer();
 
-		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate, parent: $replyTo);
+		$event = new BeforeSystemMessageSentEvent($chat, $comment, silent: $silent, parent: $replyTo, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatchTyped($event);
 		try {
 			$this->commentsManager->save($comment);
@@ -229,7 +229,7 @@ class ChatManager {
 				}
 			}
 
-			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, skipLastActivityUpdate: $shouldSkipLastMessageUpdate, parent: $replyTo);
+			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, parent: $replyTo, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException $e) {
 		}

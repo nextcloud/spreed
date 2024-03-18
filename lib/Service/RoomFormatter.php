@@ -395,7 +395,7 @@ class RoomFormatter {
 					$room->getLastMessageId(),
 				);
 				$roomData['lastMessage'] = $this->userConverter->convertAttendee($room, $cachedMessage->jsonSerialize(), 'actorType', 'actorId', 'actorDisplayName');
-			} catch (DoesNotExistException $e) {
+			} catch (DoesNotExistException) {
 			}
 		}
 
