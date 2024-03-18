@@ -561,8 +561,10 @@ export default {
 				return t('spreed', 'Today')
 			case 1:
 				return t('spreed', 'Yesterday')
+			case 7:
+				return t('spreed', 'A week ago')
 			default:
-				return t('spreed', '{n} days ago', { n: diffDays })
+				return n('spreed', '%n day ago', '%n days ago', diffDays)
 			}
 		},
 
@@ -574,15 +576,22 @@ export default {
 		 */
 		generateDateSeparator(dateTimestamp) {
 			const date = moment.unix(dateTimestamp).startOf('day')
-			// <Today>, <November 11th, 2019>
-			return t('spreed', '{relativeDate}, {absoluteDate}', {
-				relativeDate: this.getRelativePrefix(date),
-				// 'LL' formats a localized date including day of month, month
-				// name and year
-				absoluteDate: date.format('LL'),
-			}, undefined, {
-				escape: false, // French "Today" has a ' in it
-			})
+			// <Today>, <March 18th, 2024>
+			// Relative date is only shown until a week ago
+			if (moment().startOf('day').diff(date, 'days') <= 7) {
+				return t('spreed', '{relativeDate}, {absoluteDate}', {
+					relativeDate: this.getRelativePrefix(date),
+					// 'LL' formats a localized date including day of month, month
+					// name and year
+					absoluteDate: date.format('LL'),
+				}, undefined, {
+					escape: false, // French "Today" has a ' in it
+				})
+			} else {
+				// <March 18th, 2024>
+				return t('spreed', '{absoluteDate}', { absoluteDate: date.format('LL') })
+			}
+
 		},
 
 		/**
