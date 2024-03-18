@@ -26,7 +26,7 @@
 		<div class="avatar__container">
 			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
-					class="avatar__preview-emoji"
+					:class="['avatar__preview-emoji', themeClass]"
 					:style="{'background-color': backgroundColor}">
 					{{ emojiAvatar }}
 				</div>
@@ -141,6 +141,7 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import ConversationIcon from '../ConversationIcon.vue'
 
 import { AVATAR } from '../../constants.js'
+import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
 // eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
@@ -226,6 +227,10 @@ export default {
 
 		hasAvatar() {
 			return this.conversation.isCustomAvatar
+		},
+
+		themeClass() {
+			return `avatar__preview-emoji--${isDarkTheme ? 'dark' : 'bright'}`
 		},
 
 		showControls() {
@@ -434,6 +439,10 @@ section {
 			background-color: var(--color-text-maxcontrast);
 			font-size: 575%;
 			line-height: 100%;
+
+			&--dark {
+				background-color: #3B3B3B;
+			}
 		}
 	}
 

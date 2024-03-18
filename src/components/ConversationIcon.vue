@@ -22,7 +22,7 @@
 <template>
 	<div class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
-		:class="{'offline': offline}">
+		:class="[themeClass, {'offline': offline}]">
 		<template v-if="!isOneToOne">
 			<div v-if="iconClass"
 				class="avatar icon"
@@ -181,8 +181,7 @@ export default {
 				// Also used in new conversation / invitation handler dialog
 				const isFed = this.item.remoteServer && 'icon-conversation-federation'
 				const type = this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-conversation-public' : 'icon-conversation-group'
-				const theme = isDarkTheme ? 'dark' : 'bright'
-				return `${isFed || type} icon--dummy icon--${theme}`
+				return `${isFed || type} icon--dummy`
 			}
 
 			if (!supportsAvatar) {
@@ -218,6 +217,10 @@ export default {
 
 			// Fall-through for other conversation suggestions to user-avatar handling
 			return undefined
+		},
+
+		themeClass() {
+			return `conversation-icon--${isDarkTheme ? 'dark' : 'bright'}`
 		},
 
 		isOneToOne() {
@@ -265,6 +268,10 @@ export default {
 		&.icon-changelog {
 			background-size: cover !important;
 		}
+	}
+
+	&--dark .avatar.icon {
+		background-color: #3B3B3B;
 	}
 
 	&__type {
