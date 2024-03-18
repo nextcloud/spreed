@@ -62,10 +62,6 @@ class MessageSentListener implements IEventListener {
 			return;
 		}
 
-		if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
-			return;
-		}
-
 		// FIXME once we store/cache the info skip this if the room has no federation participant
 		// if (!$event->getRoom()->hasFederatedParticipants()) {
 		// return;
@@ -75,6 +71,14 @@ class MessageSentListener implements IEventListener {
 		$l = $this->l10nFactory->get('spreed', 'en', 'en');
 		$chatMessage = $this->messageParser->createMessage($event->getRoom(), null, $event->getComment(), $l);
 		$this->messageParser->parseMessage($chatMessage);
+
+		$systemMessage = $chatMessage->getMessageType() === ChatManager::VERB_SYSTEM ? $chatMessage->getMessageRaw() : '';
+		if ($systemMessage !== 'message_edited'
+			&& $systemMessage !== 'message_deleted'
+			&& $event instanceof ASystemMessageSentEvent
+			&& $event->shouldSkipLastActivityUpdate()) {
+			return;
+		}
 
 		if (!$chatMessage->getVisibility()) {
 			return;
@@ -86,8 +90,9 @@ class MessageSentListener implements IEventListener {
 		$metaData = $event->getComment()->getMetaData() ?? [];
 		$parent = $event->getParent();
 		if ($parent instanceof IComment) {
-			$metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE] = $parent->getActorType();
-			$metaData[ProxyCacheMessage::METADATA_REPLYTO_ID] = $parent->getActorId();
+			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE] = $parent->getActorType();
+			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_ID] = $parent->getActorId();
+			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_MESSAGE_ID] = (int) $parent->getId();
 		}
 
 		$messageData = [
@@ -96,7 +101,7 @@ class MessageSentListener implements IEventListener {
 			'actorId' => $chatMessage->getActorId(),
 			'actorDisplayName' => $chatMessage->getActorDisplayName(),
 			'messageType' => $chatMessage->getMessageType(),
-			'systemMessage' => $chatMessage->getMessageType() === ChatManager::VERB_SYSTEM ? $chatMessage->getMessageRaw() : '',
+			'systemMessage' => $systemMessage,
 			'expirationDatetime' => $expireDate ? $expireDate->format(\DateTime::ATOM) : '',
 			'message' => $chatMessage->getMessage(),
 			'messageParameter' => json_encode($chatMessage->getMessageParameters(), JSON_THROW_ON_ERROR),

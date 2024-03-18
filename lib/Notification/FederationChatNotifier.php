@@ -90,13 +90,13 @@ class FederationChatNotifier {
 	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData
 	 */
 	protected function isRepliedTo(Room $room, Participant $participant, array $metaData): bool {
-		if (!isset($metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE])
-			|| !isset($metaData[ProxyCacheMessage::METADATA_REPLYTO_ID])
-			|| $metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE] !== Attendee::ACTOR_FEDERATED_USERS) {
+		if (!isset($metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE])
+			|| !isset($metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_ID])
+			|| $metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE] !== Attendee::ACTOR_FEDERATED_USERS) {
 			return false;
 		}
 
-		$repliedTo = $this->userConverter->convertTypeAndId($room, $metaData[ProxyCacheMessage::METADATA_REPLYTO_TYPE], $metaData[ProxyCacheMessage::METADATA_REPLYTO_ID]);
+		$repliedTo = $this->userConverter->convertTypeAndId($room, $metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE], $metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_ID]);
 		return $repliedTo['type'] === $participant->getAttendee()->getActorType()
 			&& $repliedTo['id'] === $participant->getAttendee()->getActorId();
 	}

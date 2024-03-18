@@ -87,10 +87,16 @@ Feature: federation/chat
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 2    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type |
-      | room | 2    |
+      | id   | type | lastMessage |
+      | room | 2    | {federated_user} accepted the invitation |
     And user "participant1" sends message "Message 1" to room "room" with 201
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage |
+      | room | 2    | Message 1 |
     When user "participant2" sends reply "Message 1-1" on message "Message 1" to room "LOCAL::room" with 201
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage |
+      | room | 2    | Message 1-1 |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType       | actorId                    | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message 1-1 | []                | Message 1     |
@@ -103,6 +109,9 @@ Feature: federation/chat
       | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message 1   | []                |               |
     And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     And user "participant2" edits message "Message 1-1" in room "LOCAL::room" to "Message 1-1 - Edit 1" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage |
+      | room | 2    | Message 1-1 - Edit 1 |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType       | actorId                    | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId            | lastEditActorDisplayName |
       | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | federated_users   | participant2@{$REMOTE_URL} | participant2-displayname |
@@ -125,6 +134,9 @@ Feature: federation/chat
       | room | actorType       | actorId                  | actorDisplayName         | message                   | messageParameters | parentMessage             |
       | room | users           | participant2             | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
       | room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$BASE_URL}"}} |                           |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage |
+      | room | 2    | Message deleted by author |
 
   Scenario: Read marker checking
     Given the following "spreed" app config is set

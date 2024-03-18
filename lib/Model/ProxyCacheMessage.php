@@ -62,8 +62,9 @@ use OCP\AppFramework\Db\Entity;
  * @psalm-import-type TalkRoomProxyMessage from ResponseDefinitions
  */
 class ProxyCacheMessage extends Entity implements \JsonSerializable {
-	public const METADATA_REPLYTO_TYPE = 'replyToActorType';
-	public const METADATA_REPLYTO_ID = 'replyToActorId';
+	public const METADATA_REPLY_TO_ACTOR_TYPE = 'replyToActorType';
+	public const METADATA_REPLY_TO_ACTOR_ID = 'replyToActorId';
+	public const METADATA_REPLY_TO_MESSAGE_ID = 'replyToMessageId';
 
 
 	protected string $localToken = '';

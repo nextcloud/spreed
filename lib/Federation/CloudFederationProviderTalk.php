@@ -32,6 +32,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
@@ -46,6 +47,7 @@ use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -90,6 +92,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private IEventDispatcher $dispatcher,
 		private LoggerInterface $logger,
 		private ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private ProxyCacheMessageService $pcmService,
 		private FederationChatNotifier $federationChatNotifier,
 		private UserConverter $userConverter,
 		ICacheFactory $cacheFactory,
@@ -345,6 +348,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
+		$removeParentMessage = null;
+		if ($notification['messageData']['systemMessage'] === 'message_edited'
+			|| $notification['messageData']['systemMessage'] === 'message_deleted') {
+			$metaData = json_decode($notification['messageData']['metaData'], true);
+			if (isset($metaData['replyToMessageId'])) {
+				$removeParentMessage = $metaData['replyToMessageId'];
+			}
+		}
+
 		// We transform the parameters when storing in the PCM, so we only have
 		// to do it once for each message.
 		// Note: `messageParameters` (array during parsing) vs `messageParameter` (string during sending)
@@ -357,55 +369,57 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		/** @var array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string} $converted */
 		$notification['messageData'] = $converted;
 
-
-		$message = new ProxyCacheMessage();
-		$message->setLocalToken($room->getToken());
-		$message->setRemoteServerUrl($notification['remoteServerUrl']);
-		$message->setRemoteToken($notification['remoteToken']);
-		$message->setRemoteMessageId($notification['messageData']['remoteMessageId']);
-		$message->setActorType($notification['messageData']['actorType']);
-		$message->setActorId($notification['messageData']['actorId']);
-		$message->setActorDisplayName($notification['messageData']['actorDisplayName']);
-		$message->setMessageType($notification['messageData']['messageType']);
-		$message->setSystemMessage($notification['messageData']['systemMessage']);
-		if ($notification['messageData']['expirationDatetime']) {
-			$message->setExpirationDatetime(new \DateTime($notification['messageData']['expirationDatetime']));
-		}
-		$message->setMessage($notification['messageData']['message']);
-		$message->setMessageParameters($notification['messageData']['messageParameter']);
-		$message->setCreationDatetime(new \DateTime($notification['messageData']['creationDatetime']));
-		$message->setMetaData($notification['messageData']['metaData']);
-
-		try {
-			$this->proxyCacheMessageMapper->insert($message);
-
-			$lastMessageId = $room->getLastMessageId();
-			if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
-				$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
+		$message = null;
+		if ($removeParentMessage === null) {
+			$message = new ProxyCacheMessage();
+			$message->setLocalToken($room->getToken());
+			$message->setRemoteServerUrl($notification['remoteServerUrl']);
+			$message->setRemoteToken($notification['remoteToken']);
+			$message->setRemoteMessageId($notification['messageData']['remoteMessageId']);
+			$message->setActorType($notification['messageData']['actorType']);
+			$message->setActorId($notification['messageData']['actorId']);
+			$message->setActorDisplayName($notification['messageData']['actorDisplayName']);
+			$message->setMessageType($notification['messageData']['messageType']);
+			$message->setSystemMessage($notification['messageData']['systemMessage']);
+			if ($notification['messageData']['expirationDatetime']) {
+				$message->setExpirationDatetime(new \DateTime($notification['messageData']['expirationDatetime']));
 			}
-			$this->roomService->setLastMessageInfo($room, $lastMessageId, new \DateTime());
+			$message->setMessage($notification['messageData']['message']);
+			$message->setMessageParameters($notification['messageData']['messageParameter']);
+			$message->setCreationDatetime(new \DateTime($notification['messageData']['creationDatetime']));
+			$message->setMetaData($notification['messageData']['metaData']);
 
-			if ($this->proxyCacheMessages instanceof ICache) {
-				$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));
-				$cacheData = $this->proxyCacheMessages->get($cacheKey);
-				if ($cacheData === null || $cacheData < $notification['messageData']['remoteMessageId']) {
-					$this->proxyCacheMessages->set($cacheKey, $notification['messageData']['remoteMessageId'], 300);
+			try {
+				$this->proxyCacheMessageMapper->insert($message);
+
+				$lastMessageId = $room->getLastMessageId();
+				if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
+					$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
 				}
-			}
-		} catch (DBException $e) {
-			// DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION happens when
-			// multiple users are in the same conversation. We are therefore
-			// informed multiple times about the same remote message.
-			if ($e->getReason() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-				$this->logger->error('Error saving proxy cache message failed: ' . $e->getMessage(), ['exception' => $e]);
-				throw $e;
-			}
+				$this->roomService->setLastMessageInfo($room, $lastMessageId, new \DateTime());
 
-			$message = $this->proxyCacheMessageMapper->findByRemote(
-				$notification['remoteServerUrl'],
-				$notification['remoteToken'],
-				$notification['messageData']['remoteMessageId'],
-			);
+				if ($this->proxyCacheMessages instanceof ICache) {
+					$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));
+					$cacheData = $this->proxyCacheMessages->get($cacheKey);
+					if ($cacheData === null || $cacheData < $notification['messageData']['remoteMessageId']) {
+						$this->proxyCacheMessages->set($cacheKey, $notification['messageData']['remoteMessageId'], 300);
+					}
+				}
+			} catch (DBException $e) {
+				// DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION happens when
+				// multiple users are in the same conversation. We are therefore
+				// informed multiple times about the same remote message.
+				if ($e->getReason() !== DBException::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+					$this->logger->error('Error saving proxy cache message failed: ' . $e->getMessage(), ['exception' => $e]);
+					throw $e;
+				}
+
+				$message = $this->pcmService->findByRemote(
+					$notification['remoteServerUrl'],
+					$notification['remoteToken'],
+					$notification['messageData']['remoteMessageId'],
+				);
+			}
 		}
 
 		try {
@@ -413,6 +427,23 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		} catch (ParticipantNotFoundException) {
 			// Not accepted the invite yet
 			return [];
+		}
+
+		if ($removeParentMessage !== null) {
+			try {
+				$this->pcmService->syncRemoteMessage($room, $participant, $removeParentMessage);
+			} catch (\InvalidArgumentException|CannotReachRemoteException) {
+				$oldMessage = $this->pcmService->findByRemote(
+					$notification['remoteServerUrl'],
+					$notification['remoteToken'],
+					$removeParentMessage,
+				);
+				$this->pcmService->delete($oldMessage);
+				$this->logger->info('Failed to resync chat message #' . $removeParentMessage . ' after being notified by host ' . $notification['remoteServerUrl']);
+			}
+
+			// Update the last activity so the left sidebar refreshes the data as well
+			$this->roomService->setLastMessageInfo($room, $room->getLastMessageId(), new \DateTime());
 		}
 
 		$this->logger->debug('Setting unread info for local federated user ' . $invite->getUserId() . ' in ' . $room->getToken() . ' to ' . json_encode($notification['unreadInfo']), [
@@ -427,7 +458,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$notification['unreadInfo']['lastReadMessage'],
 		);
 
-		$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);
+		if ($message instanceof ProxyCacheMessage) {
+			$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);
+		}
 
 		return [];
 	}
