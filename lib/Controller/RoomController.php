@@ -2253,7 +2253,16 @@ class RoomController extends AEnvironmentAwareController {
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
 			$response = $proxy->getCapabilities($this->room, $this->participant);
 
+			/** @var TalkCapabilities|array<empty> $data */
 			$data = $response->getData();
+
+			if (isset($data['config']['chat']['read-privacy'])) {
+				$data['config']['chat']['read-privacy'] = Participant::PRIVACY_PRIVATE;
+			}
+			if (isset($data['config']['chat']['typing-privacy'])) {
+				$data['config']['chat']['typing-privacy'] = Participant::PRIVACY_PRIVATE;
+			}
+
 			if ($response->getHeaders()['X-Nextcloud-Talk-Hash']) {
 				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $response->getHeaders()['X-Nextcloud-Talk-Hash'];
 			}

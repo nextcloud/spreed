@@ -1941,15 +1941,11 @@ export type operations = {
       };
       /** @description No messages */
       304: {
-        headers: {
-          "X-Chat-Last-Common-Read"?: string;
-          "X-Chat-Last-Given"?: string;
-        };
         content: {
           "application/json": {
             ocs: {
               meta: components["schemas"]["OCSMeta"];
-              data: components["schemas"]["ChatMessageWithParent"][];
+              data: unknown;
             };
           };
         };
@@ -2329,15 +2325,11 @@ export type operations = {
       };
       /** @description No messages */
       304: {
-        headers: {
-          "X-Chat-Last-Common-Read"?: string;
-          "X-Chat-Last-Given"?: string;
-        };
         content: {
           "application/json": {
             ocs: {
               meta: components["schemas"]["OCSMeta"];
-              data: components["schemas"]["ChatMessageWithParent"][];
+              data: unknown;
             };
           };
         };
