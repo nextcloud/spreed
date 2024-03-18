@@ -77,6 +77,16 @@
 	background-image: url(../img/icon-mail-white.svg);
 }
 
+.app-talk .icon-team,
+.talk-modal .icon-team,
+.sidebar-callview .icon-team,
+#talk-panel .icon-team,
+#talk-sidebar .icon-team,
+#call-container .icon-team,
+.talkChatTab .icon-team {
+	background-image: url(../img/icon-team-white.svg);
+}
+
 .app-talk .icon-changelog,
 .talk-modal .icon-changelog,
 .sidebar-callview .icon-changelog,

@@ -193,6 +193,8 @@ export default {
 					return 'icon-mail'
 				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.PHONE) {
 					return 'icon-phone'
+				} else if (this.item.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
+					return 'icon-team'
 				} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 					return 'icon-changelog'
 				} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
@@ -208,6 +210,11 @@ export default {
 			if (this.item.token) {
 				// Existing conversations use the /avatar endpoint… Always!
 				return undefined
+			}
+
+			if (this.item.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
+				// Team icon for group conversation suggestions
+				return 'icon-team'
 			}
 
 			if (this.item.type === CONVERSATION.TYPE.GROUP) {
