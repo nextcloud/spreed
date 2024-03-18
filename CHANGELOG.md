@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-beta.3 – 2024-03-19
+### Added
+- Preview: Federated chatting - Implemented reminders
+  [#11814](https://github.com/nextcloud/spreed/issues/11814)
+
+### Changed
+- Update translations
+- Update several dependencies
+- Provide better OpenAPI data for message parameters
+  [#11807](https://github.com/nextcloud/spreed/issues/11807)
+
+### Fixed
+- Fix editing and deleting not reflected correctly in left sidebar for federated conversations
+  [#11839](https://github.com/nextcloud/spreed/issues/11839)
+- Fix missing expiration of cached messages in federated conversations
+  [#11816](https://github.com/nextcloud/spreed/issues/11816)
+- Make conversation avatars dark mode again
+  [#11840](https://github.com/nextcloud/spreed/issues/11840)
+- Reduce the cache time of avatars when the remote was not reachable
+  [#11842](https://github.com/nextcloud/spreed/issues/11842)
+- Don't notify user about own messages when replying or mentioning themselves
+  [#11815](https://github.com/nextcloud/spreed/issues/11815)
+- Fix read marker and unread behaviour in federated conversations again
+  [#11810](https://github.com/nextcloud/spreed/issues/11810)
+- Hide federated conversations from various integrations
+  [#11809](https://github.com/nextcloud/spreed/issues/11809)
+
 ## 19.0.0-beta.2 – 2024-03-14
 ### Added
 - Preview: Federated chatting - Implemented reactions
