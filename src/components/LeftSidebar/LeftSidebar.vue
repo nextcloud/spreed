@@ -1031,6 +1031,16 @@ export default {
 	overflow-y: auto !important;
 	overflow-x: hidden !important;
 	padding: 0;
+
+	// FIXME upstream: subname color was dropped
+	:deep(.list-item-content__subname) {
+		color: var(--color-text-maxcontrast);
+	}
+
+	:deep(.list-item-content__name),
+	:deep(.list-item-content__subname--bold) {
+		font-weight: 500;
+	}
 }
 
 .unread-mention-button {
