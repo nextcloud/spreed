@@ -35,26 +35,28 @@
 			<ul v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
 		</TransitionWrapper>
 
-		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
-			:key="`section_${dateTimestamp}`"
-			:ref="`dateGroup-${token}`"
-			:data-date-timestamp="dateTimestamp"
-			:class="{'has-sticky': dateTimestamp === stickyDate}">
-			<li class="messages-group__date">
-				<span class="messages-group__date-text" role="heading" aria-level="3">
-					{{ dateSeparatorLabels[dateTimestamp] }}
-				</span>
-			</li>
-			<component :is="messagesGroupComponent(group)"
-				v-for="group in list"
-				:key="group.id"
-				ref="messagesGroup"
-				class="messages-group"
-				:token="token"
-				:messages="group.messages"
-				:previous-message-id="group.previousMessageId"
-				:next-message-id="group.nextMessageId" />
-		</ul>
+		<div class="messages-list-wrapper__reversed">
+			<ul v-for="[dateTimestamp, list] in Object.entries(messagesGroupedByDateByAuthor).reverse()"
+				:key="`section_${dateTimestamp}`"
+				:ref="`dateGroup-${token}`"
+				:data-date-timestamp="dateTimestamp"
+				:class="{'has-sticky': dateTimestamp === stickyDate}">
+				<li class="messages-group__date">
+					<span class="messages-group__date-text" role="heading" aria-level="3">
+						{{ dateSeparatorLabels[dateTimestamp] }}
+					</span>
+				</li>
+				<component :is="messagesGroupComponent(group)"
+					v-for="group in list"
+					:key="group.id"
+					ref="messagesGroup"
+					class="messages-group"
+					:token="token"
+					:messages="group.messages"
+					:previous-message-id="group.previousMessageId"
+					:next-message-id="group.nextMessageId" />
+			</ul>
+		</div>
 
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
@@ -1366,5 +1368,10 @@ export default {
 .scroller--isScrolling .has-sticky .messages-group__date {
 	opacity: 1;
 	transition: opacity 0s;
+}
+
+.messages-list-wrapper__reversed {
+	display: flex;
+	flex-direction: column-reverse;
 }
 </style>
