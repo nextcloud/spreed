@@ -147,6 +147,8 @@ class AvatarController extends AEnvironmentAwareController {
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
+		// Cache for 1 day
+		$cacheDuration = 60 * 60 * 24;
 		if ($this->room->getRemoteServer() !== '') {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
@@ -154,13 +156,14 @@ class AvatarController extends AEnvironmentAwareController {
 				return $proxy->getAvatar($this->room, $this->participant, $this->invitation, $darkTheme);
 			} catch (CannotReachRemoteException) {
 				// Falling back to a local "globe" avatar for indicating the federation
+				// Cache for 15 minutes only
+				$cacheDuration = 15 * 60;
 			}
 		}
 		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $darkTheme);
 
 		$response = new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => $file->getMimeType()]);
-		// Cache for 1 day
-		$response->cacheFor(60 * 60 * 24, false, true);
+		$response->cacheFor($cacheDuration, false, true);
 		return $response;
 	}
 
@@ -277,7 +280,7 @@ class AvatarController extends AEnvironmentAwareController {
 			Http::STATUS_OK,
 			['Content-Type' => $file->getMimeType()],
 		);
-		$response->cacheFor(60 * 60 * 24, false, true);
+		$response->cacheFor(60 * 15, false, true);
 		return $response;
 
 	}
