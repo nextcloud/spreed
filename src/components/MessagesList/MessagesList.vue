@@ -554,8 +554,7 @@ export default {
 				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
 		},
 
-		getRelativePrefix(date) {
-			const diffDays = moment().startOf('day').diff(date, 'days')
+		getRelativePrefix(date, diffDays) {
 			switch (diffDays) {
 			case 0:
 				return t('spreed', 'Today')
@@ -576,11 +575,12 @@ export default {
 		 */
 		generateDateSeparator(dateTimestamp) {
 			const date = moment.unix(dateTimestamp).startOf('day')
-			// <Today>, <March 18th, 2024>
-			// Relative date is only shown until a week ago
-			if (moment().startOf('day').diff(date, 'days') <= 7) {
+			const diffDays = moment().startOf('day').diff(date, 'days')
+			// Relative date is only shown up to a week ago (inclusive)
+			if (diffDays <= 7) {
+				// TRANSLATORS: <Today>, <March 18th, 2024>
 				return t('spreed', '{relativeDate}, {absoluteDate}', {
-					relativeDate: this.getRelativePrefix(date),
+					relativeDate: this.getRelativePrefix(date, diffDays),
 					// 'LL' formats a localized date including day of month, month
 					// name and year
 					absoluteDate: date.format('LL'),
@@ -588,7 +588,7 @@ export default {
 					escape: false, // French "Today" has a ' in it
 				})
 			} else {
-				// <March 18th, 2024>
+				// TRANSLATORS: <March 18th, 2024>
 				return t('spreed', '{absoluteDate}', { absoluteDate: date.format('LL') })
 			}
 
