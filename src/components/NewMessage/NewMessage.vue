@@ -423,6 +423,10 @@ export default {
 			return this.$store.getters.currentConversationIsJoined
 		},
 
+		currentUploadId() {
+			return this.$store.getters.currentUploadId
+		},
+
 		hasText() {
 			return this.text.trim() !== ''
 		},
@@ -502,7 +506,19 @@ export default {
 			this.focusInput()
 		},
 
+		currentUploadId(value) {
+			if (value && !this.upload) {
+				this.text = ''
+			} else if (!value && !this.upload) {
+				// reset or fill main input in chat view from the store
+				this.text = this.chatInput
+			}
+		},
+
 		text(newValue) {
+			if (this.currentUploadId && !this.upload) {
+				return
+			}
 			this.debouncedUpdateChatInput(newValue)
 		},
 
@@ -522,6 +538,10 @@ export default {
 		},
 
 		chatInput(newValue) {
+			if (this.currentUploadId && !this.upload) {
+				return
+			}
+
 			if (parseSpecialSymbols(this.text) !== newValue) {
 				this.text = newValue
 			}
@@ -620,8 +640,6 @@ export default {
 				return
 			}
 			this.$nextTick(() => {
-				// reset or fill main input in chat view from the store
-				this.text = this.chatInput
 				// refocus input as the user might want to type further
 				this.focusInput()
 			})
@@ -659,7 +677,7 @@ export default {
 				// remove Quote component
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
-				if (this.$store.getters.getInitialisedUploads(this.$store.getters.currentUploadId).length) {
+				if (this.$store.getters.getInitialisedUploads(this.currentUploadId).length) {
 					// If dialog contains files to upload, delegate sending
 					this.$emit('upload', { caption: this.text, options })
 					return
@@ -826,7 +844,7 @@ export default {
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			// Create a unique id for the upload operation
-			const uploadId = this.$store.getters.currentUploadId ?? new Date().getTime()
+			const uploadId = this.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files
 			await this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId, rename, isVoiceMessage })
 		},
