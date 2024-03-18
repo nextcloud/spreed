@@ -4712,18 +4712,6 @@
                     },
                     "304": {
                         "description": "No messages",
-                        "headers": {
-                            "X-Chat-Last-Common-Read": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            },
-                            "X-Chat-Last-Given": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4742,12 +4730,7 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/ChatMessageWithParent"
-                                                    }
-                                                }
+                                                "data": {}
                                             }
                                         }
                                     }
@@ -5828,18 +5811,6 @@
                     },
                     "304": {
                         "description": "No messages",
-                        "headers": {
-                            "X-Chat-Last-Common-Read": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            },
-                            "X-Chat-Last-Given": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5858,12 +5829,7 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/ChatMessageWithParent"
-                                                    }
-                                                }
+                                                "data": {}
                                             }
                                         }
                                     }
