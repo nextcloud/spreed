@@ -43,7 +43,7 @@ use OCP\Security\ISecureRandom;
 
 class AvatarService {
 	public const THEMING_PLACEHOLDER = '{{THEMING}}';
-	public const THEMING_DARK_BACKGROUND = '999999';
+	public const THEMING_DARK_BACKGROUND = '3B3B3B';
 	public const THEMING_BRIGHT_BACKGROUND = '6B6B6B';
 
 	public function __construct(
