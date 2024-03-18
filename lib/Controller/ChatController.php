@@ -412,7 +412,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param 0|1 $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
 	 * @param 0|1 $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
 	 * @param 0|1 $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatMessageWithParent[], array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array<empty>>
 	 *
 	 * 200: Messages returned
 	 * 304: No messages
@@ -642,7 +642,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @psalm-param non-negative-int $messageId
 	 * @param 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100 $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
 	 * @psalm-param int<1, 100> $limit
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatMessageWithParent[], array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array<empty>>
 	 *
 	 * 200: Message context returned
 	 * 304: No messages

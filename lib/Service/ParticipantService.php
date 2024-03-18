@@ -483,6 +483,9 @@ class ParticipantService {
 					FederationManager::TOKEN_LENGTH,
 					ISecureRandom::CHAR_HUMAN_READABLE
 				);
+
+				// Disable read marker for federated users
+				$readPrivacy = Participant::PRIVACY_PRIVATE;
 			}
 
 			$attendee = new Attendee();

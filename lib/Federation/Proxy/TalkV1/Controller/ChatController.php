@@ -112,12 +112,12 @@ class ChatController {
 		return new DataResponse(
 			$data,
 			Http::STATUS_CREATED,
-			$headers
+			$headers,
 		);
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatMessageWithParent[], array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array<empty>>
 	 * @throws CannotReachRemoteException
 	 *
 	 *  200: Messages returned
@@ -214,7 +214,7 @@ class ChatController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_MODIFIED, TalkChatMessageWithParent[], array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkChatMessageWithParent[], array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array<empty>>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Message context returned
@@ -307,7 +307,7 @@ class ChatController {
 		return new DataResponse(
 			$data,
 			$statusCode,
-			$headers
+			$headers,
 		);
 	}
 
@@ -358,7 +358,7 @@ class ChatController {
 		return new DataResponse(
 			$data,
 			$statusCode,
-			$headers
+			$headers,
 		);
 	}
 
