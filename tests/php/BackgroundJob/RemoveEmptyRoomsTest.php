@@ -139,10 +139,8 @@ class RemoveEmptyRoomsTest extends TestCase {
 			->willReturn(Room::TYPE_GROUP);
 		$room->method('getObjectType')
 			->willReturn($objectType);
-		$room->method('getRemoteServer')
-			->willReturn($inviteCount ? 'https://remote.example.tld' : '');
-		$room->method('getRemoteToken')
-			->willReturn($inviteCount ? 'remote' : '');
+		$room->method('isFederatedConversation')
+			->willReturn($inviteCount > 0);
 
 		$this->federationManager->method('getNumberOfInvitations')
 			->with($room)

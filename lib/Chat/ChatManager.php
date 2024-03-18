@@ -136,7 +136,7 @@ class ChatManager {
 		bool $shouldSkipLastMessageUpdate = false,
 		bool $silent = false,
 	): IComment {
-		if ($chat->getRemoteServer() !== '') {
+		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
 			$this->logger->error('Attempt to post system message into proxy conversation', ['exception' => $e]);
 			throw $e;
@@ -286,7 +286,7 @@ class ChatManager {
 	 * @throws MessagingNotAllowedException
 	 */
 	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo = null, string $referenceId = '', bool $silent = false, bool $rateLimitGuestMentions = true): IComment {
-		if ($chat->getRemoteServer() !== '') {
+		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
 			$this->logger->error('Attempt to post system message into proxy conversation', ['exception' => $e]);
 			throw $e;

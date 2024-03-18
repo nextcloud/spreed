@@ -344,7 +344,7 @@ class RoomFormatter {
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
 
-		if ($room->getRemoteServer() && $room->getRemoteToken()) {
+		if ($room->isFederatedConversation()) {
 			$roomData['remoteServer'] = $room->getRemoteServer();
 			$roomData['remoteToken'] = $room->getRemoteToken();
 		}
@@ -379,14 +379,14 @@ class RoomFormatter {
 
 		$roomData['lastMessage'] = [];
 		$lastMessage = $room->getLastMessage();
-		if ($room->getRemoteServer() === '' && $lastMessage instanceof IComment) {
+		if (!$room->isFederatedConversation() && $lastMessage instanceof IComment) {
 			$roomData['lastMessage'] = $this->formatLastMessage(
 				$responseFormat,
 				$room,
 				$currentParticipant,
 				$lastMessage,
 			);
-		} elseif ($room->getRemoteServer() !== '') {
+		} elseif ($room->isFederatedConversation()) {
 			$roomData['lastCommonReadMessage'] = 0;
 			try {
 				$cachedMessage = $this->pcmService->findByRemote(
@@ -399,7 +399,7 @@ class RoomFormatter {
 			}
 		}
 
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			$roomData['attendeeId'] = (int) $attendee->getRemoteId();
 			$roomData['canLeaveConversation'] = true;
 		}

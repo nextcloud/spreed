@@ -91,7 +91,7 @@ class RemoveEmptyRooms extends TimedJob {
 			return false;
 		}
 
-		if ($room->getRemoteServer() && $room->getRemoteToken()
+		if ($room->isFederatedConversation()
 			&& $this->federationManager->getNumberOfInvitations($room) !== 0) {
 			return false;
 		}

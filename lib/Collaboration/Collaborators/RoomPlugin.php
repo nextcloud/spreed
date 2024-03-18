@@ -62,7 +62,7 @@ class RoomPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if ($room->getRemoteServer() !== '') {
+			if ($room->isFederatedConversation()) {
 				continue;
 			}
 

@@ -165,7 +165,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutConversationCreated(RoomCreatedEvent $event): void {
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -182,7 +182,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -194,7 +194,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutRoomDescriptionChanges(RoomModifiedEvent $event): void {
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -212,7 +212,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutRoomPassword(RoomModifiedEvent $event): void {
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -242,7 +242,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			return;
 		}
 
@@ -294,7 +294,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			return;
 		}
 
@@ -331,7 +331,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			return;
 		}
 
@@ -352,7 +352,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -401,8 +401,7 @@ class Listener implements IEventListener {
 			return;
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
-		if ($room->getRemoteServer() !== '') {
-			// FIXME this should be blocked up front
+		if ($room->isFederatedConversation()) {
 			return;
 		}
 
@@ -436,7 +435,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -456,7 +455,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesRemovedEvent(AttendeesRemovedEvent $event): void {
-		if ($event->getRoom()->getRemoteServer() !== '') {
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 

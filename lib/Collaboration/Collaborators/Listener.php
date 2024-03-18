@@ -134,7 +134,7 @@ class Listener implements IEventListener {
 			return $results;
 		}
 
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			return $results;
 		}
 

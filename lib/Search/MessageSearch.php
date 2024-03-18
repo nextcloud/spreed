@@ -170,7 +170,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 				}
 			}
 
-			if ($room->getRemoteServer() !== '') {
+			if ($room->isFederatedConversation()) {
 				continue;
 			}
 

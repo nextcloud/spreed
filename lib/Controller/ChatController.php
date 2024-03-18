@@ -214,7 +214,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
-		if ($this->room->getRemoteServer()) {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent);
@@ -433,7 +433,7 @@ class ChatController extends AEnvironmentAwareController {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->receiveMessages(
@@ -656,7 +656,7 @@ class ChatController extends AEnvironmentAwareController {
 		int $limit = 50): DataResponse {
 		$limit = min(100, $limit);
 
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->getMessageContext($this->room, $this->participant, $messageId, $limit);
@@ -735,7 +735,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function deleteMessage(int $messageId): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->deleteMessage(
@@ -827,7 +827,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function editMessage(int $messageId, string $message): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->editMessage(
@@ -1086,7 +1086,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireAuthenticatedParticipant]
 	public function setReadMarker(?int $lastReadMessage = null): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->setReadMarker($this->room, $this->participant, $this->getResponseFormat(), $lastReadMessage);
@@ -1121,7 +1121,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireAuthenticatedParticipant]
 	public function markUnread(): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->markUnread($this->room, $this->participant, $this->getResponseFormat());
@@ -1280,7 +1280,7 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function mentions(string $search, int $limit = 20, bool $includeStatus = false): DataResponse {
-		if ($this->room->getRemoteServer()) {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->mentions($this->room, $this->participant, $search, $limit, $includeStatus);

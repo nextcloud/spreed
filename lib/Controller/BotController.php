@@ -353,7 +353,7 @@ class BotController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function enableBot(int $botId): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			return new DataResponse([
 				'error' => 'room',
 			], Http::STATUS_BAD_REQUEST);
