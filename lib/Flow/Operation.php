@@ -113,7 +113,7 @@ class Operation implements IOperation {
 					continue;
 				}
 
-				if ($room->getRemoteServer() !== '') {
+				if ($room->isFederatedConversation()) {
 					// Ignore conversation because it is a proxy conversation
 					continue;
 				}
@@ -202,7 +202,7 @@ class Operation implements IOperation {
 			throw new UnexpectedValueException('Room not found', $e->getCode(), $e);
 		}
 
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			throw new UnexpectedValueException('Room is a proxy conversation');
 		}
 

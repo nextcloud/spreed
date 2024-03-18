@@ -847,7 +847,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
-		if ($this->room->getRemoteServer()) {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
 			return $proxy->getParticipants($this->room, $this->participant);
@@ -1268,7 +1268,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
 		}
 
@@ -1538,7 +1538,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$headers = [];
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			$participant = $this->participantService->getParticipant($room, $this->userId);
 
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
@@ -2248,7 +2248,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[RequireParticipant]
 	public function getCapabilities(): DataResponse {
 		$headers = [];
-		if ($this->room->getRemoteServer()) {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
 			$response = $proxy->getCapabilities($this->room, $this->participant);

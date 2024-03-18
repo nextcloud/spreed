@@ -81,7 +81,7 @@ class Setup extends Base {
 			try {
 				$room = $this->roomManager->getRoomByToken($token);
 
-				if ($room->getRemoteServer() !== '') {
+				if ($room->isFederatedConversation()) {
 					$output->writeln('<error>Federated conversations can not have bots: ' . $token . '</error>');
 					$returnCode = 2;
 				}

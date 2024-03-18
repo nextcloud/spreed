@@ -96,7 +96,7 @@ class CurrentMessageSearch extends MessageSearch {
 			return SearchResult::complete($title, []);
 		}
 
-		if ($room->getRemoteServer() !== '') {
+		if ($room->isFederatedConversation()) {
 			return SearchResult::complete($title, []);
 		}
 

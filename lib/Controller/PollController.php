@@ -88,7 +88,7 @@ class PollController extends AEnvironmentAwareController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
 			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes);
@@ -153,7 +153,7 @@ class PollController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function showPoll(int $pollId): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
 			return $proxy->showPoll($this->room, $this->participant, $pollId);
@@ -191,7 +191,7 @@ class PollController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function votePoll(int $pollId, array $optionIds = []): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
 			return $proxy->votePoll($this->room, $this->participant, $pollId, $optionIds);
@@ -252,7 +252,7 @@ class PollController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function closePoll(int $pollId): DataResponse {
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
 			return $proxy->closePoll($this->room, $this->participant, $pollId);

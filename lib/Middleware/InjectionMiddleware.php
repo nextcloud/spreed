@@ -279,7 +279,7 @@ class InjectionMiddleware extends Middleware {
 	 */
 	protected function checkFederationSupport(AEnvironmentAwareController $controller): void {
 		$room = $controller->getRoom();
-		if ($room instanceof Room && $room->getRemoteServer() !== '') {
+		if ($room instanceof Room && $room->isFederatedConversation()) {
 			throw new FederationUnsupportedFeatureException();
 		}
 	}

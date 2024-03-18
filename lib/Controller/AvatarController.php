@@ -149,7 +149,7 @@ class AvatarController extends AEnvironmentAwareController {
 	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
 		// Cache for 1 day
 		$cacheDuration = 60 * 60 * 24;
-		if ($this->room->getRemoteServer() !== '') {
+		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\AvatarController::class);
 			try {
