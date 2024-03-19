@@ -467,12 +467,25 @@ Feature: callapi/recording
       | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.txt. |
       | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg.  |
     When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1          | participant1-displayname | conversation_created |
+    And user "participant1" sees the following messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | messageType  | message | messageParameters |
+      | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
       | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.txt. |
     When user "participant1" shares file from the first notification to room "room1" with 200 (v1)
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1          | participant1-displayname | conversation_created |
+    And user "participant1" sees the following messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | messageType  | message | messageParameters |
+      | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
+      | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
 
   Scenario: Store recording with success but fail to transcript
     Given the following spreed app config is set
