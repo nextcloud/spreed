@@ -1,15 +1,6 @@
-/* Mention bubbles in the chat input and messages */
-.avatar-class-icon.icon-group-forced-white {
-	background-image: url(../img/icon-contacts-white.svg);
-}
-
-.avatar-class-icon.icon-user-forced-white {
-	background-image: url(../img/icon-contacts-white.svg);
-}
-
 .app-talk .icon-user,
-.talk-modal .icon-user,
-.sidebar-callview .icon-user,
+.modal-mask .icon-user,
+.talk-sidebar-callview .icon-user,
 #talk-panel .icon-user,
 #talk-sidebar .icon-user,
 #call-container .icon-user,
@@ -18,8 +9,8 @@
 }
 
 .app-talk .icon-public,
-.talk-modal .icon-public,
-.sidebar-callview .icon-public,
+.modal-mask .icon-public,
+.talk-sidebar-callview .icon-public,
 #talk-panel .icon-public,
 #talk-sidebar .icon-public,
 #call-container .icon-public,
@@ -28,8 +19,8 @@
 }
 
 .app-talk .icon-contacts,
-.talk-modal .icon-contacts,
-.sidebar-callview .icon-contacts,
+.modal-mask .icon-contacts,
+.talk-sidebar-callview .icon-contacts,
 #talk-panel .icon-contacts,
 #talk-sidebar .icon-contacts,
 #call-container .icon-contacts,
@@ -38,8 +29,8 @@
 }
 
 .app-talk .icon-phone,
-.talk-modal .icon-phone,
-.sidebar-callview .icon-phone,
+.modal-mask .icon-phone,
+.talk-sidebar-callview .icon-phone,
 #talk-panel .icon-phone,
 #talk-sidebar .icon-phone,
 #call-container .icon-phone,
@@ -48,8 +39,8 @@
 }
 
 .app-talk .icon-password,
-.talk-modal .icon-password,
-.sidebar-callview .icon-password,
+.modal-mask .icon-password,
+.talk-sidebar-callview .icon-password,
 #talk-panel .icon-password,
 #talk-sidebar .icon-password,
 #call-container .icon-password,
@@ -58,8 +49,8 @@
 }
 
 .app-talk .icon-file,
-.talk-modal .icon-file,
-.sidebar-callview .icon-file,
+.modal-mask .icon-file,
+.talk-sidebar-callview .icon-file,
 #talk-panel .icon-file,
 #talk-sidebar .icon-file,
 #call-container .icon-file,
@@ -68,8 +59,8 @@
 }
 
 .app-talk .icon-mail,
-.talk-modal .icon-mail,
-.sidebar-callview .icon-mail,
+.modal-mask .icon-mail,
+.talk-sidebar-callview .icon-mail,
 #talk-panel .icon-mail,
 #talk-sidebar .icon-mail,
 #call-container .icon-mail,
@@ -78,8 +69,8 @@
 }
 
 .app-talk .icon-team,
-.talk-modal .icon-team,
-.sidebar-callview .icon-team,
+.modal-mask .icon-team,
+.talk-sidebar-callview .icon-team,
 #talk-panel .icon-team,
 #talk-sidebar .icon-team,
 #call-container .icon-team,
@@ -88,8 +79,8 @@
 }
 
 .app-talk .icon-changelog,
-.talk-modal .icon-changelog,
-.sidebar-callview .icon-changelog,
+.modal-mask .icon-changelog,
+.talk-sidebar-callview .icon-changelog,
 #talk-panel .icon-changelog,
 #talk-sidebar .icon-changelog,
 #call-container .icon-changelog,
@@ -101,18 +92,42 @@
  * .app-Talk rules above.
  * "forced-white" needs to be included in the class name as the Avatar does
  * not accept several classes. */
-.user-bubble__avatar .avatar-class-icon.icon-group-forced-white,
-.tribute-container .icon-group-forced-white {
-	background-color: var(--color-text-maxcontrast-default);
-	background-image: url(../img/icon-contacts-white.svg);
+.user-bubble__avatar .icon-group-forced-white,
+.user-bubble__avatar .icon-user-forced-white,
+.autocomplete-result .icon-group-forced-white,
+.autocomplete-result .icon-user-forced-white,
+.mention-bubble .icon-group-forced-white,
+.mention-bubble .icon-user-forced-white {
+	background-color: var(--color-text-maxcontrast-default) !important;
+}
+
+body[data-theme-dark] .icon-group-forced-white,
+body[data-theme-dark] .icon-user-forced-white {
+	background-color: #3B3B3B !important;
+}
+
+.user-bubble__avatar .icon-group-forced-white,
+.user-bubble__avatar .icon-user-forced-white {
 	background-size: 75%;
 }
 
-.user-bubble__avatar .avatar-class-icon.icon-user-forced-white,
-.tribute-container .icon-user-forced-white {
-	background-color: var(--color-text-maxcontrast-default);
+.autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
+.autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
+.mention-bubble .icon-group-forced-white.mention-bubble__icon--,
+.mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
+	background-size: 50% !important;
+}
+
+.user-bubble__avatar .icon-user-forced-white,
+.autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
+.mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
 	background-image: url(../img/icon-user-white.svg);
-	background-size: 75%;
+}
+
+.user-bubble__avatar .icon-group-forced-white,
+.autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
+.mention-bubble .icon-group-forced-white.mention-bubble__icon-- {
+	background-image: url(../img/icon-contacts-white.svg);
 }
 
 /* Needed to use white color also in dark mode. */

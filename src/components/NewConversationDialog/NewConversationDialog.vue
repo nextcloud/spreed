@@ -20,10 +20,10 @@
 -->
 
 <template>
-	<div v-if="modal" class="wrapper">
+	<div v-if="modal">
 		<!-- New group form -->
 		<NcModal v-show="page !== 2"
-			class="conversation-form"
+			class="new-group-conversation"
 			:container="container"
 			@close="closeModal">
 			<h2 class="new-group-conversation__header">
@@ -445,18 +445,18 @@ export default {
 	&__button {
 		margin-left: auto;
 	}
-}
 
-.conversation-form :deep(.modal-wrapper) {
-	.modal-container {
-		height: 90%;
-	}
+	:deep(.modal-wrapper) {
+		.modal-container {
+			height: 90%;
+		}
 
-	.modal-container__content {
-		display: flex !important;
-		flex-direction: column;
-		height: 100%;
-		overflow: hidden !important;
+		.modal-container__content {
+			display: flex !important;
+			flex-direction: column;
+			height: 100%;
+			overflow: hidden !important;
+		}
 	}
 }
 

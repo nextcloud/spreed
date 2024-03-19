@@ -1040,20 +1040,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// FIXME upstream: Enforce NcAutoCompleteResult to have proper box-sizing
-.tribute-container {
-	position: absolute;
-	box-sizing: content-box !important;
-
-	& *,
-	& *::before,
-	& *::after {
-		box-sizing: inherit !important;
-	}
-}
-</style>
-
 <style lang="scss" scoped>
 .wrapper {
 	padding: 12px 12px 12px 0;
