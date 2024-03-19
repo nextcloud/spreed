@@ -178,10 +178,7 @@ export default {
 		iconClass() {
 			if (this.item.isDummyConversation) {
 				// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
-				// Also used in new conversation / invitation handler dialog
-				const isFed = this.item.remoteServer && 'icon-conversation-federation'
-				const type = this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-conversation-public' : 'icon-conversation-group'
-				return `${isFed || type} icon--dummy`
+				return this.item.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
 			}
 
 			if (!supportsAvatar) {
@@ -267,10 +264,6 @@ export default {
 		line-height: var(--icon-size);
 		background-size: calc(var(--icon-size) / 2);
 		background-color: var(--color-text-maxcontrast-default);
-
-		&--dummy {
-			background-size: var(--icon-size);
-		}
 
 		&.icon-changelog {
 			background-size: cover !important;
