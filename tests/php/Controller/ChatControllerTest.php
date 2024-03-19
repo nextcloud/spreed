@@ -26,6 +26,7 @@ namespace OCA\Talk\Tests\php\Controller;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\Federation\Authenticator;
@@ -117,6 +118,7 @@ class ChatControllerTest extends TestCase {
 	private $l;
 	private Authenticator|MockObject $federationAuthenticator;
 	private ProxyCacheMessageService|MockObject $pcmService;
+	private Notifier|MockObject $notifier;
 
 	/** @var Room|MockObject */
 	protected $room;
@@ -157,6 +159,7 @@ class ChatControllerTest extends TestCase {
 		$this->l = $this->createMock(IL10N::class);
 		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->pcmService = $this->createMock(ProxyCacheMessageService::class);
+		$this->notifier = $this->createMock(Notifier::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -202,6 +205,7 @@ class ChatControllerTest extends TestCase {
 			$this->l,
 			$this->federationAuthenticator,
 			$this->pcmService,
+			$this->notifier,
 		);
 	}
 
