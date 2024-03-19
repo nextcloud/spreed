@@ -313,6 +313,7 @@ OC.L10N.register(
     "Contact" : "Kontak",
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
+    "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
     "Create conversation" : "Buat percakapan",
     "Add participants" : "Tambahkan peserta",
     "Close" : "Tutup",

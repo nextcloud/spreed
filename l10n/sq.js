@@ -226,6 +226,7 @@ OC.L10N.register(
     "Contact" : "Kontakt",
     "Today" : "Sot",
     "Yesterday" : "Dje",
+    "_%n day ago_::_%n days ago_" : ["%n ditë më parë","%n ditë më parë"],
     "Close" : "Mbylleni",
     "Password protect" : "Mbroje me fjalëkalim",
     "Send message" : "Dërgo mesazh",

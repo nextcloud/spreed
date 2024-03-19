@@ -97,6 +97,7 @@ OC.L10N.register(
     "Contact" : "Contacto",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
+    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "Close" : "Cerrar",
     "Password protect" : "Proteger con contraseña",
     "Group" : "Grupo",
