@@ -160,7 +160,7 @@ class Listener implements IEventListener {
 	 * Reaction: "{user} reacted with {reaction} in {call}"
 	 *
 	 * We should not mark reactions read based on the read-status of the comment
-	 * they apply to, but the point in time when the reaction as done.
+	 * they apply to, but the point in time when the reaction was done.
 	 * However, these messages are not visible and don't update the read marker,
 	 * so we purge them on joining the conversation.
 	 * This already happened before on the initial loading of a chat with
