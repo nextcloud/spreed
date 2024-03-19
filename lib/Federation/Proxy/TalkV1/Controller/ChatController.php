@@ -26,9 +26,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
+use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -52,6 +54,7 @@ class ChatController {
 		protected UserConverter $userConverter,
 		protected ParticipantService $participantService,
 		protected RoomFormatter $roomFormatter,
+		protected Notifier $notifier,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
@@ -138,6 +141,11 @@ class ChatController {
 		int $noStatusUpdate,
 		int $markNotificationsAsRead): DataResponse {
 		$cacheKey = sha1(json_encode([$room->getRemoteServer(), $room->getRemoteToken()]));
+
+
+		if ($lookIntoFuture && $markNotificationsAsRead && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$this->notifier->markMentionNotificationsRead($room, $participant->getAttendee()->getActorId());
+		}
 
 		if ($lookIntoFuture) {
 			if ($this->proxyCacheMessages instanceof ICache) {
@@ -231,6 +239,10 @@ class ChatController {
 				'limit' => $limit,
 			],
 		);
+
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$this->notifier->markMentionNotificationsRead($room, $participant->getAttendee()->getActorId());
+		}
 
 		if ($proxy->getStatusCode() === Http::STATUS_NOT_MODIFIED) {
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);

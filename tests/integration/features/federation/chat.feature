@@ -226,6 +226,13 @@ Feature: federation/chat
       | spreed | chat        | room/Hi @all bye         | participant1-displayname mentioned everyone in conversation room       | Hi room bye |
       | spreed | chat        | room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
       | spreed | chat        | room/Message 1-1         | participant1-displayname replied to your message in conversation room  | Message 1-1 |
+    When next message request has the following parameters set
+      | timeout                  | 0         |
+      | lookIntoFuture           | 1         |
+      | lastKnownMessageId       | Hi @all bye         |
+    And user "participant2" sees the following messages in room "LOCAL::room" with 304
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                | subject                                                                | message     |
 
   Scenario: Mentioning a federated user as a guest also triggers a notification for them
     Given the following "spreed" app config is set
@@ -248,9 +255,13 @@ Feature: federation/chat
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
     When user "guest" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
+    When user "guest" sends message "Message 2" to room "room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
       | spreed | chat        | room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | A guest mentioned you in conversation room | Hi @participant2-displayname bye |
+    Then user "participant2" reads message "Message 2" in room "LOCAL::room" with 200 (v1)
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                | subject                                                                | message     |
 
   Scenario: Mentioning a federated user as a federated user that is a local user to the mentioned one also triggers a notification for them
     Given the following "spreed" app config is set

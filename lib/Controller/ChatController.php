@@ -30,6 +30,7 @@ use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Authenticator;
@@ -130,6 +131,7 @@ class ChatController extends AEnvironmentAwareController {
 		private IL10N $l,
 		protected Authenticator $federationAuthenticator,
 		protected ProxyCacheMessageService $pcmService,
+		protected Notifier $notifier,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1086,14 +1088,19 @@ class ChatController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireAuthenticatedParticipant]
 	public function setReadMarker(?int $lastReadMessage = null): DataResponse {
+		$setToMessage = $lastReadMessage ?? $this->room->getLastMessageId();
+		if ($setToMessage === $this->room->getLastMessageId()
+			&& $this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$this->notifier->markMentionNotificationsRead($this->room, $this->participant->getAttendee()->getActorId());
+		}
+
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
 			return $proxy->setReadMarker($this->room, $this->participant, $this->getResponseFormat(), $lastReadMessage);
 		}
 
-		$lastReadMessage = $lastReadMessage ?? $this->room->getLastMessageId();
-		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
+		$this->participantService->updateLastReadMessage($this->participant, $setToMessage);
 		$attendee = $this->participant->getAttendee();
 
 		$headers = $lastCommonRead = [];
