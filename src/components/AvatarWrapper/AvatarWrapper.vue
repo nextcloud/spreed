@@ -156,11 +156,15 @@ export default {
 			if (this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id === ATTENDEE.CHANGELOG_BOT_ID) {
 				return 'icon-changelog'
 			}
-			// source: groups, circles
+			if (this.source === ATTENDEE.ACTOR_TYPE.CIRCLES) {
+				return 'icon-team'
+			}
+			// source: groups
 			return 'icon-contacts'
 		},
 		avatarClass() {
 			return {
+				'avatar-wrapper--dark': isDarkTheme,
 				'avatar-wrapper--offline': this.offline,
 				'avatar-wrapper--condensed': this.condensed,
 				'avatar-wrapper--highlighted': this.highlighted,
@@ -211,6 +215,10 @@ export default {
 	width: var(--avatar-size);
 	border-radius: var(--avatar-size);
 
+	&--dark .avatar {
+		background-color: #3B3B3B !important;
+	}
+
 	.avatar {
 		position: sticky;
 		top: 0;
@@ -219,9 +227,9 @@ export default {
 		line-height: var(--avatar-size);
 		font-size: calc(var(--avatar-size) / 2);
 		border-radius: 50%;
+		background-color: var(--color-text-maxcontrast-default);
 
 		&.icon {
-			background-color: var(--color-background-darker);
 			background-size: calc(var(--avatar-size) / 2);
 			&.icon-changelog {
 				background-size: cover !important;
@@ -235,7 +243,6 @@ export default {
 
 		&.guest {
 			color: #ffffff;
-			background-color: #b9b9b9;
 			padding: 0;
 			display: block;
 			text-align: center;
