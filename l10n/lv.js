@@ -197,6 +197,7 @@ OC.L10N.register(
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n dienas atpakaļ","%n dienas atpakaļ","%n dienām"],
     "Close" : "Aizvērt",
     "Password protect" : "Aizsargāt ar paroli",
     "Group" : "Grupa",

@@ -74,6 +74,7 @@ OC.L10N.register(
     "Contact" : "Kontakt",
     "Today" : "Täna",
     "Yesterday" : "Eile",
+    "_%n day ago_::_%n days ago_" : ["%n päev tagasi","%n päeva tagasi"],
     "Close" : "Sulge",
     "Password protect" : "Parooliga kaitsmine",
     "Group" : "Grupp",

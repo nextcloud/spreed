@@ -103,6 +103,7 @@ OC.L10N.register(
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n დღის წინ","%n დღის წინ"],
     "Close" : "დახურვა",
     "Password protect" : "პაროლით დაცვა",
     "Group" : "ჯგუფი",
