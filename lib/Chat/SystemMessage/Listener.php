@@ -397,7 +397,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($this->request->getParam('_route') === 'ocs.spreed.Recording.shareToChat') {
+		if (strtolower($this->request->getParam('_route')) === 'ocs.spreed.recording.sharetochat') {
 			return;
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());

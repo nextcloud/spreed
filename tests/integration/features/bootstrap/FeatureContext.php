@@ -2650,6 +2650,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
 		$includeLastEdit = in_array('lastEditActorId', $formData->getRow(0), true);
+		$includeMessageType = in_array('messageType', $formData->getRow(0), true);
 
 		$expected = $formData->getHash();
 		$count = count($expected);
@@ -2712,7 +2713,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit) {
+		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -2729,6 +2730,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeReferenceId) {
 				$data['referenceId'] = $message['referenceId'];
+			}
+			if ($includeMessageType) {
+				$data['messageType'] = $message['messageType'];
 			}
 			if (isset($expected['silent'])) {
 				$data['silent'] = isset($message['silent']) ? json_encode($message['silent']) : '!ISSET';
