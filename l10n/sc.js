@@ -848,6 +848,7 @@ OC.L10N.register(
     "Today" : "Oe",
     "Yesterday" : "Eris",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n dies a oe","%n dies a oe"],
     "Search participants" : "Chirca partetzipantes",
     "Create a new group conversation" : "Crea unu grupu de resonada nou",
     "Create conversation" : "Crea resonada",

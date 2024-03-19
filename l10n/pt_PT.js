@@ -293,6 +293,7 @@ OC.L10N.register(
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n dias atrás","%n dias atrás"],
     "Close" : "Fechar",
     "Password protect" : "Proteger com palavra-passe",
     "Send message" : "Enviar mensagem",

@@ -505,6 +505,7 @@ OC.L10N.register(
     "Today" : "היום",
     "Yesterday" : "מחר",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["לפני %n יום","לפני %n ימים","לפני %n ימים","לפני %n ימים"],
     "Search participants" : "חיפוש משתתפים",
     "Create a new group conversation" : "יצירת דיון קבוצתי חדש",
     "Create conversation" : "יצירת דיון",

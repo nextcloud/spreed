@@ -869,6 +869,7 @@ OC.L10N.register(
     "Today" : "Danas",
     "Yesterday" : "Jučer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["Prije %n dana","Prije %n dana","Prije %n dana"],
     "Search participants" : "Pretraži sudionike",
     "Create a new group conversation" : "Stvori novi grupni razgovor",
     "Create conversation" : "Stvori razgovor",
