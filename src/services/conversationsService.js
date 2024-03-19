@@ -92,7 +92,7 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
 		!onlyUsers ? SHARE.TYPE.GROUP : null,
 		!onlyUsers ? SHARE.TYPE.CIRCLE : null,
 		(!onlyUsers && token !== 'new') ? SHARE.TYPE.EMAIL : null,
-		(!onlyUsers && token !== 'new' && canInviteToFederation) ? SHARE.TYPE.REMOTE : null,
+		(!onlyUsers && canInviteToFederation) ? SHARE.TYPE.REMOTE : null,
 	].filter(type => type !== null)
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {

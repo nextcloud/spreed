@@ -85,6 +85,7 @@ describe('conversationsService', () => {
 				SHARE.TYPE.USER,
 				SHARE.TYPE.GROUP,
 				SHARE.TYPE.CIRCLE,
+				SHARE.TYPE.REMOTE,
 			],
 		)
 	})
