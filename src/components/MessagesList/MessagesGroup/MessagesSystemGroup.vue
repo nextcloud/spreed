@@ -153,6 +153,14 @@ export default {
 				return 'user_added'
 			}
 
+			// Group users removed by one actor
+			if (message1.systemMessage === 'user_removed'
+				&& message1.systemMessage === message2.systemMessage
+				&& message1.actorId === message2.actorId
+				&& message1.actorType === message2.actorType) {
+				return 'user_removed'
+			}
+
 			// Group users reconnected in a minute
 			if (message1.systemMessage === 'call_joined'
 				&& message2.systemMessage === 'call_left'
