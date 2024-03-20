@@ -1266,6 +1266,7 @@ OC.L10N.register(
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["Hace %n día","hace %n días","hace %n días"],
     "Add a phone number" : "Añadir un número de teléfono",
     "Search participants" : "Buscar participantes",
     "Create a new group conversation" : "Crear nueva conversación en grupo",
