@@ -307,6 +307,10 @@ export default {
 				} else {
 					this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
 				}
+
+				if (this.isSticky) {
+					this.scrollToBottom({ smooth: true })
+				}
 			},
 		},
 	},
@@ -746,9 +750,7 @@ export default {
 				return
 			}
 
-			const followInNewMessages = this.conversation.lastReadMessage === this.conversation.lastMessage?.id
-
-			await this.getNewMessages(followInNewMessages)
+			await this.getNewMessages()
 		},
 
 		async getMessageContext(messageId) {
@@ -808,13 +810,11 @@ export default {
 		/**
 		 * Creates a long polling request for a new message.
 		 *
-		 * @param {boolean} scrollToBottom Whether we should try to automatically scroll to the bottom
 		 */
-		async getNewMessages(scrollToBottom = true) {
+		async getNewMessages() {
 			if (this.destroying) {
 				return
 			}
-
 			// Make the request
 			try {
 				// TODO: move polling logic to the store and also cancel timers on cancel
@@ -824,11 +824,6 @@ export default {
 					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
 					requestId: this.chatIdentifier,
 				})
-
-				// Scroll to the last message if sticky
-				if (scrollToBottom && this.isSticky) {
-					this.scrollToBottom({ smooth: true })
-				}
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
@@ -840,7 +835,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages(scrollToBottom)
+						this.getNewMessages()
 					}, 500)
 					return
 				}
@@ -853,7 +848,7 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages(scrollToBottom)
+					this.getNewMessages()
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
