@@ -30,6 +30,7 @@
 			:loading="isNameLoading"
 			:placeholder="t('spreed', 'Enter a name for this conversation')"
 			:edit-button-aria-label="t('spreed', 'Edit conversation name')"
+			:max-length="CONVERSATION.MAX_NAME_LENGTH"
 			@submit-text="handleUpdateName"
 			@update:editing="handleEditName" />
 		<template v-if="!isOneToOne">
@@ -42,6 +43,7 @@
 				:loading="isDescriptionLoading"
 				:edit-button-aria-label="t('spreed', 'Edit conversation description')"
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
+				:max-length="CONVERSATION.MAX_DESCRIPTION_LENGTH"
 				multiline
 				use-markdown
 				@submit-text="handleUpdateDescription"
@@ -92,7 +94,10 @@ export default {
 	},
 
 	setup() {
-		return { supportsAvatar }
+		return {
+			supportsAvatar,
+			CONVERSATION,
+		}
 	},
 
 	data() {
