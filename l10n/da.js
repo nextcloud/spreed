@@ -446,6 +446,7 @@ OC.L10N.register(
     "Today" : "I dag",
     "Yesterday" : "I går",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n dag siden","%n dage siden"],
     "Search participants" : "Find deltagere",
     "Create a new group conversation" : "Opret en ny gruppesamtale",
     "Create conversation" : "Opret samtale",

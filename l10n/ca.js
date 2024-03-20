@@ -1254,6 +1254,7 @@ OC.L10N.register(
     "Today" : "Avui",
     "Yesterday" : "Ahir",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["fa %n dia","fa %n dies"],
     "Add a phone number" : "Afegeix un número de telèfon",
     "Search participants" : "Cercar participants",
     "Create a new group conversation" : "Crear una conversa de grup nova",

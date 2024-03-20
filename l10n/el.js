@@ -809,6 +809,7 @@ OC.L10N.register(
     "Today" : "Σήμερα",
     "Yesterday" : "Χθες",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n ημέρα πριν","%n ημέρες πριν"],
     "Search participants" : "Αναζήτηση συμμετεχόντων",
     "Create a new group conversation" : "Δημιουργία νέας ομαδικής συζήτησης",
     "Create conversation" : "Δημιουργία συνομιλίας",

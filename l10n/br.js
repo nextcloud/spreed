@@ -607,6 +607,7 @@ OC.L10N.register(
     "Today" : "Hiziv",
     "Yesterday" : "Dec'h",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["%n deiz zo","%n deiz zo","%n deiz zo","%n deiz zo","%n deiz zo"],
     "Search participants" : "Klask implijer",
     "Create a new group conversation" : "Krouiñ un diviz strollad nevez",
     "Create conversation" : "Krouiñ un diviz",
