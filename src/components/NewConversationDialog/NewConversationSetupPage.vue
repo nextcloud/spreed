@@ -26,12 +26,20 @@
 			v-model="conversationName"
 			:placeholder="t('spreed', 'Enter a name for this conversation')"
 			:label="t('spreed', 'Name')"
+			:error="!!nameErrorLabel"
 			label-visible
 			@keydown.enter="$emit('handle-enter')" />
+		<span v-if="nameErrorLabel" class="new-group-conversation__error">
+			{{ nameErrorLabel }}
+		</span>
 		<NcTextArea v-model="conversationDescription"
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
 			:label="t('spreed', 'Description')"
+			:error="!!descriptionErrorLabel"
 			label-visible />
+		<span v-if="descriptionErrorLabel" class="new-group-conversation__error">
+			{{ descriptionErrorLabel }}
+		</span>
 
 		<template v-if="supportsAvatar">
 			<label class="avatar-editor__label">
@@ -136,6 +144,20 @@ export default {
 			},
 		},
 
+		nameErrorLabel() {
+			if (this.conversationName.length <= CONVERSATION.MAX_NAME_LENGTH) {
+				return
+			}
+			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: CONVERSATION.MAX_NAME_LENGTH })
+		},
+
+		descriptionErrorLabel() {
+			if (this.conversationDescription.length <= CONVERSATION.MAX_DESCRIPTION_LENGTH) {
+				return
+			}
+			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: CONVERSATION.MAX_DESCRIPTION_LENGTH })
+		},
+
 		isPublic: {
 			get() {
 				return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
@@ -205,6 +227,10 @@ export default {
 		display: block;
 		margin-top: 10px;
 		padding: 4px 0;
+	}
+
+	&__error {
+		color: var(--color-error);
 	}
 }
 </style>

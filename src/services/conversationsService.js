@@ -176,7 +176,7 @@ const setConversationPassword = async function(token, password) {
  * Set a conversation's name
  *
  * @param {string} token the conversation's token
- * @param {string} name the name to be set
+ * @param {string} name the name to be set (max 255 characters)
  */
 const setConversationName = async function(token, name) {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }), {
@@ -188,7 +188,7 @@ const setConversationName = async function(token, name) {
  * Set a conversation's description
  *
  * @param {string} token the conversation's token
- * @param {string} description the description to be set
+ * @param {string} description the description to be set (max 500 characters)
  */
 const setConversationDescription = async function(token, description) {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/description', { token }), {

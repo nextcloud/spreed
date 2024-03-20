@@ -224,6 +224,8 @@ export default {
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
 			return this.conversationName === '' || (this.newConversation.hasPassword && this.password === '')
+				|| this.conversationName.length > CONVERSATION.MAX_NAME_LENGTH
+				|| this.newConversation.description.length > CONVERSATION.MAX_DESCRIPTION_LENGTH
 		},
 	},
 
