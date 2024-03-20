@@ -1104,41 +1104,32 @@ export default {
 		 * @param {boolean} [options.smooth] 'smooth' scrolling to the bottom ('auto' by default)
 		 * @param {boolean} [options.force] force scrolling to the bottom (otherwise check for current position)
 		 */
-		scrollToBottom(options = null) {
-			if (!this.$refs.scroller) {
-				return
-			}
+		scrollToBottom(options = {}) {
+			this.$nextTick(() => {
+				if (!this.$refs.scroller) {
+					return
+				}
+				if (!this.isWindowVisible || (!document.hasFocus() && !this.isInCall)) {
+					const firstUnreadMessageHeight = this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight
+					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
+					// Single new line from the previous author is 35px so scroll half a line (10px)
+					// Single new line from the new author is 75px so scroll half an avatar (40px)
+					this.$refs.scroller.scrollTop += firstUnreadMessageHeight < 40 ? 10 : 40
+					this.setChatScrolledToBottom(false)
+					return
+				}
 
-			if (options?.smooth) {
-				this.$nextTick(() => {
+				if (options?.force || this.isChatScrolledToBottom || this.isSticky) {
 					if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
 						// scrollTo is used when the user is watching
 						this.$refs.scroller.scrollTo({
 							top: this.$refs.scroller.scrollHeight,
-							behavior: 'smooth',
+							behavior: options?.smooth ? 'smooth' : 'auto',
 						})
 						this.setChatScrolledToBottom(true)
-					} else {
-						// Otherwise we jump half a message and stop autoscrolling, so the user can read up
-						if (this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight < 40) {
-							// Single new line from the previous author is 35px so scroll half a line
-							this.$refs.scroller.scrollTop += 10
-						} else {
-							// Single new line from the new author is 75px so scroll half an avatar
-							this.$refs.scroller.scrollTop += 40
-						}
-						this.setChatScrolledToBottom(false)
 					}
-				})
-				return
-			}
-
-			if (options?.force || this.isChatScrolledToBottom || this.isSticky) {
-				this.$nextTick(() => {
-					this.$refs.scroller.scrollTop = this.$refs.scroller.scrollHeight
-					this.setChatScrolledToBottom(true)
-				})
-			}
+				}
+			})
 		},
 
 		/**
