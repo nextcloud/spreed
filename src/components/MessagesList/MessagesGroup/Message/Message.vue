@@ -453,7 +453,7 @@ export default {
 	watch: {
 		// Scroll list to the bottom if reaction to the message was added, as it expands the list
 		reactions() {
-			EventBus.$emit('scroll-chat-to-bottom-if-sticky')
+			EventBus.$emit('scroll-chat-to-bottom')
 		},
 	},
 

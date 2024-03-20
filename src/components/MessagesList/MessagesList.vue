@@ -279,7 +279,6 @@ export default {
 				if (oldValue) {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
-				this.$emit('update:is-chat-scrolled-to-bottom', true)
 				this.handleStartGettingMessagesPreconditions()
 
 				// Remove expired messages when joining a room
@@ -316,10 +315,7 @@ export default {
 		this.debounceUpdateReadMarkerPosition = debounce(this.updateReadMarkerPosition, 1000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
-		this.scrollToBottom()
-		EventBus.$on('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
-		EventBus.$on('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
-		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
+		EventBus.$on('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.$on('focus-message', this.focusMessage)
 		EventBus.$on('route-change', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
@@ -339,9 +335,7 @@ export default {
 		this.debounceHandleScroll.clear?.()
 
 		window.removeEventListener('focus', this.onWindowFocus)
-		EventBus.$off('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
-		EventBus.$off('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
-		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
+		EventBus.$off('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.$off('focus-message', this.focusMessage)
 		EventBus.$off('route-change', this.onRouteChange)
 
@@ -638,7 +632,7 @@ export default {
 			if (!isFocused) {
 				// if no anchor was present or the message to focus on did not exist,
 				// scroll to bottom
-				this.scrollToBottom()
+				this.scrollToBottom({ force: true })
 			}
 
 			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
@@ -752,8 +746,7 @@ export default {
 				return
 			}
 
-			const followInNewMessages = this.conversation.lastMessage
-				&& this.conversation.lastReadMessage === this.conversation.lastMessage.id
+			const followInNewMessages = this.conversation.lastReadMessage === this.conversation.lastMessage?.id
 
 			await this.getNewMessages(followInNewMessages)
 		},
@@ -834,7 +827,7 @@ export default {
 
 				// Scroll to the last message if sticky
 				if (scrollToBottom && this.isSticky) {
-					this.smoothScrollToBottom()
+					this.scrollToBottom({ smooth: true })
 				}
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
@@ -847,7 +840,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages()
+						this.getNewMessages(scrollToBottom)
 					}, 500)
 					return
 				}
@@ -860,7 +853,7 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages()
+					this.getNewMessages(scrollToBottom)
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
@@ -1106,66 +1099,46 @@ export default {
 		},
 
 		/**
-		 * @param {object} options Event options
-		 * @param {boolean} options.force Set to true, if the chat should be scrolled to the bottom even when it was not before
-		 */
-		handleScrollChatToBottomEvent(options) {
-			if ((options && options.force) || this.isChatScrolledToBottom) {
-				this.scrollToBottom()
-			}
-		},
-
-		/**
-		 * Scrolls to the bottom of the list (to show reaction to the last message).
-		 */
-		scrollToBottomIfSticky() {
-			if (this.isSticky) {
-				this.scrollToBottom()
-			}
-		},
-
-		/**
-		 * Scrolls to the bottom of the list smoothly.
-		 */
-		smoothScrollToBottom() {
-			this.$nextTick(() => {
-				if (!this.$refs.scroller) {
-					return
-				}
-
-				if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
-					// scrollTo is used when the user is watching
-					this.$refs.scroller.scrollTo({
-						top: this.$refs.scroller.scrollHeight,
-						behavior: 'smooth',
-					})
-					this.setChatScrolledToBottom(true)
-				} else {
-					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
-					if (this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight < 40) {
-						// Single new line from the previous author is 35px so scroll half a line
-						this.$refs.scroller.scrollTop += 10
-					} else {
-						// Single new line from the new author is 75px so scroll half an avatar
-						this.$refs.scroller.scrollTop += 40
-					}
-					this.setChatScrolledToBottom(false)
-				}
-			})
-		},
-		/**
 		 * Scrolls to the bottom of the list.
+		 * @param {object} options Options for scrolling
+		 * @param {boolean} [options.smooth] 'smooth' scrolling to the bottom ('auto' by default)
+		 * @param {boolean} [options.force] force scrolling to the bottom (otherwise check for current position)
 		 */
-		scrollToBottom() {
-			this.$nextTick(() => {
-				if (!this.$refs.scroller) {
-					return
-				}
+		scrollToBottom(options = null) {
+			if (!this.$refs.scroller) {
+				return
+			}
 
-				this.$refs.scroller.scrollTop = this.$refs.scroller.scrollHeight
-				this.setChatScrolledToBottom(true)
-			})
+			if (options?.smooth) {
+				this.$nextTick(() => {
+					if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
+						// scrollTo is used when the user is watching
+						this.$refs.scroller.scrollTo({
+							top: this.$refs.scroller.scrollHeight,
+							behavior: 'smooth',
+						})
+						this.setChatScrolledToBottom(true)
+					} else {
+						// Otherwise we jump half a message and stop autoscrolling, so the user can read up
+						if (this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight < 40) {
+							// Single new line from the previous author is 35px so scroll half a line
+							this.$refs.scroller.scrollTop += 10
+						} else {
+							// Single new line from the new author is 75px so scroll half an avatar
+							this.$refs.scroller.scrollTop += 40
+						}
+						this.setChatScrolledToBottom(false)
+					}
+				})
+				return
+			}
 
+			if (options?.force || this.isChatScrolledToBottom || this.isSticky) {
+				this.$nextTick(() => {
+					this.$refs.scroller.scrollTop = this.$refs.scroller.scrollHeight
+					this.setChatScrolledToBottom(true)
+				})
+			}
 		},
 
 		/**
