@@ -185,6 +185,8 @@ export default {
 		top: 0;
 		width: var(--avatar-size);
 		height: var(--avatar-size);
+		max-height: var(--avatar-size);
+		max-width: var(--avatar-size);
 		line-height: var(--avatar-size);
 		font-size: calc(var(--avatar-size) / 2);
 		border-radius: 50%;
