@@ -164,6 +164,10 @@ const getters = {
 				&& !getters.isModerator
 				&& (conversation.permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) === 0
 	},
+	getConversationForUser: (state, getters) => {
+		return (userId) => getters.conversationsList
+			.find((conversation) => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
+	},
 }
 
 const mutations = {
