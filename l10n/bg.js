@@ -1069,6 +1069,7 @@ OC.L10N.register(
     "Today" : "Днес",
     "Yesterday" : "Вчера",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["преди %n ден","преди %n дни"],
     "Search participants" : "Търсене на участници",
     "Create a new group conversation" : "Създаване на нов групов разговор",
     "Create conversation" : "Създаване на разговор",

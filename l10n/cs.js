@@ -1258,6 +1258,7 @@ OC.L10N.register(
     "Today" : "Dnes",
     "Yesterday" : "Včera",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "_%n day ago_::_%n days ago_" : ["včera","před %n dny","před %n dny","před %n dny"],
     "Add a phone number" : "Přidat telefonní číslo",
     "Search participants" : "Vyhledat účastníky",
     "Create a new group conversation" : "Vytvořit novou skupinovou konverzaci",

@@ -1296,6 +1296,7 @@ OC.L10N.register(
     "All messages have expired or have been deleted." : "所有訊息都已過期或已被刪除。",
     "Today" : "今日",
     "Yesterday" : "昨日",
+    "A week ago" : "一星期前",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}，{absoluteDate}",
     "_%n day ago_::_%n days ago_" : ["%n 天前"],
     "Add a phone number" : "添加電話號碼",
