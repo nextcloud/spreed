@@ -316,6 +316,7 @@ OC.L10N.register(
     "Contact" : "Kontakto",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
+    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
     "Close" : "Malfermi",
     "Password protect" : "Protekti per pasvorto",
     "Group" : "Grupo",
