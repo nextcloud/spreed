@@ -58,8 +58,6 @@ export default new Router({
 	routes: [
 		{
 			path: '/apps/spreed',
-			// On desktop add index path as root page
-			alias: IS_DESKTOP ? '/' : undefined,
 			name: 'root',
 			component: WelcomeView,
 			props: true,
