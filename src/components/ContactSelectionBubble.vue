@@ -22,6 +22,7 @@
 <template>
 	<div class="contact-selection-bubble">
 		<AvatarWrapper :id="participant.id"
+			token="new"
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
