@@ -32,6 +32,10 @@ $requirementsWithSize = [
 	'token' => '^[a-z0-9]{4,30}$',
 	'size' => '(64|512)',
 ];
+$requirementsNewWithSize = [
+	'apiVersion' => '(v1)',
+	'size' => '(64|512)',
+];
 
 return [
 	'ocs' => [
@@ -45,6 +49,10 @@ return [
 		['name' => 'Avatar#getAvatarDark', 'url' => '/api/{apiVersion}/room/{token}/avatar/dark', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\AvatarController::deleteAvatar() */
 		['name' => 'Avatar#deleteAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\AvatarController::getUserProxyAvatarWithoutRoom() */
+		['name' => 'Avatar#getUserProxyAvatarWithoutRoom', 'url' => '/api/{apiVersion}/proxy/new/user-avatar/{size}', 'verb' => 'GET', 'requirements' => $requirementsNewWithSize],
+		/** @see \OCA\Talk\Controller\AvatarController::getUserProxyAvatarDarkWithoutRoom() */
+		['name' => 'Avatar#getUserProxyAvatarDarkWithoutRoom', 'url' => '/api/{apiVersion}/proxy/new/user-avatar/{size}/dark', 'verb' => 'GET', 'requirements' => $requirementsNewWithSize],
 		/** @see \OCA\Talk\Controller\AvatarController::getUserProxyAvatar() */
 		['name' => 'Avatar#getUserProxyAvatar', 'url' => '/api/{apiVersion}/proxy/{token}/user-avatar/{size}', 'verb' => 'GET', 'requirements' => $requirementsWithSize],
 		/** @see \OCA\Talk\Controller\AvatarController::getUserProxyAvatarDark() */
