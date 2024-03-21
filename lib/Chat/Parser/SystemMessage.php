@@ -161,7 +161,8 @@ class SystemMessage implements IEventListener {
 			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
-				$currentActorId === $parsedParameters['actor']['id'];
+				$currentActorId === $parsedParameters['actor']['id'] &&
+				empty($parsedParameters['actor']['server']);
 		} else {
 			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
@@ -365,7 +366,9 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} invited {federated_user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You invited {federated_user}');
-				if ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
+				if (isset($parsedParameters['federated_user']['server'], $parsedParameters['actor']['server'])
+					&& $parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']
+					&& $parsedParameters['federated_user']['server'] === $parsedParameters['actor']['server']) {
 					$parsedMessage = $this->l->t('You accepted the invitation');
 				}
 			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['federated_user'])) {
@@ -375,7 +378,9 @@ class SystemMessage implements IEventListener {
 				}
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator invited {federated_user}');
-			} elseif ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
+			} elseif (isset($parsedParameters['federated_user']['server'], $parsedParameters['actor']['server'])
+				&& $parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']
+				&& $parsedParameters['federated_user']['server'] === $parsedParameters['actor']['server']) {
 				$parsedMessage = $this->l->t('{federated_user} accepted the invitation');
 			}
 		} elseif ($message === 'federated_user_removed') {
