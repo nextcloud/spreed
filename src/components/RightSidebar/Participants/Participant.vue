@@ -353,6 +353,7 @@ import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
@@ -380,6 +381,8 @@ import {
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getStatusMessage } from '../../../utils/userStatus.js'
+
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'Participant',
@@ -610,6 +613,10 @@ export default {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 		},
 
+		isFederatedActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+		},
+
 		isGuestActor() {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
@@ -752,7 +759,9 @@ export default {
 		 * return this.participant.status === 'offline' ||  !this.sessionIds.length && !this.isSearched
 		 */
 		isOffline() {
-			return !this.sessionIds.length && !this.isSearched && (this.isUserActor || this.isGuestActor)
+			return !this.sessionIds.length && !this.isSearched
+				&& (this.isUserActor || this.isFederatedActor || this.isGuestActor)
+				&& (!supportFederationV1 || (!this.conversation.remoteServer && !this.isFederatedActor))
 		},
 
 		isGuest() {
