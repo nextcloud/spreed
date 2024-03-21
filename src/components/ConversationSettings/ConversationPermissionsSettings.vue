@@ -88,6 +88,7 @@
 			:conversation-name="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"
+			nested-container=".conversation-permissions-editor"
 			@close="handleClosePermissionsEditor"
 			@submit="handleSubmitPermissions" />
 	</div>
