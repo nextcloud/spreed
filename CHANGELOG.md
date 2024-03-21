@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-beta.4 – 2024-03-19
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- Adjust read handling in received federated conversations to match normal conversations
+  [#11861](https://github.com/nextcloud/spreed/issues/11861)
+- Allow inviting federated users while creating a conversation
+  [#11862](https://github.com/nextcloud/spreed/issues/11862)
+- Fix duplicate messages when sharing recordings or transcripts
+  [#11863](https://github.com/nextcloud/spreed/issues/11863)
+- Prevent manipulating receiving federated conversations via OCC
+  [#11855](https://github.com/nextcloud/spreed/issues/11855)
+
 ## 19.0.0-beta.3 – 2024-03-19
 ### Added
 - Preview: Federated chatting - Implemented reminders
