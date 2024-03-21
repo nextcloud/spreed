@@ -372,6 +372,14 @@ export type paths = {
     /** Delete your avatar as a user */
     delete: operations["user_avatar-delete-avatar"];
   };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}": {
+    /** Get the avatar of a cloudId user when inviting users while creating a conversation */
+    get: operations["avatar-get-user-proxy-avatar-without-room"];
+  };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}/dark": {
+    /** Get the dark mode avatar of a cloudId user when inviting users while creating a conversation */
+    get: operations["avatar-get-user-proxy-avatar-dark-without-room"];
+  };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}": {
     /** Get the avatar of a cloudId user */
     get: operations["avatar-get-user-proxy-avatar"];
@@ -5533,6 +5541,60 @@ export type operations = {
               data: unknown;
             };
           };
+        };
+      };
+    };
+  };
+  /** Get the avatar of a cloudId user when inviting users while creating a conversation */
+  "avatar-get-user-proxy-avatar-without-room": {
+    parameters: {
+      query: {
+        /** @description Federation CloudID to get the avatar for */
+        cloudId: string;
+        /** @description Theme used for background */
+        darkTheme?: 0 | 1;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        /** @description Avatar size */
+        size: 64 | 512;
+      };
+    };
+    responses: {
+      /** @description User avatar returned */
+      200: {
+        content: {
+          "*/*": string;
+        };
+      };
+    };
+  };
+  /** Get the dark mode avatar of a cloudId user when inviting users while creating a conversation */
+  "avatar-get-user-proxy-avatar-dark-without-room": {
+    parameters: {
+      query: {
+        /** @description Federation CloudID to get the avatar for */
+        cloudId: string;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        /** @description Avatar size */
+        size: 64 | 512;
+      };
+    };
+    responses: {
+      /** @description User avatar returned */
+      200: {
+        content: {
+          "*/*": string;
         };
       };
     };

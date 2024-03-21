@@ -39,6 +39,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -181,6 +182,43 @@ class AvatarController extends AEnvironmentAwareController {
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	public function getAvatarDark(): FileDisplayResponse {
 		return $this->getAvatar(true);
+	}
+
+	/**
+	 * Get the avatar of a cloudId user when inviting users while creating a conversation
+	 *
+	 * @param int $size Avatar size
+	 * @psalm-param 64|512 $size
+	 * @param string $cloudId Federation CloudID to get the avatar for
+	 * @param bool $darkTheme Theme used for background
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: User avatar returned
+	 */
+	#[FederationSupported]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function getUserProxyAvatarWithoutRoom(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
+		return $this->getUserProxyAvatar($size, $cloudId, $darkTheme);
+	}
+
+	/**
+	 * Get the dark mode avatar of a cloudId user when inviting users while creating a conversation
+	 *
+	 * @param int $size Avatar size
+	 * @psalm-param 64|512 $size
+	 * @param string $cloudId Federation CloudID to get the avatar for
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: User avatar returned
+	 */
+	#[FederationSupported]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function getUserProxyAvatarDarkWithoutRoom(int $size, string $cloudId): FileDisplayResponse {
+		return $this->getUserProxyAvatar($size, $cloudId, true);
 	}
 
 	/**
