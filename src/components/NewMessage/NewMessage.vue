@@ -199,7 +199,7 @@ import SendIcon from 'vue-material-design-icons/Send.vue'
 import SendVariantOutlineIcon from 'vue-material-design-icons/SendVariantOutline.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateUrl } from '@nextcloud/router'
 
@@ -843,6 +843,10 @@ export default {
 		 * @param {boolean} isVoiceMessage indicates whether the file is a voice message
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage = false) {
+			if (!this.canUploadFiles) {
+				showWarning(t('spreed', 'File upload is not available in this conversation'))
+				return
+			}
 			// Create a unique id for the upload operation
 			const uploadId = this.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files

@@ -76,6 +76,8 @@
 <script>
 import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
@@ -84,9 +86,12 @@ import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './TransitionWrapper.vue'
 
-import { CONVERSATION } from '../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
+
+const attachmentsAllowed = getCapabilities()?.spreed?.config?.attachments?.allowed
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 
@@ -133,8 +138,15 @@ export default {
 			return !userName && this.isGuest
 		},
 
-		isEditingMessage() {
-			return this.chatExtrasStore.getMessageIdToEdit(this.token) !== undefined
+		canUploadFiles() {
+			return attachmentsAllowed && this.$store.getters.getUserId()
+				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
+				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
+				&& (!supportFederationV1 || !this.conversation.remoteServer)
+		},
+
+		isDragAndDropBlocked() {
+			return this.chatExtrasStore.getMessageIdToEdit(this.token) !== undefined || !this.canUploadFiles
 		},
 
 		dropHintText() {
@@ -147,8 +159,8 @@ export default {
 			}
 		},
 		isReadOnly() {
-			if (this.$store.getters.conversation(this.token)) {
-				return this.$store.getters.conversation(this.token).readOnly === CONVERSATION.STATE.READ_ONLY
+			if (this.conversation) {
+				return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 			} else {
 				return undefined
 			}
@@ -156,6 +168,10 @@ export default {
 
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token)
 		},
 
 		container() {
@@ -177,7 +193,7 @@ export default {
 	methods: {
 
 		handleDragOver(event) {
-			if (event.dataTransfer.types.includes('Files') && !this.isEditingMessage) {
+			if (event.dataTransfer.types.includes('Files') && !this.isDragAndDropBlocked) {
 				this.isDraggingOver = true
 			}
 		},
@@ -189,7 +205,7 @@ export default {
 		},
 
 		handleDropFiles(event) {
-			if (!this.isDraggingOver) {
+			if (!this.isDraggingOver || this.isDragAndDropBlocked) {
 				return
 			}
 
