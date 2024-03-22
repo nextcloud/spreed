@@ -131,7 +131,8 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				await this.fetchBreakoutRoomsParticipants(token)
 
 				// Open the sidebar and switch to the breakout rooms tab
-				emit('spreed:select-active-sidebar-tab', 'breakout-rooms')
+				// FIXME upstream https://github.com/nextcloud-libraries/nextcloud-event-bus/pull/734
+				emit('spreed:select-active-sidebar-tab', 'breakout-rooms' as unknown as object)
 				store.dispatch('showSidebar')
 			} catch (error) {
 				console.error(error)
