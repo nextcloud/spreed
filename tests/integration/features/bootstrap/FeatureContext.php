@@ -3780,7 +3780,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given /^user "([^"]*)" set the message expiration to (\d+) of room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Given /^user "([^"]*)" set the message expiration to ([-\d]+) of room "([^"]*)" with (\d+) \((v4)\)$/
 	 */
 	public function userSetTheMessageExpirationToXWithStatusCode(string $user, int $messageExpiration, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
