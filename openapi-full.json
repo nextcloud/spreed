@@ -15300,6 +15300,7 @@
             "get": {
                 "operationId": "room-get-capabilities",
                 "summary": "Get capabilities for a room",
+                "description": "See \"Capability handling in federated conversations\" in https://github.com/nextcloud/spreed/issues/10680 to learn which capabilities should be considered from the local server or from the remote server.",
                 "tags": [
                     "room"
                 ],
