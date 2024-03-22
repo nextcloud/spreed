@@ -394,10 +394,7 @@ const actions = {
 			}
 
 			if (newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM) {
-				breakoutRoomsStore.addBreakoutRoom({
-					parentRoomToken: newConversation.objectId,
-					breakoutRoom: newConversation,
-				})
+				breakoutRoomsStore.addBreakoutRoom(newConversation.objectId, newConversation)
 			}
 		}
 

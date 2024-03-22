@@ -146,7 +146,9 @@ export default {
 
 	mounted() {
 		// Get the breakout room every time the tab is mounted
-		this.getBreakoutRooms()
+		if (this.breakoutRoomsConfigured) {
+			this.breakoutRoomsStore.getBreakoutRooms(this.mainToken)
+		}
 	},
 
 	beforeDestroy() {
@@ -155,19 +157,9 @@ export default {
 	},
 
 	methods: {
-		getBreakoutRooms() {
-			if (this.breakoutRoomsConfigured) {
-				this.breakoutRoomsStore.getBreakoutRoomsAction({
-					token: this.mainToken,
-				})
-			}
-		},
-
 		getParticipants() {
 			if (this.breakoutRoomsConfigured) {
-				this.breakoutRoomsStore.getBreakoutRoomsParticipantsAction({
-					token: this.mainToken,
-				})
+				this.breakoutRoomsStore.fetchBreakoutRoomsParticipants(this.mainToken)
 			}
 		},
 	},

@@ -323,7 +323,7 @@ export default {
 		},
 
 		createRooms() {
-			this.breakoutRoomsStore.configureBreakoutRoomsAction({
+			this.breakoutRoomsStore.configureBreakoutRooms({
 				token: this.token,
 				mode: 2,
 				amount: this.roomNumber,
@@ -333,7 +333,7 @@ export default {
 		},
 
 		reorganizeAttendees() {
-			this.breakoutRoomsStore.reorganizeAttendeesAction({
+			this.breakoutRoomsStore.reorganizeAttendees({
 				token: this.token,
 				attendeeMap: this.createAttendeeMap(),
 			})
@@ -345,7 +345,7 @@ export default {
 		},
 
 		deleteBreakoutRooms() {
-			this.breakoutRoomsStore.deleteBreakoutRoomsAction({ token: this.token })
+			this.breakoutRoomsStore.deleteBreakoutRooms(this.token)
 		},
 	},
 }

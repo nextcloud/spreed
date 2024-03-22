@@ -718,7 +718,7 @@ export default {
 		// Broadcast message to all breakout rooms
 		async broadcastMessage(token, message) {
 			try {
-				await this.breakoutRoomsStore.broadcastMessageToBreakoutRoomsAction({ token, message })
+				await this.breakoutRoomsStore.broadcastMessageToBreakoutRooms({ token, message })
 				this.$emit('sent')
 			} catch {
 				this.$emit('failure')

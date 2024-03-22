@@ -114,7 +114,7 @@ const broadcastMessageToBreakoutRooms = async function(token, message) {
  * @param {string} token the conversation token
  * @return {Promise<import('axios').AxiosResponse<any>>} The array of conversations
  */
-const getBreakoutRoomsParticipants = async function(token) {
+const fetchBreakoutRoomsParticipants = async function(token) {
 	return await axios.get(generateOcsUrl('/apps/spreed/api/v4/room/{token}/breakout-rooms/participants', {
 		token,
 	}))
@@ -139,7 +139,7 @@ const requestAssistance = async function(token) {
  * @param {string} token the breakout room token
  * @return {Promise<import('axios').AxiosResponse<any>>} The array of conversations
  */
-const resetRequestAssistance = async function(token) {
+const dismissRequestAssistance = async function(token) {
 	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/request-assistance', {
 		token,
 	})
@@ -171,8 +171,8 @@ export {
 	startBreakoutRooms,
 	stopBreakoutRooms,
 	broadcastMessageToBreakoutRooms,
-	getBreakoutRoomsParticipants,
+	fetchBreakoutRoomsParticipants,
 	requestAssistance,
-	resetRequestAssistance,
+	dismissRequestAssistance,
 	switchToBreakoutRoom,
 }

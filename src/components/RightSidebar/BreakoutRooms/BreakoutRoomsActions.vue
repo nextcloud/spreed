@@ -238,11 +238,11 @@ export default {
 
 	methods: {
 		startBreakoutRooms() {
-			this.breakoutRoomsStore.startBreakoutRoomsAction(this.mainToken)
+			this.breakoutRoomsStore.startBreakoutRooms(this.mainToken)
 		},
 
 		stopBreakoutRooms() {
-			this.breakoutRoomsStore.stopBreakoutRoomsAction(this.mainToken)
+			this.breakoutRoomsStore.stopBreakoutRooms(this.mainToken)
 		},
 
 		openSendMessageDialog() {

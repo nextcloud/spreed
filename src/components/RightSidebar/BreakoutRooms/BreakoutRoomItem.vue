@@ -224,7 +224,7 @@ export default {
 		},
 
 		dismissRequestAssistance() {
-			this.breakoutRoomsStore.resetRequestAssistanceAction({ token: this.roomToken })
+			this.breakoutRoomsStore.dismissRequestAssistance(this.roomToken)
 		},
 
 		async joinRoom() {
@@ -235,7 +235,7 @@ export default {
 			} else {
 				try {
 					if (this.mainConversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE) {
-						await this.breakoutRoomsStore.switchToBreakoutRoomAction({
+						await this.breakoutRoomsStore.switchToBreakoutRoom({
 							token: this.breakoutRoomsStore.getParentRoomToken(this.roomToken),
 							target: this.roomToken,
 						})

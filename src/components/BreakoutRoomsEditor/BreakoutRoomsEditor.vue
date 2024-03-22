@@ -156,7 +156,7 @@ export default {
 	methods: {
 		async handleCreateRooms() {
 			try {
-				await this.breakoutRoomsStore.configureBreakoutRoomsAction({
+				await this.breakoutRoomsStore.configureBreakoutRooms({
 					token: this.token,
 					mode: this.mode,
 					amount: this.amount,
