@@ -39,7 +39,7 @@ import {
 	dismissRequestAssistance,
 	reorganizeAttendees,
 	switchToBreakoutRoom,
-} from '../services/breakoutRoomsService.js'
+} from '../services/breakoutRoomsService.ts'
 import store from '../store/index.js'
 
 export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
