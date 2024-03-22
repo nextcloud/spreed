@@ -365,7 +365,7 @@ export default {
 
 	watch: {
 		showJoinCallButton() {
-			EventBus.$emit('scroll-chat-to-bottom')
+			EventBus.$emit('scroll-chat-to-bottom', { smooth: true })
 		},
 	},
 
