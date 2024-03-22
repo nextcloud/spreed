@@ -1309,6 +1309,7 @@
     "Allow guests to join via link" : "允許訪客透過連結加入",
     "Password protect" : "密碼防護",
     "Enter password" : "輸入密碼",
+    "Maximum length exceeded ({maxlength} characters)" : "超出最大長度（{maxlength} 個字元）",
     "Add emoji" : "新增表情符號",
     "Adding a mention will only notify users who did not read the message." : "新增提及僅會通知尚未閱讀訊息的使用者。",
     "This conversation has been locked" : "此對話已鎖定",

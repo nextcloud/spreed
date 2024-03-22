@@ -1309,6 +1309,7 @@
     "Allow guests to join via link" : "Tillat gjester å bli med via kobling",
     "Password protect" : "Passordbeskyttelse",
     "Enter password" : "Skriv inn passord",
+    "Maximum length exceeded ({maxlength} characters)" : "Maksimal lengde overskredet ({maxlength} tegn)",
     "Add emoji" : "Legg til emoji",
     "Adding a mention will only notify users who did not read the message." : "Hvis du legger til en nevner, varsles bare brukere som ikke har lest meldingen.",
     "This conversation has been locked" : "Samtalen er låst",
