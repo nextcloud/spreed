@@ -67,7 +67,7 @@ import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
-import TransitionWrapper from './components/TransitionWrapper.vue'
+import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'

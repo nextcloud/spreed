@@ -102,7 +102,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import ParticipantsList from './ParticipantsList.vue'
-import Hint from '../../Hint.vue'
+import Hint from '../../UIShared/Hint.vue'
 
 import { ATTENDEE } from '../../../constants.js'
 import { useIntegrationsStore } from '../../../stores/integrations.js'

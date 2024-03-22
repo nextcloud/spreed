@@ -66,7 +66,7 @@ import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
-import EditableTextField from './EditableTextField.vue'
+import EditableTextField from '../UIShared/EditableTextField.vue'
 
 import { CONVERSATION } from '../../constants.js'
 

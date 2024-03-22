@@ -38,7 +38,7 @@
 import { RecycleScroller } from 'vue-virtual-scroller'
 
 import Conversation from './Conversation.vue'
-import LoadingPlaceholder from '../../LoadingPlaceholder.vue'
+import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 

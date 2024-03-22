@@ -49,7 +49,7 @@ import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import PollViewer from './components/PollViewer/PollViewer.vue'
 import TopBar from './components/TopBar/TopBar.vue'
-import TransitionWrapper from './components/TransitionWrapper.vue'
+import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'

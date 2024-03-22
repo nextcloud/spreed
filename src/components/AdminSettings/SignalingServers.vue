@@ -96,7 +96,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-import TransitionWrapper from '../TransitionWrapper.vue'
+import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { SIGNALING } from '../../constants.js'
 

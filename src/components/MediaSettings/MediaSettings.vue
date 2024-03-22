@@ -223,7 +223,7 @@ import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import CallButton from '../TopBar/CallButton.vue'
-import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
+import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
 import { useDevices } from '../../composables/useDevices.js'
 import { useIsInCall } from '../../composables/useIsInCall.js'

@@ -87,7 +87,7 @@ import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
-import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
+import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
 import { useDevices } from '../../composables/useDevices.js'
 
