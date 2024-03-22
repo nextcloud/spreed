@@ -1311,6 +1311,7 @@ OC.L10N.register(
     "Allow guests to join via link" : "السماح بالضيوف بالانضمام عن طريق الرابط",
     "Password protect" : "حماية كلمة السر",
     "Enter password" : "أدخل كلمة المرور",
+    "Maximum length exceeded ({maxlength} characters)" : "تمّ تجاوز الحدّ الأقصى ({maxlength} حرفاً)",
     "Add emoji" : "اضافة رمز تعبيري",
     "Adding a mention will only notify users who did not read the message." : "إضافة إشارة ستؤدي إلى إشعار المستخدِمين الذين لم يسبق لهم قراءة الرسالة.",
     "This conversation has been locked" : "هذه المحادثة مغلقة",
