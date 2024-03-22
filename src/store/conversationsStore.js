@@ -70,7 +70,7 @@ import {
 	stopCallRecording,
 } from '../services/recordingService.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
-import { useBreakoutRoomsStore } from '../stores/breakoutRooms.js'
+import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'

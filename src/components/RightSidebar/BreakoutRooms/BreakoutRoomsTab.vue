@@ -58,7 +58,7 @@ import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 import Participant from '../Participants/Participant.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
-import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.js'
+import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.ts'
 
 export default {
 	name: 'BreakoutRoomsTab',

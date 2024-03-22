@@ -119,7 +119,7 @@ import SelectableParticipant from './SelectableParticipant.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
