@@ -99,7 +99,7 @@ class RoomController {
 			throw new CannotReachRemoteException();
 		}
 
-		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash')];
+		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $this->proxy->overwrittenRemoteTalkHash($proxy->getHeader('X-Nextcloud-Talk-Hash'))];
 
 		return new DataResponse([], $statusCode, $headers);
 	}
@@ -123,7 +123,7 @@ class RoomController {
 		$data = $this->proxy->getOCSData($proxy);
 
 		$headers = [
-			'X-Nextcloud-Talk-Hash' => $proxy->getHeader('X-Nextcloud-Talk-Hash'),
+			'X-Nextcloud-Talk-Hash' => $this->proxy->overwrittenRemoteTalkHash($proxy->getHeader('X-Nextcloud-Talk-Hash')),
 		];
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);

@@ -40,6 +40,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -2259,6 +2260,12 @@ class RoomController extends AEnvironmentAwareController {
 			/** @var TalkCapabilities|array<empty> $data */
 			$data = $response->getData();
 
+			/**
+			 * IMPORTANT:
+			 * When adding, changing or removing anything here, update
+			 * @see ProxyRequest::overwrittenRemoteTalkHash()
+			 * so clients correctly refresh their capabilities.
+			 */
 			if (isset($data['config']['chat']['read-privacy'])) {
 				$data['config']['chat']['read-privacy'] = Participant::PRIVACY_PRIVATE;
 			}
