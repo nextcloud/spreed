@@ -26,9 +26,7 @@
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
-		<!-- description -->
-		<NcAppSettingsSection v-if="showDescription"
-			id="basic-info"
+		<NcAppSettingsSection id="basic-info"
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo :conversation="conversation"
 				:can-full-moderate="canFullModerate" />
@@ -39,7 +37,8 @@
 			<NcAppSettingsSection v-if="!isNoteToSelf"
 				id="notifications"
 				:name="t('spreed', 'Personal')">
-				<NcCheckboxRadioSwitch type="switch"
+				<NcCheckboxRadioSwitch v-if="showMediaSettingsToggle"
+					type="switch"
 					:disabled="recordingConsentRequired"
 					:checked="showMediaSettings"
 					@update:checked="setShowMediaSettings">
@@ -138,6 +137,7 @@ import { useSettingsStore } from '../../stores/settings.js'
 const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
 const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
 const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent'] !== CALL.RECORDING_CONSENT.OFF
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -196,6 +196,10 @@ export default {
 				|| this.$store.getters.getToken()
 		},
 
+		showMediaSettingsToggle() {
+			return (!supportFederationV1 || !this.conversation.remoteServer)
+		},
+
 		showMediaSettings() {
 			return this.settingsStore.getShowMediaSettings(this.token)
 		},
@@ -224,15 +228,6 @@ export default {
 
 		canLeaveConversation() {
 			return this.conversation.canLeaveConversation
-		},
-
-		showDescription() {
-			if (this.canFullModerate) {
-				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-					&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-			} else {
-				return this.description !== ''
-			}
 		},
 
 		isBreakoutRoom() {
