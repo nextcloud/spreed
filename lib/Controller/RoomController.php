@@ -2239,6 +2239,9 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Get capabilities for a room
 	 *
+	 * See "Capability handling in federated conversations" in https://github.com/nextcloud/spreed/issues/10680
+	 * to learn which capabilities should be considered from the local server or from the remote server.
+	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkCapabilities|array<empty>, array{X-Nextcloud-Talk-Hash?: string, X-Nextcloud-Talk-Proxy-Hash?: string}>
 	 *
 	 * 200: Get capabilities successfully

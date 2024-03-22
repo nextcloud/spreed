@@ -353,7 +353,10 @@ export type paths = {
     post: operations["room-set-message-expiration"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/capabilities": {
-    /** Get capabilities for a room */
+    /**
+     * Get capabilities for a room
+     * @description See "Capability handling in federated conversations" in https://github.com/nextcloud/spreed/issues/10680 to learn which capabilities should be considered from the local server or from the remote server.
+     */
     get: operations["room-get-capabilities"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
@@ -5144,7 +5147,10 @@ export type operations = {
       };
     };
   };
-  /** Get capabilities for a room */
+  /**
+   * Get capabilities for a room
+   * @description See "Capability handling in federated conversations" in https://github.com/nextcloud/spreed/issues/10680 to learn which capabilities should be considered from the local server or from the remote server.
+   */
   "room-get-capabilities": {
     parameters: {
       header: {

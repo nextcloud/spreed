@@ -484,6 +484,9 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 ## Get conversation capabilities
 
+See [Capability handling in federated conversations](https://github.com/nextcloud/spreed/issues/10680) to learn which capabilities
+should be considered from the local server or from the remote server.
+
 * Required capability: `federation-v1`
 * Method: `GET`
 * Endpoint: `/room/{token}/capabilities`
