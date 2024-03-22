@@ -63,6 +63,27 @@ You can enable HMR (Hot module replacement) to avoid page reloads when working o
 
 We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
 
+### 🌏 Testing federation locally
+
+When testing federated conversations locally, some additional steps might be needed,
+to improve the behaviour and allowing the servers to talk to each others:
+
+1. Allow self-signed certificates
+	```shell
+	occ config:system:set sharing.federation.allowSelfSignedCertificates --value true --type bool
+	occ security:certificates:import /path/to/the/nextcloud.crt
+	occ security:certificates
+	```
+2. Allow local servers to be remote servers
+	```shell
+	occ config:system:set allow_local_remote_servers --value true --type bool
+	```
+
+Additionally you can enable debug mode that will list local users as federated users options
+allowing you to federate with accounts on the same instance. Federation will still work
+and use the full federation experience and opposed to the federated files sharing **not**
+create a local share instead.
+
 ### 🪄 Useful tricks for testing video calls
 
 #### 👥 Joining a test call with multiple users
