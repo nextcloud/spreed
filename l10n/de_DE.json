@@ -1309,6 +1309,7 @@
     "Allow guests to join via link" : "Gästen die Teilnahme per Link erlauben",
     "Password protect" : "Passwortschutz",
     "Enter password" : "Passwort eingeben",
+    "Maximum length exceeded ({maxlength} characters)" : "Maximale Länge überschritten ({maxlength} Zeichen)",
     "Add emoji" : "Emoji hinzufügen",
     "Adding a mention will only notify users who did not read the message." : "Hinzufügen einer Erwähnung benachrichtigt nur Benutzer, die die Nachricht noch nicht gelesen haben.",
     "This conversation has been locked" : "Diese Unterhaltung wurde gesperrt",
