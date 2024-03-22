@@ -66,7 +66,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import StunServer from '../../components/AdminSettings/StunServer.vue'
-import TransitionWrapper from '../TransitionWrapper.vue'
+import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 export default {
 	name: 'StunServers',

@@ -116,7 +116,7 @@ import { emit } from '@nextcloud/event-bus'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import TransitionWrapper from '../../TransitionWrapper.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'

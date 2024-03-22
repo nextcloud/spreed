@@ -40,7 +40,7 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import { NcButton } from '@nextcloud/vue'
 
-import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
+import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
 import BrowserStorage from '../../../services/BrowserStorage.js'

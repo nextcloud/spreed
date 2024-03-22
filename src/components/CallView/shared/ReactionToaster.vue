@@ -53,7 +53,7 @@ import { imagePath } from '@nextcloud/router'
 
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
 
-import TransitionWrapper from '../../TransitionWrapper.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { useGuestNameStore } from '../../../stores/guestName.js'
 

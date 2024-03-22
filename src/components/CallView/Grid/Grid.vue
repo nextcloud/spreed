@@ -162,7 +162,7 @@ import { generateFilePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import TransitionWrapper from '../../TransitionWrapper.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'

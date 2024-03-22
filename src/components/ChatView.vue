@@ -84,7 +84,7 @@ import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
-import TransitionWrapper from './TransitionWrapper.vue'
+import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'

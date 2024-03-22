@@ -137,7 +137,7 @@ import LocalVideo from './LocalVideo.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
 import Screen from './Screen.vue'
 import VideoVue from './VideoVue.vue'
-import TransitionWrapper from '../../TransitionWrapper.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 

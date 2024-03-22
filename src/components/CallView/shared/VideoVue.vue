@@ -98,7 +98,7 @@ import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import TransitionWrapper from '../../TransitionWrapper.vue'
+import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'

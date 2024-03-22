@@ -366,7 +366,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import DialpadPanel from '../../DialpadPanel.vue'
+import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE, WEBINAR } from '../../../constants.js'

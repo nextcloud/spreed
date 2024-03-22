@@ -47,7 +47,7 @@ import Phone from 'vue-material-design-icons/Phone.vue'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
-import Hint from './Hint.vue'
+import Hint from './UIShared/Hint.vue'
 
 import { ATTENDEE } from '../constants.js'
 

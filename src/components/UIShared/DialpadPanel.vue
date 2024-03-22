@@ -91,7 +91,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
-import { regionCodes } from '../regionCodes.js'
+import { regionCodes } from '../../regionCodes.js'
 
 const allowedKeys = /^[0-9+\-()*#\s]+$/
 

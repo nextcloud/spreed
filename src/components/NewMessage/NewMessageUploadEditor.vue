@@ -100,7 +100,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NewMessage from './NewMessage.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import TransitionWrapper from '../TransitionWrapper.vue'
+import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 const supportMediaCaption = getCapabilities()?.spreed?.features?.includes('media-caption')
 

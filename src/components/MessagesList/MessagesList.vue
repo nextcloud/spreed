@@ -86,8 +86,8 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
-import LoadingPlaceholder from '../LoadingPlaceholder.vue'
-import TransitionWrapper from '../TransitionWrapper.vue'
+import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
+import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'

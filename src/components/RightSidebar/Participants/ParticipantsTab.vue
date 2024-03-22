@@ -77,9 +77,9 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import ParticipantsList from './ParticipantsList.vue'
 import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults.vue'
-import DialpadPanel from '../../DialpadPanel.vue'
-import Hint from '../../Hint.vue'
-import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
+import DialpadPanel from '../../UIShared/DialpadPanel.vue'
+import Hint from '../../UIShared/Hint.vue'
+import SearchBox from '../../UIShared/SearchBox.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 
 import { useGetParticipants } from '../../../composables/useGetParticipants.js'

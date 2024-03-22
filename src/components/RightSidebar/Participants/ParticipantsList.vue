@@ -33,7 +33,7 @@
 <script>
 
 import Participant from './Participant.vue'
-import LoadingPlaceholder from '../../LoadingPlaceholder.vue'
+import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 
 export default {
 	name: 'ParticipantsList',
