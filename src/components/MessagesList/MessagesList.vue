@@ -58,6 +58,7 @@
 
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
+				class="messages-list__placeholder"
 				:count="15" />
 		</template>
 		<NcEmptyContent v-else-if="showEmptyContent"
@@ -1290,9 +1291,16 @@ export default {
 }
 
 .messages-list {
-  &__empty-content {
-    height: 100%;
-  }
+	&__placeholder {
+		display: flex;
+		flex-direction: column-reverse;
+		overflow: hidden;
+		height: 100%;
+	}
+
+	&__empty-content {
+		height: 100%;
+	}
 }
 
 .messages-group {
