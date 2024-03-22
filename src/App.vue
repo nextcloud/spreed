@@ -42,6 +42,7 @@ import { provide } from 'vue'
 import PreventUnload from 'vue-prevent-unload'
 
 import { getCurrentUser } from '@nextcloud/auth'
+import { setGlobalToastOptions } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
@@ -291,6 +292,8 @@ export default {
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 
 		this.onResize()
+
+		setGlobalToastOptions({ selector: this.$store.getters.getMainContainerSelector().slice(1) })
 
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
