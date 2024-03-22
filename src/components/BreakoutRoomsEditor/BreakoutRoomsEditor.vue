@@ -97,7 +97,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
 
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 
 export default {
 	name: 'BreakoutRoomsEditor',
