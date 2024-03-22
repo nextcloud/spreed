@@ -182,19 +182,6 @@
 
 				<!-- Search results -->
 				<ul v-else class="h-100 scroller">
-					<!-- Create a new conversation -->
-					<NcListItem v-if="canStartConversations"
-						:name="t('spreed', 'Create a new conversation')"
-						data-nav-id="conversation_create_new"
-						@click="createConversation(searchText)">
-						<template #icon>
-							<ChatPlus :size="30" />
-						</template>
-						<template #subname>
-							{{ searchText }}
-						</template>
-					</NcListItem>
-
 					<!-- Search results: user's conversations -->
 					<NcAppNavigationCaption :name="t('spreed', 'Conversations')" />
 					<Conversation v-for="item of searchResultsConversationList"
@@ -203,6 +190,19 @@
 						:item="item"
 						@click="abortSearch" />
 					<Hint v-if="searchResultsConversationList.length === 0" :hint="t('spreed', 'No matches found')" />
+
+					<!-- Create a new conversation -->
+					<NcListItem v-if="canStartConversations"
+						:name="searchText"
+						data-nav-id="conversation_create_new"
+						@click="createConversation(searchText)">
+						<template #icon>
+							<ChatPlus :size="44" />
+						</template>
+						<template #subname>
+							{{ t('spreed', 'New group conversation') }}
+						</template>
+					</NcListItem>
 
 					<!-- Search results: listed (open) conversations -->
 					<template v-if="!listedConversationsLoading && searchResultsListedConversations.length !== 0">
@@ -225,6 +225,9 @@
 							<template #icon>
 								<ConversationIcon :item="iconData(item)" />
 							</template>
+							<template #subname>
+								{{ t('spreed', 'New private conversation') }}
+							</template>
 						</NcListItem>
 					</template>
 
@@ -241,6 +244,9 @@
 								<template #icon>
 									<ConversationIcon :item="iconData(item)" />
 								</template>
+								<template #subname>
+									{{ t('spreed', 'New group conversation') }}
+								</template>
 							</NcListItem>
 						</template>
 
@@ -255,14 +261,19 @@
 								<template #icon>
 									<ConversationIcon :item="iconData(item)" />
 								</template>
+								<template #subname>
+									{{ t('spreed', 'New group conversation') }}
+								</template>
 							</NcListItem>
 						</template>
 					</template>
 
 					<!-- Search results: no results (yet) -->
-					<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
-					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-					<Hint v-else :hint="t('spreed', 'No search results')" />
+					<template v-if="sourcesWithoutResults">
+						<NcAppNavigationCaption :name="sourcesWithoutResultsList" />
+						<Hint :hint="t('spreed', 'No search results')" />
+					</template>
+					<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				</ul>
 			</li>
 		</template>
@@ -1072,6 +1083,14 @@ export default {
 
 :deep(.app-navigation__list) {
 	padding: 0 !important;
+}
+
+:deep(.app-navigation-caption):not(:first-child) {
+	margin-top: 12px !important;
+}
+
+:deep(.app-navigation-caption__name) {
+	margin: 0 !important;
 }
 
 :deep(.list-item) {
