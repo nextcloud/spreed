@@ -1311,6 +1311,7 @@ OC.L10N.register(
     "Allow guests to join via link" : "Permitir que convidados participem via link",
     "Password protect" : "Proteger com senha",
     "Enter password" : "Digite a senha ",
+    "Maximum length exceeded ({maxlength} characters)" : "Comprimento máximo excedido ({maxlength} caracteres)",
     "Add emoji" : "Adicionar emoji",
     "Adding a mention will only notify users who did not read the message." : "Adicionar uma menção notificará apenas os usuários que não leram a mensagem.",
     "This conversation has been locked" : "Esta conversa está bloqueada",

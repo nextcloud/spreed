@@ -1309,6 +1309,7 @@
     "Allow guests to join via link" : "Дозволи да гости приступе путем линка",
     "Password protect" : "Заштићено лозинком",
     "Enter password" : "Унесите лозинку",
+    "Maximum length exceeded ({maxlength} characters)" : "Прекорачена је максимална дужина ({maxlength} карактера)",
     "Add emoji" : "Додај емођи",
     "Adding a mention will only notify users who did not read the message." : "Додавање помињања ће обавестити само кориснике који још увек нису прочитали поруку.",
     "This conversation has been locked" : "Разговор је закључан",
