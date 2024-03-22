@@ -323,7 +323,7 @@ const actions = {
 			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', { token, message })
 			// Scroll the message list
-			EventBus.$emit('scroll-chat-to-bottom', { force: true })
+			EventBus.$emit('scroll-chat-to-bottom', { smooth: true, force: true })
 		}
 
 		await dispatch('prepareUploadPaths', { token, uploadId })

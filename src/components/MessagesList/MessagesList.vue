@@ -308,9 +308,8 @@ export default {
 					this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
 				}
 
-				if (this.isSticky) {
-					this.scrollToBottom({ smooth: true })
-				}
+				// scroll to bottom if needed
+				this.scrollToBottom({ smooth: true })
 			},
 		},
 	},
@@ -1104,26 +1103,31 @@ export default {
 				if (!this.$refs.scroller) {
 					return
 				}
-				if (!this.isWindowVisible || (!document.hasFocus() && !this.isInCall)) {
+
+				let newTop
+				if (options?.force) {
+					newTop = this.$refs.scroller.scrollHeight
+					this.setChatScrolledToBottom(true)
+				} else if (!this.isSticky) {
+					// Reading old messages
+					return
+				} else if (!this.isWindowVisible) {
 					const firstUnreadMessageHeight = this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight
-					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
+					const scrollBy = firstUnreadMessageHeight < 40 ? 10 : 40
+					// We jump half a message and stop autoscrolling, so the user can read up
 					// Single new line from the previous author is 35px so scroll half a line (10px)
 					// Single new line from the new author is 75px so scroll half an avatar (40px)
-					this.$refs.scroller.scrollTop += firstUnreadMessageHeight < 40 ? 10 : 40
+					newTop = this.$refs.scroller.scrollTop + scrollBy
 					this.setChatScrolledToBottom(false)
-					return
+				} else {
+					newTop = this.$refs.scroller.scrollHeight
+					this.setChatScrolledToBottom(true)
 				}
 
-				if (options?.force || this.isChatScrolledToBottom || this.isSticky) {
-					if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
-						// scrollTo is used when the user is watching
-						this.$refs.scroller.scrollTo({
-							top: this.$refs.scroller.scrollHeight,
-							behavior: options?.smooth ? 'smooth' : 'auto',
-						})
-						this.setChatScrolledToBottom(true)
-					}
-				}
+				this.$refs.scroller.scrollTo({
+					top: newTop,
+					behavior: options?.smooth ? 'smooth' : 'auto',
+				})
 			})
 		},
 

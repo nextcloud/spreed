@@ -695,7 +695,7 @@ export default {
 				this.text = ''
 				this.userData = {}
 				// Scrolls the message list to the last added message
-				EventBus.$emit('scroll-chat-to-bottom', { smooth: true })
+				EventBus.$emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
