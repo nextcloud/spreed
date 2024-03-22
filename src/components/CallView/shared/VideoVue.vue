@@ -727,6 +727,7 @@ export default {
 	content: '';
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
+	z-index: 1;
 }
 
 .presenter-icon__hide {
@@ -739,6 +740,7 @@ export default {
 	border-radius: 50%;
 	padding: 6px;
 	width: 44px;
+	z-index: 2;
 
 	&:hover {
 		cursor: pointer;
