@@ -38,7 +38,8 @@
 			</span>
 		</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch id="notification_calls"
+		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
+			id="notification_calls"
 			type="switch"
 			:checked.sync="notifyCalls"
 			@update:checked="setNotificationCalls">
@@ -52,9 +53,13 @@ import Account from 'vue-material-design-icons/Account.vue'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { PARTICIPANT } from '../../constants.js'
+
+const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
@@ -86,6 +91,12 @@ export default {
 		return {
 			notifyCalls: this.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON,
 			notificationLevel: this.conversation.notificationLevel.toString(),
+		}
+	},
+
+	computed: {
+		showCallNotificationSettings() {
+			return (!supportFederationV1 || !this.conversation.remoteServer)
 		}
 	},
 
