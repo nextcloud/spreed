@@ -67,9 +67,9 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 import LoadingComponent from '../../LoadingComponent.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
+import DialpadPanel from '../../UIShared/DialpadPanel.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { callSIPDialOut } from '../../../services/callsService.js'

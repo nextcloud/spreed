@@ -223,7 +223,7 @@
 							:name="item.label"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" />
+								<AvatarWrapper v-bind="iconData(item)" />
 							</template>
 							<template #subname>
 								{{ t('spreed', 'New private conversation') }}
@@ -260,6 +260,23 @@
 								@click="createAndJoinConversation(item)">
 								<template #icon>
 									<ConversationIcon :item="iconData(item)" />
+								</template>
+								<template #subname>
+									{{ t('spreed', 'New group conversation') }}
+								</template>
+							</NcListItem>
+						</template>
+
+						<!-- New conversations: Federated users -->
+						<template v-if="searchResultsFederated.length !== 0">
+							<NcAppNavigationCaption :name="t('spreed', 'Federated users')" />
+							<NcListItem v-for="item of searchResultsFederated"
+								:key="`federated_${item.id}`"
+								:data-nav-id="`federated_${item.id}`"
+								:name="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<AvatarWrapper v-bind="iconData(item)" />
 								</template>
 								<template #subname>
 									{{ t('spreed', 'New group conversation') }}
@@ -327,10 +344,11 @@ import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
-import SearchBox from '../UIShared/SearchBox.vue'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../ConversationIcon.vue'
-import Hint from '../UIShared/Hint.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
+import Hint from '../UIShared/Hint.vue'
+import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -360,6 +378,7 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
+		AvatarWrapper,
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
@@ -424,6 +443,7 @@ export default {
 			searchResultsUsers: [],
 			searchResultsGroups: [],
 			searchResultsCircles: [],
+			searchResultsFederated: [],
 			searchResultsListedConversations: [],
 			contactsLoading: false,
 			listedConversationsLoading: false,
@@ -714,6 +734,10 @@ export default {
 				})
 				this.searchResultsGroups = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.GROUPS)
 				this.searchResultsCircles = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
+				this.searchResultsFederated = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.REMOTES)
+					.map((item) => {
+						return { ...item, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS }
+					})
 				this.contactsLoading = false
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
@@ -971,11 +995,15 @@ export default {
 		},
 
 		iconData(item) {
-			if (item.source === ATTENDEE.ACTOR_TYPE.USERS) {
+			if (item.source === ATTENDEE.ACTOR_TYPE.USERS
+				|| item.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
 				return {
-					type: CONVERSATION.TYPE.ONE_TO_ONE,
-					displayName: item.label,
-					name: item.id,
+					id: item.id,
+					name: item.label,
+					source: item.source,
+					disableMenu: true,
+					token: 'new',
+					showUserStatus: true,
 				}
 			}
 			return {
