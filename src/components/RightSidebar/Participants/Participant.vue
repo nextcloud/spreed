@@ -31,7 +31,7 @@
 			'selected': isSelected }"
 		:aria-label="participantAriaLabel"
 		:role="isSearched ? 'listitem' : undefined"
-		:tabindex="isSearched ? 0 : undefined"
+		:tabindex="0"
 		v-on="isSearched ? { click: handleClick, 'keydown.enter': handleClick } : {}"
 		@keydown.enter="handleClick">
 		<!-- Participant's avatar -->

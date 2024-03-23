@@ -20,9 +20,10 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div ref="wrapper" class="wrapper">
 		<div class="search-form">
 			<SearchBox v-if="canSearch"
+				ref="searchBox"
 				class="search-form__input"
 				:value.sync="searchText"
 				:is-focused.sync="isFocused"
@@ -46,15 +47,17 @@
 			:participants="participants"
 			:loading="!participantsInitialised" />
 
-		<div v-else class="scroller">
+		<div v-else class="scroller h-100">
 			<NcAppNavigationCaption v-if="canAdd" :name="t('spreed', 'Participants')" />
 
 			<ParticipantsList v-if="filteredParticipants.length"
+				class="known-results"
 				:items="filteredParticipants"
 				:loading="!participantsInitialised" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 
 			<ParticipantsSearchResults v-if="canAdd"
+				class="search-results"
 				:search-results="searchResults"
 				:contacts-loading="contactsLoading"
 				:no-results="noResults"
@@ -66,7 +69,7 @@
 
 <script>
 import debounce from 'debounce'
-import { toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
@@ -82,6 +85,7 @@ import Hint from '../../UIShared/Hint.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 
+import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useGetParticipants } from '../../../composables/useGetParticipants.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
@@ -125,12 +129,20 @@ export default {
 	},
 
 	setup(props) {
+		const wrapper = ref(null)
+		const searchBox = ref(null)
 		const { isActive } = toRefs(props)
 		const { sortParticipants } = useSortParticipants()
 		const isInCall = useIsInCall()
 		const { cancelableGetParticipants } = useGetParticipants(isActive, false)
 
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, searchBox)
+
 		return {
+			initializeNavigation,
+			resetNavigation,
+			wrapper,
+			searchBox,
 			sortParticipants,
 			isInCall,
 			cancelableGetParticipants,
@@ -253,7 +265,7 @@ export default {
 			if (!this.isSearching) {
 				return
 			}
-
+			this.resetNavigation()
 			try {
 				this.cancelSearchPossibleConversations('canceled')
 				const { request, cancel } = CancelableRequest(searchPossibleConversations)
@@ -266,6 +278,9 @@ export default {
 
 				this.searchResults = response?.data?.ocs?.data || []
 				this.contactsLoading = false
+				this.$nextTick(() => {
+					this.initializeNavigation()
+				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
@@ -356,6 +371,14 @@ export default {
 	overflow-y: auto;
 }
 
+.known-results {
+	padding: 0 2px;
+}
+
+.search-results {
+	margin-top: 12px; // compensate margin before first header inside
+}
+
 /** TODO: fix these in the nextcloud-vue library **/
 
 :deep(.app-sidebar-header__menu) {
@@ -367,6 +390,14 @@ export default {
 :deep(.app-sidebar__close) {
 	top: 6px !important;
 	right: 6px !important;
+}
+
+:deep(.app-navigation-caption):not(:first-child) {
+	margin-top: 12px !important;
+}
+
+:deep(.app-navigation-caption__name) {
+	margin: 0 !important;
 }
 
 /*
