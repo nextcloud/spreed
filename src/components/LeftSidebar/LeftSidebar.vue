@@ -400,7 +400,7 @@ export default {
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
-		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
 
 		return {

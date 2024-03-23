@@ -131,7 +131,7 @@ export default {
 		const wrapper = ref(null)
 		const setContacts = ref(null)
 
-		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, setContacts, '.participant-row')
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, setContacts)
 
 		return {
 			initializeNavigation,
