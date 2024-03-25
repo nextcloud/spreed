@@ -128,7 +128,8 @@ class Operation implements IOperation {
 					new \DateTime(),
 					null,
 					'',
-					false
+					false,
+					forceLastMessageUpdate: true,
 				);
 			} catch (UnexpectedValueException $e) {
 				continue;
