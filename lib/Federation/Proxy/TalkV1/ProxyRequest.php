@@ -50,6 +50,20 @@ class ProxyRequest {
 	) {
 	}
 
+	public function overwrittenRemoteTalkHash(string $hash): string {
+		return sha1(json_encode([
+			'remoteHash' => $hash,
+			'manipulated' => [
+				'config' => [
+					'chat' => [
+						'read-privacy',
+						'typing-privacy',
+					],
+				],
+			]
+		]));
+	}
+
 	/**
 	 * @return Http::STATUS_BAD_REQUEST
 	 */
