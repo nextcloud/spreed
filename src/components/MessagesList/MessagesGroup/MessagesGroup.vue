@@ -38,7 +38,6 @@
 			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
-				ref="message"
 				v-bind="message"
 				:token="token"
 				:is-temporary="message.timestamp === 0"
@@ -101,8 +100,6 @@ export default {
 		}
 	},
 
-	expose: ['highlightMessage'],
-
 	computed: {
 		actorId() {
 			return this.messages[0].actorId
@@ -163,16 +160,6 @@ export default {
 		},
 	},
 
-	methods: {
-		highlightMessage(messageId) {
-			for (const message of this.$refs.message) {
-				if (message.id === messageId) {
-					message.highlightMessage()
-					break
-				}
-			}
-		},
-	},
 }
 </script>
 

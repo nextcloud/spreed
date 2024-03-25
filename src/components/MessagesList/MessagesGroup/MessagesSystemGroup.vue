@@ -89,8 +89,6 @@ export default {
 		},
 	},
 
-	expose: ['highlightMessage'],
-
 	setup() {
 		const { createCombinedSystemMessage } = useCombinedSystemMessage()
 
@@ -234,15 +232,6 @@ export default {
 		getPrevMessageId(message) {
 			const prevMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) - 1]
 			return prevMessage?.id || this.previousMessageId
-		},
-
-		highlightMessage(messageId) {
-			for (const message of this.$refs.message) {
-				if (message.id === messageId) {
-					message.highlightMessage()
-					break
-				}
-			}
 		},
 	},
 }

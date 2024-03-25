@@ -48,7 +48,6 @@
 			<component :is="messagesGroupComponent(group)"
 				v-for="group in list"
 				:key="group.id"
-				ref="messagesGroup"
 				class="messages-group"
 				:token="token"
 				:messages="group.messages"
@@ -616,8 +615,7 @@ export default {
 			return null
 		},
 
-		scrollToFocusedMessage() {
-			const focusMessageId = this.getMessageIdFromHash()
+		scrollToFocusedMessage(focusMessageId) {
 			let isFocused = null
 			if (focusMessageId) {
 				// scroll to message in URL anchor
@@ -717,7 +715,7 @@ export default {
 					if (!this.hasMoreMessagesToLoad) {
 						hasScrolled = true
 						this.$nextTick(() => {
-							this.scrollToFocusedMessage()
+							this.scrollToFocusedMessage(focusMessageId)
 						})
 					}
 				}
@@ -731,7 +729,7 @@ export default {
 					// don't scroll if lookForNewMessages was polling as we don't want
 					// to scroll back to the read marker after receiving new messages later
 					if (!hasScrolled) {
-						this.scrollToFocusedMessage()
+						this.scrollToFocusedMessage(focusMessageId)
 					}
 				}
 			} else {
@@ -1153,7 +1151,7 @@ export default {
 
 			this.$nextTick(async () => {
 				// FIXME: this doesn't wait for the smooth scroll to end
-				await element.scrollIntoView({
+				element.scrollIntoView({
 					behavior: smooth ? 'smooth' : 'auto',
 					block: 'center',
 					inline: 'nearest',
@@ -1163,12 +1161,7 @@ export default {
 					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
 				if (highlightAnimation) {
-					for (const group of this.$refs.messagesGroup) {
-						if (group.messages.some(message => message.id === messageId)) {
-							group.highlightMessage(messageId)
-							break
-						}
-					}
+					EventBus.$emit('highlight-message', messageId)
 				}
 				this.isFocusingMessage = false
 				await this.handleScroll()
