@@ -22,6 +22,9 @@
 
 import axios from '@nextcloud/axios'
 import {
+	showWarning
+} from '@nextcloud/dialogs'
+import {
 	generateOcsUrl,
 } from '@nextcloud/router'
 
@@ -47,6 +50,20 @@ const joinConversation = async ({ token, forceJoin = false }, options) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }), {
 		force: forceJoin,
 	}, options)
+
+	if (response.headers.get('X-Nextcloud-Bruteforce-Throttled')) {
+		console.error(
+			'Remote address is bruteforce throttled: '
+			+ response.headers.get('X-Nextcloud-Bruteforce-Throttled')
+			+ ' (Request ID: ' + response.headers.get('X-Request-ID') + ')'
+		)
+		const throttleMs = parseInt(response.headers.get('X-Nextcloud-Bruteforce-Throttled'), 10)
+		if (throttleMs > 5000) {
+			showWarning(
+				t('spreed', 'Your requests are throttled at the moment due to brute force protection')
+			)
+		}
+	}
 
 	// FIXME Signaling should not be synchronous
 	await signalingJoinConversation(token, response.data.ocs.data.sessionId)
