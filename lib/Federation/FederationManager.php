@@ -39,7 +39,10 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
+use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudId;
+use OCP\Federation\ICloudIdManager;
 use OCP\IUser;
 use OCP\Notification\IManager;
 use SensitiveParameter;
@@ -68,6 +71,7 @@ class FederationManager {
 		private InvitationMapper $invitationMapper,
 		private BackendNotifier $backendNotifier,
 		private IManager $notificationManager,
+		private ICloudIdManager $cloudIdManager,
 		private RestrictionValidator $restrictionValidator,
 	) {
 	}
@@ -97,10 +101,21 @@ class FederationManager {
 		string $inviterDisplayName,
 		string $localCloudId,
 	): Invitation {
+		$couldHaveInviteWithOtherCasing = false;
 		try {
 			$room = $this->manager->getRoomByToken($remoteToken, null, $remoteServerUrl);
+			$couldHaveInviteWithOtherCasing = true;
 		} catch (RoomNotFoundException) {
 			$room = $this->manager->createRemoteRoom($roomType, $roomName, $remoteToken, $remoteServerUrl);
+		}
+
+		if ($couldHaveInviteWithOtherCasing) {
+			try {
+				$this->invitationMapper->getInvitationForUserByLocalRoom($room, $user->getUID(), true);
+				throw new ProviderCouldNotAddShareException('User already invited', '', Http::STATUS_BAD_REQUEST);
+			} catch (DoesNotExistException) {
+				// Not invited with any casing already, so all good.
+			}
 		}
 
 		$invitation = new Invitation();
@@ -145,10 +160,13 @@ class FederationManager {
 			throw new \InvalidArgumentException('state');
 		}
 
+
+		$cloudId = $this->cloudIdManager->getCloudId($user->getUID(), null);
+
 		// Add user to the room
 		$room = $this->manager->getRoomById($invitation->getLocalRoomId());
 		if (
-			!$this->backendNotifier->sendShareAccepted($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken(), $user->getDisplayName())
+			!$this->backendNotifier->sendShareAccepted($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken(), $user->getDisplayName(), $cloudId->getId())
 		) {
 			throw new CannotReachRemoteException();
 		}
@@ -169,6 +187,7 @@ class FederationManager {
 		$attendee = array_pop($attendees);
 
 		$invitation->setState(Invitation::STATE_ACCEPTED);
+		$invitation->setLocalCloudId($cloudId->getId());
 		$this->invitationMapper->update($invitation);
 
 		$this->markNotificationProcessed($user->getUID(), $shareId);

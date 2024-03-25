@@ -219,6 +219,11 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		if (!empty($notification['displayName'])) {
 			$attendee->setDisplayName($notification['displayName']);
 			$attendee->setState(Invitation::STATE_ACCEPTED);
+
+			if (!empty($notification['cloudId'])) {
+				$attendee->setActorId($notification['cloudId']);
+			}
+
 			$this->attendeeMapper->update($attendee);
 		}
 
