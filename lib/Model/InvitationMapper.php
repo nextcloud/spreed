@@ -98,14 +98,18 @@ class InvitationMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function getInvitationForUserByLocalRoom(Room $room, string $userId): Invitation {
+	public function getInvitationForUserByLocalRoom(Room $room, string $userId, bool $caseInsensitive = false): Invitation {
 		$query = $this->db->getQueryBuilder();
 
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
-			->andWhere($query->expr()->eq('local_room_id', $query->createNamedParameter($room->getId())));
+			->where($query->expr()->eq('local_room_id', $query->createNamedParameter($room->getId())));
 
+		if ($caseInsensitive) {
+			$query->andWhere($query->expr()->eq($query->func()->lower('user_id'), $query->createNamedParameter(strtolower($userId))));
+		} else {
+			$query->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
+		}
 		return $this->findEntity($query);
 	}
 
