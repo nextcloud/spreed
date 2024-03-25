@@ -37,12 +37,20 @@
 						v-model="conversationName"
 						:placeholder="t('spreed', 'Enter a name for this conversation')"
 						:label="t('spreed', 'Name')"
+						:error="!!nameErrorLabel"
 						label-visible
 						@keydown.enter="handleEnter" />
+					<span v-if="nameErrorLabel" class="new-group-conversation__error">
+						{{ nameErrorLabel }}
+					</span>
 					<NcTextArea v-model="conversationDescription"
 						:placeholder="t('spreed', 'Enter a description for this conversation')"
 						:label="t('spreed', 'Description')"
+						:error="!!descriptionErrorLabel"
 						label-visible />
+					<span v-if="descriptionErrorLabel" class="new-group-conversation__error">
+						{{ descriptionErrorLabel }}
+					</span>
 
 					<template v-if="supportsAvatar">
 						<label class="avatar-editor__label">
@@ -276,9 +284,20 @@ export default {
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
 			return this.conversationNameTrimmed === '' || (this.passwordProtect && this.password === '')
+				|| this.conversationNameTrimmed.length > CONVERSATION.MAX_NAME_LENGTH
+				|| this.conversationDescription.length > CONVERSATION.MAX_DESCRIPTION_LENGTH
 		},
-		selectedParticipants() {
-			return this.$store.getters.selectedParticipants
+		nameErrorLabel() {
+			if (this.conversationNameTrimmed.length <= CONVERSATION.MAX_NAME_LENGTH) {
+				return
+			}
+			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: CONVERSATION.MAX_NAME_LENGTH })
+		},
+		descriptionErrorLabel() {
+			if (this.conversationDescription.length <= CONVERSATION.MAX_DESCRIPTION_LENGTH) {
+				return
+			}
+			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: CONVERSATION.MAX_DESCRIPTION_LENGTH })
 		},
 	},
 
@@ -531,6 +550,10 @@ export default {
 
 	&__button {
 		margin-left: auto;
+	}
+
+	&__error {
+		color: var(--color-error);
 	}
 }
 
