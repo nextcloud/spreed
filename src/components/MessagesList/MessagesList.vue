@@ -428,10 +428,10 @@ export default {
 		},
 
 		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
-			const oldKeys = Object.keys(oldGroups)
 			Object.entries(newGroups).forEach(([id, newGroup]) => {
 				if (!oldGroups[id]) {
-					const oldId = oldKeys.find(key => id < key && oldGroups[key].nextMessageId <= newGroup.nextMessageId)
+					const oldId = Object.keys(oldGroups)
+						.find(key => id < key && oldGroups[key].nextMessageId <= newGroup.nextMessageId)
 					if (oldId) {
 						// newGroup includes oldGroup and more old messages, remove oldGroup
 						delete this.messagesGroupedByDateByAuthor[dateTimestamp][oldId]

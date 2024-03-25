@@ -145,6 +145,57 @@ export function useCombinedSystemMessage() {
 			}
 		}
 
+		// Handle cases when actor removed users from conversation (when remove team/group, for example)
+		if (type === 'user_removed') {
+			messages.forEach(message => {
+				if (checkIfSelfIsOneOfUsers(message)) {
+					selfIsUser = true
+				} else {
+					combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.user
+					referenceIndex++
+				}
+				usersCounter++
+			})
+
+			if (checkIfSelfIsActor(combinedMessage)) {
+				if (usersCounter === 2) {
+					combinedMessage.message = t('spreed', 'You removed {user0} and {user1}')
+				} else {
+					combinedMessage.message = n('spreed',
+						'You removed {user0}, {user1} and %n more participant',
+						'You removed {user0}, {user1} and %n more participants', usersCounter - 2)
+				}
+			} else if (selfIsUser) {
+				if (usersCounter === 2) {
+					combinedMessage.message = actorIsAdministrator
+						? t('spreed', 'An administrator removed you and {user0}')
+						: t('spreed', '{actor} removed you and {user0}')
+				} else {
+					combinedMessage.message = actorIsAdministrator
+						? n('spreed',
+							'An administrator removed you, {user0} and %n more participant',
+							'An administrator removed you, {user0} and %n more participants', usersCounter - 2)
+						: n('spreed',
+							'{actor} removed you, {user0} and %n more participant',
+							'{actor} removed you, {user0} and %n more participants', usersCounter - 2)
+				}
+			} else {
+				if (usersCounter === 2) {
+					combinedMessage.message = actorIsAdministrator
+						? t('spreed', 'An administrator removed {user0} and {user1}')
+						: t('spreed', '{actor} removed {user0} and {user1}')
+				} else {
+					combinedMessage.message = actorIsAdministrator
+						? n('spreed',
+							'An administrator removed {user0}, {user1} and %n more participant',
+							'An administrator removed {user0}, {user1} and %n more participants', usersCounter - 2)
+						: n('spreed',
+							'{actor} removed {user0}, {user1} and %n more participant',
+							'{actor} removed {user0}, {user1} and %n more participants', usersCounter - 2)
+				}
+			}
+		}
+
 		// Handle cases when users joined or left the call
 		if (type === 'call_joined' || type === 'call_left') {
 			const storedUniqueUsers = []

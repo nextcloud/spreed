@@ -233,6 +233,17 @@ export default {
 			default: undefined,
 		},
 		/**
+		 * Specifies if the message is inside a collapsed group.
+		 */
+		isCollapsedSystemMessage: {
+			type: Boolean,
+			default: false,
+		},
+		lastCollapsedMessageId: {
+			type: [String, Number],
+			default: 0,
+		},
+		/**
 		 * The type of the message.
 		 */
 		messageType: {
@@ -329,8 +340,17 @@ export default {
 			return !this.nextMessageId || this.id === this.conversation?.lastMessage?.id
 		},
 
+		visualLastLastReadMessageId() {
+			return this.$store.getters.getVisualLastReadMessageId(this.token)
+		},
+
 		isLastReadMessage() {
-			return !this.isLastMessage && this.id === this.$store.getters.getVisualLastReadMessageId(this.token)
+			if (this.isLastMessage) {
+				return false
+			}
+			return (!this.isCollapsedSystemMessage && this.id === this.visualLastLastReadMessageId)
+				|| (this.isCollapsedSystemMessage && this.id === this.visualLastLastReadMessageId && this.id !== this.lastCollapsedMessageId)
+				|| (this.isCombinedSystemMessage && this.lastCollapsedMessageId === this.visualLastLastReadMessageId)
 		},
 
 		isSystemMessage() {

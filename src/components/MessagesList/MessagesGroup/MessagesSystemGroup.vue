@@ -32,6 +32,7 @@
 					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
 					:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
+					:last-collapsed-message-id="messagesCollapsed.lastId"
 					@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
 			</ul>
 			<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
@@ -41,6 +42,8 @@
 					:key="message.id"
 					v-bind="message"
 					:token="token"
+					is-collapsed-system-message
+					:last-collapsed-message-id="messagesCollapsed.lastId"
 					:next-message-id="getNextMessageId(message)"
 					:previous-message-id="getPrevMessageId(message)" />
 			</ul>
@@ -153,6 +156,14 @@ export default {
 				return 'user_added'
 			}
 
+			// Group users removed by one actor
+			if (message1.systemMessage === 'user_removed'
+				&& message1.systemMessage === message2.systemMessage
+				&& message1.actorId === message2.actorId
+				&& message1.actorType === message2.actorType) {
+				return 'user_removed'
+			}
+
 			// Group users reconnected in a minute
 			if (message1.systemMessage === 'call_joined'
 				&& message2.systemMessage === 'call_left'
@@ -194,30 +205,30 @@ export default {
 			let lastMessage = null
 			let forceNextGroup = false
 			for (const message of messages) {
-				const isLastRead = message.id === this.lastReadMessageId
 				const groupingType = this.messagesShouldBeGrouped(message, lastMessage)
 				if (!groupingType || forceNextGroup) {
-					groups.push({ id: message.id, messages: [message], type: '', collapsed: this.groupIsCollapsed[message.id] ?? !isLastRead })
+					groups.push({ id: message.id, lastId: message.id, messages: [message], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
 					forceNextGroup = false
 				} else {
 					if (groupingType === 'call_reconnected') {
-						groups.push({ id: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: this.groupIsCollapsed[message.id] ?? !isLastRead })
+						groups.push({ id: message.id, lastId: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
+						groups.at(-1).lastId = groups.at(-1).messages.at(-1).id
 						forceNextGroup = true
 					}
 					groups.at(-1).messages.push(message)
+					groups.at(-1).lastId = message.id
 					groups.at(-1).type = groupingType
-					if (isLastRead) {
+
+					// Check if last read message is hidden inside the collapsed group, and open it, if so.
+					// Otherwise, combined system message will show a marker
+					const isLastReadInsideGroup = this.lastReadMessageId >= groups.at(-1).id && this.lastReadMessageId < groups.at(-1).lastId
+					if (isLastReadInsideGroup) {
 						groups.at(-1).collapsed = false
 					}
 				}
 				lastMessage = message
 			}
 
-			groups.forEach(group => {
-				if (this.groupIsCollapsed[group.id] === undefined) {
-					this.groupIsCollapsed[group.id] = group.collapsed
-				}
-			})
 			return groups
 		},
 
