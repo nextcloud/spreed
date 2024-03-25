@@ -97,6 +97,8 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
 
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
+
 export default {
 	name: 'BreakoutRoomsEditor',
 
@@ -116,6 +118,12 @@ export default {
 	},
 
 	emits: ['close'],
+
+	setup() {
+		return {
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
+	},
 
 	data() {
 		return {
@@ -148,7 +156,7 @@ export default {
 	methods: {
 		async handleCreateRooms() {
 			try {
-				await this.$store.dispatch('configureBreakoutRoomsAction', {
+				await this.breakoutRoomsStore.configureBreakoutRooms({
 					token: this.token,
 					mode: this.mode,
 					amount: this.amount,

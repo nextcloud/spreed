@@ -124,6 +124,7 @@ import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'
+import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.js'
 
 export default {
 	name: 'BreakoutRoomsActions',
@@ -169,8 +170,10 @@ export default {
 	},
 
 	setup() {
-		const isInCall = useIsInCall()
-		return { isInCall }
+		return {
+			isInCall: useIsInCall(),
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
 	},
 
 	data() {
@@ -235,11 +238,11 @@ export default {
 
 	methods: {
 		startBreakoutRooms() {
-			this.$store.dispatch('startBreakoutRoomsAction', this.mainToken)
+			this.breakoutRoomsStore.startBreakoutRooms(this.mainToken)
 		},
 
 		stopBreakoutRooms() {
-			this.$store.dispatch('stopBreakoutRoomsAction', this.mainToken)
+			this.breakoutRoomsStore.stopBreakoutRooms(this.mainToken)
 		},
 
 		openSendMessageDialog() {

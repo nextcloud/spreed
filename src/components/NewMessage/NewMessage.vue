@@ -224,6 +224,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
@@ -314,12 +315,10 @@ export default {
 	expose: ['focusInput'],
 
 	setup() {
-		const chatExtrasStore = useChatExtrasStore()
-		const settingsStore = useSettingsStore()
-
 		return {
-			chatExtrasStore,
-			settingsStore,
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+			chatExtrasStore: useChatExtrasStore(),
+			settingsStore: useSettingsStore(),
 			supportTypingStatus,
 		}
 	},
@@ -719,7 +718,7 @@ export default {
 		// Broadcast message to all breakout rooms
 		async broadcastMessage(token, message) {
 			try {
-				await this.$store.dispatch('broadcastMessageToBreakoutRoomsAction', { token, message })
+				await this.breakoutRoomsStore.broadcastMessageToBreakoutRooms({ token, message })
 				this.$emit('sent')
 			} catch {
 				this.$emit('failure')

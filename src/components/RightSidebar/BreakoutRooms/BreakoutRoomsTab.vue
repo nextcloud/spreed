@@ -58,6 +58,7 @@ import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 import Participant from '../Participants/Participant.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { useBreakoutRoomsStore } from '../../../stores/breakoutRooms.js'
 
 export default {
 	name: 'BreakoutRoomsTab',
@@ -90,6 +91,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
+	},
+
 	data() {
 		return {
 			breakoutRoomsParticipantsInterval: undefined,
@@ -111,7 +118,7 @@ export default {
 		},
 
 		breakoutRooms() {
-			return this.$store.getters.breakoutRooms(this.mainToken)
+			return this.breakoutRoomsStore.breakoutRooms(this.mainToken)
 		},
 
 		breakoutRoomsConfigured() {
@@ -139,7 +146,9 @@ export default {
 
 	mounted() {
 		// Get the breakout room every time the tab is mounted
-		this.getBreakoutRooms()
+		if (this.breakoutRoomsConfigured) {
+			this.breakoutRoomsStore.getBreakoutRooms(this.mainToken)
+		}
 	},
 
 	beforeDestroy() {
@@ -148,19 +157,9 @@ export default {
 	},
 
 	methods: {
-		getBreakoutRooms() {
-			if (this.breakoutRoomsConfigured) {
-				this.$store.dispatch('getBreakoutRoomsAction', {
-					token: this.mainToken,
-				})
-			}
-		},
-
 		getParticipants() {
 			if (this.breakoutRoomsConfigured) {
-				this.$store.dispatch('getBreakoutRoomsParticipantsAction', {
-					token: this.mainToken,
-				})
+				this.breakoutRoomsStore.fetchBreakoutRoomsParticipants(this.mainToken)
 			}
 		},
 	},

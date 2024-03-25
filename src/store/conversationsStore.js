@@ -70,6 +70,7 @@ import {
 	stopCallRecording,
 } from '../services/recordingService.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { useBreakoutRoomsStore } from '../stores/breakoutRooms.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
@@ -365,6 +366,7 @@ const actions = {
 	 */
 	patchConversations(context, { conversations, withRemoving = false, withCaching = false }) {
 		let storeHasChanged = false
+		const breakoutRoomsStore = useBreakoutRoomsStore()
 
 		const currentConversations = context.state.conversations
 		const newConversations = Object.fromEntries(
@@ -392,10 +394,7 @@ const actions = {
 			}
 
 			if (newConversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM) {
-				context.commit('addBreakoutRoom', {
-					parentRoomToken: newConversation.objectId,
-					breakoutRoom: newConversation,
-				})
+				breakoutRoomsStore.addBreakoutRoom(newConversation.objectId, newConversation)
 			}
 		}
 

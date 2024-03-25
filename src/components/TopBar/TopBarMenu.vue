@@ -190,6 +190,7 @@ import PromotedView from '../../assets/missingMaterialDesignIcons/PromotedView.v
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -252,8 +253,10 @@ export default {
 	emits: ['open-breakout-rooms-editor'],
 
 	setup() {
-		const isInCall = useIsInCall()
-		return { isInCall }
+		return {
+			isInCall: useIsInCall(),
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
 	},
 
 	data() {
@@ -475,9 +478,9 @@ export default {
 				}
 				const hasAssistanceRequested = this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
 				if (newState && !hasAssistanceRequested) {
-					this.$store.dispatch('requestAssistanceAction', { token: this.token })
+					this.breakoutRoomsStore.requestAssistance(this.token)
 				} else if (!newState && hasAssistanceRequested) {
-					this.$store.dispatch('resetRequestAssistanceAction', { token: this.token })
+					this.breakoutRoomsStore.dismissRequestAssistance(this.token)
 				}
 			}
 		},

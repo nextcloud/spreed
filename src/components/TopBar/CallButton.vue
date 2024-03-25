@@ -116,6 +116,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { callSIPDialOut } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
@@ -184,13 +185,11 @@ export default {
 	},
 
 	setup() {
-		const isInCall = useIsInCall()
-		const talkHashStore = useTalkHashStore()
-		const settingsStore = useSettingsStore()
 		return {
-			isInCall,
-			settingsStore,
-			talkHashStore,
+			isInCall: useIsInCall(),
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+			talkHashStore: useTalkHashStore(),
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -430,9 +429,8 @@ export default {
 		},
 
 		async switchToParentRoom() {
-			const parentRoomToken = this.$store.getters.parentRoomToken(this.token)
 			EventBus.$emit('switch-to-conversation', {
-				token: parentRoomToken,
+				token: this.breakoutRoomsStore.getParentRoomToken(this.token),
 			})
 		},
 

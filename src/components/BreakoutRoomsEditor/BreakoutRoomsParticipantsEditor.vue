@@ -119,6 +119,7 @@ import SelectableParticipant from './SelectableParticipant.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -149,11 +150,17 @@ export default {
 
 		breakoutRooms: {
 			type: Array,
-			default: undefined,
+			default: () => [],
 		},
 	},
 
 	emits: ['back', 'close'],
+
+	setup() {
+		return {
+			breakoutRoomsStore: useBreakoutRoomsStore(),
+		}
+	},
 
 	data() {
 		return {
@@ -207,7 +214,7 @@ export default {
 		// If the breakoutRooms prop is populated it means that this component is
 		// being used to reorganize the attendees of an existing breakout room.
 		isReorganizingAttendees() {
-			return this.breakoutRooms?.length
+			return this.breakoutRooms.length
 		},
 
 		confirmButtonLabel() {
@@ -316,7 +323,7 @@ export default {
 		},
 
 		createRooms() {
-			this.$store.dispatch('configureBreakoutRoomsAction', {
+			this.breakoutRoomsStore.configureBreakoutRooms({
 				token: this.token,
 				mode: 2,
 				amount: this.roomNumber,
@@ -326,7 +333,7 @@ export default {
 		},
 
 		reorganizeAttendees() {
-			this.$store.dispatch('reorganizeAttendeesAction', {
+			this.breakoutRoomsStore.reorganizeAttendees({
 				token: this.token,
 				attendeeMap: this.createAttendeeMap(),
 			})
@@ -338,9 +345,7 @@ export default {
 		},
 
 		deleteBreakoutRooms() {
-			this.$store.dispatch('deleteBreakoutRoomsAction', {
-				token: this.token,
-			})
+			this.breakoutRoomsStore.deleteBreakoutRooms(this.token)
 		},
 	},
 }
