@@ -157,6 +157,7 @@ class RoomFormatter {
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
+			'lastUnreadMentionMessage' => '',
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -319,6 +320,7 @@ class RoomFormatter {
 				$lastMentionDirect = $attendee->getLastMentionDirect();
 				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
+				$roomData['lastUnreadMentionMessage'] = ($lastMentionDirect !== 0 or $lastMentionDirect !== null) ? $this->participantService->getLastUnreadMentionMessage($lastMentionDirect) : '';
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE

@@ -148,8 +148,8 @@ export default {
 					return t('spreed', 'Call in progress')
 				}
 
-				if (conversation.unreadMention) {
-					return t('spreed', 'You were mentioned')
+				if (conversation.unreadMentionDirect) {
+					return t('spreed', conversation.lastUnreadMentionMessage)
 				}
 
 				return this.simpleLastChatMessage(conversation.lastMessage)
@@ -188,7 +188,7 @@ export default {
 				const rooms = allRooms.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 				const importantRooms = rooms.filter((conversation) => {
 					return conversation.hasCall
-						|| conversation.unreadMention
+						|| conversation.unreadMentionDirect
 						|| (conversation.unreadMessages > 0 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
 				})
 

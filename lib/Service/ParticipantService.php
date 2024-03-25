@@ -1947,4 +1947,21 @@ class ParticipantService {
 		$this->cacheParticipant($room, $participant);
 		return $participant;
 	}
+
+	/**
+	 * @param int $mentionId
+	 * @return string
+	 */
+	public function getLastUnreadMentionMessage(int $mentionId)
+	{
+		$query = $this->connection->getQueryBuilder();
+		$query->select('c.message')
+			->from('comments', 'c')
+			->where('c.id = :mentionId')
+			->setParameter('mentionId', $mentionId)
+			->setMaxResults(1);
+
+		$result = $query->executeQuery();
+		return $result->fetchOne();
+	}
 }
