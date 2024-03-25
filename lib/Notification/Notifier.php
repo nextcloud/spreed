@@ -874,6 +874,7 @@ class Notifier implements INotifier {
 			case Room::TYPE_ONE_TO_ONE_FORMER:
 				return 'one2one';
 			case Room::TYPE_GROUP:
+			case Room::TYPE_NOTE_TO_SELF:
 				return 'group';
 			case Room::TYPE_PUBLIC:
 				return 'public';
