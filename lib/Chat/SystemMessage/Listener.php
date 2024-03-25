@@ -64,6 +64,7 @@ use OCP\IUserSession;
 use OCP\Share\Events\BeforeShareCreatedEvent;
 use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
@@ -81,6 +82,7 @@ class Listener implements IEventListener {
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
 		protected IL10N $l,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -308,6 +310,7 @@ class Listener implements IEventListener {
 			|| $this->getUserId() !== $attendee->getActorId()
 			// - has joined a listable room on their own
 			|| $attendee->getParticipantType() === Participant::USER) {
+			$this->logger->debug('User "' . $attendee->getActorId() . '" added to room "' . $room->getToken() . '"', ['app' => 'spreed-bfp']);
 			$comment = $this->sendSystemMessage(
 				$room,
 				'user_added',
@@ -341,6 +344,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		$this->logger->debug('User "' . $event->getAttendee()->getActorId() . '" removed from room "' . $room->getToken() . '"', ['app' => 'spreed-bfp']);
 		$this->sendSystemMessage($room, 'user_removed', ['user' => $event->getAttendee()->getActorId()]);
 	}
 
@@ -440,6 +444,7 @@ class Listener implements IEventListener {
 		}
 
 		foreach ($event->getAttendees() as $attendee) {
+			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" added to room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 				$this->sendSystemMessage($event->getRoom(), 'group_added', ['group' => $attendee->getActorId()]);
 			} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
@@ -460,6 +465,7 @@ class Listener implements IEventListener {
 		}
 
 		foreach ($event->getAttendees() as $attendee) {
+			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" removed from room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 				$this->sendSystemMessage($event->getRoom(), 'group_removed', ['group' => $attendee->getActorId()]);
 			} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {

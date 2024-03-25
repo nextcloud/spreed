@@ -240,6 +240,7 @@ class PageController extends Controller {
 							$response = new RedirectResponse($passwordVerification['url']);
 						}
 
+						$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
 						$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 						return $response;
 					}
@@ -284,6 +285,7 @@ class PageController extends Controller {
 		$response->setContentSecurityPolicy($csp);
 		if ($throttle) {
 			// Logged-in user tried to access a chat they can not access
+			$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $bruteForceToken . '"', ['app' => 'spreed-bfp']);
 			$response->throttle(['token' => $bruteForceToken, 'action' => 'talkRoomToken']);
 		}
 		return $response;
@@ -301,6 +303,7 @@ class PageController extends Controller {
 			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			$response = new NotFoundResponse();
+			$this->logger->debug('Recording "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 
 			return $response;
