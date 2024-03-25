@@ -287,7 +287,18 @@ class ChatManager {
 	 * @param string $referenceId
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo, string $referenceId, bool $silent): IComment {
+	public function sendMessage(
+		Room $chat,
+		?Participant $participant,
+		string $actorType,
+		string $actorId,
+		string $message,
+		\DateTime $creationDateTime,
+		?IComment $replyTo,
+		string $referenceId,
+		bool $silent,
+		bool $forceLastMessageUpdate = false, // Remove when dropping commands
+	): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
@@ -322,9 +333,10 @@ class ChatManager {
 				$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
 			}
 
-			// Update last_message
+			// Update last_message (not for commands)
 			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
+				|| $forceLastMessageUpdate
 				|| str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
