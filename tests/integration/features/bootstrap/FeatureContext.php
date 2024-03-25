@@ -586,6 +586,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedInvite['state'])) {
 				$data['state'] = $invite['state'];
 			}
+			if (isset($expectedInvite['localCloudId'])) {
+				$data['localCloudId'] = $invite['localCloudId'];
+			}
 
 			return $data;
 		}, $invites, $expectedInvites));

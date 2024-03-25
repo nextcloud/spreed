@@ -417,6 +417,7 @@ class FederationTest extends TestCase {
 					'message' => 'Recipient accepted the share',
 					'remoteServerUrl' => 'http://example.tld',
 					'displayName' => 'Foo Bar',
+					'cloudId' => 'cloudId@example.tld',
 				]
 			);
 
@@ -441,7 +442,7 @@ class FederationTest extends TestCase {
 			->with('/')
 			->willReturn('http://example.tld/index.php/');
 
-		$success = $this->backendNotifier->sendShareAccepted($remote, $id, $token, 'Foo Bar');
+		$success = $this->backendNotifier->sendShareAccepted($remote, $id, $token, 'Foo Bar', 'cloudId@example.tld');
 
 		$this->assertTrue($success);
 	}
