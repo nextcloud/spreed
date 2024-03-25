@@ -285,7 +285,19 @@ class ChatManager {
 	 * @throws MessageTooLongException
 	 * @throws MessagingNotAllowedException
 	 */
-	public function sendMessage(Room $chat, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo = null, string $referenceId = '', bool $silent = false, bool $rateLimitGuestMentions = true): IComment {
+	public function sendMessage(
+		Room $chat,
+		?Participant $participant,
+		string $actorType,
+		string $actorId,
+		string $message,
+		\DateTime $creationDateTime,
+		?IComment $replyTo = null,
+		string $referenceId = '',
+		bool $silent = false,
+		bool $rateLimitGuestMentions = true,
+		bool $forceLastMessageUpdate = false, // Remove when dropping commands
+	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
 			$this->logger->error('Attempt to post system message into proxy conversation', ['exception' => $e]);
@@ -338,9 +350,10 @@ class ChatManager {
 				$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
 			}
 
-			// Update last_message
+			// Update last_message (not for commands)
 			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
+				|| $forceLastMessageUpdate
 				|| str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
