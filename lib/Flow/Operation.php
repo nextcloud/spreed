@@ -121,8 +121,8 @@ class Operation implements IOperation {
 
 				$this->chatManager->sendMessage(
 					$room,
-					$participant,
-					'bots',
+					null,
+					Attendee::ACTOR_BOTS,
 					$participant->getAttendee()->getActorId(),
 					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
