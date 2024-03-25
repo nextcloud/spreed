@@ -181,10 +181,13 @@ export default {
 	},
 
 	watch: {
-		sharedItemsIdentifier() {
-			if (this.token && this.active && this.isSidebarOpen) {
-				this.sharedItemsStore.getSharedItemsOverview(this.token)
-			}
+		sharedItemsIdentifier: {
+			immediate: true,
+			handler() {
+				if (this.token && this.active && this.isSidebarOpen) {
+					this.sharedItemsStore.getSharedItemsOverview(this.token)
+				}
+			},
 		},
 	},
 
