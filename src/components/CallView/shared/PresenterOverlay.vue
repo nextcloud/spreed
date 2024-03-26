@@ -131,13 +131,13 @@ export default {
 	min-height: var(--min-size);
 	z-index: 10;
 
-    &:hover {
-        cursor: grab;
-    }
+	&:hover {
+		cursor: grab;
+	}
 
-    &.dragging {
-        cursor: grabbing;
-    }
+	&.dragging {
+		cursor: grabbing;
+	}
 }
 
 .presenter-overlay--collapsed {
@@ -158,6 +158,7 @@ export default {
 }
 
 :deep(div) {
-    cursor: inherit;
+	// prevent default cursor
+	cursor: inherit;
 }
 </style>

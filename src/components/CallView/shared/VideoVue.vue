@@ -740,7 +740,7 @@ export default {
 	border-radius: 50%;
 	padding: 6px;
 	width: 44px;
-	z-index: 2;
+	z-index: 2; // Above video and its border
 
 	&:hover {
 		cursor: pointer;
