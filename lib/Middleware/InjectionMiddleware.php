@@ -67,6 +67,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\Bruteforce\MaxDelayReached;
+use Psr\Log\LoggerInterface;
 
 class InjectionMiddleware extends Middleware {
 	public function __construct(
@@ -79,6 +80,7 @@ class InjectionMiddleware extends Middleware {
 		protected IURLGenerator $url,
 		protected InvitationMapper $invitationMapper,
 		protected Authenticator $federationAuthenticator,
+		protected LoggerInterface $logger,
 		protected ?string $userId,
 	) {
 	}
@@ -354,6 +356,7 @@ class InjectionMiddleware extends Middleware {
 						$action = $protection->getAction();
 
 						if ($action === 'talkRoomToken') {
+							$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . ($this->request->getParam('token') ?? 'UNKNOWN') . '"', ['app' => 'spreed-bfp']);
 							try {
 								$this->throttler->sleepDelayOrThrowOnMax($this->request->getRemoteAddress(), $action);
 							} catch (MaxDelayReached $e) {

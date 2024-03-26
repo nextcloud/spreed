@@ -45,6 +45,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 /**
@@ -75,6 +76,7 @@ class ListenerTest extends TestCase {
 	protected $participantService;
 	/** @var MessageParser|MockObject */
 	protected $messageParser;
+	protected LoggerInterface|MockObject $logger;
 	protected ?array $handlers = null;
 	protected ?\DateTime $dummyTime = null;
 
@@ -99,6 +101,7 @@ class ListenerTest extends TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
@@ -125,6 +128,7 @@ class ListenerTest extends TestCase {
 			$this->participantService,
 			$this->messageParser,
 			$l,
+			$this->logger,
 		);
 	}
 
