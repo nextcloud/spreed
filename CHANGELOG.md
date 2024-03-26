@@ -1,7 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 19.0.0-beta.4 – 2024-03-19
+## 19.0.0-beta.5 – 2024-03-26
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- Fix handling of cloud ID when provided in wrong casing
+  [#11922](https://github.com/nextcloud/spreed/issues/11922)
+- Fix flow notifications triggered by own actions and in note-to-self conversations
+  [#11918](https://github.com/nextcloud/spreed/issues/11918)
+- Hide call related user settings in federated conversations
+  [#11892](https://github.com/nextcloud/spreed/issues/11892)
+
+## 19.0.0-beta.4 – 2024-03-21
 ### Changed
 - Update translations
 - Update several dependencies
