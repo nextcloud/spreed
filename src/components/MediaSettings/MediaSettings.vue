@@ -712,8 +712,7 @@ export default {
 	}
 }
 
-:deep(.modal-container) {
-	display: flex !important;
+:deep(.modal-wrapper--normal > .modal-container) {
 	max-width: 500px !important;
 }
 </style>
