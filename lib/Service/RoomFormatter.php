@@ -320,7 +320,7 @@ class RoomFormatter {
 				$lastMentionDirect = $attendee->getLastMentionDirect();
 				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
-				$roomData['lastUnreadMentionMessage'] = ($lastMentionDirect !== 0 or $lastMentionDirect !== null) ? $this->participantService->getLastUnreadMentionMessage($lastMentionDirect) : '';
+				$roomData['lastUnreadMentionMessage'] = $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect)->getMessage() : '';
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
@@ -342,6 +342,7 @@ class RoomFormatter {
 			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
 			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
+			$roomData['lastUnreadMentionMessage'] = $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect)->getMessage() : '';
 		} else {
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
