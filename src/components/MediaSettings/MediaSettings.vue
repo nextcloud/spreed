@@ -107,10 +107,12 @@
 				<MediaDevicesSelector kind="audioinput"
 					:devices="devices"
 					:device-id="audioInputId"
+					@refresh="updateDevices"
 					@update:deviceId="audioInputId = $event" />
 				<MediaDevicesSelector kind="videoinput"
 					:devices="devices"
 					:device-id="videoInputId"
+					@refresh="updateDevices"
 					@update:deviceId="videoInputId = $event" />
 				<MediaDevicesSpeakerTest />
 			</div>
@@ -282,6 +284,7 @@ export default {
 
 		const {
 			devices,
+			updateDevices,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
@@ -301,6 +304,7 @@ export default {
 			video,
 			// useDevices
 			devices,
+			updateDevices,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
