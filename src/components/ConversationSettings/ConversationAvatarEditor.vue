@@ -44,7 +44,7 @@
 				<div class="avatar__buttons">
 					<!-- Set emoji as avatar -->
 					<template v-if="!showCropper">
-						<NcEmojiPicker :per-line="5" :container="container" @select="setEmoji">
+						<NcEmojiPicker :per-line="5" container="#vue-avatar-section" @select="setEmoji">
 							<NcButton :title="t('spreed', 'Set emoji as conversation picture')"
 								:aria-label="t('spreed', 'Set emoji as conversation picture')">
 								<template #icon>
@@ -52,7 +52,7 @@
 								</template>
 							</NcButton>
 						</NcEmojiPicker>
-						<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor" :container="container">
+						<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor" container="#vue-avatar-section">
 							<NcButton :title="t('spreed', 'Set background color for conversation picture')"
 								:aria-label="t('spreed', 'Set background color for conversation picture')">
 								<template #icon>
@@ -111,7 +111,7 @@
 
 		<FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'Choose your conversation picture')"
-			:container="container"
+			container="#vue-avatar-section"
 			:buttons="filePickerButtons"
 			:multiselect="false"
 			:mimetype-filter="validMimeTypes"
@@ -217,10 +217,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		inputId() {
 			return `account-property-${this.conversation.displayName}`
 		},
