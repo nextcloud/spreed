@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Dashboard;
 
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
@@ -60,6 +61,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
+		protected ChatManager $chatManager,
 		protected ITimeFactory $timeFactory,
 	) {
 	}
@@ -201,7 +203,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			$subtitle = $this->l10n->t('Call in progress');
 		} elseif ($participant->getAttendee()->getLastMentionMessage() > $participant->getAttendee()->getLastReadMessage()) {
-			$subtitle = $this->l10n->t('You were mentioned');
+			$subtitle = $this->chatManager->getComment($room, (string)$participant->getAttendee()->getLastMentionMessage())->getMessage();
 		}
 
 		return new WidgetItem(
