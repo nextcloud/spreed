@@ -149,7 +149,7 @@ export default {
 				}
 
 				if (conversation.unreadMentionDirect) {
-					return t('spreed', conversation.lastUnreadMentionMessage)
+					return conversation.lastUnreadMentionMessage
 				}
 
 				return this.simpleLastChatMessage(conversation.lastMessage)
