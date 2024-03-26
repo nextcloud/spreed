@@ -56,15 +56,16 @@ components.
 				<p dir="auto">{{ shortenedQuoteMessage }}</p>
 			</blockquote>
 		</div>
-		<div v-if="canCancel" class="quote__main__right">
-			<NcButton type="tertiary"
-				:aria-label="cancelQuoteLabel"
-				@click="handleAbort">
-				<template #icon>
-					<Close :size="20" />
-				</template>
-			</NcButton>
-		</div>
+
+		<NcButton v-if="canCancel"
+			class="quote__close"
+			type="tertiary"
+			:aria-label="cancelQuoteLabel"
+			@click="handleAbort">
+			<template #icon>
+				<Close :size="20" />
+			</template>
+		</NcButton>
 	</a>
 </template>
 
@@ -297,6 +298,7 @@ export default {
 	border-radius: var(--border-radius-large);
 	border: 2px solid var(--color-border);
 	background-color: var(--color-main-background);
+	overflow: hidden;
 
 	&::before {
 		content: ' ';
@@ -343,13 +345,11 @@ export default {
 			gap: 4px;
 		}
 	}
-	&__right {
-		flex: 0 0 44px;
-		color: var(--color-text-maxcontrast);
-		font-size: 13px;
-		padding: 0 8px 0 8px;
-		position: relative;
-		margin: auto;
+
+	&__close {
+		position: absolute !important;
+		top: 4px;
+		right: 4px;
 	}
 }
 

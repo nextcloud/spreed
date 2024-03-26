@@ -1066,6 +1066,7 @@ export default {
 	&__input {
 		flex-grow: 1;
 		position: relative;
+		min-width: 0;
 	}
 
 	// Override NcRichContenteditable styles
