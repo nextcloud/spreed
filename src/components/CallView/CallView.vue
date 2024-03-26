@@ -75,36 +75,13 @@
 							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
 							is-big />
 						<!-- presenter overlay -->
-						<VueDraggableResizable v-if="shouldShowPresenterOverlay"
-							:key="presenterOverlaySize"
-							parent
-							:resizable="false"
-							:h="presenterOverlaySize"
-							:w="presenterOverlaySize"
-							:x="10"
-							:y="10">
-							<VideoVue class="presenter-overlay__video"
-								:token="token"
-								:model="shownRemoteScreenCallParticipantModel"
-								:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-								is-presenter-overlay
-								un-selectable
-								hide-bottom-bar
-								@click-presenter="toggleShowPresenterOverlay" />
-						</VueDraggableResizable>
-						<!-- presenter button when presenter overlay is collapsed -->
-						<NcButton v-else-if="isPresenterCollapsed"
-							:aria-label="t('spreed', 'Show presenter')"
-							:title="t('spreed', 'Show presenter')"
-							class="presenter-overlay--collapse"
-							type="tertiary-no-background"
-							@click="toggleShowPresenterOverlay">
-							<template #icon>
-								<AccountBox fill-color="#ffffff" :size="20" />
-							</template>
-						</NcButton>
+						<PresenterOverlay v-if="shouldShowPresenterOverlay"
+							:token="token"
+							:model="shownRemoteScreenCallParticipantModel"
+							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+							:is-collapsed="!showPresenterOverlay"
+							@click="toggleShowPresenterOverlay" />
 					</template>
-
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue v-else-if="promotedParticipantModel"
 						:key="promotedParticipantModel.attributes.peerId"
@@ -159,19 +136,15 @@
 
 <script>
 import debounce from 'debounce'
-import VueDraggableResizable from 'vue-draggable-resizable'
-
-import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LocalVideo from './shared/LocalVideo.vue'
+import PresenterOverlay from './shared/PresenterOverlay.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
 import Screen from './shared/Screen.vue'
 import VideoVue from './shared/VideoVue.vue'
@@ -190,13 +163,11 @@ export default {
 	name: 'CallView',
 
 	components: {
-		AccountBox,
 		EmptyCallView,
 		ViewerOverlayCallView,
-		VueDraggableResizable,
 		Grid,
 		LocalVideo,
-		NcButton,
+		PresenterOverlay,
 		ReactionToaster,
 		Screen,
 		VideoVue,
@@ -242,9 +213,9 @@ export default {
 			isBackgroundBlurred: true,
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
-			presenterOverlaySize: 128,
 		}
 	},
+
 	computed: {
 		promotedParticipantModel() {
 			return this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
@@ -367,12 +338,8 @@ export default {
 			})
 		},
 
-		isPresenterCollapsed() {
-			return !this.showPresenterOverlay && this.shownRemoteScreenCallParticipantModel.attributes.videoAvailable
-		},
-
 		shouldShowPresenterOverlay() {
-			return this.showPresenterOverlay && this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+			return this.shownRemoteScreenCallParticipantModel.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
 
 		},
 
@@ -380,6 +347,7 @@ export default {
 			return this.sharedDatas[this.shownRemoteScreenPeerId]?.remoteVideoBlocker?.isVideoEnabled()
 		},
 	},
+
 	watch: {
 		'localCallParticipantModel.attributes.peerId'(newValue, previousValue) {
 			const index = this.screens.indexOf(previousValue)
@@ -462,12 +430,14 @@ export default {
 			this.showPresenterOverlay = value
 		},
 	},
+
 	created() {
 		// Ensure that data is properly initialized before mounting the
 		// subviews.
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
 		this.isBackgroundBlurred = BrowserStorage.getItem('background-blurred') !== 'false'
 	},
+
 	mounted() {
 		this.debounceFetchPeers = debounce(this.fetchPeers, 1500)
 		EventBus.$on('refresh-peer-list', this.debounceFetchPeers)
@@ -476,9 +446,8 @@ export default {
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
-
-		window.addEventListener('resize', this.updateSize)
 	},
+
 	beforeDestroy() {
 		this.debounceFetchPeers.clear?.()
 		EventBus.$off('refresh-peer-list', this.debounceFetchPeers)
@@ -487,9 +456,8 @@ export default {
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
 		unsubscribe('set-background-blurred', this.setBackgroundBlurred)
-
-		window.removeEventListener('resize', this.updateSize)
 	},
+
 	methods: {
 		/**
 		 * Updates data properties that depend on the CallParticipantModels.
@@ -769,9 +737,6 @@ export default {
 			}
 		},
 
-		updateSize() {
-			this.presenterOverlaySize = Math.min(Math.max(window.innerWidth * 0.1, 100), 242)
-		},
 	},
 }
 </script>
@@ -793,36 +758,6 @@ export default {
 
 	&.blurred {
 		backdrop-filter: blur(25px);
-	}
-}
-
-.presenter-overlay__video {
-	position: relative;
-	--max-size: 242px;
-	--min-size: 100px;
-	width: 10vw;
-	height: 10vw;
-	max-width: var(--max-size);
-	max-height: var(--max-size);
-	min-width: var(--min-size);
-	min-height: var(--min-size);
-	z-index: 10;
-}
-
-.presenter-overlay--collapse {
-	position: absolute !important;
-	opacity: .7;
-	bottom: 48px;
-	right: 0;
-
-	#call-container:hover & {
-		background-color: rgba(0, 0, 0, 0.1) !important;
-
-		&:hover,
-		&:focus {
-			opacity: 1;
-			background-color: rgba(0, 0, 0, 0.2) !important;
-		}
 	}
 }
 
