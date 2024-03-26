@@ -162,6 +162,14 @@ export function useDevices(video, initializeOnMounted) {
 	}
 
 	/**
+	 * Force enumerate devices (audio and video)
+	 * @public
+	 */
+	function updateDevices() {
+		mediaDevicesManager._updateDevices()
+	}
+
+	/**
 	 * Stop tracking device events (audio and video)
 	 * @public
 	 */
@@ -369,6 +377,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	return {
 		devices,
+		updateDevices,
 		currentVolume,
 		currentThreshold,
 		audioPreviewAvailable,
