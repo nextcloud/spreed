@@ -166,13 +166,13 @@ class BotService {
 				'X-Nextcloud-Talk-Random' => $random,
 				'X-Nextcloud-Talk-Signature' => $hash,
 				'X-Nextcloud-Talk-Backend' => rtrim($this->serverConfig->getSystemValueString('overwrite.cli.url'), '/') . '/',
-				'OCS-APIRequest' => 'true', // FIXME optional?
+				'OCS-APIRequest' => 'true',
 			];
 
 			$data = [
-				'verify' => false,
+				'verify' => true,
 				'nextcloud' => [
-					'allow_local_address' => true, // FIXME don't enforce
+					'allow_local_address' => true,
 				],
 				'headers' => $headers,
 				'timeout' => 5,
