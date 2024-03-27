@@ -413,7 +413,7 @@ class Listener implements IEventListener {
 		$metaData = json_decode($metaData, true);
 		$metaData = is_array($metaData) ? $metaData : [];
 
-		if (isset($metaData['messageType']) && $metaData['messageType'] === 'voice-message') {
+		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
 			if ($share->getNode()->getMimeType() !== 'audio/mpeg'
 				&& $share->getNode()->getMimeType() !== 'audio/wav') {
 				unset($metaData['messageType']);

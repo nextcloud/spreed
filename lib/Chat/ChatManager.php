@@ -87,6 +87,9 @@ class ChatManager {
 	public const VERB_MESSAGE_DELETED = 'comment_deleted';
 	public const VERB_REACTION = 'reaction';
 	public const VERB_REACTION_DELETED = 'reaction_deleted';
+	public const VERB_VOICE_MESSAGE = 'voice-message';
+	public const VERB_RECORD_AUDIO = 'record-audio';
+	public const VERB_RECORD_VIDEO = 'record-video';
 
 	protected ICache $cache;
 	protected ICache $unreadCountCache;
