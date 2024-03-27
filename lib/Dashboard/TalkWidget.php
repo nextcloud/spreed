@@ -202,8 +202,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			$subtitle = $this->l10n->t('Call in progress');
-		} elseif ($participant->getAttendee()->getLastMentionMessage() > $participant->getAttendee()->getLastReadMessage()) {
-			$subtitle = $this->chatManager->getComment($room, (string)$participant->getAttendee()->getLastMentionMessage())->getMessage();
+		} elseif ($participant->getAttendee()->getLastMentionDirect() > $participant->getAttendee()->getLastReadMessage()) {
+			$subtitle = $this->chatManager->getComment($room, (string)$participant->getAttendee()->getLastMentionDirect())->getMessage();
 		}
 
 		return new WidgetItem(
