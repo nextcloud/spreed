@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Dashboard;
 
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
@@ -60,6 +61,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
+		protected ChatManager $chatManager,
 		protected ITimeFactory $timeFactory,
 	) {
 	}
@@ -175,8 +177,15 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$subtitle = '';
 
 		$lastMessage = $room->getLastMessage();
+
+		$lastMentionDirect = $participant->getAttendee()->getLastMentionDirect();
+        $lastReadMessage = $participant->getAttendee()->getLastReadMessage();
+		if ($lastMentionDirect > $lastReadMessage) {
+            $lastMessage = $this->chatManager->getComment($room, (string)$lastMentionDirect);
+		}
+
 		if ($lastMessage instanceof IComment) {
-			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
+			$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
 			$this->messageParser->parseMessage($message);
 
 			$now = $this->timeFactory->getDateTime();
@@ -200,8 +209,6 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			$subtitle = $this->l10n->t('Call in progress');
-		} elseif ($participant->getAttendee()->getLastMentionMessage() > $participant->getAttendee()->getLastReadMessage()) {
-			$subtitle = $this->l10n->t('You were mentioned');
 		}
 
 		return new WidgetItem(
