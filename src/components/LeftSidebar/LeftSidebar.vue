@@ -182,19 +182,6 @@
 
 				<!-- Search results -->
 				<ul v-else class="h-100 scroller">
-					<!-- Create a new conversation -->
-					<NcListItem v-if="canStartConversations"
-						:name="t('spreed', 'Create a new conversation')"
-						data-nav-id="conversation_create_new"
-						@click="createConversation(searchText)">
-						<template #icon>
-							<ChatPlus :size="30" />
-						</template>
-						<template #subname>
-							{{ searchText }}
-						</template>
-					</NcListItem>
-
 					<!-- Search results: user's conversations -->
 					<NcAppNavigationCaption :name="t('spreed', 'Conversations')" />
 					<Conversation v-for="item of searchResultsConversationList"
@@ -203,6 +190,19 @@
 						:item="item"
 						@click="abortSearch" />
 					<Hint v-if="searchResultsConversationList.length === 0" :hint="t('spreed', 'No matches found')" />
+
+					<!-- Create a new conversation -->
+					<NcListItem v-if="canStartConversations"
+						:name="searchText"
+						data-nav-id="conversation_create_new"
+						@click="createConversation(searchText)">
+						<template #icon>
+							<ChatPlus :size="44" />
+						</template>
+						<template #subname>
+							{{ t('spreed', 'New group conversation') }}
+						</template>
+					</NcListItem>
 
 					<!-- Search results: listed (open) conversations -->
 					<template v-if="!listedConversationsLoading && searchResultsListedConversations.length !== 0">
@@ -223,7 +223,10 @@
 							:name="item.label"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" />
+								<AvatarWrapper v-bind="iconData(item)" />
+							</template>
+							<template #subname>
+								{{ t('spreed', 'New private conversation') }}
 							</template>
 						</NcListItem>
 					</template>
@@ -241,6 +244,9 @@
 								<template #icon>
 									<ConversationIcon :item="iconData(item)" />
 								</template>
+								<template #subname>
+									{{ t('spreed', 'New group conversation') }}
+								</template>
 							</NcListItem>
 						</template>
 
@@ -255,14 +261,36 @@
 								<template #icon>
 									<ConversationIcon :item="iconData(item)" />
 								</template>
+								<template #subname>
+									{{ t('spreed', 'New group conversation') }}
+								</template>
+							</NcListItem>
+						</template>
+
+						<!-- New conversations: Federated users -->
+						<template v-if="searchResultsFederated.length !== 0">
+							<NcAppNavigationCaption :name="t('spreed', 'Federated users')" />
+							<NcListItem v-for="item of searchResultsFederated"
+								:key="`federated_${item.id}`"
+								:data-nav-id="`federated_${item.id}`"
+								:name="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<AvatarWrapper v-bind="iconData(item)" />
+								</template>
+								<template #subname>
+									{{ t('spreed', 'New group conversation') }}
+								</template>
 							</NcListItem>
 						</template>
 					</template>
 
 					<!-- Search results: no results (yet) -->
-					<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
-					<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-					<Hint v-else :hint="t('spreed', 'No search results')" />
+					<template v-if="sourcesWithoutResults">
+						<NcAppNavigationCaption :name="sourcesWithoutResultsList" />
+						<Hint :hint="t('spreed', 'No search results')" />
+					</template>
+					<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				</ul>
 			</li>
 		</template>
@@ -316,10 +344,11 @@ import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
-import SearchBox from '../UIShared/SearchBox.vue'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../ConversationIcon.vue'
-import Hint from '../UIShared/Hint.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
+import Hint from '../UIShared/Hint.vue'
+import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -349,6 +378,7 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
+		AvatarWrapper,
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
@@ -389,7 +419,7 @@ export default {
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
-		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
 
 		return {
@@ -413,6 +443,7 @@ export default {
 			searchResultsUsers: [],
 			searchResultsGroups: [],
 			searchResultsCircles: [],
+			searchResultsFederated: [],
 			searchResultsListedConversations: [],
 			contactsLoading: false,
 			listedConversationsLoading: false,
@@ -703,6 +734,10 @@ export default {
 				})
 				this.searchResultsGroups = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.GROUPS)
 				this.searchResultsCircles = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.CIRCLES)
+				this.searchResultsFederated = this.searchResults.filter((match) => match.source === ATTENDEE.ACTOR_TYPE.REMOTES)
+					.map((item) => {
+						return { ...item, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS }
+					})
 				this.contactsLoading = false
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
@@ -960,11 +995,15 @@ export default {
 		},
 
 		iconData(item) {
-			if (item.source === ATTENDEE.ACTOR_TYPE.USERS) {
+			if (item.source === ATTENDEE.ACTOR_TYPE.USERS
+				|| item.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
 				return {
-					type: CONVERSATION.TYPE.ONE_TO_ONE,
-					displayName: item.label,
-					name: item.id,
+					id: item.id,
+					name: item.label,
+					source: item.source,
+					disableMenu: true,
+					token: 'new',
+					showUserStatus: true,
 				}
 			}
 			return {
@@ -1072,6 +1111,14 @@ export default {
 
 :deep(.app-navigation__list) {
 	padding: 0 !important;
+}
+
+:deep(.app-navigation-caption):not(:first-child) {
+	margin-top: 12px !important;
+}
+
+:deep(.app-navigation-caption__name) {
+	margin: 0 !important;
 }
 
 :deep(.list-item) {

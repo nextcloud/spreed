@@ -21,11 +21,12 @@
 
 import { computed, onMounted, ref, unref } from 'vue'
 
+/* selector to check, if item element or its children are focusable */
+const focusableCondition = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
 /**
  * Mount navigation according to https://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
- * Item elements should have:
- * - specific valid CSS selector (tag, class or another attribute)
- * - unique "data-nav-id" attribute (on element or its parent, if it's not possible to pass it through the wrapper)
+ * Item elements should have unique "data-nav-id" attribute
  *
  * Controls:
  * - ArrowDown or ArrowUp keys - to move through the itemElements list
@@ -36,11 +37,10 @@ import { computed, onMounted, ref, unref } from 'vue'
  *
  * @param {import('vue').Ref | HTMLElement} listElementRef component ref to mount navigation
  * @param {import('vue').Ref} defaultElementRef component ref to return focus to // Vue component
- * @param {string} selector native selector of elements to look for
  * @param {object} options navigation options
  * @param {boolean} [options.confirmEnter=false] flag to confirm Enter click
  */
-export function useArrowNavigation(listElementRef, defaultElementRef, selector, options = { confirmEnter: false }) {
+export function useArrowNavigation(listElementRef, defaultElementRef, options = { confirmEnter: false }) {
 	const listRef = ref(null)
 	const defaultRef = ref(null)
 
@@ -50,17 +50,29 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	 */
 	const itemElements = ref([])
 	const itemElementsIdMap = computed(() => itemElements.value.map(item => {
-		return item.getAttribute('data-nav-id') || item.parentElement.getAttribute('data-nav-id')
+		return item.getAttribute('data-nav-id')
 	}))
-	const itemSelector = ref(selector)
 
 	const focusedIndex = ref(null)
 	const isConfirmationEnabled = ref(null)
 
+	const lookupNavId = (element) => {
+		if (element.hasAttribute('data-nav-id')) {
+			return element.getAttribute('data-nav-id')
+		}
+		// Find parent element with data-nav-id attribute
+		let parentElement = element.parentNode
+		while (parentElement && parentElement !== document.body) {
+			if (parentElement.hasAttribute('data-nav-id')) {
+				return parentElement.getAttribute('data-nav-id')
+			}
+			parentElement = parentElement.parentNode
+		}
+	}
+
 	// Set focused index according to selected element
 	const handleFocusEvent = (event) => {
-		const newIndex = itemElementsIdMap.value.indexOf(event.target?.getAttribute('data-nav-id'))
-
+		const newIndex = itemElementsIdMap.value.indexOf(lookupNavId(event.target))
 		// Quit if triggered by arrow navigation as already handled
 		// or if using Tab key to navigate, and going through NcActions
 		if (focusedIndex.value !== newIndex && newIndex !== -1) {
@@ -104,7 +116,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	 * Put a listener for focus/blur events on navigation area
 	 */
 	function initializeNavigation() {
-		itemElements.value = Array.from(listRef.value?.querySelectorAll(itemSelector.value))
+		itemElements.value = Array.from(listRef.value?.querySelectorAll('[data-nav-id]'))
 		focusedIndex.value = null
 
 		listRef.value?.addEventListener('focus', handleFocusEvent, true)
@@ -125,11 +137,22 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	/**
 	 * Focus natively the DOM element specified by index
 	 *
-	 * @param {object} index the item index
+	 * @param {number} index the item index
 	 */
 	function nativelyFocusElement(index) {
 		focusedIndex.value = index
-		itemElements.value[index].focus()
+		const itemElement = itemElements.value[index]
+
+		if (itemElement.matches(focusableCondition)) {
+			itemElement.focus()
+			return
+		}
+
+		try {
+			itemElement.querySelector(focusableCondition).focus()
+		} catch (e) {
+			console.warn('Nav element does not have any focusable children')
+		}
 	}
 
 	/**
