@@ -504,11 +504,11 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
-					if ($metaData['messageType'] === 'voice-message') {
+					if ($metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
 						$chatMessage->setMessageType(ChatManager::VERB_VOICE_MESSAGE);
-					} elseif ($metaData['messageType'] === 'record-audio') {
+					} elseif ($metaData['messageType'] === ChatManager::VERB_RECORD_AUDIO) {
 						$chatMessage->setMessageType(ChatManager::VERB_RECORD_AUDIO);
-					} elseif ($metaData['messageType'] === 'record-video') {
+					} elseif ($metaData['messageType'] === ChatManager::VERB_RECORD_VIDEO) {
 						$chatMessage->setMessageType(ChatManager::VERB_RECORD_VIDEO);
 					} else {
 						$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);

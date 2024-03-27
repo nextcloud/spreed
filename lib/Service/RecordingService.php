@@ -356,9 +356,9 @@ class RecordingService {
 
 	private function getTypeOfShare(string $mimetype): string {
 		if (str_starts_with($mimetype, 'video/')) {
-			return 'record-video';
+			return ChatManager::VERB_RECORD_VIDEO;
 		}
-		return 'record-audio';
+		return ChatManager::VERB_RECORD_AUDIO;
 	}
 
 	public function shareToChat(Room $room, Participant $participant, int $fileId, int $timestamp): void {

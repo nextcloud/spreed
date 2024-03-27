@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\AttachmentMapper;
 use OCA\Talk\Room;
@@ -61,11 +62,11 @@ class AttachmentService {
 			$messageType = $parameters['metaData']['messageType'] ?? '';
 			$mimetype = $parameters['metaData']['mimeType'] ?? '';
 
-			if ($messageType === 'record-audio') {
+			if ($messageType === ChatManager::VERB_RECORD_AUDIO) {
 				$attachment->setObjectType(Attachment::TYPE_RECORDING);
-			} elseif ($messageType === 'record-video') {
+			} elseif ($messageType === ChatManager::VERB_RECORD_VIDEO) {
 				$attachment->setObjectType(Attachment::TYPE_RECORDING);
-			} elseif ($messageType === 'voice-message') {
+			} elseif ($messageType === ChatManager::VERB_VOICE_MESSAGE) {
 				$attachment->setObjectType(Attachment::TYPE_VOICE);
 			} elseif (str_starts_with($mimetype, 'audio/')) {
 				$attachment->setObjectType(Attachment::TYPE_AUDIO);
