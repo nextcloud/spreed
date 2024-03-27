@@ -613,31 +613,33 @@ export default {
 			let isFocused = null
 			if (focusMessageId) {
 				// scroll to message in URL anchor
-				isFocused = this.focusMessage(focusMessageId, false)
+				this.focusMessage(focusMessageId)
+				return
 			}
 
-			if (!isFocused && this.visualLastReadMessageId) {
+			if (this.visualLastReadMessageId) {
 				// scroll to last read message if visible in the current pages
 				isFocused = this.focusMessage(this.visualLastReadMessageId, false, false)
 			}
 
-			// TODO: in case the element is not in a page but does exist in the DB,
-			// we need to scroll up / down to the page where it would exist after
-			// loading said pages
-
 			if (!isFocused) {
-				// if no anchor was present or the message to focus on did not exist,
-				// scroll to bottom
-				this.scrollToBottom({ force: true })
+				// Safeguard: scroll to before last read message
+				const fallbackLastReadMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, this.visualLastReadMessageId)
+				if (fallbackLastReadMessageId) {
+					isFocused = this.focusMessage(fallbackLastReadMessageId, false, false)
+					this.$store.dispatch('setVisualLastReadMessageId', {
+						token: this.token,
+						id: fallbackLastReadMessageId,
+					})
+				} else {
+					// This is an ultimate safeguard in case the fallback message is not found too
+					// scroll to bottom
+					this.scrollToBottom({ force: true, smooth: true })
+				}
 			}
 
-			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
-			// also clear in case lastReadMessage is zero which is due to an older bug
-			if (this.visualLastReadMessageId === 0
-				|| (this.$refs.scroller && this.$refs.scroller.scrollHeight <= this.$refs.scroller.offsetHeight)) {
-				// clear after a delay, unless scrolling can resume in-between
-				this.debounceUpdateReadMarkerPosition()
-			}
+			// Update read marker in all cases except when the message is from URL anchor
+			this.debounceUpdateReadMarkerPosition()
 		},
 
 		async handleStartGettingMessagesPreconditions() {
@@ -653,70 +655,27 @@ export default {
 				})
 
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
-					let startingMessageId = 0
-					// first time load, initialize important properties
-					if (focusMessageId === null) {
-						// Start from unread marker
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: this.conversation.lastReadMessage,
-						})
-						startingMessageId = this.conversation.lastReadMessage
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: this.conversation.lastReadMessage,
-						})
-					} else {
-						// Start from message hash
-						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
-							id: focusMessageId,
-						})
-						startingMessageId = focusMessageId
-						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
-							id: focusMessageId,
-						})
-					}
+					// Start from message hash or unread marker
+					const startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
+					// First time load, initialize important properties
+					this.$store.dispatch('setFirstKnownMessageId', { token: this.token, id: startingMessageId })
+					this.$store.dispatch('setLastKnownMessageId', { token: this.token, id: startingMessageId })
 
 					// Get chat messages before last read message and after it
 					await this.getMessageContext(startingMessageId)
-					const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
-
-					if (!startingMessageFound) {
-						const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessageId)
-						this.$store.dispatch('setVisualLastReadMessageId', {
-							token: this.token,
-							id: fallbackStartingMessageId,
-						})
-						this.focusMessage(fallbackStartingMessageId, false, false)
-					}
 				}
 
-				let hasScrolled = false
-				if (focusMessageId === null) {
-					// if lookForNewMessages will long poll instead of returning existing messages,
-					// scroll right away to avoid delays
-					if (!this.hasMoreMessagesToLoad) {
-						hasScrolled = true
-						this.$nextTick(() => {
-							this.scrollToFocusedMessage(focusMessageId)
-						})
-					}
-				}
+				this.$nextTick(() => {
+					// basically scrolling to either the last read message or the message in the URL anchor
+					// and there is a fallback to scroll to the bottom if the message is not found
+					this.scrollToFocusedMessage(focusMessageId)
+				})
 
 				this.isInitialisingMessages = false
 
 				// get new messages
 				await this.lookForNewMessages()
 
-				if (focusMessageId === null) {
-					// don't scroll if lookForNewMessages was polling as we don't want
-					// to scroll back to the read marker after receiving new messages later
-					if (!hasScrolled) {
-						this.scrollToFocusedMessage(focusMessageId)
-					}
-				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
@@ -1124,33 +1083,33 @@ export default {
 		focusMessage(messageId, smooth = true, highlightAnimation = true) {
 			const element = document.getElementById(`message_${messageId}`)
 			if (!element) {
+				// Message id doesn't exist
 				// TODO: in some cases might need to trigger a scroll up if this is an older message
+				// https://github.com/nextcloud/spreed/pull/10084
 				console.warn('Message to focus not found in DOM', messageId)
-				return false
+				return false // element not found
 			}
 
 			console.debug('Scrolling to a focused message programmatically')
 			this.isFocusingMessage = true
 
-			this.$nextTick(async () => {
-				// FIXME: this doesn't wait for the smooth scroll to end
-				element.scrollIntoView({
-					behavior: smooth ? 'smooth' : 'auto',
-					block: 'center',
-					inline: 'nearest',
-				})
-				if (this.$refs.scroller && !smooth) {
-					// scroll the viewport slightly further to make sure the element is about 1/3 from the top
-					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
-				}
-				if (highlightAnimation) {
-					EventBus.emit('highlight-message', messageId)
-				}
-				this.isFocusingMessage = false
-				await this.handleScroll()
+			element.scrollIntoView({
+				behavior: smooth ? 'smooth' : 'auto',
+				block: 'center',
+				inline: 'nearest',
 			})
 
-			return true
+			if (this.$refs.scroller && !smooth) {
+				// scroll the viewport slightly further to make sure the element is about 1/3 from the top
+				this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
+			}
+
+			if (highlightAnimation) {
+				EventBus.$emit('highlight-message', messageId)
+			}
+			this.isFocusingMessage = false
+
+			return true // element found
 		},
 
 		/**
