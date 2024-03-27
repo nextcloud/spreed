@@ -20,6 +20,11 @@
  */
 
 import BrowserStorage from '../../services/BrowserStorage.js'
+import {
+	listMediaDevices,
+	populateMediaDevicesPreferences,
+	updateMediaDevicesPreferences,
+} from '../../services/mediaDevicePreferences.ts'
 import EmitterMixin from '../EmitterMixin.js'
 
 /**
@@ -90,6 +95,12 @@ export default function MediaDevicesManager() {
 
 	this._fallbackAudioInputId = undefined
 	this._fallbackVideoInputId = undefined
+
+	const audioInputPreferences = BrowserStorage.getItem('audioInputPreferences')
+	this._preferenceAudioInputList = audioInputPreferences !== null ? JSON.parse(audioInputPreferences) : []
+
+	const videoInputPreferences = BrowserStorage.getItem('videoInputPreferences')
+	this._preferenceVideoInputList = videoInputPreferences !== null ? JSON.parse(videoInputPreferences) : []
 
 	this._tracks = []
 
@@ -220,10 +231,64 @@ MediaDevicesManager.prototype = {
 			}
 
 			this._pendingEnumerateDevicesPromise = null
+
+			this._populatePreferences(devices)
 		}).catch(function(error) {
 			console.error('Could not update known media devices: ' + error.name + ': ' + error.message)
 
 			this._pendingEnumerateDevicesPromise = null
+		})
+	},
+
+	_populatePreferences(devices) {
+		const { newAudioInputList, newVideoInputList } = populateMediaDevicesPreferences(
+			devices,
+			this._preferenceAudioInputList,
+			this._preferenceVideoInputList,
+		)
+
+		if (newAudioInputList) {
+			this._preferenceAudioInputList = newAudioInputList
+			BrowserStorage.setItem('audioInputPreferences', JSON.stringify(this._preferenceAudioInputList))
+		}
+		if (newVideoInputList) {
+			this._preferenceVideoInputList = newVideoInputList
+			BrowserStorage.setItem('videoInputPreferences', JSON.stringify(this._preferenceVideoInputList))
+		}
+	},
+
+	updatePreferences() {
+		const { newAudioInputList, newVideoInputList } = updateMediaDevicesPreferences(
+			this.attributes.devices,
+			this.attributes.audioInputId,
+			this.attributes.videoInputId,
+			this._preferenceAudioInputList,
+			this._preferenceVideoInputList,
+		)
+
+		if (newAudioInputList) {
+			this._preferenceAudioInputList = newAudioInputList
+			BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
+		}
+		if (newVideoInputList) {
+			this._preferenceVideoInputList = newVideoInputList
+			BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
+		}
+	},
+
+	/**
+	 * List all registered devices in order of their preferences
+	 * Show whether device is currently unplugged or selected, if information is available
+	 */
+	listDevices() {
+		navigator.mediaDevices.enumerateDevices().then(devices => {
+			listMediaDevices(
+				devices,
+				this.attributes.audioInputId,
+				this.attributes.videoInputId,
+				this._preferenceAudioInputList,
+				this._preferenceVideoInputList,
+			)
 		})
 	},
 

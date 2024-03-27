@@ -285,6 +285,7 @@ export default {
 		const {
 			devices,
 			updateDevices,
+			updatePreferences,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
@@ -305,6 +306,7 @@ export default {
 			// useDevices
 			devices,
 			updateDevices,
+			updatePreferences,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
@@ -553,6 +555,8 @@ export default {
 			if (this.videoDeviceStateChanged) {
 				emit('local-video-control-button:toggle-video')
 			}
+
+			this.updatePreferences()
 			this.closeModal()
 		},
 

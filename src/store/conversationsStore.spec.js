@@ -65,7 +65,7 @@ jest.mock('../services/messagesService', () => ({
 jest.mock('@nextcloud/event-bus')
 
 jest.mock('../services/BrowserStorage.js', () => ({
-	getItem: jest.fn(),
+	getItem: jest.fn().mockReturnValue(null),
 	setItem: jest.fn(),
 	removeItem: jest.fn(),
 }))
