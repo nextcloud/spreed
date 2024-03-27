@@ -165,11 +165,6 @@ export default {
 
 			isFocusingMessage: false,
 
-			/**
-			 * Quick edit option to fall back to the loading history and then new messages
-			 */
-			loadChatInLegacyMode: getCapabilities()?.spreed?.config?.chat?.legacy || false,
-
 			destroying: false,
 
 			expirationInterval: null,
@@ -211,7 +206,6 @@ export default {
 
 		showLoadingAnimation() {
 			return !this.$store.getters.isMessageListPopulated(this.token)
-				&& !this.messagesList.length
 		},
 
 		showEmptyContent() {
@@ -661,7 +655,7 @@ export default {
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					let startingMessageId = 0
 					// first time load, initialize important properties
-					if (this.loadChatInLegacyMode || focusMessageId === null) {
+					if (focusMessageId === null) {
 						// Start from unread marker
 						this.$store.dispatch('setFirstKnownMessageId', {
 							token: this.token,
@@ -685,31 +679,22 @@ export default {
 						})
 					}
 
-					if (this.loadChatInLegacyMode) {
-						// get history before last read message
-						await this.getOldMessages(true)
-						// at this stage, the read marker will appear at the bottom of the view port since
-						// we haven't fetched the messages that come after it yet
-						// TODO: should we still show a spinner at this stage ?
+					// Get chat messages before last read message and after it
+					await this.getMessageContext(startingMessageId)
+					const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
 
-					} else {
-						// Get chat messages before last read message and after it
-						await this.getMessageContext(startingMessageId)
-						const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
-
-						if (!startingMessageFound) {
-							const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessageId)
-							this.$store.dispatch('setVisualLastReadMessageId', {
-								token: this.token,
-								id: fallbackStartingMessageId,
-							})
-							this.focusMessage(fallbackStartingMessageId, false, false)
-						}
+					if (!startingMessageFound) {
+						const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessageId)
+						this.$store.dispatch('setVisualLastReadMessageId', {
+							token: this.token,
+							id: fallbackStartingMessageId,
+						})
+						this.focusMessage(fallbackStartingMessageId, false, false)
 					}
 				}
 
 				let hasScrolled = false
-				if (this.loadChatInLegacyMode || focusMessageId === null) {
+				if (focusMessageId === null) {
 					// if lookForNewMessages will long poll instead of returning existing messages,
 					// scroll right away to avoid delays
 					if (!this.hasMoreMessagesToLoad) {
@@ -725,7 +710,7 @@ export default {
 				// get new messages
 				await this.lookForNewMessages()
 
-				if (this.loadChatInLegacyMode || focusMessageId === null) {
+				if (focusMessageId === null) {
 					// don't scroll if lookForNewMessages was polling as we don't want
 					// to scroll back to the read marker after receiving new messages later
 					if (!hasScrolled) {
@@ -904,16 +889,14 @@ export default {
 				return
 			}
 
-			if (!this.loadChatInLegacyMode) {
-				if (this.isInitialisingMessages) {
-					console.debug('Ignore handleScroll as we are initialising the message history')
-					return
-				}
+			if (this.isInitialisingMessages) {
+				console.debug('Ignore handleScroll as we are initialising the message history')
+				return
+			}
 
-				if (this.isFocusingMessage) {
-					console.debug('Ignore handleScroll as we are programmatically scrolling to focus a message')
-					return
-				}
+			if (this.isFocusingMessage) {
+				console.debug('Ignore handleScroll as we are programmatically scrolling to focus a message')
+				return
 			}
 
 			const { scrollHeight, scrollTop, clientHeight } = this.$refs.scroller
