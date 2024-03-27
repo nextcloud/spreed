@@ -426,6 +426,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../../assets/markdown';
+@import '../../../../../assets/variables';
 
 .message-main {
 	display: flex;
@@ -434,10 +435,10 @@ export default {
 	min-width: 100%;
 
 	&__text {
-		flex: 0 1 600px;
+		flex: 0 1 $messages-text-max-width;
 		width: 100%;
 		min-width: 0;
-		max-width: 600px;
+		max-width: $messages-text-max-width;
 		color: var(--color-text-light);
 
 		& > .single-emoji {
@@ -475,7 +476,7 @@ export default {
 			.message-copy-code {
 				position: absolute;
 				top: 0;
-				right: 4px;
+				right: calc(4px + var(--default-clickable-area));
 				margin-top: 4px;
 				background-color: var(--color-background-dark);
 			}
@@ -496,7 +497,7 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-size: var(--default-font-size);
 		flex: 1 0 auto;
-		padding: 0 8px 0 8px;
+		padding: 0 calc(2 * var(--default-grid-baseline));
 
 		.date:last-child {
 			margin-right: var(--default-clickable-area);
@@ -519,5 +520,10 @@ export default {
 // Hardcode to prevent RTL affecting on user mentions
 :deep(.rich-text--component) {
 	direction: ltr;
+}
+
+// Hardcode to restrict size of message images for the chat
+:deep(.widget-default--image) {
+	max-width: 240px;
 }
 </style>

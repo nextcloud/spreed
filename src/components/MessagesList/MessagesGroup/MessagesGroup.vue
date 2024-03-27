@@ -196,8 +196,8 @@ export default {
 	&__author {
 		display: flex;
 		gap: 4px;
-		max-width: 600px;
-		padding: 4px 0 0 8px;
+		max-width: $messages-text-max-width;
+		padding: var(--default-grid-baseline) 0 0 calc(2 * var(--default-grid-baseline));
 		color: var(--color-text-maxcontrast);
 
 		&-name {

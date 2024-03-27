@@ -294,7 +294,7 @@ export default {
 	margin: 4px 0;
 	padding: 6px 6px 6px 24px;
 	display: flex;
-	max-width: $messages-list-max-width - $message-utils-width;
+	max-width: $messages-text-max-width;
 	border-radius: var(--border-radius-large);
 	border: 2px solid var(--color-border);
 	background-color: var(--color-main-background);

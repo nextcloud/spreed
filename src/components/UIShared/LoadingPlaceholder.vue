@@ -81,6 +81,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables';
+
 .placeholder-list {
 	width: 100%;
 	transform: translateZ(0); // enable hardware acceleration
@@ -131,7 +133,7 @@ export default {
 
 // Messages placeholder ruleset
 .placeholder-list--messages {
-	max-width: 800px;
+	max-width: $messages-list-max-width;
 	margin: auto;
 
 	.placeholder-item {
@@ -148,7 +150,7 @@ export default {
 		}
 
 		&__content {
-			max-width: 600px;
+			max-width: $messages-text-max-width;
 			padding: 12px 0;
 
 			&-line {

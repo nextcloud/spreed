@@ -573,7 +573,8 @@ export default {
 }
 
 .message-body {
-	padding: 4px 4px 4px 8px;
+	padding: var(--default-grid-baseline);
+	padding-left: calc(2 * var(--default-grid-baseline));
 	font-size: var(--default-font-size);
 	line-height: var(--default-line-height);
 	position: relative;
@@ -626,7 +627,7 @@ export default {
 	background-color: var(--color-main-background);
 	border-radius: calc(var(--default-clickable-area) / 2);
 	box-shadow: 0 0 4px 0 var(--color-box-shadow);
-	height: 44px;
+	height: var(--default-clickable-area);
 	z-index: 1;
 
 	& h6 {
