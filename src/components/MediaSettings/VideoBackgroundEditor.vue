@@ -80,7 +80,7 @@
 		<FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
 			:path="relativeBackgroundsFolderPath"
-			:container="container"
+			container=".background-editor"
 			:buttons="filePickerButtons"
 			:multiselect="false"
 			@close="showFilePicker = false" />
@@ -154,10 +154,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		isCustomBackground() {
 			return this.selectedBackground !== 'none'
 				&& this.selectedBackground !== 'blur'
