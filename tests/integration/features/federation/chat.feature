@@ -138,6 +138,34 @@ Feature: federation/chat
       | id   | type | lastMessage |
       | room | 2    | Message deleted by author |
 
+  Scenario: Last message actor when the same user ID is present
+    Given the following "spreed" app config is set
+      | federation_enabled | yes |
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant1" to room "room" with 200 (v4)
+    And user "participant1" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant1" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 2    | LOCAL        | room        |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage |
+      | room | 2    | {actor} invited you |
+      | room | 2    | {federated_user} accepted the invitation |
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | lastMessageActorType | lastMessageActorId |
+      | room | 2    | Message 1   | users                | participant1       |
+      | room | 2    | Message 1   | federated_users      | participant1@{$BASE_URL} |
+    When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "LOCAL::room" with 201
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | lastMessageActorType | lastMessageActorId |
+      | room | 2    | Message 1-1 | federated_users      | participant1@{$REMOTE_URL} |
+      | room | 2    | Message 1-1 | users                | participant1       |
+
   Scenario: Read marker checking
     Given the following "spreed" app config is set
       | federation_enabled | yes |

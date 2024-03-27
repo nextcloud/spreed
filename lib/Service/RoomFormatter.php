@@ -394,7 +394,7 @@ class RoomFormatter {
 					$room->getRemoteToken(),
 					$room->getLastMessageId(),
 				);
-				$roomData['lastMessage'] = $this->userConverter->convertAttendee($room, $cachedMessage->jsonSerialize(), 'actorType', 'actorId', 'actorDisplayName');
+				$roomData['lastMessage'] = $cachedMessage->jsonSerialize();
 			} catch (DoesNotExistException) {
 			}
 		}
