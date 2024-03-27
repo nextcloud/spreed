@@ -96,6 +96,27 @@ class InvitationMapper extends QBMapper {
 	}
 
 	/**
+	 * @psalm-param Invitation::STATE_*|null $state
+	 */
+	public function countInvitationsForUser(IUser $user, ?int $state = null): int {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select($qb->func()->count('*'))
+			->from($this->getTableName())
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($user->getUID())));
+
+		if ($state !== null) {
+			$qb->andWhere($qb->expr()->eq('state', $qb->createNamedParameter($state)));
+		}
+
+		$result = $qb->executeQuery();
+		$count = (int) $result->fetchOne();
+		$result->closeCursor();
+
+		return $count;
+	}
+
+	/**
 	 * @throws DoesNotExistException
 	 */
 	public function getInvitationForUserByLocalRoom(Room $room, string $userId, bool $caseInsensitive = false): Invitation {

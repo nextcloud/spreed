@@ -26,6 +26,7 @@ namespace OCA\Talk\Service;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
@@ -562,9 +563,9 @@ class ParticipantService {
 		$roomService = Server::get(RoomService::class);
 		$roomService->setLastMessage($room, $message);
 
-		$lastMessageCache = $this->cacheFactory->createDistributed('talk/lastmsgid');
+		$lastMessageCache = $this->cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
 		$lastMessageCache->remove($room->getToken());
-		$unreadCountCache = $this->cacheFactory->createDistributed('talk/unreadcount');
+		$unreadCountCache = $this->cacheFactory->createDistributed(CachePrefix::CHAT_UNREAD_COUNT);
 		$unreadCountCache->clear($room->getId() . '-');
 
 		$event = new SystemMessagesMultipleSentEvent($room, $message);

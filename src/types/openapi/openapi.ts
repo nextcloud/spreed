@@ -3463,6 +3463,7 @@ export type operations = {
         headers: {
           "X-Nextcloud-Talk-Hash"?: string;
           "X-Nextcloud-Talk-Modified-Before"?: string;
+          "X-Nextcloud-Talk-Federation-Invites"?: string;
         };
         content: {
           "application/json": {

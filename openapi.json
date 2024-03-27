@@ -9447,6 +9447,11 @@
                                 "schema": {
                                     "type": "string"
                                 }
+                            },
+                            "X-Nextcloud-Talk-Federation-Invites": {
+                                "schema": {
+                                    "type": "string"
+                                }
                             }
                         },
                         "content": {

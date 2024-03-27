@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
@@ -57,7 +58,7 @@ class ChatController {
 		protected Notifier $notifier,
 		ICacheFactory $cacheFactory,
 	) {
-		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
+		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;
 	}
 
 	/**

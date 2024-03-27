@@ -41,6 +41,9 @@ Feature: federation/invite
       | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | name           | type |
+    Then last response has federation invites header set to "1"
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId      | participantType |
       | users           | participant1 | 1               |
@@ -59,6 +62,10 @@ Feature: federation/invite
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 3    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 3    | LOCAL        | room        |
+    Then last response has federation invites header set to "NULL"
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 400 (v1)
       | error | state |
     And user "participant2" declines invite to room "room" of server "LOCAL" with 400 (v1)
