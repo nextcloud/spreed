@@ -181,7 +181,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param bool $includeStatus Include the user status
 	 * @param int $modifiedSince Filter rooms modified after a timestamp
 	 * @psalm-param non-negative-int $modifiedSince
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{X-Nextcloud-Talk-Hash: string, X-Nextcloud-Talk-Modified-Before: numeric-string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom[], array{X-Nextcloud-Talk-Hash: string, X-Nextcloud-Talk-Modified-Before: numeric-string, X-Nextcloud-Talk-Federation-Invites?: numeric-string}>
 	 *
 	 * 200: Return list of rooms
 	 */
@@ -191,6 +191,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$event = new BeforeRoomsFetchEvent($this->userId);
 		$this->dispatcher->dispatchTyped($event);
+		$user = $this->userManager->get($this->userId);
 
 		if ($noStatusUpdate === 0) {
 			$isMobileApp = $this->request->isUserAgent([
@@ -201,7 +202,7 @@ class RoomController extends AEnvironmentAwareController {
 			if ($isMobileApp) {
 				// Bump the user status again
 				$event = new UserLiveStatusEvent(
-					$this->userManager->get($this->userId),
+					$user,
 					IUserStatus::ONLINE,
 					$this->timeFactory->getTime()
 				);
@@ -255,7 +256,19 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		return new DataResponse($return, Http::STATUS_OK, array_merge($this->getTalkHashHeader(), ['X-Nextcloud-Talk-Modified-Before' => (string) $nextModifiedSince]));
+		/** @var array{X-Nextcloud-Talk-Modified-Before: numeric-string, X-Nextcloud-Talk-Federation-Invites?: numeric-string} $headers */
+		$headers = ['X-Nextcloud-Talk-Modified-Before' => (string) $nextModifiedSince];
+		if ($this->talkConfig->isFederationEnabledForUserId($user)) {
+			$numInvites = $this->federationManager->getNumberOfPendingInvitationsForUser($user);
+			if ($numInvites !== 0) {
+				$headers['X-Nextcloud-Talk-Federation-Invites'] = (string) $numInvites;
+			}
+		}
+
+		/** @var array{X-Nextcloud-Talk-Hash: string, X-Nextcloud-Talk-Modified-Before: numeric-string, X-Nextcloud-Talk-Federation-Invites?: numeric-string} $headers */
+		$headers = array_merge($this->getTalkHashHeader(), $headers);
+
+		return new DataResponse($return, Http::STATUS_OK, $headers);
 	}
 
 	/**

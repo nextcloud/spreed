@@ -3027,6 +3027,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^last response has federation invites header set to "([^"]*)"$/
+	 *
+	 * @param string $count
+	 */
+	public function hasFederationInvitesHeader(string $count): void {
+		if ($count === 'NULL') {
+			Assert::assertFalse($this->response->hasHeader('X-Nextcloud-Talk-Federation-Invites'), "Should not contain 'X-Nextcloud-Talk-Federation-Invites' header\n" . json_encode($this->response->getHeaders(), JSON_PRETTY_PRINT));
+		} else {
+			Assert::assertTrue($this->response->hasHeader('X-Nextcloud-Talk-Federation-Invites'), "Should contain 'X-Nextcloud-Talk-Federation-Invites' header\n" . json_encode($this->response->getHeaders(), JSON_PRETTY_PRINT));
+			Assert::assertEquals($count, $this->response->getHeader('X-Nextcloud-Talk-Federation-Invites')[0]);
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" creates (\d+) (automatic|manual|free) breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user

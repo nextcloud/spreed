@@ -28,6 +28,7 @@ namespace OCA\Talk\Federation;
 use Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
@@ -97,7 +98,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private UserConverter $userConverter,
 		ICacheFactory $cacheFactory,
 	) {
-		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed('talk/pcm/') : null;
+		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;
 	}
 
 	/**
