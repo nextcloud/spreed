@@ -314,8 +314,6 @@ export default {
 		}
 	},
 
-	expose: ['highlightMessage'],
-
 	data() {
 		return {
 			isHovered: false,
@@ -470,6 +468,14 @@ export default {
 		},
 	},
 
+	mounted() {
+		EventBus.$on('highlight-message', this.highlightMessage)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('highlight-message', this.highlightMessage)
+	},
+
 	methods: {
 		lastReadMessageVisibilityChanged(isVisible) {
 			if (isVisible) {
@@ -477,8 +483,10 @@ export default {
 			}
 		},
 
-		highlightMessage() {
-			this.isHighlighted = true
+		highlightMessage(messageId) {
+			if (this.id === messageId) {
+				this.isHighlighted = true
+			}
 		},
 
 		handleMouseover() {

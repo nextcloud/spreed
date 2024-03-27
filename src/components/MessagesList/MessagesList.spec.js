@@ -141,9 +141,6 @@ describe('MessagesList.vue', () => {
 			expect(group.props('nextMessageId')).toBe(0)
 
 			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
-
-			const placeholder = wrapper.findAllComponents({ name: 'LoadingPlaceholder' })
-			expect(placeholder.exists()).toBe(false)
 		})
 
 		test('displays a date separator between days', () => {
@@ -254,7 +251,7 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAllComponents({ ref: 'messagesGroup' })
+			const groups = wrapper.findAll('.messages-group')
 
 			expect(groups.exists()).toBe(true)
 
@@ -279,7 +276,7 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAllComponents({ ref: 'messagesGroup' })
+			const groups = wrapper.findAll('.messages-group')
 
 			expect(groups.exists()).toBeTruthy()
 

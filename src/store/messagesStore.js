@@ -224,16 +224,16 @@ const getters = {
 			return null
 		}
 
-		const displayableMessages = getters.messagesList(token).filter(message => {
+		return getters.messagesList(token).find(message => {
 			return message.id >= readMessageId
-				&& !('' + message.id).startsWith('temp-')
-		})
-
-		if (displayableMessages.length) {
-			return displayableMessages.shift().id
-		}
-
-		return null
+				&& !String(message.id).startsWith('temp-')
+				&& message.systemMessage !== 'reaction'
+				&& message.systemMessage !== 'reaction_deleted'
+				&& message.systemMessage !== 'reaction_revoked'
+				&& message.systemMessage !== 'poll_voted'
+				&& message.systemMessage !== 'message_deleted'
+				&& message.systemMessage !== 'message_edited'
+		})?.id
 	},
 
 	getFirstDisplayableMessageIdBeforeReadMarker: (state, getters) => (token, readMessageId) => {
@@ -241,16 +241,16 @@ const getters = {
 			return null
 		}
 
-		const displayableMessages = getters.messagesList(token).filter(message => {
+		return getters.messagesList(token).findLast(message => {
 			return message.id < readMessageId
-				&& !('' + message.id).startsWith('temp-')
-		})
-
-		if (displayableMessages.length) {
-			return displayableMessages.pop().id
-		}
-
-		return null
+				&& !String(message.id).startsWith('temp-')
+				&& message.systemMessage !== 'reaction'
+				&& message.systemMessage !== 'reaction_deleted'
+				&& message.systemMessage !== 'reaction_revoked'
+				&& message.systemMessage !== 'poll_voted'
+				&& message.systemMessage !== 'message_deleted'
+				&& message.systemMessage !== 'message_edited'
+		})?.id
 	},
 
 	isSendingMessages: (state) => {
