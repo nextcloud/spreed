@@ -23,6 +23,7 @@
 	<NcModal v-if="showModal"
 		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
+		:close-on-click-outside="false"
 		:container="container"
 		@close="handleDismiss">
 		<div class="upload-editor"

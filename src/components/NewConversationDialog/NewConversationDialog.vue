@@ -24,6 +24,7 @@
 		<!-- New group form -->
 		<NcModal v-show="page !== 2"
 			class="new-group-conversation"
+			:close-on-click-outside="!isFilled"
 			:container="container"
 			@close="closeModal">
 			<h2 class="new-group-conversation__header">
@@ -226,6 +227,11 @@ export default {
 			return this.conversationName === '' || (this.newConversation.hasPassword && this.password === '')
 				|| this.conversationName.length > CONVERSATION.MAX_NAME_LENGTH
 				|| this.newConversation.description.length > CONVERSATION.MAX_DESCRIPTION_LENGTH
+		},
+
+		isFilled() {
+			return JSON.stringify(this.newConversation) !== JSON.stringify(NEW_CONVERSATION)
+				|| this.listable !== CONVERSATION.LISTABLE.NONE || this.isAvatarEdited
 		},
 	},
 
