@@ -23,6 +23,7 @@
 
 <template>
 	<NcModal size="small"
+		:close-on-click-outside="!isFilled"
 		:container="container"
 		v-on="$listeners">
 		<div class="poll-editor">
@@ -132,6 +133,10 @@ export default {
 	computed: {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
+		},
+
+		isFilled() {
+			return !!this.pollQuestion || this.pollOptions.some(option => option)
 		},
 	},
 
