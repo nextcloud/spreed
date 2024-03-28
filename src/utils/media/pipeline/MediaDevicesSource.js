@@ -19,9 +19,8 @@
  *
  */
 
-import UAParser from 'ua-parser-js'
-
 import TrackSource from './TrackSource.js'
+import { isChromium } from '../../browserCheck.js'
 import { mediaDevicesManager } from '../../webrtc/index.js'
 
 /**
@@ -250,15 +249,7 @@ export default class MediaDevicesSource extends TrackSource {
 	 * @param {object} constraints the constraints to be adjusted
 	 */
 	_adjustVideoConstraintsForChromium(constraints) {
-		const parser = new UAParser()
-		const browserName = parser.getBrowser().name
-
-		if (browserName !== 'Chrome'
-			&& browserName !== 'Chromium'
-			&& browserName !== 'Opera'
-			&& browserName !== 'Safari'
-			&& browserName !== 'Mobile Safari'
-			&& browserName !== 'Edge') {
+		if (!isChromium) {
 			return
 		}
 
