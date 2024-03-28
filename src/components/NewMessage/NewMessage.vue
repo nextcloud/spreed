@@ -743,7 +743,7 @@ export default {
 				await this.$store.dispatch('editMessage', {
 					token: this.token,
 					messageId: this.messageToEdit.id,
-					updatedMessage: this.text.trim(),
+					updatedMessage: parseSpecialSymbols(this.text.trim()),
 				})
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 				this.resetTypingIndicator()
