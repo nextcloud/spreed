@@ -547,6 +547,15 @@ const actions = {
 				context.commit('addMessage', { token, message: message.parent })
 			}
 
+			// update conversation lastMessage, if it was edited
+			if (message.systemMessage === 'message_edited'
+				&& message.parent.id === context.getters.conversation(token).lastMessage.id) {
+				context.dispatch('updateConversationLastMessage', {
+					token,
+					lastMessage: message.parent,
+				})
+			}
+
 			const reactionsStore = useReactionsStore()
 			if (message.systemMessage === 'message_deleted') {
 				reactionsStore.resetReactions(token, message.parent.id)
