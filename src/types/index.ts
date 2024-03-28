@@ -36,6 +36,9 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 // Conversations
 export type Conversation = components['schemas']['Room']
 
+// Participants
+export type Participant = components['schemas']['Participant']
+
 // Chats
 export type Mention = RichObject<'server'|'call-type'|'icon-url'>
 export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available'> & {
@@ -96,3 +99,24 @@ export type addReactionParams = ApiOptions<operations['reaction-react']['paramet
 export type addReactionResponse = ApiResponse<operations['reaction-react']['responses'][200]['content']['application/json']>
 export type deleteReactionParams = ApiOptions<operations['reaction-delete']['parameters']['query']>['params']
 export type deleteReactionResponse = ApiResponse<operations['reaction-delete']['responses'][200]['content']['application/json']>
+
+// Breakout rooms
+export type BreakoutRoom = components['schemas']['Room'] & {
+	objectType: 'room',
+}
+
+export type configureBreakoutRoomsParams = ApiOptions<operations['breakout_room-configure-breakout-rooms']['parameters']['query']>['params']
+export type configureBreakoutRoomsResponse = ApiResponse<operations['breakout_room-configure-breakout-rooms']['responses'][200]['content']['application/json']>
+export type deleteBreakoutRoomsResponse = ApiResponse<operations['breakout_room-remove-breakout-rooms']['responses'][200]['content']['application/json']>
+export type reorganizeAttendeesParams = ApiOptions<operations['breakout_room-apply-attendee-map']['parameters']['query']>['params']
+export type reorganizeAttendeesResponse = ApiResponse<operations['breakout_room-apply-attendee-map']['responses'][200]['content']['application/json']>
+export type getBreakoutRoomsResponse = ApiResponse<operations['room-get-breakout-rooms']['responses'][200]['content']['application/json']>
+export type startBreakoutRoomsResponse = ApiResponse<operations['breakout_room-start-breakout-rooms']['responses'][200]['content']['application/json']>
+export type stopBreakoutRoomsResponse = ApiResponse<operations['breakout_room-stop-breakout-rooms']['responses'][200]['content']['application/json']>
+export type broadcastChatMessageParams = ApiOptions<operations['breakout_room-broadcast-chat-message']['parameters']['query']>['params']
+export type broadcastChatMessageResponse = ApiResponse<operations['breakout_room-broadcast-chat-message']['responses'][201]['content']['application/json']>
+export type getBreakoutRoomsParticipantsResponse = ApiResponse<operations['room-get-breakout-room-participants']['responses'][200]['content']['application/json']>
+export type requestAssistanceResponse = ApiResponse<operations['breakout_room-request-assistance']['responses'][200]['content']['application/json']>
+export type resetRequestAssistanceResponse = ApiResponse<operations['breakout_room-reset-request-for-assistance']['responses'][200]['content']['application/json']>
+export type switchToBreakoutRoomParams = ApiOptions<operations['breakout_room-switch-breakout-room']['parameters']['query']>['params']
+export type switchToBreakoutRoomResponse = ApiResponse<operations['breakout_room-switch-breakout-room']['responses'][200]['content']['application/json']>
