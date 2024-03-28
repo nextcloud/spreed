@@ -12,9 +12,9 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Don't close the modal on outside click when the user started to fill them
-  [#11942](https://github.com/nextcloud/spreed/issues/11942)
-- Fix user confusion when federating with a user that has the same user ID
   [#11941](https://github.com/nextcloud/spreed/issues/11941)
+- Fix user confusion when federating with a user that has the same user ID
+  [#11942](https://github.com/nextcloud/spreed/issues/11942)
 - Don't transfer ownership federated memberships as it doesn't work
   [#11950](https://github.com/nextcloud/spreed/issues/11950)
 - Provide the correct container for the file picker
