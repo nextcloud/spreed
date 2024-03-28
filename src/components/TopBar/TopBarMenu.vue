@@ -190,7 +190,7 @@ import PromotedView from '../../assets/missingMaterialDesignIcons/PromotedView.v
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.js'
+import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
