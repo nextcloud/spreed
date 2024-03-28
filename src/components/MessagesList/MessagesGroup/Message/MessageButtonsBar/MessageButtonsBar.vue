@@ -246,7 +246,7 @@
 				</template>
 			</NcButton>
 
-			<NcEmojiPicker :container="`${messageContainer} .message-buttons-bar`"
+			<NcEmojiPicker :container="mainContainer"
 				:boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
@@ -501,6 +501,10 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
+		},
+
+		mainContainer() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		messageContainer() {
