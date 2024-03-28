@@ -42,8 +42,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
- * @method void setActorDisplayName(string $actorDisplayName)
- * @method string getActorDisplayName()
+ * @method void setActorDisplayName(?string $actorDisplayName)
+ * @method string|null getActorDisplayName()
  * @method void setMessageType(string $messageType)
  * @method string getMessageType()
  * @method void setSystemMessage(?string $systemMessage)
@@ -119,7 +119,7 @@ class ProxyCacheMessage extends Entity implements \JsonSerializable {
 		return [
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
-			'actorDisplayName' => $this->getActorDisplayName(),
+			'actorDisplayName' => $this->getActorDisplayName() ?? '',
 			'timestamp' => $this->getCreationDatetime()->getTimestamp(),
 			'expirationTimestamp' => $expirationTimestamp,
 			'messageType' => $this->getMessageType(),

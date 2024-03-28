@@ -7,9 +7,6 @@ name: Integration oci
 
 on:
   pull_request:
-    paths:
-      # Only running on PR for this file to save CI time (otherwise pgsql only)
-      - '.github/workflows/integration-oci.yml'
   schedule:
     - cron: "5 2 * * *"
 

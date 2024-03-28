@@ -69,7 +69,7 @@ class MessageParser {
 		$message->setActor(
 			$proxy->getActorType(),
 			$proxy->getActorId(),
-			$proxy->getActorDisplayName(),
+			$proxy->getActorDisplayName() ?? '',
 		);
 
 		$message->setMessageType($proxy->getMessageType());
