@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
@@ -42,7 +43,7 @@ class Manager {
 		protected RoomService $roomService,
 		ICacheFactory $cacheFactory,
 	) {
-		$this->cache = $cacheFactory->createDistributed('hpb_servers');
+		$this->cache = $cacheFactory->createDistributed(CachePrefix::SIGNALING_ASSIGNED_SERVER);
 	}
 
 	public function isCompatibleSignalingServer(IResponse $response): bool {

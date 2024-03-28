@@ -51,7 +51,6 @@ use OCP\IUserSession;
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class FederationController extends OCSController {
-
 	public function __construct(
 		IRequest $request,
 		private FederationManager $federationManager,

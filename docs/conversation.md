@@ -40,10 +40,11 @@
 
     - Header:
 
-| field                              | type   | Description                                                                                                                                              |
-|------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `X-Nextcloud-Talk-Hash`            | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed. |
-| `X-Nextcloud-Talk-Modified-Before` | string | Timestamp from before the database request that can be used as `modifiedSince` parameter in the next request                                             |
+| field                                 | type   | Description                                                                                                                                                         |
+|---------------------------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-Nextcloud-Talk-Hash`               | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed.            |
+| `X-Nextcloud-Talk-Modified-Before`    | string | Timestamp from before the database request that can be used as `modifiedSince` parameter in the next request                                                        |
+| `X-Nextcloud-Talk-Federation-Invites` | string | *Optional:* Number of pending invites to federated conversations the user has. (Only available when the user can do federation and has at least one invite pending) |
 
     - Data:
         Array of conversations, each conversation has at least:
