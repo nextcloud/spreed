@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-rc.1 – 2024-03-28
+### Added
+- Add a header to the room list indicating pending invites
+  [#11944](https://github.com/nextcloud/spreed/issues/11944)
+
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- Don't close the modal on outside click when the user started to fill them
+  [#11942](https://github.com/nextcloud/spreed/issues/11942)
+- Fix user confusion when federating with a user that has the same user ID
+  [#11941](https://github.com/nextcloud/spreed/issues/11941)
+- Don't transfer ownership federated memberships as it doesn't work
+  [#11950](https://github.com/nextcloud/spreed/issues/11950)
+- Provide the correct container for the file picker
+  [#11939](https://github.com/nextcloud/spreed/issues/11939)
+- Adjust the cursor to be a grabbing hand when dragging the presenter view
+  [#11903](https://github.com/nextcloud/spreed/issues/11903)
+- Fix file names overflowing the box when chat is in the right sidebar
+  [#11937](https://github.com/nextcloud/spreed/issues/11937)
+
 ## 19.0.0-beta.5 – 2024-03-26
 ### Changed
 - Update translations
