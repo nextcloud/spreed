@@ -20,11 +20,14 @@
  *
  */
 
-//messages list max width
-$messages-list-max-width: 800px;
-
-//message utils width
-$message-utils-width: 100px;
+/** Messages list dimensions:
+ * - text max width: 70em (recommended by W3C standard) = 1050px
+ * - utils-width: 52px (group avatar with paddings) + 120px (date and checkmark) + 4*4px (date paddings) = 188px
+ * - list max width: text width + utils width + 4 + 8 (paddings) = 1250px
+ */
+$messages-text-max-width: calc(70 * var(--default-font-size));
+$message-utils-width: calc(52px + 4 * var(--default-grid-baseline) + 120px);
+$messages-list-max-width: calc($messages-text-max-width + $message-utils-width + 3 * var(--default-grid-baseline));
 
 // background color of call container
 $color-call-background: rgba(34, 34, 34, 0.8);

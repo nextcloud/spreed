@@ -1044,6 +1044,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables';
+
 .wrapper {
 	padding: 12px 12px 12px 0;
 	min-height: 69px;
@@ -1054,7 +1056,7 @@ export default {
 	display: flex;
 	gap: 4px;
 	position: relative;
-	max-width: 700px;
+	max-width: calc($messages-list-max-width - 100px);
 	margin: 0 auto;
 
 	&__emoji-picker {
