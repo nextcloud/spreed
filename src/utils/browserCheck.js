@@ -27,6 +27,16 @@ export const isYandex = browser.name === 'Yandex'
 export const majorVersion = browser.version ? parseInt(browser.version.split('.')[0], 10) : 0
 
 /**
+ * Is the browser Chromium-based
+ */
+export const isChromium = isChrome
+	|| isOpera
+	|| isSafari
+	|| isEdge
+	|| isBrave
+	|| isYandex
+
+/**
  * Is the browser fully supported by Talk
  */
 export const isFullySupported = (isFirefox && majorVersion >= 52)
