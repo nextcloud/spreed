@@ -257,6 +257,10 @@ class FederationManager {
 		return $this->invitationMapper->getInvitationsForUser($user);
 	}
 
+	public function getNumberOfPendingInvitationsForUser(IUser $user): int {
+		return $this->invitationMapper->countInvitationsForUser($user, Invitation::STATE_PENDING);
+	}
+
 	public function getNumberOfInvitations(Room $room): int {
 		return $this->invitationMapper->countInvitationsForLocalRoom($room);
 	}

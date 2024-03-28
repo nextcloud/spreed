@@ -27,6 +27,7 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeSystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
@@ -113,8 +114,8 @@ class ChatManager {
 		protected IRequest $request,
 		protected LoggerInterface $logger,
 	) {
-		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
-		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
+		$this->cache = $cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
+		$this->unreadCountCache = $cacheFactory->createDistributed(CachePrefix::CHAT_UNREAD_COUNT);
 	}
 
 	/**
