@@ -37,13 +37,22 @@
 			:clearable="false"
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
+
+		<NcButton type="tertiary-no-background"
+			:title="t('spreed', 'Refresh devices list')"
+			:aria-lebel="t('spreed', 'Refresh devices list')"
+			@click="$emit('refresh')">
+			<RefreshIcon :size="20" />
+		</NcButton>
 	</div>
 </template>
 
 <script>
 import Microphone from 'vue-material-design-icons/Microphone.vue'
+import RefreshIcon from 'vue-material-design-icons/Refresh.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 export default {
@@ -51,8 +60,10 @@ export default {
 	name: 'MediaDevicesSelector',
 
 	components: {
+		NcButton,
 		NcSelect,
 		Microphone,
+		RefreshIcon,
 		VideoIcon,
 	},
 
@@ -77,7 +88,7 @@ export default {
 		},
 	},
 
-	emits: ['update:deviceId'],
+	emits: ['refresh', 'update:deviceId'],
 
 	data() {
 		return {
