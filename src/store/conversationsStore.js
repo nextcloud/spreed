@@ -700,6 +700,7 @@ const actions = {
 			&& lastMessage.systemMessage !== 'reaction_deleted'
 			&& lastMessage.systemMessage !== 'reaction_revoked'
 			&& lastMessage.systemMessage !== 'message_deleted'
+			&& lastMessage.systemMessage !== 'message_edited'
 			&& !(typeof lastMessage.id.startsWith === 'function'
 				&& lastMessage.id.startsWith('temp-')
 				&& lastMessage.message.startsWith('/'))) {
