@@ -564,8 +564,6 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Deltag i samtaler når som helst, hvor som helst og på en hvilken som helst enhed.",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
-    "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkommen til Nextcloud Talk!\nI denne samtale finder du information om nye features tilgængelige i Nextcloud Talk.",
-    "New in Talk %s" : "Nyt i Snak %s",
     "- You can now react to chat message" : "- Du kan nu reagere på chatbeskeden",
     "{actor} opened the conversation to registered and guest app users" : "{actor} åbnede samtalen for registrerede og gæsteapp brugere",
     "You opened the conversation to registered and guest app users" : "Du åbnede samtalen for registrerede og gæsteapp brugere",
@@ -574,18 +572,13 @@ OC.L10N.register(
     "You invited {user}" : "Du inviterede {user}",
     "An administrator invited {user}" : "En administrator inviterede {user}",
     "Path is already shared with this room" : "Stien er allerede delt med dette rum",
-    "No matches" : "Ingen matches",
     "Circles" : "Cirkler",
     "Groups and circles" : "Grupper og cirkler",
     "Creating your conversation" : "Opret din samtale",
     "All set" : "Samtalen er klar",
-    "Conversation name" : "Samtalenavn",
     "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Add circles" : "Tilføj cirkler",
     "Add groups or circles" : "Tilføj grupper eller cirkler",
-    "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
-    "Rename conversation" : "Omdøb samtale",
-    "Mention room" : "Nævn rum",
-    "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"
+    "Mention room" : "Nævn rum"
 },
 "nplurals=2; plural=(n != 1);");

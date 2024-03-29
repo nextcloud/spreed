@@ -356,10 +356,6 @@ OC.L10N.register(
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS",
-    "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Selamat datang di Nextcloud Talk!\nDalam percakapan ini Anda akan diberitahu tentang fitur baru yang tersedia di Nextcloud Talk.",
-    "New in Talk %s" : "Terbaru di Talk %s",
-    "Conversation name" : "Nama percakapan",
-    "Rename conversation" : "Ganti nama percakapan"
+    "iOS app" : "Aplikasi iOS"
 },
 "nplurals=1; plural=0;");

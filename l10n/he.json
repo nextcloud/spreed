@@ -596,17 +596,13 @@
     "Signaling servers" : "שרתי איתות",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
-    "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "ברוך בואך ל־Talk מבית Nextcloud!\nבדיון הזה נעדכן אותך בנוגע לתכונות החדשות שזמינות ב־Talk מבית Nextcloud.",
     "Circles" : "מעגלים",
     "Groups and circles" : "קבוצות ומעגלים",
     "Creating your conversation" : "הדיון שלך נוצר",
     "All set" : "הכול מוכן",
-    "Conversation name" : "שם דיון",
     "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Add circles" : "הוספת מעגלים",
     "Add groups or circles" : "הוספת קבוצות או מעגלים",
-    "Rename conversation" : "שינוי שם הדיון",
-    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
     "Mention room" : "אזכור חדר"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"
 }
