@@ -259,10 +259,6 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Habla en tus dispositivos móviles",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
-    "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bienvenido a Nextcloud Talk!\nEn esta conversación se te informará sobre nuevas características disponibles en Nextcloud Talk.",
-    "Circles" : "Círculos",
-    "Conversation name" : "Nombre de la conversación",
-    "Rename conversation" : "Renombrar conversación",
-    "Exit fullscreen (F)" : "Salir de pantalla completa (F)"
+    "Circles" : "Círculos"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
