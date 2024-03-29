@@ -320,7 +320,16 @@ class RoomFormatter {
 				$lastMentionDirect = $attendee->getLastMentionDirect();
 				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
-				$roomData['lastUnreadMentionMessage'] = $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect)->getMessage() : '';
+
+				$lastMentionMessage =  $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect): '';
+				if (!$room->isFederatedConversation() && $lastMentionMessage instanceof IComment) {
+						$roomData['lastUnreadMentionMessage'] = $this->formatLastMessage(
+							$responseFormat,
+							$room,
+							$currentParticipant,
+							$lastMentionMessage,
+						)['message'];
+				}
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
@@ -342,7 +351,17 @@ class RoomFormatter {
 			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
 			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
-			$roomData['lastUnreadMentionMessage'] = $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect)->getMessage() : '';
+
+			$lastMentionMessage =  $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect): '';
+			if (!$room->isFederatedConversation() && $lastMentionMessage instanceof IComment) {
+					$roomData['lastUnreadMentionMessage'] = $this->formatLastMessage(
+						$responseFormat,
+						$room,
+						$currentParticipant,
+						$lastMentionMessage,
+					)['message'];
+			}
+
 		} else {
 			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
