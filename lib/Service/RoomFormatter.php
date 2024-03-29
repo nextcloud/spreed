@@ -322,13 +322,13 @@ class RoomFormatter {
 				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 
 				$lastMentionMessage =  $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect): '';
-				if (!$room->isFederatedConversation() && $lastMentionMessage instanceof IComment) {
-						$roomData['lastUnreadMentionMessage'] = $this->formatLastMessage(
-							$responseFormat,
-							$room,
-							$currentParticipant,
-							$lastMentionMessage,
-						)['message'];
+				if ($lastMentionMessage instanceof IComment) {
+					$roomData['lastUnreadMentionMessage'] = $this->formatDirectMentionMessage(
+						$responseFormat,
+						$room,
+						$currentParticipant,
+						$lastMentionMessage,
+					)['message'];
 				}
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
@@ -353,13 +353,13 @@ class RoomFormatter {
 			$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 
 			$lastMentionMessage =  $lastMentionDirect ? $this->chatManager->getComment($room, (string)$lastMentionDirect): '';
-			if (!$room->isFederatedConversation() && $lastMentionMessage instanceof IComment) {
-					$roomData['lastUnreadMentionMessage'] = $this->formatLastMessage(
-						$responseFormat,
-						$room,
-						$currentParticipant,
-						$lastMentionMessage,
-					)['message'];
+			if ($lastMentionMessage instanceof IComment) {
+				$roomData['lastUnreadMentionMessage'] = $this->formatDirectMentionMessage(
+					$responseFormat,
+					$room,
+					$currentParticipant,
+					$lastMentionMessage,
+				)['message'];
 			}
 
 		} else {
@@ -453,4 +453,40 @@ class RoomFormatter {
 
 		return $message->toArray($responseFormat);
 	}
+
+    public function formatDirectMentionMessage(
+        string $responseFormat,
+        Room $room,
+        Participant $participant,
+        IComment $lastMessage,
+    ) {
+        $message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
+        $this->messageParser->parseMessage($message);
+
+        if (!$message->getVisibility()) {
+            return [];
+        }
+
+        $now = $this->timeFactory->getDateTime();
+        $expireDate = $message->getComment()->getExpireDate();
+        if ((!$expireDate instanceof \DateTime || $expireDate >= $now)
+            && $message->getVisibility()) {
+            $transformedMessage = [];
+            $placeholders = $replacements = [];
+
+            foreach ($message->getMessageParameters() as $placeholder => $parameter) {
+                $placeholders[] = '{' . $placeholder . '}';
+                if ($parameter['type'] === 'user' || $parameter['type'] === 'guest') {
+                    $replacements[] = '@' . $parameter['name'];
+                } else {
+                    $replacements[] = $parameter['name'];
+                }
+            }
+
+            $transformedMessage['message'] = str_replace($placeholders, $replacements, $message->getMessage());
+            return $transformedMessage;
+        }
+
+        return $message->toArray($responseFormat);
+    }
 }
