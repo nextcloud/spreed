@@ -342,9 +342,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
-    "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bem-vindo ao Nextcloud Talk!\nNesta conversa será informado sobre novas funcionalidades disponíveis no Nextcloud Talk.",
-    "Circles" : "Círculos",
-    "Conversation name" : "Nome da conversação",
-    "Rename conversation" : "Renomear conversação"
+    "Circles" : "Círculos"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
