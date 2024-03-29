@@ -256,9 +256,7 @@
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
-    "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Esiet sveicināts Nextcloud Talk!\nŠajā sarunā jūs tiksit informēts par jaunām Nextcloud Talk iespējām.",
     "Path is already shared with this room" : "Ceļš jau ir koplietots ar šo telpu",
-    "Conversation name" : "Sarunas nosaukums",
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }
