@@ -172,6 +172,7 @@ OC.L10N.register(
     "Edit" : "Editar",
     "Delete" : "Eliminar",
     "Log content" : "Contenido de bitácoras",
+    "Talk conversation" : "Conversación de Talk",
     "Password" : "Contraseña",
     "API token" : "Ficha del API",
     "Login" : "Iniciar sesión",
