@@ -45,6 +45,15 @@
 					@click="showFilePicker = true">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
+				<FilePickerVue v-if="showFilePicker"
+					:name="t('spreed', 'Select location for attachments')"
+					:path="attachmentFolder"
+					container=".app-settings-section__wrapper"
+					:buttons="filePickerButtons"
+					:multiselect="false"
+					:mimetype-filter="['httpd/unix-directory']"
+					allow-pick-directory
+					@close="showFilePicker = false" />
 			</div>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
@@ -160,16 +169,6 @@
 				</div>
 			</dl>
 		</NcAppSettingsSection>
-
-		<FilePickerVue v-if="showFilePicker"
-			:name="t('spreed', 'Select location for attachments')"
-			:path="attachmentFolder"
-			:container="container"
-			:buttons="filePickerButtons"
-			:multiselect="false"
-			:mimetype-filter="['httpd/unix-directory']"
-			allow-pick-directory
-			@close="showFilePicker = false" />
 	</NcAppSettingsDialog>
 </template>
 
