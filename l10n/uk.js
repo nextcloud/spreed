@@ -175,7 +175,7 @@ OC.L10N.register(
     "{actor} deleted a message" : "{actor} вилучив(-ла) повідомлення",
     "You deleted a message" : "Ви видалили повідомлення",
     "{actor} deleted a reaction" : "{actor} прибрав(-ла) реакцію",
-    "You deleted a reaction" : "Ви видалили реакцію",
+    "You deleted a reaction" : "Ви прибрали реакцію",
     "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["Ви встановили термін дії повідомлення у %n тижні(-в)","Ви встановили термін дії повідомлення у %n тижні(-в)","Ви встановили термін дії повідомлення у %n тижні(-в)","Ви встановили термін дії повідомлення у %n тижні(-в)"],
     "_You set the message expiration to %n day_::_You set the message expiration to %n days_" : ["Ви встановили термін дії повідомлення у %n дні(-в)","Ви встановили термін дії повідомлення у %n дні(-в)","Ви встановили термін дії повідомлення у %n дні(-в)","Ви встановили термін дії повідомлення у %n дні(-в)"],
     "_You set the message expiration to %n hour_::_You set the message expiration to %n hours_" : ["Ви встановили термін дії повідомлення у %n годин(-у,и)","Ви встановили термін дії повідомлення у %n годин(-у,и)","Ви встановили термін дії повідомлення у %n годин(-у,и)","Ви встановили термін дії повідомлення у %n годин(-у,и)"],
