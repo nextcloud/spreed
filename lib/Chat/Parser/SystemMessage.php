@@ -963,7 +963,7 @@ class SystemMessage implements IEventListener {
 			'type' => 'circle',
 			'id' => $circleId,
 			'name' => $this->circleNames[$circleId],
-			'url' => $this->circleLinks[$circleId],
+			'link' => $this->circleLinks[$circleId],
 		];
 	}
 
