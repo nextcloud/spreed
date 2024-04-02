@@ -78,7 +78,7 @@ namespace OCA\Talk;
  *     'message-id'?: string,
  *     boardname?: string,
  *     stackname?: string,
- *     size?: string,
+ *     size?: int,
  *     path?: string,
  *     mimetype?: string,
  *     'preview-available'?: 'yes'|'no',

@@ -144,7 +144,8 @@ export type components = {
       "message-id"?: string;
       boardname?: string;
       stackname?: string;
-      size?: string;
+      /** Format: int64 */
+      size?: number;
       path?: string;
       mimetype?: string;
       /** @enum {string} */

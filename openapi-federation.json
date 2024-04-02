@@ -448,7 +448,8 @@
                         "type": "string"
                     },
                     "size": {
-                        "type": "string"
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "path": {
                         "type": "string"
