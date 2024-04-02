@@ -808,6 +808,7 @@ OC.L10N.register(
     "Clear filter" : "Rensa filter",
     "No matches found" : "Inga träffar hittades",
     "Groups" : "Grupper",
+    "Teams" : "Teams",
     "No search results" : "Inga sökresultat",
     "Loading" : "Läser in",
     "Talk settings" : "Talk inställningar",
