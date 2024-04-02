@@ -906,6 +906,7 @@ OC.L10N.register(
     "Unread mentions" : "Непрочитані згадки",
     "Open conversations" : "Відкрити розмови",
     "Groups" : "Групи",
+    "Teams" : "Команди",
     "No search results" : "Нічого не знайдено",
     "Loading" : "Завантаження",
     "Talk settings" : "Налаштування Talk",
