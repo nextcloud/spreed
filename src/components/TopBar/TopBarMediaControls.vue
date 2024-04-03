@@ -194,6 +194,7 @@ export default {
 	setup() {
 		return {
 			isInCall: useIsInCall(),
+			callAnalyzer,
 		}
 	},
 
@@ -203,7 +204,6 @@ export default {
 			screenSharingMenuOpen: false,
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
-			callAnalyzer,
 			qualityWarningInGracePeriodTimeout: null,
 			audioEnabledBeforeSpacebarKeydown: undefined,
 			spacebarKeyDown: false,
