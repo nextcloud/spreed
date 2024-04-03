@@ -151,20 +151,20 @@ Feature: federation/chat
     And user "participant1" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id   | name | type | remoteServer | remoteToken |
       | room | room | 2    | LOCAL        | room        |
-    Then user "participant1" is participant of the following rooms (v4)
-      | id   | type | lastMessage |
-      | room | 2    | {actor} invited you |
-      | room | 2    | {federated_user} accepted the invitation |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id   | name | type | remoteServer | remoteToken | lastMessage |
+      | room | room | 2    |              |             | {actor} invited you |
+      | room | room | 2    | LOCAL        | room        | {federated_user} accepted the invitation |
     And user "participant1" sends message "Message 1" to room "room" with 201
-    Then user "participant1" is participant of the following rooms (v4)
-      | id   | type | lastMessage | lastMessageActorType | lastMessageActorId |
-      | room | 2    | Message 1   | users                | participant1       |
-      | room | 2    | Message 1   | federated_users      | participant1@{$BASE_URL} |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id   | name | type | remoteServer | remoteToken | lastMessage | lastMessageActorType | lastMessageActorId |
+      | room | room | 2    |              |             | Message 1   | users                | participant1       |
+      | room | room | 2    | LOCAL        | room        | Message 1   | federated_users      | participant1@{$BASE_URL} |
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "LOCAL::room" with 201
-    Then user "participant1" is participant of the following rooms (v4)
-      | id   | type | lastMessage | lastMessageActorType | lastMessageActorId |
-      | room | 2    | Message 1-1 | federated_users      | participant1@{$REMOTE_URL} |
-      | room | 2    | Message 1-1 | users                | participant1       |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id   | name | type | remoteServer | remoteToken | lastMessage | lastMessageActorType | lastMessageActorId |
+      | room | room | 2    |              |             | Message 1-1 | federated_users      | participant1@{$REMOTE_URL} |
+      | room | room | 2    | LOCAL        | room        | Message 1-1 | users                | participant1       |
 
   Scenario: Read marker checking
     Given the following "spreed" app config is set
