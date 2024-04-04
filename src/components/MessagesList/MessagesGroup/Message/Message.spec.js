@@ -722,7 +722,7 @@ describe('Message.vue', () => {
 			expect(reloadNcButton.exists()).toBe(true)
 
 			const retryEvent = jest.fn()
-			EventBus.$on('retry-message', retryEvent)
+			EventBus.on('retry-message', retryEvent)
 
 			await reloadNcButton.vm.$emit('click')
 

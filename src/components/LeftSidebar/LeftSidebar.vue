@@ -643,9 +643,9 @@ export default {
 		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
-		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
-		EventBus.$once('conversations-received', this.handleConversationsReceived)
-		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
+		EventBus.once('conversations-received', this.handleConversationsReceived)
+		EventBus.on('route-change', this.onRouteChange)
 		// Check filter status in previous sessions and apply if it exists
 		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
 	},
@@ -655,9 +655,9 @@ export default {
 		this.debounceFetchConversations.clear?.()
 		this.debounceHandleScroll.clear?.()
 
-		EventBus.$off('should-refresh-conversations', this.handleShouldRefreshConversations)
-		EventBus.$off('conversations-received', this.handleUnreadMention)
-		EventBus.$off('route-change', this.onRouteChange)
+		EventBus.off('should-refresh-conversations', this.handleShouldRefreshConversations)
+		EventBus.off('conversations-received', this.handleUnreadMention)
+		EventBus.off('route-change', this.onRouteChange)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
@@ -911,7 +911,7 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.$emit('conversations-received', { singleConversation: false })
+				EventBus.emit('conversations-received', { singleConversation: false })
 				this.isFetchingConversations = false
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
@@ -923,7 +923,7 @@ export default {
 			try {
 				await this.$store.dispatch('restoreConversations')
 				this.initialisedConversations = true
-				EventBus.$emit('conversations-received', { singleConversation: false })
+				EventBus.emit('conversations-received', { singleConversation: false })
 			} catch (error) {
 				console.debug('Error while restoring conversations: ', error)
 			}

@@ -189,8 +189,8 @@ export default {
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
 			if (loadState('spreed', 'signaling_mode') !== 'internal') {
-				EventBus.$on('should-refresh-conversations', this.fetchCurrentConversation)
-				EventBus.$on('signaling-participant-list-changed', this.fetchCurrentConversation)
+				EventBus.on('should-refresh-conversations', this.fetchCurrentConversation)
+				EventBus.on('signaling-participant-list-changed', this.fetchCurrentConversation)
 			} else {
 				// The "should-refresh-conversations" event is triggered only when
 				// the external signaling server is used; when the internal

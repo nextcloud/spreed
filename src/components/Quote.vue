@@ -268,7 +268,7 @@ export default {
 			} else {
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 			}
-			EventBus.$emit('focus-chat-input')
+			EventBus.emit('focus-chat-input')
 		},
 
 		handleQuoteClick() {
@@ -278,7 +278,7 @@ export default {
 				this.$router.replace(parentHash)
 			} else {
 				// Already on this message route, just trigger highlight
-				EventBus.$emit('focus-message', this.id)
+				EventBus.emit('focus-message', this.id)
 			}
 		},
 	},

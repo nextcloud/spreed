@@ -272,11 +272,11 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('talk:poll-added', this.showPollToast)
+		EventBus.on('talk:poll-added', this.showPollToast)
 	},
 
 	beforeDestroy() {
-		EventBus.$off('talk:poll-added', this.showPollToast)
+		EventBus.off('talk:poll-added', this.showPollToast)
 	},
 
 	methods: {

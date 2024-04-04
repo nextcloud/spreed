@@ -208,8 +208,8 @@ export default {
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
 			if (loadState('spreed', 'signaling_mode') !== 'internal') {
-				EventBus.$on('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
-				EventBus.$on('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
+				EventBus.on('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
+				EventBus.on('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
 			} else {
 				// The "should-refresh-conversations" event is triggered only when
 				// the external signaling server is used; when the internal
@@ -220,8 +220,8 @@ export default {
 		},
 
 		leaveConversation() {
-			EventBus.$off('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
-			EventBus.$off('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
+			EventBus.off('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
+			EventBus.off('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
 			window.clearInterval(OCA.Talk.fetchCurrentConversationIntervalId)
 
 			this.$store.dispatch('leaveConversation', { token: this.token })

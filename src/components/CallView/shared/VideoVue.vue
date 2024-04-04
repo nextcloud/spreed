@@ -349,7 +349,7 @@ export default {
 		peerData() {
 			let peerData = this.$store.getters.getPeer(this.$store.getters.getToken(), this.peerId, this.model.attributes.userId)
 			if (!peerData.actorId) {
-				EventBus.$emit('refresh-peer-list')
+				EventBus.emit('refresh-peer-list')
 				peerData = {
 					actorType: '',
 					actorId: '',

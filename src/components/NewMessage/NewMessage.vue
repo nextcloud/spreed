@@ -565,10 +565,10 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('focus-chat-input', this.focusInput)
-		EventBus.$on('upload-start', this.handleUploadSideEffects)
-		EventBus.$on('upload-discard', this.handleUploadSideEffects)
-		EventBus.$on('retry-message', this.handleRetryMessage)
+		EventBus.on('focus-chat-input', this.focusInput)
+		EventBus.on('upload-start', this.handleUploadSideEffects)
+		EventBus.on('upload-discard', this.handleUploadSideEffects)
+		EventBus.on('retry-message', this.handleRetryMessage)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -576,10 +576,10 @@ export default {
 	},
 
 	beforeDestroy() {
-		EventBus.$off('focus-chat-input', this.focusInput)
-		EventBus.$off('upload-start', this.handleUploadSideEffects)
-		EventBus.$off('upload-discard', this.handleUploadSideEffects)
-		EventBus.$off('retry-message', this.handleRetryMessage)
+		EventBus.off('focus-chat-input', this.focusInput)
+		EventBus.off('upload-start', this.handleUploadSideEffects)
+		EventBus.off('upload-discard', this.handleUploadSideEffects)
+		EventBus.off('retry-message', this.handleRetryMessage)
 	},
 
 	methods: {
@@ -694,7 +694,7 @@ export default {
 				this.text = ''
 				this.userData = {}
 				// Scrolls the message list to the last added message
-				EventBus.$emit('scroll-chat-to-bottom', { smooth: true, force: true })
+				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 

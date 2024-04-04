@@ -312,9 +312,9 @@ export default {
 		this.debounceUpdateReadMarkerPosition = debounce(this.updateReadMarkerPosition, 1000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
-		EventBus.$on('scroll-chat-to-bottom', this.scrollToBottom)
-		EventBus.$on('focus-message', this.focusMessage)
-		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.on('scroll-chat-to-bottom', this.scrollToBottom)
+		EventBus.on('focus-message', this.focusMessage)
+		EventBus.on('route-change', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -332,9 +332,9 @@ export default {
 		this.debounceHandleScroll.clear?.()
 
 		window.removeEventListener('focus', this.onWindowFocus)
-		EventBus.$off('scroll-chat-to-bottom', this.scrollToBottom)
-		EventBus.$off('focus-message', this.focusMessage)
-		EventBus.$off('route-change', this.onRouteChange)
+		EventBus.off('scroll-chat-to-bottom', this.scrollToBottom)
+		EventBus.off('focus-message', this.focusMessage)
+		EventBus.off('route-change', this.onRouteChange)
 
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
@@ -1144,7 +1144,7 @@ export default {
 					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
 				if (highlightAnimation) {
-					EventBus.$emit('highlight-message', messageId)
+					EventBus.emit('highlight-message', messageId)
 				}
 				this.isFocusingMessage = false
 				await this.handleScroll()

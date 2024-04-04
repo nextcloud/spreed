@@ -68,12 +68,12 @@ window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon
 	integrationsStore.addParticipantSearchAction(participantSearchAction)
 }
 
-EventBus.$on('signaling-join-room', (payload) => {
+EventBus.on('signaling-join-room', (payload) => {
 	const token = payload[0]
 	store.dispatch('updateLastJoinedConversationToken', token)
 })
 
-EventBus.$on('signaling-recording-status-changed', (token, status) => {
+EventBus.on('signaling-recording-status-changed', (token, status) => {
 	store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })
 
 	if (status !== CALL.RECORDING.FAILED) {

@@ -219,16 +219,16 @@ export default {
 	beforeMount() {
 		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
 
-		EventBus.$on('route-change', this.abortSearch)
-		EventBus.$on('signaling-users-changed', this.updateUsers)
+		EventBus.on('route-change', this.abortSearch)
+		EventBus.on('signaling-users-changed', this.updateUsers)
 		subscribe('user_status:status.updated', this.updateUserStatus)
 	},
 
 	beforeDestroy() {
 		this.debounceFetchSearchResults.clear?.()
 
-		EventBus.$off('route-change', this.abortSearch)
-		EventBus.$off('signaling-users-changed', this.updateUsers)
+		EventBus.off('route-change', this.abortSearch)
+		EventBus.off('signaling-users-changed', this.updateUsers)
 		unsubscribe('user_status:status.updated', this.updateUserStatus)
 
 		this.cancelSearchPossibleConversations()

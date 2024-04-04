@@ -285,7 +285,7 @@ const actions = {
 		if (state.currentUploadId === uploadId) {
 			commit('setCurrentUploadId', undefined)
 		}
-		EventBus.$emit('upload-discard')
+		EventBus.emit('upload-discard')
 
 		commit('discardUpload', { uploadId })
 	},
@@ -309,7 +309,7 @@ const actions = {
 			commit('setCurrentUploadId', undefined)
 		}
 
-		EventBus.$emit('upload-start')
+		EventBus.emit('upload-start')
 
 		// Tag previously indexed files and add temporary messages to the MessagesList
 		// If caption is provided, attach to the last temporary message
@@ -323,7 +323,7 @@ const actions = {
 			// Add temporary messages (files) to the messages list
 			dispatch('addTemporaryMessage', { token, message })
 			// Scroll the message list
-			EventBus.$emit('scroll-chat-to-bottom', { smooth: true, force: true })
+			EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 		}
 
 		await dispatch('prepareUploadPaths', { token, uploadId })
@@ -332,7 +332,7 @@ const actions = {
 
 		await dispatch('shareFiles', { token, uploadId, lastIndex, caption, options })
 
-		EventBus.$emit('upload-finished')
+		EventBus.emit('upload-finished')
 	},
 
 	/**

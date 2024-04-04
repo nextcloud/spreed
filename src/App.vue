@@ -265,7 +265,7 @@ export default {
 	beforeDestroy() {
 		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
-			EventBus.$off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
+			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 
@@ -274,10 +274,10 @@ export default {
 
 	beforeMount() {
 		if (!getCurrentUser()) {
-			EventBus.$once('joined-conversation', () => {
+			EventBus.once('joined-conversation', () => {
 				this.fixmeDelayedSetupOfGuestUsers()
 			})
-			EventBus.$on('should-refresh-conversations', this.debounceRefreshCurrentConversation)
+			EventBus.on('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
 
 		if (this.$route.name === 'conversation') {
@@ -304,7 +304,7 @@ export default {
 			}
 		})
 
-		EventBus.$on('switch-to-conversation', (params) => {
+		EventBus.on('switch-to-conversation', (params) => {
 			if (this.isInCall) {
 				this.$store.dispatch('setForceCallView', true)
 
@@ -315,7 +315,7 @@ export default {
 				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + this.token)
 				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
 
-				EventBus.$once('joined-conversation', async ({ token }) => {
+				EventBus.once('joined-conversation', async ({ token }) => {
 					if (params.token !== token) {
 						return
 					}
@@ -376,7 +376,7 @@ export default {
 			this.$router.push({ name: 'conversation', params: { token: params.token, skipLeaveWarning: true } })
 		})
 
-		EventBus.$on('conversations-received', (params) => {
+		EventBus.on('conversations-received', (params) => {
 			if (this.$route.name === 'conversation'
 				&& !this.$store.getters.conversation(this.token)) {
 				if (!params.singleConversation) {
@@ -395,7 +395,7 @@ export default {
 		 * component each time a new batch of conversations is received and processed in
 		 * the store.
 		 */
-		EventBus.$once('conversations-received', () => {
+		EventBus.once('conversations-received', () => {
 			if (this.$route.name === 'conversation') {
 				// Adjust the page title once the conversation list is loaded
 				this.setPageTitle(this.getConversationName(this.token), false)
@@ -427,7 +427,7 @@ export default {
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
 			 */
-			EventBus.$emit('route-change', { from, to })
+			EventBus.emit('route-change', { from, to })
 
 			next()
 		}
@@ -717,7 +717,7 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.$emit('conversations-received', {
+				EventBus.emit('conversations-received', {
 					singleConversation: true,
 				})
 			} catch (exception) {

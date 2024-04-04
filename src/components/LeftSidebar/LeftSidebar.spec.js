@@ -129,7 +129,7 @@ describe('LeftSidebar.vue', () => {
 
 		test('fetches and renders conversation list initially', async () => {
 			const conversationsReceivedEvent = jest.fn()
-			EventBus.$once('conversations-received', conversationsReceivedEvent)
+			EventBus.once('conversations-received', conversationsReceivedEvent)
 			fetchConversationsAction.mockResolvedValueOnce()
 
 			const wrapper = mountComponent()
@@ -194,7 +194,7 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
-			EventBus.$emit('should-refresh-conversations', {})
+			EventBus.emit('should-refresh-conversations', {})
 
 			// note: debounce was short-circuited so no delay needed
 			expect(fetchConversationsAction).toHaveBeenCalled()
@@ -683,7 +683,7 @@ describe('LeftSidebar.vue', () => {
 				await resultsListItems.at(0).findAll('a').trigger('click')
 				// FIXME Real router and store should work at this place to execute following:
 				//  click => route-change => participantsStore.joinConversation() => joined-conversation
-				EventBus.$emit('joined-conversation', { token: 'new-conversation' })
+				EventBus.emit('joined-conversation', { token: 'new-conversation' })
 				await flushPromises()
 
 				expect(searchBoxEl.exists()).toBeTruthy()

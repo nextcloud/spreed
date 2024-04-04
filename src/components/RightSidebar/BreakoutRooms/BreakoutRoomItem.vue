@@ -229,7 +229,7 @@ export default {
 
 		async joinRoom() {
 			if (this.canModerate) {
-				EventBus.$emit('switch-to-conversation', {
+				EventBus.emit('switch-to-conversation', {
 					token: this.roomToken,
 				})
 			} else {
@@ -240,7 +240,7 @@ export default {
 							target: this.roomToken,
 						})
 					}
-					EventBus.$emit('switch-to-conversation', {
+					EventBus.emit('switch-to-conversation', {
 						token: this.roomToken,
 					})
 				} catch (error) {

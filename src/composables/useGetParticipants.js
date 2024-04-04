@@ -50,12 +50,12 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 *
 	 */
 	function initialiseGetParticipants() {
-		EventBus.$on('joined-conversation', onJoinedConversation)
+		EventBus.on('joined-conversation', onJoinedConversation)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
 		// periodically gets a hash of all online sessions?
-		EventBus.$on('signaling-participant-list-changed', debounceUpdateParticipants)
+		EventBus.on('signaling-participant-list-changed', debounceUpdateParticipants)
 		subscribe('guest-promoted', onJoinedConversation)
 	}
 
@@ -64,8 +64,8 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	 *
 	 */
 	function stopGetParticipants() {
-		EventBus.$off('joined-conversation', onJoinedConversation)
-		EventBus.$off('signaling-participant-list-changed', debounceUpdateParticipants)
+		EventBus.off('joined-conversation', onJoinedConversation)
+		EventBus.off('signaling-participant-list-changed', debounceUpdateParticipants)
 		unsubscribe('guest-promoted', onJoinedConversation)
 	}
 

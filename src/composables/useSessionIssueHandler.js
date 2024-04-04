@@ -37,13 +37,13 @@ export function useSessionIssueHandler() {
 	const isLeavingAfterSessionIssue = ref(false)
 
 	onBeforeMount(() => {
-		EventBus.$on('duplicate-session-detected', duplicateSessionTriggered)
-		EventBus.$on('deleted-session-detected', deletedSessionTriggered)
+		EventBus.on('duplicate-session-detected', duplicateSessionTriggered)
+		EventBus.on('deleted-session-detected', deletedSessionTriggered)
 	})
 
 	onBeforeUnmount(() => {
-		EventBus.$off('duplicate-session-detected', duplicateSessionTriggered)
-		EventBus.$off('deleted-session-detected', deletedSessionTriggered)
+		EventBus.off('duplicate-session-detected', duplicateSessionTriggered)
+		EventBus.off('deleted-session-detected', deletedSessionTriggered)
 	})
 
 	const redirectTo = (url) => {
