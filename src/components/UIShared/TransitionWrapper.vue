@@ -22,14 +22,14 @@
 <template>
 	<TransitionGroup v-if="group"
 		class="transition-group"
-		v-bind="$attrs"
 		:name="name"
+		v-bind="$attrs"
 		v-on="$listeners">
 		<slot />
 	</TransitionGroup>
 	<Transition v-else
-		v-bind="$attrs"
 		:name="name"
+		v-bind="$attrs"
 		v-on="$listeners">
 		<slot />
 	</Transition>

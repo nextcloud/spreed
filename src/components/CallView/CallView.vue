@@ -98,7 +98,6 @@
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
-					v-bind="$attrs"
 					:is-stripe="!isGrid"
 					:is-recording="isRecording"
 					:token="token"
@@ -108,6 +107,7 @@
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
 					:shared-datas="sharedDatas"
+					v-bind="$attrs"
 					@select-video="handleSelectVideo"
 					@click-local-video="handleClickLocalVideo" />
 

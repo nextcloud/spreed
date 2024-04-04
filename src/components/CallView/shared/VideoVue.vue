@@ -80,9 +80,9 @@
 			{{ connectionMessage }}
 		</div>
 		<slot v-if="!hideBottomBar" name="bottom-bar">
-			<VideoBottomBar v-bind="$props"
-				:has-shadow="hasVideo"
-				:participant-name="participantName" />
+			<VideoBottomBar :has-shadow="hasVideo"
+				:participant-name="participantName"
+				v-bind="$props" />
 		</slot>
 	</div>
 </template>
