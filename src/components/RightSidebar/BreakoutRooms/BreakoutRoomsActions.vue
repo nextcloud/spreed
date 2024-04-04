@@ -262,13 +262,13 @@ export default {
 		},
 
 		async switchToParentRoom() {
-			EventBus.$emit('switch-to-conversation', {
+			EventBus.emit('switch-to-conversation', {
 				token: this.mainToken,
 			})
 		},
 
 		async switchToBreakoutRoom() {
-			EventBus.$emit('switch-to-conversation', {
+			EventBus.emit('switch-to-conversation', {
 				token: this.mainToken,
 			})
 		},

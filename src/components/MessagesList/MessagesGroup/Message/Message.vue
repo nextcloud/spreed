@@ -469,11 +469,11 @@ export default {
 	},
 
 	mounted() {
-		EventBus.$on('highlight-message', this.highlightMessage)
+		EventBus.on('highlight-message', this.highlightMessage)
 	},
 
 	beforeDestroy() {
-		EventBus.$off('highlight-message', this.highlightMessage)
+		EventBus.off('highlight-message', this.highlightMessage)
 	},
 
 	methods: {
@@ -506,7 +506,7 @@ export default {
 				token: this.token,
 				id: this.id,
 			})
-			EventBus.$emit('focus-chat-input')
+			EventBus.emit('focus-chat-input')
 		},
 
 		handleEdit() {

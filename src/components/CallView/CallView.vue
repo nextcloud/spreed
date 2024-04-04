@@ -440,7 +440,7 @@ export default {
 
 	mounted() {
 		this.debounceFetchPeers = debounce(this.fetchPeers, 1500)
-		EventBus.$on('refresh-peer-list', this.debounceFetchPeers)
+		EventBus.on('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
@@ -450,7 +450,7 @@ export default {
 
 	beforeDestroy() {
 		this.debounceFetchPeers.clear?.()
-		EventBus.$off('refresh-peer-list', this.debounceFetchPeers)
+		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 

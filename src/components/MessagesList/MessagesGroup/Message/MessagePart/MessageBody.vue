@@ -365,7 +365,7 @@ export default {
 
 	watch: {
 		showJoinCallButton() {
-			EventBus.$emit('scroll-chat-to-bottom', { smooth: true })
+			EventBus.emit('scroll-chat-to-bottom', { smooth: true })
 		},
 	},
 
@@ -415,8 +415,8 @@ export default {
 						caption: this.renderedMessage !== this.message ? this.message : undefined,
 					})
 				} else {
-					EventBus.$emit('retry-message', this.id)
-					EventBus.$emit('focus-chat-input')
+					EventBus.emit('retry-message', this.id)
+					EventBus.emit('focus-chat-input')
 				}
 			}
 		},

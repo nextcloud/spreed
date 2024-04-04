@@ -26,9 +26,10 @@
 			class="screen"
 			:class="screenClass" />
 		<VideoBottomBar v-if="isBig"
-			v-bind="$props"
-			:is-big="true"
-			:is-screen="true"
+			:token="token"
+			:shared-data="sharedData"
+			is-big
+			is-screen
 			:model="model"
 			:participant-name="remoteParticipantName" />
 	</div>

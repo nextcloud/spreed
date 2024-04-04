@@ -429,7 +429,7 @@ export default {
 		},
 
 		async switchToParentRoom() {
-			EventBus.$emit('switch-to-conversation', {
+			EventBus.emit('switch-to-conversation', {
 				token: this.breakoutRoomsStore.getParentRoomToken(this.token),
 			})
 		},

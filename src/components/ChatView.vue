@@ -224,7 +224,7 @@ export default {
 		},
 
 		smoothScrollToBottom() {
-			EventBus.$emit('scroll-chat-to-bottom', { smooth: true, force: true })
+			EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 		},
 	},
 

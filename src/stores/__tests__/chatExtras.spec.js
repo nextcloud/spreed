@@ -228,7 +228,7 @@ describe('chatExtrasStore', () => {
 				message: 'Hello, world!',
 				messageParameters: {}
 			}
-			const emitSpy = jest.spyOn(EventBus, '$emit')
+			const emitSpy = jest.spyOn(EventBus, 'emit')
 
 			// Act
 			chatExtrasStore.initiateEditingMessage(payload)

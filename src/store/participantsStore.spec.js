@@ -574,7 +574,7 @@ describe('participantsStore', () => {
 			])
 
 			// Finished connecting to the call
-			EventBus.$emit('signaling-users-in-room')
+			EventBus.emit('signaling-users-in-room')
 
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
@@ -624,7 +624,7 @@ describe('participantsStore', () => {
 
 		beforeEach(() => {
 			joinedConversationEventMock = jest.fn()
-			EventBus.$once('joined-conversation', joinedConversationEventMock)
+			EventBus.once('joined-conversation', joinedConversationEventMock)
 
 			getTokenMock = jest.fn().mockReturnValue(TOKEN)
 			getParticipantIdentifierMock = jest.fn().mockReturnValue({

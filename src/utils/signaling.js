@@ -142,7 +142,7 @@ Signaling.Base.prototype._trigger = function(ev, args) {
 		.replace(/([a-z])([A-Z])/g, '$1-$2')
 		.replace(/[\s_]+/g, '-')
 		.toLowerCase()
-	EventBus.$emit('signaling-' + kebabCase(ev), args)
+	EventBus.emit('signaling-' + kebabCase(ev), args)
 }
 
 Signaling.Base.prototype.setSettings = function(settings) {
@@ -563,11 +563,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				console.error('Session was killed but the conversation still exists')
 				this._trigger('pullMessagesStoppedOnFail')
 
-				EventBus.$emit('duplicate-session-detected')
+				EventBus.emit('duplicate-session-detected')
 			} else if (error?.response?.status === 404 || error?.response?.status === 403) {
 				// Conversation was deleted or the user was removed
 				console.error('Conversation was not found anymore')
-				EventBus.$emit('deleted-session-detected')
+				EventBus.emit('deleted-session-detected')
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
 					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
@@ -796,7 +796,7 @@ Signaling.Standalone.prototype.connect = function() {
 				this.nextcloudSessionId = null
 			} else {
 				// TODO(fancycode): Only fetch properties of room that was modified.
-				EventBus.$emit('should-refresh-conversations')
+				EventBus.emit('should-refresh-conversations')
 			}
 			break
 		case 'event':
@@ -1409,7 +1409,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 		}
 		break
 	case 'switchto':
-		EventBus.$emit('switch-to-conversation', {
+		EventBus.emit('switch-to-conversation', {
 			token: data.event.switchto.roomid,
 		})
 		break
@@ -1426,10 +1426,10 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(token, data) {
 	switch (data.type) {
 	case 'chat':
 		// FIXME this is not listened to
-		EventBus.$emit('should-refresh-chat-messages')
+		EventBus.emit('should-refresh-chat-messages')
 		break
 	case 'recording':
-		EventBus.$emit('signaling-recording-status-changed', token, data.recording.status)
+		EventBus.emit('signaling-recording-status-changed', token, data.recording.status)
 		break
 	default:
 		console.error('Unknown room message event', data)
@@ -1440,7 +1440,7 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 	switch (data.event.type) {
 	case 'delete':
 		console.debug('Room list event', data)
-		EventBus.$emit('should-refresh-conversations', { all: true })
+		EventBus.emit('should-refresh-conversations', { all: true })
 		break
 	case 'update':
 		if (data.event.update.properties['participant-list']) {
@@ -1476,7 +1476,7 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				normalizedProperties[normalizedKey] = properties[key]
 			})
 
-			EventBus.$emit('should-refresh-conversations', {
+			EventBus.emit('should-refresh-conversations', {
 				token: data.event.update.roomid,
 				properties: normalizedProperties,
 			})
@@ -1490,13 +1490,13 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				return
 			}
 			console.error('User or session was removed from the conversation, redirecting')
-			EventBus.$emit('deleted-session-detected')
+			EventBus.emit('deleted-session-detected')
 			break
 		}
 		// eslint-disable-next-line no-fallthrough
 	default:
 		console.debug('Room list event', data)
-		EventBus.$emit('should-refresh-conversations')
+		EventBus.emit('should-refresh-conversations')
 		break
 	}
 }

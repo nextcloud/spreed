@@ -226,8 +226,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 					parameters: messageParameters
 				})
 			}
-			EventBus.$emit('editing-message')
-			EventBus.$emit('focus-chat-input')
+			EventBus.emit('editing-message')
+			EventBus.emit('focus-chat-input')
 		},
 
 		/**

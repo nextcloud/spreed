@@ -39,12 +39,12 @@ export function useIsInCall() {
 	}
 
 	onBeforeMount(() => {
-		EventBus.$on('joined-conversation', readSessionStorageJoinedConversation)
+		EventBus.on('joined-conversation', readSessionStorageJoinedConversation)
 		readSessionStorageJoinedConversation()
 	})
 
 	onBeforeUnmount(() => {
-		EventBus.$off('joined-conversation', readSessionStorageJoinedConversation)
+		EventBus.off('joined-conversation', readSessionStorageJoinedConversation)
 	})
 
 	return computed(() => {
