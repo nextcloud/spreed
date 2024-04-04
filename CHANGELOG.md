@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-rc.2 – 2024-04-04
+### Added
+- feat(desktop): Prepare to support screensharing in the desktop client
+  [#12003](https://github.com/nextcloud/spreed/issues/12003)
+
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(federation): Fix posting federated messages with oracle database
+  [#11999](https://github.com/nextcloud/spreed/issues/11999)
+
 ## 18.0.6 – 2024-04-04
 ### Changed
 - Update translations
