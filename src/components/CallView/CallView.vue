@@ -222,7 +222,7 @@ export default {
 		},
 
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
+			return callParticipantCollection.callParticipantModels.value.filter(callParticipantModel => !callParticipantModel.attributes.internal)
 		},
 
 		callParticipantModelsWithScreen() {

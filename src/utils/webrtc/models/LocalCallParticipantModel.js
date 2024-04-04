@@ -19,6 +19,8 @@
  *
  */
 
+import { reactive } from 'vue'
+
 import { ConnectionState } from './CallParticipantModel.js'
 import store from '../../../store/index.js'
 import EmitterMixin from '../../EmitterMixin.js'
@@ -30,14 +32,14 @@ export default function LocalCallParticipantModel() {
 
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		peerId: null,
 		peer: null,
 		screenPeer: null,
 		guestName: null,
 		peerNeeded: false,
 		connectionState: null,
-	}
+	})
 
 	this._handleForcedMuteBound = this._handleForcedMute.bind(this)
 	this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this)

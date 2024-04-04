@@ -19,6 +19,8 @@
  *
  */
 
+import { reactive } from 'vue'
+
 import { ParticipantAnalyzer } from './ParticipantAnalyzer.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
@@ -51,11 +53,11 @@ import EmitterMixin from '../../EmitterMixin.js'
 export default function CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection) {
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		senderConnectionQualityAudio: null,
 		senderConnectionQualityVideo: null,
 		senderConnectionQualityScreen: null,
-	}
+	})
 
 	this._localMediaModel = localMediaModel
 	this._localCallParticipantModel = localCallParticipantModel
