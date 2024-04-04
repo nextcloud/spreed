@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcPopover class="poll-voters-details" trigger="hover">
+	<NcPopover class="poll-voters-details" trigger="hover" :container="container">
 		<template #trigger>
 			<NcButton type="tertiary-no-background"
 				:aria-label="t('spreed','Voted participants')"
@@ -76,6 +76,11 @@ export default {
 	props: {
 		details: {
 			type: Array,
+			required: true,
+		},
+
+		container: {
+			type: String,
 			required: true,
 		},
 	},

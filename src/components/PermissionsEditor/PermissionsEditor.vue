@@ -110,6 +110,11 @@ export default {
 			default: '',
 		},
 
+		nestedContainer: {
+			type: String,
+			default: null,
+		},
+
 		/**
 		 * The conversation's name. Don't provide this when modifying
 		 * participants' permissions.
@@ -148,7 +153,7 @@ export default {
 
 	computed: {
 		container() {
-			return this.$store.getters.getMainContainerSelector()
+			return this.nestedContainer ?? this.$store.getters.getMainContainerSelector()
 		},
 
 		modalTitle() {
@@ -262,4 +267,8 @@ export default {
 	margin: 0 auto;
 }
 
+// TODO remove after https://github.com/nextcloud-libraries/nextcloud-vue/issues/5228
+:deep(.modal-wrapper--small .modal-container) {
+	width: 400px !important;
+}
 </style>
