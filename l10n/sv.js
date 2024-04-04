@@ -726,6 +726,7 @@ OC.L10N.register(
     "{option} only" : "endast {option}",
     "Test this server" : "Testa denna server",
     "TURN servers" : "TURN-servrar",
+    "Failed" : "Misslyckades",
     "OK" : "OK",
     "Checking …" : "Kontrollerar...",
     "Create rooms" : "Skapa rum",
