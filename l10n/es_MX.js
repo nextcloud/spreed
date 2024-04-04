@@ -140,6 +140,7 @@ OC.L10N.register(
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
     "TURN server protocols" : "Protocolos del servidor TURN",
+    "Failed" : "Falló",
     "OK" : "OK",
     "Checking …" : "Verificando ...",
     "Back" : "Atrás",
