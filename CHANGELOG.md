@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.7 – 2024-04-04
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(conversation): skip unread marker increasing from notification
+  [#11735](https://github.com/nextcloud/spreed/issues/11735)
+- fix(modal): mount nested modals inside global modals
+  [#11891](https://github.com/nextcloud/spreed/issues/11891)
+
 ## 17.1.6 – 2024-02-29
 ### Changed
 - Update translations
