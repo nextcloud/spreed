@@ -303,12 +303,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$rooms = $this->getDataFromResponse($this->response);
 
 		if ($shouldFilter === '') {
-			$rooms = array_filter($rooms, function ($room) {
+			$rooms = array_filter($rooms, static function (array $room) {
 				// Filter out "Talk updates" and "Note to self" conversations
 				return $room['type'] !== 4 && $room['type'] !== 6;
 			});
 		} elseif ($shouldFilter === 'note-to-self ') {
-			$rooms = array_filter($rooms, function ($room) {
+			$rooms = array_filter($rooms, static function (array $room) {
 				// Filter out "Talk updates" conversations
 				return $room['type'] !== 4;
 			});
@@ -343,7 +343,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$rooms = $this->getDataFromResponse($this->response);
 
-		$rooms = array_filter($rooms, function ($room) {
+		$rooms = array_filter($rooms, static function (array $room) {
 			// Filter out "Talk updates" and "Note to self" conversations
 			return $room['type'] !== 4 && $room['type'] !== 6;
 		});
@@ -360,7 +360,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param array $rooms
 	 * @param TableNode $formData
 	 */
-	private function assertRooms($rooms, TableNode $formData, bool $shouldOrder = false) {
+	private function assertRooms(array $rooms, TableNode $formData, bool $shouldOrder = false) {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 
 		$expected = $formData->getHash();
@@ -388,6 +388,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					self::$identifierToId[$roomB['name']] = $idB;
 				}
 
+				if ($idA === $idB) {
+					if (isset($roomA['remoteServer'], $roomB['remoteServer'])) {
+						return $roomA['remoteServer'] < $roomB['remoteServer'] ? -1 : 1;
+					}
+					if (isset($roomA['remoteServer'])) {
+						return 1;
+					}
+					if (isset($roomB['remoteServer'])) {
+						return -1;
+					}
+				}
+
 				return $idA < $idB ? -1 : 1;
 			};
 
@@ -395,7 +407,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			usort($expected, $sorter);
 		}
 
-		Assert::assertEquals($expected, array_map(function ($room, $expectedRoom) {
+		Assert::assertEquals($expected, array_map(function (array $room, array $expectedRoom): array {
 			if (!isset(self::$identifierToToken[$room['name']])) {
 				self::$identifierToToken[$room['name']] = $room['token'];
 			}
@@ -411,7 +423,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['name'] = $room['name'];
 
 				// Breakout room regex
-				if (strpos($expectedRoom['name'], '/') === 0 && preg_match($expectedRoom['name'], $room['name'])) {
+				if (str_starts_with($expectedRoom['name'], '/') && preg_match($expectedRoom['name'], $room['name'])) {
 					$data['name'] = $expectedRoom['name'];
 				}
 			}
@@ -422,10 +434,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['type'] = (string) $room['type'];
 			}
 			if (isset($expectedRoom['remoteServer'])) {
-				$data['remoteServer'] = self::translateRemoteServer($room['remoteServer']);
+				$data['remoteServer'] = isset($room['remoteServer']) ? self::translateRemoteServer($room['remoteServer']) : '';
 			}
 			if (isset($expectedRoom['remoteToken'])) {
-				$data['remoteToken'] = self::$tokenToIdentifier[$room['remoteToken']] ?? 'unknown-token';
+				if (isset($room['remoteToken'])) {
+					$data['remoteToken'] = self::$tokenToIdentifier[$room['remoteToken']] ?? 'unknown-token';
+				} else {
+					$data['remoteToken'] = '';
+				}
 			}
 			if (isset($expectedRoom['hasPassword'])) {
 				$data['hasPassword'] = (string) $room['hasPassword'];
@@ -494,7 +510,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 
 			return $data;
-		}, $rooms, $formData->getHash()));
+		}, $rooms, $expected));
 	}
 
 	/**
