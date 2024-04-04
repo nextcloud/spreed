@@ -458,16 +458,12 @@ export default {
 		},
 
 		toggleScreenSharingMenu() {
-			if (IS_DESKTOP) {
-				alert('Unfortunately, Screen sharing is not supported by Nextcloud Talk Preview')
-				return
-			}
-
 			if (!this.isScreensharingAllowed) {
 				return
 			}
 
-			if (!this.model.getWebRtc().capabilities.supportScreenSharing) {
+			// webrtcsupport considers screen share supported only via HTTPS, even if it is actually supported in the browser/desktop
+			if (!this.model.getWebRtc().capabilities.supportScreenSharing && !IS_DESKTOP) {
 				if (window.location.protocol === 'https:') {
 					showMessage(t('spreed', 'Screen sharing is not supported by your browser.'))
 				} else {
