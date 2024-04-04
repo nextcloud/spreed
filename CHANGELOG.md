@@ -1,6 +1,43 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-rc.2 – 2024-04-04
+### Added
+- feat(desktop): Prepare to support screensharing in the desktop client
+  [#12003](https://github.com/nextcloud/spreed/issues/12003)
+
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(federation): Fix posting federated messages with oracle database
+  [#11999](https://github.com/nextcloud/spreed/issues/11999)
+
+## 18.0.6 – 2024-04-04
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(FilePicker): Provide correct container for FilePicker
+  [#11940](https://github.com/nextcloud/spreed/issues/11940)
+- fix(flow): Fix flow notifications in note-to-self and on own actions
+  [#11919](https://github.com/nextcloud/spreed/issues/11919)
+- fix(call): Keep the talk time information when changing active tab
+  [#11797](https://github.com/nextcloud/spreed/issues/11797)
+
+## 17.1.7 – 2024-04-04
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(conversation): skip unread marker increasing from notification
+  [#11735](https://github.com/nextcloud/spreed/issues/11735)
+- fix(modal): mount nested modals inside global modals
+  [#11891](https://github.com/nextcloud/spreed/issues/11891)
+
 ## 19.0.0-rc.1 – 2024-03-28
 ### Added
 - Add a header to the room list indicating pending invites
