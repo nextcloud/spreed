@@ -19,6 +19,8 @@
  *
  */
 
+import { ref } from 'vue'
+
 import CallParticipantModel from './CallParticipantModel.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
@@ -29,7 +31,8 @@ export default function CallParticipantCollection() {
 
 	this._superEmitterMixin()
 
-	this.callParticipantModels = []
+	// FIXME: use reactive instead of ref after migration to vue 3
+	this.callParticipantModels = ref([])
 
 }
 
@@ -37,7 +40,7 @@ CallParticipantCollection.prototype = {
 
 	add(options) {
 		const callParticipantModel = new CallParticipantModel(options)
-		this.callParticipantModels.push(callParticipantModel)
+		this.callParticipantModels.value.push(callParticipantModel)
 
 		this._trigger('add', [callParticipantModel])
 
@@ -45,19 +48,19 @@ CallParticipantCollection.prototype = {
 	},
 
 	get(peerId) {
-		return this.callParticipantModels.find(function(callParticipantModel) {
+		return this.callParticipantModels.value.find(function(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === peerId
 		})
 	},
 
 	remove(peerId) {
-		const index = this.callParticipantModels.findIndex(function(callParticipantModel) {
+		const index = this.callParticipantModels.value.findIndex(function(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === peerId
 		})
 		if (index !== -1) {
-			const callParticipantModel = this.callParticipantModels[index]
+			const callParticipantModel = this.callParticipantModels.value[index]
 
-			this.callParticipantModels.splice(index, 1)
+			this.callParticipantModels.value.splice(index, 1)
 
 			this._trigger('remove', [callParticipantModel])
 

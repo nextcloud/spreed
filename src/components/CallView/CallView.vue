@@ -193,14 +193,15 @@ export default {
 	setup() {
 		return {
 			supportedReactions,
+			localMediaModel,
+			localCallParticipantModel,
+			callParticipantCollection,
 		}
 	},
 
 	data() {
 		return {
 			screens: [],
-			localMediaModel,
-			localCallParticipantModel,
 			sharedDatas: {},
 			raisedHandUnwatchers: {},
 			speakingUnwatchers: {},
@@ -209,7 +210,6 @@ export default {
 			localSharedData: {
 				screenVisible: true,
 			},
-			callParticipantCollection,
 			isBackgroundBlurred: true,
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
@@ -222,7 +222,7 @@ export default {
 		},
 
 		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
+			return callParticipantCollection.callParticipantModels.value.filter(callParticipantModel => !callParticipantModel.attributes.internal)
 		},
 
 		callParticipantModelsWithScreen() {
