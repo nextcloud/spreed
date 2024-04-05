@@ -36,10 +36,10 @@
 			'system' : isSystemMessage,
 			'combined-system': isCombinedSystemMessage}"
 			class="message-body">
-			<MessageBody v-bind="{...$props, ...readInfoProps}"
-				:rich-parameters="richParameters"
+			<MessageBody :rich-parameters="richParameters"
 				:is-deleting="isDeleting"
-				:has-call="conversation.hasCall" />
+				:has-call="conversation.hasCall"
+				v-bind="{...$props, ...readInfoProps}" />
 
 			<!-- reactions buttons and popover with details -->
 			<Reactions v-if="Object.keys(reactions).length"
@@ -55,13 +55,13 @@
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
 				class="message-buttons-bar"
-				v-bind="{...$props, ...readInfoProps}"
 				:is-translation-available="isTranslationAvailable"
 				:is-action-menu-open.sync="isActionMenuOpen"
 				:is-emoji-picker-open.sync="isEmojiPickerOpen"
 				:is-reactions-menu-open.sync="isReactionsMenuOpen"
 				:is-forwarder-open.sync="isForwarderOpen"
 				:can-react="canReact"
+				v-bind="{...$props, ...readInfoProps}"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
 				@edit="handleEdit"

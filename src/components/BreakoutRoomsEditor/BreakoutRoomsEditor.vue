@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<NcModal v-bind="$attrs"
-		:container="container"
+	<NcModal :container="container"
 		:class="{'modal-mask__participants-step': isEditingParticipants}"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor"

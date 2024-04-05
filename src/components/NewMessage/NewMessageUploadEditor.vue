@@ -46,8 +46,8 @@
 					<template v-for="file in files">
 						<FilePreview :key="file[1].temporaryMessage.id"
 							:token="token"
+							is-upload-editor
 							v-bind="file[1].temporaryMessage.messageParameters.file"
-							:is-upload-editor="true"
 							@remove-file="handleRemoveFileFromSelection" />
 					</template>
 					<div :key="'addMore'"

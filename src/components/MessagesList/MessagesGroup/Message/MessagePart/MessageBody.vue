@@ -41,9 +41,9 @@
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" />
 			<Poll v-if="showResultsButton"
-				v-bind="messageParameters.poll"
 				:token="token"
-				show-as-button />
+				show-as-button
+				v-bind="messageParameters.poll" />
 		</div>
 
 		<!-- Normal message body content -->

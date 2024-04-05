@@ -173,6 +173,7 @@ import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
+import PromotedView from 'vue-material-design-icons/ViewGallery.vue'
 import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
@@ -185,8 +186,6 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-
-import PromotedView from '../../assets/missingMaterialDesignIcons/PromotedView.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
