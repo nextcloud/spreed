@@ -43,9 +43,9 @@ export type Participant = components['schemas']['Participant']
 export type Mention = RichObject<'server'|'call-type'|'icon-url'>
 export type File = RichObject<'size'|'path'|'link'|'mimetype'|'preview-available'> & {
 	'etag': string,
-	'permissions': number,
-	'width': number,
-	'height': number,
+	'permissions': string,
+	'width': string,
+	'height': string,
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
 export type receiveMessagesParams = ApiOptions<operations['chat-receive-messages']['parameters']['query']>['params']

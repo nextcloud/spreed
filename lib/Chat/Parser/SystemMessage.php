@@ -800,11 +800,11 @@ class SystemMessage implements IEventListener {
 			'type' => 'file',
 			'id' => (string) $fileId,
 			'name' => $name,
-			'size' => $size,
+			'size' => (string) $size,
 			'path' => $path,
 			'link' => $url,
 			'etag' => $node->getEtag(),
-			'permissions' => $node->getPermissions(),
+			'permissions' => (string) $node->getPermissions(),
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
 		];
@@ -814,8 +814,8 @@ class SystemMessage implements IEventListener {
 			try {
 				$sizeMetadata = $this->metadataCache->getMetadataPhotosSizeForFileId($fileId);
 				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
-					$data['width'] = $sizeMetadata['width'];
-					$data['height'] = $sizeMetadata['height'];
+					$data['width'] = (string) $sizeMetadata['width'];
+					$data['height'] = (string) $sizeMetadata['height'];
 				}
 			} catch (FilesMetadataNotFoundException) {
 			}
