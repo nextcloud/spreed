@@ -1418,6 +1418,7 @@ OC.L10N.register(
     "Add users" : "Kullanıcı ekle",
     "Add groups" : "Grup ekle",
     "Add emails" : "E-posta adreslerini ekle",
+    "Add teams" : "Takım ekle",
     "Integrations" : "Bütünleştirmeler",
     "Add federated users" : "Birleştirilmiş kullanıcılar ekle",
     "Searching …" : "Aranıyor …",
