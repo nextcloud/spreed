@@ -101,7 +101,7 @@ return [
 		/** @see \OCA\Talk\Controller\RoomController::verifyDialInPin() */
 		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
 			'pin' => '\d{7,32}',
-		])],
+		]), 'postfix' => 'deprecated'],
 		/** @see \OCA\Talk\Controller\RoomController::verifyDialInPin() */
 		['name' => 'Room#verifyDialInPin', 'url' => '/api/{apiVersion}/room/{token}/verify-dialin', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::verifyDialOutNumber() */
