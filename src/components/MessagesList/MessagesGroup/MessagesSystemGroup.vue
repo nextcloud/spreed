@@ -42,7 +42,7 @@
 					:key="message.id"
 					v-bind="message"
 					:token="token"
-					is-collapsed-system-message
+					:is-collapsed-system-message="messagesCollapsed.messages?.length > 1"
 					:last-collapsed-message-id="messagesCollapsed.lastId"
 					:next-message-id="getNextMessageId(message)"
 					:previous-message-id="getPrevMessageId(message)" />
@@ -119,7 +119,12 @@ export default {
 			immediate: true,
 			handler(value) {
 				this.messagesGroupedBySystemMessage = this.groupMessages(value)
+				this.updateCollapsedState()
 			},
+		},
+
+		lastReadMessageId() {
+			this.updateCollapsedState()
 		},
 	},
 
@@ -198,6 +203,22 @@ export default {
 			return ''
 		},
 
+		updateCollapsedState() {
+			for (const group of this.messagesGroupedBySystemMessage) {
+				const isLastReadInsideGroup = this.lastReadMessageId >= group.id && this.lastReadMessageId < group.lastId
+				if (isLastReadInsideGroup) {
+					// If the last read message is inside the group, we should show the group expanded
+					group.collapsed = false
+				} else if (this.groupIsCollapsed[group.id] !== undefined) {
+					// If the group was collapsed before, we should keep it collapsed
+					group.collapsed = this.groupIsCollapsed[group.id]
+				} else {
+					// If the group is not collapsed, we should collapse it if it contains more than one message
+					group.collapsed = group.messages.length > 1
+				}
+			}
+		},
+
 		groupMessages(messages) {
 			const groups = []
 			let lastMessage = null
@@ -205,34 +226,29 @@ export default {
 			for (const message of messages) {
 				const groupingType = this.messagesShouldBeGrouped(message, lastMessage)
 				if (!groupingType || forceNextGroup) {
-					groups.push({ id: message.id, lastId: message.id, messages: [message], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
+					// Adding a new group
+					groups.push({ id: message.id, lastId: message.id, messages: [message], type: '', collapsed: undefined })
 					forceNextGroup = false
 				} else {
+					// Adding a message to the existing group
+
 					if (groupingType === 'call_reconnected') {
-						groups.push({ id: message.id, lastId: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
+						groups.push({ id: message.id, lastId: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: undefined })
 						groups.at(-1).lastId = groups.at(-1).messages.at(-1).id
 						forceNextGroup = true
 					}
 					groups.at(-1).messages.push(message)
 					groups.at(-1).lastId = message.id
 					groups.at(-1).type = groupingType
-
-					// Check if last read message is hidden inside the collapsed group, and open it, if so.
-					// Otherwise, combined system message will show a marker
-					const isLastReadInsideGroup = this.lastReadMessageId >= groups.at(-1).id && this.lastReadMessageId < groups.at(-1).lastId
-					if (isLastReadInsideGroup) {
-						groups.at(-1).collapsed = false
-					}
 				}
 				lastMessage = message
 			}
-
 			return groups
 		},
 
-		toggleCollapsed(messages) {
-			this.$set(messages, 'collapsed', !messages.collapsed)
-			this.groupIsCollapsed[messages.id] = !this.groupIsCollapsed[messages.id]
+		toggleCollapsed(group) {
+			this.$set(group, 'collapsed', !group.collapsed)
+			this.groupIsCollapsed[group.id] = group.collapsed
 		},
 
 		getNextMessageId(message) {
