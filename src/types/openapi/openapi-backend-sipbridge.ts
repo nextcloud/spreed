@@ -16,7 +16,7 @@ export type paths = {
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/pin/{pin}": {
     /** Verify a dial-in PIN (SIP bridge) */
-    get: operations["room-verify-dial-in-pin"];
+    get: operations["room-verify-dial-in-pin-deprecated"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/verify-dialin": {
     /** Verify a dial-in PIN (SIP bridge) */
@@ -315,6 +315,67 @@ export type operations = {
       };
       /** @description Room not found */
       404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+    };
+  };
+  /** Verify a dial-in PIN (SIP bridge) */
+  "room-verify-dial-in-pin-deprecated": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v4";
+        token: string;
+        /** @description PIN the participant used to dial-in */
+        pin: string;
+      };
+    };
+    responses: {
+      /** @description Participant returned */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: components["schemas"]["Room"];
+            };
+          };
+        };
+      };
+      /** @description SIP request invalid */
+      401: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      /** @description Participant not found */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      /** @description SIP dial-in is not configured */
+      501: {
         content: {
           "application/json": {
             ocs: {
