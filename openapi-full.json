@@ -18314,7 +18314,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/pin/{pin}": {
             "get": {
-                "operationId": "room-verify-dial-in-pin",
+                "operationId": "room-verify-dial-in-pin-deprecated",
                 "summary": "Verify a dial-in PIN (SIP bridge)",
                 "tags": [
                     "room"
