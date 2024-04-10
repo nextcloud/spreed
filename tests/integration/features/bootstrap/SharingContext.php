@@ -983,9 +983,9 @@ class SharingContext implements Context {
 		} elseif ($contentExpected === 'A_TOKEN') {
 			// A token is composed by 15 characters from
 			// ISecureRandom::CHAR_HUMAN_READABLE.
-			\PHPUnit\Framework\Assert::assertRegExp('/^[abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789]{15}$/', (string)$returnedShare[$field], "Field '$field' is not a token");
+			\PHPUnit\Framework\Assert::assertMatchesRegularExpression('/^[abcdefgijkmnopqrstwxyzABCDEFGHJKLMNPQRSTWXYZ23456789]{15}$/', (string)$returnedShare[$field], "Field '$field' is not a token");
 		} elseif (strpos($contentExpected, 'REGEXP ') === 0) {
-			\PHPUnit\Framework\Assert::assertRegExp(substr($contentExpected, strlen('REGEXP ')), (string)$returnedShare[$field], "Field '$field' does not match");
+			\PHPUnit\Framework\Assert::assertMatchesRegularExpression(substr($contentExpected, strlen('REGEXP ')), (string)$returnedShare[$field], "Field '$field' does not match");
 		} else {
 			\PHPUnit\Framework\Assert::assertEquals($contentExpected, (string)$returnedShare[$field], "Field '$field' does not match");
 		}
