@@ -2322,7 +2322,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following entries for dashboard widgets "([^"]*)"(?: \((v1)\))$/
+	 * @Then /^user "([^"]*)" sees the following entries for dashboard widgets "([^"]*)"(?: \((v1|v2)\))$/
 	 *
 	 * @param string $user
 	 * @param string $widgetId
@@ -2339,12 +2339,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertArrayHasKey($widgetId, $data);
 		$expectedItems = $formData->getColumnsHash();
 
+		if ($apiVersion === 'v1') {
+			$actualItems = $data[$widgetId];
+		} else {
+			$actualItems = $data[$widgetId]['items'];
+		}
+
 		if (empty($expectedItems)) {
-			Assert::assertEmpty($data[$widgetId]);
+			Assert::assertEmpty($actualItems);
 			return;
 		}
 
-		Assert::assertCount(count($expectedItems), $data[$widgetId]);
+		Assert::assertCount(count($expectedItems), $actualItems);
 
 		foreach ($expectedItems as $key => $item) {
 			$token = self::$identifierToToken[$item['link']];
@@ -2352,11 +2358,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
 			$item['iconUrl'] = str_replace('{token}', $token, $item['iconUrl']);
 
-			Assert::assertMatchesRegularExpression('/\?v=\w{8}$/', $data[$widgetId][$key]['iconUrl']);
-			preg_match('/(?<version>\?v=\w{8})$/', $data[$widgetId][$key]['iconUrl'], $matches);
+			Assert::assertMatchesRegularExpression('/\?v=\w{8}$/', $actualItems[$key]['iconUrl']);
+			preg_match('/(?<version>\?v=\w{8})$/', $actualItems[$key]['iconUrl'], $matches);
 			$item['iconUrl'] = str_replace('{version}', $matches['version'], $item['iconUrl']);
 
-			Assert::assertEquals($item, $data[$widgetId][$key], 'Wrong details for item #' . $key);
+			Assert::assertEquals($item, $actualItems[$key], 'Wrong details for item #' . $key);
 		}
 	}
 

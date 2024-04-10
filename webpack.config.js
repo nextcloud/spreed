@@ -29,7 +29,6 @@ module.exports = mergeWithRules({
 		'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 		'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
 		flow: path.join(__dirname, 'src', 'flow.js'),
-		dashboard: path.join(__dirname, 'src', 'dashboard.js'),
 		deck: path.join(__dirname, 'src', 'deck.js'),
 		maps: path.join(__dirname, 'src', 'maps.js'),
 		search: path.join(__dirname, 'src', 'search.js'),
