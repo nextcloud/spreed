@@ -3321,6 +3321,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Given /^OCM provider (does not have|has) the following resource types$/
+	 *
+	 * @param TableNode $formData
+	 */
+	public function checkOCMProviderResourceTypes(string $shouldFind, TableNode $formData): void {
+		$this->sendFrontpageRequest('GET', '/ocm-provider');
+		$data = json_decode($this->response->getBody()->getContents(), true);
+		$expectedTypes = $formData->getHash();
+		$expectedFound = $shouldFind === 'has';
+
+		foreach ($expectedTypes as $expected) {
+			$found = false;
+			foreach ($data['resourceTypes'] as $type) {
+				if ($type['name'] === $expected['name']) {
+					$found = true;
+					Assert::assertEquals(
+						json_decode($expected['shareTypes'], true),
+						$type['shareTypes'],
+					);
+					Assert::assertEquals(
+						json_decode($expected['protocols'], true),
+						$type['protocols'],
+					);
+				}
+			}
+			Assert::assertEquals($expectedFound, $found);
+		}
+	}
+
+	/**
 	 * @Then user :user has the following notifications
 	 *
 	 * @param string $user
