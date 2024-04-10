@@ -17,11 +17,4 @@
 			<directory>../../../spreed/lib</directory>
 		</include>
 	</source>
-	<coverage>
-		<report>
-			<!-- and this is where your report will be written -->
-			<clover outputFile="./clover.xml"/>
-			<html outputDirectory="coverage-html"/>
-		</report>
-	</coverage>
 </phpunit>
