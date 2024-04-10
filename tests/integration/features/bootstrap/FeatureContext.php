@@ -2929,11 +2929,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		foreach ($expected as $key => $row) {
 			if ($row['id'] === 'GUEST_ID') {
-				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
+				Assert::assertMatchesRegularExpression('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
 			}
 			if ($row['mentionId'] === 'GUEST_ID') {
-				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['mentionId']);
+				Assert::assertMatchesRegularExpression('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['mentionId']);
 				$mentions[$key]['mentionId'] = 'GUEST_ID';
 			}
 			if (str_ends_with($row['id'], '@{$BASE_URL}')) {
@@ -2949,7 +2949,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$row['mentionId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['mentionId']);
 			}
 			if (array_key_exists('avatar', $row)) {
-				Assert::assertRegExp('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
+				Assert::assertMatchesRegularExpression('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
 				unset($row['avatar']);
 			}
 			unset($mentions[$key]['avatar']);
