@@ -55,6 +55,19 @@ export type webhooks = Record<string, never>;
 
 export type components = {
   schemas: {
+    BaseMessage: {
+      actorDisplayName: string;
+      actorId: string;
+      actorType: string;
+      /** Format: int64 */
+      expirationTimestamp: number;
+      message: string;
+      messageParameters: {
+        [key: string]: components["schemas"]["RichObjectParameter"];
+      };
+      messageType: string;
+      systemMessage: string;
+    };
     Capabilities: {
       features: string[];
       config: {
@@ -105,28 +118,17 @@ export type components = {
       };
       version: string;
     };
-    ChatMessage: {
-      actorDisplayName: string;
-      actorId: string;
-      actorType: string;
+    ChatMessage: components["schemas"]["BaseMessage"] & {
       /** @enum {boolean} */
       deleted?: true;
-      /** Format: int64 */
-      expirationTimestamp: number;
       /** Format: int64 */
       id: number;
       isReplyable: boolean;
       markdown: boolean;
-      message: string;
-      messageParameters: {
-        [key: string]: components["schemas"]["RichObjectParameter"];
-      };
-      messageType: string;
       reactions: {
         [key: string]: number;
       };
       referenceId: string;
-      systemMessage: string;
       /** Format: int64 */
       timestamp: number;
       token: string;
@@ -137,6 +139,7 @@ export type components = {
       lastEditTimestamp?: number;
       silent?: boolean;
     };
+    ChatProxyMessage: components["schemas"]["BaseMessage"];
     FederationInvite: {
       /** Format: int64 */
       id: number;
@@ -277,20 +280,7 @@ export type components = {
       /** Format: int64 */
       unreadMessages: number;
     };
-    RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["RoomProxyMessage"];
-    RoomProxyMessage: {
-      actorDisplayName: string;
-      actorId: string;
-      actorType: string;
-      /** Format: int64 */
-      expirationTimestamp: number;
-      message: string;
-      messageParameters: {
-        [key: string]: components["schemas"]["RichObjectParameter"];
-      };
-      messageType: string;
-      systemMessage: string;
-    };
+    RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
   };
   responses: never;
   parameters: never;
