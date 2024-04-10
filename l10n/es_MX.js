@@ -401,6 +401,7 @@ OC.L10N.register(
     "Add to favorites" : "Agregar a favoritos",
     "Unread mentions" : "Menciones sin leer",
     "Groups" : "Grupos",
+    "Teams" : "Equipos",
     "Loading" : "Cargando",
     "Devices" : "Dispositivos",
     "No audio" : "Sin audio",
