@@ -351,6 +351,7 @@ OC.L10N.register(
     "Choose" : "Escoyer",
     "Error removing conversation picture" : "Hebo un error al quitar la semeya de la conversación",
     "All permissions" : "Tolos permisos",
+    "Restricted" : "Restrinxóse",
     "Advanced permissions" : "Permisos avanzaos",
     "Edit permissions" : "Editar los permisos",
     "Basic Info" : "Información básica",
