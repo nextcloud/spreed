@@ -357,6 +357,7 @@ OC.L10N.register(
     "TURN server protocols" : "TURN server protokoller ",
     "Test this server" : "Test denne server",
     "TURN servers" : "TURN-servere",
+    "Failed" : "Mislykkede",
     "OK" : "OK",
     "Checking …" : "Tjekker...",
     "Back" : "Tilbage",
