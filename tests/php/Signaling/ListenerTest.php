@@ -70,7 +70,7 @@ class ListenerTest extends TestCase {
 		);
 	}
 
-	public function dataRoomModified(): array {
+	public static function dataRoomModified(): array {
 		return [
 			[
 				ARoomModifiedEvent::PROPERTY_NAME,
@@ -150,7 +150,7 @@ class ListenerTest extends TestCase {
 		$this->listener->handle($event);
 	}
 
-	public function dataRoomLobbyModified(): array {
+	public static function dataRoomLobbyModified(): array {
 		return [
 			[
 				Webinary::LOBBY_NON_MODERATORS,

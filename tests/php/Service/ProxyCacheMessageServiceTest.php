@@ -73,7 +73,7 @@ class ProxyCacheMessageServiceTest extends TestCase {
 		$query->executeStatement();
 	}
 
-	public function dataDeleteExpiredMessages(): array {
+	public static function dataDeleteExpiredMessages(): array {
 		return [
 			[1234,    12345, true],
 			[1234567, 12345, false],
