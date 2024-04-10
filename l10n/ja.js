@@ -1143,6 +1143,7 @@ OC.L10N.register(
     "No matches found" : "一致するものが見つかりません。",
     "Open conversations" : "オープンな会話",
     "Groups" : "グループ",
+    "Teams" : "チーム",
     "No search results" : "検索結果なし",
     "Loading" : "読み込み中",
     "Talk settings" : "Talk設定",
