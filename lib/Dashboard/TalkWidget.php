@@ -179,9 +179,10 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$rooms = [];
 		$mentions = [];
 		foreach ($allRooms as $room) {
-			if ($room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
-				$rooms[] = $room;
+			if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+				continue;
 			}
+			$rooms[] = $room;
 
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
