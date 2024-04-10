@@ -328,6 +328,9 @@ class Listener implements IEventListener {
 				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', $userIds);
 			}
 		}
+		if ($room->getToken() === 'c9bui2ju') {
+			\OC::$server->getLogger()->warning('Debugging step #7.2: ' . microtime(true));
+		}
 
 		$this->connection->beginTransaction();
 		try {
@@ -347,8 +350,14 @@ class Listener implements IEventListener {
 						$this->preparedCallNotifications[$languageCode] = $this->notificationProvider->prepare($translatedNotification, $languageCode);
 						$this->notificationManager->setPreparingPushNotification(false);
 						$notification = $translatedNotification;
+						if ($room->getToken() === 'c9bui2ju') {
+							\OC::$server->getLogger()->warning('Debugging step #7.2.' . $languageCode . ': ' . microtime(true));
+						}
 					} else {
 						$notification = $this->preparedCallNotifications[$languageCode];
+						if ($room->getToken() === 'c9bui2ju') {
+							\OC::$server->getLogger()->warning('Debugging step #7.2.reused.' . $languageCode . ': ' . microtime(true));
+						}
 					}
 				}
 
