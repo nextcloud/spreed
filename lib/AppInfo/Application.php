@@ -84,6 +84,7 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
+use OCA\Talk\Federation\Proxy\TalkV1\Listener\ResourceTypeRegisterListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\BeforeRoomDeletedListener as TalkV1BeforeRoomDeletedListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\CancelRetryOCMListener as TalkV1CancelRetryOCMListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\MessageSentListener as TalkV1MessageSentListener;
@@ -146,6 +147,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use OCP\OCM\Events\ResourceTypeRegisterEvent;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Server;
@@ -288,6 +290,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(SystemMessageSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(SystemMessagesMultipleSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(AttendeeRemovedEvent::class, TalkV1CancelRetryOCMListener::class);
+		$context->registerEventListener(ResourceTypeRegisterEvent::class, ResourceTypeRegisterListener::class);
 
 		// Signaling listeners (External)
 		$context->registerEventListener(AttendeesAddedEvent::class, SignalingListener::class);

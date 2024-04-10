@@ -1,4 +1,4 @@
-Feature: federation/chat
+Feature: federation/reminder
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
