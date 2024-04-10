@@ -153,8 +153,8 @@ export default {
 		 * File size in bytes
 		 */
 		size: {
-			type: Number,
-			default: -1,
+			type: String,
+			default: '-1',
 		},
 		/**
 		 * Download link
@@ -181,8 +181,8 @@ export default {
 		 * File ETag
 		 */
 		permissions: {
-			type: Number,
-			default: 0,
+			type: String,
+			default: '0',
 		},
 		/**
 		 * Whether a preview is available, string "yes" for yes
@@ -198,7 +198,7 @@ export default {
 		 * If preview and metadata are available, return width
 		 */
 		width: {
-			type: Number,
+			type: String,
 			default: null,
 		},
 
@@ -206,7 +206,7 @@ export default {
 		 * If preview and metadata are available, return height
 		 */
 		height: {
-			type: Number,
+			type: String,
 			default: null,
 		},
 
@@ -407,12 +407,12 @@ export default {
 			}
 
 			const sizeMultiplicator = Math.min(
-				(heightConstraint > this.height ? 1 : (heightConstraint / this.height)),
-				(widthConstraint > this.width ? 1 : (widthConstraint / this.width))
+				(heightConstraint > parseInt(this.height, 10) ? 1 : (heightConstraint / parseInt(this.height, 10))),
+				(widthConstraint > parseInt(this.width, 10) ? 1 : (widthConstraint / parseInt(this.width, 10)))
 			)
 
 			return {
-				width: this.width * sizeMultiplicator + 'px',
+				width: parseInt(this.width, 10) * sizeMultiplicator + 'px',
 				aspectRatio: this.width + '/' + this.height,
 			}
 		},
@@ -426,7 +426,7 @@ export default {
 				return PREVIEW_TYPE.MIME_ICON
 			}
 			const maxGifSize = getCapabilities()?.spreed?.config?.previews?.['max-gif-size'] || 3145728
-			if (this.mimetype === 'image/gif' && this.size <= maxGifSize) {
+			if (this.mimetype === 'image/gif' && parseInt(this.size, 10) <= maxGifSize) {
 				return PREVIEW_TYPE.DIRECT
 			}
 
