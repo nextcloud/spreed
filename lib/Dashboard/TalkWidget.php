@@ -5,6 +5,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2020 Julius Härtl <jus@bitgrid.net>
  *
  * @author Julius Härtl <jus@bitgrid.net>
+ * @author Richard Steinmetz <richard@steinmetz.cloud>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -40,16 +41,17 @@ use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IConditionalWidget;
 use OCP\Dashboard\IIconWidget;
 use OCP\Dashboard\IOptionWidget;
+use OCP\Dashboard\IReloadableWidget;
 use OCP\Dashboard\Model\WidgetButton;
 use OCP\Dashboard\Model\WidgetItem;
+use OCP\Dashboard\Model\WidgetItems;
 use OCP\Dashboard\Model\WidgetOptions;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Util;
 
-class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget, IConditionalWidget {
+class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget, IConditionalWidget, IReloadableWidget {
 
 	public function __construct(
 		protected IUserSession $userSession,
@@ -112,7 +114,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$buttons[] = new WidgetButton(
 			WidgetButton::TYPE_MORE,
 			$this->url->linkToRouteAbsolute('spreed.Page.index'),
-			$this->l10n->t('More unread mentions')
+			$this->l10n->t('More conversations')
 		);
 		return $buttons;
 	}
@@ -135,8 +137,6 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * @inheritDoc
 	 */
 	public function load(): void {
-		Util::addStyle('spreed', 'icons');
-		Util::addScript('spreed', 'talk-dashboard');
 	}
 
 	public function getItems(string $userId, ?string $since = null, int $limit = 7): array {
@@ -168,6 +168,53 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getItemsV2(string $userId, ?string $since = null, int $limit = 7): WidgetItems {
+		$allRooms = $this->manager->getRoomsForUser($userId, [], true);
+
+		$rooms = [];
+		$mentions = [];
+		foreach ($allRooms as $room) {
+			if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+				continue;
+			}
+			$rooms[] = $room;
+
+			$participant = $this->participantService->getParticipant($room, $userId);
+			$attendee = $participant->getAttendee();
+			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED
+				|| $attendee->getLastMentionMessage() > $attendee->getLastReadMessage()
+				|| (
+					($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
+					&& $room->getLastMessage()
+					&& $room->getLastMessage()->getId() > $attendee->getLastReadMessage()
+				)) {
+				$mentions[] = $room;
+			}
+		}
+
+		$roomsToReturn = $rooms;
+		if (!empty($mentions)) {
+			$roomsToReturn = $mentions;
+		}
+
+		uasort($roomsToReturn, [$this, 'sortRooms']);
+		$roomsToReturn = array_slice($roomsToReturn, 0, $limit);
+
+		$result = [];
+		foreach ($roomsToReturn as $room) {
+			$result[] = $this->prepareRoom($room, $userId);
+		}
+
+		return new WidgetItems(
+			$result,
+			empty($result) ? $this->l10n->t('Say hi to your friends and colleagues!') : '',
+			empty($mentions) ? $this->l10n->t('No unread mentions') : '',
+		);
 	}
 
 	protected function prepareRoom(Room $room, string $userId): WidgetItem {
@@ -218,5 +265,12 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		}
 
 		return $roomA->getLastActivity() >= $roomB->getLastActivity() ? -1 : 1;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getReloadInterval(): int {
+		return 30;
 	}
 }

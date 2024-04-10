@@ -6,10 +6,12 @@ Feature: integration/dashboard
   Scenario: User gets the available dashboard widgets
     When user "participant1" sees the following entry when loading the list of dashboard widgets (v1)
       | id     | title         | icon_class          | icon_url         | widget_url                       | item_icons_round | order | buttons | item_api_versions | reload_interval |
-      | spreed | Talk mentions | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More unread mentions","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1] | 0 |
+      | spreed | Talk mentions | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More conversations","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1,2] | 30 |
 
   Scenario: User gets the dashboard widget content
     When user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
+      | title | subtitle | link | iconUrl |
+    When user "participant1" sees the following entries for dashboard widgets "spreed" (v2)
       | title | subtitle | link | iconUrl |
     Given user "participant2" creates room "one-to-one room" (v4)
       | roomType | 1 |
@@ -36,6 +38,11 @@ Feature: integration/dashboard
     And user "participant2" starts breakout rooms in room "breakout room parent" with 200 (v1)
     And user "participant2" broadcasts message "@participant1 hello" to room "breakout room parent" with 201 (v1)
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
+      | title                    | subtitle            | link            | iconUrl                                                               | sinceId | overlayIconUrl |
+      | call room                |  Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | group room               |  You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | participant2-displayname |  Hello              | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+    Then user "participant1" sees the following entries for dashboard widgets "spreed" (v2)
       | title                    | subtitle            | link            | iconUrl                                                               | sinceId | overlayIconUrl |
       | call room                |  Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | group room               |  You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
