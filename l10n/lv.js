@@ -68,6 +68,7 @@ OC.L10N.register(
     "Invalid file provided" : "Norādīta nederīga datne",
     "Invalid image" : "Nederīgs attēls",
     "Unknown filetype" : "Nezināms datnes tips",
+    "Say hi to your friends and colleagues!" : "Sasveicinies ar saviem draugiem un kolēģiem!",
     "%s invited you to a conversation." : "%s uzaicināja jūs uz sarunu.",
     "You were invited to a conversation." : "Jūs uzaicinājāt uz sarunu.",
     "Conversation invitation" : "Sarunas uzaicinājums",
@@ -235,8 +236,6 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Startējot ekrāna koplietošanu, radās kļūda.",
     "Grid view" : "Režģa izkārtojums",
     "Submit" : "Iesniegt",
-    "Say hi to your friends and colleagues!" : "Sasveicinies ar saviem draugiem un kolēģiem!",
-    "Start a conversation" : "Sākt sarunu",
     "Join a conversation or start a new one" : "Pievienoties sarunai vai sākt jaunu",
     "Audio" : "Audio",
     "Other" : "Cits",
@@ -259,6 +258,7 @@ OC.L10N.register(
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
     "Path is already shared with this room" : "Ceļš jau ir koplietots ar šo telpu",
-    "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …"
+    "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
+    "Start a conversation" : "Sākt sarunu"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

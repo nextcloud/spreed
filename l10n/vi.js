@@ -154,6 +154,8 @@ OC.L10N.register(
     "Invalid image" : "Ảnh không hợp lệ",
     "Unknown filetype" : "Loại tệp không xác định",
     "Talk mentions" : "Đề cập trong cuộc trò chuyện",
+    "Say hi to your friends and colleagues!" : "Gửi lòi chào đến bạn bè và đồng nghiệp",
+    "No unread mentions" : "Không có đề cập nào chưa đọc",
     "Call in progress" : "Cuộc gọi đang chờ",
     "You were mentioned" : "Bạn đã được nhắc tới",
     "Write to conversation" : "Viết vào cuộc trò chuyên",
@@ -666,9 +668,6 @@ OC.L10N.register(
     "Lower hand" : "Đặt tay xuống",
     "Select a region" : "Chọn một khu vực",
     "Submit" : "Gửi đi",
-    "No unread mentions" : "Không có đề cập nào chưa đọc",
-    "Say hi to your friends and colleagues!" : "Gửi lòi chào đến bạn bè và đồng nghiệp",
-    "Start a conversation" : "Bắt đầu một cuộc Đàm thoại",
     "Message without mention" : "Tin nhắn không đề cập",
     "Mention myself" : "Nhắc đến chính mình",
     "The conversation does not exist" : "Cuộc trò chuyện không tồn tại",
@@ -747,6 +746,7 @@ OC.L10N.register(
     "Add groups or circles" : "Thêm nhóm hoặc vòng kết nối",
     "Meeting ID: {meetingId}" : "Mã cuộc họp: {meetingId}",
     "Your PIN: {attendeePin}" : "Mã PIN của bạn: {attendeePin}",
+    "Start a conversation" : "Bắt đầu một cuộc Đàm thoại",
     "Mention room" : "Nhắc đến phòng"
 },
 "nplurals=1; plural=0;");

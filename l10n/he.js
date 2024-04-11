@@ -71,6 +71,8 @@ OC.L10N.register(
     "Invalid file provided" : "הקובץ שסופק שגוי",
     "Invalid image" : "תמונה לא חוקית",
     "Unknown filetype" : "סוג קובץ לא מוכר",
+    "Say hi to your friends and colleagues!" : "על הדרך לראות מה עם חבריך לעבודה!",
+    "No unread mentions" : "אין אזכורים שלא נקראו",
     "Call in progress" : "מתנהלת שיחה",
     "Conversation invitation" : "הזמנה לדיון",
     "Click the button below to join." : "יש ללחוץ על הכפתור שלהלן כדי להצטרף.",
@@ -567,9 +569,6 @@ OC.L10N.register(
     "Grid view" : "תצוגת טבלה",
     "Select a region" : "נא לבחור איזור",
     "Submit" : "שליחה",
-    "No unread mentions" : "אין אזכורים שלא נקראו",
-    "Say hi to your friends and colleagues!" : "על הדרך לראות מה עם חבריך לעבודה!",
-    "Start a conversation" : "התחלת דיון",
     "Message without mention" : "הודעה ללא אזכור",
     "Mention myself" : "אזכור עצמי",
     "The conversation does not exist" : "הדיון לא קיים",
@@ -605,6 +604,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Add circles" : "הוספת מעגלים",
     "Add groups or circles" : "הוספת קבוצות או מעגלים",
+    "Start a conversation" : "התחלת דיון",
     "Mention room" : "אזכור חדר"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

@@ -70,6 +70,7 @@ OC.L10N.register(
     "Invalid file provided" : "Ógild skrá gefin",
     "Invalid image" : "Ógild mynd",
     "Unknown filetype" : "Óþekkt skráategund",
+    "Say hi to your friends and colleagues!" : "Segðu hæ við vini þína og samstarfsmenn!",
     "%s invited you to a conversation." : "%s bauð þér að taka þátt í samtali.",
     "You were invited to a conversation." : "Þér var boðið að taka þátt í samtali.",
     "Conversation invitation" : "Boð í samtal",
@@ -536,8 +537,6 @@ OC.L10N.register(
     "Grid view" : "Reitasýn",
     "Select a region" : "Veldu svæði",
     "Submit" : "Senda inn",
-    "Say hi to your friends and colleagues!" : "Segðu hæ við vini þína og samstarfsmenn!",
-    "Start a conversation" : "Hefja samtal",
     "This weekend – {timeLocale}" : "Þessa helgi – {timeLocale}",
     "Join a conversation or start a new one" : "Taktu þátt í samtali eða byrjaðu nýtt samtal",
     "Tomorrow – {timeLocale}" : "Á morgun – {timeLocale}",
@@ -569,6 +568,7 @@ OC.L10N.register(
     "iOS app" : "iOS-forrit",
     "Path is already shared with this room" : "Slóðinni er þegar deilt með þessu spjallsvæði",
     "Circles" : "Hringir",
-    "Write message, @ to mention someone …" : "Write message, @ to mention someone …"
+    "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
+    "Start a conversation" : "Hefja samtal"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
