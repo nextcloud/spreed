@@ -282,6 +282,9 @@ export default {
 			}
 			return t('spreed', 'Maximum length exceeded ({maxlength} characters)', { maxlength: CONVERSATION.MAX_DESCRIPTION_LENGTH })
 		},
+		selectedParticipants() {
+			return this.$store.getters.selectedParticipants
+		},
 	},
 
 	watch: {
