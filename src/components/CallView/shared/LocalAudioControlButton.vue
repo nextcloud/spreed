@@ -149,7 +149,7 @@ export default {
 	methods: {
 		toggleAudio() {
 			if (!this.model.attributes.audioAvailable) {
-				emit('show-settings', {})
+				emit('talk:media-settings:show')
 				return
 			}
 

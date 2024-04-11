@@ -150,7 +150,7 @@ export default {
 			}
 
 			if (!this.model.attributes.videoAvailable) {
-				emit('show-settings', {})
+				emit('talk:media-settings:show')
 				return
 			}
 

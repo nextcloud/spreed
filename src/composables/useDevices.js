@@ -45,6 +45,8 @@ export function useDevices(video, initializeOnMounted) {
 	const videoTrackToStream = ref(null)
 	const mediaDevicesManager = reactive(mediaDevicesManagerInstance)
 
+	window.OCA.Talk.mediaDevicesManager = mediaDevicesManagerInstance
+
 	// Public refs
 	const currentVolume = ref(-100)
 	const currentThreshold = ref(-100)
@@ -159,6 +161,22 @@ export function useDevices(video, initializeOnMounted) {
 		mediaDevicesManager.enableDeviceEvents()
 		updateAudioStream()
 		updateVideoStream()
+	}
+
+	/**
+	 * Force enumerate devices (audio and video)
+	 * @public
+	 */
+	function updateDevices() {
+		mediaDevicesManager._updateDevices()
+	}
+
+	/**
+	 * Update preference counters for devices (audio and video)
+	 * @public
+	 */
+	function updatePreferences() {
+		mediaDevicesManager.updatePreferences()
 	}
 
 	/**
@@ -369,6 +387,7 @@ export function useDevices(video, initializeOnMounted) {
 
 	return {
 		devices,
+		updateDevices,
 		currentVolume,
 		currentThreshold,
 		audioPreviewAvailable,
@@ -382,6 +401,7 @@ export function useDevices(video, initializeOnMounted) {
 		videoStreamError,
 		// MediaSettings only
 		initializeDevices,
+		updatePreferences,
 		stopDevices,
 		virtualBackground,
 	}
