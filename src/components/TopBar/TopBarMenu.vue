@@ -166,6 +166,7 @@
 import Cog from 'vue-material-design-icons/Cog.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import File from 'vue-material-design-icons/File.vue'
 import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
@@ -207,6 +208,7 @@ export default {
 		Cog,
 		DotsCircle,
 		DotsHorizontal,
+		File,
 		Fullscreen,
 		FullscreenExit,
 		GridView,
