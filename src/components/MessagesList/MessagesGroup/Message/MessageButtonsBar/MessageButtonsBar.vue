@@ -791,6 +791,11 @@ export default {
 
 		// Making sure that the click is outside the MessageButtonsBar
 		handleClickOutside(event) {
+			// check if click is inside the emoji picker
+			if (event.composedPath().some(element => element.classList?.contains('v-popper__popper--shown'))) {
+				return
+			}
+
 			if (event.composedPath().includes(this.$el)) {
 				return
 			}
