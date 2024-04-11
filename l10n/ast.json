@@ -36,6 +36,8 @@
     "Invalid file provided" : "Fornióse un ficheru inválidu",
     "Invalid image" : "La imaxe ye inválida",
     "Unknown filetype" : "El tipu de ficheru ye inválidu",
+    "Say hi to your friends and colleagues!" : "¡Saluda a amigos y colegues!",
+    "No unread mentions" : "Nun hai nenguna mención ensin lleer",
     "Accept" : "Aceptar",
     "Decline" : "Refugar",
     "{user} mentioned you in a private conversation" : "«{user}» mentóte nuna conversación privada",
@@ -583,9 +585,6 @@
     "Open dialpad" : "Abrir el tecláu numbéricu",
     "Submit" : "Unviar",
     "Search …" : "Buscar…",
-    "No unread mentions" : "Nun hai nenguna mención ensin lleer",
-    "Say hi to your friends and colleagues!" : "¡Saluda a amigos y colegues!",
-    "Start a conversation" : "Aniciar una conversación",
     "Mention everyone" : "Mentar a tol mundu",
     "The conversation does not exist" : "La conversación nun esiste",
     "Join a conversation or start a new one!" : "¡Xúnite una conversación o anicia una nueva!",
@@ -633,6 +632,7 @@
     "{actor} invited {user}" : "{actor} convidó a «{user}»",
     "You invited {user}" : "Convidesti a «{user}»",
     "Circles" : "Círculos",
+    "Start a conversation" : "Aniciar una conversación",
     "Delete Conversation" : "Desaniciar la conversación"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
