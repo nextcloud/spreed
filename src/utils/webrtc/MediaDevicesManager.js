@@ -21,6 +21,7 @@
 
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
+	getFirstAvailableDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
 	updateMediaDevicesPreferences,
@@ -211,14 +212,14 @@ MediaDevicesManager.prototype = {
 					// Couldn't find device by id
 					console.debug('Could not find previous audio device, falling back to default/first device in the list', BrowserStorage.getItem('audioInputId'), this.attributes.devices)
 				}
-				this.attributes.audioInputId = this._fallbackAudioInputId
+				this.attributes.audioInputId = getFirstAvailableDevice(devices, this._preferenceAudioInputList, this._fallbackAudioInputId) ?? 'default'
 			}
 			if (this.attributes.videoInputId === undefined) {
 				if (BrowserStorage.getItem('videoInputId')) {
 					// Couldn't find device by id, try the label
 					console.debug('Could not find previous video device, falling back to default/first device in the list', BrowserStorage.getItem('videoInputId'), this.attributes.devices)
 				}
-				this.attributes.videoInputId = this._fallbackVideoInputId
+				this.attributes.videoInputId = getFirstAvailableDevice(devices, this._preferenceVideoInputList, this._fallbackVideoInputId) ?? 'default'
 			}
 
 			// Trigger change events after all the devices are processed to
@@ -300,19 +301,17 @@ MediaDevicesManager.prototype = {
 
 		if (removedDevice.kind === 'audioinput') {
 			if (this._fallbackAudioInputId === removedDevice.deviceId) {
-				const firstAudioInputDevice = this.attributes.devices.find(device => device.kind === 'audioinput')
-				this._fallbackAudioInputId = firstAudioInputDevice ? firstAudioInputDevice.deviceId : undefined
+				this._fallbackAudioInputId = getFirstAvailableDevice(this.attributes.devices, this._preferenceAudioInputList, undefined)
 			}
 			if (this.attributes.audioInputId === removedDevice.deviceId) {
-				this.attributes.audioInputId = this._fallbackAudioInputId
+				this.attributes.audioInputId = getFirstAvailableDevice(this.attributes.devices, this._preferenceAudioInputList, this._fallbackAudioInputId)
 			}
 		} else if (removedDevice.kind === 'videoinput') {
 			if (this._fallbackVideoInputId === removedDevice.deviceId) {
-				const firstVideoInputDevice = this.attributes.devices.find(device => device.kind === 'videoinput')
-				this._fallbackVideoInputId = firstVideoInputDevice ? firstVideoInputDevice.deviceId : undefined
+				this._fallbackVideoInputId = getFirstAvailableDevice(this.attributes.devices, this._preferenceVideoInputList, undefined)
 			}
 			if (this.attributes.videoInputId === removedDevice.deviceId) {
-				this.attributes.videoInputId = this._fallbackVideoInputId
+				this.attributes.videoInputId = getFirstAvailableDevice(this.attributes.devices, this._preferenceVideoInputList, this._fallbackVideoInputId)
 			}
 		}
 	},
@@ -368,14 +367,16 @@ MediaDevicesManager.prototype = {
 		// Additionally, set first available device as fallback, and override
 		// any fallback previously set if the default device is added.
 		if (addedDevice.kind === 'audioinput') {
-			if (BrowserStorage.getItem('audioInputId') === addedDevice.deviceId) {
+			if (BrowserStorage.getItem('audioInputId') === addedDevice.deviceId
+				|| getFirstAvailableDevice(this.attributes.devices, this._preferenceAudioInputList, this._fallbackAudioInputId)) {
 				this.attributes.audioInputId = addedDevice.deviceId
 			}
 			if (!this._fallbackAudioInputId || addedDevice.deviceId === 'default') {
 				this._fallbackAudioInputId = addedDevice.deviceId
 			}
 		} else if (addedDevice.kind === 'videoinput') {
-			if (BrowserStorage.getItem('videoInputId') === addedDevice.deviceId) {
+			if (BrowserStorage.getItem('videoInputId') === addedDevice.deviceId
+				|| getFirstAvailableDevice(this.attributes.devices, this._preferenceVideoInputList, this._fallbackVideoInputId)) {
 				this.attributes.videoInputId = addedDevice.deviceId
 			}
 			if (!this._fallbackVideoInputId || addedDevice.deviceId === 'default') {
