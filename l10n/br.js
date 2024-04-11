@@ -108,6 +108,8 @@ OC.L10N.register(
     "Invalid image" : "N'eo ket aotreet ar skeudenn",
     "Unknown filetype" : "N'eo ket anavezet stumm ar restr",
     "Talk mentions" : "Menegoù Talk",
+    "Say hi to your friends and colleagues!" : "Lâr koukouk d'ho mignoned ha genseurted",
+    "No unread mentions" : "Kemenadenn nan-lennet ebet",
     "Call in progress" : "Kemenadenn en dro",
     "You were mentioned" : "Meneget oc'h bet",
     "Write to conversation" : "Skrivañ d'an diviz",
@@ -685,9 +687,6 @@ OC.L10N.register(
     "Mute others" : "Lakaat ar re all mut",
     "Grid view" : "Diskwell ar roued",
     "Submit" : "Kinnig",
-    "No unread mentions" : "Kemenadenn nan-lennet ebet",
-    "Say hi to your friends and colleagues!" : "Lâr koukouk d'ho mignoned ha genseurted",
-    "Start a conversation" : "Kregiñ un diviz",
     "Message without mention" : "Kemenn hp meneg",
     "Mention myself" : "Meneg ac'hanon",
     "The conversation does not exist" : "N'ez eus ket eus an diviz-mañ",
@@ -749,6 +748,7 @@ OC.L10N.register(
     "Add users, groups or circles" : "Ouhzpennañ implijourienn, strolladoù pe kelc'hioù",
     "Add users or circles" : "Ouhzpennañ implijourienn pe kelc'hioù",
     "Add groups or circles" : "Ouhzpennañ strolladoù pe kelc'hioù",
+    "Start a conversation" : "Kregiñ un diviz",
     "Mention room" : "Sal meneg"
 },
 "nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);");

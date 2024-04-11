@@ -162,6 +162,8 @@ OC.L10N.register(
     "Invalid image" : "Невалидна фотографија",
     "Unknown filetype" : "Непознат тип на датотека",
     "Talk mentions" : "Спомнувања",
+    "Say hi to your friends and colleagues!" : "Кажи им здраво на твојте пријатели и колеги!",
+    "No unread mentions" : "Нема непрочитани спомнувања",
     "Call in progress" : "Повик е во тек",
     "You were mentioned" : "Споменати сте",
     "Write to conversation" : "Пишивајте во разговорот",
@@ -947,9 +949,6 @@ OC.L10N.register(
     "Select a region" : "Изберете регион",
     "Submit" : "Испрати",
     "Search …" : "Пребарај ...",
-    "No unread mentions" : "Нема непрочитани спомнувања",
-    "Say hi to your friends and colleagues!" : "Кажи им здраво на твојте пријатели и колеги!",
-    "Start a conversation" : "Започни разговор",
     "Message without mention" : "Пораки без спомнувања",
     "Mention myself" : "Спомни се себеси",
     "The conversation does not exist" : "Разговорот не постои",
@@ -1035,6 +1034,7 @@ OC.L10N.register(
     "Add groups or circles" : "Додади групи или кругови",
     "Meeting ID: {meetingId}" : "Состанок ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Вашиот ПИН: {attendeePin}",
+    "Start a conversation" : "Започни разговор",
     "Mention room" : "Спомни соба"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

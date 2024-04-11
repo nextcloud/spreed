@@ -168,6 +168,8 @@
     "Invalid image" : "Slika neispravna",
     "Unknown filetype" : "Vrsta datoteke nepoznata",
     "Talk mentions" : "Spominjanja u alatu Talk",
+    "Say hi to your friends and colleagues!" : "Pozdravi svoje prijatelje i kolege!",
+    "No unread mentions" : "Nema nepročitanih spominjanja",
     "Call in progress" : "Poziv u tijeku",
     "You were mentioned" : "Spomenuti ste",
     "Write to conversation" : "Napiši u razgovor",
@@ -1028,9 +1030,6 @@
     "Select a region" : "Odaberite regiju",
     "Submit" : "Šalji",
     "Search …" : "Traži …",
-    "No unread mentions" : "Nema nepročitanih spominjanja",
-    "Say hi to your friends and colleagues!" : "Pozdravi svoje prijatelje i kolege!",
-    "Start a conversation" : "Započni razgovor",
     "Message without mention" : "Poruka bez spominjanja",
     "Mention myself" : "Spomeni sebe",
     "The conversation does not exist" : "Razgovor ne postoji",
@@ -1110,6 +1109,7 @@
     "Add groups or circles" : "Dodaj grupe ili krugove",
     "Meeting ID: {meetingId}" : "ID sastanka: {meetingId}",
     "Your PIN: {attendeePin}" : "Vaš PIN: {attendeePin}",
+    "Start a conversation" : "Započni razgovor",
     "Mention room" : "Spomeni sobu",
     "Remove circle and members" : "Ukloni krug i članove"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
