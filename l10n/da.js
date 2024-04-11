@@ -155,6 +155,8 @@ OC.L10N.register(
     "Invalid image" : "Ugyldigt billede",
     "Unknown filetype" : "Ukendt filtype",
     "Talk mentions" : "Snak samtaler",
+    "Say hi to your friends and colleagues!" : "Sig hej til dine venner og kollegaer.",
+    "No unread mentions" : "Ingen ulæste samtaler",
     "Call in progress" : "Opkald i gang",
     "Write to conversation" : "Skriv til samtale",
     "Writes event information into a conversation of your choice" : "Skriver begivenhedsinformation i en samtale du vælger",
@@ -529,9 +531,6 @@ OC.L10N.register(
     "Grid view" : "Grid visning",
     "Select a region" : "Vælg en region",
     "Submit" : "Tilføj",
-    "No unread mentions" : "Ingen ulæste samtaler",
-    "Say hi to your friends and colleagues!" : "Sig hej til dine venner og kollegaer.",
-    "Start a conversation" : "Start en samtale",
     "Message without mention" : "Besked som ikke nævner nogen",
     "Mention myself" : "Nævn mig selv",
     "The conversation does not exist" : "Samtalen findes ikke",
@@ -583,6 +582,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
     "Add circles" : "Tilføj cirkler",
     "Add groups or circles" : "Tilføj grupper eller cirkler",
+    "Start a conversation" : "Start en samtale",
     "Mention room" : "Nævn rum"
 },
 "nplurals=2; plural=(n != 1);");

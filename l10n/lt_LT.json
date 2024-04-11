@@ -137,6 +137,8 @@
     "Invalid image" : "Netinkamas paveikslas",
     "Unknown filetype" : "Nežinomas failo tipas",
     "Talk mentions" : "Paminėjimai pokalbiuose",
+    "Say hi to your friends and colleagues!" : "Pasisveikinkite su savo draugais ir kolegomis!",
+    "No unread mentions" : "Nėra neskaitytų paminėjimų",
     "Write to conversation" : "Rašyti į pokalbį",
     "Writes event information into a conversation of your choice" : "Parašo apie įvykio informaciją į jūsų pasirinktą pokalbį",
     "%s invited you to a conversation." : "%s jus pakvietė į pokalbį.",
@@ -740,9 +742,6 @@
     "Lower hand (R)" : "Nuleisti ranką (R)",
     "Select a region" : "Pasirinkti regioną",
     "Submit" : "Pateikti",
-    "No unread mentions" : "Nėra neskaitytų paminėjimų",
-    "Say hi to your friends and colleagues!" : "Pasisveikinkite su savo draugais ir kolegomis!",
-    "Start a conversation" : "Pradėti pokalbį",
     "Message without mention" : "Rašyti be paminėjimo",
     "Mention myself" : "Paminėti save",
     "The conversation does not exist" : "Pokalbio nėra",
@@ -811,6 +810,7 @@
     "Add groups or circles" : "Pridėti grupes ar ratus",
     "Meeting ID: {meetingId}" : "Susitikimo ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Jūsų PIN kodas: {attendeePin}",
+    "Start a conversation" : "Pradėti pokalbį",
     "Mention room" : "Paminėti kambarį"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

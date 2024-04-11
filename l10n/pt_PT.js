@@ -325,7 +325,6 @@ OC.L10N.register(
     "Grid view" : "Vista em grelha",
     "Select a region" : "Selecione uma região",
     "Submit" : "Submeter",
-    "Start a conversation" : "Iniciar uma conversação",
     "Media" : "Media",
     "Locations" : "Localizações",
     "Audio" : "Áudio",
@@ -342,6 +341,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
-    "Circles" : "Círculos"
+    "Circles" : "Círculos",
+    "Start a conversation" : "Iniciar uma conversação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

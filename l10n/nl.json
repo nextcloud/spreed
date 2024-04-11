@@ -189,6 +189,8 @@
     "Invalid image" : "Afbeelding ongeldig",
     "Unknown filetype" : "Onbekend bestandsformaat",
     "Talk mentions" : "Talk-vermeldingen",
+    "Say hi to your friends and colleagues!" : "Zeg hallo tegen je vrienden en collega's!",
+    "No unread mentions" : "Geen ongelezen vermeldingen",
     "Call in progress" : "Oproep is bezig",
     "You were mentioned" : "Je werd vermeld",
     "Write to conversation" : "Schrijf naar gesprek",
@@ -1124,9 +1126,6 @@
     "Remove participant {name}" : "Deelnemer {name} verwijderen",
     "Select a region" : "Selecteer een regie",
     "Submit" : "Verwerken",
-    "No unread mentions" : "Geen ongelezen vermeldingen",
-    "Say hi to your friends and colleagues!" : "Zeg hallo tegen je vrienden en collega's!",
-    "Start a conversation" : "Begin een gesprek",
     "Message without mention" : "Bericht zonder vermelding",
     "Mention myself" : "Vermeld mezelf",
     "The conversation does not exist" : "Het gesprek bestaat niet",
@@ -1231,6 +1230,7 @@
     "Add groups or circles" : "Toevoegen groepen of kringen",
     "Meeting ID: {meetingId}" : "Meeting ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Je PIN: {attendeePin}",
+    "Start a conversation" : "Begin een gesprek",
     "Mention room" : "Vermeld ruimte",
     "Remove circle and members" : "Verwijderen kring en leden"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

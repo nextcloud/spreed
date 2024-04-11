@@ -129,6 +129,8 @@
     "Invalid image" : "Μη έγκυρη εικόνα",
     "Unknown filetype" : "Άγνωστος τύπος αρχείου",
     "Talk mentions" : "Αναφορές σε ονόματα του Talk",
+    "Say hi to your friends and colleagues!" : "Πείτε γειά σε φίλους και συνεργάτες!",
+    "No unread mentions" : "Δεν υπάρχουν μη αναγνωσμένες αναφορές στο όνομά σας",
     "Call in progress" : "Κλήση σε εξέλιξη",
     "You were mentioned" : "Αναφέρθηκε το όνομά σας",
     "Write to conversation" : "Γράψτε στη συνομιλία",
@@ -946,9 +948,6 @@
     "Lower hand" : "Κατεβάστε το χέρι",
     "Select a region" : "Επιλογή περιοχής",
     "Submit" : "Υποβολή",
-    "No unread mentions" : "Δεν υπάρχουν μη αναγνωσμένες αναφορές στο όνομά σας",
-    "Say hi to your friends and colleagues!" : "Πείτε γειά σε φίλους και συνεργάτες!",
-    "Start a conversation" : "Έναρξη συνομιλίας",
     "Message without mention" : "Μήνυμα χωρίς αναφορά σε κάποιον",
     "Mention myself" : "Αναφορά στον εαυτό μου",
     "The conversation does not exist" : "Η συνομιλία δεν υπάρχει",
@@ -1029,6 +1028,7 @@
     "Add groups or circles" : "Προσθήκη ομάδων ή κύκλων",
     "Meeting ID: {meetingId}" : "Αναγνωριστικό συνάντησης: {meetingId}",
     "Your PIN: {attendeePin}" : "Το PIN σας: {attendeePin}",
+    "Start a conversation" : "Έναρξη συνομιλίας",
     "Mention room" : "Αναφορά στο δωμάτιο",
     "Remove circle and members" : "Αφαίρεση κύκλων και μελών"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

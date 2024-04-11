@@ -85,7 +85,7 @@ OC.L10N.register(
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
     "Talk mentions" : "Menciones en Talk",
-    "More unread mentions" : "Más menciones no leídas",
+    "No unread mentions" : "No hay menciones sin leer",
     "%s invited you to a conversation." : "%s te invitó a una conversación",
     "You were invited to a conversation." : "fuiste invitado a una conversación",
     "Conversation invitation" : "invitación a una conversación",
@@ -385,6 +385,8 @@ OC.L10N.register(
     "Personal" : "Personal",
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Borrar conversación",
+    "_%n hour_::_%n hours_" : ["%n hora","%n horas","%n horas"],
+    "_%n day_::_%n days_" : ["%n día","%n días","%n días"],
     "Password protection" : "Protección con contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
@@ -457,7 +459,6 @@ OC.L10N.register(
     "Exit full screen (F)" : "Salir de pantalla completa (F)",
     "Grid view" : "Vista de cuadrícula",
     "Submit" : "Enviar",
-    "No unread mentions" : "No hay menciones sin leer",
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
     "Media" : "Multimedia",
     "Polls" : "Encuestas",
@@ -481,6 +482,7 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Habla en tus dispositivos móviles",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
+    "More unread mentions" : "Más menciones no leídas",
     "Circles" : "Círculos"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

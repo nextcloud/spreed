@@ -252,7 +252,6 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",
     "Grid view" : "Pamje galeri",
     "Submit" : "Dërgo",
-    "Start a conversation" : "Filloni një bisedë",
     "Media" : "Media",
     "Polls" : "Sondazhe",
     "Audio" : "Audio",
@@ -268,6 +267,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
-    "Circles" : "Rrethet"
+    "Circles" : "Rrethet",
+    "Start a conversation" : "Filloni një bisedë"
 },
 "nplurals=2; plural=(n != 1);");
