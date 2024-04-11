@@ -205,11 +205,8 @@ class PageController extends Controller {
 				}
 			} catch (RoomNotFoundException $e) {
 				// Room not found, redirect to main page
-				$throttle = $token !== 'undefined';
-				if ($token === 'undefined') {
-					$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" tried to access "undefined"', ['app' => 'spreed-bfp']);
-				}
 				$token = '';
+				$throttle = true;
 			}
 
 			if ($room instanceof Room && $room->hasPassword()) {
@@ -364,13 +361,7 @@ class PageController extends Controller {
 			$response = new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
-			if ($token !== 'undefined') {
-				// Logged-in user tried to access a chat they can not access
-				$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
-				$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
-			} else {
-				$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" tried to access "undefined"', ['app' => 'spreed-bfp']);
-			}
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
