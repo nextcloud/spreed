@@ -23,6 +23,7 @@
 		<MediaDevicesSelector kind="audioinput"
 			:devices="devices"
 			:device-id="audioInputId"
+			@refresh="updateDevices"
 			@update:deviceId="audioInputId = $event" />
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
@@ -51,6 +52,7 @@
 		<MediaDevicesSelector kind="videoinput"
 			:devices="devices"
 			:device-id="videoInputId"
+			@refresh="updateDevices"
 			@update:deviceId="videoInputId = $event" />
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
@@ -107,6 +109,7 @@ export default {
 		const video = ref(null)
 		const {
 			devices,
+			updateDevices,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
@@ -122,6 +125,7 @@ export default {
 		return {
 			video,
 			devices,
+			updateDevices,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
