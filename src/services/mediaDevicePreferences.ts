@@ -30,7 +30,7 @@
  * @param audioInputList list of registered audio devices in order of preference
  * @param videoInputList list of registered video devices in order of preference
  */
-function listMediaDevices(devices: MediaDeviceInfo[], audioInputId: string, videoInputId: string, audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]) {
+function listMediaDevices(devices: MediaDeviceInfo[], audioInputId: string, videoInputId: string, audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]): void {
 	const availableDevices = devices.map(device => device.deviceId).filter(id => id !== 'default')
 
 	const getDeviceString = (device: MediaDeviceInfo, index: number) => {
@@ -42,7 +42,7 @@ function listMediaDevices(devices: MediaDeviceInfo[], audioInputId: string, vide
 				return device.deviceId === videoInputId ? ' (selected)' : ''
 			}
 		}
-		return `    ${index + 1}. ${device.label || device.deviceId}` + isUnplugged + isSelected()
+		return `    ${index + 1}. ${device.label} | ${device.deviceId}` + isUnplugged + isSelected()
 	}
 
 	// eslint-disable-next-line no-console
@@ -63,8 +63,9 @@ ${videoInputList.map(getDeviceString).join('\n')}
  * @param devices list of available devices
  * @param inputList list of registered audio/video devices in order of preference
  * @param [fallbackId] id of currently selected input
+ * @return first available (plugged) device id or fallback
  */
-function getFirstAvailableDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[], fallbackId?: string) {
+function getFirstAvailableMediaDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[], fallbackId?: string): string | undefined {
 	const availableDevices = devices.map(device => device.deviceId).filter(id => id !== 'default')
 	return inputList.find(device => availableDevices.includes(device.deviceId))?.deviceId ?? fallbackId
 }
@@ -75,8 +76,9 @@ function getFirstAvailableDevice(devices: MediaDeviceInfo[], inputList: MediaDev
  * @param device device
  * @param devicesList list of registered devices in order of preference
  * @param promote whether device should be promoted (to be used in updateMediaDevicesPreferences)
+ * @return updated devices list
  */
-function registerNewDevice(device: MediaDeviceInfo, devicesList: MediaDeviceInfo[], promote: boolean = false) {
+function registerNewMediaDevice(device: MediaDeviceInfo, devicesList: MediaDeviceInfo[], promote: boolean = false): MediaDeviceInfo[] {
 	const newDevicesList = devicesList.slice()
 	console.debug('Registering new device:', device)
 
@@ -103,8 +105,9 @@ function registerNewDevice(device: MediaDeviceInfo, devicesList: MediaDeviceInfo
  * @param devices list of available devices
  * @param inputList list of registered audio/video devices in order of preference
  * @param inputId id of currently selected input
+ * @return updated devices list (null, if it has not been changed)
  */
-function promoteDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[], inputId: string | null) {
+function promoteMediaDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[], inputId: string | null) {
 	const newInputList = inputList.slice()
 
 	// Get the index of the first plugged device
@@ -146,6 +149,7 @@ function promoteDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[],
  * @param devices list of available devices
  * @param audioInputList list of registered audio devices in order of preference
  * @param videoInputList list of registered video devices in order of preference
+ * @return object with updated devices lists (null, if they have not been changed)
  */
 function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]) {
 	let newAudioInputList = null
@@ -155,12 +159,12 @@ function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputL
 		if (device.kind === 'audioinput') {
 			// Add to the list of known devices
 			if (device.deviceId !== 'default' && !audioInputList.some(input => input.deviceId === device.deviceId)) {
-				newAudioInputList = registerNewDevice(device, audioInputList)
+				newAudioInputList = registerNewMediaDevice(device, audioInputList)
 			}
 		} else if (device.kind === 'videoinput') {
 			// Add to the list of known devices
 			if (device.deviceId !== 'default' && !videoInputList.some(input => input.deviceId === device.deviceId)) {
-				newVideoInputList = registerNewDevice(device, videoInputList)
+				newVideoInputList = registerNewMediaDevice(device, videoInputList)
 			}
 		}
 	}
@@ -185,13 +189,13 @@ function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputL
  */
 function updateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputId: string, videoInputId: string, audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]) {
 	return {
-		newAudioInputList: promoteDevice(devices, audioInputList, audioInputId),
-		newVideoInputList: promoteDevice(devices, videoInputList, videoInputId),
+		newAudioInputList: promoteMediaDevice(devices, audioInputList, audioInputId),
+		newVideoInputList: promoteMediaDevice(devices, videoInputList, videoInputId),
 	}
 }
 
 export {
-	getFirstAvailableDevice,
+	getFirstAvailableMediaDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
 	updateMediaDevicesPreferences,
