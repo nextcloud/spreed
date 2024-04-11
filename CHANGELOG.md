@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-rc.3 – 2024-04-11
+### Added
+- feat(chat): Allow todo lists to be interactive
+  [#12065](https://github.com/nextcloud/spreed/issues/12065)
+- feat(devicechecker): Save all previously picked devices instead of the last one
+  [#12067](https://github.com/nextcloud/spreed/issues/12067)
+- feat(OCM): Register TalkV1 as OCM resource
+  [#12045](https://github.com/nextcloud/spreed/issues/12045)
+- feat(dashboard): Implement Dashboard Widget APIv2
+  [#12035](https://github.com/nextcloud/spreed/issues/12035)
+
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(chat): Mentions in todo lists are not rendered
+  [#12009](https://github.com/nextcloud/spreed/issues/12009)
+- fix(one2one): Allow the desktop client to handle one-to-one links without a reload
+  [#12047](https://github.com/nextcloud/spreed/issues/12047)
+- fix(attachments): Ensure all rich object parameters are strings
+  [#12043](https://github.com/nextcloud/spreed/issues/12043)
+- fix(openapi): Ensure operation IDs are unique
+  [#12030](https://github.com/nextcloud/spreed/issues/12030)
+- fix(openapi): Object inheritance for chat and proxy messages
+  [#12056](https://github.com/nextcloud/spreed/issues/12056)
+- fix(chat): Don't close emoji picker when clicking on the search input or a category
+  [#12062](https://github.com/nextcloud/spreed/issues/12062)
+
 ## 19.0.0-rc.2 – 2024-04-04
 ### Added
 - feat(desktop): Prepare to support screensharing in the desktop client
