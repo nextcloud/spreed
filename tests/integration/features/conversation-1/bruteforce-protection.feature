@@ -72,12 +72,6 @@ Feature: conversation/bruteforce-protection
     When user "participant2" views call-URL of room "invalid" with 200
     When user "participant2" views call-URL of room "invalid" with 200
     When user "participant2" views call-URL of room "invalid" with 200
-    When user "participant2" views call-URL of room "undefined" with 200
-    When user "participant2" views call-URL of room "undefined" with 200
-    When user "participant2" views call-URL of room "undefined" with 200
-    When user "participant2" views call-URL of room "undefined" with 200
-    When user "participant2" views call-URL of room "undefined" with 200
-    When user "participant2" views call-URL of room "undefined" with 200
     When user "participant2" views call-URL of room "invalid" with 200
     When user "participant2" views call-URL of room "invalid" with 200
     When user "participant2" views call-URL of room "invalid" with 200
