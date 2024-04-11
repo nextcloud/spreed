@@ -532,6 +532,19 @@ export type webhooks = Record<string, never>;
 
 export type components = {
   schemas: {
+    BaseMessage: {
+      actorDisplayName: string;
+      actorId: string;
+      actorType: string;
+      /** Format: int64 */
+      expirationTimestamp: number;
+      message: string;
+      messageParameters: {
+        [key: string]: components["schemas"]["RichObjectParameter"];
+      };
+      messageType: string;
+      systemMessage: string;
+    };
     Bot: {
       description: string | null;
       /** Format: int64 */
@@ -624,28 +637,17 @@ export type components = {
       statusIcon: string | null;
       statusMessage: string | null;
     };
-    ChatMessage: {
-      actorDisplayName: string;
-      actorId: string;
-      actorType: string;
+    ChatMessage: components["schemas"]["BaseMessage"] & {
       /** @enum {boolean} */
       deleted?: true;
-      /** Format: int64 */
-      expirationTimestamp: number;
       /** Format: int64 */
       id: number;
       isReplyable: boolean;
       markdown: boolean;
-      message: string;
-      messageParameters: {
-        [key: string]: components["schemas"]["RichObjectParameter"];
-      };
-      messageType: string;
       reactions: {
         [key: string]: number;
       };
       referenceId: string;
-      systemMessage: string;
       /** Format: int64 */
       timestamp: number;
       token: string;
@@ -659,6 +661,7 @@ export type components = {
     ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
       parent?: components["schemas"]["ChatMessage"];
     };
+    ChatProxyMessage: components["schemas"]["BaseMessage"];
     ChatReminder: {
       /** Format: int64 */
       messageId: number;
@@ -884,20 +887,7 @@ export type components = {
       /** Format: int64 */
       unreadMessages: number;
     };
-    RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["RoomProxyMessage"];
-    RoomProxyMessage: {
-      actorDisplayName: string;
-      actorId: string;
-      actorType: string;
-      /** Format: int64 */
-      expirationTimestamp: number;
-      message: string;
-      messageParameters: {
-        [key: string]: components["schemas"]["RichObjectParameter"];
-      };
-      messageType: string;
-      systemMessage: string;
-    };
+    RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     SignalingSession: {
       /** Format: int64 */
       inCall: number;

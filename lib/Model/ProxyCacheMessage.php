@@ -59,7 +59,7 @@ use OCP\AppFramework\Db\Entity;
  * @method void setMetaData(?string $metaData)
  * @method string|null getMetaData()
  *
- * @psalm-import-type TalkRoomProxyMessage from ResponseDefinitions
+ * @psalm-import-type TalkChatProxyMessage from ResponseDefinitions
  */
 class ProxyCacheMessage extends Entity implements \JsonSerializable {
 	public const METADATA_REPLY_TO_ACTOR_TYPE = 'replyToActorType';
@@ -108,7 +108,7 @@ class ProxyCacheMessage extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return TalkRoomProxyMessage
+	 * @return TalkChatProxyMessage
 	 */
 	public function jsonSerialize(): array {
 		$expirationTimestamp = 0;

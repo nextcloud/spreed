@@ -20,6 +20,49 @@
             }
         },
         "schemas": {
+            "BaseMessage": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "expirationTimestamp",
+                    "message",
+                    "messageParameters",
+                    "messageType",
+                    "systemMessage"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string"
+                    },
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "expirationTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "messageParameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RichObjectParameter"
+                        }
+                    },
+                    "messageType": {
+                        "type": "string"
+                    },
+                    "systemMessage": {
+                        "type": "string"
+                    }
+                }
+            },
             "Bot": {
                 "type": "object",
                 "required": [
@@ -311,103 +354,74 @@
                 }
             },
             "ChatMessage": {
-                "type": "object",
-                "required": [
-                    "actorDisplayName",
-                    "actorId",
-                    "actorType",
-                    "expirationTimestamp",
-                    "id",
-                    "isReplyable",
-                    "markdown",
-                    "message",
-                    "messageParameters",
-                    "messageType",
-                    "reactions",
-                    "referenceId",
-                    "systemMessage",
-                    "timestamp",
-                    "token"
-                ],
-                "properties": {
-                    "actorDisplayName": {
-                        "type": "string"
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/BaseMessage"
                     },
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "deleted": {
-                        "type": "boolean",
-                        "enum": [
-                            true
-                        ]
-                    },
-                    "expirationTimestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "isReplyable": {
-                        "type": "boolean"
-                    },
-                    "markdown": {
-                        "type": "boolean"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "messageParameters": {
+                    {
                         "type": "object",
-                        "additionalProperties": {
-                            "$ref": "#/components/schemas/RichObjectParameter"
+                        "required": [
+                            "id",
+                            "isReplyable",
+                            "markdown",
+                            "reactions",
+                            "referenceId",
+                            "timestamp",
+                            "token"
+                        ],
+                        "properties": {
+                            "deleted": {
+                                "type": "boolean",
+                                "enum": [
+                                    true
+                                ]
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "isReplyable": {
+                                "type": "boolean"
+                            },
+                            "markdown": {
+                                "type": "boolean"
+                            },
+                            "reactions": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "referenceId": {
+                                "type": "string"
+                            },
+                            "timestamp": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "token": {
+                                "type": "string"
+                            },
+                            "lastEditActorDisplayName": {
+                                "type": "string"
+                            },
+                            "lastEditActorId": {
+                                "type": "string"
+                            },
+                            "lastEditActorType": {
+                                "type": "string"
+                            },
+                            "lastEditTimestamp": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "silent": {
+                                "type": "boolean"
+                            }
                         }
-                    },
-                    "messageType": {
-                        "type": "string"
-                    },
-                    "reactions": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    "referenceId": {
-                        "type": "string"
-                    },
-                    "systemMessage": {
-                        "type": "string"
-                    },
-                    "timestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "token": {
-                        "type": "string"
-                    },
-                    "lastEditActorDisplayName": {
-                        "type": "string"
-                    },
-                    "lastEditActorId": {
-                        "type": "string"
-                    },
-                    "lastEditActorType": {
-                        "type": "string"
-                    },
-                    "lastEditTimestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "silent": {
-                        "type": "boolean"
                     }
-                }
+                ]
             },
             "ChatMessageWithParent": {
                 "allOf": [
@@ -423,6 +437,9 @@
                         }
                     }
                 ]
+            },
+            "ChatProxyMessage": {
+                "$ref": "#/components/schemas/BaseMessage"
             },
             "ChatReminder": {
                 "type": "object",
@@ -1118,52 +1135,9 @@
                         "$ref": "#/components/schemas/ChatMessage"
                     },
                     {
-                        "$ref": "#/components/schemas/RoomProxyMessage"
+                        "$ref": "#/components/schemas/ChatProxyMessage"
                     }
                 ]
-            },
-            "RoomProxyMessage": {
-                "type": "object",
-                "required": [
-                    "actorDisplayName",
-                    "actorId",
-                    "actorType",
-                    "expirationTimestamp",
-                    "message",
-                    "messageParameters",
-                    "messageType",
-                    "systemMessage"
-                ],
-                "properties": {
-                    "actorDisplayName": {
-                        "type": "string"
-                    },
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "expirationTimestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "messageParameters": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "$ref": "#/components/schemas/RichObjectParameter"
-                        }
-                    },
-                    "messageType": {
-                        "type": "string"
-                    },
-                    "systemMessage": {
-                        "type": "string"
-                    }
-                }
             },
             "SignalingSession": {
                 "type": "object",

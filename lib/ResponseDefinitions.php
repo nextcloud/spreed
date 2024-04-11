@@ -93,21 +93,24 @@ namespace OCA\Talk;
  *     conversation?: string,
  * }
  *
- * @psalm-type TalkChatMessage = array{
+ * @psalm-type TalkBaseMessage = array{
  *     actorDisplayName: string,
  *     actorId: string,
  *     actorType: string,
- *     deleted?: true,
  *     expirationTimestamp: int,
- *     id: int,
- *     isReplyable: bool,
- *     markdown: bool,
  *     message: string,
  *     messageParameters: array<string, TalkRichObjectParameter>,
  *     messageType: string,
+ *     systemMessage: string,
+ *  }
+ *
+ * @psalm-type TalkChatMessage = TalkBaseMessage&array{
+ *     deleted?: true,
+ *     id: int,
+ *     isReplyable: bool,
+ *     markdown: bool,
  *     reactions: array<string, integer>|\stdClass,
  *     referenceId: string,
- *     systemMessage: string,
  *     timestamp: int,
  *     token: string,
  *     lastEditActorDisplayName?: string,
@@ -117,18 +120,9 @@ namespace OCA\Talk;
  *     silent?: bool,
  * }
  *
- * @psalm-type TalkRoomProxyMessage = array{
- *     actorDisplayName: string,
- *     actorId: string,
- *     actorType: string,
- *     expirationTimestamp: int,
- *     message: string,
- *     messageParameters: array<string, TalkRichObjectParameter>,
- *     messageType: string,
- *     systemMessage: string,
- * }
+ * @psalm-type TalkChatProxyMessage = TalkBaseMessage
  *
- * @psalm-type TalkRoomLastMessage = TalkChatMessage|TalkRoomProxyMessage
+ * @psalm-type TalkRoomLastMessage = TalkChatMessage|TalkChatProxyMessage
  *
  * @psalm-type TalkChatMessageWithParent = TalkChatMessage&array{parent?: TalkChatMessage}
  *
