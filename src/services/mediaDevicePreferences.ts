@@ -56,6 +56,20 @@ ${videoInputList.map(getDeviceString).join('\n')}
 }
 
 /**
+ * Get the first available device from the preference list.
+ *
+ * Returns id of device from the list / provided fallback id / 'default' id
+ *
+ * @param devices list of available devices
+ * @param inputList list of registered audio/video devices in order of preference
+ * @param [fallbackId] id of currently selected input
+ */
+function getFirstAvailableDevice(devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[], fallbackId?: string) {
+	const availableDevices = devices.map(device => device.deviceId).filter(id => id !== 'default')
+	return inputList.find(device => availableDevices.includes(device.deviceId))?.deviceId ?? fallbackId
+}
+
+/**
  * Modify devices list.
  *
  * @param device device
@@ -177,6 +191,7 @@ function updateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputId:
 }
 
 export {
+	getFirstAvailableDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
 	updateMediaDevicesPreferences,
