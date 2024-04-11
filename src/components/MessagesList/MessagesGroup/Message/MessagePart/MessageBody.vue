@@ -61,8 +61,10 @@
 				:class="{'single-emoji': isSingleEmoji}"
 				autolink
 				dir="auto"
+				:interactive="markdown && isEditable"
 				:use-extended-markdown="markdown"
-				:reference-limit="1" />
+				:reference-limit="1"
+				@interact:todo="handleInteraction" />
 
 			<!-- Additional controls -->
 			<NcButton v-if="containsCodeBlocks"
@@ -133,6 +135,7 @@ import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
 import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
 import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
@@ -144,8 +147,11 @@ import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
+import { CONVERSATION, PARTICIPANT } from '../../../../../constants.js'
 import { EventBus } from '../../../../../services/EventBus.js'
+import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
+const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
 // Regular expression to check for Unicode emojis in message text
 const regex = emojiRegex()
 
@@ -293,6 +299,36 @@ export default {
 			return this.isInCall && !!this.$store.getters.getNewPolls[this.messageParameters.object.id]
 		},
 
+		conversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		isConversationReadOnly() {
+			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+		},
+
+		isModifiable() {
+			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
+		},
+
+		isObjectShare() {
+			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('object'))
+		},
+
+		isMyMsg() {
+			return this.actorId === this.$store.getters.getActorId()
+				&& this.actorType === this.$store.getters.getActorType()
+		},
+
+		isEditable() {
+			if (!canEditMessage || !this.isModifiable || this.isObjectShare
+				|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
+				return false
+			}
+
+			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
+		},
+
 		hideDate() {
 			return this.isTemporary || this.isDeleting || !!this.sendingFailure
 		},
@@ -420,6 +456,48 @@ export default {
 				}
 			}
 		},
+
+		async handleInteraction(id) {
+			if (!this.isEditable) {
+				return
+			}
+
+			const parentId = id.split('-markdown-input-')[0]
+			const index = Array.from(this.$refs.messageMain.querySelectorAll(`span[id^="${parentId}-markdown-input-"]`)).findIndex((el) => el.id.includes(id))
+			if (index === -1) {
+				return
+			}
+			let checkBoxIndex = 0
+			const lines = this.message.split('\n')
+			for (let i = 0; i < lines.length; i++) {
+				if (lines[i].trim().match(/^- {1,4}\[\s\]/) || lines[i].trim().match(/^- {1,4}\[x\]/)) {
+					if (checkBoxIndex === index) {
+						const isChecked = lines[i].includes('[x]')
+						if (isChecked) {
+							lines[i] = lines[i].replace('[x]', '[ ]')
+						} else {
+							lines[i] = lines[i].replace('[ ]', '[x]')
+						}
+						break
+					}
+					checkBoxIndex++
+				}
+			}
+			// Update the message using editing API
+			let newMessageText = parseSpecialSymbols(lines.join('\n').trim())
+			// also parse mentions
+			newMessageText = parseMentions(newMessageText, this.messageParameters)
+			try {
+				await this.$store.dispatch('editMessage', {
+					token: this.token,
+					messageId: this.id,
+					updatedMessage: newMessageText,
+				})
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Could not update the message'))
+			}
+		}
 	},
 }
 </script>
