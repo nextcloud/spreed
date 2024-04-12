@@ -58,40 +58,26 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RecordingServiceTest extends TestCase {
-	/** @var IMimeTypeDetector */
-	private $mimeTypeDetector;
-	/** @var ParticipantService|MockObject */
-	private $participantService;
-	/** @var IRootFolder|MockObject */
-	private $rootFolder;
-	/** @var Config|MockObject */
-	private $config;
-	/** @var IConfig|MockObject */
-	private $serverConfig;
-	/** @var IManager|MockObject */
-	private $notificationManager;
-	/** @var Manager|MockObject */
-	private $roomManager;
-	/** @var ITimeFactory|MockObject */
-	private $timeFactory;
-	/** @var RoomService|MockObject */
-	private $roomService;
-	/** @var ShareManager|MockObject */
-	private $shareManager;
-	/** @var ChatManager|MockObject */
-	private $chatManager;
-	/** @var LoggerInterface|MockObject */
-	private $logger;
-	/** @var BackendNotifier|MockObject */
-	private $backendNotifier;
-	private ISpeechToTextManager|MockObject $speechToTextManager;
-	/** @var RecordingService */
-	protected $recordingService;
+	private IMimeTypeDetector $mimeTypeDetector;
+	protected ParticipantService&MockObject $participantService;
+	protected IRootFolder&MockObject $rootFolder;
+	protected Config&MockObject $config;
+	protected IConfig&MockObject $serverConfig;
+	protected IManager&MockObject $notificationManager;
+	protected Manager&MockObject $roomManager;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected RoomService&MockObject $roomService;
+	protected ShareManager&MockObject $shareManager;
+	protected ChatManager&MockObject $chatManager;
+	protected LoggerInterface&MockObject $logger;
+	protected BackendNotifier&MockObject $backendNotifier;
+	protected ISpeechToTextManager&MockObject $speechToTextManager;
+	protected RecordingService $recordingService;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
+		$this->mimeTypeDetector = \OCP\Server::get(IMimeTypeDetector::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->notificationManager = $this->createMock(IManager::class);
@@ -124,16 +110,6 @@ class RecordingServiceTest extends TestCase {
 		);
 	}
 
-	/** @dataProvider dataValidateFileFormat */
-	public function testValidateFileFormat(string $fileName, string $fileRealPath, string $exceptionMessage): void {
-		if ($exceptionMessage) {
-			$this->expectExceptionMessage($exceptionMessage);
-		} else {
-			$this->expectNotToPerformAssertions();
-		}
-		$this->recordingService->validateFileFormat($fileName, $fileRealPath);
-	}
-
 	public static function dataValidateFileFormat(): array {
 		return [
 			# file_invalid_path
@@ -151,22 +127,15 @@ class RecordingServiceTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataGetResourceFromFileArray
+	 * @dataProvider dataValidateFileFormat
 	 */
-	public function testGetResourceFromFileArray(array $file, $expected, string $exceptionMessage): void {
+	public function testValidateFileFormat(string $fileName, string $fileRealPath, string $exceptionMessage): void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);
+		} else {
+			$this->expectNotToPerformAssertions();
 		}
-
-		$room = $this->createMock(Room::class);
-		$attendee = Attendee::fromRow([
-			'actor_type' => Attendee::ACTOR_USERS,
-			'actor_id' => 'participant1',
-		]);
-		$participant = new Participant($room, $attendee, null);
-
-		$actual = stream_get_contents($this->recordingService->getResourceFromFileArray($file, $room, $participant));
-		$this->assertEquals($expected, $actual);
+		$this->recordingService->validateFileFormat($fileName, $fileRealPath);
 	}
 
 	public static function dataGetResourceFromFileArray(): array {
@@ -180,5 +149,24 @@ class RecordingServiceTest extends TestCase {
 			# file with content
 			[['error' => 0, 'tmp_name' => $fileWithContent], 'bla', ''],
 		];
+	}
+
+	/**
+	 * @dataProvider dataGetResourceFromFileArray
+	 */
+	public function testGetResourceFromFileArray(array $file, string $expected, string $exceptionMessage): void {
+		if ($exceptionMessage) {
+			$this->expectExceptionMessage($exceptionMessage);
+		}
+
+		$room = $this->createMock(Room::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => Attendee::ACTOR_USERS,
+			'actor_id' => 'participant1',
+		]);
+		$participant = new Participant($room, $attendee, null);
+
+		$actual = stream_get_contents($this->recordingService->getResourceFromFileArray($file, $room, $participant));
+		$this->assertEquals($expected, $actual);
 	}
 }

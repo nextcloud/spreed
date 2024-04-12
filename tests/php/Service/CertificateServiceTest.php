@@ -39,7 +39,7 @@ class CertificateServiceTest extends TestCase {
 		$this->service = new CertificateService($logger);
 	}
 
-	public function testGetParsedTlsHost() {
+	public function testGetParsedTlsHost(): void {
 		$actual = $this->service->getParsedTlsHost("domain.com");
 		$this->assertEquals($actual, "domain.com");
 

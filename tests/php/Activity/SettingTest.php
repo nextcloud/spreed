@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -26,7 +28,7 @@ use OCP\Activity\ISetting;
 use Test\TestCase;
 
 class SettingTest extends TestCase {
-	public static function dataSettings() {
+	public static function dataSettings(): array {
 		return [
 			[Setting::class],
 		];
@@ -34,40 +36,36 @@ class SettingTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testImplementsInterface($settingClass) {
-		$setting = \OC::$server->get($settingClass);
+	public function testImplementsInterface(string $settingClass): void {
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertInstanceOf(ISetting::class, $setting);
 	}
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testGetIdentifier($settingClass) {
+	public function testGetIdentifier(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsString($setting->getIdentifier());
 	}
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testGetName($settingClass) {
+	public function testGetName(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsString($setting->getName());
 	}
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testGetPriority($settingClass) {
+	public function testGetPriority(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$priority = $setting->getPriority();
 		$this->assertIsInt($setting->getPriority());
 		$this->assertGreaterThanOrEqual(0, $priority);
@@ -76,41 +74,37 @@ class SettingTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testCanChangeStream($settingClass) {
+	public function testCanChangeStream(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->canChangeStream());
 	}
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testIsDefaultEnabledStream($settingClass) {
+	public function testIsDefaultEnabledStream(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->isDefaultEnabledStream());
 	}
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testCanChangeMail($settingClass) {
+	public function testCanChangeMail(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->canChangeMail());
 	}
 
 	/**
 	 * @dataProvider dataSettings
-	 * @param string $settingClass
 	 */
-	public function testIsDefaultEnabledMail($settingClass) {
+	public function testIsDefaultEnabledMail(string $settingClass): void {
 		/** @var ISetting $setting */
-		$setting = \OC::$server->get($settingClass);
+		$setting = \OCP\Server::get($settingClass);
 		$this->assertIsBool($setting->isDefaultEnabledMail());
 	}
 }

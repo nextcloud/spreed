@@ -42,19 +42,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SearchPluginTest extends TestCase {
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var GuestManager|MockObject */
-	protected $guestManager;
-	/** @var TalkSession|MockObject */
-	protected $talkSession;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var Util|MockObject */
-	protected $util;
-	protected Authenticator|MockObject $federationAuthenticator;
-	/** @var IL10N|MockObject */
-	protected $l;
+	protected IUserManager&MockObject $userManager;
+	protected GuestManager&MockObject $guestManager;
+	protected TalkSession&MockObject $talkSession;
+	protected ParticipantService&MockObject $participantService;
+	protected Util&MockObject $util;
+	protected Authenticator&MockObject $federationAuthenticator;
+	protected IL10N&MockObject $l;
 	protected ?string $userId = null;
 	protected SearchPlugin $plugin;
 
@@ -110,7 +104,7 @@ class SearchPluginTest extends TestCase {
 	}
 
 	protected function createParticipantMock(string $uid, string $displayName, string $session = ''): Participant {
-		/** @var Participant|MockObject $p */
+		/** @var Participant&MockObject $p */
 		$p = $this->createMock(Participant::class);
 		$a = Attendee::fromRow([
 			'actor_type' => $uid ? 'users' : 'guests',
@@ -134,7 +128,7 @@ class SearchPluginTest extends TestCase {
 		return $p;
 	}
 
-	public function testSearch() {
+	public function testSearch(): void {
 		$result = $this->createMock(ISearchResult::class);
 		$room = $this->createMock(Room::class);
 
@@ -221,13 +215,8 @@ class SearchPluginTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSearchGuests
-	 * @param string $search
-	 * @param string[] $sessionHashes
-	 * @param array $displayNames
-	 * @param array $expected
-	 * @param array $expectedExact
 	 */
-	public function testSearchGuests($search, array $guests, array $expected, array $expectedExact): void {
+	public function testSearchGuests(string $search, array $guests, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 		$result->expects($this->once())
 			->method('addResultSet')
@@ -262,7 +251,7 @@ class SearchPluginTest extends TestCase {
 		return $user;
 	}
 
-	public static function dataCreateResult() {
+	public static function dataCreateResult(): array {
 		return [
 			['user', 'foo', 'bar', '', ['label' => 'bar', 'value' => ['shareType' => 'user', 'shareWith' => 'foo']]],
 			['user', 'test', 'Test', '', ['label' => 'Test', 'value' => ['shareType' => 'user', 'shareWith' => 'test']]],
@@ -273,13 +262,8 @@ class SearchPluginTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCreateResult
-	 * @param string $type
-	 * @param string $uid
-	 * @param string $name
-	 * @param string $managerName
-	 * @param array $expected
 	 */
-	public function testCreateResult($type, $uid, $name, $managerName, array $expected) {
+	public function testCreateResult(string $type, string $uid, string $name, ?string $managerName, array $expected): void {
 		if ($managerName !== null) {
 			$this->userManager->expects($this->any())
 				->method('getDisplayName')
@@ -306,9 +290,6 @@ class SearchPluginTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCreateGuestResult
-	 * @param string $actorId
-	 * @param string $name
-	 * @param array $expected
 	 */
 	public function testCreateGuestResult(string $actorId, string $name, array $expected): void {
 		$plugin = $this->getPlugin();

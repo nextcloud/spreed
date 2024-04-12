@@ -43,7 +43,6 @@ class EventDocumentationTest extends TestCase {
 
 	/**
 	 * @dataProvider dataEventDocumentation
-	 * @param string $eventClass
 	 */
 	public function testEventDocumentation(string $eventClass): void {
 		$reflectionClass = new \ReflectionClass($eventClass);

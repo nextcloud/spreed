@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * @copyright Copyright (c) 2022, Vitor Mattos <vitor@php.rio>
  *
@@ -43,21 +42,14 @@ use Test\TestCase;
  * @group DB
  */
 class AvatarServiceTest extends TestCase {
-	private AvatarService $service;
-	/** @var IAppData|MockObject */
-	private $appData;
-	/** @var IL10N|MockObject */
-	private $l;
-	/** @var IURLGenerator|MockObject */
-	private $url;
-	/** @var ISecureRandom|MockObject */
-	private $random;
-	/** @var RoomService|MockObject */
-	private $roomService;
-	/** @var IAvatarManager|MockObject */
-	private $avatarManager;
-	/** @var EmojiHelper|MockObject */
-	private $emojiHelper;
+	protected IAppData&MockObject $appData;
+	protected IL10N&MockObject $l;
+	protected IURLGenerator&MockObject $url;
+	protected ISecureRandom&MockObject $random;
+	protected RoomService&MockObject $roomService;
+	protected IAvatarManager&MockObject $avatarManager;
+	protected EmojiHelper $emojiHelper;
+	protected ?AvatarService $service = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -80,11 +72,19 @@ class AvatarServiceTest extends TestCase {
 		);
 	}
 
+	public static function dataGetAvatarVersion(): array {
+		return [
+			['', 'STRING WITH 8 CHARS'],
+			['1', '1'],
+			['1.png', '1'],
+		];
+	}
+
 	/**
 	 * @dataProvider dataGetAvatarVersion
 	 */
 	public function testGetAvatarVersion(string $avatar, string $expected): void {
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 		$room->method('getAvatar')
 			->willReturn($avatar);
@@ -94,14 +94,6 @@ class AvatarServiceTest extends TestCase {
 		} else {
 			$this->assertEquals($expected, $actual);
 		}
-	}
-
-	public static function dataGetAvatarVersion(): array {
-		return [
-			['', 'STRING WITH 8 CHARS'],
-			['1', '1'],
-			['1.png', '1'],
-		];
 	}
 
 	public static function dataGetFirstCombinedEmoji(): array {

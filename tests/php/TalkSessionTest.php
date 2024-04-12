@@ -31,9 +31,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class TalkSessionTest extends TestCase {
-	/** @var ISession|MockObject */
-	protected $session;
-
+	protected ISession&MockObject $session;
 	protected ?TalkSession $talkSession = null;
 
 	public function setUp(): void {
@@ -54,11 +52,8 @@ class TalkSessionTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGet
-	 *
-	 * @param null|string $sessionData
-	 * @param null|string $expected
 	 */
-	public function testGetSessionForRoom($sessionData, $expected) {
+	public function testGetSessionForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
 			->with('spreed-session')
@@ -68,11 +63,8 @@ class TalkSessionTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGet
-	 *
-	 * @param null|string $sessionData
-	 * @param null|string $expected
 	 */
-	public function testGetPasswordForRoom($sessionData, $expected) {
+	public function testGetPasswordForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
 			->with('spreed-password')
@@ -91,11 +83,8 @@ class TalkSessionTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSet
-	 *
-	 * @param null|string $sessionData
-	 * @param null|string $expected
 	 */
-	public function testSetSessionForRoom($sessionData, $expected) {
+	public function testSetSessionForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
 			->with('spreed-session')
@@ -108,11 +97,8 @@ class TalkSessionTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSet
-	 *
-	 * @param null|string $sessionData
-	 * @param null|string $expected
 	 */
-	public function testSetPasswordForRoom($sessionData, $expected) {
+	public function testSetPasswordForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
 			->with('spreed-password')
@@ -134,11 +120,8 @@ class TalkSessionTest extends TestCase {
 
 	/**
 	 * @dataProvider dataRemove
-	 *
-	 * @param null|string $sessionData
-	 * @param null|string $expected
 	 */
-	public function testRemoveSessionForRoom($sessionData, $expected) {
+	public function testRemoveSessionForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
 			->with('spreed-session')
@@ -151,11 +134,8 @@ class TalkSessionTest extends TestCase {
 
 	/**
 	 * @dataProvider dataRemove
-	 *
-	 * @param null|string $sessionData
-	 * @param null|string $expected
 	 */
-	public function testRemovePasswordForRoom($sessionData, $expected) {
+	public function testRemovePasswordForRoom(?string $sessionData, ?string $expected): void {
 		$this->session->expects($this->once())
 			->method('get')
 			->with('spreed-password')

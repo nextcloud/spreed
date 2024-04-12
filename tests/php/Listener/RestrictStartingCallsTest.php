@@ -36,10 +36,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class RestrictStartingCallsTest extends TestCase {
-	/** @var IConfig|MockObject */
-	protected $serverConfig;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
+	protected IConfig&MockObject $serverConfig;
+	protected ParticipantService&MockObject $participantService;
 	protected ?RestrictStartingCalls $listener = null;
 
 	public function setUp(): void {
@@ -63,12 +61,6 @@ class RestrictStartingCallsTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCheckStartCallPermissions
-	 * @param int $roomType
-	 * @param string $roomObjectType
-	 * @param bool $canStart
-	 * @param bool $hasParticipants
-	 * @param bool $throws
-	 * @throws ForbiddenException
 	 */
 	public function testCheckStartCallPermissions(int $roomType, string $roomObjectType, bool $canStart, bool $hasParticipants, bool $throws): void {
 		$room = $this->createMock(Room::class);

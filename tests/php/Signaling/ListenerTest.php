@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2018, Joachim Bauch (bauch@struktur.de)
@@ -40,17 +42,18 @@ use OCA\Talk\Signaling\Listener;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\Webinary;
 use OCP\Comments\IComment;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 /**
  * @group DB
  */
 class ListenerTest extends TestCase {
-	protected ?BackendNotifier $backendNotifier = null;
-	protected ?Manager $manager = null;
-	protected ?ParticipantService $participantService = null;
-	protected ?SessionService $sessionService = null;
-	protected ?Listener $listener = null;
+	protected BackendNotifier&MockObject $backendNotifier;
+	protected Manager&MockObject $manager;
+	protected ParticipantService&MockObject $participantService;
+	protected SessionService&MockObject $sessionService;
+	protected ?Listener $listener;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -175,10 +178,6 @@ class ListenerTest extends TestCase {
 
 	/**
 	 * @dataProvider dataRoomLobbyModified
-	 * @param int $newValue
-	 * @param int $oldValue
-	 * @param \DateTime|null $lobbyTimer
-	 * @param bool $timerReached
 	 */
 	public function testRoomLobbyModified(int $newValue, int $oldValue, ?\DateTime $lobbyTimer, bool $timerReached): void {
 		$room = $this->createMock(Room::class);
@@ -197,7 +196,7 @@ class ListenerTest extends TestCase {
 		$this->listener->handle($event);
 	}
 
-	public function testRoomLobbyRemoved() {
+	public function testRoomLobbyRemoved(): void {
 		$room = $this->createMock(Room::class);
 
 		$event = new LobbyModifiedEvent(

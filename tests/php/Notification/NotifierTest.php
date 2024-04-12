@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
@@ -59,47 +61,28 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class NotifierTest extends TestCase {
-	/** @var IFactory|MockObject */
-	protected $lFactory;
-	/** @var IURLGenerator|MockObject */
-	protected $url;
-	/** @var Config|MockObject */
-	protected $config;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var IGroupManager|MockObject */
-	protected $groupManager;
-	/** @var GuestManager|MockObject */
-	protected $guestManager;
-	/** @var IShareManager|MockObject */
-	protected $shareManager;
-	/** @var Manager|MockObject */
-	protected $manager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
-	/** @var INotificationManager|MockObject */
-	protected $notificationManager;
-	/** @var CommentsManager|MockObject */
-	protected $commentsManager;
-	protected ProxyCacheMessageMapper|MockObject $proxyCacheMessageMapper;
-	/** @var MessageParser|MockObject */
-	protected $messageParser;
-	/** @var IRootFolder|MockObject */
-	protected $rootFolder;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var Definitions|MockObject */
-	protected $definitions;
+	protected IFactory&MockObject $lFactory;
+	protected IURLGenerator&MockObject $url;
+	protected Config&MockObject $config;
+	protected IUserManager&MockObject $userManager;
+	protected IGroupManager&MockObject $groupManager;
+	protected GuestManager&MockObject $guestManager;
+	protected IShareManager&MockObject $shareManager;
+	protected Manager&MockObject $manager;
+	protected ParticipantService&MockObject $participantService;
+	protected AvatarService&MockObject $avatarService;
+	protected INotificationManager&MockObject $notificationManager;
+	protected CommentsManager&MockObject $commentsManager;
+	protected ProxyCacheMessageMapper&MockObject $proxyCacheMessageMapper;
+	protected MessageParser&MockObject $messageParser;
+	protected IRootFolder&MockObject $rootFolder;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected Definitions&MockObject $definitions;
+	protected AddressHandler&MockObject $addressHandler;
+	protected BotServerMapper&MockObject $botServerMapper;
+	protected FederationManager&MockObject $federationManager;
+	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected ?Notifier $notifier = null;
-	/** @var AddressHandler|MockObject */
-	protected $addressHandler;
-	/** @var BotServerMapper|MockObject */
-	protected $botServerMapper;
-	/** @var FederationManager|MockObject */
-	protected $federationManager;
-	protected ICloudIdManager|MockObject $cloudIdManager;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -160,12 +143,9 @@ class NotifierTest extends TestCase {
 
 	/**
 	 * @dataProvider dataPrepareOne2One
-	 * @param string $uid
-	 * @param string $displayName
-	 * @param string $parsedSubject
 	 */
 	public function testPrepareOne2One(string $uid, string $displayName, string $parsedSubject): void {
-		/** @var INotification|MockObject $n */
+		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
@@ -260,7 +240,7 @@ class NotifierTest extends TestCase {
 	 * @param string $displayName
 	 * @param string $parsedSubject
 	 */
-	public function testPreparingMultipleTimesOnlyGetsTheRoomOnce($uid, $displayName, $parsedSubject) {
+	public function testPreparingMultipleTimesOnlyGetsTheRoomOnce($uid, $displayName, $parsedSubject): void {
 		$numNotifications = 4;
 
 		$l = $this->createMock(IL10N::class);
@@ -319,7 +299,7 @@ class NotifierTest extends TestCase {
 	}
 
 	public function getNotificationMock(string $parsedSubject, string $uid, string $displayName) {
-		/** @var INotification|MockObject $n */
+		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$n->expects($this->once())
 			->method('setIcon')
@@ -369,7 +349,7 @@ class NotifierTest extends TestCase {
 		return $n;
 	}
 
-	public static function dataPrepareGroup() {
+	public static function dataPrepareGroup(): array {
 		return [
 			[Room::TYPE_GROUP, 'admin', 'Admin', 'Group', 'Admin invited you to a group conversation: Group'],
 			[Room::TYPE_PUBLIC, 'test', 'Test user', 'Public', 'Test user invited you to a group conversation: Public'],
@@ -378,15 +358,10 @@ class NotifierTest extends TestCase {
 
 	/**
 	 * @dataProvider dataPrepareGroup
-	 * @param int $type
-	 * @param string $uid
-	 * @param string $displayName
-	 * @param string $name
-	 * @param string $parsedSubject
 	 */
-	public function testPrepareGroup($type, $uid, $displayName, $name, $parsedSubject) {
+	public function testPrepareGroup(int $type, string $uid, string $displayName, string $name, string $parsedSubject): void {
 		$roomId = $type;
-		/** @var INotification|MockObject $n */
+		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
@@ -879,18 +854,9 @@ class NotifierTest extends TestCase {
 
 	/**
 	 * @dataProvider dataPrepareChatMessage
-	 * @param string $subject
-	 * @param int $roomType
-	 * @param array $subjectParameters
-	 * @param string $displayName
-	 * @param string $roomName
-	 * @param string $parsedSubject
-	 * @param array $richSubject
-	 * @param bool $deletedUser
-	 * @param null|string $guestName
 	 */
-	public function testPrepareChatMessage(string $subject, int $roomType, array $subjectParameters, $displayName, string $roomName, string $parsedSubject, array $richSubject, bool $deletedUser = false, ?string $guestName = null, bool $isPushNotification = false) {
-		/** @var INotification|MockObject $notification */
+	public function testPrepareChatMessage(string $subject, int $roomType, array $subjectParameters, ?string $displayName, string $roomName, string $parsedSubject, array $richSubject, bool $deletedUser = false, ?string $guestName = null, bool $isPushNotification = false): void {
+		/** @var INotification&MockObject $notification */
 		$notification = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
@@ -1073,7 +1039,7 @@ class NotifierTest extends TestCase {
 		$this->assertEquals($notification, $this->notifier->prepare($notification, 'de'));
 	}
 
-	public static function dataPrepareThrows() {
+	public static function dataPrepareThrows(): array {
 		return [
 			['Incorrect app', 'invalid-app', null, null, null, null, null],
 			'User can not use Talk' => [AlreadyProcessedException::class, 'spreed', true, null, null, null, null],
@@ -1088,18 +1054,9 @@ class NotifierTest extends TestCase {
 
 	/**
 	 * @dataProvider dataPrepareThrows
-	 *
-	 * @param string $message
-	 * @param string $app
-	 * @param bool|null $isDisabledForUser
-	 * @param bool|null $validRoom
-	 * @param string|null $subject
-	 * @param array|null $params
-	 * @param string|null $objectType
-	 * @param string $token
 	 */
-	public function testPrepareThrows($message, $app, $isDisabledForUser, $validRoom, $subject, $params, $objectType, $token = 'roomToken') {
-		/** @var INotification|MockObject $n */
+	public function testPrepareThrows(string $message, string $app, ?bool $isDisabledForUser, ?bool $validRoom, ?string $subject, ?array $params, ?string $objectType, string $token = 'roomToken'): void {
+		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 

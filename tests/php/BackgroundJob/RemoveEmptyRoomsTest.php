@@ -33,24 +33,18 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\Config\IUserMountCache;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RemoveEmptyRoomsTest extends TestCase {
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var Manager|MockObject */
-	protected $manager;
-	/** @var RoomService|MockObject */
-	protected $roomService;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var ParticipantService|MockObject */
-	protected $federationManager;
-	/** @var LoggerInterface|MockObject */
-	protected $loggerInterface;
-	/** @var IUserMountCache|MockObject */
-	protected $userMountCache;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected Manager&MockObject $manager;
+	protected RoomService&MockObject $roomService;
+	protected ParticipantService&MockObject $participantService;
+	protected FederationManager&MockObject $federationManager;
+	protected LoggerInterface&MockObject $loggerInterface;
+	protected IUserMountCache&MockObject $userMountCache;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -91,6 +85,15 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->assertEquals(1, $numDeletedRooms, 'Invalid final quantity of rooms');
 	}
 
+	public static function dataDeleteIfFileIsRemoved(): array {
+		return [
+			['', [], 0],
+			['email', [], 0],
+			['file', ['fileExists'], 0],
+			['file', [], 1],
+		];
+	}
+
 	/**
 	 * @dataProvider dataDeleteIfFileIsRemoved
 	 */
@@ -116,12 +119,14 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	public static function dataDeleteIfFileIsRemoved(): array {
+	public static function dataDeleteIfIsEmpty(): array {
 		return [
-			['', [], 0],
-			['email', [], 0],
-			['file', ['fileExists'], 0],
-			['file', [], 1],
+			'room with user' => ['', 1, 0, 0],
+			'room with fed invite' => ['', 0, 1, 0],
+			'room to delete' => ['', 0, 0, 1],
+			'file room with user' => ['file', 1, 0, 0],
+			'email room with user' => ['email', 1, 0, 0],
+			'email room without user' => ['email', 0, 0, 1]
 		];
 	}
 
@@ -154,17 +159,6 @@ class RemoveEmptyRoomsTest extends TestCase {
 
 		$numDeletedRoomsActual = self::invokePrivate($backgroundJob, 'numDeletedRooms');
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
-	}
-
-	public static function dataDeleteIfIsEmpty(): array {
-		return [
-			'room with user' => ['', 1, 0, 0],
-			'room with fed invite' => ['', 0, 1, 0],
-			'room to delete' => ['', 0, 0, 1],
-			'file room with user' => ['file', 1, 0, 0],
-			'email room with user' => ['email', 1, 0, 0],
-			'email room without user' => ['email', 0, 0, 1]
-		];
 	}
 
 	/**

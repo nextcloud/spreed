@@ -43,15 +43,15 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CapabilitiesTest extends TestCase {
-	protected IConfig|MockObject $serverConfig;
-	protected Config|MockObject $talkConfig;
-	protected IAppConfig|MockObject $appConfig;
-	protected CommentsManager|MockObject $commentsManager;
-	protected IUserSession|MockObject $userSession;
-	protected IAppManager|MockObject $appManager;
-	protected ITranslationManager|MockObject $translationManager;
-	protected ICacheFactory|MockObject $cacheFactory;
-	protected ICache|MockObject $talkCache;
+	protected IConfig&MockObject $serverConfig;
+	protected Config&MockObject $talkConfig;
+	protected IAppConfig&MockObject $appConfig;
+	protected CommentsManager&MockObject $commentsManager;
+	protected IUserSession&MockObject $userSession;
+	protected IAppManager&MockObject $appManager;
+	protected ITranslationManager&MockObject $translationManager;
+	protected ICacheFactory&MockObject $cacheFactory;
+	protected ICache&MockObject $talkCache;
 	protected ?array $baseFeatures = null;
 
 	public function setUp(): void {
@@ -256,11 +256,6 @@ class CapabilitiesTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetCapabilitiesUserAllowed
-	 * @param bool $isNotAllowed
-	 * @param bool $canCreate
-	 * @param string $quota
-	 * @param bool $canUpload
-	 * @param int $readPrivacy
 	 */
 	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy): void {
 		$capabilities = new Capabilities(
@@ -442,6 +437,13 @@ class CapabilitiesTest extends TestCase {
 		$this->assertEquals('this-is-the-key', $data['spreed']['config']['signaling']['hello-v2-token-key']);
 	}
 
+	public static function dataTestConfigRecording(): array {
+		return [
+			[true],
+			[false],
+		];
+	}
+
 	/**
 	 * @dataProvider dataTestConfigRecording
 	 */
@@ -463,13 +465,6 @@ class CapabilitiesTest extends TestCase {
 
 		$data = $capabilities->getCapabilities();
 		$this->assertEquals($data['spreed']['config']['call']['recording'], $enabled);
-	}
-
-	public static function dataTestConfigRecording(): array {
-		return [
-			[true],
-			[false],
-		];
 	}
 
 	public function testCapabilitiesTranslations(): void {

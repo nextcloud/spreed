@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -61,11 +62,6 @@ class ShellExecutorTest extends TestCase {
 
 	/**
 	 * @dataProvider dataExecShellRun
-	 * @param string|null $actorId
-	 * @param string $roomToken
-	 * @param string $cmd
-	 * @param string $arguments
-	 * @param string $output
 	 */
 	public function testExecShellRun(?string $actorId, string $roomToken, string $cmd, string $arguments, string $output): void {
 		$executor = new ShellExecutor();
@@ -82,12 +78,6 @@ class ShellExecutorTest extends TestCase {
 
 	/**
 	 * @dataProvider dataExecShell
-	 * @param string|null $actorId
-	 * @param string $roomToken
-	 * @param string $cmd
-	 * @param string $arguments
-	 * @param string $expected
-	 * @param string $output
 	 */
 	public function testExecShell(?string $actorId, string $roomToken, string $cmd, string $arguments, string $expected, string $output): void {
 		$executor = $this->getMockBuilder(ShellExecutor::class)

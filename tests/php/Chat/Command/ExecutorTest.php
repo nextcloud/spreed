@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -37,21 +38,11 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class ExecutorTest extends TestCase {
-	/** @var IEventDispatcher|MockObject */
-	protected $dispatcher;
-
-	/** @var ShellExecutor|MockObject */
-	protected $shellExecutor;
-
-	/** @var CommandService|MockObject */
-	protected $commandService;
-
-	/** @var LoggerInterface|MockObject */
-	protected $logger;
-
-	/** @var IL10N|MockObject */
-	protected $l10n;
-
+	protected IEventDispatcher&MockObject $dispatcher;
+	protected ShellExecutor&MockObject $shellExecutor;
+	protected CommandService&MockObject $commandService;
+	protected LoggerInterface&MockObject $logger;
+	protected IL10N&MockObject $l10n;
 	protected ?Executor $executor = null;
 
 	public function setUp(): void {
@@ -80,8 +71,6 @@ class ExecutorTest extends TestCase {
 
 	/**
 	 * @dataProvider dataExecApp
-	 * @param string $arguments
-	 * @param string $expected
 	 */
 	public function testExecApp(string $arguments, string $expected): void {
 		$message = $this->createMock(IComment::class);
@@ -125,14 +114,9 @@ class ExecutorTest extends TestCase {
 
 	/**
 	 * @dataProvider dataExecShell
-	 * @param string|null $actorId
-	 * @param string $roomToken
-	 * @param string $script
-	 * @param string $arguments
-	 * @param string $output
 	 */
 	public function testExecShell(?string $actorId, string $roomToken, string $script, string $arguments, string $output): void {
-		/** @var IComment|MockObject $message */
+		/** @var IComment&MockObject $message */
 		$message = $this->createMock(IComment::class);
 		if ($actorId === null) {
 			$message->expects($this->once())
@@ -149,7 +133,7 @@ class ExecutorTest extends TestCase {
 				->willReturn($actorId);
 		}
 
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 		$room->expects($this->once())
 			->method('getToken')

@@ -29,8 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SorterTest extends TestCase {
-	/** @var CommentsManager|MockObject */
-	protected $commentsManager;
+	protected CommentsManager&MockObject $commentsManager;
 
 	protected string $userId;
 
@@ -67,7 +66,7 @@ class SorterTest extends TestCase {
 		$this->sorter = new Sorter($this->commentsManager);
 	}
 
-	public function testGetId() {
+	public function testGetId(): void {
 		$this->assertSame('talk_chat_participants', $this->sorter->getId());
 	}
 
@@ -85,13 +84,8 @@ class SorterTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSort
-	 *
-	 * @param string $search
-	 * @param array $toSort
-	 * @param array $comments
-	 * @param array $expected
 	 */
-	public function testSort(string $search, array $toSort, array $comments, array $expected) {
+	public function testSort(string $search, array $toSort, array $comments, array $expected): void {
 		$this->commentsManager->expects(isset($toSort['users']) ? $this->once() : $this->never())
 			->method('getLastCommentDateByActor')
 			->with('chat', '23', 'comment', 'users', $this->anything())

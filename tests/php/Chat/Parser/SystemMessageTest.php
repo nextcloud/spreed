@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -57,31 +59,19 @@ use Test\TestCase;
  * @group DB
  */
 class SystemMessageTest extends TestCase {
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var IGroupManager|MockObject */
-	protected $groupManager;
-	/** @var GuestManager|MockObject */
-	protected $guestManager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var IPreviewManager|MockObject */
-	protected $previewManager;
-	/** @var RoomShareProvider|MockObject */
-	protected $shareProvider;
-	/** @var PhotoCache|MockObject */
-	protected $photoCache;
-	/** @var IRootFolder|MockObject */
-	protected $rootFolder;
-	/** @var IURLGenerator|MockObject */
-	protected $url;
-	/** @var ICloudIdManager|MockObject */
-	protected $cloudIdManager;
-	/** @var FilesMetadataCache|MockObject */
-	protected $filesMetadataCache;
-	protected Authenticator|MockObject $federationAuthenticator;
-	/** @var IL10N|MockObject */
-	protected $l;
+	protected IUserManager&MockObject $userManager;
+	protected IGroupManager&MockObject $groupManager;
+	protected GuestManager&MockObject $guestManager;
+	protected ParticipantService&MockObject $participantService;
+	protected IPreviewManager&MockObject $previewManager;
+	protected RoomShareProvider&MockObject $shareProvider;
+	protected PhotoCache&MockObject $photoCache;
+	protected IRootFolder&MockObject $rootFolder;
+	protected IURLGenerator&MockObject $url;
+	protected ICloudIdManager&MockObject $cloudIdManager;
+	protected FilesMetadataCache&MockObject $filesMetadataCache;
+	protected Authenticator&MockObject $federationAuthenticator;
+	protected IL10N&MockObject $l;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -104,9 +94,9 @@ class SystemMessageTest extends TestCase {
 				return vsprintf($text, $parameters);
 			});
 		$this->l->method('n')
-			->willReturnCallback(function ($singular, $plural, $count, $parameters = []) {
+			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
-				return vsprintf(str_replace('%n', $count, $text), $parameters);
+				return vsprintf(str_replace('%n', (string) $count, $text), $parameters);
 			});
 	}
 
@@ -461,14 +451,9 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataParseMessage
-	 * @param string $message
-	 * @param array $parameters
-	 * @param string|null $recipientId
-	 * @param string $expectedMessage
-	 * @param array $expectedParameters
 	 */
-	public function testParseMessage(string $message, array $parameters, ?string $recipientId, string $expectedMessage, array $expectedParameters) {
-		/** @var Participant|MockObject $participant */
+	public function testParseMessage(string $message, array $parameters, ?string $recipientId, string $expectedMessage, array $expectedParameters): void {
+		/** @var Participant&MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		if ($recipientId === null) {
 			$participant = null;
@@ -506,7 +491,7 @@ class SystemMessageTest extends TestCase {
 				->willReturn($session);
 		}
 
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->createMock(IComment::class);
 		if ($recipientId && strpos($recipientId, 'guest::') !== false) {
 			$comment->method('getActorType')
@@ -520,7 +505,7 @@ class SystemMessageTest extends TestCase {
 				->willReturn($recipientId);
 		}
 
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getGroup', 'getGuest', 'parseCall', 'getFileFromShare']);
@@ -594,13 +579,12 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataParseMessageThrows
-	 * @param string|null $return
 	 */
-	public function testParseMessageThrows($return) {
-		/** @var IComment|MockObject $comment */
+	public function testParseMessageThrows(?string $return): void {
+		/** @var IComment&MockObject $comment */
 		$comment = $this->createMock(IComment::class);
 
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$parser = $this->getParser(['getActorFromComment']);
@@ -609,7 +593,7 @@ class SystemMessageTest extends TestCase {
 			->with($room, $comment)
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 
-		/** @var Participant|MockObject $participant */
+		/** @var Participant&MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
 		$chatMessage->setMessage($return, []);
@@ -618,7 +602,7 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'parseMessage', [$chatMessage]);
 	}
 
-	public function testGetFileFromShareForGuest() {
+	public function testGetFileFromShareForGuest(): void {
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
 			->method('getId')
@@ -691,7 +675,7 @@ class SystemMessageTest extends TestCase {
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
-	public function testGetFileFromShareForOwner() {
+	public function testGetFileFromShareForOwner(): void {
 		$node = $this->createMock(Node::class);
 		$node->expects($this->exactly(2))
 			->method('getId')
@@ -770,7 +754,7 @@ class SystemMessageTest extends TestCase {
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
-	public function testGetFileFromShareForRecipient() {
+	public function testGetFileFromShareForRecipient(): void {
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
@@ -857,7 +841,7 @@ class SystemMessageTest extends TestCase {
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
-	public function testGetFileFromShareForRecipientThrows() {
+	public function testGetFileFromShareForRecipientThrows(): void {
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
@@ -899,7 +883,7 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']);
 	}
 
-	public function testGetFileFromShareThrows() {
+	public function testGetFileFromShareThrows(): void {
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
 			->with('23')
@@ -920,13 +904,9 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetActor
-	 * @param string $actorType
-	 * @param array $guestData
-	 * @param array $userData
-	 * @param array $expected
 	 */
-	public function testGetActor(string $actorType, array $guestData, array $userData, array $expected) {
-		/** @var Room|MockObject $room */
+	public function testGetActor(string $actorType, array $guestData, array $userData, array $expected): void {
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$chatMessage = $this->createMock(IComment::class);
@@ -971,12 +951,8 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetUser
-	 * @param string $uid
-	 * @param array $cache
-	 * @param bool $cacheHit
-	 * @param string $name
 	 */
-	public function testGetUser(string $uid, array $cache, bool $cacheHit, string $name) {
+	public function testGetUser(string $uid, array $cache, bool $cacheHit, string $name): void {
 		$parser = $this->getParser(['getDisplayName']);
 
 		self::invokePrivate($parser, 'displayNames', [$cache]);
@@ -1006,11 +982,8 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetDisplayName
-	 * @param string $uid
-	 * @param bool $validUser
-	 * @param string $name
 	 */
-	public function testGetDisplayName(string $uid, bool $validUser, string $name) {
+	public function testGetDisplayName(string $uid, bool $validUser, string $name): void {
 		$parser = $this->getParser();
 
 		if ($validUser) {
@@ -1039,10 +1012,6 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetGroup
-	 * @param string $gid
-	 * @param array $cache
-	 * @param bool $cacheHit
-	 * @param string $name
 	 */
 	public function testGetGroup(string $gid, array $cache, bool $cacheHit, string $name): void {
 		$parser = $this->getParser(['getDisplayNameGroup']);
@@ -1074,9 +1043,6 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetDisplayNameGroup
-	 * @param string $gid
-	 * @param bool $validGroup
-	 * @param string $name
 	 */
 	public function testGetDisplayNameGroup(string $gid, bool $validGroup, string $name): void {
 		$parser = $this->getParser();
@@ -1109,11 +1075,9 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetGuest
-	 * @param string $attendeeType
-	 * @param string $actorId
 	 */
 	public function testGetGuest(string $attendeeType, string $actorId): void {
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$parser = $this->getParser(['getGuestName']);
@@ -1147,20 +1111,16 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetGuestName
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $attendeeName
-	 * @param string $expected
 	 */
 	public function testGetGuestName(string $actorType, string $actorId, string $attendeeName, string $expected): void {
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$attendee = Attendee::fromParams([
 			'displayName' => $attendeeName,
 		]);
 
-		/** @var Participant|MockObject $room */
+		/** @var Participant&MockObject $room */
 		$participant = $this->createMock(Participant::class);
 		$participant->method('getAttendee')
 			->willReturn($attendee);
@@ -1174,10 +1134,10 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame($expected, self::invokePrivate($parser, 'getGuestName', [$room, $actorType, $actorId]));
 	}
 
-	public function testGetGuestNameThrows() {
+	public function testGetGuestNameThrows(): void {
 		$actorId = sha1('name');
 
-		/** @var Room|MockObject $room */
+		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$this->participantService->method('getParticipantByActor')
@@ -1423,10 +1383,8 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataParseCall
-	 * @param array $parameters
-	 * @param array $expected
 	 */
-	public function testParseCall(string $message, array $parameters, array $actor, array $expected) {
+	public function testParseCall(string $message, array $parameters, array $actor, array $expected): void {
 		$parser = $this->getParser(['getDuration', 'getUser']);
 		$parser->expects($this->once())
 			->method('getDuration')
@@ -1456,10 +1414,8 @@ class SystemMessageTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetDuration
-	 * @param int $seconds
-	 * @param string $expected
 	 */
-	public function testGetDuration(int $seconds, string $expected) {
+	public function testGetDuration(int $seconds, string $expected): void {
 		$parser = $this->getParser();
 		$this->assertSame($expected, self::invokePrivate($parser, 'getDuration', [$seconds]));
 	}

@@ -66,49 +66,29 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class FederationTest extends TestCase {
-	protected ?FederationManager $federationManager = null;
-
-	protected ?BackendNotifier $backendNotifier = null;
-
-	protected ICloudIdManager|MockObject $cloudIdManager;
-	/** @var ICloudFederationProviderManager|MockObject */
-	protected $cloudFederationProviderManager;
-
-	/** @var ICloudFederationFactory|MockObject */
-	protected $cloudFederationFactory;
-
-	/** @var Config|MockObject */
-	protected $config;
-	protected IAppConfig|MockObject $appConfig;
-	/** @var LoggerInterface|MockObject */
-	protected $logger;
-
-	/** @var AddressHandler|MockObject */
-	protected $addressHandler;
-
+	protected FederationManager&MockObject $federationManager;
+	protected ICloudIdManager&MockObject $cloudIdManager;
+	protected ICloudFederationProviderManager&MockObject $cloudFederationProviderManager;
+	protected ICloudFederationFactory&MockObject $cloudFederationFactory;
+	protected Config&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
+	protected LoggerInterface&MockObject $logger;
+	protected AddressHandler&MockObject $addressHandler;
+	protected IUserManager&MockObject $userManager;
+	protected IAppManager&MockObject $appManager;
+	protected IURLGenerator&MockObject $url;
+	protected INotificationManager&MockObject $notificationManager;
+	protected AttendeeMapper&MockObject $attendeeMapper;
+	protected ProxyCacheMessageMapper&MockObject $proxyCacheMessageMapper;
+	protected ProxyCacheMessageService&MockObject $proxyCacheMessageService;
+	protected FederationChatNotifier&MockObject $federationChatNotifier;
+	protected UserConverter&MockObject $userConverter;
+	protected ICacheFactory&MockObject $cacheFactory;
+	protected RetryNotificationMapper&MockObject $retryNotificationMapper;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected RestrictionValidator&MockObject $restrictionValidator;
 	protected ?CloudFederationProviderTalk $cloudFederationProvider = null;
-
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	protected IAppManager|MockObject $appManager;
-
-	/** @var IURLGenerator|MockObject */
-	protected $url;
-
-	/** @var INotificationManager|MockObject */
-	protected $notificationManager;
-
-	/** @var AttendeeMapper|MockObject */
-	protected $attendeeMapper;
-
-	protected ProxyCacheMessageMapper|MockObject $proxyCacheMessageMapper;
-	protected ProxyCacheMessageService|MockObject $proxyCacheMessageService;
-	protected FederationChatNotifier|MockObject $federationChatNotifier;
-	protected UserConverter|MockObject $userConverter;
-	protected ICacheFactory|MockObject $cacheFactory;
-	protected RetryNotificationMapper|MockObject $retryNotificationMapper;
-	protected ITimeFactory|MockObject $timeFactory;
-	protected RestrictionValidator|MockObject $restrictionValidator;
+	protected ?BackendNotifier $backendNotifier = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -173,7 +153,7 @@ class FederationTest extends TestCase {
 		);
 	}
 
-	public function testSendRemoteShareWithOwner() {
+	public function testSendRemoteShareWithOwner(): void {
 		$cloudShare = $this->createMock(ICloudFederationShare::class);
 
 		$providerId = '3';
@@ -276,7 +256,7 @@ class FederationTest extends TestCase {
 		$this->backendNotifier->sendRemoteShare($providerId, $token, $shareWith, $sharedBy, $shareType, $room, $attendee);
 	}
 
-	public function testReceiveRemoteShare() {
+	public function testReceiveRemoteShare(): void {
 		$providerId = '3';
 		$token = 'abcdefghijklmno';
 		$shareWith = 'test@remote.test.local';
@@ -400,7 +380,7 @@ class FederationTest extends TestCase {
 		);
 	}
 
-	public function testSendAcceptNotification() {
+	public function testSendAcceptNotification(): void {
 		$remote = 'https://remote.test.local';
 		$id = 50;
 		$token = 'abcdefghijklmno';
@@ -447,7 +427,7 @@ class FederationTest extends TestCase {
 		$this->assertTrue($success);
 	}
 
-	public function testSendRejectNotification() {
+	public function testSendRejectNotification(): void {
 		$remote = 'https://remote.test.local';
 		$id = 50;
 		$token = 'abcdefghijklmno';

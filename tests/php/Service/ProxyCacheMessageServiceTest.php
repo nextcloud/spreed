@@ -39,9 +39,9 @@ use Test\TestCase;
  * @group DB
  */
 class ProxyCacheMessageServiceTest extends TestCase {
+	protected LoggerInterface&MockObject $logger;
+	protected ITimeFactory&MockObject $timeFactory;
 	protected ?ProxyCacheMessageMapper $mapper = null;
-	protected LoggerInterface|MockObject $logger;
-	protected ITimeFactory|MockObject $timeFactory;
 	protected ?ProxyCacheMessageService $service = null;
 
 
