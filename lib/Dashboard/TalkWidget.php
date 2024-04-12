@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Dashboard;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
@@ -62,6 +63,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
+		protected ChatManager $chatManager,
 		protected ITimeFactory $timeFactory,
 	) {
 	}
@@ -147,15 +149,21 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				return false;
 			}
 
+			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+				return true;
+			}
+
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
-			return $room->getCallFlag() !== Participant::FLAG_DISCONNECTED
-				|| $attendee->getLastMentionMessage() > $attendee->getLastReadMessage()
-				|| (
-					($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
-					&& $room->getLastMessage()
-					&& $room->getLastMessage()->getId() > $attendee->getLastReadMessage()
-				);
+
+			if ($attendee->getLastMentionMessage() > $attendee->getLastReadMessage()) {
+				return true;
+			}
+
+			return ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
+				&& $room->getLastMessage()
+				&& $room->getLastMessage()->getId() > $attendee->getLastReadMessage()
+				&& $this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0;
 		});
 
 		uasort($rooms, [$this, 'sortRooms']);
@@ -186,14 +194,27 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
-			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED
-				|| $attendee->getLastMentionMessage() > $attendee->getLastReadMessage()
-				|| (
-					($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
-					&& $room->getLastMessage()
-					&& $room->getLastMessage()->getId() > $attendee->getLastReadMessage()
-				)) {
+			if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+				// Call in progress
 				$mentions[] = $room;
+				continue;
+			}
+
+			if ($attendee->getLastMentionMessage() > $attendee->getLastReadMessage()) {
+				// Really mentioned
+				$mentions[] = $room;
+				continue;
+			}
+
+			if (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
+				&& $room->getLastMessage()?->getId() > $attendee->getLastReadMessage()) {
+				// If there are "unread" messages in one-to-one or former one-to-one
+				// we check if they are actual messages or system messages not
+				// considered by the read-marker
+				if ($this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0) {
+					// Unread message in one-to-one are considered "mentions"
+					$mentions[] = $room;
+				}
 			}
 		}
 
