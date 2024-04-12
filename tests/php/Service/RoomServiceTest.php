@@ -52,23 +52,15 @@ use Test\TestCase;
  * @group DB
  */
 class RoomServiceTest extends TestCase {
-	/** @var Manager|MockObject */
-	protected $manager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var IShareManager|MockObject */
-	protected $shareManager;
-	/** @var Config|MockObject */
-	protected $config;
-	/** @var IHasher|MockObject */
-	protected $hasher;
-	/** @var IEventDispatcher|MockObject */
-	protected $dispatcher;
-	private ?RoomService $service = null;
-	/** @var IJobList|MockObject */
-	private IJobList $jobList;
+	protected Manager&MockObject $manager;
+	protected ParticipantService&MockObject $participantService;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected IShareManager&MockObject $shareManager;
+	protected Config&MockObject $config;
+	protected IHasher&MockObject $hasher;
+	protected IEventDispatcher&MockObject $dispatcher;
+	protected IJobList&MockObject $jobList;
+	protected ?RoomService $service = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -84,7 +76,7 @@ class RoomServiceTest extends TestCase {
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
-			\OC::$server->get(IDBConnection::class),
+			\OCP\Server::get(IDBConnection::class),
 			$this->timeFactory,
 			$this->shareManager,
 			$this->config,
@@ -208,7 +200,6 @@ class RoomServiceTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCreateConversationInvalidNames
-	 * @param string $name
 	 */
 	public function testCreateConversationInvalidNames(string $name): void {
 		$this->manager->expects($this->never())
@@ -230,7 +221,6 @@ class RoomServiceTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCreateConversationInvalidTypes
-	 * @param int $type
 	 */
 	public function testCreateConversationInvalidTypes(int $type): void {
 		$this->manager->expects($this->never())
@@ -252,9 +242,6 @@ class RoomServiceTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCreateConversationInvalidObjects
-	 * @param string $type
-	 * @param string $id
-	 * @param string $exception
 	 */
 	public function testCreateConversationInvalidObjects(string $type, string $id, string $exception): void {
 		$this->manager->expects($this->never())
@@ -275,11 +262,6 @@ class RoomServiceTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCreateConversation
-	 * @param int $type
-	 * @param string $name
-	 * @param string $ownerId
-	 * @param string $objectType
-	 * @param string $objectId
 	 */
 	public function testCreateConversation(int $type, string $name, string $ownerId, string $objectType, string $objectId): void {
 		$room = $this->createMock(Room::class);
@@ -328,8 +310,6 @@ class RoomServiceTest extends TestCase {
 
 	/**
 	 * @dataProvider dataPrepareConversationName
-	 * @param string $input
-	 * @param string $expected
 	 */
 	public function testPrepareConversationName(string $input, string $expected): void {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
@@ -356,7 +336,7 @@ class RoomServiceTest extends TestCase {
 		$service = new RoomService(
 			$this->manager,
 			$this->participantService,
-			\OC::$server->get(IDBConnection::class),
+			\OCP\Server::get(IDBConnection::class),
 			$this->timeFactory,
 			$this->shareManager,
 			$this->config,

@@ -27,6 +27,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\IDBConnection;
 use Test\TestCase;
 
 /**
@@ -40,7 +41,7 @@ class AttendeeMapperTest extends TestCase {
 		parent::setUp();
 
 		$this->attendeeMapper = new AttendeeMapper(
-			\OC::$server->getDatabaseConnection()
+			\OCP\Server::get(IDBConnection::class)
 		);
 	}
 
@@ -355,10 +356,6 @@ class AttendeeMapperTest extends TestCase {
 
 	/**
 	 * @dataProvider dataModifyPermissions
-	 * @param array $attendees
-	 * @param string $mode
-	 * @param int $permission
-	 * @param array $expected
 	 */
 	public function testModifyPermissions(array $attendees, string $mode, int $permission, array $expected): void {
 		$roomId = 12345678;

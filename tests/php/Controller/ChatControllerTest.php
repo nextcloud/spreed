@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -68,60 +69,36 @@ use Test\TestCase;
 
 class ChatControllerTest extends TestCase {
 	private ?string $userId = null;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var IAppManager|MockObject */
-	private $appManager;
-	/** @var ChatManager|MockObject */
-	protected $chatManager;
-	private RoomFormatter|MockObject $roomFormatter;
-	/** @var ReactionManager|MockObject */
-	protected $reactionManager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var SessionService|MockObject */
-	protected $sessionService;
-	/** @var AttachmentService|MockObject */
-	protected $attachmentService;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
-	/** @var ReminderService|MockObject */
-	protected $reminderService;
-	/** @var GuestManager|MockObject */
-	protected $guestManager;
-	/** @var MessageParser|MockObject */
-	protected $messageParser;
-	/** @var RoomShareProvider|MockObject */
-	protected $roomShareProvider;
-	/** @var FilesMetadataCache|MockObject */
-	protected $filesMetadataCache;
-	/** @var IManager|MockObject */
-	protected $autoCompleteManager;
-	/** @var IUserStatusManager|MockObject */
-	protected $statusManager;
-	/** @var MatterbridgeManager|MockObject */
-	protected $matterbridgeManager;
-	protected BotService|MockObject $botService;
-	/** @var SearchPlugin|MockObject */
-	protected $searchPlugin;
-	/** @var ISearchResult|MockObject */
-	protected $searchResult;
-	/** @var IEventDispatcher|MockObject */
-	protected $eventDispatcher;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var IValidator|MockObject */
-	protected $richObjectValidator;
-	/** @var ITrustedDomainHelper|MockObject */
-	protected $trustedDomainHelper;
-	/** @var IL10N|MockObject */
-	private $l;
-	private Authenticator|MockObject $federationAuthenticator;
-	private ProxyCacheMessageService|MockObject $pcmService;
-	private Notifier|MockObject $notifier;
+	protected IUserManager&MockObject $userManager;
+	protected IAppManager&MockObject $appManager;
+	protected ChatManager&MockObject $chatManager;
+	private RoomFormatter&MockObject $roomFormatter;
+	protected ReactionManager&MockObject $reactionManager;
+	protected ParticipantService&MockObject $participantService;
+	protected SessionService&MockObject $sessionService;
+	protected AttachmentService&MockObject $attachmentService;
+	protected AvatarService&MockObject $avatarService;
+	protected ReminderService&MockObject $reminderService;
+	protected GuestManager&MockObject $guestManager;
+	protected MessageParser&MockObject $messageParser;
+	protected RoomShareProvider&MockObject $roomShareProvider;
+	protected FilesMetadataCache&MockObject $filesMetadataCache;
+	protected IManager&MockObject $autoCompleteManager;
+	protected IUserStatusManager&MockObject $statusManager;
+	protected MatterbridgeManager&MockObject $matterbridgeManager;
+	protected BotService&MockObject $botService;
+	protected SearchPlugin&MockObject $searchPlugin;
+	protected ISearchResult&MockObject $searchResult;
+	protected IEventDispatcher&MockObject $eventDispatcher;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected IValidator&MockObject $richObjectValidator;
+	protected ITrustedDomainHelper&MockObject $trustedDomainHelper;
+	protected IL10N&MockObject $l;
+	private Authenticator&MockObject $federationAuthenticator;
+	private ProxyCacheMessageService&MockObject $pcmService;
+	private Notifier&MockObject $notifier;
 
-	/** @var Room|MockObject */
-	protected $room;
+	protected Room&MockObject $room;
 
 	private ?ChatController $controller = null;
 
@@ -222,14 +199,14 @@ class ChatControllerTest extends TestCase {
 		return $comment;
 	}
 
-	public function testSendMessageByUser() {
+	public function testSendMessageByUser(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -293,14 +270,14 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendMessageByUserWithReferenceId() {
+	public function testSendMessageByUserWithReferenceId(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -364,7 +341,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendReplyByUser() {
+	public function testSendReplyByUser(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$date = new \DateTime();
@@ -372,10 +349,10 @@ class ChatControllerTest extends TestCase {
 			->method('getDateTime')
 			->willReturn($date);
 
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$parent = $this->newComment(23, 'users', $this->userId . '2', $date, 'testMessage original');
 
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'users', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -490,11 +467,11 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendReplyByUserToNotReplyable() {
+	public function testSendReplyByUserToNotReplyable(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$date = new \DateTime();
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$parent = $this->newComment(23, 'user', $this->userId . '2', $date, 'testMessage original');
 
 		$this->chatManager->expects($this->never())
@@ -526,14 +503,14 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendMessageByUserNotJoinedButInRoom() {
+	public function testSendMessageByUserNotJoinedButInRoom(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(23, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -595,7 +572,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendMessageByGuest() {
+	public function testSendMessageByGuest(): void {
 		$this->userId = null;
 		$this->recreateChatController();
 
@@ -612,7 +589,7 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(64, 'guest', sha1('testSpreedSession'), $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -674,7 +651,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testShareObjectToChatByUser() {
+	public function testShareObjectToChatByUser(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$this->avatarService->method('getAvatarUrl')
@@ -692,7 +669,7 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment|MockObject $comment */
+		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('addSystemMessage')
@@ -768,7 +745,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected->getData(), $response->getData());
 	}
 
-	public function testReceiveHistoryByUser() {
+	public function testReceiveHistoryByUser(): void {
 		$offset = 23;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
@@ -837,7 +814,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testReceiveMessagesByUserNotJoinedButInRoom() {
+	public function testReceiveMessagesByUserNotJoinedButInRoom(): void {
 		$participant = $this->createMock(Participant::class);
 
 		$offset = 23;
@@ -906,7 +883,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testReceiveMessagesByGuest() {
+	public function testReceiveMessagesByGuest(): void {
 		$this->userId = null;
 		$this->recreateChatController();
 
@@ -978,7 +955,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testWaitForNewMessagesByUser() {
+	public function testWaitForNewMessagesByUser(): void {
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -1058,7 +1035,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testWaitForNewMessagesTimeoutExpired() {
+	public function testWaitForNewMessagesTimeoutExpired(): void {
 		$participant = $this->createMock(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
@@ -1086,7 +1063,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testWaitForNewMessagesTimeoutTooLarge() {
+	public function testWaitForNewMessagesTimeoutTooLarge(): void {
 		$participant = $this->createMock(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
@@ -1115,7 +1092,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public static function dataMentions() {
+	public static function dataMentions(): array {
 		return [
 			['tes', 10, ['exact' => []], []],
 			[
@@ -1146,7 +1123,7 @@ class ChatControllerTest extends TestCase {
 	/**
 	 * @dataProvider dataMentions
 	 */
-	public function testMentions($search, $limit, $result, $expected) {
+	public function testMentions(string $search, int $limit, array $result, array $expected): void {
 		$participant = $this->createMock(Participant::class);
 		$this->room->expects($this->any())
 			->method('getId')

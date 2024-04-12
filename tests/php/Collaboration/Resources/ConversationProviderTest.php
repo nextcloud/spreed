@@ -41,16 +41,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConversationProviderTest extends TestCase {
-	/** @var Manager|MockObject */
-	protected $manager;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var IUserSession|MockObject */
-	protected $userSession;
-	/** @var IURLGenerator|MockObject */
-	protected $urlGenerator;
+	protected Manager&MockObject $manager;
+	protected AvatarService&MockObject $avatarService;
+	protected ParticipantService&MockObject $participantService;
+	protected IUserSession&MockObject $userSession;
+	protected IURLGenerator&MockObject $urlGenerator;
 	protected ?ConversationProvider $provider = null;
 
 	public function setUp(): void {
@@ -165,7 +160,6 @@ class ConversationProviderTest extends TestCase {
 
 	/**
 	 * @dataProvider dataCanAccessResourceYes
-	 * @param int $participantType
 	 */
 	public function testCanAccessResourceYes(int $participantType): void {
 		$user = $this->createMock(IUser::class);

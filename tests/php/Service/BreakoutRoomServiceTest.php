@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
  *
@@ -40,26 +39,16 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class BreakoutRoomServiceTest extends TestCase {
-	private BreakoutRoomService $service;
-
-	/** @var Config|MockObject */
-	private $config;
-	/** @var Manager|MockObject */
-	private $manager;
-	/** @var RoomService|MockObject */
-	private $roomService;
-	/** @var ParticipantService|MockObject */
-	private $participantService;
-	/** @var ChatManager|MockObject */
-	private $chatManager;
-	/** @var INotificationManager|MockObject */
-	private $notificationManager;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var IEventDispatcher|MockObject */
-	private $dispatcher;
-	/** @var IL10N|MockObject */
-	private $l;
+	protected Config&MockObject $config;
+	protected Manager&MockObject $manager;
+	protected RoomService&MockObject $roomService;
+	protected ParticipantService&MockObject $participantService;
+	protected ChatManager&MockObject $chatManager;
+	protected INotificationManager&MockObject $notificationManager;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected IEventDispatcher&MockObject $dispatcher;
+	protected IL10N&MockObject $l;
+	protected BreakoutRoomService $service;
 
 	public function setUp(): void {
 		parent::setUp();

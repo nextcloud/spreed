@@ -40,6 +40,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
@@ -50,31 +51,20 @@ use Test\TestCase;
  * @group DB
  */
 class ParticipantServiceTest extends TestCase {
-	/** @var IConfig|MockObject */
-	protected $serverConfig;
-	/** @var Config|MockObject */
-	protected $talkConfig;
+	protected IConfig&MockObject $serverConfig;
+	protected Config&MockObject $talkConfig;
 	protected ?AttendeeMapper $attendeeMapper = null;
 	protected ?SessionMapper $sessionMapper = null;
-	/** @var SessionService|MockObject */
-	protected $sessionService;
-	/** @var ISecureRandom|MockObject */
-	protected $secureRandom;
-	/** @var IEventDispatcher|MockObject */
-	protected $dispatcher;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	protected ICloudIdManager|MockObject $cloudIdManager;
-	/** @var IGroupManager|MockObject */
-	protected $groupManager;
-	/** @var MembershipService|MockObject */
-	protected $membershipService;
-	/** @var BackendNotifier|MockObject */
-	protected $federationBackendNotifier;
-	/** @var ITimeFactory|MockObject */
-	protected $time;
-	/** @var ICacheFactory|MockObject */
-	protected $cacheFactory;
+	protected SessionService&MockObject $sessionService;
+	protected ISecureRandom&MockObject $secureRandom;
+	protected IEventDispatcher&MockObject $dispatcher;
+	protected IUserManager&MockObject $userManager;
+	protected ICloudIdManager&MockObject $cloudIdManager;
+	protected IGroupManager&MockObject $groupManager;
+	protected MembershipService&MockObject $membershipService;
+	protected BackendNotifier&MockObject $federationBackendNotifier;
+	protected ITimeFactory&MockObject $time;
+	protected ICacheFactory&MockObject $cacheFactory;
 	private ?ParticipantService $service = null;
 
 
@@ -83,8 +73,8 @@ class ParticipantServiceTest extends TestCase {
 
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
-		$this->attendeeMapper = new AttendeeMapper(\OC::$server->getDatabaseConnection());
-		$this->sessionMapper = new SessionMapper(\OC::$server->getDatabaseConnection());
+		$this->attendeeMapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
+		$this->sessionMapper = new SessionMapper(\OCP\Server::get(IDBConnection::class));
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
@@ -102,7 +92,7 @@ class ParticipantServiceTest extends TestCase {
 			$this->sessionMapper,
 			$this->sessionService,
 			$this->secureRandom,
-			\OC::$server->getDatabaseConnection(),
+			\OCP\Server::get(IDBConnection::class),
 			$this->dispatcher,
 			$this->userManager,
 			$this->cloudIdManager,

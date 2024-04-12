@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright 2018, Denis Mosolov <denismosolov@gmail.com>
  *
@@ -24,22 +26,16 @@ namespace OCA\Talk\Tests\php\Command\Stun;
 
 use OCA\Talk\Command\Stun\ListCommand;
 use OCP\IConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class ListCommandTest extends TestCase {
-	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
-	private $config;
-
-	/** @var ListCommand|\PHPUnit_Framework_MockObject_MockObject */
-	private $command;
-
-	/** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $input;
-
-	/** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $output;
+	protected IConfig&MockObject $config;
+	protected InputInterface&MockObject $input;
+	protected OutputInterface&MockObject $output;
+	protected ListCommand&MockObject $command;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -55,7 +51,7 @@ class ListCommandTest extends TestCase {
 		$this->output = $this->createMock(OutputInterface::class);
 	}
 
-	public function testEmptyAppConfig() {
+	public function testEmptyAppConfig(): void {
 		$this->config->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'stun_servers')
@@ -69,10 +65,10 @@ class ListCommandTest extends TestCase {
 				$this->equalTo([])
 			);
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testAppConfigDataChanges() {
+	public function testAppConfigDataChanges(): void {
 		$this->config->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'stun_servers')
@@ -92,6 +88,6 @@ class ListCommandTest extends TestCase {
 				])
 			);
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 }

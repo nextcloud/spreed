@@ -77,37 +77,24 @@ class CustomInputSignalingController extends SignalingController {
  * @group DB
  */
 class SignalingControllerTest extends TestCase {
-	private IConfig $serverConfig;
-	private ?Config $config = null;
-	/** @var TalkSession|MockObject */
-	private $session;
-	/** @var \OCA\Talk\Signaling\Manager|MockObject */
-	private $signalingManager;
-	/** @var Manager|MockObject */
-	protected $manager;
-	/** @var CertificateService|MockObject */
-	protected $certificateService;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var SessionService|MockObject */
-	protected $sessionService;
-	/** @var IDBConnection|MockObject */
-	protected $dbConnection;
-	/** @var Messages|MockObject */
-	protected $messages;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var IClientService|MockObject */
-	protected $clientService;
-	private ?string $userId = null;
-	private ?ISecureRandom $secureRandom = null;
-	private ?IEventDispatcher $dispatcher = null;
-	/** @var IThrottler|MockObject */
-	private $throttler;
-	/** @var LoggerInterface|MockObject */
-	private $logger;
+	protected TalkSession&MockObject $session;
+	protected \OCA\Talk\Signaling\Manager&MockObject $signalingManager;
+	protected Manager|MockObject $manager;
+	protected CertificateService&MockObject $certificateService;
+	protected ParticipantService&MockObject $participantService;
+	protected SessionService&MockObject $sessionService;
+	protected Messages&MockObject $messages;
+	protected IUserManager&MockObject $userManager;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected IClientService&MockObject $clientService;
+	protected IThrottler&MockObject $throttler;
+	protected LoggerInterface&MockObject $logger;
+	protected IDBConnection $dbConnection;
+	protected IConfig $serverConfig;
+	protected ?Config $config = null;
+	protected ?string $userId = null;
+	protected ?ISecureRandom $secureRandom = null;
+	protected ?IEventDispatcher $dispatcher = null;
 
 	private ?CustomInputSignalingController $controller = null;
 
@@ -115,23 +102,23 @@ class SignalingControllerTest extends TestCase {
 		parent::setUp();
 
 		$this->userId = 'testUser';
-		$this->secureRandom = \OC::$server->getSecureRandom();
+		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
-		$this->serverConfig = \OC::$server->getConfig();
+		$this->serverConfig = \OCP\Server::get(IConfig::class);
 		$this->serverConfig->setAppValue('spreed', 'signaling_servers', json_encode([
 			'secret' => 'MySecretValue',
 		]));
 		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
+		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
-		$this->dbConnection = \OC::$server->getDatabaseConnection();
+		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->certificateService = $this->createMock(CertificateService::class);
@@ -185,7 +172,7 @@ class SignalingControllerTest extends TestCase {
 		return $hash;
 	}
 
-	public function testBackendChecksums() {
+	public function testBackendChecksums(): void {
 		// Test checksum generation / validation with the example from the API documentation.
 		$data = '{"type":"auth","auth":{"version":"1.0","params":{"hello":"world"}}}';
 		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
@@ -206,7 +193,7 @@ class SignalingControllerTest extends TestCase {
 		return $this->controller->backend();
 	}
 
-	public function testBackendChecksumValidation() {
+	public function testBackendChecksumValidation(): void {
 		$data = '{}';
 
 		// Random and checksum missing.
@@ -251,7 +238,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendUnsupportedType() {
+	public function testBackendUnsupportedType(): void {
 		$result = $this->performBackendRequest([
 			'type' => 'unsupported-type',
 		]);
@@ -264,7 +251,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendAuth() {
+	public function testBackendAuth(): void {
 		// Check validating of tickets.
 		$result = $this->performBackendRequest([
 			'type' => 'auth',
@@ -369,7 +356,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomUnknown() {
+	public function testBackendRoomUnknown(): void {
 		$roomToken = 'the-room';
 		$room = $this->createMock(Room::class);
 		$this->manager->expects($this->once())
@@ -394,7 +381,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomInvited() {
+	public function testBackendRoomInvited(): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$room = $this->createMock(Room::class);
@@ -455,7 +442,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomUserPublic() {
+	public function testBackendRoomUserPublic(): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$room = $this->createMock(Room::class);
@@ -516,7 +503,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomModeratorPublic() {
+	public function testBackendRoomModeratorPublic(): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$room = $this->createMock(Room::class);
@@ -582,7 +569,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomAnonymousPublic() {
+	public function testBackendRoomAnonymousPublic(): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$sessionId = 'the-session';
@@ -644,7 +631,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomInvitedPublic() {
+	public function testBackendRoomInvitedPublic(): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$sessionId = 'the-session';
@@ -721,11 +708,8 @@ class SignalingControllerTest extends TestCase {
 
 	/**
 	 * @dataProvider dataBackendRoomUserPublicPermissions
-	 *
-	 * @param int $permissions
-	 * @param array $expectedBackendPermissions
 	 */
-	public function testBackendRoomUserPublicPermissions(int $permissions, array $expectedBackendPermissions) {
+	public function testBackendRoomUserPublicPermissions(int $permissions, array $expectedBackendPermissions): void {
 		$roomToken = 'the-room';
 		$roomName = 'the-room-name';
 		$room = $this->createMock(Room::class);
@@ -782,7 +766,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomAnonymousOneToOne() {
+	public function testBackendRoomAnonymousOneToOne(): void {
 		$roomToken = 'the-room';
 		$sessionId = 'the-session';
 		$room = $this->createMock(Room::class);
@@ -812,7 +796,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendRoomSessionFromEvent() {
+	public function testBackendRoomSessionFromEvent(): void {
 		$this->dispatcher->addListener(BeforeSignalingResponseSentEvent::class, static function (BeforeSignalingResponseSentEvent $event) {
 			$room = $event->getRoom();
 			$event->setSession([
@@ -885,7 +869,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendPingUser() {
+	public function testBackendPingUser(): void {
 		$sessionId = 'the-session';
 
 		$this->timeFactory->method('getTime')
@@ -913,7 +897,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendPingAnonymous() {
+	public function testBackendPingAnonymous(): void {
 		$sessionId = 'the-session';
 
 		$this->timeFactory->method('getTime')
@@ -941,7 +925,7 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendPingMixedAndInactive() {
+	public function testBackendPingMixedAndInactive(): void {
 		$sessionId = 'the-session';
 
 		$this->timeFactory->method('getTime')
@@ -978,21 +962,21 @@ class SignalingControllerTest extends TestCase {
 	}
 
 
-	public function testLeaveRoomWithOldSession() {
+	public function testLeaveRoomWithOldSession(): void {
 		// Make sure that leaving a user with an old session id doesn't remove
 		// the current user from the room if he re-joined in the meantime.
-		$dbConnection = \OC::$server->getDatabaseConnection();
-		$dispatcher = \OC::$server->get(IEventDispatcher::class);
+		$dbConnection = \OCP\Server::get(IDBConnection::class);
+		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		/** @var ParticipantService $participantService */
-		$participantService = \OC::$server->get(ParticipantService::class);
+		$participantService = \OCP\Server::get(ParticipantService::class);
 
 		$this->manager = new Manager(
 			$dbConnection,
-			\OC::$server->getConfig(),
+			\OCP\Server::get(IConfig::class),
 			$this->createMock(Config::class),
-			\OC::$server->get(IAppManager::class),
-			\OC::$server->get(AttendeeMapper::class),
-			\OC::$server->get(SessionMapper::class),
+			\OCP\Server::get(IAppManager::class),
+			\OCP\Server::get(AttendeeMapper::class),
+			\OCP\Server::get(SessionMapper::class),
 			$participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),

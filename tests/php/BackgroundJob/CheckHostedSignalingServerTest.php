@@ -39,20 +39,13 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class CheckHostedSignalingServerTest extends TestCase {
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var HostedSignalingServerService|MockObject */
-	protected $hostedSignalingServerService;
-	/** @var IConfig|MockObject */
-	protected $config;
-	/** @var IManager|MockObject */
-	protected $notificationManager;
-	/** @var IGroupManager|MockObject */
-	protected $groupManager;
-	/** @var IURLGenerator|MockObject */
-	protected $urlGenerator;
-	/** @var LoggerInterface|MockObject */
-	protected $logger;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected HostedSignalingServerService&MockObject $hostedSignalingServerService;
+	protected IConfig&MockObject $config;
+	protected IManager&MockObject $notificationManager;
+	protected IGroupManager&MockObject $groupManager;
+	protected IURLGenerator&MockObject $urlGenerator;
+	protected LoggerInterface&MockObject $logger;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -78,7 +71,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 		);
 	}
 
-	public function testRunWithNoChange() {
+	public function testRunWithNoChange(): void {
 		$backgroundJob = $this->getBackgroundJob();
 
 		$this->config
@@ -92,10 +85,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 			->method('fetchAccountInfo')
 			->willReturn(['status' => 'pending']);
 
-		$this->invokePrivate($backgroundJob, 'run', ['']);
+		self::invokePrivate($backgroundJob, 'run', ['']);
 	}
 
-	public function testRunWithPendingToActiveChange() {
+	public function testRunWithPendingToActiveChange(): void {
 		$backgroundJob = $this->getBackgroundJob();
 		$newStatus = [
 			'status' => 'active',
@@ -142,6 +135,6 @@ class CheckHostedSignalingServerTest extends TestCase {
 			->method('fetchAccountInfo')
 			->willReturn($newStatus);
 
-		$this->invokePrivate($backgroundJob, 'run', ['']);
+		self::invokePrivate($backgroundJob, 'run', ['']);
 	}
 }

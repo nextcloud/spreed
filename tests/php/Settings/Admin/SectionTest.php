@@ -30,10 +30,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SectionTest extends TestCase {
-	/** @var IURLGenerator|MockObject */
-	protected $url;
-	/** @var IL10N|MockObject */
-	protected $l;
+	protected IURLGenerator&MockObject $url;
+	protected IL10N&MockObject $l;
 	protected ?Section $admin = null;
 
 	public function setUp(): void {

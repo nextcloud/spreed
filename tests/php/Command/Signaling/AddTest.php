@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright 2018, Denis Mosolov <denismosolov@gmail.com>
  *
@@ -24,22 +26,16 @@ namespace OCA\Talk\Tests\php\Command\Signaling;
 
 use OCA\Talk\Command\Signaling\Add;
 use OCP\IConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class AddTest extends TestCase {
-	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
-	private $config;
-
-	/** @var Add|\PHPUnit_Framework_MockObject_MockObject */
-	private $command;
-
-	/** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $input;
-
-	/** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $output;
+	protected IConfig&MockObject $config;
+	protected InputInterface&MockObject $input;
+	protected OutputInterface&MockObject $output;
+	protected Add $command;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -52,7 +48,7 @@ class AddTest extends TestCase {
 		$this->output = $this->createMock(OutputInterface::class);
 	}
 
-	public function testServerEmptyString() {
+	public function testServerEmptyString(): void {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
@@ -71,10 +67,10 @@ class AddTest extends TestCase {
 		$this->config->expects($this->never())
 			->method('setAppValue');
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testSecretEmptyString() {
+	public function testSecretEmptyString(): void {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
@@ -93,10 +89,10 @@ class AddTest extends TestCase {
 		$this->config->expects($this->never())
 			->method('setAppValue');
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testAddServerToEmptyList() {
+	public function testAddServerToEmptyList(): void {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
@@ -132,10 +128,10 @@ class AddTest extends TestCase {
 			->method('writeln')
 			->with($this->equalTo('<info>Added signaling server wss://signaling.test.com.</info>'));
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testAddServerToNonEmptyList() {
+	public function testAddServerToNonEmptyList(): void {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
 				if ($arg === 'server') {
@@ -183,6 +179,6 @@ class AddTest extends TestCase {
 			->method('writeln')
 			->with($this->equalTo('<info>Added signaling server wss://signaling2.test.com.</info>'));
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 }

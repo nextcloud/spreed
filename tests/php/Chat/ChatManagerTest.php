@@ -43,6 +43,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICacheFactory;
+use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
@@ -58,35 +59,21 @@ use Test\TestCase;
  * @group DB
  */
 class ChatManagerTest extends TestCase {
-	/** @var CommentsManager|ICommentsManager|MockObject */
-	protected $commentsManager;
-	/** @var IEventDispatcher|MockObject */
-	protected $dispatcher;
-	/** @var INotificationManager|MockObject */
-	protected $notificationManager;
-	/** @var IManager|MockObject */
-	protected $shareManager;
-	/** @var RoomShareProvider|MockObject */
-	protected $shareProvider;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var RoomService|MockObject */
-	protected $roomService;
-	/** @var PollService|MockObject */
-	protected $pollService;
-	/** @var Notifier|MockObject */
-	protected $notifier;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var AttachmentService|MockObject */
-	protected $attachmentService;
-	/** @var IReferenceManager|MockObject */
-	protected $referenceManager;
-	/** @var ILimiter|MockObject */
-	protected $rateLimiter;
-	/** @var IRequest|MockObject */
-	protected $request;
-	protected LoggerInterface|MockObject $logger;
+	protected CommentsManager|ICommentsManager|MockObject $commentsManager;
+	protected IEventDispatcher&MockObject $dispatcher;
+	protected INotificationManager&MockObject $notificationManager;
+	protected IManager&MockObject $shareManager;
+	protected RoomShareProvider&MockObject $shareProvider;
+	protected ParticipantService&MockObject $participantService;
+	protected RoomService&MockObject $roomService;
+	protected PollService&MockObject $pollService;
+	protected Notifier&MockObject $notifier;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected AttachmentService&MockObject $attachmentService;
+	protected IReferenceManager&MockObject $referenceManager;
+	protected ILimiter&MockObject $rateLimiter;
+	protected IRequest&MockObject $request;
+	protected LoggerInterface&MockObject $logger;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -123,7 +110,7 @@ class ChatManagerTest extends TestCase {
 				->setConstructorArgs([
 					$this->commentsManager,
 					$this->dispatcher,
-					\OC::$server->getDatabaseConnection(),
+					\OCP\Server::get(IDBConnection::class),
 					$this->notificationManager,
 					$this->shareManager,
 					$this->shareProvider,
@@ -146,7 +133,7 @@ class ChatManagerTest extends TestCase {
 		return new ChatManager(
 			$this->commentsManager,
 			$this->dispatcher,
-			\OC::$server->getDatabaseConnection(),
+			\OCP\Server::get(IDBConnection::class),
 			$this->notificationManager,
 			$this->shareManager,
 			$this->shareProvider,
@@ -223,10 +210,6 @@ class ChatManagerTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSendMessage
-	 * @param string $userId
-	 * @param string $message
-	 * @param string $referenceId
-	 * @param string $parentId
 	 */
 	public function testSendMessage(string $userId, string $message, string $referenceId, string $parentId): void {
 		$creationDateTime = new \DateTime();
@@ -343,7 +326,7 @@ class ChatManagerTest extends TestCase {
 			->method('markMentionNotificationsRead')
 			->with($chat, 'userId');
 
-		/** @var IUser|MockObject $user */
+		/** @var IUser&MockObject $user */
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
@@ -381,7 +364,7 @@ class ChatManagerTest extends TestCase {
 			->method('markMentionNotificationsRead')
 			->with($chat, 'userId');
 
-		/** @var IUser|MockObject $user */
+		/** @var IUser&MockObject $user */
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
@@ -393,7 +376,7 @@ class ChatManagerTest extends TestCase {
 	}
 
 	public function testGetUnreadCount(): void {
-		/** @var Room|MockObject $chat */
+		/** @var Room&MockObject $chat */
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->atLeastOnce())
 			->method('getId')
@@ -424,7 +407,7 @@ class ChatManagerTest extends TestCase {
 	}
 
 	public function testDeleteMessage(): void {
-		$mapper = new AttendeeMapper(\OC::$server->getDatabaseConnection());
+		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$attendee = $mapper->createAttendeeFromRow([
 			'a_id' => 1,
 			'room_id' => 123,
@@ -485,7 +468,7 @@ class ChatManagerTest extends TestCase {
 	}
 
 	public function testDeleteMessageFileShare(): void {
-		$mapper = new AttendeeMapper(\OC::$server->getDatabaseConnection());
+		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$attendee = $mapper->createAttendeeFromRow([
 			'a_id' => 1,
 			'room_id' => 123,
@@ -568,7 +551,7 @@ class ChatManagerTest extends TestCase {
 	}
 
 	public function testDeleteMessageFileShareNotFound(): void {
-		$mapper = new AttendeeMapper(\OC::$server->getDatabaseConnection());
+		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$attendee = $mapper->createAttendeeFromRow([
 			'a_id' => 1,
 			'room_id' => 123,
@@ -755,7 +738,7 @@ class ChatManagerTest extends TestCase {
 	/**
 	 * @dataProvider dataAddConversationNotify
 	 */
-	public function testAddConversationNotify($search, $roomMocks, $participantMocks, $expected) {
+	public function testAddConversationNotify(string $search, array$roomMocks, array $participantMocks, array $expected): void {
 		$room = $this->createMock(Room::class);
 		foreach ($roomMocks as $method => $return) {
 			$room->expects($this->once())

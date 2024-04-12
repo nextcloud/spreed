@@ -33,9 +33,9 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class SIPDialOutServiceTest extends TestCase {
-	protected BackendNotifier|MockObject $backendNotifier;
-	protected LoggerInterface|MockObject $logger;
-	private ?SIPDialOutService $service = null;
+	protected BackendNotifier&MockObject $backendNotifier;
+	protected LoggerInterface&MockObject $logger;
+	protected ?SIPDialOutService $service = null;
 
 	public function setUp(): void {
 		parent::setUp();

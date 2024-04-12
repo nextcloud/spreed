@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -58,7 +60,7 @@ class ConfigTest extends TestCase {
 		return $helper;
 	}
 
-	public function testGetStunServers() {
+	public function testGetStunServers(): void {
 		$servers = [
 			'stun1.example.com:443',
 			'stun2.example.com:129',
@@ -81,7 +83,7 @@ class ConfigTest extends TestCase {
 		$this->assertSame($helper->getStunServers(), $servers);
 	}
 
-	public function testGetDefaultStunServer() {
+	public function testGetDefaultStunServer(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -99,7 +101,7 @@ class ConfigTest extends TestCase {
 		$this->assertSame(['stun.nextcloud.com:443'], $helper->getStunServers());
 	}
 
-	public function testGetDefaultStunServerNoInternet() {
+	public function testGetDefaultStunServerNoInternet(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -117,7 +119,7 @@ class ConfigTest extends TestCase {
 		$this->assertSame([], $helper->getStunServers());
 	}
 
-	public function testGenerateTurnSettings() {
+	public function testGenerateTurnSettings(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -198,7 +200,7 @@ class ConfigTest extends TestCase {
 		], $settings[2]);
 	}
 
-	public function testGenerateTurnSettingsEmpty() {
+	public function testGenerateTurnSettingsEmpty(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -213,7 +215,7 @@ class ConfigTest extends TestCase {
 		$this->assertEquals(0, count($settings));
 	}
 
-	public function testGenerateTurnSettingsEvent() {
+	public function testGenerateTurnSettingsEvent(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
@@ -241,7 +243,7 @@ class ConfigTest extends TestCase {
 		$secureRandom = $this->createMock(ISecureRandom::class);
 
 		/** @var IEventDispatcher $dispatcher */
-		$dispatcher = \OC::$server->get(IEventDispatcher::class);
+		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
 		$servers = [
 			[
@@ -268,7 +270,7 @@ class ConfigTest extends TestCase {
 		$this->assertSame($servers, $settings);
 	}
 
-	public static function dataGetWebSocketDomainForSignalingServer() {
+	public static function dataGetWebSocketDomainForSignalingServer(): array {
 		return [
 			['http://blabla.nextcloud.com', 'ws://blabla.nextcloud.com'],
 			['http://blabla.nextcloud.com/', 'ws://blabla.nextcloud.com'],
@@ -329,7 +331,7 @@ class ConfigTest extends TestCase {
 	 * @param string $url
 	 * @param string $expectedWebSocketDomain
 	 */
-	public function testGetWebSocketDomainForSignalingServer($url, $expectedWebSocketDomain) {
+	public function testGetWebSocketDomainForSignalingServer($url, $expectedWebSocketDomain): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 
@@ -341,7 +343,7 @@ class ConfigTest extends TestCase {
 		);
 	}
 
-	public static function dataTicketV2Algorithm() {
+	public static function dataTicketV2Algorithm(): array {
 		return [
 			['ES384'],
 			['ES256'],
@@ -354,11 +356,9 @@ class ConfigTest extends TestCase {
 
 	/**
 	 * @dataProvider dataTicketV2Algorithm
-	 * @param string $algo
 	 */
 	public function testSignalingTicketV2User(string $algo): void {
-		/** @var IConfig $config */
-		$config = \OC::$server->getConfig();
+		$config = \OCP\Server::get(IConfig::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
 		/** @var MockObject|ITimeFactory $timeFactory */
@@ -420,11 +420,10 @@ class ConfigTest extends TestCase {
 
 	/**
 	 * @dataProvider dataTicketV2Algorithm
-	 * @param string $algo
 	 */
 	public function testSignalingTicketV2Anonymous(string $algo): void {
 		/** @var IConfig $config */
-		$config = \OC::$server->getConfig();
+		$config = \OCP\Server::get(IConfig::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
 		/** @var MockObject|ITimeFactory $timeFactory */

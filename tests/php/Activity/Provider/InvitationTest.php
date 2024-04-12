@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -43,20 +45,13 @@ use Test\TestCase;
  * @package OCA\Talk\Tests\php\Activity
  */
 class InvitationTest extends TestCase {
-	/** @var IFactory|MockObject */
-	protected $l10nFactory;
-	/** @var IURLGenerator|MockObject */
-	protected $url;
-	/** @var Config|MockObject */
-	protected $config;
-	/** @var IManager|MockObject */
-	protected $activityManager;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
-	/** @var Manager|MockObject */
-	protected $manager;
+	protected IFactory&MockObject $l10nFactory;
+	protected IURLGenerator&MockObject $url;
+	protected Config&MockObject $config;
+	protected IManager&MockObject $activityManager;
+	protected IUserManager&MockObject $userManager;
+	protected AvatarService&MockObject $avatarService;
+	protected Manager&MockObject $manager;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -100,8 +95,8 @@ class InvitationTest extends TestCase {
 		);
 	}
 
-	public function testParseThrowsWrongSubject() {
-		/** @var IEvent|MockObject $event */
+	public function testParseThrowsWrongSubject(): void {
+		/** @var IEvent&MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
@@ -128,7 +123,7 @@ class InvitationTest extends TestCase {
 		$provider->parse('en', $event);
 	}
 
-	public static function dataParse() {
+	public static function dataParse(): array {
 		return [
 			['en', true, ['room' => 23, 'user' => 'test1'], ['actor' => ['actor-data'], 'call' => ['call-data']]],
 			['de', false, ['room' => 42, 'user' => 'test2'], ['actor' => ['actor-data'], 'call' => ['call-unknown']]],
@@ -137,16 +132,11 @@ class InvitationTest extends TestCase {
 
 	/**
 	 * @dataProvider dataParse
-	 *
-	 * @param string $lang
-	 * @param bool $roomExists
-	 * @param array $params
-	 * @param array $expectedParams
 	 */
-	public function testParse($lang, $roomExists, array $params, array $expectedParams) {
+	public function testParse(string $lang, bool $roomExists, array $params, array $expectedParams): void {
 		$provider = $this->getProvider(['setSubjects', 'getUser', 'getRoom', 'getFormerRoom']);
 
-		/** @var IL10N|MockObject $l */
+		/** @var IL10N&MockObject $l */
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
@@ -154,7 +144,7 @@ class InvitationTest extends TestCase {
 				return vsprintf($text, $parameters);
 			});
 
-		/** @var IEvent|MockObject $event */
+		/** @var IEvent&MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
@@ -180,7 +170,7 @@ class InvitationTest extends TestCase {
 			->willReturn(false);
 
 		if ($roomExists) {
-			/** @var Room|MockObject $room */
+			/** @var Room&MockObject $room */
 			$room = $this->createMock(Room::class);
 
 			$this->manager->expects($this->once())

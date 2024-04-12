@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2018 Joachim Bauch <bauch@struktur.de>
@@ -75,18 +77,14 @@ class CustomBackendNotifier extends BackendNotifier {
  * @group DB
  */
 class BackendNotifierTest extends TestCase {
-	private ?Config $config = null;
-	private ?ISecureRandom $secureRandom = null;
-	/** @var IURLGenerator|MockObject */
-	private $urlGenerator;
-	private ?CustomBackendNotifier $backendNotifier = null;
-
-	/** @var ParticipantService|MockObject */
-	private $participantService;
-	private ?Manager $manager = null;
-
-	private ?string $recordingSecret = null;
-	private ?string $baseUrl = null;
+	protected IURLGenerator&MockObject $urlGenerator;
+	protected ParticipantService $participantService;
+	protected ?CustomBackendNotifier $backendNotifier = null;
+	protected ?Config $config = null;
+	protected ?ISecureRandom $secureRandom = null;
+	protected ?Manager $manager = null;
+	protected ?string $recordingSecret = null;
+	protected ?string $baseUrl = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -193,10 +191,10 @@ class BackendNotifierTest extends TestCase {
 		$this->assertContainsEquals($message, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
 	}
 
-	public function testStart() {
+	public function testStart(): void {
 		$userId = 'testUser';
 
-		/** @var IUser|MockObject $testUser */
+		/** @var IUser&MockObject $testUser */
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -228,10 +226,10 @@ class BackendNotifierTest extends TestCase {
 		]);
 	}
 
-	public function testStop() {
+	public function testStop(): void {
 		$userId = 'testUser';
 
-		/** @var IUser|MockObject $testUser */
+		/** @var IUser&MockObject $testUser */
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')

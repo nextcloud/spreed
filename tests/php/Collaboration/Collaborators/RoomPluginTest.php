@@ -36,19 +36,15 @@ use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IShare;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class RoomPluginTest extends TestCase {
+	protected ParticipantService&MockObject $participantService;
 	protected ?Manager $manager = null;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-
 	protected ?IUserSession $userSession = null;
-
 	protected ?IUser $user = null;
-
 	protected ?ISearchResult $searchResult = null;
-
 	protected ?RoomPlugin $plugin = null;
 
 	public function setUp(): void {
@@ -234,14 +230,6 @@ class RoomPluginTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSearch
-	 *
-	 * @param string $searchTerm
-	 * @param int $limit
-	 * @param int $offset
-	 * @param array $roomsForParticipant
-	 * @param array $expectedMatchesExact
-	 * @param array $expectedMatches
-	 * @param bool $expectedHasMoreResults
 	 */
 	public function testSearch(
 		string $searchTerm,

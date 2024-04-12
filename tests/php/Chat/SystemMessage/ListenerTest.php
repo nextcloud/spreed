@@ -54,31 +54,20 @@ use Test\TestCase;
 class ListenerTest extends TestCase {
 	public const DUMMY_REFERENCE_ID = 'DUMMY_REFERENCE_ID';
 
-	protected ?Listener $listener = null;
-
-	/** @var IRequest|MockObject */
-	protected $request;
-	/** @var ChatManager|MockObject */
-	protected $chatManager;
-	/** @var IUserSession|MockObject */
-	protected $userSession;
-	/** @var ISession|MockObject */
-	protected $session;
-	/** @var TalkSession|MockObject */
-	protected $talkSession;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var IEventDispatcher|MockObject */
-	protected $eventDispatcher;
-	/** @var Manager|MockObject */
-	protected $manager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var MessageParser|MockObject */
-	protected $messageParser;
-	protected LoggerInterface|MockObject $logger;
+	protected IRequest&MockObject $request;
+	protected ChatManager&MockObject $chatManager;
+	protected IUserSession&MockObject $userSession;
+	protected ISession&MockObject $session;
+	protected TalkSession&MockObject $talkSession;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected IEventDispatcher&MockObject $eventDispatcher;
+	protected Manager&MockObject $manager;
+	protected ParticipantService&MockObject $participantService;
+	protected MessageParser&MockObject $messageParser;
+	protected LoggerInterface&MockObject $logger;
 	protected ?array $handlers = null;
 	protected ?\DateTime $dummyTime = null;
+	protected ?Listener $listener = null;
 
 	protected function setUp(): void {
 		parent::setUp();

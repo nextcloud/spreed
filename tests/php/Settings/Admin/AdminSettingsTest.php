@@ -40,27 +40,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class AdminSettingsTest extends TestCase {
-	/** @var Config|MockObject */
-	protected $talkConfig;
-	/** @var IConfig|MockObject */
-	protected $serverConfig;
-	protected IAppConfig|MockObject $appConfig;
-	/** @var CommandService|MockObject */
-	protected $commandService;
-	/** @var IInitialState|MockObject */
-	protected $initialState;
-	/** @var ICacheFactory|MockObject */
-	protected $cacheFactory;
-	/** @var IGroupManager|MockObject  */
-	protected $groupManager;
-	/** @var MatterbridgeManager|MockObject  */
-	protected $matterbridgeManager;
-	/** @var IUserSession|MockObject  */
-	protected $userSession;
-	/** @var IL10N|MockObject  */
-	protected $l10n;
-	/** @var IFactory|MockObject  */
-	protected $l10nFactory;
+	protected Config&MockObject $talkConfig;
+	protected IConfig&MockObject $serverConfig;
+	protected IAppConfig&MockObject $appConfig;
+	protected CommandService&MockObject $commandService;
+	protected IInitialState&MockObject $initialState;
+	protected ICacheFactory&MockObject $cacheFactory;
+	protected IGroupManager&MockObject $groupManager;
+	protected MatterbridgeManager&MockObject $matterbridgeManager;
+	protected IUserSession&MockObject $userSession;
+	protected IL10N&MockObject $l10n;
+	protected IFactory&MockObject $l10nFactory;
 	protected ?AdminSettings $admin = null;
 
 	public function setUp(): void {

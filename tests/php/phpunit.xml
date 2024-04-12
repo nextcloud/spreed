@@ -4,6 +4,12 @@
 		 timeoutForSmallTests="900"
 		 timeoutForMediumTests="900"
 		 timeoutForLargeTests="900"
+		 failOnDeprecation="true"
+		 failOnIncomplete="true"
+		 failOnRisky="true"
+		 failOnWarning="true"
+		 failOnEmptyTestSuite="true"
+		 failOnNotice="true"
 		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
 		 cacheDirectory=".phpunit.result.cache">
 	<testsuite name="Talk App Tests">

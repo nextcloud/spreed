@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -43,20 +44,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class NotifierTest extends TestCase {
-	/** @var INotificationManager|MockObject */
-	protected $notificationManager;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var IGroupManager|MockObject */
-	protected $groupManager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var IConfig|MockObject */
-	protected $config;
-	/** @var ITimeFactory|MockObject */
-	protected $timeFactory;
-	/** @var Util|MockObject */
-	protected $util;
+	protected INotificationManager&MockObject $notificationManager;
+	protected IUserManager&MockObject $userManager;
+	protected IGroupManager&MockObject $groupManager;
+	protected ParticipantService&MockObject $participantService;
+	protected IConfig&MockObject $config;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected Util&MockObject $util;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -149,23 +143,6 @@ class NotifierTest extends TestCase {
 		return $room;
 	}
 
-	/**
-	 * @dataProvider dataNotifyMentionedUsers
-	 */
-	public function testNotifyMentionedUsers(string $message, array $alreadyNotifiedUsers, array $notify, array $expectedReturn): void {
-		if (count($notify)) {
-			$this->notificationManager->expects($this->exactly(count($notify)))
-			->method('notify');
-		}
-
-		$room = $this->getRoom();
-		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
-		$notifier = $this->getNotifier([]);
-		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false);
-
-		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
-	}
-
 	public static function dataNotifyMentionedUsers(): array {
 		return [
 			'no notifications' => [
@@ -203,6 +180,23 @@ class NotifierTest extends TestCase {
 		];
 	}
 
+	/**
+	 * @dataProvider dataNotifyMentionedUsers
+	 */
+	public function testNotifyMentionedUsers(string $message, array $alreadyNotifiedUsers, array $notify, array $expectedReturn): void {
+		if (count($notify)) {
+			$this->notificationManager->expects($this->exactly(count($notify)))
+			->method('notify');
+		}
+
+		$room = $this->getRoom();
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$notifier = $this->getNotifier([]);
+		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false);
+
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
+	}
+
 	public static function dataShouldParticipantBeNotified(): array {
 		return [
 			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
@@ -217,13 +211,6 @@ class NotifierTest extends TestCase {
 
 	/**
 	 * @dataProvider dataShouldParticipantBeNotified
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param int|null $sessionAge
-	 * @param string $commentActorType
-	 * @param string $commentActorId
-	 * @param array $alreadyNotifiedUsers
-	 * @param bool $expected
 	 */
 	public function testShouldParticipantBeNotified(string $actorType, string $actorId, ?int $sessionAge, string $commentActorType, string $commentActorId, array $alreadyNotifiedUsers, bool $expected): void {
 		$comment = $this->createMock(IComment::class);
@@ -310,27 +297,6 @@ class NotifierTest extends TestCase {
 		$this->getNotifier()->removePendingNotificationsForRoom($room, true);
 	}
 
-	/**
-	 * @dataProvider dataAddMentionAllToList
-	 */
-	public function testAddMentionAllToList(array $usersToNotify, array $participants, array $return): void {
-		$room = $this->createMock(Room::class);
-		$this->participantService
-			->method('getActorsByType')
-			->willReturn($participants);
-
-		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
-		$this->assertCount(count($return), $actual);
-		foreach ($actual as $key => $value) {
-			$this->assertIsArray($value);
-			if (array_key_exists('attendee', $value)) {
-				$this->assertInstanceOf(Attendee::class, $value['attendee']);
-				unset($value['attendee']);
-			}
-			$this->assertEqualsCanonicalizing($return[$key], $value);
-		}
-	}
-
 	public static function dataAddMentionAllToList(): array {
 		return [
 			'not notify' => [
@@ -365,6 +331,42 @@ class NotifierTest extends TestCase {
 	}
 
 	/**
+	 * @dataProvider dataAddMentionAllToList
+	 */
+	public function testAddMentionAllToList(array $usersToNotify, array $participants, array $return): void {
+		$room = $this->createMock(Room::class);
+		$this->participantService
+			->method('getActorsByType')
+			->willReturn($participants);
+
+		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
+		$this->assertCount(count($return), $actual);
+		foreach ($actual as $key => $value) {
+			$this->assertIsArray($value);
+			if (array_key_exists('attendee', $value)) {
+				$this->assertInstanceOf(Attendee::class, $value['attendee']);
+				unset($value['attendee']);
+			}
+			$this->assertEqualsCanonicalizing($return[$key], $value);
+		}
+	}
+
+	public static function dataNotifyReacted(): array {
+		return [
+			'author react to own message' =>
+				[0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
+			'notify never' =>
+				[0, Participant::NOTIFY_NEVER, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, not one to one' =>
+				[0, Participant::NOTIFY_DEFAULT, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, one to one' =>
+				[1, Participant::NOTIFY_DEFAULT, Room::TYPE_ONE_TO_ONE, 'testUser2'],
+			'notify always' =>
+				[1, Participant::NOTIFY_ALWAYS, Room::TYPE_GROUP, 'testUser2'],
+		];
+	}
+
+	/**
 	 * @dataProvider dataNotifyReacted
 	 */
 	public function testNotifyReacted(int $notify, int $notifyType, int $roomType, string $authorId): void {
@@ -385,30 +387,6 @@ class NotifierTest extends TestCase {
 
 		$notifier = $this->getNotifier([]);
 		$notifier->notifyReacted($room, $comment, $reaction);
-	}
-
-	public static function dataNotifyReacted(): array {
-		return [
-			'author react to own message' =>
-				[0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
-			'notify never' =>
-				[0, Participant::NOTIFY_NEVER, Room::TYPE_GROUP, 'testUser2'],
-			'notify default, not one to one' =>
-				[0, Participant::NOTIFY_DEFAULT, Room::TYPE_GROUP, 'testUser2'],
-			'notify default, one to one' =>
-				[1, Participant::NOTIFY_DEFAULT, Room::TYPE_ONE_TO_ONE, 'testUser2'],
-			'notify always' =>
-				[1, Participant::NOTIFY_ALWAYS, Room::TYPE_GROUP, 'testUser2'],
-		];
-	}
-
-	/**
-	 * @dataProvider dataGetMentionedUsers
-	 */
-	public function testGetMentionedUsers(string $message, array $expectedReturn): void {
-		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
-		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUsers', [$comment]);
-		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
 	public static function dataGetMentionedUsers(): array {
@@ -443,11 +421,11 @@ class NotifierTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataGetMentionedUserIds
+	 * @dataProvider dataGetMentionedUsers
 	 */
-	public function testGetMentionedUserIds(string $message, array $expectedReturn): void {
+	public function testGetMentionedUsers(string $message, array $expectedReturn): void {
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
-		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUserIds', [$comment]);
+		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUsers', [$comment]);
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
@@ -460,5 +438,14 @@ class NotifierTest extends TestCase {
 			return $scenario;
 		});
 		return $return;
+	}
+
+	/**
+	 * @dataProvider dataGetMentionedUserIds
+	 */
+	public function testGetMentionedUserIds(string $message, array $expectedReturn): void {
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
+		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUserIds', [$comment]);
+		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 }

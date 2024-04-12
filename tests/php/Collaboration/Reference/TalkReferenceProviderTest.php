@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
@@ -36,20 +35,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class TalkReferenceProviderTest extends TestCase {
-	/** @var IURLGenerator|MockObject */
-	protected $urlGenerator;
-	/** @var Manager|MockObject */
-	protected $roomManager;
-	/** @var ParticipantService|MockObject */
-	protected $participantService;
-	/** @var ChatManager|MockObject */
-	protected $chatManager;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
-	/** @var MessageParser|MockObject */
-	protected $messageParser;
-	/** @var IL10N|MockObject */
-	protected $l;
+	protected IURLGenerator&MockObject $urlGenerator;
+	protected Manager&MockObject $roomManager;
+	protected ParticipantService&MockObject $participantService;
+	protected ChatManager&MockObject $chatManager;
+	protected AvatarService&MockObject $avatarService;
+	protected MessageParser&MockObject $messageParser;
+	protected IL10N&MockObject $l;
 	protected ?TalkReferenceProvider $provider = null;
 
 	public function setUp(): void {
@@ -90,9 +82,6 @@ class TalkReferenceProviderTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetTalkAppLinkToken
-	 * @param string $reference
-	 * @param array|null $expected
-	 * @return void
 	 */
 	public function testGetTalkAppLinkToken(string $reference, ?array $expected): void {
 		$this->urlGenerator->expects($this->any())

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright 2018, Denis Mosolov <denismosolov@gmail.com>
  *
@@ -24,22 +26,16 @@ namespace OCA\Talk\Tests\php\Command\Stun;
 
 use OCA\Talk\Command\Stun\Delete;
 use OCP\IConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class DeleteTest extends TestCase {
-	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
-	private $config;
-
-	/** @var Delete|\PHPUnit_Framework_MockObject_MockObject */
-	private $command;
-
-	/** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $input;
-
-	/** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $output;
+	protected IConfig&MockObject $config;
+	protected InputInterface&MockObject $input;
+	protected OutputInterface&MockObject $output;
+	protected Delete $command;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -52,7 +48,7 @@ class DeleteTest extends TestCase {
 		$this->output = $this->createMock(OutputInterface::class);
 	}
 
-	public function testAddDefaultServerIfEmpty() {
+	public function testAddDefaultServerIfEmpty(): void {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun1.test.com:443');
@@ -71,10 +67,10 @@ class DeleteTest extends TestCase {
 			->method('writeln')
 			->with($this->equalTo('<info>You deleted all STUN servers. A default STUN server was added.</info>'));
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testDelete() {
+	public function testDelete(): void {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun1.test.com:443');
@@ -93,10 +89,10 @@ class DeleteTest extends TestCase {
 			->method('writeln')
 			->with($this->equalTo('<info>Deleted stun1.test.com:443.</info>'));
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testNothingToDelete() {
+	public function testNothingToDelete(): void {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun3.test.com:443');
@@ -115,6 +111,6 @@ class DeleteTest extends TestCase {
 			->method('writeln')
 			->with($this->equalTo('<info>There is nothing to delete.</info>'));
 
-		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 }

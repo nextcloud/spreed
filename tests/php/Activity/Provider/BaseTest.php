@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -41,20 +43,13 @@ use Test\TestCase;
  * @package OCA\Talk\Tests\php\Activity
  */
 class BaseTest extends TestCase {
-	/** @var IFactory|MockObject */
-	protected $l10nFactory;
-	/** @var IURLGenerator|MockObject */
-	protected $url;
-	/** @var Config|MockObject */
-	protected $config;
-	/** @var IManager|MockObject */
-	protected $activityManager;
-	/** @var IUserManager|MockObject */
-	protected $userManager;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
-	/** @var Manager|MockObject */
-	protected $manager;
+	protected IFactory&MockObject $l10nFactory;
+	protected IURLGenerator&MockObject $url;
+	protected Config&MockObject $config;
+	protected IManager&MockObject $activityManager;
+	protected IUserManager&MockObject $userManager;
+	protected AvatarService&MockObject $avatarService;
+	protected Manager&MockObject $manager;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -104,7 +99,7 @@ class BaseTest extends TestCase {
 	public function testPreParse(string $appId, bool $hasUser, bool $disabledForUser, bool $willThrowException): void {
 		$user = $hasUser ? $this->createMock(IUser::class) : null;
 
-		/** @var IEvent|MockObject $event */
+		/** @var IEvent&MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
@@ -135,8 +130,8 @@ class BaseTest extends TestCase {
 		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 
-	public function testPreParseThrows() {
-		/** @var IEvent|MockObject $event */
+	public function testPreParseThrows(): void {
+		/** @var IEvent&MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
@@ -146,7 +141,7 @@ class BaseTest extends TestCase {
 		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 
-	public static function dataSetSubject() {
+	public static function dataSetSubject(): array {
 		return [
 			['No placeholder', [], 'No placeholder'],
 			['This has one {placeholder}', ['placeholder' => ['name' => 'foobar']], 'This has one foobar'],
@@ -156,12 +151,8 @@ class BaseTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSetSubject
-	 *
-	 * @param string $subject
-	 * @param array $parameters
-	 * @param string $parsedSubject
 	 */
-	public function testSetSubject($subject, array $parameters, $parsedSubject) {
+	public function testSetSubject(string $subject, array $parameters, string $parsedSubject): void {
 		$provider = $this->getProvider();
 
 		$event = $this->createMock(IEvent::class);
@@ -177,7 +168,7 @@ class BaseTest extends TestCase {
 		self::invokePrivate($provider, 'setSubjects', [$event, $subject, $parameters]);
 	}
 
-	public static function dataGetRoom() {
+	public static function dataGetRoom(): array {
 		return [
 			[Room::TYPE_ONE_TO_ONE, 23, 'private-call', 'private-call', 'one2one'],
 			[Room::TYPE_GROUP, 42, 'group-call', 'group-call', 'group'],
@@ -190,14 +181,8 @@ class BaseTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetRoom
-	 *
-	 * @param int $type
-	 * @param int $id
-	 * @param string $name
-	 * @param string $expectedName
-	 * @param string $expectedType
 	 */
-	public function testGetRoom($type, $id, $name, $expectedName, $expectedType) {
+	public function testGetRoom(int $type, int $id, string $name, string $expectedName, string $expectedType): void {
 		$provider = $this->getProvider();
 
 		$room = $this->createMock(Room::class);
@@ -239,10 +224,6 @@ class BaseTest extends TestCase {
 
 	/**
 	 * @dataProvider dataGetUser
-	 *
-	 * @param string $uid
-	 * @param bool $validUser
-	 * @param string $name
 	 */
 	public function testGetUser(string $uid, bool $validUser, string $name): void {
 		$provider = $this->getProvider();
