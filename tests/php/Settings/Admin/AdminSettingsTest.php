@@ -25,7 +25,6 @@ namespace OCA\Talk\Tests\php\Settings\Admin;
 
 use OCA\Talk\Config;
 use OCA\Talk\MatterbridgeManager;
-use OCA\Talk\Service\CommandService;
 use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
@@ -43,7 +42,6 @@ class AdminSettingsTest extends TestCase {
 	protected Config&MockObject $talkConfig;
 	protected IConfig&MockObject $serverConfig;
 	protected IAppConfig&MockObject $appConfig;
-	protected CommandService&MockObject $commandService;
 	protected IInitialState&MockObject $initialState;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected IGroupManager&MockObject $groupManager;
@@ -59,7 +57,6 @@ class AdminSettingsTest extends TestCase {
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
-		$this->commandService = $this->createMock(CommandService::class);
 		$this->initialState = $this->createMock(IInitialState::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
@@ -81,7 +78,6 @@ class AdminSettingsTest extends TestCase {
 				$this->talkConfig,
 				$this->serverConfig,
 				$this->appConfig,
-				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
 				$this->groupManager,
@@ -97,7 +93,6 @@ class AdminSettingsTest extends TestCase {
 				$this->talkConfig,
 				$this->serverConfig,
 				$this->appConfig,
-				$this->commandService,
 				$this->initialState,
 				$this->cacheFactory,
 				$this->groupManager,
@@ -124,7 +119,6 @@ class AdminSettingsTest extends TestCase {
 		$admin = $this->getAdminSettings([
 			'initGeneralSettings',
 			'initAllowedGroups',
-			'initCommands',
 			'initStunServers',
 			'initTurnServers',
 			'initSignalingServers',
@@ -135,8 +129,6 @@ class AdminSettingsTest extends TestCase {
 			->method('initGeneralSettings');
 		$admin->expects($this->once())
 			->method('initAllowedGroups');
-		$admin->expects($this->once())
-			->method('initCommands');
 		$admin->expects($this->once())
 			->method('initStunServers');
 		$admin->expects($this->once())
