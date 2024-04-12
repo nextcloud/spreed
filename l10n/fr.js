@@ -1081,7 +1081,7 @@ OC.L10N.register(
     "Server ID or name" : "Identifiant du serveur ou nom",
     "Channel ID or name" : "Identifiant du canal ou nom",
     "Channel" : "Canal",
-    "Login" : "S'identifier",
+    "Login" : "S’identifier",
     "Chat ID" : "Identifiant de la discussion",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL du serveur IRC (ex. chat.freenode.net:6667)",
     "Nickname" : "Surnom",
