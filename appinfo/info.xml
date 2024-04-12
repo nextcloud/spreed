@@ -73,13 +73,9 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 			<step>OCA\Talk\Migration\FixNamespaceInDatabaseTables</step>
 		</pre-migration>
 		<post-migration>
-			<step>OCA\Talk\Migration\CreateHelpCommand</step>
 			<step>OCA\Talk\Migration\ClearResourceAccessCache</step>
 			<step>OCA\Talk\Migration\CacheUserDisplayNames</step>
 		</post-migration>
-		<install>
-			<step>OCA\Talk\Migration\CreateHelpCommand</step>
-		</install>
 	</repair-steps>
 
 	<commands>
@@ -89,11 +85,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<command>OCA\Talk\Command\Bot\State</command>
 		<command>OCA\Talk\Command\Bot\Setup</command>
 		<command>OCA\Talk\Command\Bot\Uninstall</command>
-		<command>OCA\Talk\Command\Command\Add</command>
-		<command>OCA\Talk\Command\Command\AddSamples</command>
-		<command>OCA\Talk\Command\Command\Delete</command>
-		<command>OCA\Talk\Command\Command\ListCommand</command>
-		<command>OCA\Talk\Command\Command\Update</command>
 		<command>OCA\Talk\Command\Developer\UpdateDocs</command>
 		<command>OCA\Talk\Command\Monitor\Calls</command>
 		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>

@@ -90,19 +90,6 @@ Feature: chat-2/reply
       | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        |
       | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               |
 
-  Scenario: user can not reply to commands
-    Given user "participant1" creates room "group room" (v4)
-      | roomType | 2 |
-      | invite   | attendees1 |
-    And user "participant1" sends message "/help" to room "group room" with 201
-    # In the tests the reference for the message to reply to is got from the
-    # messages originally sent, not from how they are returned by the server.
-    When user "participant1" sends reply "Message X-1" on message "/help" to room "group room" with 400
-    Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId | actorDisplayName | message                                    | messageParameters | parentMessage |
-      | group room | bots      | talk    | talk-bot         | There are currently no commands available. | []                |               |
-    And user "participant2" sees the following messages in room "group room" with 200
-
   Scenario: user can not reply to system messages
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |

@@ -35,6 +35,10 @@ use OCP\EventDispatcher\IEventListener;
  * @template-implements IEventListener<Event>
  */
 class Command implements IEventListener {
+	public const RESPONSE_NONE = 0;
+	public const RESPONSE_USER = 1;
+	public const RESPONSE_ALL = 2;
+
 	public function handle(Event $event): void {
 		if (!$event instanceof MessageParseEvent) {
 			return;
@@ -46,6 +50,8 @@ class Command implements IEventListener {
 			return;
 		}
 
+		$message->setVisibility(false);
+
 		$comment = $message->getComment();
 		$data = json_decode($comment->getMessage(), true);
 		if (!\is_array($data)) {
@@ -54,13 +60,13 @@ class Command implements IEventListener {
 
 		$event->stopPropagation();
 
-		if ($data['visibility'] === \OCA\Talk\Model\Command::RESPONSE_NONE) {
+		if ($data['visibility'] === self::RESPONSE_NONE) {
 			$message->setVisibility(false);
 			return;
 		}
 
 		$participant = $message->getParticipant();
-		if ($data['visibility'] !== \OCA\Talk\Model\Command::RESPONSE_ALL &&
+		if ($data['visibility'] !== self::RESPONSE_ALL &&
 			$participant !== null &&
 			($participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
 				|| $data['user'] !== $participant->getAttendee()->getActorId())) {

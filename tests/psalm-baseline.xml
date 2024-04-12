@@ -1,44 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.17.0@c620f6e80d0abfca532b00bda366062aaedf6e5d">
+<files psalm-version="5.23.1@8471a896ccea3526b26d082f4461eeea467f10a4">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
-      <code>BeforeTemplateRenderedEvent</code>
-      <code>BeforeTemplateRenderedEvent</code>
+      <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
+      <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
     <UndefinedClass>
-      <code>SchemaWrapper</code>
+      <code><![CDATA[SchemaWrapper]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Chat/ChatManager.php">
     <UndefinedClass>
-      <code>NullCache</code>
+      <code><![CDATA[NullCache]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Chat/MessageParser.php">
     <UndefinedVariable>
-      <code>$guestNames</code>
+      <code><![CDATA[$guestNames]]></code>
     </UndefinedVariable>
   </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
     <UndefinedClass>
-      <code>\OC_Util</code>
+      <code><![CDATA[\OC_Util]]></code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Command/Command/AddSamples.php">
-    <ForbiddenCode>
-      <code><![CDATA[shell_exec('which bc')]]></code>
-    </ForbiddenCode>
   </file>
   <file src="lib/Config.php">
     <NullArgument>
-      <code>null</code>
+      <code><![CDATA[null]]></code>
     </NullArgument>
   </file>
   <file src="lib/Controller/TempAvatarController.php">
     <UndefinedClass>
-      <code>Filesystem</code>
+      <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Federation/Authenticator.php">
@@ -48,7 +43,7 @@
   </file>
   <file src="lib/Files/Util.php">
     <InvalidArgument>
-      <code>$fileId</code>
+      <code><![CDATA[$fileId]]></code>
     </InvalidArgument>
   </file>
   <file src="lib/MatterbridgeManager.php">
@@ -56,7 +51,7 @@
       <code><![CDATA[$this->tokenProvider]]></code>
       <code><![CDATA[$this->tokenProvider]]></code>
       <code><![CDATA[$this->tokenProvider]]></code>
-      <code>private</code>
+      <code><![CDATA[private]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
@@ -73,30 +68,30 @@
   </file>
   <file src="lib/PublicShare/TemplateLoader.php">
     <UndefinedClass>
-      <code>BeforeTemplateRenderedEvent</code>
+      <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/PublicShareAuth/TemplateLoader.php">
     <UndefinedClass>
-      <code>BeforeTemplateRenderedEvent</code>
+      <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Service/AvatarService.php">
     <UndefinedClass>
-      <code>Filesystem</code>
-      <code>\OC_Image</code>
+      <code><![CDATA[Filesystem]]></code>
+      <code><![CDATA[\OC_Image]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Service/RecordingService.php">
     <LessSpecificReturnStatement>
-      <code>$recordingFolder</code>
+      <code><![CDATA[$recordingFolder]]></code>
     </LessSpecificReturnStatement>
     <MoreSpecificReturnType>
-      <code>Folder</code>
+      <code><![CDATA[Folder]]></code>
     </MoreSpecificReturnType>
     <UndefinedClass>
-      <code>NoUserException</code>
-      <code>NoUserException</code>
+      <code><![CDATA[NoUserException]]></code>
+      <code><![CDATA[NoUserException]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/Listener.php">
@@ -104,20 +99,20 @@
       <code><![CDATA[$event->getView()]]></code>
       <code><![CDATA[$event->getView()]]></code>
       <code><![CDATA[$event->getView()]]></code>
-      <code>$view</code>
-      <code>$view</code>
-      <code>$view</code>
-      <code>Filesystem</code>
+      <code><![CDATA[$view]]></code>
+      <code><![CDATA[$view]]></code>
+      <code><![CDATA[$view]]></code>
+      <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
     <UndefinedClass>
-      <code>Cache</code>
+      <code><![CDATA[Cache]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/TInitialState.php">
     <UndefinedClass>
-      <code>NoUserException</code>
+      <code><![CDATA[NoUserException]]></code>
     </UndefinedClass>
   </file>
 </files>

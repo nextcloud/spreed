@@ -156,17 +156,6 @@ listen to the `OCA\Talk\Events\SystemMessagesMultipleSentEvent` event instead.
 * Since: 18.0.0
 * Since: 19.0.0 - Method `getParent()` was added
 
-### Deprecated events
-
-These events were not using the typed-event mechanism and are therefore deprecated and will be removed in a future version.
-
-#### Command execution for apps
-
-* Event class: `OCA\Talk\Events\CommandEvent`
-* Event name: `OCA\Talk\Chat\Command\Executor::EVENT_APP_EXECUTE`
-* Since: 8.0.0
-* Deprecated: 17.0.0 - Commands are deprecated, please migrate to bots instead
-
 ## Other events
 
 ### Turn servers get

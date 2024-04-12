@@ -1202,28 +1202,6 @@ describe('conversationsStore', () => {
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.lastMessage).toBe(testLastMessage)
 		})
-
-		test('ignore update from temporary if posting a command', () => {
-			const testLastMessage = {
-				actorType: 'users',
-				actorId: 'admin',
-				systemMessage: '',
-				id: 'temp-42',
-				message: '/quit',
-			}
-
-			testConversation.lastMessage = previousLastMessage
-
-			store.dispatch('addConversation', testConversation)
-
-			store.dispatch('updateConversationLastMessage', {
-				token: testToken,
-				lastMessage: testLastMessage,
-			})
-
-			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
-		})
 	})
 
 	describe('creating conversations', () => {

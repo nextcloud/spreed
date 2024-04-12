@@ -14,14 +14,6 @@
 		<p class="settings-hint"><?php p($l->t('Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.')); ?></p>
 	</div>
 
-	<div class="videocalls section" id="chat_commands">
-		<h2><?php p($l->t('Commands')) ?></h2>
-		<p class="settings-hint"><?php p($l->t('Specify commands the users can use in chats')); ?></p>
-
-		<div class="commands">
-		</div>
-	</div>
-
 	<div id="stun_server" class="videocalls section">
 		<h2><?php p($l->t('STUN servers')) ?></h2>
 		<p class="settings-hint"><?php p($l->t('A STUN server is used to determine the public IP address of participants behind a router.')); ?></p>

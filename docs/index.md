@@ -17,7 +17,6 @@
 * [Call experience](call-experience.md)
 * [Occ commands](occ.md)
 * [Bots](bot-list.md)
-* [Commands (deprecated)](commands.md)
 * [Matterbridge integration](matterbridge.md)
 
 ## Developer documentation
