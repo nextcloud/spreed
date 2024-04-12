@@ -15,9 +15,9 @@
 
 * 💬 **Chat** Nextcloud Talk comes with a simple text chat, allowing you to share or upload files from your Nextcloud Files app or local device and mention other participants.
 * 👥 **Private, group, public and password protected calls!** Invite someone, a whole group or send a public link to invite to a call.
+* 🌐 **Federated chats** Chat with other Nextcloud users on their servers
 * 💻 **Screen sharing!** Share your screen with the participants of your call.
 * 🚀 **Integration with other Nextcloud apps** like Files, Calendar, User status, Dashboard, Flow, Maps, Smart picker, Contacts, Deck, and many more.
-* 🎡 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://github.com/simplewebrtc/SimpleWebRTC) library.
 * 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
 
 More in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/).
