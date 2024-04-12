@@ -2,6 +2,7 @@ Feature: integration/dashboard
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
+    Given user "participant3" exists
 
   Scenario: User gets the available dashboard widgets
     When user "participant1" sees the following entry when loading the list of dashboard widgets (v1)
@@ -16,6 +17,10 @@ Feature: integration/dashboard
     Given user "participant2" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant1 |
+    Given user "participant1" creates room "former one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant3 |
+    And user "participant3" is deleted
     And user "participant2" sends message "Hello" to room "one-to-one room" with 201
     And wait for 1 second
     Given user "participant2" creates room "group room" (v4)
