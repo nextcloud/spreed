@@ -6,15 +6,13 @@
 	<summary><![CDATA[Chat, video & audio-conferencing using WebRTC]]></summary>
 	<description><![CDATA[Chat, video & audio-conferencing using WebRTC
 
-* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.
-* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
-* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 66 (or newer), latest Edge or Chrome 72 (or newer, also possible using Chrome 49 with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol)).
-* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.
-
-And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
-* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
-
-	]]></description>
+* 💬 **Chat** Nextcloud Talk comes with a simple text chat, allowing you to share or upload files from your Nextcloud Files app or local device and mention other participants.
+* 👥 **Private, group, public and password protected calls!** Invite someone, a whole group or send a public link to invite to a call.
+* 🌐 **Federated chats** Chat with other Nextcloud users on their servers
+* 💻 **Screen sharing!** Share your screen with the participants of your call.
+* 🚀 **Integration with other Nextcloud apps** like Files, Calendar, User status, Dashboard, Flow, Maps, Smart picker, Contacts, Deck, and many more.
+* 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
+]]></description>
 
 	<version>20.0.0-dev.0</version>
 	<licence>agpl</licence>
