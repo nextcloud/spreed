@@ -227,6 +227,9 @@ All notable changes to this project will be documented in this file.
 - Bots can now be installed by apps with limited feature flags
   [#11630](https://github.com/nextcloud/spreed/issues/11630)
 
+### Deprecation
+- Commands: This will be the last major version that supports commands. Please migrate your commands to webhook based bots instead.
+
 ### Known issues
 - Federated chatting: Various features are still visible but not functional
 
