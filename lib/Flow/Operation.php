@@ -132,7 +132,6 @@ class Operation implements IOperation {
 					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
 					rateLimitGuestMentions: false,
-					forceLastMessageUpdate: true,
 				);
 			} catch (UnexpectedValueException|ParticipantNotFoundException|RoomNotFoundException) {
 				continue;

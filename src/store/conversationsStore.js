@@ -693,8 +693,7 @@ const actions = {
 		/**
 		 * Only use the last message as lastMessage when:
 		 * 1. It's not a command reply
-		 * 2. It's not a temporary message starting with "/" which is a user posting a command
-		 * 3. It's not a reaction or deletion of a reaction
+		 * 2. It's not a reaction or deletion of a reaction
 		 * 3. It's not a deletion of a message
 		 */
 		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
@@ -704,10 +703,7 @@ const actions = {
 			&& lastMessage.systemMessage !== 'reaction_deleted'
 			&& lastMessage.systemMessage !== 'reaction_revoked'
 			&& lastMessage.systemMessage !== 'message_deleted'
-			&& lastMessage.systemMessage !== 'message_edited'
-			&& !(typeof lastMessage.id.startsWith === 'function'
-				&& lastMessage.id.startsWith('temp-')
-				&& lastMessage.message.startsWith('/'))) {
+			&& lastMessage.systemMessage !== 'message_edited') {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
 	},

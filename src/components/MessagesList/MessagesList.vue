@@ -499,7 +499,7 @@ export default {
 				return false // Edited messages are not grouped
 			}
 
-			if (message1.actorType === ATTENDEE.ACTOR_TYPE.BOTS // Don't group messages of commands and bots
+			if (message1.actorType === ATTENDEE.ACTOR_TYPE.BOTS // Don't group messages of bots
 				&& message1.actorId !== ATTENDEE.CHANGELOG_BOT_ID) { // Apart from the changelog bot
 				return false
 			}

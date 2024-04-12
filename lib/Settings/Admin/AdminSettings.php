@@ -26,10 +26,8 @@ namespace OCA\Talk\Settings\Admin;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\MatterbridgeManager;
-use OCA\Talk\Model\Command;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
@@ -51,7 +49,6 @@ class AdminSettings implements ISettings {
 		private Config $talkConfig,
 		private IConfig $serverConfig,
 		private IAppConfig $appConfig,
-		private CommandService $commandService,
 		private IInitialState $initialState,
 		private ICacheFactory $memcacheFactory,
 		private IGroupManager $groupManager,
@@ -69,7 +66,6 @@ class AdminSettings implements ISettings {
 	public function getForm(): TemplateResponse {
 		$this->initGeneralSettings();
 		$this->initAllowedGroups();
-		$this->initCommands();
 		$this->initFederation();
 		$this->initMatterbridge();
 		$this->initStunServers();
@@ -100,16 +96,6 @@ class AdminSettings implements ISettings {
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds(), 'allowed_groups');
 		$this->initialState->provideInitialState('allowed_groups', $groups);
-	}
-
-	protected function initCommands(): void {
-		$commands = $this->commandService->findAll();
-
-		$result = array_map(function (Command $command) {
-			return $command->asArray();
-		}, $commands);
-
-		$this->initialState->provideInitialState('commands', $result);
 	}
 
 	protected function initFederation(): void {

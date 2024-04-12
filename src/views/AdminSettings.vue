@@ -27,7 +27,6 @@
 		<AllowedGroups />
 		<Federation v-if="supportFederation" />
 		<BotsSettings />
-		<Commands />
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
@@ -43,7 +42,6 @@ import { getCapabilities } from '@nextcloud/capabilities'
 
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
-import Commands from '../components/AdminSettings/Commands.vue'
 import Federation from '../components/AdminSettings/Federation.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
@@ -63,7 +61,6 @@ export default {
 	components: {
 		AllowedGroups,
 		BotsSettings,
-		Commands,
 		Federation,
 		GeneralSettings,
 		HostedSignalingServer,

@@ -52,3 +52,5 @@ nav:
       - 'Overview': 'TURN.md'
       - 'coTURN': 'coturn.md'
       - 'eturnal': 'eturnal.md'
+  - 'Removed features':
+      - 'Commands': 'commands.md'

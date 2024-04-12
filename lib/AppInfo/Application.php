@@ -35,10 +35,8 @@ use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
-use OCA\Talk\Chat\Command\Listener as CommandListener;
 use OCA\Talk\Chat\Listener as ChatListener;
 use OCA\Talk\Chat\Parser\Changelog;
-use OCA\Talk\Chat\Parser\Command;
 use OCA\Talk\Chat\Parser\ReactionParser;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Chat\Parser\UserMention;
@@ -57,7 +55,6 @@ use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeesAddedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
-use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -219,14 +216,10 @@ class Application extends App implements IBootstrap {
 
 		// Chat parser
 		$context->registerEventListener(MessageParseEvent::class, Changelog::class, -75);
-		$context->registerEventListener(MessageParseEvent::class, Command::class);
 		$context->registerEventListener(MessageParseEvent::class, ReactionParser::class);
 		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class);
 		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class, 9999);
 		$context->registerEventListener(MessageParseEvent::class, UserMention::class, -100);
-
-		// Command listener
-		$context->registerEventListener(BeforeChatMessageSentEvent::class, CommandListener::class);
 
 		// Files integration listeners
 		$context->registerEventListener(BeforeGuestJoinedRoomEvent::class, FilesListener::class);
