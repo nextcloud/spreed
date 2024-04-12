@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.7 – 2024-04-12
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(conversation): Fix error when adding participants while creating a conversation
+  [#12057](https://github.com/nextcloud/spreed/issues/12057)
+- fix(conversation): Fix missing icon in conversation settings for file conversations
+  [#12051](https://github.com/nextcloud/spreed/issues/12051)
+
+## 17.1.8 – 2024-04-12
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(conversation): Fix error when adding participants while creating a conversation
+  [#12059](https://github.com/nextcloud/spreed/issues/12059)
+- fix(conversation): Fix missing icon in conversation settings for file conversations
+  [#12052](https://github.com/nextcloud/spreed/issues/12052)
+
 ## 18.0.6 – 2024-04-04
 ### Changed
 - Update translations
