@@ -28,7 +28,7 @@
     "@nextcloud/auth": "^2.2.1",
     "@nextcloud/axios": "^2.4.0",
     "@nextcloud/browser-storage": "^0.3.0",
-    "@nextcloud/capabilities": "^1.1.0",
+    "@nextcloud/capabilities": "^1.2.0",
     "@nextcloud/dialogs": "^5.3.0",
     "@nextcloud/event-bus": "^3.1.0",
     "@nextcloud/files": "^3.1.1",
