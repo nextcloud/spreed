@@ -69,9 +69,6 @@ OC.L10N.register(
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- يمكن الآن تعديل الرسائل من قِبَل المؤلفين و المنسقين إلى حد 6 ساعات",
     "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى",
-    "There are currently no commands available." : "لا يوجد أوامر في الوقت الحالي",
-    "The command does not exist" : "الامر غير موجود",
-    "An error occurred while running the command. Please ask an administrator to check the logs." : "خطأ اثناء استدعاء الامر، اطلب من المسؤول مراجعة السجلات.",
     "Talk updates ✅" : "تحديثات التحدث  ✅",
     "Reaction deleted by author" : "تم حذف تفاعل من قبل الكاتب",
     "{actor} created the conversation" : "{actor} قام بإنشاء محادثة",
@@ -668,7 +665,6 @@ OC.L10N.register(
     "Conversation not found" : "المحادثة غير موجودة",
     "Path is already shared with this conversation" : "المسار سبقت مشاركته سلفاً مع هذه المحادثة",
     "Chat, video & audio-conferencing using WebRTC" : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC",
-    "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 66 (or newer), latest Edge or Chrome 72 (or newer, also possible using Chrome 49 with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol)).\n* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC * 💬 ** تكامل الدردشة! ** يأتي Nextcloud Talk مع دردشة نصية بسيطة. حيث يسمح لك بمشاركة الملفات من نكست كلاود الخاص بك ومنشن للمشاركين الآخرين. * 👥 ** مكالمات خاصة، جماعية، عامة ومكالمات محمية بكلمة مرور! ** فقط قم بدعوة شخص ما، أو مجموعة كاملة أو أرسل رابطًا عامًا للدعوة إلى المكالمة. 💻 ** مشاركة الشاشة! ** شارك شاشتك مع المشاركين في مكالمتك. ما عليك سوى استخدام Firefox الإصدار 66 (أو أحدث) ، أو Edge أو Chrome 72 (أو الاحدث بالإضافة إلى إمكانية استخدام Chrome 49 ) مع [امتداد Chrome] (https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol ) . * 🚀 ** التكامل مع تطبيقات نكست كلاود الأخرى ** مثل الملفات وجهات الاتصال و Deck، والمزيد مستقبًلا. وفي أعمال [الإصدارات القادمة] (https://github.com/nextcloud/spreed/milestones/): * ✋ [المكالمات الموحدة](https://github.com/nextcloud/spreed/issues/21)، لمكالمة الناس على نكست كلاود الأخرى",
     "Navigating away from the page will leave the call in {conversation}" : "الخروج من هذه الصفحة سيؤدي لمغادرة المكالمة في {conversation}",
     "Leave call" : "مغادرة المكالمة",
     "Stay in call" : "البقاء في المكالمة",
@@ -713,17 +709,6 @@ OC.L10N.register(
     "Locked for moderators" : "مقفل للمنسقين",
     "Enabled" : "مُفعّل",
     "Disabled" : "معطّل",
-    "Commands" : "الاوامر",
-    "Deprecated" : "تمّ استبداله ببديل أحدث",
-    "Command" : "الأمر",
-    "Script" : "السيناريو",
-    "Response to" : "الرد على",
-    "Enabled for" : "السماح لـ",
-    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our {linkstart}documentation{linkend}." : "الاوامر ميزة جديدة تجريبية في نكست كلاود التحدث. تسمح لك بتشغيل سكربتات في خادم نكست كلاود. بإمكانك تعريفهم في واجهة سطر الاوامر. مثال على سكربت التقويم يمكن العثور عليه في مستند {linkstart}التعليمات{linkend}.",
-    "None" : "لا شيء",
-    "User" : "المستخدم",
-    "Moderators" : "المشرفين",
-    "Users" : "المستخدمين:",
     "Federation" : "الإتحاد",
     "Beta" : "تجريبي",
     "Enable Federation in Talk app" : "تمكين تطبيق \"المحادثة\" talk من التواصل عبر السحابة الاتحادية ",
@@ -1063,6 +1048,7 @@ OC.L10N.register(
     "User password" : "كلمة مرور المستخدم",
     "Talk conversation" : "محادثات",
     "Matrix server URL" : "عنوان URL لخادم Matrix",
+    "User" : "المستخدم",
     "Matrix channel" : "قناة Matrix",
     "Mattermost server URL" : "عنوان URL لخادم Mattermost",
     "Mattermost user" : "مستخدم Mattermost",
@@ -1155,6 +1141,7 @@ OC.L10N.register(
     "No matches found" : "لم يٌمكن إيجاد أي تطابقات",
     "New group conversation" : "محادثة جماعية جديدة",
     "Open conversations" : "فتح المحادثات ",
+    "Users" : "المستخدمين:",
     "New private conversation" : "محادثة جديدة على الخاص",
     "Groups" : "المجموعات",
     "Teams" : "الفرق",
@@ -1175,10 +1162,12 @@ OC.L10N.register(
     "The meeting will start soon" : "هذا الاجتماع سيبدأ قريباً",
     "This meeting is scheduled for {startTime}" : "تمت جدولة هذا الاجتماع في {startTime}",
     "Select a device" : "إختَر جهازاً",
+    "Refresh devices list" : "تحديث قائمة الإجهزة",
     "No microphone available" : "لا يوجد مايكرفون متاح",
     "Select microphone" : "اختر مايك",
     "No camera available" : "لا توجد كاميرا متاحة",
     "Select camera" : "اختر كاميرا",
+    "None" : "لا شيء",
     "Playing …" : "قيد التشغيل ...",
     "Test speakers" : "اختبار مكبرات الصوت",
     "Media settings" : "إعدادات الوسائط",
@@ -1278,6 +1267,7 @@ OC.L10N.register(
     "You cannot send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
     "Code block copied to clipboard" : "إنسَخ الكتلة المنسوخة في الحافظة",
     "Code block could not be copied" : "تعذّر نسخ الكتلة الكودية",
+    "Could not update the message" : "تعذّر تحديث الرسالة",
     "Poll" : "استبيان",
     "See results" : "رؤية النتائج",
     "Open poll • You voted already" : "فتح الاستطلاع • لقد قمت بالتصويت بالفعل",
@@ -1758,7 +1748,6 @@ OC.L10N.register(
     "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "لقد اكتشفنا عدة محاولات غير صالحة لكلمة المرور من عنوان IP الخاص بك. لذلك سوق يتم تقييد محاولتك التالية لمدة تصل إلى 30 ثانية.",
     "This conversation is password-protected." : "هذه المحادثة محمية بكلمة مرور.",
     "The password is wrong. Try again." : "كلمة المرور خاطئة. حاول مرة أخرى.",
-    "Specify commands the users can use in chats" : "حدد اوامر ليتم استخدامها في المحادثة من قبل الاعضاء",
     "TURN server" : "خادم TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "يتم استخدام خادم TURN كوسيط لمرور المشاركين خلف جدار الحماية.",
     "Signaling servers" : "خوادم التشوير ",
@@ -1768,6 +1757,9 @@ OC.L10N.register(
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
     "- You can now react to chat message" : "- يمكنك الآن الرَّدّ على رسالة الدردشة",
+    "There are currently no commands available." : "لا يوجد أوامر في الوقت الحالي",
+    "The command does not exist" : "الامر غير موجود",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "خطأ اثناء استدعاء الامر، اطلب من المسؤول مراجعة السجلات.",
     "{actor} opened the conversation to registered and guest app users" : "{actor} اتاح المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
     "You opened the conversation to registered and guest app users" : "قمت بإتاحة المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
     "An administrator opened the conversation to registered and guest app users" : "قامت الإدارة بإتاحة المحادثة للمستخدمين المسجلين وضيوف التطبيق ",
@@ -1778,6 +1770,15 @@ OC.L10N.register(
     "{user1} shared room {roomName} on {remoteServer} with you" : "شارك {user1} غرفة {roomName} على {remoteServer} معك",
     "Messages in {conversation}" : "الرسائل في {conversation}",
     "Path is already shared with this room" : "تم مشاركة المسار بالفعل مع هذه الغرفة  ",
+    "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 66 (or newer), latest Edge or Chrome 72 (or newer, also possible using Chrome 49 with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol)).\n* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC * 💬 ** تكامل الدردشة! ** يأتي Nextcloud Talk مع دردشة نصية بسيطة. حيث يسمح لك بمشاركة الملفات من نكست كلاود الخاص بك ومنشن للمشاركين الآخرين. * 👥 ** مكالمات خاصة، جماعية، عامة ومكالمات محمية بكلمة مرور! ** فقط قم بدعوة شخص ما، أو مجموعة كاملة أو أرسل رابطًا عامًا للدعوة إلى المكالمة. 💻 ** مشاركة الشاشة! ** شارك شاشتك مع المشاركين في مكالمتك. ما عليك سوى استخدام Firefox الإصدار 66 (أو أحدث) ، أو Edge أو Chrome 72 (أو الاحدث بالإضافة إلى إمكانية استخدام Chrome 49 ) مع [امتداد Chrome] (https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol ) . * 🚀 ** التكامل مع تطبيقات نكست كلاود الأخرى ** مثل الملفات وجهات الاتصال و Deck، والمزيد مستقبًلا. وفي أعمال [الإصدارات القادمة] (https://github.com/nextcloud/spreed/milestones/): * ✋ [المكالمات الموحدة](https://github.com/nextcloud/spreed/issues/21)، لمكالمة الناس على نكست كلاود الأخرى",
+    "Commands" : "الاوامر",
+    "Deprecated" : "تمّ استبداله ببديل أحدث",
+    "Command" : "الأمر",
+    "Script" : "السيناريو",
+    "Response to" : "الرد على",
+    "Enabled for" : "السماح لـ",
+    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our {linkstart}documentation{linkend}." : "الاوامر ميزة جديدة تجريبية في نكست كلاود التحدث. تسمح لك بتشغيل سكربتات في خادم نكست كلاود. بإمكانك تعريفهم في واجهة سطر الاوامر. مثال على سكربت التقويم يمكن العثور عليه في مستند {linkstart}التعليمات{linkend}.",
+    "Moderators" : "المشرفين",
     "Setup summary" : "ملخص الإعداد",
     "Also open to guest app users" : "مفتوح أيضًا لضيوف التطبيق ",
     "Circles" : "جماعة",
@@ -1797,6 +1798,7 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "رقمك السري: {attendeePin}",
     "Start a conversation" : "ابدأ محادثة",
     "Mention room" : "منشن غرفة",
+    "Specify commands the users can use in chats" : "حدد اوامر ليتم استخدامها في المحادثة من قبل الاعضاء",
     "Delete Conversation" : "حذف المحادثة",
     "Remove circle and members" : "حذف الدائرة circle و الأعضاء",
     "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
