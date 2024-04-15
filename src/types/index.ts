@@ -75,7 +75,7 @@ export type Bot = components['schemas']['Bot']
 export type BotWithDetails = components['schemas']['BotWithDetails']
 
 export type getBotsResponse = ApiResponse<operations['bot-list-bots']['responses'][200]['content']['application/json']>
-export type getBotsAdminResponse = ApiResponse<operations['settings-admin-list-bots']['responses'][200]['content']['application/json']>
+export type getBotsAdminResponse = ApiResponse<operations['bot-admin-list-bots']['responses'][200]['content']['application/json']>
 export type enableBotResponse = ApiResponse<operations['bot-enable-bot']['responses'][201]['content']['application/json']>
 export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['responses'][200]['content']['application/json']>
 

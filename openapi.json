@@ -745,7 +745,7 @@
                     },
                     {
                         "type": "array",
-                        "maxLength": 0
+                        "maxItems": 0
                     }
                 ]
             },
@@ -1016,13 +1016,13 @@
                         "format": "int64"
                     },
                     "lastMessage": {
-                        "oneOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/RoomLastMessage"
                             },
                             {
                                 "type": "array",
-                                "maxLength": 0
+                                "maxItems": 0
                             }
                         ]
                     },
@@ -1130,7 +1130,7 @@
                 }
             },
             "RoomLastMessage": {
-                "oneOf": [
+                "anyOf": [
                     {
                         "$ref": "#/components/schemas/ChatMessage"
                     },
@@ -4417,32 +4417,7 @@
                         }
                     },
                     "304": {
-                        "description": "No messages",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "description": "No messages"
                     }
                 }
             },
@@ -5516,32 +5491,7 @@
                         }
                     },
                     "304": {
-                        "description": "No messages",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "description": "No messages"
                     }
                 }
             }
@@ -6814,9 +6764,27 @@
                     "404": {
                         "description": "Share not found",
                         "content": {
-                            "text/plain": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -8193,7 +8161,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
             "post": {
-                "operationId": "files_integration-create-room",
+                "operationId": "public_share_auth-create-room",
                 "summary": "Creates a new room for video verification (requesting the password of a share)",
                 "description": "The new room is a public room associated with a \"share:password\" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.\nThe share must have \"send password by Talk\" enabled; an error is returned otherwise.",
                 "tags": [
@@ -11483,7 +11451,7 @@
                                                         },
                                                         {
                                                             "type": "array",
-                                                            "maxLength": 0
+                                                            "maxItems": 0
                                                         }
                                                     ]
                                                 }
@@ -14433,13 +14401,13 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "oneOf": [
+                                                    "anyOf": [
                                                         {
                                                             "$ref": "#/components/schemas/Capabilities"
                                                         },
                                                         {
                                                             "type": "array",
-                                                            "maxLength": 0
+                                                            "maxItems": 0
                                                         }
                                                     ]
                                                 }
@@ -14586,7 +14554,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
             "get": {
-                "operationId": "internal_signaling-external_signaling-get-settings",
+                "operationId": "signaling-get-settings",
                 "summary": "Get the signaling settings",
                 "tags": [
                     "internal_signaling",
@@ -14726,7 +14694,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
             "post": {
-                "operationId": "internal_signaling-send-messages",
+                "operationId": "signaling-send-messages",
                 "summary": "Send signaling messages",
                 "tags": [
                     "internal_signaling"
@@ -14845,7 +14813,7 @@
                 }
             },
             "get": {
-                "operationId": "internal_signaling-pull-messages",
+                "operationId": "signaling-pull-messages",
                 "summary": "Get signaling messages",
                 "tags": [
                     "internal_signaling"
@@ -15094,7 +15062,7 @@
         },
         "/ocs/v2.php/apps/spreed/temp-user-avatar": {
             "post": {
-                "operationId": "user_avatar-post-avatar",
+                "operationId": "temp_avatar-post-avatar",
                 "summary": "Upload your avatar as a user",
                 "tags": [
                     "user_avatar"
@@ -15189,7 +15157,7 @@
                 }
             },
             "delete": {
-                "operationId": "user_avatar-delete-avatar",
+                "operationId": "temp_avatar-delete-avatar",
                 "summary": "Delete your avatar as a user",
                 "tags": [
                     "user_avatar"
