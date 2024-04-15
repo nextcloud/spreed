@@ -141,13 +141,16 @@
 			<!-- Send buttons -->
 			<template v-else>
 				<NcActions v-if="!broadcast" :container="container" force-menu>
+					<template #icon>
+						<BellOffIcon v-if="silentChat" :size="16" />
+					</template>
 					<NcActionButton close-after-click
+						:model-value="silentChat"
 						:name="silentSendLabel"
 						@click="toggleSilentChat">
 						{{ silentSendInfo }}
 						<template #icon>
-							<BellIcon v-if="silentChat" :size="16" />
-							<BellOffIcon v-else :size="16" />
+							<BellOffIcon :size="16" />
 						</template>
 					</NcActionButton>
 				</NcActions>
@@ -159,8 +162,7 @@
 					:aria-label="sendMessageLabel"
 					@click="handleSubmit">
 					<template #icon>
-						<SendVariantOutlineIcon v-if="silentChat" :size="18" />
-						<SendIcon v-else :size="16" />
+						<SendIcon :size="16" />
 					</template>
 				</NcButton>
 			</template>
@@ -190,13 +192,11 @@
 <script>
 import debounce from 'debounce'
 
-import BellIcon from 'vue-material-design-icons/Bell.vue'
 import BellOffIcon from 'vue-material-design-icons/BellOff.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import SendIcon from 'vue-material-design-icons/Send.vue'
-import SendVariantOutlineIcon from 'vue-material-design-icons/SendVariantOutline.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showWarning } from '@nextcloud/dialogs'
@@ -258,13 +258,11 @@ export default {
 		NewMessageTypingIndicator,
 		Quote,
 		// Icons
-		BellIcon,
 		BellOffIcon,
 		CheckIcon,
 		CloseIcon,
 		EmoticonOutline,
 		SendIcon,
-		SendVariantOutlineIcon,
 	},
 
 	props: {
@@ -440,21 +438,13 @@ export default {
 		},
 
 		silentSendLabel() {
-			return this.silentChat
-				? t('spreed', 'Send with notification')
-				: t('spreed', 'Send without notification')
+			return t('spreed', 'Send without notification')
 		},
 
 		silentSendInfo() {
-			if (this.isOneToOne) {
-				return this.silentChat
-					? t('spreed', 'The participant will be notified about new messages')
-					: t('spreed', 'The participant will not be notified about new messages')
-			} else {
-				return this.silentChat
-					? t('spreed', 'Participants will be notified about new messages')
-					: t('spreed', 'Participants will not be notified about new messages')
-			}
+			return this.isOneToOne
+				? t('spreed', 'The participant will not be notified about new messages')
+				: t('spreed', 'Participants will not be notified about new messages')
 		},
 
 		showAttachmentsMenu() {
