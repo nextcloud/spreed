@@ -15,14 +15,14 @@ export type paths = {
      * List admin bots
      * @description This endpoint requires admin access
      */
-    get: operations["settings-admin-list-bots"];
+    get: operations["bot-admin-list-bots"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/certificate/expiration": {
     /**
      * Get the certificate expiration for a host
      * @description This endpoint requires admin access
      */
-    get: operations["settings-get-certificate-expiration"];
+    get: operations["certificate-get-certificate-expiration"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/hostedsignalingserver/requesttrial": {
     /**
@@ -43,21 +43,21 @@ export type paths = {
      * Stop all bridges
      * @description This endpoint requires admin access
      */
-    delete: operations["matterbridge-stop-all-bridges"];
+    delete: operations["matterbridge_settings-stop-all-bridges"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
     /**
      * Get Matterbridge version
      * @description This endpoint requires admin access
      */
-    get: operations["matterbridge-get-matterbridge-version"];
+    get: operations["matterbridge_settings-get-matterbridge-version"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/welcome/{serverId}": {
     /**
      * Get the welcome message of a recording server
      * @description This endpoint requires admin access
      */
-    get: operations["settings-get-welcome-message"];
+    get: operations["recording-get-welcome-message"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/sip": {
     /**
@@ -72,7 +72,7 @@ export type paths = {
      * @description Only available for logged-in users because guests can not use the apps right now.
      * This endpoint requires admin access
      */
-    get: operations["settings-get-welcome-message"];
+    get: operations["signaling-get-welcome-message"];
   };
 };
 
@@ -177,7 +177,7 @@ export type operations = {
    * List admin bots
    * @description This endpoint requires admin access
    */
-  "settings-admin-list-bots": {
+  "bot-admin-list-bots": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -205,7 +205,7 @@ export type operations = {
    * Get the certificate expiration for a host
    * @description This endpoint requires admin access
    */
-  "settings-get-certificate-expiration": {
+  "certificate-get-certificate-expiration": {
     parameters: {
       query: {
         /** @description Host to check */
@@ -333,14 +333,7 @@ export type operations = {
     responses: {
       /** @description Account deleted successfully */
       204: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
+        content: never;
       };
       /** @description Deleting account is not possible */
       400: {
@@ -373,7 +366,7 @@ export type operations = {
    * Stop all bridges
    * @description This endpoint requires admin access
    */
-  "matterbridge-stop-all-bridges": {
+  "matterbridge_settings-stop-all-bridges": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -414,7 +407,7 @@ export type operations = {
    * Get Matterbridge version
    * @description This endpoint requires admin access
    */
-  "matterbridge-get-matterbridge-version": {
+  "matterbridge_settings-get-matterbridge-version": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -454,11 +447,103 @@ export type operations = {
     };
   };
   /**
+   * Get the welcome message of a recording server
+   * @description This endpoint requires admin access
+   */
+  "recording-get-welcome-message": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        /** @description ID of the server */
+        serverId: number;
+      };
+    };
+    responses: {
+      /** @description Welcome message returned */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                /** Format: double */
+                version: number;
+              };
+            };
+          };
+        };
+      };
+      /** @description Recording server not found or not configured */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      500: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error: string;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
+   * Update SIP bridge settings
+   * @description This endpoint requires admin access
+   */
+  "settings-setsip-settings": {
+    parameters: {
+      query?: {
+        /** @description New SIP groups */
+        "sipGroups[]"?: string[];
+        /** @description New dial info */
+        dialInInfo?: string;
+        /** @description New shared secret */
+        sharedSecret?: string;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+      };
+    };
+    responses: {
+      /** @description Successfully set new SIP settings */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
    * Get the welcome message from a signaling server
    * @description Only available for logged-in users because guests can not use the apps right now.
    * This endpoint requires admin access
    */
-  "settings-get-welcome-message": {
+  "signaling-get-welcome-message": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -504,42 +589,6 @@ export type operations = {
                 error: string;
                 version?: string;
               };
-            };
-          };
-        };
-      };
-    };
-  };
-  /**
-   * Update SIP bridge settings
-   * @description This endpoint requires admin access
-   */
-  "settings-setsip-settings": {
-    parameters: {
-      query?: {
-        /** @description New SIP groups */
-        "sipGroups[]"?: string[];
-        /** @description New dial info */
-        dialInInfo?: string;
-        /** @description New shared secret */
-        sharedSecret?: string;
-      };
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-      };
-    };
-    responses: {
-      /** @description Successfully set new SIP settings */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
             };
           };
         };
