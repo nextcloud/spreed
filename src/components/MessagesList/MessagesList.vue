@@ -78,7 +78,6 @@ import uniqueId from 'lodash/uniqueId.js'
 import Message from 'vue-material-design-icons/Message.vue'
 
 import Axios from '@nextcloud/axios'
-import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import moment from '@nextcloud/moment'
 
@@ -241,7 +240,7 @@ export default {
 				return false
 			}
 
-			return !!this.$store.getters.findParticipant(this.token, this.$store.getters.getParticipantIdentifier())
+			return !!this.$store.getters.findParticipant(this.token, this.conversation)
 		},
 
 		isInLobby() {
@@ -644,7 +643,6 @@ export default {
 
 		async handleStartGettingMessagesPreconditions() {
 			if (this.token && this.isParticipant && !this.isInLobby) {
-
 				// prevent sticky mode before we have loaded anything
 				this.isInitialisingMessages = true
 				const focusMessageId = this.getMessageIdFromHash()
