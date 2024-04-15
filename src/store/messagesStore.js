@@ -1410,6 +1410,10 @@ const actions = {
 	async easeMessageList(context, { token }) {
 		context.commit('easeMessageList', { token })
 	},
+
+	loadedMessagesOfConversation(context, { token }) {
+		context.commit('loadedMessagesOfConversation', { token })
+	}
 }
 
 export default { state, mutations, getters, actions }
