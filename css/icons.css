@@ -103,12 +103,12 @@
 
 /* System default: dark theme */
 @media (prefers-color-scheme: dark) {
-	.user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
-	.user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
-	.autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
-	.autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
-	.mention-bubble .icon-group-forced-white.mention-bubble__icon--,
-	.mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
+	body[data-theme-default] .user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
+	body[data-theme-default] .user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
+	body[data-theme-default] .autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
+	body[data-theme-default] .autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
+	body[data-theme-default] .mention-bubble .icon-group-forced-white.mention-bubble__icon--,
+	body[data-theme-default] .mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
 		background-color: #3B3B3B;
 	}
 }
