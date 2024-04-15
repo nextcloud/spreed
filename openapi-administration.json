@@ -314,7 +314,7 @@
                     },
                     {
                         "type": "array",
-                        "maxLength": 0
+                        "maxItems": 0
                     }
                 ]
             }
@@ -323,7 +323,7 @@
     "paths": {
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/admin": {
             "get": {
-                "operationId": "settings-admin-list-bots",
+                "operationId": "bot-admin-list-bots",
                 "summary": "List admin bots",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -400,7 +400,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/certificate/expiration": {
             "get": {
-                "operationId": "settings-get-certificate-expiration",
+                "operationId": "certificate-get-certificate-expiration",
                 "summary": "Get the certificate expiration for a host",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -769,32 +769,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "Account deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Account deleted successfully"
                     },
                     "400": {
                         "description": "Deleting account is not possible",
@@ -877,7 +852,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge": {
             "delete": {
-                "operationId": "matterbridge-stop-all-bridges",
+                "operationId": "matterbridge_settings-stop-all-bridges",
                 "summary": "Stop all bridges",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -989,7 +964,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
             "get": {
-                "operationId": "matterbridge-get-matterbridge-version",
+                "operationId": "matterbridge_settings-get-matterbridge-version",
                 "summary": "Get Matterbridge version",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -1109,7 +1084,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/welcome/{serverId}": {
             "get": {
-                "operationId": "settings-get-welcome-message",
+                "operationId": "recording-get-welcome-message",
                 "summary": "Get the welcome message of a recording server",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -1187,7 +1162,7 @@
                                                     "properties": {
                                                         "version": {
                                                             "type": "number",
-                                                            "format": "float"
+                                                            "format": "double"
                                                         }
                                                     }
                                                 }
@@ -1371,7 +1346,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/welcome/{serverId}": {
             "get": {
-                "operationId": "settings-get-welcome-message",
+                "operationId": "signaling-get-welcome-message",
                 "summary": "Get the welcome message from a signaling server",
                 "description": "Only available for logged-in users because guests can not use the apps right now.\nThis endpoint requires admin access",
                 "tags": [

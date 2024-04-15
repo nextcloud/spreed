@@ -194,7 +194,7 @@ export type paths = {
      * @description The new room is a public room associated with a "share:password" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.
      * The share must have "send password by Talk" enabled; an error is returned otherwise.
      */
-    post: operations["files_integration-create-room"];
+    post: operations["public_share_auth-create-room"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/reaction/{token}/{messageId}": {
     /** Get a list of reactions for a message */
@@ -361,19 +361,19 @@ export type paths = {
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
     /** Get the signaling settings */
-    get: operations["internal_signaling-external_signaling-get-settings"];
+    get: operations["signaling-get-settings"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
     /** Get signaling messages */
-    get: operations["internal_signaling-pull-messages"];
+    get: operations["signaling-pull-messages"];
     /** Send signaling messages */
-    post: operations["internal_signaling-send-messages"];
+    post: operations["signaling-send-messages"];
   };
   "/ocs/v2.php/apps/spreed/temp-user-avatar": {
     /** Upload your avatar as a user */
-    post: operations["user_avatar-post-avatar"];
+    post: operations["temp_avatar-post-avatar"];
     /** Delete your avatar as a user */
-    delete: operations["user_avatar-delete-avatar"];
+    delete: operations["temp_avatar-delete-avatar"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}": {
     /** Get the avatar of a cloudId user when inviting users while creating a conversation */
@@ -432,14 +432,14 @@ export type paths = {
      * List admin bots
      * @description This endpoint requires admin access
      */
-    get: operations["settings-admin-list-bots"];
+    get: operations["bot-admin-list-bots"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/certificate/expiration": {
     /**
      * Get the certificate expiration for a host
      * @description This endpoint requires admin access
      */
-    get: operations["settings-get-certificate-expiration"];
+    get: operations["certificate-get-certificate-expiration"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/hostedsignalingserver/requesttrial": {
     /**
@@ -460,21 +460,21 @@ export type paths = {
      * Stop all bridges
      * @description This endpoint requires admin access
      */
-    delete: operations["matterbridge-stop-all-bridges"];
+    delete: operations["matterbridge_settings-stop-all-bridges"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
     /**
      * Get Matterbridge version
      * @description This endpoint requires admin access
      */
-    get: operations["matterbridge-get-matterbridge-version"];
+    get: operations["matterbridge_settings-get-matterbridge-version"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/welcome/{serverId}": {
     /**
      * Get the welcome message of a recording server
      * @description This endpoint requires admin access
      */
-    get: operations["settings-get-welcome-message"];
+    get: operations["recording-get-welcome-message"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/sip": {
     /**
@@ -489,7 +489,7 @@ export type paths = {
      * @description Only available for logged-in users because guests can not use the apps right now.
      * This endpoint requires admin access
      */
-    get: operations["settings-get-welcome-message"];
+    get: operations["signaling-get-welcome-message"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/backend": {
     /** Update the recording status as a backend */
@@ -1942,14 +1942,7 @@ export type operations = {
       };
       /** @description No messages */
       304: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
+        content: never;
       };
     };
   };
@@ -2326,14 +2319,7 @@ export type operations = {
       };
       /** @description No messages */
       304: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
+        content: never;
       };
     };
   };
@@ -2754,7 +2740,12 @@ export type operations = {
       /** @description Share not found */
       404: {
         content: {
-          "text/plain": string;
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
         };
       };
     };
@@ -3222,7 +3213,7 @@ export type operations = {
    * @description The new room is a public room associated with a "share:password" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.
    * The share must have "send password by Talk" enabled; an error is returned otherwise.
    */
-  "files_integration-create-room": {
+  "public_share_auth-create-room": {
     parameters: {
       query: {
         /** @description Token of the file share */
@@ -5313,7 +5304,7 @@ export type operations = {
     };
   };
   /** Get the signaling settings */
-  "internal_signaling-external_signaling-get-settings": {
+  "signaling-get-settings": {
     parameters: {
       query?: {
         /** @description Token of the room */
@@ -5364,7 +5355,7 @@ export type operations = {
     };
   };
   /** Get signaling messages */
-  "internal_signaling-pull-messages": {
+  "signaling-pull-messages": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -5433,7 +5424,7 @@ export type operations = {
     };
   };
   /** Send signaling messages */
-  "internal_signaling-send-messages": {
+  "signaling-send-messages": {
     parameters: {
       query: {
         /** @description JSON encoded messages */
@@ -5475,7 +5466,7 @@ export type operations = {
     };
   };
   /** Upload your avatar as a user */
-  "user_avatar-post-avatar": {
+  "temp_avatar-post-avatar": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -5510,7 +5501,7 @@ export type operations = {
     };
   };
   /** Delete your avatar as a user */
-  "user_avatar-delete-avatar": {
+  "temp_avatar-delete-avatar": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -6066,7 +6057,7 @@ export type operations = {
    * List admin bots
    * @description This endpoint requires admin access
    */
-  "settings-admin-list-bots": {
+  "bot-admin-list-bots": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -6094,7 +6085,7 @@ export type operations = {
    * Get the certificate expiration for a host
    * @description This endpoint requires admin access
    */
-  "settings-get-certificate-expiration": {
+  "certificate-get-certificate-expiration": {
     parameters: {
       query: {
         /** @description Host to check */
@@ -6222,14 +6213,7 @@ export type operations = {
     responses: {
       /** @description Account deleted successfully */
       204: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
+        content: never;
       };
       /** @description Deleting account is not possible */
       400: {
@@ -6262,7 +6246,7 @@ export type operations = {
    * Stop all bridges
    * @description This endpoint requires admin access
    */
-  "matterbridge-stop-all-bridges": {
+  "matterbridge_settings-stop-all-bridges": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -6303,7 +6287,7 @@ export type operations = {
    * Get Matterbridge version
    * @description This endpoint requires admin access
    */
-  "matterbridge-get-matterbridge-version": {
+  "matterbridge_settings-get-matterbridge-version": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -6343,11 +6327,103 @@ export type operations = {
     };
   };
   /**
+   * Get the welcome message of a recording server
+   * @description This endpoint requires admin access
+   */
+  "recording-get-welcome-message": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        /** @description ID of the server */
+        serverId: number;
+      };
+    };
+    responses: {
+      /** @description Welcome message returned */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                /** Format: double */
+                version: number;
+              };
+            };
+          };
+        };
+      };
+      /** @description Recording server not found or not configured */
+      404: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+      500: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error: string;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
+   * Update SIP bridge settings
+   * @description This endpoint requires admin access
+   */
+  "settings-setsip-settings": {
+    parameters: {
+      query?: {
+        /** @description New SIP groups */
+        "sipGroups[]"?: string[];
+        /** @description New dial info */
+        dialInInfo?: string;
+        /** @description New shared secret */
+        sharedSecret?: string;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+      };
+    };
+    responses: {
+      /** @description Successfully set new SIP settings */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
    * Get the welcome message from a signaling server
    * @description Only available for logged-in users because guests can not use the apps right now.
    * This endpoint requires admin access
    */
-  "settings-get-welcome-message": {
+  "signaling-get-welcome-message": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -6393,42 +6469,6 @@ export type operations = {
                 error: string;
                 version?: string;
               };
-            };
-          };
-        };
-      };
-    };
-  };
-  /**
-   * Update SIP bridge settings
-   * @description This endpoint requires admin access
-   */
-  "settings-setsip-settings": {
-    parameters: {
-      query?: {
-        /** @description New SIP groups */
-        "sipGroups[]"?: string[];
-        /** @description New dial info */
-        dialInInfo?: string;
-        /** @description New shared secret */
-        sharedSecret?: string;
-      };
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-      };
-    };
-    responses: {
-      /** @description Successfully set new SIP settings */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
             };
           };
         };

@@ -194,7 +194,7 @@ export type paths = {
      * @description The new room is a public room associated with a "share:password" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.
      * The share must have "send password by Talk" enabled; an error is returned otherwise.
      */
-    post: operations["files_integration-create-room"];
+    post: operations["public_share_auth-create-room"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/reaction/{token}/{messageId}": {
     /** Get a list of reactions for a message */
@@ -365,19 +365,19 @@ export type paths = {
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
     /** Get the signaling settings */
-    get: operations["internal_signaling-external_signaling-get-settings"];
+    get: operations["signaling-get-settings"];
   };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
     /** Get signaling messages */
-    get: operations["internal_signaling-pull-messages"];
+    get: operations["signaling-pull-messages"];
     /** Send signaling messages */
-    post: operations["internal_signaling-send-messages"];
+    post: operations["signaling-send-messages"];
   };
   "/ocs/v2.php/apps/spreed/temp-user-avatar": {
     /** Upload your avatar as a user */
-    post: operations["user_avatar-post-avatar"];
+    post: operations["temp_avatar-post-avatar"];
     /** Delete your avatar as a user */
-    delete: operations["user_avatar-delete-avatar"];
+    delete: operations["temp_avatar-delete-avatar"];
   };
 };
 
@@ -1765,14 +1765,7 @@ export type operations = {
       };
       /** @description No messages */
       304: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
+        content: never;
       };
     };
   };
@@ -2149,14 +2142,7 @@ export type operations = {
       };
       /** @description No messages */
       304: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
-            };
-          };
-        };
+        content: never;
       };
     };
   };
@@ -2577,7 +2563,12 @@ export type operations = {
       /** @description Share not found */
       404: {
         content: {
-          "text/plain": string;
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
         };
       };
     };
@@ -3045,7 +3036,7 @@ export type operations = {
    * @description The new room is a public room associated with a "share:password" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.
    * The share must have "send password by Talk" enabled; an error is returned otherwise.
    */
-  "files_integration-create-room": {
+  "public_share_auth-create-room": {
     parameters: {
       query: {
         /** @description Token of the file share */
@@ -5214,7 +5205,7 @@ export type operations = {
     };
   };
   /** Get the signaling settings */
-  "internal_signaling-external_signaling-get-settings": {
+  "signaling-get-settings": {
     parameters: {
       query?: {
         /** @description Token of the room */
@@ -5265,7 +5256,7 @@ export type operations = {
     };
   };
   /** Get signaling messages */
-  "internal_signaling-pull-messages": {
+  "signaling-pull-messages": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -5334,7 +5325,7 @@ export type operations = {
     };
   };
   /** Send signaling messages */
-  "internal_signaling-send-messages": {
+  "signaling-send-messages": {
     parameters: {
       query: {
         /** @description JSON encoded messages */
@@ -5376,7 +5367,7 @@ export type operations = {
     };
   };
   /** Upload your avatar as a user */
-  "user_avatar-post-avatar": {
+  "temp_avatar-post-avatar": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */
@@ -5411,7 +5402,7 @@ export type operations = {
     };
   };
   /** Delete your avatar as a user */
-  "user_avatar-delete-avatar": {
+  "temp_avatar-delete-avatar": {
     parameters: {
       header: {
         /** @description Required to be true for the API request to pass */

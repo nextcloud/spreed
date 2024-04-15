@@ -363,7 +363,7 @@
                     },
                     {
                         "type": "array",
-                        "maxLength": 0
+                        "maxItems": 0
                     }
                 ]
             },
@@ -610,13 +610,13 @@
                         "format": "int64"
                     },
                     "lastMessage": {
-                        "oneOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/RoomLastMessage"
                             },
                             {
                                 "type": "array",
-                                "maxLength": 0
+                                "maxItems": 0
                             }
                         ]
                     },
@@ -724,7 +724,7 @@
                 }
             },
             "RoomLastMessage": {
-                "oneOf": [
+                "anyOf": [
                     {
                         "$ref": "#/components/schemas/ChatMessage"
                     },

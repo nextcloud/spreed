@@ -858,7 +858,7 @@
                     },
                     {
                         "type": "array",
-                        "maxLength": 0
+                        "maxItems": 0
                     }
                 ]
             },
@@ -1129,13 +1129,13 @@
                         "format": "int64"
                     },
                     "lastMessage": {
-                        "oneOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/RoomLastMessage"
                             },
                             {
                                 "type": "array",
-                                "maxLength": 0
+                                "maxItems": 0
                             }
                         ]
                     },
@@ -1243,7 +1243,7 @@
                 }
             },
             "RoomLastMessage": {
-                "oneOf": [
+                "anyOf": [
                     {
                         "$ref": "#/components/schemas/ChatMessage"
                     },
@@ -4530,32 +4530,7 @@
                         }
                     },
                     "304": {
-                        "description": "No messages",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "description": "No messages"
                     }
                 }
             },
@@ -5629,32 +5604,7 @@
                         }
                     },
                     "304": {
-                        "description": "No messages",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "description": "No messages"
                     }
                 }
             }
@@ -6927,9 +6877,27 @@
                     "404": {
                         "description": "Share not found",
                         "content": {
-                            "text/plain": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -8306,7 +8274,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
             "post": {
-                "operationId": "files_integration-create-room",
+                "operationId": "public_share_auth-create-room",
                 "summary": "Creates a new room for video verification (requesting the password of a share)",
                 "description": "The new room is a public room associated with a \"share:password\" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.\nThe share must have \"send password by Talk\" enabled; an error is returned otherwise.",
                 "tags": [
@@ -11373,7 +11341,7 @@
                                                         },
                                                         {
                                                             "type": "array",
-                                                            "maxLength": 0
+                                                            "maxItems": 0
                                                         }
                                                     ]
                                                 }
@@ -14323,13 +14291,13 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "oneOf": [
+                                                    "anyOf": [
                                                         {
                                                             "$ref": "#/components/schemas/Capabilities"
                                                         },
                                                         {
                                                             "type": "array",
-                                                            "maxLength": 0
+                                                            "maxItems": 0
                                                         }
                                                     ]
                                                 }
@@ -14476,7 +14444,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
             "get": {
-                "operationId": "internal_signaling-external_signaling-get-settings",
+                "operationId": "signaling-get-settings",
                 "summary": "Get the signaling settings",
                 "tags": [
                     "internal_signaling",
@@ -14616,7 +14584,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
             "post": {
-                "operationId": "internal_signaling-send-messages",
+                "operationId": "signaling-send-messages",
                 "summary": "Send signaling messages",
                 "tags": [
                     "internal_signaling"
@@ -14735,7 +14703,7 @@
                 }
             },
             "get": {
-                "operationId": "internal_signaling-pull-messages",
+                "operationId": "signaling-pull-messages",
                 "summary": "Get signaling messages",
                 "tags": [
                     "internal_signaling"
@@ -14984,7 +14952,7 @@
         },
         "/ocs/v2.php/apps/spreed/temp-user-avatar": {
             "post": {
-                "operationId": "user_avatar-post-avatar",
+                "operationId": "temp_avatar-post-avatar",
                 "summary": "Upload your avatar as a user",
                 "tags": [
                     "user_avatar"
@@ -15079,7 +15047,7 @@
                 }
             },
             "delete": {
-                "operationId": "user_avatar-delete-avatar",
+                "operationId": "temp_avatar-delete-avatar",
                 "summary": "Delete your avatar as a user",
                 "tags": [
                     "user_avatar"
@@ -16667,7 +16635,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/admin": {
             "get": {
-                "operationId": "settings-admin-list-bots",
+                "operationId": "bot-admin-list-bots",
                 "summary": "List admin bots",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -16744,7 +16712,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/certificate/expiration": {
             "get": {
-                "operationId": "settings-get-certificate-expiration",
+                "operationId": "certificate-get-certificate-expiration",
                 "summary": "Get the certificate expiration for a host",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -17113,32 +17081,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "Account deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Account deleted successfully"
                     },
                     "400": {
                         "description": "Deleting account is not possible",
@@ -17221,7 +17164,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge": {
             "delete": {
-                "operationId": "matterbridge-stop-all-bridges",
+                "operationId": "matterbridge_settings-stop-all-bridges",
                 "summary": "Stop all bridges",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -17333,7 +17276,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
             "get": {
-                "operationId": "matterbridge-get-matterbridge-version",
+                "operationId": "matterbridge_settings-get-matterbridge-version",
                 "summary": "Get Matterbridge version",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -17453,7 +17396,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/welcome/{serverId}": {
             "get": {
-                "operationId": "settings-get-welcome-message",
+                "operationId": "recording-get-welcome-message",
                 "summary": "Get the welcome message of a recording server",
                 "description": "This endpoint requires admin access",
                 "tags": [
@@ -17531,7 +17474,7 @@
                                                     "properties": {
                                                         "version": {
                                                             "type": "number",
-                                                            "format": "float"
+                                                            "format": "double"
                                                         }
                                                     }
                                                 }
@@ -17715,7 +17658,7 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/welcome/{serverId}": {
             "get": {
-                "operationId": "settings-get-welcome-message",
+                "operationId": "signaling-get-welcome-message",
                 "summary": "Get the welcome message from a signaling server",
                 "description": "Only available for logged-in users because guests can not use the apps right now.\nThis endpoint requires admin access",
                 "tags": [
