@@ -62,6 +62,7 @@ OC.L10N.register(
     "You stopped Matterbridge" : "עצרת את Matterbridge",
     "{actor} deleted a message" : "הודעה נמחקה על ידי {actor}",
     "You deleted a message" : "מחקת הודעה",
+    "Message deleted by author" : "ההודעה נמחקה על ידי מי שפרסם אותה",
     "You missed a call from {user}" : "החמצת שיחה עם {user}",
     "Talk conversations" : "דיוני שיח",
     "File is too big" : "הקובץ גדול מדי",
