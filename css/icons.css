@@ -92,29 +92,46 @@
  * .app-Talk rules above.
  * "forced-white" needs to be included in the class name as the Avatar does
  * not accept several classes. */
-.user-bubble__avatar .icon-group-forced-white,
-.user-bubble__avatar .icon-user-forced-white,
-.autocomplete-result .icon-group-forced-white,
-.autocomplete-result .icon-user-forced-white,
-.mention-bubble .icon-group-forced-white,
-.mention-bubble .icon-user-forced-white {
-	background-color: var(--color-text-maxcontrast-default) !important;
-}
-
-body[data-theme-dark] .icon-group-forced-white,
-body[data-theme-dark] .icon-user-forced-white {
-	background-color: #3B3B3B !important;
-}
-
-.user-bubble__avatar .icon-group-forced-white,
-.user-bubble__avatar .icon-user-forced-white {
-	background-size: 75%;
-}
-
+.user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
+.user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
 .autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
 .autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
 .mention-bubble .icon-group-forced-white.mention-bubble__icon--,
 .mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
+	background-color: #6B6B6B;
+}
+
+/* System default: dark theme */
+@media (prefers-color-scheme: dark) {
+	.user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
+	.user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
+	.autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
+	.autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
+	.mention-bubble .icon-group-forced-white.mention-bubble__icon--,
+	.mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
+		background-color: #3B3B3B;
+	}
+}
+
+/* Manually set dark theme */
+body[data-theme-dark] .user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
+body[data-theme-dark] .user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
+body[data-theme-dark] .autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
+body[data-theme-dark] .autocomplete-result .icon-user-forced-white.autocomplete-result__icon--,
+body[data-theme-dark] .mention-bubble .icon-group-forced-white.mention-bubble__icon--,
+body[data-theme-dark] .mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
+	background-color: #3B3B3B;
+}
+
+.user-bubble__avatar .icon-group-forced-white.avatar-class-icon,
+.user-bubble__avatar .icon-user-forced-white.avatar-class-icon,
+.mention-bubble .icon-group-forced-white.mention-bubble__icon--,
+.mention-bubble .icon-user-forced-white.mention-bubble__icon-- {
+	background-size: 75%;
+}
+
+.autocomplete-result .icon-group-forced-white.autocomplete-result__icon--,
+.autocomplete-result .icon-user-forced-white.autocomplete-result__icon-- {
 	background-size: 50% !important;
 }
 
