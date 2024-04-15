@@ -707,6 +707,12 @@ export default {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
+
+				if (exception?.response?.status === 304 && exception?.response?.data === '') {
+					// 304 - Not modified
+					// Empty chat, no messages to load
+					this.$store.dispatch('loadedMessagesOfConversation', { token: this.token })
+				}
 			}
 			this.loadingOldMessages = false
 		},
