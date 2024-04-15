@@ -395,7 +395,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyBreakoutRoomStopped(Room $room): void {
-		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken(), true);
 
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$sessionIds = [];
