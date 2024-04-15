@@ -94,9 +94,6 @@ export default function MediaDevicesManager() {
 
 	this._knownDevices = {}
 
-	this._fallbackAudioInputId = undefined
-	this._fallbackVideoInputId = undefined
-
 	const audioInputPreferences = BrowserStorage.getItem('audioInputPreferences')
 	this._preferenceAudioInputList = audioInputPreferences !== null ? JSON.parse(audioInputPreferences) : []
 
@@ -191,6 +188,8 @@ MediaDevicesManager.prototype = {
 		this._pendingEnumerateDevicesPromise = navigator.mediaDevices.enumerateDevices().then(devices => {
 			const previousAudioInputId = this.attributes.audioInputId
 			const previousVideoInputId = this.attributes.videoInputId
+			const previousFirstAvailableAudioInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioInputList)
+			const previousFirstAvailableVideoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList)
 
 			const removedDevices = this.attributes.devices.filter(oldDevice => !devices.find(device => oldDevice.deviceId === device.deviceId && oldDevice.kind === device.kind))
 			const updatedDevices = devices.filter(device => this.attributes.devices.find(oldDevice => device.deviceId === oldDevice.deviceId && device.kind === oldDevice.kind))
@@ -206,28 +205,15 @@ MediaDevicesManager.prototype = {
 				this._addDevice(addedDevice)
 			})
 
-			// Fallback in case we didn't find the previously picked device
-			if (this.attributes.audioInputId === undefined) {
-				if (BrowserStorage.getItem('audioInputId')) {
-					// Couldn't find device by id
-					console.debug(`Could not find previous audio device (${BrowserStorage.getItem('audioInputId')}), falling back to first available device\n`, listMediaDevices(
-						this.attributes,
-						this._preferenceAudioInputList,
-						this._preferenceVideoInputList,
-					))
-				}
-				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList, 'default')
+			// Selecting preferred device in case it was removed/unplugged, or it is a first initialization after reload,
+			// or we add/plug preferred device and overwriting automatic selection
+			if (this.attributes.audioInputId === undefined || this.attributes.audioInputId === previousFirstAvailableAudioInputId) {
+				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList)
+				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
 			}
-			if (this.attributes.videoInputId === undefined) {
-				if (BrowserStorage.getItem('videoInputId')) {
-					// Couldn't find device by id, try the label
-					console.debug(`Could not find previous video device (${BrowserStorage.getItem('videoInputId')}), falling back to first available device\n`, listMediaDevices(
-						this.attributes,
-						this._preferenceAudioInputList,
-						this._preferenceVideoInputList,
-					))
-				}
-				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList, 'default')
+			if (this.attributes.videoInputId === undefined || this.attributes.videoInputId === previousFirstAvailableVideoInputId) {
+				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList)
+				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
 			}
 
 			// Trigger change events after all the devices are processed to
@@ -268,9 +254,7 @@ MediaDevicesManager.prototype = {
 
 	updatePreferences() {
 		const { newAudioInputList, newVideoInputList } = updateMediaDevicesPreferences(
-			this.attributes.devices,
-			this.attributes.audioInputId,
-			this.attributes.videoInputId,
+			this.attributes,
 			this._preferenceAudioInputList,
 			this._preferenceVideoInputList,
 		)
@@ -308,21 +292,10 @@ MediaDevicesManager.prototype = {
 		if (removedDeviceIndex >= 0) {
 			this.attributes.devices.splice(removedDeviceIndex, 1)
 		}
-
-		if (removedDevice.kind === 'audioinput') {
-			if (this._fallbackAudioInputId === removedDevice.deviceId) {
-				this._fallbackAudioInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioInputList, undefined)
-			}
-			if (this.attributes.audioInputId === removedDevice.deviceId) {
-				this.attributes.audioInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioInputList, this._fallbackAudioInputId)
-			}
-		} else if (removedDevice.kind === 'videoinput') {
-			if (this._fallbackVideoInputId === removedDevice.deviceId) {
-				this._fallbackVideoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList, undefined)
-			}
-			if (this.attributes.videoInputId === removedDevice.deviceId) {
-				this.attributes.videoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList, this._fallbackVideoInputId)
-			}
+		if (removedDevice.kind === 'audioinput' && removedDevice.deviceId === this.attributes.audioInputId) {
+			this.attributes.audioInputId = undefined
+		} else if (removedDevice.kind === 'videoinput' && removedDevice.deviceId === this.attributes.videoInputId) {
+			this.attributes.videoInputId = undefined
 		}
 	},
 
@@ -372,26 +345,6 @@ MediaDevicesManager.prototype = {
 
 		// Always refresh the known device with the latest values.
 		this._knownDevices[addedDevice.kind + '-' + addedDevice.deviceId] = addedDevice
-
-		// Restore previously selected device (based on preferences list) if it becomes available again.
-		// Additionally, set first available device as fallback, and override
-		// any fallback previously set if the default device is added.
-		if (addedDevice.kind === 'audioinput') {
-			if (getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioInputList) === addedDevice.deviceId) {
-				this.attributes.audioInputId = addedDevice.deviceId
-			}
-			if (!this._fallbackAudioInputId || addedDevice.deviceId === 'default') {
-				this._fallbackAudioInputId = addedDevice.deviceId
-			}
-		} else if (addedDevice.kind === 'videoinput') {
-			if (getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList) === addedDevice.deviceId) {
-				this.attributes.videoInputId = addedDevice.deviceId
-			}
-			if (!this._fallbackVideoInputId || addedDevice.deviceId === 'default') {
-				this._fallbackVideoInputId = addedDevice.deviceId
-			}
-		}
-
 		this.attributes.devices.push(addedDevice)
 	},
 
