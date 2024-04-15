@@ -416,19 +416,19 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'circle_added') {
 			$parsedParameters['circle'] = $this->getCircle($parameters['circle']);
-			$parsedMessage = $this->l->t('{actor} added circle {circle}');
+			$parsedMessage = $this->l->t('{actor} added team {circle}');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You added circle {circle}');
+				$parsedMessage = $this->l->t('You added team {circle}');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator added circle {circle}');
+				$parsedMessage = $this->l->t('An administrator added team {circle}');
 			}
 		} elseif ($message === 'circle_removed') {
 			$parsedParameters['circle'] = $this->getCircle($parameters['circle']);
-			$parsedMessage = $this->l->t('{actor} removed circle {circle}');
+			$parsedMessage = $this->l->t('{actor} removed team {circle}');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You removed circle {circle}');
+				$parsedMessage = $this->l->t('You removed team {circle}');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator removed circle {circle}');
+				$parsedMessage = $this->l->t('An administrator removed team {circle}');
 			}
 		} elseif ($message === 'phone_added') {
 			$parsedParameters['phone'] = $this->getPhone($room, $parameters['phone'], $parameters['name']);
