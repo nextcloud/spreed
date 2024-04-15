@@ -439,7 +439,7 @@ class BreakoutRoomService {
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
 
-		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken(), true);
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
 
