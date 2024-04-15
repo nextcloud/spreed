@@ -60,6 +60,7 @@ use OCP\Notification\IAction;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 use OCP\RichObjectStrings\Definitions;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
@@ -189,12 +190,13 @@ class Notifier implements INotifier {
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
-	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
+	 * @throws AlreadyProcessedException
+	 * @throws UnknownNotificationException
 	 * @since 9.0.0
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
-			throw new \InvalidArgumentException('Incorrect app');
+			throw new UnknownNotificationException('Incorrect app');
 		}
 
 		$userId = $notification->getUser();
@@ -278,7 +280,7 @@ class Notifier implements INotifier {
 		}
 
 		$this->notificationManager->markProcessed($notification);
-		throw new \InvalidArgumentException('Unknown subject');
+		throw new UnknownNotificationException('Unknown subject');
 	}
 
 	protected function shortenJsonEncodedMultibyteSave(string $subject, int $dataLength): string {
@@ -471,11 +473,11 @@ class Notifier implements INotifier {
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws AlreadyProcessedException
-	 * @throws \InvalidArgumentException
+	 * @throws UnknownNotificationException
 	 */
 	protected function parseChatMessage(INotification $notification, Room $room, Participant $participant, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'chat' && $notification->getObjectType() !== 'reminder') {
-			throw new \InvalidArgumentException('Unknown object type');
+			throw new UnknownNotificationException('Unknown object type');
 		}
 
 		$messageParameters = $notification->getMessageParameters();
@@ -911,12 +913,12 @@ class Notifier implements INotifier {
 	 * @param Room $room
 	 * @param IL10N $l
 	 * @return INotification
-	 * @throws \InvalidArgumentException
 	 * @throws AlreadyProcessedException
+	 * @throws UnknownNotificationException
 	 */
 	protected function parseInvitation(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'room') {
-			throw new \InvalidArgumentException('Unknown object type');
+			throw new UnknownNotificationException('Unknown object type');
 		}
 
 		$parameters = $notification->getSubjectParameters();
@@ -992,12 +994,12 @@ class Notifier implements INotifier {
 	 * @param Room $room
 	 * @param IL10N $l
 	 * @return INotification
-	 * @throws \InvalidArgumentException
 	 * @throws AlreadyProcessedException
+	 * @throws UnknownNotificationException
 	 */
 	protected function parseCall(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'call') {
-			throw new \InvalidArgumentException('Unknown object type');
+			throw new UnknownNotificationException('Unknown object type');
 		}
 
 		$roomName = $room->getDisplayName($notification->getUser());
@@ -1069,12 +1071,12 @@ class Notifier implements INotifier {
 	 * @param Room $room
 	 * @param IL10N $l
 	 * @return INotification
-	 * @throws \InvalidArgumentException
 	 * @throws AlreadyProcessedException
+	 * @throws UnknownNotificationException
 	 */
 	protected function parsePasswordRequest(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'call') {
-			throw new \InvalidArgumentException('Unknown object type');
+			throw new UnknownNotificationException('Unknown object type');
 		}
 
 		try {
@@ -1151,6 +1153,9 @@ class Notifier implements INotifier {
 		return $notification;
 	}
 
+	/**
+	 * @throws UnknownNotificationException
+	 */
 	protected function parseHostedSignalingServer(INotification $notification, IL10N $l): INotification {
 		$action = $notification->createAction();
 		$action->setLabel('open_settings')
@@ -1183,7 +1188,7 @@ class Notifier implements INotifier {
 				];
 				break;
 			default:
-				throw new \InvalidArgumentException('Unknown subject');
+				throw new UnknownNotificationException('Unknown subject');
 		}
 
 		return $notification
