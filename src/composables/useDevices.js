@@ -158,6 +158,17 @@ export function useDevices(video, initializeOnMounted) {
 			}
 		}
 
+		// Attempt to request permissions for camera and microphone
+		mediaDevicesManager.getUserMedia({ audio: true, video: true })
+			.then(stream => {
+				stream.getTracks().forEach(track => track.stop())
+			})
+			.catch(error => {
+				console.error('Error getting audio/video streams: ' + error.name + ': ' + error.message)
+				audioStreamError.value = error
+				videoStreamError.value = error
+			})
+
 		mediaDevicesManager.enableDeviceEvents()
 		updateAudioStream()
 		updateVideoStream()
