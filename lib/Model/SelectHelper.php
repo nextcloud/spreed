@@ -90,6 +90,7 @@ class SelectHelper {
 			->addSelect($alias . 'call_id')
 			->addSelect($alias . 'state')
 			->addSelect($alias . 'unread_messages')
+			->addSelect($alias . 'last_attendee_activity')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

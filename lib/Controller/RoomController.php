@@ -214,9 +214,24 @@ class RoomController extends AEnvironmentAwareController {
 		$rooms = $this->manager->getRoomsForUser($this->userId, $sessionIds, true);
 
 		if ($modifiedSince !== 0) {
-			$rooms = array_filter($rooms, static function (Room $room) use ($includeStatus, $modifiedSince): bool {
-				return ($includeStatus && $room->getType() === Room::TYPE_ONE_TO_ONE)
-					|| ($room->getLastActivity() && $room->getLastActivity()->getTimestamp() >= $modifiedSince);
+			$rooms = array_filter($rooms, function (Room $room) use ($includeStatus, $modifiedSince): bool {
+				if ($includeStatus && $room->getType() === Room::TYPE_ONE_TO_ONE) {
+					// Always include 1-1s to update the user status
+					return true;
+				}
+				if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+					// Always include active calls
+					return true;
+				}
+				if ($room->getLastActivity() && $room->getLastActivity()->getTimestamp() >= $modifiedSince) {
+					// Include rooms which had activity
+					return true;
+				}
+
+				// Include rooms where only attendee level things changed,
+				// e.g. favorite, read-marker update, notification setting
+				$attendee = $room->getParticipant($this->userId)->getAttendee();
+				return $attendee->getLastAttendeeActivity() >= $modifiedSince;
 			});
 		}
 

@@ -301,6 +301,7 @@ class AttendeeMapper extends QBMapper {
 			'call_id' => $row['call_id'],
 			'state' => (int) $row['state'],
 			'unread_messages' => (int) $row['unread_messages'],
+			'last_attendee_activity' => (int) $row['last_attendee_activity'],
 		]);
 	}
 }
