@@ -716,6 +716,7 @@ export default {
 
 .video-container.presenter-overlay::after {
 	border-radius: 50%;
+	z-index: 1;
 }
 
 .video-container.speaking::after {
@@ -727,7 +728,6 @@ export default {
 	content: '';
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	z-index: 1;
 }
 
 .presenter-icon__hide {
