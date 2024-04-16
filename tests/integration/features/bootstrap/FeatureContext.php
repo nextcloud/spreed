@@ -73,6 +73,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $phoneNumberToActorId;
 	/** @var array<string, mixed>|null */
 	protected static ?array $nextChatRequestParameters = null;
+	/** @var array<string, int> */
+	protected static array $modifiedSince;
 
 
 	protected static array $permissionsMap = [
@@ -185,6 +187,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$questionToPollId = [];
 		self::$lastNotifications = [];
 		self::$phoneNumberToActorId = [];
+		self::$modifiedSince = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -288,17 +291,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" is participant of the following (unordered )?(note-to-self )?rooms \((v4)\)$/
+	 * @Then /^user "([^"]*)" is participant of the following (unordered )?(note-to-self )?(modified-since )?rooms \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $shouldOrder
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $shouldFilter, string $apiVersion, TableNode $formData = null): void {
+	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $shouldFilter, string $modifiedSince, string $apiVersion, TableNode $formData = null): void {
+		$parameters = '';
+		if ($modifiedSince !== '') {
+			if (!isset(self::$modifiedSince[$user])) {
+				throw new \RuntimeException('Must run once without "modified-since" before');
+			}
+			$parameters .= '?modifiedSince=' . self::$modifiedSince[$user];
+		}
+
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room' . $parameters);
 		$this->assertStatusCode($this->response, 200);
+		self::$modifiedSince[$user] = time();
 
 		$rooms = $this->getDataFromResponse($this->response);
 
