@@ -51,6 +51,12 @@
 					:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
 					v-bind="dateTimePickerAttrs"
 					@change="saveLobbyTimer" />
+				<div class="lobby_timer--timezone">
+					{{ getTimeZone }}
+				</div>
+				<div v-if="showRelativeTime" class="lobby_timer--relative">
+					{{ getRelativeTime }}
+				</div>
 			</form>
 		</div>
 	</div>
@@ -64,6 +70,9 @@ import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 import { WEBINAR } from '../../constants.js'
+import { futureRelativeTime } from '../../utils/formattedTime.ts'
+
+const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
 export default {
 	name: 'LobbySettings',
@@ -140,6 +149,24 @@ export default {
 				valueType: 'timestamp',
 			}
 		},
+
+		showRelativeTime() {
+			return this.lobbyTimer
+				&& this.lobbyTimer > Date.now()
+				&& (this.lobbyTimer - Date.now()) < ONE_DAY_IN_MS // less than 24 hours
+		},
+
+		getTimeZone() {
+			if (!this.lobbyTimer) {
+				return ''
+			}
+			const date = new Date(this.lobbyTimer)
+			return t('spreed', `Start time: ${date}`)
+		},
+
+		getRelativeTime() {
+			return futureRelativeTime(this.lobbyTimer)
+		},
 	},
 
 	methods: {
@@ -189,6 +216,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.lobby_timer {
+	&--relative {
+		color: var(--color-text-maxcontrast);
+	}
+	&--timezone {
+		padding-top: 4px;
+	}
+}
+
 :deep(.mx-input) {
 	margin: 0;
 }
