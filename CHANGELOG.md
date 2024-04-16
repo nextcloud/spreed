@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-rc.3 – 2024-04-16
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(calls): Correctly pick the device when showing the device picker after a page reload
+  [#12124](https://github.com/nextcloud/spreed/issues/12124)
+- fix(conversations): Correctly update conversations when the read marker changes via another device or window
+  [#9590](https://github.com/nextcloud/spreed/issues/9590)
+- fix(chat): Make "silent send" state more obvious for follow up messages
+  [#12118](https://github.com/nextcloud/spreed/issues/12118)
+- fix(dashboard): Correctly handle 1-1 conversations with unread system messages
+  [#12073](https://github.com/nextcloud/spreed/issues/12073)
+
 ## 18.0.7 – 2024-04-12
 ### Changed
 - Update translations
