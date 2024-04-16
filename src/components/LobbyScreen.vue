@@ -32,8 +32,7 @@
 			<p v-if="countdown"
 				class="lobby__countdown">
 				{{ message }} -
-				<span class="lobby__countdown live-relative-timestamp"
-					:data-timestamp="countdown * 1000"
+				<span class="lobby__countdown relative-timestamp"
 					:title="startTime">
 					{{ relativeDate }}
 				</span>
@@ -59,6 +58,8 @@ import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
+
+import { futureRelativeTime } from '../utils/formattedTime.ts'
 
 export default {
 
@@ -94,7 +95,7 @@ export default {
 			if (diff > -45000 && diff < 45000) {
 				return t('spreed', 'The meeting will start soon')
 			}
-			return this.timerInMoment.fromNow()
+			return futureRelativeTime(this.timerInMoment.valueOf())
 		},
 
 		timerInMoment() {
