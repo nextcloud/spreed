@@ -145,6 +145,7 @@ class ParticipantService {
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 		}
 
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 
 		// XOR so we don't move the participant in and out when they are changed from moderator to owner or vice-versa
@@ -232,6 +233,7 @@ class ParticipantService {
 		if ($attendee->getParticipantType() === Participant::USER_SELF_JOINED) {
 			$attendee->setParticipantType(Participant::USER);
 		}
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 
 		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, $newPermissions, $oldPermissions);
@@ -247,6 +249,7 @@ class ParticipantService {
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setLastReadMessage($lastReadMessage);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
 
@@ -256,12 +259,14 @@ class ParticipantService {
 		$attendee->setLastReadMessage($lastReadMessageId);
 		$attendee->setLastMentionMessage($hasMention ? 1 : 0);
 		$attendee->setLastMentionDirect($hadDirectMention ? 1 : 0);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
 
 	public function updateFavoriteStatus(Participant $participant, bool $isFavorite): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setFavorite($isFavorite);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
 
@@ -281,6 +286,7 @@ class ParticipantService {
 
 		$attendee = $participant->getAttendee();
 		$attendee->setNotificationLevel($level);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
 
@@ -298,6 +304,7 @@ class ParticipantService {
 
 		$attendee = $participant->getAttendee();
 		$attendee->setNotificationCalls($level);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
 
@@ -794,6 +801,7 @@ class ParticipantService {
 			&& ($attendee->getActorType() === Attendee::ACTOR_USERS || $attendee->getActorType() === Attendee::ACTOR_EMAILS)
 			&& !$attendee->getPin()) {
 			$attendee->setPin($this->generatePin());
+			$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 			$this->attendeeMapper->update($attendee);
 		}
 	}
@@ -1330,6 +1338,7 @@ class ParticipantService {
 			->set('last_read_message', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('last_mention_message', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('last_mention_direct', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('last_attendee_activity', $update->createNamedParameter($this->timeFactory->getTime(), IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 	}

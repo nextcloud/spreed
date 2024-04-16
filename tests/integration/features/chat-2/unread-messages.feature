@@ -148,9 +148,24 @@ Feature: chat-2/unread-messages
     And user "participant1" sends message "Message 1" to room "group room" with 201
     And user "participant1" sends message "Message 2" to room "group room" with 201
     And user "participant1" sends message "Message 3" to room "group room" with 201
+    Then user "participant2" is participant of the following rooms (v4)
+      | id         | unreadMessages |
+      | group room | 3              |
+    And wait for 2 seconds
+    Then user "participant2" is participant of the following modified-since rooms (v4)
     And user "participant2" reads message "Message 3" in room "group room" with 200
+    And wait for 2 seconds
+    Then user "participant2" is participant of the following modified-since rooms (v4)
+      | id         | unreadMessages |
+      | group room | 0              |
+    Then user "participant2" is participant of the following modified-since rooms (v4)
     When user "participant1" marks room "group room" as unread with 200
     And user "participant2" marks room "group room" as unread with 200
+    And wait for 2 seconds
+    Then user "participant2" is participant of the following modified-since rooms (v4)
+      | id         | unreadMessages |
+      | group room | 1              |
+    Then user "participant2" is participant of the following modified-since rooms (v4)
     Then user "participant1" is participant of room "group room" (v4)
       | unreadMessages |
       | 1              |
