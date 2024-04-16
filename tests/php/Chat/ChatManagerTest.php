@@ -432,6 +432,7 @@ class ChatManagerTest extends TestCase {
 			'invited_cloud_id' => '',
 			'state' => Invitation::STATE_ACCEPTED,
 			'unread_messages' => 0,
+			'last_attendee_activity' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -493,6 +494,7 @@ class ChatManagerTest extends TestCase {
 			'invited_cloud_id' => '',
 			'state' => Invitation::STATE_ACCEPTED,
 			'unread_messages' => 0,
+			'last_attendee_activity' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -576,6 +578,7 @@ class ChatManagerTest extends TestCase {
 			'invited_cloud_id' => '',
 			'state' => Invitation::STATE_ACCEPTED,
 			'unread_messages' => 0,
+			'last_attendee_activity' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())

@@ -70,6 +70,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getState()
  * @method void setUnreadMessages(int $unreadMessages)
  * @method int getUnreadMessages()
+ * @method void setLastAttendeeActivity(int $lastAttendeeActivity)
+ * @method int getLastAttendeeActivity()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -178,6 +180,9 @@ class Attendee extends Entity {
 	/** @var int */
 	protected $unreadMessages;
 
+	/** @var int */
+	protected $lastAttendeeActivity;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -201,6 +206,7 @@ class Attendee extends Entity {
 		$this->addType('callId', 'string');
 		$this->addType('state', 'int');
 		$this->addType('unreadMessages', 'int');
+		$this->addType('lastAttendeeActivity', 'int');
 	}
 
 	public function getDisplayName(): string {
@@ -232,6 +238,7 @@ class Attendee extends Entity {
 			'invited_cloud_id' => $this->getInvitedCloudId(),
 			'phone_number' => $this->getPhoneNumber(),
 			'call_id' => $this->getCallId(),
+			'last_attendee_activity' => $this->getLastAttendeeActivity(),
 		];
 	}
 }
