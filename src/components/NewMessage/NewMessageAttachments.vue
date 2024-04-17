@@ -56,6 +56,9 @@
 				close-after-click
 				:icon="provider.iconClass"
 				@click="$emit('update-new-file-dialog', index)">
+				<template v-if="provider.iconSvgInline" #icon>
+					<NcIconSvgWrapper :svg="provider.iconSvgInline" :size="20" />
+				</template>
 				{{ provider.label }}
 			</NcActionButton>
 		</template>
@@ -79,6 +82,7 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
 
 export default {
 	name: 'NewMessageAttachments',
@@ -86,6 +90,7 @@ export default {
 	components: {
 		NcActionButton,
 		NcActions,
+		NcIconSvgWrapper,
 		// Icons
 		Folder,
 		Paperclip,
