@@ -1792,9 +1792,6 @@ OC.L10N.register(
     "Delete Conversation" : "Zmazať konverzáciu",
     "Remove circle and members" : "Vymazať kruh a členov",
     "Phone number could not be hanged up" : "Hovor sa nepodarilo zavesiť",
-    "Phone number could not be putted on hold" : "Hovor sa nepodarilo podržať",
-    "Send with notification" : "Odoslať s upozornením",
-    "The participant will be notified about new messages" : "Účastník bude upozornený na nové správy",
-    "Participants will be notified about new messages" : "Účastníci budú upozornený na nové správy"
+    "Phone number could not be putted on hold" : "Hovor sa nepodarilo podržať"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -157,6 +157,12 @@
     "{actor} removed group {group}" : "قام {actor} بإزالة مجموعة {group}",
     "You removed group {group}" : "لقد قمت بإزالة مجموعة {group}.",
     "An administrator removed group {group}" : "قام المسؤول بإزالة مجموعة {group}",
+    "{actor} added team {circle}" : "قام {actor} بإضافة الفريق {circle}",
+    "You added team {circle}" : "أنت قمت بإضافة الفريق {circle}",
+    "An administrator added team {circle}" : "قام المشرف بإضافة الفريق {circle}",
+    "{actor} removed team {circle}" : "قام {actor} بحذف الفريق {circle}",
+    "You removed team {circle}" : "أنت قمت بحذف الفريق {circle}",
+    "An administrator removed team {circle}" : "قم المشرف بحذف الفريق {circle}",
     "{actor} added {phone}" : "قام {actor} بإضافة {phone}",
     "You added {phone}" : "أنتَ قُمت بإضافة {phone}",
     "An administrator added {phone}" : "قام مشرفٌ بإضافة {phone}",
@@ -1798,9 +1804,6 @@
     "Delete Conversation" : "حذف المحادثة",
     "Remove circle and members" : "حذف الدائرة circle و الأعضاء",
     "Phone number could not be hanged up" : "لا يمكن تعليق رقم الهاتف",
-    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار",
-    "Send with notification" : "إرسال مع إشعار",
-    "The participant will be notified about new messages" : "سوف لن يتم إشعار المُشارك بشأن الرسائل الجديدة",
-    "Participants will be notified about new messages" : "سوف يتم إشعار المُشارك بشأن الرسائل الجديدة"
+    "Phone number could not be putted on hold" : "لا يمكن وضع رقم الهاتف في وضع الانتظار"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

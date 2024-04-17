@@ -159,6 +159,12 @@ OC.L10N.register(
     "{actor} removed group {group}" : "{actor} 移除了群組 {group}",
     "You removed group {group}" : "您移除了群組 {group}",
     "An administrator removed group {group}" : "管理員移除了群組 {group}",
+    "{actor} added team {circle}" : "{actor} 新增了團隊 {circle}",
+    "You added team {circle}" : "您新增了團隊 {circle}",
+    "An administrator added team {circle}" : "管理員新增了團隊 {circle}",
+    "{actor} removed team {circle}" : "{actor} 移除了團隊 {circle}",
+    "You removed team {circle}" : "您移除了團隊 {circle}",
+    "An administrator removed team {circle}" : "管理員移除了團隊 {circle}",
     "{actor} added {phone}" : "{actor} 新增了 {phone}",
     "You added {phone}" : "您新增了 {phone}",
     "An administrator added {phone}" : "管理員新增了 {phone}",
@@ -1800,9 +1806,6 @@ OC.L10N.register(
     "Delete Conversation" : "刪除對話",
     "Remove circle and members" : "移除小圈圈與成員",
     "Phone number could not be hanged up" : "無法掛斷電話號碼",
-    "Phone number could not be putted on hold" : "無法保留電話號碼",
-    "Send with notification" : "與通知一起傳送",
-    "The participant will be notified about new messages" : "參與者將會收到新訊息通知",
-    "Participants will be notified about new messages" : "參與者將會收到新訊息通知"
+    "Phone number could not be putted on hold" : "無法保留電話號碼"
 },
 "nplurals=1; plural=0;");
