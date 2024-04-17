@@ -19,7 +19,7 @@
  */
 
 import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue from 'vue'
+import Vue, { reactive } from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import vOutsideEvents from 'vue-outside-events'
 import VueShortKey from 'vue-shortkey'
@@ -85,9 +85,9 @@ adjustLayout()
 // An "isOpen" boolean should be passed to the component, but as it is a
 // primitive it would not be reactive; it needs to be wrapped in an object and
 // that object passed to the component to get reactivity.
-const sidebarState = {
+const sidebarState = reactive({
 	isOpen: false,
-}
+})
 
 // Open the sidebar by default based on the window width using the same
 // threshold as in the main Talk UI (in Talk 7).
