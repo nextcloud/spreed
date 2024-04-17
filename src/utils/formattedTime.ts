@@ -33,12 +33,12 @@ function futureRelativeTime(time: number): string {
 		if (minutes === 0) {
 			// TRANSLATORS: hint for the time when the meeting starts (only hours)
 			return n('spreed', 'In %n hour', 'In %n hours', hours)
-		} else if (hours === 1) {
-			// TRANSLATORS: hint for the time when the meeting starts (1 hour and minutes)
-			return n('spreed', 'In 1 hour and %n minute', 'In 1 hour and %n minutes', minutes)
 		} else {
 			// TRANSLATORS: hint for the time when the meeting starts (hours and minutes)
-			return n('spreed', 'In {hours} hours and %n minute', 'In {hours} hours and %n minutes', minutes, { hours })
+			return t('spreed', 'In {hours} and {minutes}', {
+				hours: n('spreed', '%n hour', '%n hours', hours),
+				minutes: n('spreed', '%n minute ', '%n minutes', minutes),
+			})
 		}
 	} else {
 		// TRANSLATORS: hint for the time when the meeting starts (only minutes)
