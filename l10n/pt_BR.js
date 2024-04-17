@@ -1799,9 +1799,6 @@ OC.L10N.register(
     "Delete Conversation" : "Apagar conversa",
     "Remove circle and members" : "Remover círculo e membros",
     "Phone number could not be hanged up" : "Não foi possível desligar o número de telefone",
-    "Phone number could not be putted on hold" : "Não foi possível colocar o número de telefone em espera",
-    "Send with notification" : "Enviar com notificação",
-    "The participant will be notified about new messages" : "O participante será notificado sobre novas mensagens",
-    "Participants will be notified about new messages" : "Os participantes serão notificados sobre novas mensagens"
+    "Phone number could not be putted on hold" : "Não foi possível colocar o número de telefone em espera"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

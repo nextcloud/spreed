@@ -159,6 +159,12 @@ OC.L10N.register(
     "{actor} removed group {group}" : "{actor} removed group {group}",
     "You removed group {group}" : "You removed group {group}",
     "An administrator removed group {group}" : "An administrator removed group {group}",
+    "{actor} added team {circle}" : "{actor} added team {circle}",
+    "You added team {circle}" : "You added team {circle}",
+    "An administrator added team {circle}" : "An administrator added team {circle}",
+    "{actor} removed team {circle}" : "{actor} removed team {circle}",
+    "You removed team {circle}" : "You removed team {circle}",
+    "An administrator removed team {circle}" : "An administrator removed team {circle}",
     "{actor} added {phone}" : "{actor} added {phone}",
     "You added {phone}" : "You added {phone}",
     "An administrator added {phone}" : "An administrator added {phone}",
@@ -1800,9 +1806,6 @@ OC.L10N.register(
     "Delete Conversation" : "Delete Conversation",
     "Remove circle and members" : "Remove circle and members",
     "Phone number could not be hanged up" : "Phone number could not be hanged up",
-    "Phone number could not be putted on hold" : "Phone number could not be putted on hold",
-    "Send with notification" : "Send with notification",
-    "The participant will be notified about new messages" : "The participant will be notified about new messages",
-    "Participants will be notified about new messages" : "Participants will be notified about new messages"
+    "Phone number could not be putted on hold" : "Phone number could not be putted on hold"
 },
 "nplurals=2; plural=(n != 1);");

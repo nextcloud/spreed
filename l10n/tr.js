@@ -255,6 +255,7 @@ OC.L10N.register(
     "Invalid image" : "Görsel geçersiz",
     "Unknown filetype" : "Dosya türü bilinmiyor",
     "Talk mentions" : "Talk anmaları",
+    "More conversations" : "Daha fazla görüşme",
     "Say hi to your friends and colleagues!" : "Tanıdık ve çalışma arkadaşlarınıza selam verin!",
     "No unread mentions" : "Okunmamış bir anma yok",
     "Call in progress" : "Çağrı sürüyor",
@@ -1155,6 +1156,7 @@ OC.L10N.register(
     "The meeting will start soon" : "Toplantı yakında başlayacak",
     "This meeting is scheduled for {startTime}" : "Bu toplantının başlangıcı {startTime} olarak ayarlanmış",
     "Select a device" : "Bir aygıt seçin",
+    "Refresh devices list" : "Cihaz listesini yenile",
     "No microphone available" : "Kullanılabilecek bir mikrofon yok",
     "Select microphone" : "Mikrofonu seçin",
     "No camera available" : "Kullanılabilecek bir kamera bulunamadı",
@@ -1259,6 +1261,7 @@ OC.L10N.register(
     "You cannot send messages to this conversation at the moment" : "Şu anda bu görüşmeye ileti gönderemezsiniz",
     "Code block copied to clipboard" : "Kod bloğu panoya kopyalandı",
     "Code block could not be copied" : "Kod bloğu kopyalanamadı",
+    "Could not update the message" : "Mesajlar güncellenemedi",
     "Poll" : "Anket",
     "See results" : "Sonuçları görüntüle",
     "Open poll • You voted already" : "Açık anket • Zaten oy vermişsiniz",
@@ -1590,6 +1593,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Görüşmeye başka bir pencereden ya da aygıttan da katılmışsınız. Nextcloud Talk henüz bu özelliği desteklemediği için bu oturum kapatılacak.",
     "This weekend – {timeLocale}" : "Bu hafta sonu – {timeLocale}",
     "Join a conversation or start a new one" : "Bir görüşmeye katılın ya da yeni bir görüşme başlatın",
+    "Error while joining the conversation" : "Görüşmeye katılırken hata oluştu",
     "Tomorrow – {timeLocale}" : "Yarın – {timeLocale}",
     "Later today – {timeLocale}" : "Bugün daha sonra – {timeLocale}",
     "Media" : "Ortam",
@@ -1793,9 +1797,6 @@ OC.L10N.register(
     "Delete Conversation" : "Görüşmeyi sil",
     "Remove circle and members" : "Takımı ve üyelerini sil",
     "Phone number could not be hanged up" : "Telefon numarası kapatılamadı",
-    "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı",
-    "Send with notification" : "İleti bildirim ile gönderilsin",
-    "The participant will be notified about new messages" : "Yeni iletler katılımcıya bildirilecek",
-    "Participants will be notified about new messages" : "Yeni iletler katılımcılara bildirilecek"
+    "Phone number could not be putted on hold" : "Telefon numarası beklemeye alınamadı"
 },
 "nplurals=2; plural=(n > 1);");
