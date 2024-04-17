@@ -1793,9 +1793,6 @@ OC.L10N.register(
     "Delete Conversation" : "Slett samtale",
     "Remove circle and members" : "Fjern sirkel og medlemmer",
     "Phone number could not be hanged up" : "Telefonnummeret kunne ikke legges på",
-    "Phone number could not be putted on hold" : "Telefonnummeret kunne ikke settes på vent",
-    "Send with notification" : "Send med varsel",
-    "The participant will be notified about new messages" : "Mottakeren blir varslet om nye meldinger",
-    "Participants will be notified about new messages" : "Mottakere blir varslet om nye meldinger"
+    "Phone number could not be putted on hold" : "Telefonnummeret kunne ikke settes på vent"
 },
 "nplurals=2; plural=(n != 1);");

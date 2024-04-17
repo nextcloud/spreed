@@ -1614,8 +1614,6 @@ OC.L10N.register(
     "Specify commands the users can use in chats" : "Določitev ukazov, ki jih uporabnik lahko uporabi v klepetalnem oknu",
     "Remove circle and members" : "Odstrani krog in člane",
     "Phone number could not be hanged up" : "Klica te telefonske številke ni mogoče prekiniti",
-    "Phone number could not be putted on hold" : "Klica te telefonske številke ni mogoče zadržati",
-    "Send with notification" : "Pošlji z obvestilom",
-    "The participant will be notified about new messages" : "Udeleženec bo obveščen o tem sporočilu"
+    "Phone number could not be putted on hold" : "Klica te telefonske številke ni mogoče zadržati"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
