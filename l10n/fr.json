@@ -157,6 +157,12 @@
     "{actor} removed group {group}" : "{actor} a supprimé le groupe {group}",
     "You removed group {group}" : "Vous avez supprimé le groupe {group}",
     "An administrator removed group {group}" : "Un administrateur a supprimé le groupe {group}",
+    "{actor} added team {circle}" : "{actor} a ajouté l’équipe {circle}",
+    "You added team {circle}" : "Vous avez ajouté l’équipe {circle}",
+    "An administrator added team {circle}" : "Un administrateur a ajouté l’équipe {circle}",
+    "{actor} removed team {circle}" : "{actor} a supprimé l’équipe {circle}",
+    "You removed team {circle}" : "Vous avez supprimé l’équipe {circle}",
+    "An administrator removed team {circle}" : "Un administrateur a supprimé l’équipe {circle}",
     "{actor} added {phone}" : "{actor} a ajouté {phone}",
     "You added {phone}" : "Vous avez ajouté {phone}",
     "An administrator added {phone}" : "Un administrateur a ajouté {phone}",
@@ -1793,9 +1799,6 @@
     "Delete Conversation" : "Supprimer la conversation",
     "Remove circle and members" : "Supprimer le cercle et ses membres",
     "Phone number could not be hanged up" : "Impossible de raccrocher le numéro de téléphone",
-    "Phone number could not be putted on hold" : "Impossible de mettre en attente le numéro de téléphone",
-    "Send with notification" : "Envoyer avec une notification",
-    "The participant will be notified about new messages" : "Les participants seront notifiés sur les nouveaux messages",
-    "Participants will be notified about new messages" : "Les participants seront notifiés sur les nouveaux messages"
+    "Phone number could not be putted on hold" : "Impossible de mettre en attente le numéro de téléphone"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -157,6 +157,12 @@
     "{actor} removed group {group}" : "{actor} hat die Gruppe {group} entfernt",
     "You removed group {group}" : "Sie haben die Gruppe {group} entfernt",
     "An administrator removed group {group}" : "Ein Administrator hat die Gruppe {group} entfernt",
+    "{actor} added team {circle}" : "{actor} hat das Team {circle} hinzugefügt",
+    "You added team {circle}" : "Sie haben das Team {circle} hinzugefügt",
+    "An administrator added team {circle}" : "Ein Administrator hat das Team {circle} hinzugefügt",
+    "{actor} removed team {circle}" : "{actor} hat das Team {circle} entfernt",
+    "You removed team {circle}" : "Sie haben das Team {circle} entfernt",
+    "An administrator removed team {circle}" : "Ein Administrator hat das Team {circle} entfernt",
     "{actor} added {phone}" : "{actor} hat {phone} hinzugefügt",
     "You added {phone}" : "Sie haben {phone} hinzugefügt",
     "An administrator added {phone}" : "Die Administration hat {phone} hinzgefügt",
@@ -1798,9 +1804,6 @@
     "Delete Conversation" : "Unterhaltung löschen",
     "Remove circle and members" : "Kreis und Mitglieder entfernen",
     "Phone number could not be hanged up" : "Telefonnummer konnte nicht aufgelegt werden",
-    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden",
-    "Send with notification" : "Mit Benachrichtigung senden",
-    "The participant will be notified about new messages" : "Der Teilnehmer wird über neue Nachrichten benachrichtigt",
-    "Participants will be notified about new messages" : "Teilnehmer werden über neue Nachrichten benachrichtigt"
+    "Phone number could not be putted on hold" : "Telefonnummer konnte nicht in die Warteschleife gelegt werden"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
