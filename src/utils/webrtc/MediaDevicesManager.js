@@ -209,12 +209,18 @@ MediaDevicesManager.prototype = {
 
 			// Selecting preferred device in case it was removed/unplugged, or it is a first initialization after reload,
 			// or we add/plug preferred device and overwriting automatic selection
+			// If the preference list is empty the default device falls back to
+			// the first device of that kind found. This can happen, for
+			// example, when no permissions were given yet. In that case,
+			// according to the spec, a single device of each kind (if at least
+			// one device of that kind is available) with an empty deviceId is
+			// returned, which will not be registered in the preference list.
 			if (this.attributes.audioInputId === undefined || this.attributes.audioInputId === previousFirstAvailableAudioInputId) {
-				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList)
+				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList) || devices.find(device => device.kind === 'audioinput')?.deviceId
 				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
 			}
 			if (this.attributes.videoInputId === undefined || this.attributes.videoInputId === previousFirstAvailableVideoInputId) {
-				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList)
+				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList) || devices.find(device => device.kind === 'videoinput')?.deviceId
 				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
 			}
 
