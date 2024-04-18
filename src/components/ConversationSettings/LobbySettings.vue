@@ -161,7 +161,7 @@ export default {
 				return ''
 			}
 			const date = new Date(this.lobbyTimer)
-			return t('spreed', `Start time: ${date}`)
+			return t('spreed', 'Start time: {date}', { date })
 		},
 
 		getRelativeTime() {
