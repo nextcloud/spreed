@@ -1,7 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 19.0.0-rc.3 – 2024-04-16
+## 19.0.0-rc.5 – 2024-04-18
+### Changed
+- Update translations
+
+### Fixed
+- fix(lobby): Show the timezone and relative time when enabling the lobby
+  [#12135](https://github.com/nextcloud/spreed/issues/12135)
+- fix(shareIntegration): Fix handle to close and open the right sidebar on publish share links
+  [#12134](https://github.com/nextcloud/spreed/issues/12134)
+- fix(chat): Fix collapsing grouped system message
+  [#12139](https://github.com/nextcloud/spreed/issues/12139)
+- fix(attachments): Fix missing icons when creating a file in a chat
+  [#12138](https://github.com/nextcloud/spreed/issues/12138)
+- fix(media): Fix initial selection of devices
+  [#12152](https://github.com/nextcloud/spreed/pull/12152)
+  [#12146](https://github.com/nextcloud/spreed/pull/12146)
+
+## 19.0.0-rc.4 – 2024-04-16
 ### Changed
 - Update translations
 - Update several dependencies
