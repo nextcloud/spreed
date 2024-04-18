@@ -273,6 +273,12 @@ MediaDevicesManager.prototype = {
 			this._preferenceVideoInputList = newVideoInputList
 			BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
 		}
+
+		const devicesPreferred = BrowserStorage.getItem('devicesPreferred')
+		if (!devicesPreferred) {
+			BrowserStorage.setItem('devicesPreferred', true)
+		}
+
 	},
 
 	/**
