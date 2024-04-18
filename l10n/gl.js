@@ -1103,6 +1103,7 @@ OC.L10N.register(
     "Open conversations" : "Conversas abertas",
     "Users" : "Usuarios",
     "Groups" : "Grupos",
+    "Teams" : "Equipos",
     "No search results" : "Sen resultados de busca",
     "Loading" : "Cargando",
     "Talk settings" : "Axustes de Talk",
