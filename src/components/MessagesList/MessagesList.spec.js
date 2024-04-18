@@ -27,6 +27,9 @@ describe('MessagesList.vue', () => {
 		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 
+		// scrollTo isn't implemented in JSDOM
+		Element.prototype.scrollTo = () => {}
+
 		// hack to catch date separators
 		const oldTee = global.t
 		global.t = jest.fn().mockImplementation(function(pkg, text, data) {
