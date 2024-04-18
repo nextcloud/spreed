@@ -55,9 +55,9 @@ describe('FilePreview.vue', () => {
 			id: '123',
 			name: 'test.jpg',
 			path: 'path/to/test.jpg',
-			size: 128,
+			size: '128',
 			etag: '1872ade88f3013edeb33decd74a4f947',
-			permissions: 15,
+			permissions: '15',
 			mimetype: 'image/jpeg',
 			previewAvailable: 'yes',
 		}
@@ -262,7 +262,7 @@ describe('FilePreview.vue', () => {
 				})
 			})
 			test('directly renders small GIF files', async () => {
-				propsData.size = 128
+				propsData.size = '128'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -278,7 +278,7 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('directly renders small GIF files (absolute path)', async () => {
-				propsData.size = 128
+				propsData.size = '128'
 				propsData.path = '/path/to/test %20.gif'
 
 				const wrapper = shallowMount(FilePreview, {
@@ -295,7 +295,7 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('directly renders small GIF files for guests', async () => {
-				propsData.size = 128
+				propsData.size = '128'
 				propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
 				getUserIdMock.mockClear().mockReturnValue(null)
 
@@ -314,7 +314,7 @@ describe('FilePreview.vue', () => {
 
 			test('renders static preview for big GIF files', async () => {
 				// bigger than max from capability
-				propsData.size = 2048
+				propsData.size = '2048'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -485,7 +485,7 @@ describe('FilePreview.vue', () => {
 					propsData.mimetype = 'image/gif'
 					propsData.name = 'test.gif'
 					propsData.path = 'path/to/test.gif'
-					propsData.size = 10000000 // bigger than default max
+					propsData.size = '10000000' // bigger than default max
 
 					await testPlayButtonVisible(true)
 				})
