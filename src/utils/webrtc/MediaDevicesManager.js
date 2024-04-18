@@ -205,6 +205,8 @@ MediaDevicesManager.prototype = {
 				this._addDevice(addedDevice)
 			})
 
+			this._populatePreferences(devices)
+
 			// Selecting preferred device in case it was removed/unplugged, or it is a first initialization after reload,
 			// or we add/plug preferred device and overwriting automatic selection
 			if (this.attributes.audioInputId === undefined || this.attributes.audioInputId === previousFirstAvailableAudioInputId) {
@@ -226,8 +228,6 @@ MediaDevicesManager.prototype = {
 			}
 
 			this._pendingEnumerateDevicesPromise = null
-
-			this._populatePreferences(devices)
 		}).catch(function(error) {
 			console.error('Could not update known media devices: ' + error.name + ': ' + error.message)
 
