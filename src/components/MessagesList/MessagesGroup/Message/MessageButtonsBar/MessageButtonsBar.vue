@@ -519,9 +519,14 @@ export default {
 			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
 		},
 
+		isOneToOne() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
 		isEditable() {
 			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-					|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
+					|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
 				return false
 			}
 
