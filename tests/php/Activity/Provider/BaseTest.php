@@ -28,6 +28,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IURLGenerator;
@@ -65,9 +66,8 @@ class BaseTest extends TestCase {
 
 	/**
 	 * @param string[] $methods
-	 * @return Base|MockObject
 	 */
-	protected function getProvider(array $methods = []) {
+	protected function getProvider(array $methods = []): Base&MockObject {
 		$methods[] = 'parse';
 		return $this->getMockBuilder(Base::class)
 			->setConstructorArgs([
@@ -106,7 +106,7 @@ class BaseTest extends TestCase {
 			->willReturn($appId);
 
 		if ($willThrowException) {
-			$this->expectException(\InvalidArgumentException::class);
+			$this->expectException(UnknownActivityException::class);
 		}
 		$event->expects($this->exactly($willThrowException ? 0 : 1))
 			->method('setIcon')
@@ -137,7 +137,7 @@ class BaseTest extends TestCase {
 			->method('getApp')
 			->willReturn('activity');
 		$provider = $this->getProvider();
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(UnknownActivityException::class);
 		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 

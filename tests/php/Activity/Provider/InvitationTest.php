@@ -29,6 +29,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IL10N;
@@ -119,7 +120,7 @@ class InvitationTest extends TestCase {
 			->willReturn(false);
 
 		$provider = $this->getProvider();
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(UnknownActivityException::class);
 		$provider->parse('en', $event);
 	}
 

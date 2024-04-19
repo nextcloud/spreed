@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Activity\Provider;
 
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 
 class Invitation extends Base {
@@ -32,7 +33,7 @@ class Invitation extends Base {
 	 * @param IEvent $event
 	 * @param IEvent|null $previousEvent
 	 * @return IEvent
-	 * @throws \InvalidArgumentException
+	 * @throws UnknownActivityException
 	 * @since 11.0.0
 	 */
 	public function parse($language, IEvent $event, ?IEvent $previousEvent = null): IEvent {
@@ -54,7 +55,7 @@ class Invitation extends Base {
 				'call' => $roomParameter,
 			]);
 		} else {
-			throw new \InvalidArgumentException('Wrong subject');
+			throw new UnknownActivityException('subject');
 		}
 
 		return $event;
