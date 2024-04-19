@@ -1029,7 +1029,6 @@ OC.L10N.register(
     "Error occurred when opening the conversation to everyone" : "Дошло је до грешке током отварања разговора за све",
     "Start time has been updated" : "Ажурирано је време почетка",
     "Error occurred while updating start time" : "Дошло је до грешке приликом ажурирања времена почетка",
-    "Start time: ${date}" : "Време почетка: ${date}",
     "Lock conversation" : "Закључај разговор",
     "This will also terminate the ongoing call." : "Ово ће такође да прекине текући позив.",
     "Lock the conversation to prevent anyone to post messages or start calls" : "Закључај разговор и спречи све да објављују поруке или започињу позиве",
