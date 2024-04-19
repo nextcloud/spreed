@@ -130,7 +130,7 @@ class UserMention implements IEventListener {
 			if (
 				$mention['type'] === 'group' ||
 				// $mention['type'] === 'federated_group' ||
-				// $mention['type'] === 'team' ||
+				 $mention['type'] === 'team' ||
 				// $mention['type'] === 'federated_team' ||
 				$mention['type'] === 'federated_user') {
 				$search = $mention['type'] . '/' . $mention['id'];
@@ -147,7 +147,7 @@ class UserMention implements IEventListener {
 				&& !str_starts_with($search, 'guest/')
 				&& !str_starts_with($search, 'group/')
 				// && !str_starts_with($search, 'federated_group/')
-				// && !str_starts_with($search, 'team/')
+				 && !str_starts_with($search, 'team/')
 				// && !str_starts_with($search, 'federated_team/')
 				&& !str_starts_with($search, 'federated_user/')) {
 				$message = str_replace('@' . $search, '{' . $mentionParameterId . '}', $message);
@@ -211,6 +211,12 @@ class UserMention implements IEventListener {
 					'type' => 'user-group',
 					'id' => $mention['id'],
 					'name' => $displayName,
+				];
+			} elseif ($mention['type'] === 'team') {
+				$messageParameters[$mentionParameterId] = [
+					'type' => 'circle',
+					'id' => $mention['id'],
+					'name' => $mention['id'],
 				];
 			} else {
 				try {

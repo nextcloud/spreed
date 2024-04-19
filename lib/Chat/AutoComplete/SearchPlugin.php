@@ -80,6 +80,8 @@ class SearchPlugin implements ISearchPlugin {
 		$userIds = [];
 		/** @var array<string, string> $groupIds */
 		$groupIds = [];
+		/** @var array<string, string> $teams */
+		$teams = [];
 		/** @var array<string, string> $cloudIds */
 		$cloudIds = [];
 		/** @var list<Attendee> $guestAttendees */
@@ -103,12 +105,15 @@ class SearchPlugin implements ISearchPlugin {
 					$cloudIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
 					$groupIds[$attendee->getActorId()] = $attendee->getDisplayName();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
+					$teams[$attendee->getActorId()] = $attendee->getDisplayName();
 				}
 			}
 		}
 
 		$this->searchUsers($search, $userIds, $searchResult);
 		$this->searchGroups($search, $groupIds, $searchResult);
+		$this->searchTeams($search, $teams, $searchResult);
 		$this->searchGuests($search, $guestAttendees, $searchResult);
 		$this->searchFederatedUsers($search, $cloudIds, $searchResult);
 
@@ -269,6 +274,44 @@ class SearchPlugin implements ISearchPlugin {
 	}
 
 	/**
+	 * @param array<array-key, string> $teams
+	 */
+	protected function searchTeams(string $search, array $teams, ISearchResult $searchResult): void {
+		$search = strtolower($search);
+
+		$type = new SearchResultType('groups');
+
+		$matches = $exactMatches = [];
+		foreach ($teams as $id => $displayName) {
+			if ($displayName === '') {
+				continue;
+			}
+
+			$id = (string) $id;
+			if ($searchResult->hasResult($type, $id)) {
+				continue;
+			}
+
+			if ($search === '') {
+				$matches[] = $this->createTeamResult($id, $displayName);
+				continue;
+			}
+
+			if (strtolower($displayName) === $search) {
+				$exactMatches[] = $this->createTeamResult($id, $displayName);
+				continue;
+			}
+
+			if (stripos($displayName, $search) !== false) {
+				$matches[] = $this->createTeamResult($id, $displayName);
+				continue;
+			}
+		}
+
+		$searchResult->addResultSet($type, $matches, $exactMatches);
+	}
+
+	/**
 	 * @param string $search
 	 * @param list<Attendee> $attendees
 	 * @param ISearchResult $searchResult
@@ -335,6 +378,16 @@ class SearchPlugin implements ISearchPlugin {
 			'value' => [
 				'shareType' => 'group',
 				'shareWith' => 'group/' . $groupId,
+			],
+		];
+	}
+
+	protected function createTeamResult(string $teamId, string $name): array {
+		return [
+			'label' => $name,
+			'value' => [
+				'shareType' => 'team',
+				'shareWith' => 'team/' . $teamId,
 			],
 		];
 	}
