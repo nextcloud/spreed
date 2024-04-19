@@ -320,9 +320,14 @@ export default {
 				&& this.actorType === this.$store.getters.getActorType()
 		},
 
+		isOneToOne() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
 		isEditable() {
 			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-				|| (!this.$store.getters.isModerator && !this.isMyMsg)) {
+				|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
 				return false
 			}
 
