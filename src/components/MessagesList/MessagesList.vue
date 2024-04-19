@@ -1045,7 +1045,7 @@ export default {
 		 */
 		scrollToBottom(options = {}) {
 			this.$nextTick(() => {
-				if (!this.$refs.scroller) {
+				if (!this.$refs.scroller || this.isFocusingMessage) {
 					return
 				}
 
@@ -1068,7 +1068,6 @@ export default {
 					newTop = this.$refs.scroller.scrollHeight
 					this.setChatScrolledToBottom(true)
 				}
-
 				this.$refs.scroller.scrollTo({
 					top: newTop,
 					behavior: options?.smooth ? 'smooth' : 'auto',
@@ -1109,7 +1108,7 @@ export default {
 			}
 
 			if (highlightAnimation) {
-				EventBus.$emit('highlight-message', messageId)
+				EventBus.emit('highlight-message', messageId)
 			}
 			this.isFocusingMessage = false
 
