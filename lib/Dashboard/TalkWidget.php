@@ -31,12 +31,14 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ProxyCacheMessageService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IConditionalWidget;
@@ -64,6 +66,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		protected ParticipantService $participantService,
 		protected MessageParser $messageParser,
 		protected ChatManager $chatManager,
+		protected ProxyCacheMessageService $pcmService,
 		protected ITimeFactory $timeFactory,
 	) {
 	}
@@ -156,13 +159,13 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
 
-			if ($attendee->getLastMentionMessage() > $attendee->getLastReadMessage()) {
+			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
+				|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
 				return true;
 			}
 
 			return ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
-				&& $room->getLastMessage()
-				&& $room->getLastMessage()->getId() > $attendee->getLastReadMessage()
+				&& $room->getLastMessageId() > $attendee->getLastReadMessage()
 				&& $this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0;
 		});
 
@@ -200,14 +203,15 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				continue;
 			}
 
-			if ($attendee->getLastMentionMessage() > $attendee->getLastReadMessage()) {
+			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
+				|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
 				// Really mentioned
 				$mentions[] = $room;
 				continue;
 			}
 
 			if (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
-				&& $room->getLastMessage()?->getId() > $attendee->getLastReadMessage()) {
+				&& $room->getLastMessageId() > $attendee->getLastReadMessage()) {
 				// If there are "unread" messages in one-to-one or former one-to-one
 				// we check if they are actual messages or system messages not
 				// considered by the read-marker
@@ -242,33 +246,29 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$participant = $this->participantService->getParticipant($room, $userId);
 		$subtitle = '';
 
-		$lastMessage = $room->getLastMessage();
-		if ($lastMessage instanceof IComment) {
+		if ($room->getLastMessageId() && $room->isFederatedConversation()) {
+			try {
+				$cachedMessage = $this->pcmService->findByRemote(
+					$room->getRemoteServer(),
+					$room->getRemoteToken(),
+					$room->getLastMessageId(),
+				);
+				$message = $this->messageParser->createMessageFromProxyCache($room, $participant, $cachedMessage, $this->l10n);
+				$subtitle = $this->getSubtitleFromMessage($message);
+			} catch (DoesNotExistException $e) {
+				// Fallback to empty subtitle
+			}
+		} elseif ($room->getLastMessageId() && !$room->isFederatedConversation()) {
 			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
 			$this->messageParser->parseMessage($message);
-
-			$now = $this->timeFactory->getDateTime();
-			$expireDate = $message->getComment()->getExpireDate();
-			if ((!$expireDate instanceof \DateTime || $expireDate >= $now)
-				&& $message->getVisibility()) {
-				$placeholders = $replacements = [];
-
-				foreach ($message->getMessageParameters() as $placeholder => $parameter) {
-					$placeholders[] = '{' . $placeholder . '}';
-					if ($parameter['type'] === 'user' || $parameter['type'] === 'guest') {
-						$replacements[] = '@' . $parameter['name'];
-					} else {
-						$replacements[] = $parameter['name'];
-					}
-				}
-
-				$subtitle = str_replace($placeholders, $replacements, $message->getMessage());
-			}
+			$subtitle = $this->getSubtitleFromMessage($message);
 		}
 
+		$attendee = $participant->getAttendee();
 		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			$subtitle = $this->l10n->t('Call in progress');
-		} elseif ($participant->getAttendee()->getLastMentionMessage() > $participant->getAttendee()->getLastReadMessage()) {
+		} elseif (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
+			|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
 			$subtitle = $this->l10n->t('You were mentioned');
 		}
 
@@ -278,6 +278,30 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
 			$this->avatarService->getAvatarUrl($room)
 		);
+	}
+
+	protected function getSubtitleFromMessage(Message $message): string {
+		$expireDate = $message->getExpirationDateTime();
+		if ($expireDate instanceof \DateTimeInterface
+			&& $expireDate <= $this->timeFactory->getDateTime()) {
+			return '';
+		}
+
+		if (!$message->getVisibility()) {
+			return '';
+		}
+
+		$placeholders = $replacements = [];
+		foreach ($message->getMessageParameters() as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder . '}';
+			if ($parameter['type'] === 'user' || $parameter['type'] === 'guest') {
+				$replacements[] = '@' . $parameter['name'];
+			} else {
+				$replacements[] = $parameter['name'];
+			}
+		}
+
+		return str_replace($placeholders, $replacements, $message->getMessage());
 	}
 
 	protected function sortRooms(Room $roomA, Room $roomB): int {

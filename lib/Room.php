@@ -356,7 +356,11 @@ class Room {
 	}
 
 	public function getLastMessage(): ?IComment {
-		if ($this->lastMessageId && $this->lastMessage === null && !$this->isFederatedConversation()) {
+		if ($this->isFederatedConversation()) {
+			return null;
+		}
+
+		if ($this->lastMessageId && $this->lastMessage === null) {
 			$this->lastMessage = $this->manager->loadLastCommentInfo($this->lastMessageId);
 			if ($this->lastMessage === null) {
 				$this->lastMessageId = 0;
