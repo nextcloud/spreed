@@ -2357,12 +2357,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$actualItems = $data[$widgetId]['items'];
 		}
 
+		$actualItems = array_values(array_filter($actualItems, static fn ($item) => $item['title'] !== 'Note to self' && $item['title'] !== 'Talk updates ✅'));
+
 		if (empty($expectedItems)) {
 			Assert::assertEmpty($actualItems);
 			return;
 		}
 
-		Assert::assertCount(count($expectedItems), $actualItems);
+		Assert::assertCount(count($expectedItems), $actualItems, json_encode($actualItems, JSON_PRETTY_PRINT));
 
 		foreach ($expectedItems as $key => $item) {
 			$token = self::$identifierToToken[$item['link']];

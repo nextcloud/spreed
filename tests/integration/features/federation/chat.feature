@@ -246,7 +246,18 @@ Feature: federation/chat
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "LOCAL::room" with 201
+    Then user "participant2" sees the following entries for dashboard widgets "spreed" (v1)
+      | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
+    Then user "participant2" sees the following entries for dashboard widgets "spreed" (v2)
+      | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
+      | room  | Message 1          | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "room" with 201
+    Then user "participant2" sees the following entries for dashboard widgets "spreed" (v1)
+      | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
+      | room  | You were mentioned | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+    Then user "participant2" sees the following entries for dashboard widgets "spreed" (v2)
+      | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
+      | room  | You were mentioned | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     And user "participant1" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
     And user "participant1" sends message 'Hi @all bye' to room "room" with 201
     Then user "participant2" has the following notifications
