@@ -184,6 +184,14 @@ export default {
 			type: String,
 			required: true,
 		},
+		actorId: {
+			type: String,
+			required: true,
+		},
+		actorType: {
+			type: String,
+			required: true,
+		},
 		parent: {
 			type: Object,
 			default: undefined,
