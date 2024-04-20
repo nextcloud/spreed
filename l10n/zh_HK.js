@@ -1025,6 +1025,7 @@ OC.L10N.register(
     "Enable lobby, restricting the conversation to moderators" : "啟用等候室，將對話限制為主持人",
     "Meeting start time" : "會議開始時間",
     "Start time (optional)" : "開始時間（可選）",
+    "Start time: {date}" : "開始時間：{date}",
     "Error occurred when restricting the conversation to moderator" : "將對話限制為主持人時發生錯誤",
     "Error occurred when opening the conversation to everyone" : "向所有人打開對話時發生錯誤",
     "Start time has been updated" : "開始時間已被更新。",
