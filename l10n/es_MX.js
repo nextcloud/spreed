@@ -403,6 +403,7 @@ OC.L10N.register(
     "None" : "Ninguno",
     "Devices" : "Dispositivos",
     "No audio" : "Sin audio",
+    "Blur" : "Difuminar",
     "Upload" : "Cargar",
     "Files" : "Archivos",
     "Invalid path selected" : "Ruta seleccionada no válida.",

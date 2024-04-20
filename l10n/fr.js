@@ -1025,6 +1025,7 @@ OC.L10N.register(
     "Enable lobby, restricting the conversation to moderators" : "Activer la salle d'attente, restreignant la conversation aux modérateurs",
     "Meeting start time" : "Heure de début de la réunion",
     "Start time (optional)" : "Heure de début (optionnelle)",
+    "Start time: {date}" : "Heure de début : {date}",
     "Error occurred when restricting the conversation to moderator" : "Une erreur s'est produite lors de la restriction de la conversation au modérateur",
     "Error occurred when opening the conversation to everyone" : "Une erreur s'est produite lors de l'ouverture de la conversation à tout le monde",
     "Start time has been updated" : "L'heure de début a été mise à jour",
