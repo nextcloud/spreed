@@ -41,7 +41,7 @@
     "@nextcloud/vue": "^8.11.2",
     "crypto-js": "^4.2.0",
     "debounce": "^2.0.0",
-    "emoji-mart-vue-fast": "^15.0.0",
+    "emoji-mart-vue-fast": "^15.0.2",
     "emoji-regex": "^10.3.0",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.2.0",
