@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Activity\Provider;
 
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\IL10N;
 
@@ -32,7 +33,7 @@ class Call extends Base {
 	 * @param IEvent $event
 	 * @param IEvent|null $previousEvent
 	 * @return IEvent
-	 * @throws \InvalidArgumentException
+	 * @throws UnknownActivityException
 	 * @since 11.0.0
 	 */
 	public function parse($language, IEvent $event, ?IEvent $previousEvent = null): IEvent {
@@ -54,7 +55,7 @@ class Call extends Base {
 			//			$result['params']['call'] = $roomParameter;
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {
-			throw new \InvalidArgumentException('Wrong subject');
+			throw new UnknownActivityException('subject');
 		}
 
 		return $event;
@@ -80,7 +81,7 @@ class Call extends Base {
 
 		$currentUser = array_search($this->activityManager->getCurrentUserId(), $parameters['users'], true);
 		if ($currentUser === false) {
-			throw new \InvalidArgumentException('Unknown case');
+			throw new UnknownActivityException('Unknown case');
 		}
 		unset($parameters['users'][$currentUser]);
 		sort($parameters['users']);

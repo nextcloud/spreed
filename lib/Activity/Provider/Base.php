@@ -27,6 +27,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
@@ -52,17 +53,17 @@ abstract class Base implements IProvider {
 	/**
 	 * @param IEvent $event
 	 * @return IEvent
-	 * @throws \InvalidArgumentException
+	 * @throws UnknownActivityException
 	 */
 	public function preParse(IEvent $event): IEvent {
 		if ($event->getApp() !== 'spreed') {
-			throw new \InvalidArgumentException('Wrong app');
+			throw new UnknownActivityException('app');
 		}
 
 		$uid = $event->getAffectedUser();
 		$user = $this->userManager->get($uid);
 		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
-			throw new \InvalidArgumentException('User can not user Talk');
+			throw new UnknownActivityException('User can not use Talk');
 		}
 
 		if ($this->activityManager->getRequirePNG()) {
@@ -78,7 +79,6 @@ abstract class Base implements IProvider {
 	 * @param IEvent $event
 	 * @param string $subject
 	 * @param array $parameters
-	 * @throws \InvalidArgumentException
 	 */
 	protected function setSubjects(IEvent $event, string $subject, array $parameters): void {
 		$placeholders = $replacements = [];
