@@ -1025,6 +1025,7 @@ OC.L10N.register(
     "Enable lobby, restricting the conversation to moderators" : "تمكين صالة الانتظار، و قصر المحادثة على المنسقين moderators",
     "Meeting start time" : "وقت بدء الإجتماع ",
     "Start time (optional)" : "بداية الوقت (اختياري)",
+    "Start time: {date}" : "بدايةً من: {date}",
     "Error occurred when restricting the conversation to moderator" : "حدث خطأ عندما اقتصرت المحادثة على المشرفيين فقط ",
     "Error occurred when opening the conversation to everyone" : "حدث خطأ أثناء فتح المحادثة للجميع ",
     "Start time has been updated" : "تم تحديث وقت البدء",

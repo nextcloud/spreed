@@ -1025,6 +1025,7 @@ OC.L10N.register(
     "Enable lobby, restricting the conversation to moderators" : "Enable lobby, restricting the conversation to moderators",
     "Meeting start time" : "Meeting start time",
     "Start time (optional)" : "Start time (optional)",
+    "Start time: {date}" : "Start time: {date}",
     "Error occurred when restricting the conversation to moderator" : "Error occurred when restricting the conversation to moderator",
     "Error occurred when opening the conversation to everyone" : "Error occurred when opening the conversation to everyone",
     "Start time has been updated" : "Start time has been updated",
