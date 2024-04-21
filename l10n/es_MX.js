@@ -334,6 +334,7 @@ OC.L10N.register(
     "Enabled" : "Habilitado",
     "Disabled" : "Deshabilitado",
     "Federation" : "Federación",
+    "Beta" : "Beta",
     "Permissions" : "Permisos",
     "General settings" : "Configuraciones generales",
     "@-mentions only" : "Solo menciones con @",
