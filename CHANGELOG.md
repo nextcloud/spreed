@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.0-rc.6 – 2024-04-22
+### Changed
+- Update translations
+- Update several dependencies
+
+### Fixed
+- fix(chat): restrict checkbox editing in one-to-one conversations
+  [#12160](https://github.com/nextcloud/spreed/pull/12160)
+  [#12176](https://github.com/nextcloud/spreed/pull/12176)
+- fix(chat): Fix clearing the input field after file upload
+  [#12061](https://github.com/nextcloud/spreed/issues/12061)
+- fix(chat): Fix setting known chat messages borders after leaving the conversation
+  [#12183](https://github.com/nextcloud/spreed/pull/12183)
+- fix(dashboard): Dashboard does not show mentions from federated conversations
+  [#12163](https://github.com/nextcloud/spreed/pull/12163)
+
 ## 19.0.0-rc.5 – 2024-04-18
 ### Changed
 - Update translations
