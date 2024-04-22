@@ -660,6 +660,7 @@ export default {
 			}
 
 			// Clear input content from store
+			this.debouncedUpdateChatInput.clear()
 			this.chatExtrasStore.removeChatInput(this.token)
 
 			if (this.upload) {
