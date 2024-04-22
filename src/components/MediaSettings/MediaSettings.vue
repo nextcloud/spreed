@@ -473,11 +473,6 @@ export default {
 	mounted() {
 		subscribe('talk:media-settings:show', this.showModal)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
-
-		const devicesPreferred = BrowserStorage.getItem('devicesPreferred')
-		if (!devicesPreferred) {
-			this.tabContent = 'devices'
-		}
 	},
 
 	beforeDestroy() {
@@ -490,6 +485,10 @@ export default {
 			this.modal = true
 			if (page === 'video-verification') {
 				this.isPublicShareAuthSidebar = true
+			}
+
+			if (!BrowserStorage.getItem('devicesPreferred')) {
+				this.tabContent = 'devices'
 			}
 		},
 
