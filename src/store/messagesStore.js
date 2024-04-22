@@ -504,15 +504,15 @@ const mutations = {
 			return
 		}
 
-		const messagesToRemove = messageIds.sort().reverse().slice(199)
+		const messagesToRemove = messageIds.sort((a, b) => b - a).slice(199)
 		const newFirstKnown = messagesToRemove.shift()
 
 		messagesToRemove.forEach((messageId) => {
 			Vue.delete(state.messages[token], messageId)
 		})
 
-		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token])) {
-			Vue.set(state.firstKnown, token, newFirstKnown)
+		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token].toString())) {
+			Vue.set(state.firstKnown, token, +newFirstKnown)
 		}
 	},
 }
