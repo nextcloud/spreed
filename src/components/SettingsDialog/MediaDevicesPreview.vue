@@ -198,16 +198,12 @@ export default {
 	methods: {
 		handleAudioInputIdChange(audioInputId) {
 			this.audioInputId = audioInputId
-			if (audioInputId !== null) {
-				this.updatePreferences()
-			}
+			this.updatePreferences('audioinput')
 		},
 
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
-			if (videoInputId !== null) {
-				this.updatePreferences()
-			}
+			this.updatePreferences('videoinput')
 		},
 
 	},
