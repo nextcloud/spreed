@@ -199,12 +199,17 @@ MediaDevicesManager.prototype = {
 			// according to the spec, a single device of each kind (if at least
 			// one device of that kind is available) with an empty deviceId is
 			// returned, which will not be registered in the preference list.
+			let deviceIdChanged = false
 			if (this.attributes.audioInputId === undefined || this.attributes.audioInputId === previousFirstAvailableAudioInputId) {
 				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList) || devices.find(device => device.kind === 'audioinput')?.deviceId
-				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
+				deviceIdChanged = true
 			}
 			if (this.attributes.videoInputId === undefined || this.attributes.videoInputId === previousFirstAvailableVideoInputId) {
 				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList) || devices.find(device => device.kind === 'videoinput')?.deviceId
+				deviceIdChanged = true
+			}
+
+			if (deviceIdChanged) {
 				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
 			}
 
@@ -258,8 +263,7 @@ MediaDevicesManager.prototype = {
 			BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
 		}
 
-		const devicesPreferred = BrowserStorage.getItem('devicesPreferred')
-		if (!devicesPreferred) {
+		if (!BrowserStorage.getItem('devicesPreferred')) {
 			BrowserStorage.setItem('devicesPreferred', true)
 		}
 
