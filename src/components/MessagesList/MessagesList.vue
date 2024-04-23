@@ -578,8 +578,7 @@ export default {
 					escape: false, // French "Today" has a ' in it
 				})
 			} else {
-				// TRANSLATORS: <March 18th, 2024>
-				return t('spreed', '{absoluteDate}', { absoluteDate: date.format('LL') })
+				return date.format('LL')
 			}
 
 		},
