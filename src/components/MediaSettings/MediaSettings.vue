@@ -92,12 +92,12 @@
 					:devices="devices"
 					:device-id="audioInputId"
 					@refresh="updateDevices"
-					@update:deviceId="audioInputId = $event" />
+					@update:deviceId="handleAudioInputIdChange" />
 				<MediaDevicesSelector kind="videoinput"
 					:devices="devices"
 					:device-id="videoInputId"
 					@refresh="updateDevices"
-					@update:deviceId="videoInputId = $event" />
+					@update:deviceId="handleVideoInputIdChange" />
 				<MediaDevicesSpeakerTest />
 			</div>
 
@@ -312,7 +312,6 @@ export default {
 			videoOn: undefined,
 			silentCall: false,
 			updatedBackground: undefined,
-			deviceIdChanged: false,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
 			isRecordingFromStart: false,
@@ -422,7 +421,7 @@ export default {
 		},
 
 		showUpdateChangesButton() {
-			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
+			return this.updatedBackground || this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
 		},
 	},
@@ -452,14 +451,12 @@ export default {
 		},
 
 		audioInputId(audioInputId) {
-			this.deviceIdChanged = true
 			if (this.showDeviceSelection && audioInputId && !this.audioOn) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
-			this.deviceIdChanged = true
 			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
@@ -495,7 +492,6 @@ export default {
 		closeModal() {
 			this.modal = false
 			this.updatedBackground = undefined
-			this.deviceIdChanged = false
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
@@ -544,7 +540,6 @@ export default {
 				emit('local-video-control-button:toggle-video')
 			}
 
-			this.updatePreferences()
 			this.closeModal()
 		},
 
@@ -655,7 +650,21 @@ export default {
 
 		setRecordingConsentGiven(value) {
 			this.$emit('update:recording-consent-given', value)
-		}
+		},
+
+		handleAudioInputIdChange(audioInputId) {
+			this.audioInputId = audioInputId
+			if (audioInputId !== null) {
+				this.updatePreferences()
+			}
+		},
+
+		handleVideoInputIdChange(videoInputId) {
+			this.videoInputId = videoInputId
+			if (videoInputId !== null) {
+				this.updatePreferences()
+			}
+		},
 	},
 }
 </script>

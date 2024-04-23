@@ -9,7 +9,7 @@
 			:devices="devices"
 			:device-id="audioInputId"
 			@refresh="updateDevices"
-			@update:deviceId="audioInputId = $event" />
+			@update:deviceId="handleAudioInputIdChange" />
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
 				class="preview-not-available">
@@ -38,7 +38,7 @@
 			:devices="devices"
 			:device-id="videoInputId"
 			@refresh="updateDevices"
-			@update:deviceId="videoInputId = $event" />
+			@update:deviceId="handleVideoInputIdChange" />
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
 				class="preview-not-available">
@@ -95,6 +95,7 @@ export default {
 		const {
 			devices,
 			updateDevices,
+			updatePreferences,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
@@ -111,6 +112,7 @@ export default {
 			video,
 			devices,
 			updateDevices,
+			updatePreferences,
 			currentVolume,
 			currentThreshold,
 			audioPreviewAvailable,
@@ -176,7 +178,24 @@ export default {
 
 			return t('spreed', 'Error while accessing camera')
 		},
-	}
+	},
+
+	methods: {
+		handleAudioInputIdChange(audioInputId) {
+			this.audioInputId = audioInputId
+			if (audioInputId !== null) {
+				this.updatePreferences()
+			}
+		},
+
+		handleVideoInputIdChange(videoInputId) {
+			this.videoInputId = videoInputId
+			if (videoInputId !== null) {
+				this.updatePreferences()
+			}
+		},
+
+	},
 }
 </script>
 
