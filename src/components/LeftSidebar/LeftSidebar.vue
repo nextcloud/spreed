@@ -1125,4 +1125,8 @@ export default {
 	overflow: hidden;
 	outline-offset: -2px;
 }
+
+:deep(#app-settings-header) {
+	padding-top: calc(var(--default-grid-baseline) * 2);
+}
 </style>
