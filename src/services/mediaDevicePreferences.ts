@@ -164,27 +164,9 @@ function populateMediaDevicesPreferences(devices: MediaDeviceInfo[], audioInputL
 	}
 }
 
-/**
- * Update devices preferences. Assuming that preferred devices were selected, should be called after applying the selection:
- * so either with joining the call or changing device during the call
- *
- * Returns changed preference lists for audio / video devices (null, if it hasn't been changed)
- *
- * @param attributes MediaDeviceManager attributes
- * @param audioInputList list of registered audio devices in order of preference
- * @param videoInputList list of registered video devices in order of preference
- * @return {InputLists} object with updated devices lists (null, if they have not been changed)
- */
-function updateMediaDevicesPreferences(attributes: Attributes, audioInputList: MediaDeviceInfo[], videoInputList: MediaDeviceInfo[]): InputLists {
-	return {
-		newAudioInputList: promoteMediaDevice(DeviceKind.AudioInput, attributes.devices, audioInputList, attributes.audioInputId),
-		newVideoInputList: promoteMediaDevice(DeviceKind.VideoInput, attributes.devices, videoInputList, attributes.videoInputId),
-	}
-}
-
 export {
 	getFirstAvailableMediaDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
-	updateMediaDevicesPreferences,
+	promoteMediaDevice,
 }

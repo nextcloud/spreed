@@ -8,7 +8,7 @@ import {
 	getFirstAvailableMediaDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
-	updateMediaDevicesPreferences,
+	promoteMediaDevice,
 } from '../../services/mediaDevicePreferences.ts'
 import EmitterMixin from '../EmitterMixin.js'
 
@@ -247,24 +247,25 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	updatePreferences() {
-		const { newAudioInputList, newVideoInputList } = updateMediaDevicesPreferences(
-			this.attributes,
-			this._preferenceAudioInputList,
-			this._preferenceVideoInputList,
-		)
-
-		if (newAudioInputList) {
-			this._preferenceAudioInputList = newAudioInputList
-			BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
-		}
-		if (newVideoInputList) {
-			this._preferenceVideoInputList = newVideoInputList
-			BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
-		}
-
-		if (!BrowserStorage.getItem('devicesPreferred')) {
-			BrowserStorage.setItem('devicesPreferred', true)
+	updatePreferences(kind) {
+		if (kind === 'audioinput') {
+			const newAudioInputList = promoteMediaDevice('audioinput', this.attributes.devices, this._preferenceAudioInputList, this.attributes.audioInputId)
+			if (newAudioInputList) {
+				this._preferenceAudioInputList = newAudioInputList
+				BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
+			}
+			if (!BrowserStorage.getItem('audioInputDevicePreferred')) {
+				BrowserStorage.setItem('audioInputDevicePreferred', true)
+			}
+		} else if (kind === 'videoinput') {
+			const newVideoInputList = promoteMediaDevice('videoinput', this.attributes.devices, this._preferenceVideoInputList, this.attributes.videoInputId)
+			if (newVideoInputList) {
+				this._preferenceVideoInputList = newVideoInputList
+				BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
+			}
+			if (!BrowserStorage.getItem('videoInputDevicePreferred')) {
+				BrowserStorage.setItem('videoInputDevicePreferred', true)
+			}
 		}
 
 	},

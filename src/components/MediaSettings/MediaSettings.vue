@@ -484,7 +484,7 @@ export default {
 				this.isPublicShareAuthSidebar = true
 			}
 
-			if (!BrowserStorage.getItem('devicesPreferred')) {
+			if (!BrowserStorage.getItem('audioInputDevicePreferred') || !BrowserStorage.getItem('videoInputDevicePreferred')) {
 				this.tabContent = 'devices'
 			}
 		},
@@ -654,16 +654,12 @@ export default {
 
 		handleAudioInputIdChange(audioInputId) {
 			this.audioInputId = audioInputId
-			if (audioInputId !== null) {
-				this.updatePreferences()
-			}
+			this.updatePreferences('audioinput')
 		},
 
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
-			if (videoInputId !== null) {
-				this.updatePreferences()
-			}
+			this.updatePreferences('videoinput')
 		},
 	},
 }
