@@ -88,7 +88,8 @@
 				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
-		<NcDialog :open.sync="showDialog"
+		<NcDialog v-if="showDialog"
+			:open.sync="showDialog"
 			:name="t('spreed','Delete breakout rooms')"
 			:message="dialogMessage"
 			container=".participants-editor">
@@ -357,10 +358,10 @@ export default {
 	width: 100%;
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
-	height: calc(100% - 42px);
+	height: calc(100% - 57px); // heading 30px * 1.5 line-height + 12px margin-bottom
 
 	&__section {
-		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline) 0;
+		margin: calc(var(--default-grid-baseline) * 2) 0 calc(var(--default-grid-baseline) * 4);
 
 	}
 
@@ -373,6 +374,7 @@ export default {
 		display: flex;
 		justify-content: flex-end;
 		gap: calc(var(--default-grid-baseline) * 2);
+		padding-top: 10px;
 	}
 }
 
