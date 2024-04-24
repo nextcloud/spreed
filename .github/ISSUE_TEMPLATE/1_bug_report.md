@@ -27,13 +27,13 @@ Tell us what happens instead
 
 ## Talk app
 
-**Talk app version:** (see apps admin page: `/index.php/settings/apps`)
+**Talk app version:** (see apps administration page: `/index.php/settings/apps`)
 
-**Custom Signaling server configured:** yes/no and version (see additional admin settings: `/index.php/index.php/settings/admin/talk#signaling_server`)
+**Custom Signaling server configured:** yes/no and version (see  Talk administration settings: `/index.php/index.php/settings/admin/talk#signaling_server`)
 
-**Custom TURN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/talk#turn_server`)
+**Custom TURN server configured:** yes/no (see Talk administration settings: `/index.php/settings/admin/talk#turn_server`)
 
-**Custom STUN server configured:** yes/no (see additional admin settings: `/index.php/settings/admin/talk#stun_server`)
+**Custom STUN server configured:** yes/no (see  Talk administration settings: `/index.php/settings/admin/talk#stun_server`)
 
 
 ## Browser
@@ -42,11 +42,11 @@ Tell us what happens instead
 
 **Camera available:** yes/no
 
-**Operating system:** Windows/Ubuntu/...
+**Operating system:** Windows/Ubuntu/Mac/...
 
-**Browser name:** Firefox/Chrome/...
+**Browser name:** Firefox/Chrome/Safari/...
 
-**Browser version:** 85/96/...
+**Browser version:** 124/125/...
 
 ### Browser log
 
@@ -72,9 +72,9 @@ You can use the Issue Template application to prefill most of the required infor
 
 **Database:** MySQL/Maria/SQLite/PostgreSQL
 
-**PHP version:** 8.0/8.1/8.2
+**PHP version:** 8.1/8.2/8.3
 
-**Nextcloud Version:** (see admin page)
+**Nextcloud Version:** (see administration page)
 
 **List of activated apps:**
 
