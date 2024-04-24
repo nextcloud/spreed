@@ -470,6 +470,12 @@ export default {
 	mounted() {
 		subscribe('talk:media-settings:show', this.showModal)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
+
+		// FIXME: this is a workaround to remove the old key from the browser storage
+		// To be removed in the future
+		if (BrowserStorage.getItem('devicesPreferred')) {
+			BrowserStorage.removeItem('devicesPreferred')
+		}
 	},
 
 	beforeDestroy() {
