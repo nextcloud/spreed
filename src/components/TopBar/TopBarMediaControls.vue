@@ -112,6 +112,7 @@
 		<NcButton v-else-if="!isSidebar"
 			v-tooltip="screenSharingButtonTooltip"
 			type="tertiary"
+			:aria-label="screenSharingButtonAriaLabel"
 			@click.stop="toggleScreenSharingMenu">
 			<template #icon>
 				<MonitorShare :size="20" />
@@ -269,7 +270,7 @@ export default {
 
 		screenSharingButtonAriaLabel() {
 			if (this.screenSharingMenuOpen) {
-				return ''
+				return t('spreed', 'Screensharing options')
 			}
 
 			return this.isScreensharing
