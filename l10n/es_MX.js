@@ -442,6 +442,7 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Details" : "Detalles",
     "Privacy" : "Privacidad",
+    "Performance" : "Desempeño",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Search" : "Buscar",
     "Open sidebar" : "Abrir barra lateral",
