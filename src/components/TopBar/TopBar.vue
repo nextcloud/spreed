@@ -368,7 +368,11 @@ export default {
 				this.unreadNotificationHandle = null
 			}
 			if (message) {
-				this.unreadNotificationHandle = showMessage(message)
+				this.unreadNotificationHandle = showMessage(message, {
+					onClick: () => {
+						this.openSidebar('chat')
+					},
+				})
 			}
 		},
 

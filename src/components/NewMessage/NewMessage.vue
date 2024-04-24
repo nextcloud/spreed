@@ -738,6 +738,8 @@ export default {
 				})
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 				this.resetTypingIndicator()
+				// refocus input as the user might want to type further
+				this.focusInput()
 			} catch {
 				this.$emit('failure')
 				showError(t('spreed', 'The message could not be edited'))
