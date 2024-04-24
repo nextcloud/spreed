@@ -14,6 +14,10 @@ labels: 0. Needs triage, enhancement
 
 ---
 
+## Feature request
+
+**Which Nextcloud Version are you currently using:** (see administration page)
+
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
