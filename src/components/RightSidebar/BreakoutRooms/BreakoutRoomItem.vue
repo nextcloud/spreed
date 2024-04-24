@@ -159,15 +159,15 @@ export default {
 		},
 
 		participantType() {
-			return this.breakoutRoom.participantType
+			return this.breakoutRoom?.participantType
 		},
 
 		roomName() {
-			return this.isParticipantsEditor ? this.name : this.breakoutRoom.displayName
+			return this.isParticipantsEditor ? this.name : this.breakoutRoom?.displayName
 		},
 
 		roomToken() {
-			return this.breakoutRoom.token
+			return this.breakoutRoom?.token
 		},
 
 		showJoinButton() {
@@ -189,7 +189,7 @@ export default {
 			if (this.isParticipantsEditor) {
 				return false
 			}
-			return this.canModerate && this.breakoutRoom.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
+			return this.canModerate && this.breakoutRoom?.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
 		},
 
 		toggleParticipantsListLabel() {
