@@ -62,7 +62,8 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 
 	getters: {
 		breakoutRooms: (state) => (token: string): BreakoutRoom[] => {
-			return Object.values(Object(state.rooms[token]))
+			const roomsArray: BreakoutRoom[] = Object.values(Object(state.rooms[token]))
+			return roomsArray.sort((roomA, roomB) => roomA.id - roomB.id)
 		},
 
 		getParentRoomToken: (state) => (token: string): string | undefined => {
