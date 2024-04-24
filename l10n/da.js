@@ -464,7 +464,6 @@ OC.L10N.register(
     "Demote from moderator" : "Degrader fra moderator",
     "Promote to moderator" : "Forfrem til moderator",
     "Settings for participant \"{user}\"" : "Indstillinger for deltager \"{user}\"",
-    "{absoluteDate}" : "{absoluteDate}",
     "Remove participant" : "Fjern deltager",
     "Add users" : "Tilføj brugere",
     "Add groups" : "Tilføj grupper",
