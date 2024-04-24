@@ -123,8 +123,12 @@ describe('mediaDevicePreferences', () => {
 			const ids = [null, undefined, 'default']
 
 			const getOutput = (id) => {
-				const attributes = { devices: allDevices, audioInputId: id }
-				return promoteMediaDevice('audioinput', attributes.devices, audioInputPreferenceList, attributes.audioInputId)
+				return promoteMediaDevice({
+					kind: 'audioinput',
+					devices: allDevices,
+					inputList: audioInputPreferenceList,
+					inputId: id
+				})
 			}
 
 			// Assert
@@ -134,43 +138,48 @@ describe('mediaDevicePreferences', () => {
 		})
 
 		it('returns updated preference lists (device A id provided)', () => {
-			const attributes = { devices: allDevices, audioInputId: audioInputDeviceA.deviceId }
-			const output = promoteMediaDevice('audioinput', attributes.devices, audioInputPreferenceList, attributes.audioInputId)
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
+				devices: allDevices,
+				inputList: audioInputPreferenceList,
+				inputId: audioInputDeviceA.deviceId
+			})
 
 			// Assert: should put device A on top of default device
 			expect(output).toEqual([audioInputDeviceA, audioInputDeviceDefault, audioInputDeviceB])
 		})
 
 		it('returns null if preference lists were not updated (device A id provided but not available)', () => {
-			const attributes = {
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
 				devices: allDevices.filter(device => !['da1234567890', 'da4567890123'].includes(device.deviceId)),
-				audioInputId: audioInputDeviceA.deviceId,
-			}
-			const output = promoteMediaDevice('audioinput', attributes.devices, audioInputPreferenceList, attributes.audioInputId)
+				inputList: audioInputPreferenceList,
+				inputId: audioInputDeviceA.deviceId
+			})
 
 			// Assert
 			expect(output).toEqual(null)
 		})
 
 		it('returns null if preference lists were not updated (all devices are not available)', () => {
-			const attributes = {
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
 				devices: allDevices.filter(device => !['audioinput', 'videoinput'].includes(device.kind)),
-				audioInputId: audioInputDeviceA.deviceId,
-				videoInputId: videoInputDeviceA.deviceId,
-			}
-			const output = promoteMediaDevice('audioinput', attributes.devices, audioInputPreferenceList, attributes.audioInputId)
+				inputList: audioInputPreferenceList,
+				inputId: audioInputDeviceA.deviceId
+			})
 
 			// Assert
 			expect(output).toEqual(null)
 		})
 
 		it('returns updated preference lists (device B id provided, but not registered, default device and device A not available)', () => {
-			const attributes = {
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
 				devices: allDevices.filter(device => !['default', 'da1234567890', 'da4567890123'].includes(device.deviceId)),
-				audioInputId: audioInputDeviceB.deviceId,
-			}
-
-			const output = promoteMediaDevice('audioinput', attributes.devices, [audioInputDeviceDefault, audioInputDeviceA], attributes.audioInputId)
+				inputList: [audioInputDeviceDefault, audioInputDeviceA],
+				inputId: audioInputDeviceB.deviceId
+			})
 
 			// Assert: should put device C on top of device B, but not the device A
 			expect(output).toEqual([audioInputDeviceDefault, audioInputDeviceA, audioInputDeviceB])

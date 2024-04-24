@@ -265,7 +265,13 @@ MediaDevicesManager.prototype = {
 
 	updatePreferences(kind) {
 		if (kind === 'audioinput') {
-			const newAudioInputList = promoteMediaDevice('audioinput', this.attributes.devices, this._preferenceAudioInputList, this.attributes.audioInputId)
+			const newAudioInputList = promoteMediaDevice({
+				kind,
+				devices: this.attributes.devices,
+				inputList: this._preferenceAudioInputList,
+				inputId: this.attributes.audioInputId
+			})
+
 			if (newAudioInputList) {
 				this._preferenceAudioInputList = newAudioInputList
 				BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
@@ -274,7 +280,13 @@ MediaDevicesManager.prototype = {
 				BrowserStorage.setItem('audioInputDevicePreferred', true)
 			}
 		} else if (kind === 'videoinput') {
-			const newVideoInputList = promoteMediaDevice('videoinput', this.attributes.devices, this._preferenceVideoInputList, this.attributes.videoInputId)
+			const newVideoInputList = promoteMediaDevice({
+				kind,
+				devices: this.attributes.devices,
+				inputList: this._preferenceVideoInputList,
+				inputId: this.attributes.videoInputId
+			})
+
 			if (newVideoInputList) {
 				this._preferenceVideoInputList = newVideoInputList
 				BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))

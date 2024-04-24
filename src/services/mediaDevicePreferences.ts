@@ -38,6 +38,13 @@ enum DeviceKind {
 	AudioOutput = 'audiooutput',
 }
 
+type PromotePayload = {
+	kind: DeviceKind,
+	devices: MediaDeviceInfo[],
+	inputList: MediaDeviceInfo[],
+	inputId: InputId
+}
+
 /**
  * List all registered devices in order of their preferences
  * Show whether device is currently unplugged or selected, if information is available
@@ -107,13 +114,14 @@ function registerNewMediaDevice(device: MediaDeviceInfo, devicesList: MediaDevic
  *
  * Returns changed preference lists for audio / video devices (null, if it hasn't been changed)
  *
- * @param kind kind of device
- * @param devices list of available devices
- * @param inputList list of registered audio/video devices in order of preference
- * @param inputId id of currently selected input
+ * @param data the wrapping object
+ * @param data.kind kind of device
+ * @param data.devices list of available devices
+ * @param data.inputList list of registered audio/video devices in order of preference
+ * @param data.inputId id of currently selected input
  * @return {InputListUpdated} updated devices list (null, if it has not been changed)
  */
-function promoteMediaDevice(kind: DeviceKind, devices: MediaDeviceInfo[], inputList: MediaDeviceInfo[], inputId: InputId): InputListUpdated {
+function promoteMediaDevice({ kind, devices, inputList, inputId } : PromotePayload) : InputListUpdated {
 	if (!inputId) {
 		return null
 	}
