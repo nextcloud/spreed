@@ -22,7 +22,8 @@
 <template>
 	<div class="participants-editor">
 		<ul class="participants-editor__scroller">
-			<BreakoutRoomItem class="participants-editor__section"
+			<BreakoutRoomItem key="unassigned"
+				class="participants-editor__section"
 				:name="t('spreed', 'Unassigned participants')">
 				<SelectableParticipant v-for="participant in unassignedParticipants"
 					:key="participant.attendeeId"
@@ -30,17 +31,16 @@
 					:checked.sync="selectedParticipants"
 					:participant="participant" />
 			</BreakoutRoomItem>
-			<template v-for="(item, index) in assignments">
-				<BreakoutRoomItem :key="index"
-					class="participants-editor__section"
-					:name="roomName(index)">
-					<SelectableParticipant v-for="attendeeId in item"
-						:key="attendeeId"
-						:value="assignments"
-						:checked.sync="selectedParticipants"
-						:participant="attendeesById[attendeeId]" />
-				</BreakoutRoomItem>
-			</template>
+			<BreakoutRoomItem v-for="(item, index) in assignments"
+				:key="index"
+				class="participants-editor__section"
+				:name="roomName(index)">
+				<SelectableParticipant v-for="attendeeId in item"
+					:key="attendeeId"
+					:value="assignments"
+					:checked.sync="selectedParticipants"
+					:participant="attendeesById[attendeeId]" />
+			</BreakoutRoomItem>
 		</ul>
 		<div class="participants-editor__buttons">
 			<NcButton v-if="breakoutRoomsConfigured"
@@ -74,7 +74,7 @@
 				:menu-name="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
-					:close-after-click="true"
+					close-after-click
 					@click="assignAttendees(index)">
 					<template #icon>
 						<DotsCircle :size="20" />
@@ -88,7 +88,8 @@
 				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
-		<NcDialog :open.sync="showDialog"
+		<NcDialog v-if="showDialog"
+			:open.sync="showDialog"
 			:name="t('spreed','Delete breakout rooms')"
 			:message="dialogMessage"
 			container=".participants-editor">
@@ -294,8 +295,8 @@ export default {
 		},
 
 		roomName(index) {
-			const roomNumber = index + 1
-			return t('spreed', 'Room {roomNumber}', { roomNumber })
+			return this.breakoutRooms[index]?.displayName
+				?? t('spreed', 'Room {roomNumber}', { roomNumber: index + 1 })
 		},
 
 		resetAssignments() {
@@ -357,10 +358,10 @@ export default {
 	width: 100%;
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
-	height: calc(100% - 42px);
+	height: calc(100% - 57px); // heading 30px * 1.5 line-height + 12px margin-bottom
 
 	&__section {
-		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline) 0;
+		margin: calc(var(--default-grid-baseline) * 2) 0 calc(var(--default-grid-baseline) * 4);
 
 	}
 
@@ -373,6 +374,7 @@ export default {
 		display: flex;
 		justify-content: flex-end;
 		gap: calc(var(--default-grid-baseline) * 2);
+		padding-top: 10px;
 	}
 }
 

@@ -177,6 +177,10 @@ export default {
 	justify-content: flex-start;
 	align-items: flex-start;
 
+	h2 {
+		margin-top: 0;
+	}
+
 	&__number-input{
 		display: block;
 		margin-bottom: calc(var(--default-grid-baseline)*4);
@@ -207,13 +211,6 @@ export default {
 		justify-content: flex-end;
 		gap: calc(var(--default-grid-baseline) * 2);
 		width: 100%;
-	}
-}
-
-.modal-mask__participants-step {
-	:deep(.modal-container) {
-		overflow: hidden !important;
-		height: 100% !important;
 	}
 }
 </style>

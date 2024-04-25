@@ -28,15 +28,14 @@
 			:breakout-rooms-configured="breakoutRoomsConfigured" />
 		<!-- Breakout rooms list -->
 		<ul v-if="showBreakoutRoomsList">
-			<template v-for="breakoutRoom in breakoutRooms">
-				<BreakoutRoomItem :key="breakoutRoom.token"
-					:breakout-room="breakoutRoom"
-					:main-conversation="mainConversation">
-					<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
-						<Participant :key="participant.actorId" :participant="participant" />
-					</template>
-				</BreakoutRoomItem>
-			</template>
+			<BreakoutRoomItem v-for="breakoutRoom in breakoutRooms"
+				:key="breakoutRoom.token"
+				:breakout-room="breakoutRoom"
+				:main-conversation="mainConversation">
+				<Participant v-for="participant in $store.getters.participantsList(breakoutRoom.token)"
+					:key="participant.actorId"
+					:participant="participant" />
+			</BreakoutRoomItem>
 		</ul>
 		<NcEmptyContent v-else
 			class="breakout-rooms__empty-content"
