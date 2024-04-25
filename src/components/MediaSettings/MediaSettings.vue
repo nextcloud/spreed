@@ -690,6 +690,7 @@ export default {
 <style lang="scss" scoped>
 .media-settings {
 	padding: calc(var(--default-grid-baseline) * 5);
+	padding-bottom: 0;
 
 	&__title {
 		text-align: center;
@@ -739,9 +740,14 @@ export default {
 
 	&__call-buttons {
 		display: flex;
+		z-index: 1;
 		align-items: center;
 		justify-content: center;
 		gap: var(--default-grid-baseline);
+		position: sticky;
+		bottom: 0;
+		background-color: var(--color-main-background);
+		padding: 10px 0 20px;
 	}
 }
 
