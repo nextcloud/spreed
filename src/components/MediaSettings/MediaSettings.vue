@@ -518,6 +518,9 @@ export default {
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
 			this.isRecordingFromStart = false
+			// Update devices preferences
+			this.updatePreferences('audioinput')
+			this.updatePreferences('videoinput')
 		},
 
 		toggleAudio() {
