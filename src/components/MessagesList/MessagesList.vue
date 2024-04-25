@@ -623,18 +623,21 @@ export default {
 			}
 
 			if (!isFocused) {
-				// Safeguard: scroll to before last read message
+				// Safeguard 1: scroll to first visible message before the read marker
 				const fallbackLastReadMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, this.visualLastReadMessageId)
 				if (fallbackLastReadMessageId) {
 					isFocused = this.focusMessage(fallbackLastReadMessageId, false, false)
+				}
+
+				if (!isFocused) {
+					// Safeguard 2: in case the fallback message is not found too
+					// scroll to bottom
+					this.scrollToBottom({ force: true })
+				} else {
 					this.$store.dispatch('setVisualLastReadMessageId', {
 						token: this.token,
 						id: fallbackLastReadMessageId,
 					})
-				} else {
-					// This is an ultimate safeguard in case the fallback message is not found too
-					// scroll to bottom
-					this.scrollToBottom({ force: true, smooth: true })
 				}
 			}
 
@@ -1085,13 +1088,18 @@ export default {
 		 * @return {boolean} true if element was found, false otherwise
 		 */
 		focusMessage(messageId, smooth = true, highlightAnimation = true) {
-			const element = document.getElementById(`message_${messageId}`)
+			let element = document.getElementById(`message_${messageId}`)
 			if (!element) {
 				// Message id doesn't exist
 				// TODO: in some cases might need to trigger a scroll up if this is an older message
 				// https://github.com/nextcloud/spreed/pull/10084
 				console.warn('Message to focus not found in DOM', messageId)
 				return false // element not found
+			}
+
+			if (element.offsetParent === null) {
+				console.debug('Message to focus is hidden, scrolling to its nearest visible parent', messageId)
+				element = element.closest('ul[style="display: none;"]').parentElement
 			}
 
 			console.debug('Scrolling to a focused message programmatically')
