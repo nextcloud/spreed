@@ -1,0 +1,7 @@
+The Mattermost logomark
+
+The logos below are available for use in your integrations and applications that
+connect to Mattermost. Use of the logo is permitted as long as it’s used in a
+non-commercial way and does not imply endorsement by Mattermost, Inc.
+
+https://handbook.mattermost.com/operations/operations/company-processes/publishing/publishing-guidelines/brand-and-visual-design-guidelines
