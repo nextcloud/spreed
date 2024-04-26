@@ -48,7 +48,7 @@ components.
 				</div>
 			</div>
 			<!-- file preview-->
-			<NcRichText v-if="isFileShareMessage"
+			<NcRichText v-if="isFileShare"
 				text="{file}"
 				:arguments="richParameters" />
 			<!-- text -->
@@ -82,6 +82,7 @@ import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
+import { useMessageInfo } from '../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
@@ -157,12 +158,18 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
 		const chatExtrasStore = useChatExtrasStore()
+		const {
+			isFileShare,
+			isFileShareWithoutCaption,
+		} = useMessageInfo(props.token, props.id)
 
 		return {
 			AVATAR,
 			chatExtrasStore,
+			isFileShare,
+			isFileShareWithoutCaption,
 		}
 	},
 
@@ -195,14 +202,6 @@ export default {
 		isOwnMessageQuoted() {
 			return this.actorId === this.$store.getters.getActorId()
 				&& this.actorType === this.$store.getters.getActorType()
-		},
-
-		isFileShareMessage() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
-		},
-
-		isFileShareWithoutCaption() {
-			return this.isFileShareMessage && this.message === '{file}'
 		},
 
 		richParameters() {

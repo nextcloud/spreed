@@ -146,8 +146,8 @@ import Poll from './Poll.vue'
 import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 
-import { useEditMessage } from '../../../../../composables/useEditMessage.js'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
+import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { EventBus } from '../../../../../services/EventBus.js'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
@@ -262,9 +262,14 @@ export default {
 	},
 
 	setup(props) {
+		const {
+			isEditable,
+			isFileShare,
+		} = useMessageInfo(props.token, props.id)
 		return {
 			isInCall: useIsInCall(),
-			isEditable: useEditMessage(props.token, props.id),
+			isEditable,
+			isFileShare,
 		}
 	},
 
@@ -280,7 +285,7 @@ export default {
 
 	computed: {
 		renderedMessage() {
-			if (this.isFileShareMessage && this.message !== '{file}') {
+			if (this.isFileShare && this.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
 				return '{file}' + '\n\n' + this.message
 			} else {
@@ -294,10 +299,6 @@ export default {
 
 		isDeletedMessage() {
 			return this.messageType === 'comment_deleted'
-		},
-
-		isFileShareMessage() {
-			return this.messageParameters?.file
 		},
 
 		isNewPollMessage() {
