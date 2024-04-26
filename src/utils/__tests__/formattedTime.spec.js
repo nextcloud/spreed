@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 import { formattedTime, futureRelativeTime } from '../formattedTime.ts'
 
 const TIME = (61 * 60 + 5) * 1000 // 1 hour, 1 minute, 5 seconds in ms

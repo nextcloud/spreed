@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: MIT
+ */
 import util from 'util'
 
 import mockconsole from 'mockconsole'

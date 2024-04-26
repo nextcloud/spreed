@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
 	<NcEmptyContent class="empty-view" :name="name" :description="description">
 		<template #icon>

@@ -1,4 +1,7 @@
-
+/**
+ * SPDX-FileCopyrightText: 2019 - 2022 The MediaPipe Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 var createTFLiteSIMDModule = (function() {
   var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
   if (typeof __filename !== 'undefined') _scriptDir = _scriptDir || __filename;

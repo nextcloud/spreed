@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 import type { components, operations } from './openapi/openapi-full.ts'
 
 // General

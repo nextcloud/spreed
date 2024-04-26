@@ -1,4 +1,8 @@
 /**
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/**
  * SET_TIMEOUT constant is used to set interval and it is set in
  * the id property of the request.data property. timeMs property must
  * also be set. request.data example:

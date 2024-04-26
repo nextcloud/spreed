@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: MIT
+ */
 import mockconsole from 'mockconsole'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'

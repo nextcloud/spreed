@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 import landscape from './vendor/models/selfie_segmentation_landscape.tflite'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
 import withSIMD from './vendor/tflite/tflite-simd.wasm'

@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 import { createLocalVue } from '@vue/test-utils'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'

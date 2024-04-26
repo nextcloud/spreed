@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
 	<EmptyView :name="t('spreed', 'Duplicate session')"
 		:description="t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed.')">
