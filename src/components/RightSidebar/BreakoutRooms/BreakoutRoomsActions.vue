@@ -193,6 +193,11 @@ export default {
 			return this.mainConversation.participantType === PARTICIPANT.TYPE.OWNER || this.mainConversation.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 
+		isOneToOne() {
+			return this.mainConversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.mainConversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
 		canModerate() {
 			return !this.isOneToOne && (this.canFullModerate || this.mainConversation.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
