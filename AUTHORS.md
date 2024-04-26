@@ -1,0 +1,42 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: CC0-1.0
+-->
+# Authors
+
+- Arthur Schiwon <blizzz@arthur-schiwon.de>
+- Bjoern Schiessle <bjoern@schiessle.org>
+- Carl Schwan <carl@carlschwan.eu>
+- Christoph Wurst <christoph@winzerhof-wurst.at>
+- Christopher Ng <chrng8@gmail.com>
+- Daniel Calviño Sánchez <danxuliu@gmail.com>
+- Daniel Rudolf <nextcloud.com@daniel-rudolf.de>
+- Denis Mosolov <denismosolov@gmail.com>
+- Dorra Jaouad <dorra.jaoued1@gmail.com>
+- Elmer Miroslav Mosher Golovin <miroslav@mishamosher.com>
+- Fon E. Noel NFEBE <me@nfebe.com>
+- Gary Kim <gary@garykim.dev>
+- Grigorii K. Shartsev <me@shgk.me>
+- Immanuel Pasanec <immanuel.pasanec@compaso.de>
+- Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
+- Ivan Sein <ivan@nextcloud.com>
+- Joachim Bauch <mail@joachim-bauch.de>
+- Joas Schilling <coding@schilljs.com>
+- John Molakvoæ <skjnldsv@protonmail.com>
+- Julien Veyssier <eneiluj@posteo.net>
+- Julius Härtl <jus@bitgrid.net>
+- Kate Döen <kate.doeen@nextcloud.com>
+- Lukas Reschke <lukas@statuscode.ch>
+- Maksim Sukharev <antreesy.web@gmail.com>
+- Marcel Müller <marcel.mueller@nextcloud.com>
+- Marco Ambrosini <marcoambrosini@proton.me>
+- Mario Danic <mario@lovelyhq.com>
+- Morris Jobke <hey@morrisjobke.de>
+- Richard Steinmetz <richard@steinmetz.cloud>
+- Robin Appelman <robin@icewind.nl>
+- Roeland Jago Douma <roeland@famdouma.nl>
+- Sergio Bertolín <sbertolin@solidgear.es>
+- Thomas Müller <thomas.mueller@tmit.eu>
+- Vincent Petry
+- Vitor Mattos <vitor@php.rio>
+- ownCloud, Inc.
