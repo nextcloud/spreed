@@ -1,7 +1,4 @@
 <?php
-/*
- * @copyright Copyright (c) 2024 Joas Schilling <coding@schilljs.com>
- */
 
 declare(strict_types=1);
 /**
