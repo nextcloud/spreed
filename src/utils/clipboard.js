@@ -1,4 +1,8 @@
 /**
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/**
  * @typedef {object} ClipboardContent
  * @property {('file'|'text'|'none')} kind content type (file or text)
  * @property {File[] | FileList | undefined} files files array

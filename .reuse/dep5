@@ -1,0 +1,182 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: talk
+Upstream-Contact: Nextcloud <info@nextcloud.com>
+Source: https://github.com/nextcloud/spreed/
+
+
+Files: appinfo/info.xml
+Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
+License: AGPL-3.0-or-later
+
+Files: l10n/*.js l10n/*.json
+Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
+License: AGPL-3.0-or-later
+
+Files: js/*.js.map js/*.js
+Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
+License: AGPL-3.0-or-later
+
+Files: openapi.json openapi-*.json src/types/openapi/*.ts
+Copyright: 2023 Nextcloud GmbH and Nextcloud contributors
+License: AGPL-3.0-or-later
+
+Files: .github/*
+Copyright: none
+License: CC0-1.0
+
+Files: docs/*.md
+Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
+License: CC0-1.0
+
+Files: tests/integration/features/*/*.feature
+Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
+License: CC0-1.0
+
+Files: .editorconfig babel.config.js package.json package-lock.json */package.json */package-lock.json composer.json composer.lock */composer.json */composer.lock README.md .gitignore .l10nignore psalm.xml tests/psalm-baseline.xml vendor-bin/*/composer.json vendor-bin/*/composer.lock .tx/config */phpunit.xml tsconfig.json
+Copyright: none
+License: CC0-1.0
+
+Files: src/utils/media/effects/virtual-background/vendor/tflite/*.wasm src/utils/media/effects/virtual-background/vendor/models/selfie_segmentation_landscape.tflite src/utils/media/effects/virtual-background/vendor/models/Model Card MediaPipe Selfie Segmentation.pdf src/utils/media/effects/virtual-background/vendor/README.md
+Copyright: 2019-2022 The MediaPipe Authors
+License: Apache-2.0
+
+# Nextcloud marks
+Files: img/app.svg img/app-dark.png img/app-dark.svg img/changelog.svg img/favicon.ico img/favicon.png img/favicon.svg img/favicon-mask.svg img/favicon-touch.png img/favicon-touch.svg
+Copyright: Nextcloud GmbH <https://nextcloud.com/trademarks/>
+License: LicenseRef-NextcloudTrademarks
+
+# Material design icons
+Files:
+ img/bridge-bot.png
+ img/bridge-services/irc.svg
+ img/bridge-services/msteams.svg
+ img/bridge-services/slack.svg
+ img/bridge-services/steam.svg
+ img/bridge-services/xmpp.svg
+ img/folder-multiple-image.svg
+ img/icon-contacts-white.svg
+ img/icon-conversation-federation-bright.svg
+ img/icon-conversation-federation-dark.svg
+ img/icon-conversation-group-bright.svg
+ img/icon-conversation-group-dark.svg
+ img/icon-conversation-mail-bright.svg
+ img/icon-conversation-mail-dark.svg
+ img/icon-conversation-password-bright.svg
+ img/icon-conversation-password-dark.svg
+ img/icon-conversation-phone-bright.svg
+ img/icon-conversation-phone-dark.svg
+ img/icon-conversation-public-bright.svg
+ img/icon-conversation-public-dark.svg
+ img/icon-conversation-text-bright.svg
+ img/icon-conversation-text-dark.svg
+ img/icon-conversation-user-bright.svg
+ img/icon-conversation-user-dark.svg
+ img/icon-mail-white.svg
+ img/icon-password-white.svg
+ img/icon-phone-white.svg
+ img/icon-public-white.svg
+ img/icon-team-white.svg
+ img/icon-text-white.svg
+ img/icon-user-white.svg
+ img/menu-people.svg
+ img/no-password.svg
+ img/phone.png
+ img/reply.svg
+Copyright: 2018-2024 Google LLC
+License: Apache-2.0
+
+# Animated emojis
+Files: img/emojis/*.gif
+Copyright: Google LLC
+License: CC-BY-4.0
+
+# Bridge services
+Files: img/bridge-services/discord.svg
+Copyright: Discord Inc.
+License: LicenseRef-Discord
+
+Files: img/bridge-services/matrix.svg
+Copyright: Matrix.org
+License: CC0-1.0
+
+Files: img/bridge-services/mattermost.svg
+Copyright: Mattermost, Inc
+License: LicenseRef-Mattermost
+
+Files: img/bridge-services/rocketchat.svg
+Copyright: Mattermost, Inc
+License: LicenseRef-RocketChat
+
+Files: img/bridge-services/telegram.svg
+Copyright: Telegram
+License: CC0-1.0
+
+Files: img/bridge-services/zulip.svg
+Copyright: The Zulip team
+License: MIT
+
+# Placeholders
+Files:
+ docs/screenshotplaceholders/placeholder-1.jpeg
+ docs/screenshotplaceholders/placeholder-2.jpeg
+ docs/screenshotplaceholders/placeholder-4.jpeg
+ docs/screenshotplaceholders/placeholder-5.jpeg
+ docs/screenshotplaceholders/placeholder-7.jpeg
+Copyright: Nextcloud GmbH and Nextcloud contributors
+License: CC0-1.0
+
+Files: docs/screenshotplaceholders/placeholder-0.jpeg
+Copyright: 2021 Mart Production
+License: CC0-1.0
+
+Files: docs/screenshotplaceholders/placeholder-3.jpeg
+Copyright: 2019 Sound On
+License: CC0-1.0
+
+Files:
+ docs/screenshotplaceholders/placeholder-6.jpeg
+ docs/screenshotplaceholders/placeholder-8.jpeg
+Copyright: 2021 Antoni Shkraba
+License: CC0-1.0
+
+# Sounds
+Files: img/join_call.flac img/join_call.ogg img/leave_call.flac img/leave_call.ogg
+Copyright: Marco Ambrosini <marcoambrosini@proton.me>
+License: CC0-1.0
+
+Files: img/LibremPhoneCall.flac img/LibremPhoneCall.ogg
+Copyright: 2017 Feandesign https://soundcloud.com/feandesign
+License: CC0-1.0
+
+# Video backgrounds
+Files: img/backgrounds/1_office.jpg
+Copyright: Breather, https://stocksnap.io/author/746
+License: CC0-1.0
+
+Files: img/backgrounds/2_home.jpg
+Copyright: Naomi Hébert, https://stocksnap.io/author/40931
+License: CC0-1.0
+
+Files: img/backgrounds/3_abstract.jpg
+Copyright: HD Wallpapers, https://stocksnap.io/author/hdwallpapers
+License: CC0-1.0
+
+Files: img/backgrounds/4_beach.jpg
+Copyright: Flo Dahm, https://stocksnap.io/author/flodahm
+License: CC-BY-SA-4.0
+
+Files: img/backgrounds/5_park.jpg
+Copyright: Basile Morin, https://commons.wikimedia.org/wiki/User:Basile_Morin
+License: CC-BY-SA-4.0
+
+Files: img/backgrounds/6_theater.jpg
+Copyright: Pietro Tessarin
+License: CC-BY-SA-4.0
+
+Files: img/backgrounds/7_library.jpg
+Copyright: Diliff, https://commons.wikimedia.org/wiki/User:Diliff
+License: CC-BY-SA-4.0
+
+Files: img/backgrounds/8_space_station.jpg
+Copyright: Karen Nyberg
+License: LicenseRef-Nasa

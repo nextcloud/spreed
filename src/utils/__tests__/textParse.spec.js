@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 import { parseMentions, parseSpecialSymbols } from '../textParse.ts'
 
 jest.mock('@nextcloud/router', () => ({

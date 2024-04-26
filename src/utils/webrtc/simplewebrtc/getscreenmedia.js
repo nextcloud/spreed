@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: MIT
+ */
 /* global chrome */
 
 // getScreenMedia helper by @HenrikJoreteg

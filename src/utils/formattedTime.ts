@@ -1,4 +1,8 @@
 /**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/**
  * Calculates the stopwatch string given the time (ms)
  *
  * @param time the time in ms
