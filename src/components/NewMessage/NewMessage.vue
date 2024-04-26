@@ -351,10 +351,6 @@ export default {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
-		isOneToOneConversation() {
-			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-		},
-
 		noChatPermission() {
 			return (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) === 0
 		},
@@ -1008,7 +1004,7 @@ export default {
 		},
 
 		async checkAbsenceStatus() {
-			if (!this.isOneToOneConversation) {
+			if (!this.isOneToOne) {
 				return
 			}
 
