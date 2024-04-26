@@ -286,6 +286,7 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
+import { useEditMessage } from '../../../../../composables/useEditMessage.js'
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
@@ -462,14 +463,16 @@ export default {
 
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
-	setup() {
+	setup(props) {
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
+		const isEditable = useEditMessage(props.token, props.id)
 
 		return {
 			messageActions,
 			supportReminders,
 			reactionsStore,
+			isEditable,
 		}
 	},
 
@@ -501,20 +504,6 @@ export default {
 
 		isModifiable() {
 			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
-		},
-
-		isOneToOne() {
-			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		isEditable() {
-			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-					|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
-				return false
-			}
-
-			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
 		},
 
 		isDeleteable() {
@@ -556,10 +545,6 @@ export default {
 
 		isFileShareOnly() {
 			return this.isFileShare && this.message === '{file}'
-		},
-
-		isObjectShare() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('object'))
 		},
 
 		isCurrentGuest() {
