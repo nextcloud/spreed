@@ -85,7 +85,7 @@
 						</template>
 						{{ t('spreed', 'Edit message') }}
 					</NcActionButton>
-					<NcActionButton v-if="!isFileShareOnly"
+					<NcActionButton v-if="!isFileShareWithoutCaption"
 						close-after-click
 						@click.stop="handleCopyMessageText">
 						<template #icon>
@@ -286,8 +286,8 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
-import { useEditMessage } from '../../../../../composables/useEditMessage.js'
-import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
+import { CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
@@ -296,8 +296,6 @@ import { parseMentions } from '../../../../../utils/textParse.ts'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
-const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
-const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
 
 export default {
 	name: 'MessageButtonsBar',
@@ -466,13 +464,27 @@ export default {
 	setup(props) {
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
-		const isEditable = useEditMessage(props.token, props.id)
+		const {
+			isEditable,
+			isDeleteable,
+			isModifiable,
+			isMyMsg,
+			isFileShare,
+			isFileShareWithoutCaption,
+			isConversationReadOnly,
+		} = useMessageInfo(props.token, props.id)
 
 		return {
 			messageActions,
 			supportReminders,
 			reactionsStore,
 			isEditable,
+			isModifiable,
+			isMyMsg,
+			isFileShare,
+			isFileShareWithoutCaption,
+			isConversationReadOnly,
+			isDeleteable,
 		}
 	},
 
@@ -502,25 +514,6 @@ export default {
 			return this.getMessagesListScroller()
 		},
 
-		isModifiable() {
-			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
-		},
-
-		isDeleteable() {
-			if (!this.isModifiable) {
-				return false
-			}
-
-			return (canDeleteMessageUnlimited || (moment(this.timestamp * 1000).add(6, 'h')) > moment())
-				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
-				&& !this.isDeleting
-				&& (this.isMyMsg
-					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-						&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-						&& (this.conversation.participantType === PARTICIPANT.TYPE.OWNER
-							|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR)))
-		},
-
 		isPrivateReplyable() {
 			return this.isReplyable
 				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
@@ -539,25 +532,8 @@ export default {
 			}
 		},
 
-		isFileShare() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
-		},
-
-		isFileShareOnly() {
-			return this.isFileShare && this.message === '{file}'
-		},
-
 		isCurrentGuest() {
 			return this.$store.getters.isActorGuest()
-		},
-
-		isMyMsg() {
-			return this.actorId === this.$store.getters.getActorId()
-				&& this.actorType === this.$store.getters.getActorType()
-		},
-
-		isConversationReadOnly() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		isDeletedMessage() {
@@ -830,7 +806,7 @@ export default {
 		},
 
 		editMessage() {
-			if (!canEditMessage) {
+			if (!this.isEditable) {
 				return
 			}
 			this.$emit('edit')

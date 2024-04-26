@@ -5,7 +5,7 @@
 
 import { computed, ref } from 'vue'
 
-import { ATTENDEE, CONVERSATION } from '../constants.js'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.js'
 
 /**
  * Reusable properties for Conversation... items
@@ -114,8 +114,24 @@ export function useConversationInfo({
 		})
 	})
 
+	const isOneToOne = computed(() => {
+		return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(item.value.type)
+	})
+
+	const isConversationReadOnly = computed(() => {
+		return item.value.readOnly === CONVERSATION.STATE.READ_ONLY
+	})
+
+	const isModifiable = computed(() =>
+		!isConversationReadOnly.value
+		&& item.value.participantType !== PARTICIPANT.TYPE.GUEST
+		&& item.value.participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR)
+
 	return {
 		counterType,
 		conversationInformation,
+		isOneToOne,
+		isConversationReadOnly,
+		isModifiable,
 	}
 }

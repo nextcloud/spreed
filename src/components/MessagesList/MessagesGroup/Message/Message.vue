@@ -446,10 +446,6 @@ export default {
 				&& this.messageType !== 'command'
 				&& this.messageType !== 'comment_deleted'
 		},
-
-		isFileShareOnly() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file')) && this.message === '{file}'
-		},
 	},
 
 	mounted() {
