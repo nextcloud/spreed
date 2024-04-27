@@ -1,3 +1,12 @@
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-FileCopyrightText: 2024 Arthur Schiwon <blizzz@arthur-schiwon.de>
+# SPDX-License-Identifier: MIT
+
 name: OpenAPI
 
 on: pull_request
@@ -17,34 +26,50 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+
+      - name: Get php version
+        id: php_versions
+        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
 
       - name: Set up php
-        uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d # v2
+        uses: shivammathur/setup-php@c665c7a15b5295c2488ac8a87af9cb806cd72198 # v2
         with:
-          php-version: '8.2'
+          php-version: ${{ steps.php_versions.outputs.php-available }}
           extensions: xml
           coverage: none
           ini-file: development
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check Typescript OpenApi types
+        id: check_typescript_openapi
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        with:
+          files: "src/types/openapi/openapi*.ts"
+
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@8205673bab74a63eb9b8093402fd9e0e018663a1 # v2.2
-        id: versions
+        if: steps.check_typescript_openapi.outputs.files_exists == 'true'
+        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4 # v3
+        id: node_versions
+        # Continue if no package.json
+        continue-on-error: true
         with:
           fallbackNode: '^20'
           fallbackNpm: '^10'
 
-      - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v3
+      - name: Set up node ${{ steps.node_versions.outputs.nodeVersion }}
+        if: ${{ steps.node_versions.outputs.nodeVersion }}
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: ${{ steps.versions.outputs.nodeVersion }}
+          node-version: ${{ steps.node_versions.outputs.nodeVersion }}
 
-      - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
-        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+      - name: Set up npm ${{ steps.node_versions.outputs.npmVersion }}
+        if: ${{ steps.node_versions.outputs.nodeVersion }}
+        run: npm i -g npm@"${{ steps.node_versions.outputs.npmVersion }}"
 
       - name: Install dependencies & build
+        if: ${{ steps.node_versions.outputs.nodeVersion }}
         env:
           CYPRESS_INSTALL_BINARY: 0
           PUPPETEER_SKIP_DOWNLOAD: true
@@ -59,7 +84,7 @@ jobs:
 
       - name: Check openapi*.json and typescript changes
         run: |
-          bash -c "[[ ! \"`git status --porcelain `\" ]] || (echo 'Please run \"composer run openapi\" and commit the openapi*.json files and src/types/openapi/openapi*.ts, see the section \"Show changes on failure\" for details' && exit 1)"
+          bash -c "[[ ! \"`git status --porcelain `\" ]] || (echo 'Please run \"composer run openapi\" and commit the openapi*.json files and (if applicable) src/types/openapi/openapi*.ts, see the section \"Show changes on failure\" for details' && exit 1)"
 
       - name: Show changes on failure
         if: failure()
