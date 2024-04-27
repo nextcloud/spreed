@@ -46,7 +46,7 @@
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
-    "libphonenumber-js": "^1.10.60",
+    "libphonenumber-js": "^1.10.61",
     "lodash": "^4.17.21",
     "mockconsole": "0.0.1",
     "nextcloud-vue-collections": "^0.11.1",
