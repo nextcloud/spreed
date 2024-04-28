@@ -267,6 +267,7 @@ OC.L10N.register(
     "Created at" : "Dibuat saat",
     "Pending" : "Tunggu",
     "Error" : "Kesalahan",
+    "Failed" : "Gagal",
     "OK" : "OK",
     "Back" : "Kembali",
     "Cancel" : "Membatalkan",
