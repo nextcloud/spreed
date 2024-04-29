@@ -2,6 +2,9 @@
 #
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
 
 name: Auto approve nextcloud/ocp
 
@@ -43,7 +46,7 @@ jobs:
 
       # Enable GitHub auto merge
       - name: Auto merge
-        uses: alexwilson/enable-github-automerge-action@47bd20ae5827ba2ec3897f94cbbf6d85f94acb24 # main
+        uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # main
         if: startsWith(steps.branchname.outputs.branch, 'automated/noid/') && endsWith(steps.branchname.outputs.branch, 'update-nextcloud-ocp')
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

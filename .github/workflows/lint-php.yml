@@ -2,6 +2,9 @@
 #
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2021-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
 
 name: Lint php
 
@@ -21,7 +24,7 @@ jobs:
       php-versions: ${{ steps.versions.outputs.php-versions }}
     steps:
       - name: Checkout app
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - name: Get version matrix
         id: versions
         uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.0.0
@@ -37,10 +40,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d # v2
+        uses: shivammathur/setup-php@c665c7a15b5295c2488ac8a87af9cb806cd72198 # v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
