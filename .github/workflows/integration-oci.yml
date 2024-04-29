@@ -56,6 +56,7 @@ jobs:
         php-versions: ['8.2']
         server-versions: ['master']
         guests-versions: ['master']
+        circles-versions: ['master']
         call-summary-bot-versions: ['main']
         notifications-versions: ['master']
 
@@ -105,6 +106,13 @@ jobs:
           path: apps/call_summary_bot
           ref: ${{ matrix.call-summary-bot-versions }}
 
+      - name: Checkout circles app
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          repository: nextcloud/circles
+          path: apps/circles
+          ref: ${{ matrix.circles-versions }}
+
       - name: Checkout guests app
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
@@ -148,6 +156,7 @@ jobs:
           ./occ config:system:set hashing_default_password --value=true --type=boolean
           ./occ app:enable --force ${{ env.APP_NAME }}
           ./occ app:enable --force call_summary_bot
+          ./occ app:enable --force circles
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
 

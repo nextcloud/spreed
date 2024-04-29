@@ -59,6 +59,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static ?array $nextChatRequestParameters = null;
 	/** @var array<string, int> */
 	protected static array $modifiedSince;
+	/** @var array<string, string> */
+	protected static array $createdTeams = [];
 
 
 	protected static array $permissionsMap = [
@@ -109,6 +111,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
+	}
+
+	public static function getTeamIdForLabel(string $label): string {
+		return self::$createdTeams[$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
 	}
 
 	public static function getMessageIdForText(string $text): int {
@@ -175,6 +181,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
+		self::$createdTeams = [];
 		$this->createdGuestAccountUsers = [];
 	}
 
@@ -196,6 +203,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		foreach ($this->createdGroups as $group) {
 			$this->deleteGroup($group);
+		}
+		foreach (self::$createdTeams as $team => $id) {
+			$this->deleteTeam($team);
 		}
 		foreach ($this->createdGuestAccountUsers as $user) {
 			$this->deleteGuestUser($user);
@@ -3621,6 +3631,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$ipv6Attempts = $info['attempts'];
 
 		Assert::assertEquals($totalCount, $ipv4Attempts + $ipv6Attempts, 'IP has bruteforce attempts for other actions registered');
+	}
+
+	/**
+	 * @Given /^team "([^"]*)" exists$/
+	 */
+	public function assureTeamExists(string $team): void {
+		$this->runOcc(['circles:manage:create', '--type', '1', '--output', 'json', 'admin', $team]);
+		$this->theCommandWasSuccessful();
+
+		$output = $this->getLastStdOut();
+		$data = json_decode($output, true);
+
+		self::$createdTeams[$team] = $data['id'];
+	}
+
+	/**
+	 * @Given /^add user "([^"]*)" to team "([^"]*)"$/
+	 */
+	public function addTeamMember(string $user, string $team): void {
+		$this->runOcc(['circles:members:add', '--type', '1', self::$createdTeams[$team], $user]);
+		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * @Given /^delete team "([^"]*)"$/
+	 */
+	public function deleteTeam(string $team): void {
+		$this->runOcc(['circles:manage:destroy', self::$createdTeams[$team]]);
+		$this->theCommandWasSuccessful();
+
+		unset(self::$createdTeams[$team]);
 	}
 
 	/**
