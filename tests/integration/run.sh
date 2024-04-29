@@ -8,6 +8,7 @@ PROCESS_ID=$$
 APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="master"
+CIRCLES_BRANCH="master"
 CSB_BRANCH="main"
 
 APP_INTEGRATION_DIR=$PWD
@@ -71,17 +72,20 @@ ${ROOT_DIR}/occ app:getpath spreedcheats
 # already there or in "apps").
 ${ROOT_DIR}/occ app:getpath notifications || (cd ../../../ && git clone --depth 1 --branch ${NOTIFICATIONS_BRANCH} https://github.com/nextcloud/notifications)
 ${ROOT_DIR}/occ app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
+${ROOT_DIR}/occ app:getpath circles || (cd ../../../ && git clone --depth 1 --branch ${CIRCLES_BRANCH} https://github.com/nextcloud/circles)
 ${ROOT_DIR}/occ app:getpath call_summary_bot || (cd ../../../ && git clone --depth 1 --branch ${CSB_BRANCH} https://github.com/nextcloud/call_summary_bot)
 
 ${ROOT_DIR}/occ app:enable spreed || exit 1
 ${ROOT_DIR}/occ app:enable --force spreedcheats || exit 1
 ${ROOT_DIR}/occ app:enable --force notifications || exit 1
 ${ROOT_DIR}/occ app:enable --force guests || exit 1
+${ROOT_DIR}/occ app:enable --force circles || exit 1
 ${ROOT_DIR}/occ app:enable --force call_summary_bot || exit 1
 
 ${ROOT_DIR}/occ app:list | grep spreed
 ${ROOT_DIR}/occ app:list | grep notifications
 ${ROOT_DIR}/occ app:list | grep guests
+${ROOT_DIR}/occ app:list | grep circles
 ${ROOT_DIR}/occ app:list | grep call_summary_bot
 
 echo ''

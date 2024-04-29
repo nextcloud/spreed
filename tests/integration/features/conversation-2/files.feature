@@ -83,6 +83,16 @@ Feature: conversation/files
     And user "participant3" is not participant of room "file welcome (2).txt room" (v4)
 
 
+  Scenario: get room for file shared with team
+    Given team "team1" exists
+    And add user "participant1" to team "team1"
+    And add user "participant2" to team "team1"
+    And user "participant1" shares "welcome.txt" with team "team1" with OCS 100
+    When user "participant1" gets the room for path "welcome.txt" with 200 (v1)
+    And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
+    Then user "participant1" is not participant of room "file welcome (2).txt room" (v4)
+    And user "participant2" is not participant of room "file welcome (2).txt room" (v4)
+
 
   Scenario: get room for link share
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
