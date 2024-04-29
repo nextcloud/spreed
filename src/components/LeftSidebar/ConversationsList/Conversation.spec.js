@@ -145,7 +145,7 @@ describe('Conversation.vue', () => {
 
 		test('displays nothing when there is no last chat message', () => {
 			item.lastMessage = {}
-			testConversationLabel(item, '')
+			testConversationLabel(item, 'No messages')
 		})
 
 		describe('author name', () => {
