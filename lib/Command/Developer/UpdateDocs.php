@@ -56,7 +56,8 @@ class UpdateDocs extends Base {
 		$info = $this->appManager->getAppInfo('spreed');
 		$documentation = "# Talk occ commands\n\n";
 		foreach ($info['commands'] as $namespace) {
-			if ($namespace === self::class) {
+			if ($namespace === self::class
+				|| $namespace === AgeChatMessages::class) {
 				continue;
 			}
 
