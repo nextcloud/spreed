@@ -176,6 +176,8 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited(Room $room, array $attendees): void {
+		$allUserIds = $this->participantService->getParticipantUserIds($room);
+		sort($allUserIds);
 		$userIds = [];
 		foreach ($attendees as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
@@ -189,7 +191,7 @@ class BackendNotifier {
 				'userids' => $userIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->participantService->getParticipantUserIds($room),
+				'alluserids' => $allUserIds,
 				'properties' => $room->getPropertiesForSignaling('', false),
 			],
 		]);
@@ -210,6 +212,8 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
+		$allUserIds = $this->participantService->getParticipantUserIds($room);
+		sort($allUserIds);
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
@@ -217,7 +221,7 @@ class BackendNotifier {
 				'sessionids' => $sessionIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->participantService->getParticipantUserIds($room),
+				'alluserids' => $allUserIds,
 				'properties' => $room->getPropertiesForSignaling('', false),
 			],
 		]);
