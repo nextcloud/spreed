@@ -162,6 +162,7 @@ class RoomFormatter {
 			return array_merge($roomData, [
 				'name' => $room->getName(),
 				'displayName' => $room->getDisplayName($isListingBreakoutRooms || $isSIPBridgeRequest || $this->userId === null ? '' : $this->userId, $isListingBreakoutRooms || $isSIPBridgeRequest),
+				'description' => $room->getListable() !== Room::LISTABLE_NONE ? $room->getDescription() : '',
 				'objectType' => $room->getObjectType(),
 				'objectId' => $room->getObjectId(),
 				'readOnly' => $room->getReadOnly(),

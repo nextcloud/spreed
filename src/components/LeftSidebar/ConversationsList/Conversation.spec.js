@@ -191,10 +191,11 @@ describe('Conversation.vue', () => {
 				testConversationLabel(item, 'Guest: hello')
 			})
 
-			test('displays last message for search results', () => {
+			test('displays description for search results', () => {
 				// search results have no actor id
 				item.actorId = null
-				testConversationLabel(item, 'Alice: hello', true)
+				item.description = 'This is a description'
+				testConversationLabel(item, 'This is a description', true)
 			})
 		})
 

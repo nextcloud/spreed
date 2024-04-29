@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { provide, ref } from 'vue'
 
 import RoomSelector from '../../RoomSelector.vue'
 
@@ -23,6 +24,10 @@ export default {
 
 	components: {
 		RoomSelector,
+	},
+
+	setup() {
+		provide('exposeDescription', ref(true))
 	},
 
 	data() {
