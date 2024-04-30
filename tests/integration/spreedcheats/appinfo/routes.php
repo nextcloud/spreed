@@ -9,5 +9,6 @@ declare(strict_types=1);
 return [
 	'ocs' => [
 		['name' => 'Api#resetSpreed', 'url' => '/', 'verb' => 'DELETE'],
+		['name' => 'Api#ageChat', 'url' => '/age', 'verb' => 'POST'],
 	],
 ];
