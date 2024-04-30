@@ -28,12 +28,14 @@ Feature: conversation/find-listed
     And user "creator" creates room "public-room" (v4)
       | roomType | 3           |
       | roomName | public-room |
+    And user "creator" sets description for room "group-room" to "the group-room description" with 200 (v4)
+    And user "creator" sets description for room "public-room" to "the public-room description" with 200 (v4)
     When user "creator" allows listing room "group-room" for "users" with 200 (v4)
     And user "creator" allows listing room "public-room" for "users" with 200 (v4)
     Then user "regular-user" can find listed rooms (v4)
-      | name        | listable |
-      | group-room  | 1        |
-      | public-room | 1        |
+      | name        | listable | description                 |
+      | group-room  | 1        | the group-room description  |
+      | public-room | 1        | the public-room description |
     And user "user-guest@example.com" cannot find any listed rooms (v4)
 
   Scenario: All users can find all-listed rooms
