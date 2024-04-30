@@ -349,21 +349,23 @@ class Listener implements IEventListener {
 						$this->notificationManager->setPreparingPushNotification(true);
 						$this->preparedCallNotifications[$languageCode] = $this->notificationProvider->prepare($translatedNotification, $languageCode);
 						$this->notificationManager->setPreparingPushNotification(false);
-						$notification = $translatedNotification;
+						$userNotification = $translatedNotification;
 						if ($room->getToken() === 'c9bui2ju') {
 							\OC::$server->getLogger()->warning('Debugging step #7.2.' . $languageCode . ': ' . microtime(true));
 						}
 					} else {
-						$notification = $this->preparedCallNotifications[$languageCode];
+						$userNotification = $this->preparedCallNotifications[$languageCode];
 						if ($room->getToken() === 'c9bui2ju') {
 							\OC::$server->getLogger()->warning('Debugging step #7.2.reused.' . $languageCode . ': ' . microtime(true));
 						}
 					}
+				} else {
+					$userNotification = $notification;
 				}
 
 				try {
-					$notification->setUser($userId);
-					$this->notificationManager->notify($notification);
+					$userNotification->setUser($userId);
+					$this->notificationManager->notify($userNotification);
 				} catch (\InvalidArgumentException $e) {
 					$this->logger->error($e->getMessage(), ['exception' => $e]);
 				}
