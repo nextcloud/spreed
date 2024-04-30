@@ -320,6 +320,7 @@ describe('Message.vue', () => {
 			function renderRichObject(message, messageParameters, expectedRichParameters) {
 				messageProps.message = message
 				messageProps.messageParameters = messageParameters
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps })
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
@@ -744,7 +745,6 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 				provide: injected,
 			})
-
 			const message = wrapper.findComponent({ name: 'NcRichText' })
 			expect(message.attributes('text')).toBe('test message')
 

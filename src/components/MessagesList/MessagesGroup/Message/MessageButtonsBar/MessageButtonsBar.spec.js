@@ -13,6 +13,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
+import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
@@ -96,6 +97,7 @@ describe('MessageButtonsBar.vue', () => {
 	})
 
 	describe('actions', () => {
+		let useMessageInfoSpy
 
 		beforeEach(() => {
 			store = new Store(testStoreConfig)
@@ -103,6 +105,12 @@ describe('MessageButtonsBar.vue', () => {
 			injected = {
 				getMessagesListScroller: jest.fn(),
 			}
+
+			useMessageInfoSpy = jest.spyOn(useMessageInfoModule, 'useMessageInfo')
+		})
+
+		afterEach(() => {
+			useMessageInfoSpy.mockRestore()
 		})
 
 		describe('reply action', () => {
@@ -212,6 +220,9 @@ describe('MessageButtonsBar.vue', () => {
 			}
 
 			test('hides private reply action for own messages', async () => {
+				useMessageInfoSpy.mockReturnValue({
+					isMyMsg: () => true,
+			   })
 				// using default message props which have the
 				// actor id set to the current user
 				testPrivateReplyActionVisible(false)
@@ -244,6 +255,9 @@ describe('MessageButtonsBar.vue', () => {
 				const mockDate = new Date('2020-05-07 10:00:00')
 				jest.spyOn(global.Date, 'now')
 					.mockImplementation(() => mockDate)
+				useMessageInfoSpy.mockReturnValue({
+					isDeleteable: () => true,
+				})
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
 					store,
@@ -301,6 +315,9 @@ describe('MessageButtonsBar.vue', () => {
 			})
 
 			test('show delete action for file messages', () => {
+				useMessageInfoSpy.mockReturnValue({
+					isDeleteable: () => true,
+				})
 				messageProps.message = '{file}'
 				messageProps.messageParameters.file = {}
 				testDeleteMessageVisible(true)
@@ -313,6 +330,9 @@ describe('MessageButtonsBar.vue', () => {
 			})
 
 			test('shows delete action on other people messages for moderators', () => {
+				useMessageInfoSpy.mockReturnValue({
+					isDeleteable: () => true,
+				})
 				messageProps.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.GROUP
 				conversationProps.participantType = PARTICIPANT.TYPE.MODERATOR
@@ -320,6 +340,9 @@ describe('MessageButtonsBar.vue', () => {
 			})
 
 			test('shows delete action on other people messages for owner', () => {
+				useMessageInfoSpy.mockReturnValue({
+					isDeleteable: () => true,
+				})
 				messageProps.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.PUBLIC
 				conversationProps.participantType = PARTICIPANT.TYPE.OWNER
