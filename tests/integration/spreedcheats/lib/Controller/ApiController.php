@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\Controller;
 
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -33,22 +34,14 @@ use OCP\IRequest;
 use OCP\Share\IShare;
 
 class ApiController extends OCSController {
-	/** @var IDBConnection */
-	private $db;
-
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IDBConnection $db
+		protected IDBConnection $db,
 	) {
 		parent::__construct($appName, $request);
-		$this->db = $db;
 	}
 
-	/**
-	 * @NoCSRFRequired
-	 *
-	 * @return DataResponse
-	 */
 	public function resetSpreed(): DataResponse {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_attachments')->executeStatement();
@@ -124,6 +117,64 @@ class ApiController extends OCSController {
 		} catch (\Throwable $e) {
 			// Ignore
 		}
+
+		return new DataResponse();
+	}
+
+	public function ageChat(string $token, int $hours): DataResponse {
+		$query = $this->db->getQueryBuilder();
+		$query->select('id')
+			->from('talk_rooms')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+
+		$result = $query->executeQuery();
+		$roomId = (int) $result->fetchOne();
+		$result->closeCursor();
+
+		if (!$roomId) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('comments')
+			->set('creation_timestamp', $update->createParameter('creation_timestamp'))
+			->set('expire_date', $update->createParameter('expire_date'))
+			->set('meta_data', $update->createParameter('meta_data'))
+			->where($update->expr()->eq('id', $update->createParameter('id')));
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('id', 'creation_timestamp', 'expire_date', 'meta_data')
+			->from('comments')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter('chat')))
+			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($roomId)));
+
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			$creationTimestamp = new \DateTime($row['creation_timestamp']);
+			$creationTimestamp->sub(new \DateInterval('PT' . $hours . 'H'));
+
+			$expireDate = null;
+			if ($row['expire_date']) {
+				$expireDate = new \DateTime($row['expire_date']);
+				$expireDate->sub(new \DateInterval('PT' . $hours . 'H'));
+			}
+
+			$metaData = 'null';
+			if ($row['meta_data'] !== 'null') {
+				$metaData = json_decode($row['meta_data'], true);
+				if (isset($metaData['last_edited_time'])) {
+					$metaData['last_edited_time'] -= $hours * 3600;
+				}
+				$metaData = json_encode($metaData);
+			}
+
+			$update->setParameter('id', $row['id']);
+			$update->setParameter('creation_timestamp', $creationTimestamp, IQueryBuilder::PARAM_DATE);
+			$update->setParameter('expire_date', $expireDate, IQueryBuilder::PARAM_DATE);
+			$update->setParameter('meta_data', $metaData);
+			$update->executeStatement();
+		}
+		$result->closeCursor();
 
 		return new DataResponse();
 	}
