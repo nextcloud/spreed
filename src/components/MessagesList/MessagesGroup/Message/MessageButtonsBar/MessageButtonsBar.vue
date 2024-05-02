@@ -480,11 +480,11 @@ export default {
 		const {
 			isEditable,
 			isDeleteable,
-			isModifiable,
-			isMyMsg,
+			isCurrentUserOwnMessage,
 			isFileShare,
 			isFileShareWithoutCaption,
 			isConversationReadOnly,
+			isConversationModifiable,
 		} = useMessageInfo(props.token, props.id)
 
 		return {
@@ -492,12 +492,12 @@ export default {
 			supportReminders,
 			reactionsStore,
 			isEditable,
-			isModifiable,
-			isMyMsg,
+			isCurrentUserOwnMessage,
 			isFileShare,
 			isFileShareWithoutCaption,
-			isConversationReadOnly,
 			isDeleteable,
+			isConversationReadOnly,
+			isConversationModifiable,
 		}
 	},
 
@@ -531,7 +531,7 @@ export default {
 			return this.isReplyable
 				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
 					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
-				&& !this.isMyMsg
+				&& !this.isCurrentUserOwnMessage
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.isActorUser()
 		},
