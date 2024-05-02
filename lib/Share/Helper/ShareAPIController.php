@@ -87,8 +87,8 @@ class ShareAPIController {
 
 		if ($expireDate !== '') {
 			try {
-				$expireDate = $this->parseDate($expireDate);
-				$share->setExpirationDate($expireDate);
+				$expireDateTime = $this->parseDate($expireDate);
+				$share->setExpirationDate($expireDateTime);
 			} catch (\Exception $e) {
 				throw new OCSNotFoundException($this->l->t('Invalid date, date format must be YYYY-MM-DD'));
 			}
