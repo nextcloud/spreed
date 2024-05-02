@@ -2004,7 +2004,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userEditsMessageToRoom(string $user, string $oldMessage, string $identifier, string $newMessage, string $statusCode, string $apiVersion = 'v1') {
+	public function userEditsMessageToRoom(string $user, string $oldMessage, string $identifier, string $newMessage, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null) {
 		$oldMessage = substr($oldMessage, 1, -1);
 		$oldMessage = str_replace('\n', "\n", $oldMessage);
 		$messageId = self::$textToMessageId[$oldMessage];
@@ -2020,8 +2020,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages
 
-		self::$textToMessageId[$newMessage] = $messageId;
-		self::$messageIdToText[$messageId] = $newMessage;
+		if ($statusCode === 200 || $statusCode === 202) {
+			self::$textToMessageId[$newMessage] = $messageId;
+			self::$messageIdToText[$messageId] = $newMessage;
+		} elseif ($formData instanceof TableNode) {
+			Assert::assertEquals(
+				$formData->getRowsHash(),
+				$this->getDataFromResponse($this->response),
+			);
+		}
 	}
 
 	/**
@@ -3874,6 +3881,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'recordingConsent' => $recordingConsent,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Given /^aging messages (\d+) hours in room "([^"]*)"$/
+	 */
+	public function occAgeChatMessages(int $hours, string $identifier): void {
+		$this->runOcc(['talk:developer:age-chat-messages', '--hours', $hours, self::$identifierToToken[$identifier]]);
+		$this->theCommandWasSuccessful();
 	}
 
 	/**

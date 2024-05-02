@@ -58,6 +58,11 @@ Feature: chat-1/edit-message
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType     | actorId       | actorDisplayName | message            | messageParameters | parentMessage | lastEditActorType | lastEditActorId      | lastEditActorDisplayName |
       | room | deleted_users | deleted_users |                  | Message 1 - Edit 2 | []                |               | deleted_users     | deleted_users        |                          |
+    When aging messages 6 hours in room "room"
+    And user "participant1" edits message "Message 1 - Edit 1" in room "room" to "Message 1 - Edit 2" with 200
+    When aging messages 24 hours in room "room"
+    And user "participant1" edits message "Message 1 - Edit 2" in room "room" to "Message 1 - Edit Too old" with 400
+      | error | age |
 
   Scenario: Editing a caption
     Given user "participant1" creates room "room" (v4)
