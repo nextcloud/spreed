@@ -962,8 +962,8 @@ export default {
 			this.blurInput()
 		},
 
-		handleEditLastMessage() {
-			if (!canEditMessage || this.upload || this.broadcast || this.isRecordingAudio) {
+		handleEditLastMessage(event) {
+			if (!canEditMessage || this.text || this.upload || this.broadcast || this.isRecordingAudio) {
 				return
 			}
 			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast(message => {
@@ -976,6 +976,7 @@ export default {
 				return
 			}
 
+			event.preventDefault()
 			this.chatExtrasStore.initiateEditingMessage({
 				token: this.token,
 				id: lastMessageByCurrentUser.id,
