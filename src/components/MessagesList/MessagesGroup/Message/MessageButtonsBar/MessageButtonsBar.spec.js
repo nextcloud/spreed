@@ -221,7 +221,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides private reply action for own messages', async () => {
 				useMessageInfoSpy.mockReturnValue({
-					isMyMsg: () => true,
+					isCurrentUserOwnMessage: () => true,
 			   })
 				// using default message props which have the
 				// actor id set to the current user

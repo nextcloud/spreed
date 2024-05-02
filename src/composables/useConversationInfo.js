@@ -114,7 +114,7 @@ export function useConversationInfo({
 		})
 	})
 
-	const isOneToOne = computed(() => {
+	const isOneToOneConversation = computed(() => {
 		return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(item.value.type)
 	})
 
@@ -122,7 +122,7 @@ export function useConversationInfo({
 		return item.value.readOnly === CONVERSATION.STATE.READ_ONLY
 	})
 
-	const isModifiable = computed(() =>
+	const isConversationModifiable = computed(() =>
 		!isConversationReadOnly.value
 		&& item.value.participantType !== PARTICIPANT.TYPE.GUEST
 		&& item.value.participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR)
@@ -130,8 +130,8 @@ export function useConversationInfo({
 	return {
 		counterType,
 		conversationInformation,
-		isOneToOne,
+		isOneToOneConversation,
 		isConversationReadOnly,
-		isModifiable,
+		isConversationModifiable,
 	}
 }

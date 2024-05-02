@@ -44,21 +44,21 @@ export function useMessageInfo(token = null, messageId = null) {
 	}
 
 	const {
-		isOneToOne,
+		isOneToOneConversation,
 		isConversationReadOnly,
-		isModifiable,
+		isConversationModifiable,
 	} = useConversationInfo({ item: conversation })
 
 	const isObjectShare = computed(() => Object.keys(Object(message.value.messageParameters)).some(key => key.startsWith('object')))
 
-	const isMyMsg = computed(() =>
+	const isCurrentUserOwnMessage = computed(() =>
 		message.value.actorId === store.getters.getActorId()
 		&& message.value.actorType === store.getters.getActorType()
 	)
 
 	const isEditable = computed(() => {
-		if (!canEditMessage || !isModifiable.value || isObjectShare.value
-			|| ((!store.getters.isModerator || isOneToOne.value) && !isMyMsg.value)) {
+		if (!canEditMessage || !isConversationModifiable.value || isObjectShare.value
+			|| ((!store.getters.isModerator || isOneToOneConversation.value) && !isCurrentUserOwnMessage.value)) {
 			return false
 		}
 
@@ -70,22 +70,22 @@ export function useMessageInfo(token = null, messageId = null) {
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
 	const isDeleteable = computed(() => {
-		if (!isModifiable.value) {
+		if (!isConversationModifiable.value) {
 			return false
 		}
 
 		return (canDeleteMessageUnlimited || (moment(message.value.timestamp * 1000).add(6, 'h')) > moment())
 			&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
-			&& (isMyMsg.value || (!isOneToOne.value && store.getters.isModerator))
+			&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 			&& !isConversationReadOnly.value
 	})
 
 	return {
 		isEditable,
 		isDeleteable,
-		isMyMsg,
+		isCurrentUserOwnMessage,
 		isObjectShare,
-		isModifiable,
+		isConversationModifiable,
 		isConversationReadOnly,
 		isFileShareWithoutCaption,
 		isFileShare,
