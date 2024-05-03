@@ -475,6 +475,7 @@ export default {
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
 	setup(props) {
+		const { token, id } = toRefs(props)
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const {
@@ -485,7 +486,7 @@ export default {
 			isFileShareWithoutCaption,
 			isConversationReadOnly,
 			isConversationModifiable,
-		} = useMessageInfo(props.token, props.id)
+		} = useMessageInfo(token, id)
 
 		return {
 			messageActions,

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed } from 'vue'
+import { computed, unref, ref } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import moment from '@nextcloud/moment'
@@ -17,12 +17,13 @@ const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messa
 /**
  * Check whether the user can edit the message or not
  *
- * @param {string} token conversation token
- * @param {string} messageId message id to edit
- *
+ * @param {import('vue').Ref} tokenRef conversation token
+ * @param {import('vue').Ref} messageIdRef message id to edit
  * @return {import('vue').ComputedRef<boolean>}
  */
-export function useMessageInfo(token = null, messageId = null) {
+export function useMessageInfo(tokenRef = ref(null), messageIdRef = ref(null)) {
+	const token = unref(tokenRef)
+	const messageId = unref(messageIdRef)
 	const store = useStore()
 
 	// Get the conversation and message

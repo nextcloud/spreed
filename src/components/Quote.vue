@@ -72,6 +72,8 @@ components.
 </template>
 
 <script>
+import { toRefs } from 'vue'
+
 import Close from 'vue-material-design-icons/Close.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 
@@ -159,11 +161,12 @@ export default {
 	},
 
 	setup(props) {
+		const { token, id } = toRefs(props)
 		const chatExtrasStore = useChatExtrasStore()
 		const {
 			isFileShare,
 			isFileShareWithoutCaption,
-		} = useMessageInfo(props.token, props.id)
+		} = useMessageInfo(token, id)
 
 		return {
 			AVATAR,

@@ -127,6 +127,7 @@
 
 <script>
 import emojiRegex from 'emoji-regex'
+import { toRefs } from 'vue'
 
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
@@ -262,10 +263,11 @@ export default {
 	},
 
 	setup(props) {
+		const { token, id } = toRefs(props)
 		const {
 			isEditable,
 			isFileShare,
-		} = useMessageInfo(props.token, props.id)
+		} = useMessageInfo(token, id)
 		return {
 			isInCall: useIsInCall(),
 			isEditable,
