@@ -280,12 +280,13 @@
 		</template>
 
 		<template #footer>
-			<div id="app-settings">
-				<div id="app-settings-header">
-					<NcButton class="settings-button" @click="showSettings">
-						{{ t('spreed', 'Talk settings') }}
-					</NcButton>
-				</div>
+			<div class="left-sidebar__settings-button-container">
+				<NcButton type="tertiary" wide @click="showSettings">
+					<template #icon>
+						<Cog :size="20" />
+					</template>
+					{{ t('spreed', 'Talk settings') }}
+				</NcButton>
 			</div>
 		</template>
 	</NcAppNavigation>
@@ -298,6 +299,7 @@ import { ref } from 'vue'
 import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
 import AtIcon from 'vue-material-design-icons/At.vue'
 import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import List from 'vue-material-design-icons/FormatListBulleted.vue'
@@ -393,6 +395,7 @@ export default {
 		Phone,
 		Plus,
 		ChatPlus,
+		Cog,
 		List,
 		Note,
 		NcEmptyContent,
@@ -1087,13 +1090,13 @@ export default {
 	}
 }
 
+.left-sidebar__settings-button-container {
+	padding: calc(2 * var(--default-grid-baseline));
+}
+
 :deep(.empty-content) {
 	text-align: center;
 	padding: 20% 10px 0;
-}
-
-.settings-button {
-	justify-content: flex-start !important;
 }
 
 :deep(.app-navigation__list) {
@@ -1111,9 +1114,5 @@ export default {
 :deep(.list-item) {
 	overflow: hidden;
 	outline-offset: -2px;
-}
-
-:deep(#app-settings-header) {
-	padding-top: calc(var(--default-grid-baseline) * 2);
 }
 </style>
