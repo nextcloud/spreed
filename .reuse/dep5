@@ -4,10 +4,6 @@ Upstream-Contact: Nextcloud <info@nextcloud.com>
 Source: https://github.com/nextcloud/spreed/
 
 
-Files: appinfo/info.xml
-Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
-License: AGPL-3.0-or-later
-
 Files: l10n/*.js l10n/*.json
 Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
 License: AGPL-3.0-or-later
@@ -20,7 +16,7 @@ Files: openapi.json openapi-*.json src/types/openapi/*.ts
 Copyright: 2023 Nextcloud GmbH and Nextcloud contributors
 License: AGPL-3.0-or-later
 
-Files: .github/*
+Files: .github/CODEOWNERS .github/ISSUE_TEMPLATE/1_bug_report.md .github/ISSUE_TEMPLATE/2_feature_request.md .github/ISSUE_TEMPLATE/3_bot_list.yml .github/contributing.md .github/dependabot.yml .github/pull_request_template.md
 Copyright: none
 License: CC0-1.0
 
@@ -32,7 +28,7 @@ Files: tests/integration/features/*/*.feature
 Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
 License: CC0-1.0
 
-Files: .editorconfig babel.config.js package.json package-lock.json */package.json */package-lock.json composer.json composer.lock */composer.json */composer.lock README.md .gitignore .l10nignore psalm.xml tests/psalm-baseline.xml vendor-bin/*/composer.json vendor-bin/*/composer.lock .tx/config */phpunit.xml tsconfig.json
+Files: package.json package-lock.json */package.json */package-lock.json composer.json composer.lock */composer.json */composer.lock .gitignore .l10nignore psalm.xml tests/psalm-baseline.xml vendor-bin/*/composer.json vendor-bin/*/composer.lock .tx/config */phpunit.xml tsconfig.json
 Copyright: none
 License: CC0-1.0
 
