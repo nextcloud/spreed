@@ -278,19 +278,8 @@ describe('MessageButtonsBar.vue', () => {
 
 			/**
 			 * @param {boolean} visible Whether or not the delete action is visible
-			 * @param {Date} mockDate The message date (deletion only works within 6h)
 			 */
-			function testDeleteMessageVisible(visible, mockDate) {
-				store = new Store(testStoreConfig)
-
-				// need to mock the date to be within 6h
-				if (!mockDate) {
-					mockDate = new Date('2020-05-07 10:00:00')
-				}
-
-				jest.spyOn(global.Date, 'now')
-					.mockImplementation(() => mockDate)
-
+			function testDeleteMessageVisible(visible) {
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
 					store,
@@ -305,61 +294,15 @@ describe('MessageButtonsBar.vue', () => {
 				expect(actionButton.exists()).toBe(visible)
 			}
 
-			test('hides delete action when message is older than 6 hours', () => {
-				testDeleteMessageVisible(false, new Date('2020-05-07 15:24:00'))
-			})
-
-			test('hides delete action when the conversation is read-only', () => {
-				conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
+			test('hides delete action when it cannot be deleted', async () => {
 				testDeleteMessageVisible(false)
 			})
 
-			test('show delete action for file messages', () => {
+			test('show delete action when it can be deleted', () => {
 				useMessageInfoSpy.mockReturnValue({
 					isDeleteable: () => true,
 				})
-				messageProps.message = '{file}'
-				messageProps.messageParameters.file = {}
 				testDeleteMessageVisible(true)
-			})
-
-			test('hides delete action on other people messages for non-moderators', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.GROUP
-				testDeleteMessageVisible(false)
-			})
-
-			test('shows delete action on other people messages for moderators', () => {
-				useMessageInfoSpy.mockReturnValue({
-					isDeleteable: () => true,
-				})
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.GROUP
-				conversationProps.participantType = PARTICIPANT.TYPE.MODERATOR
-				testDeleteMessageVisible(true, null)
-			})
-
-			test('shows delete action on other people messages for owner', () => {
-				useMessageInfoSpy.mockReturnValue({
-					isDeleteable: () => true,
-				})
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.PUBLIC
-				conversationProps.participantType = PARTICIPANT.TYPE.OWNER
-				testDeleteMessageVisible(true, null)
-			})
-
-			test('does not show delete action even for guest moderators', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.PUBLIC
-				conversationProps.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-				testDeleteMessageVisible(false, null)
-			})
-
-			test('does not show delete action on other people messages in one to one conversations', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.ONE_TO_ONE
-				testDeleteMessageVisible(false)
 			})
 		})
 
