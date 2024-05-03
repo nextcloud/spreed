@@ -381,11 +381,11 @@ class SystemMessageTest extends TestCase {
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'file' => ['id' => 'file-from-share']],
 			],
 			['file_shared', ['share' => InvalidPathException::class], 'recipient',
-				'{actor} shared a file which is no longer available',
+				'*{actor} shared a file which is no longer available*',
 				['actor' => ['id' => 'actor', 'type' => 'user']],
 			],
 			['file_shared', ['share' => NotFoundException::class], 'actor',
-				'You shared a file which is no longer available',
+				'*You shared a file which is no longer available*',
 				['actor' => ['id' => 'actor', 'type' => 'user']],
 			],
 			['read_only', [], 'recipient',
@@ -555,12 +555,12 @@ class SystemMessageTest extends TestCase {
 			if (is_subclass_of($parameters['share'], \Exception::class)) {
 				$parser->expects($this->once())
 					->method('getFileFromShare')
-					->with($participant, $parameters['share'])
+					->with($room, $participant, $parameters['share'])
 					->willThrowException(new $parameters['share']());
 			} else {
 				$parser->expects($this->once())
 					->method('getFileFromShare')
-					->with($participant, $parameters['share'])
+					->with($room, $participant, $parameters['share'])
 					->willReturn(['id' => 'file-from-share']);
 			}
 		} else {
@@ -619,6 +619,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForGuest() {
+		$room = $this->createMock(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
 			->method('getId')
@@ -670,9 +671,6 @@ class SystemMessageTest extends TestCase {
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('isGuest')
-			->willReturn(true);
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -688,10 +686,11 @@ class SystemMessageTest extends TestCase {
 			'preview-available' => 'yes',
 			'width' => '1234',
 			'height' => '4567',
-		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
 	}
 
 	public function testGetFileFromShareForOwner() {
+		$room = $this->createMock(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->exactly(2))
 			->method('getId')
@@ -744,9 +743,6 @@ class SystemMessageTest extends TestCase {
 			->method('getMetadataPhotosSizeForFileId');
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('isGuest')
-			->willReturn(false);
 		$attendee = Attendee::fromRow([
 			'actor_type' => 'users',
 			'actor_id' => 'owner',
@@ -767,19 +763,17 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'httpd/unix-directory',
 			'preview-available' => 'no',
-		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
 	}
 
 	public function testGetFileFromShareForRecipient() {
+		$room = $this->createMock(Room::class);
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
 			->willReturn(54);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('isGuest')
-			->willReturn(false);
 		$attendee = Attendee::fromRow([
 			'actor_type' => 'users',
 			'actor_id' => 'user',
@@ -854,19 +848,17 @@ class SystemMessageTest extends TestCase {
 			'permissions' => '27',
 			'mimetype' => 'application/octet-stream',
 			'preview-available' => 'no',
-		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
 	}
 
 	public function testGetFileFromShareForRecipientThrows() {
+		$room = $this->createMock(Room::class);
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
 			->willReturn(54);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('isGuest')
-			->willReturn(false);
 		$attendee = Attendee::fromRow([
 			'actor_type' => 'users',
 			'actor_id' => 'user',
@@ -896,19 +888,27 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		$this->expectException(NotFoundException::class);
-		self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']);
+		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']);
 	}
 
 	public function testGetFileFromShareThrows() {
+		$room = $this->createMock(Room::class);
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
 			->with('23')
 			->willThrowException(new ShareNotFound());
 
 		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'user',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
 		$parser = $this->getParser();
 		$this->expectException(ShareNotFound::class);
-		self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']);
+		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']);
 	}
 
 	public static function dataGetActor(): array {

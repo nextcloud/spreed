@@ -500,7 +500,7 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($participant, $parameters['share']);
+				$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share']);
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
@@ -520,10 +520,19 @@ class SystemMessage implements IEventListener {
 				if (isset($metaData['caption']) && $metaData['caption'] !== '') {
 					$parsedMessage = $metaData['caption'];
 				}
-			} catch (\Exception $e) {
+			} catch (\Exception) {
+				$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
+				} elseif ($currentActorType === Attendee::ACTOR_FEDERATED_USERS) {
+					$parsedMessage = $this->l->t('File shares are currently not supported in federated conversations');
+				}
+				$parsedMessage = '*' . $parsedMessage . '*';
+
+				$metaData = $parameters['metaData'] ?? [];
+				if (isset($metaData['caption']) && $metaData['caption'] !== '') {
+					$parsedMessage .= "\n\n" . $metaData['caption'];
 				}
 			}
 		} elseif ($message === 'object_shared') {
@@ -741,10 +750,10 @@ class SystemMessage implements IEventListener {
 	 * @throws NotFoundException
 	 * @throws ShareNotFound
 	 */
-	protected function getFileFromShare(?Participant $participant, string $shareId): array {
+	protected function getFileFromShare(Room $room, ?Participant $participant, string $shareId): array {
 		$share = $this->shareProvider->getShareById((int) $shareId);
 
-		if ($participant && !$participant->isGuest()) {
+		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
 				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
 				if ($userFolder instanceof Node) {
@@ -784,6 +793,8 @@ class SystemMessage implements IEventListener {
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
+		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			throw new ShareNotFound();
 		} else {
 			$node = $share->getNode();
 			$name = $node->getName();
