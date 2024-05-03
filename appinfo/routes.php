@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 return array_merge_recursive(
 	include(__DIR__ . '/routes/routesAvatarController.php'),
+	include(__DIR__ . '/routes/routesBanController.php'),
 	include(__DIR__ . '/routes/routesBotController.php'),
 	include(__DIR__ . '/routes/routesBreakoutRoomController.php'),
 	include(__DIR__ . '/routes/routesCallController.php'),

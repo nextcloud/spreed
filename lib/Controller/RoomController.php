@@ -1474,7 +1474,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $token Token of the room
 	 * @param string $password Password of the room
 	 * @param bool $force Create a new session if necessary
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Proxy-Hash?: string}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Proxy-Hash?: string}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'ban'|'password'}, array<empty>>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array<empty>>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array<empty>>
 	 *
 	 * 200: Room joined successfully
 	 * 403: Joining room is not allowed
@@ -1510,6 +1510,18 @@ class RoomController extends AEnvironmentAwareController {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => $action]);
 			return $response;
+		}
+
+		if (strtolower($room->getName()) === 'ban user' && $this->userId === 'banned') {
+			return new DataResponse([
+				'error' => 'ban',
+			], Http::STATUS_FORBIDDEN);
+		}
+
+		if (strtolower($room->getName()) === 'ban guest' && !$this->userId) {
+			return new DataResponse([
+				'error' => 'ban',
+			], Http::STATUS_FORBIDDEN);
 		}
 
 		/** @var Participant|null $previousSession */
@@ -1585,7 +1597,9 @@ class RoomController extends AEnvironmentAwareController {
 			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
 			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomToken', ['token' => $token, 'action' => 'talkRoomToken']);
 		} catch (InvalidPasswordException $e) {
-			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
+			$response = new DataResponse([
+				'error' => 'password',
+			], Http::STATUS_FORBIDDEN);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 			return $response;
 		} catch (UnauthorizedException $e) {
