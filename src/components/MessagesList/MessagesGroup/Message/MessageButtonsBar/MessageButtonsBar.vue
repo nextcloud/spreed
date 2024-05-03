@@ -250,6 +250,7 @@
 <script>
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
 import data from 'emoji-mart-vue-fast/data/all.json'
+import { toRefs } from 'vue'
 
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
@@ -462,6 +463,7 @@ export default {
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
 	setup(props) {
+		const { token, id } = toRefs(props)
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const {
@@ -472,7 +474,7 @@ export default {
 			isFileShareWithoutCaption,
 			isConversationReadOnly,
 			isConversationModifiable,
-		} = useMessageInfo(props.token, props.id)
+		} = useMessageInfo(token, id)
 
 		return {
 			messageActions,
