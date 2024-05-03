@@ -4,6 +4,8 @@
 -->
 # Nextcloud Talk
 
+[![REUSE status](https://api.reuse.software/badge/github.com/nextcloud/spreed)](https://api.reuse.software/info/github.com/nextcloud/spreed)
+
 **A video & audio conferencing app for Nextcloud**
 
 | Elevator                                              |
