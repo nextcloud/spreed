@@ -58,7 +58,7 @@ export function useMessageInfo(tokenRef = ref(null), messageIdRef = ref(null)) {
 	)
 
 	const isEditable = computed(() => {
-		if (!canEditMessage || !isConversationModifiable.value || isObjectShare.value
+		if (!canEditMessage || !isConversationModifiable.value || isObjectShare.value || message.value.systemMessage
 			|| ((!store.getters.isModerator || isOneToOneConversation.value) && !isCurrentUserOwnMessage.value)) {
 			return false
 		}
@@ -70,16 +70,11 @@ export function useMessageInfo(tokenRef = ref(null), messageIdRef = ref(null)) {
 
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
-	const isDeleteable = computed(() => {
-		if (!isConversationModifiable.value) {
-			return false
-		}
-
-		return (canDeleteMessageUnlimited || (moment(message.value.timestamp * 1000).add(6, 'h')) > moment())
-			&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
-			&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
-			&& !isConversationReadOnly.value
-	})
+	const isDeleteable = computed(() =>
+		(canDeleteMessageUnlimited || (moment(message.value.timestamp * 1000).add(6, 'h')) > moment())
+		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
+		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
+		&& isConversationModifiable.value)
 
 	return {
 		isEditable,

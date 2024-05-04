@@ -99,7 +99,7 @@ describe('message actions', () => {
 		mockConversationInfo = {
 			isOneToOneConversation: computed(() => false),
 			isConversationReadOnly: computed(() => true),
-			isConversationModifiable: computed(() => true),
+			isConversationModifiable: computed(() => false),
 		}
 		useConversationInfo.mockReturnValue(mockConversationInfo)
 		// Act
@@ -223,6 +223,15 @@ describe('message actions', () => {
 		const result = useMessageInfo(messageProps.token, messageProps.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
+		expect(result.isEditable.value).toBe(false)
+	})
+
+	test('system message is not editable', () => {
+		// Arrange
+		messageProps.systemMessage = 'system-message'
+		// Act
+		const result = useMessageInfo(messageProps.token, messageProps.id)
+		// Assert
 		expect(result.isEditable.value).toBe(false)
 	})
 
