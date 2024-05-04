@@ -75,7 +75,7 @@
     "wildemitter": "^1.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.4",
+    "@babel/core": "^7.24.5",
     "@babel/preset-env": "^7.24.4",
     "@nextcloud/babel-config": "^1.0.0",
     "@nextcloud/browserslist-config": "^3.0.1",
