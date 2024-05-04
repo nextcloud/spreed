@@ -161,10 +161,6 @@ export default {
 	justify-content: flex-start;
 	align-items: flex-start;
 
-	h2 {
-		margin-top: 0;
-	}
-
 	&__number-input{
 		display: block;
 		margin-bottom: calc(var(--default-grid-baseline)*4);

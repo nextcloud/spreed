@@ -10,7 +10,7 @@
 		:item-size="CONVERSATION_ITEM_SIZE"
 		key-field="token">
 		<template #default="{ item }">
-			<ConversationSearchResult :item="item" :expose-messages="exposeMessages" @click="onClick" />
+			<ConversationSearchResult :item="item" @click="onClick" />
 		</template>
 		<template #after>
 			<LoadingPlaceholder v-if="loading" type="conversations" />
@@ -42,10 +42,7 @@ export default {
 			type: Array,
 			required: true,
 		},
-		exposeMessages: {
-			type: Boolean,
-			default: false,
-		},
+
 		loading: {
 			type: Boolean,
 			default: false,

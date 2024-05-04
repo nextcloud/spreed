@@ -12,15 +12,20 @@ import { ATTENDEE, CONVERSATION } from '../constants.js'
  * @param {object} payload function payload
  * @param {import('vue').Ref} payload.item conversation item
  * @param {import('vue').Ref} [payload.isSearchResult] whether conversation item appears as search result
- * @param {import('vue').Ref} [payload.exposeMessages] whether to show messages in conversation item
+ * @param {import('vue').Ref} [payload.exposeMessagesRef] whether to show messages in conversation item
+ * @param {import('vue').Ref} [payload.exposeDescriptionRef] whether to show description in conversation item
  */
 export function useConversationInfo({
 	item,
 	isSearchResult = ref(null),
-	exposeMessages = ref(null),
+	exposeMessagesRef = ref(null),
+	exposeDescriptionRef = ref(null),
 }) {
+	const exposeMessages = exposeMessagesRef.value !== null ? exposeMessagesRef.value : !isSearchResult.value
+	const exposeDescription = exposeDescriptionRef.value !== null ? exposeDescriptionRef.value : isSearchResult.value
+
 	const counterType = computed(() => {
-		if (exposeMessages.value === false) {
+		if (!exposeMessages) {
 			return ''
 		} else if (item.value.unreadMentionDirect || (item.value.unreadMessages !== 0
 			&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(item.value.type)
@@ -43,7 +48,7 @@ export function useConversationInfo({
 	 * e.g. no avatars on mentions.
 	 */
 	const simpleLastChatMessage = computed(() => {
-		if (exposeMessages.value === false || !hasLastMessage.value) {
+		if (!exposeMessages || !hasLastMessage.value) {
 			return ''
 		}
 
@@ -62,7 +67,7 @@ export function useConversationInfo({
 	 * @return {string} Part of the name until the first space
 	 */
 	const shortLastChatMessageAuthor = computed(() => {
-		if (exposeMessages.value === false || !hasLastMessage.value || item.value.lastMessage.systemMessage.length) {
+		if (!exposeMessages || !hasLastMessage.value || item.value.lastMessage.systemMessage.length) {
 			return ''
 		}
 
@@ -81,8 +86,10 @@ export function useConversationInfo({
 			return t('spreed', 'Joining conversation …')
 		}
 
-		if (exposeMessages.value === false || !hasLastMessage.value) {
-			return ''
+		if (!exposeMessages) {
+			return exposeDescription ? item.value?.description : ''
+		} else if (!hasLastMessage.value) {
+			return t('spreed', 'No messages')
 		}
 
 		if (shortLastChatMessageAuthor.value === '') {

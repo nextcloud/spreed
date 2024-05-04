@@ -768,6 +768,10 @@ export default {
 body .modal-wrapper * {
 	box-sizing: border-box;
 }
+
+.modal-wrapper h2 {
+	margin-top: 0;
+}
 </style>
 
 <style lang="scss" scoped>

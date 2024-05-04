@@ -296,10 +296,6 @@ export default {
 	&__editor {
 		height: 100%;
 		padding: 20px;
-
-		h2 {
-			margin-top: 0;
-		}
 	}
 }
 

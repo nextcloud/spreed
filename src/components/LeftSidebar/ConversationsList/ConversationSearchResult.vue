@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { inject, toRefs } from 'vue'
+import { inject, toRefs, ref } from 'vue'
 
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
@@ -39,10 +39,6 @@ export default {
 	},
 
 	props: {
-		exposeMessages: {
-			type: Boolean,
-			default: false,
-		},
 		item: {
 			type: Object,
 			default() {
@@ -66,9 +62,10 @@ export default {
 	emits: ['click'],
 
 	setup(props) {
-		const { item, exposeMessages } = toRefs(props)
+		const { item } = toRefs(props)
 		const selectedRoom = inject('selectedRoom', null)
-		const { counterType, conversationInformation } = useConversationInfo({ item, exposeMessages })
+		const exposeDescriptionRef = inject('exposeDescription', ref(false))
+		const { counterType, conversationInformation } = useConversationInfo({ item, exposeDescriptionRef })
 
 		return {
 			selectedRoom,

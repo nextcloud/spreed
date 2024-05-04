@@ -145,7 +145,7 @@ describe('Conversation.vue', () => {
 
 		test('displays nothing when there is no last chat message', () => {
 			item.lastMessage = {}
-			testConversationLabel(item, '')
+			testConversationLabel(item, 'No messages')
 		})
 
 		describe('author name', () => {
@@ -191,10 +191,11 @@ describe('Conversation.vue', () => {
 				testConversationLabel(item, 'Guest: hello')
 			})
 
-			test('displays last message for search results', () => {
+			test('displays description for search results', () => {
 				// search results have no actor id
 				item.actorId = null
-				testConversationLabel(item, 'Alice: hello', true)
+				item.description = 'This is a description'
+				testConversationLabel(item, 'This is a description', true)
 			})
 		})
 
