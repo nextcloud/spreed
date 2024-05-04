@@ -23,7 +23,8 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	const token = computed(() => store.getters.getToken())
 	const conversation = computed(() => store.getters.conversation(token.value))
 	const isInCall = useIsInCall()
-	const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE)
+	const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE
+		|| conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)
 	let fetchingParticipants = false
 	let pendingChanges = true
 

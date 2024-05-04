@@ -183,6 +183,7 @@ import SendIcon from 'vue-material-design-icons/Send.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -330,10 +331,6 @@ export default {
 
 		isReadOnly() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
-		},
-
-		isOneToOneConversation() {
-			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
 		noChatPermission() {
@@ -966,10 +963,13 @@ export default {
 			if (!canEditMessage || this.text || this.upload || this.broadcast || this.isRecordingAudio) {
 				return
 			}
+
+			// last message within 24 hours
 			const lastMessageByCurrentUser = this.$store.getters.messagesList(this.token).findLast(message => {
 				return message.actorId === this.$store.getters.getUserId()
 					&& message.actorType === this.$store.getters.getActorType()
 					&& !message.isTemporary && !message.systemMessage
+					&& (moment(message.timestamp * 1000).add(1, 'd')) > moment()
 			})
 
 			if (!lastMessageByCurrentUser) {
@@ -986,7 +986,7 @@ export default {
 		},
 
 		async checkAbsenceStatus() {
-			if (!this.isOneToOneConversation) {
+			if (!this.isOneToOne) {
 				return
 			}
 

@@ -85,7 +85,7 @@
 						</template>
 						{{ t('spreed', 'Edit message') }}
 					</NcActionButton>
-					<NcActionButton v-if="!isFileShareOnly"
+					<NcActionButton v-if="!isFileShareWithoutCaption"
 						close-after-click
 						@click.stop="handleCopyMessageText">
 						<template #icon>
@@ -250,6 +250,7 @@
 <script>
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
 import data from 'emoji-mart-vue-fast/data/all.json'
+import { toRefs } from 'vue'
 
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
@@ -286,7 +287,8 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
-import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
+import { CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
@@ -295,8 +297,6 @@ import { parseMentions } from '../../../../../utils/textParse.ts'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
-const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
-const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
 
 export default {
 	name: 'MessageButtonsBar',
@@ -462,14 +462,31 @@ export default {
 
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
-	setup() {
+	setup(props) {
+		const { token, id } = toRefs(props)
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
+		const {
+			isEditable,
+			isDeleteable,
+			isCurrentUserOwnMessage,
+			isFileShare,
+			isFileShareWithoutCaption,
+			isConversationReadOnly,
+			isConversationModifiable,
+		} = useMessageInfo(token, id)
 
 		return {
 			messageActions,
 			supportReminders,
 			reactionsStore,
+			isEditable,
+			isCurrentUserOwnMessage,
+			isFileShare,
+			isFileShareWithoutCaption,
+			isDeleteable,
+			isConversationReadOnly,
+			isConversationModifiable,
 		}
 	},
 
@@ -499,44 +516,11 @@ export default {
 			return this.getMessagesListScroller()
 		},
 
-		isModifiable() {
-			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
-		},
-
-		isOneToOne() {
-			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		isEditable() {
-			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-					|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
-				return false
-			}
-
-			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
-		},
-
-		isDeleteable() {
-			if (!this.isModifiable) {
-				return false
-			}
-
-			return (canDeleteMessageUnlimited || (moment(this.timestamp * 1000).add(6, 'h')) > moment())
-				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
-				&& !this.isDeleting
-				&& (this.isMyMsg
-					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-						&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-						&& (this.conversation.participantType === PARTICIPANT.TYPE.OWNER
-							|| this.conversation.participantType === PARTICIPANT.TYPE.MODERATOR)))
-		},
-
 		isPrivateReplyable() {
 			return this.isReplyable
 				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
 					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
-				&& !this.isMyMsg
+				&& !this.isCurrentUserOwnMessage
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.isActorUser()
 		},
@@ -550,29 +534,8 @@ export default {
 			}
 		},
 
-		isFileShare() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('file'))
-		},
-
-		isFileShareOnly() {
-			return this.isFileShare && this.message === '{file}'
-		},
-
-		isObjectShare() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('object'))
-		},
-
 		isCurrentGuest() {
 			return this.$store.getters.isActorGuest()
-		},
-
-		isMyMsg() {
-			return this.actorId === this.$store.getters.getActorId()
-				&& this.actorType === this.$store.getters.getActorType()
-		},
-
-		isConversationReadOnly() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		isDeletedMessage() {
@@ -845,7 +808,7 @@ export default {
 		},
 
 		editMessage() {
-			if (!canEditMessage) {
+			if (!this.isEditable) {
 				return
 			}
 			this.$emit('edit')

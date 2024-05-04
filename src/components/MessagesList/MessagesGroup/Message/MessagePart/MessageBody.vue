@@ -110,6 +110,7 @@
 
 <script>
 import emojiRegex from 'emoji-regex'
+import { toRefs } from 'vue'
 
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
@@ -130,11 +131,10 @@ import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
-import { CONVERSATION, PARTICIPANT } from '../../../../../constants.js'
+import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { EventBus } from '../../../../../services/EventBus.js'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
-const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
 // Regular expression to check for Unicode emojis in message text
 const regex = emojiRegex()
 
@@ -245,9 +245,16 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
+		const { token, id } = toRefs(props)
+		const {
+			isEditable,
+			isFileShare,
+		} = useMessageInfo(token, id)
 		return {
 			isInCall: useIsInCall(),
+			isEditable,
+			isFileShare,
 		}
 	},
 
@@ -262,7 +269,7 @@ export default {
 
 	computed: {
 		renderedMessage() {
-			if (this.isFileShareMessage && this.message !== '{file}') {
+			if (this.isFileShare && this.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
 				return '{file}' + '\n\n' + this.message
 			} else {
@@ -278,51 +285,12 @@ export default {
 			return this.messageType === 'comment_deleted'
 		},
 
-		isFileShareMessage() {
-			return this.messageParameters?.file
-		},
-
 		isNewPollMessage() {
 			if (this.messageParameters?.object?.type !== 'talk-poll') {
 				return false
 			}
 
 			return this.isInCall && !!this.$store.getters.getNewPolls[this.messageParameters.object.id]
-		},
-
-		conversation() {
-			return this.$store.getters.conversation(this.token)
-		},
-
-		isConversationReadOnly() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
-		},
-
-		isModifiable() {
-			return !this.isConversationReadOnly && this.conversation.participantType !== PARTICIPANT.TYPE.GUEST
-		},
-
-		isObjectShare() {
-			return Object.keys(Object(this.messageParameters)).some(key => key.startsWith('object'))
-		},
-
-		isMyMsg() {
-			return this.actorId === this.$store.getters.getActorId()
-				&& this.actorType === this.$store.getters.getActorType()
-		},
-
-		isOneToOne() {
-			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		isEditable() {
-			if (!canEditMessage || !this.isModifiable || this.isObjectShare
-				|| ((!this.$store.getters.isModerator || this.isOneToOne) && !this.isMyMsg)) {
-				return false
-			}
-
-			return (moment(this.timestamp * 1000).add(1, 'd')) > moment()
 		},
 
 		hideDate() {
@@ -366,7 +334,7 @@ export default {
 		},
 
 		showLoadingIcon() {
-			return (this.isTemporary && !this.isFileShareMessage) || this.isDeleting
+			return (this.isTemporary && !this.isFileShare) || this.isDeleting
 		},
 
 		loadingIconTooltip() {

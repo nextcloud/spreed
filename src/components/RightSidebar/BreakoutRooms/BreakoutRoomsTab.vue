@@ -95,6 +95,11 @@ export default {
 			return !this.isOneToOne && (this.canFullModerate || this.mainConversation.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
+		isOneToOne() {
+			return this.mainConversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.mainConversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
 		showBreakoutRoomsList() {
 			return this.breakoutRoomsConfigured
 				&& (this.canModerate || this.mainConversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED)
