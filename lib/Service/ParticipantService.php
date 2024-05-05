@@ -1196,6 +1196,11 @@ class ParticipantService {
 			throw new DoesNotExistException('Room mismatch');
 		}
 
+		$userStatus = $this->userManager->getUserStatus(array ($attendee->getActorId()));
+		if ($userStatus[0] === IUser::DND){
+			throw new \InvalidArgumentException('User is in do not disturb mode, failed to send notification');
+		}
+
 		$sessions = $this->sessionMapper->findByAttendeeId($targetAttendeeId);
 		foreach ($sessions as $session) {
 			if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
