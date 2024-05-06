@@ -203,8 +203,8 @@ class CallController extends AEnvironmentAwareController {
 
 		try {
 			$this->participantService->sendCallNotificationForAttendee($this->room, $this->participant, $attendeeId);
-		} catch (\InvalidArgumentException) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}

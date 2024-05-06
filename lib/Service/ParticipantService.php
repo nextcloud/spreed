@@ -86,6 +86,8 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use OCP\UserStatus\IManager as IUserStatusManager;
+use OCP\UserStatus\IUserStatus;
 
 class ParticipantService {
 
@@ -110,6 +112,7 @@ class ParticipantService {
 		private BackendNotifier $backendNotifier,
 		private ITimeFactory $timeFactory,
 		private ICacheFactory $cacheFactory,
+		private IUserStatusManager $userStatusManager,
 	) {
 	}
 
@@ -1196,9 +1199,9 @@ class ParticipantService {
 			throw new DoesNotExistException('Room mismatch');
 		}
 
-		$userStatus = $this->userManager->getUserStatus(array ($attendee->getActorId()));
-		if ($userStatus[0] === IUser::DND){
-			throw new \InvalidArgumentException('User is in do not disturb mode, failed to send notification');
+		$userStatus = $this->userStatusManager->getUserStatuses([$attendee->getActorId()]);
+		if (isset($userStatus[$attendee->getActorId()]) && $userStatus[$attendee->getActorId()]->getStatus() === IUserStatus::DND) {
+			throw new \InvalidArgumentException('status');
 		}
 
 		$sessions = $this->sessionMapper->findByAttendeeId($targetAttendeeId);
