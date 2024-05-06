@@ -26,7 +26,7 @@
   "dependencies": {
     "@linusborg/vue-simple-portal": "^0.1.5",
     "@nextcloud/auth": "^2.3.0",
-    "@nextcloud/axios": "^2.4.0",
+    "@nextcloud/axios": "^2.5.0",
     "@nextcloud/browser-storage": "^0.4.0",
     "@nextcloud/capabilities": "^1.2.0",
     "@nextcloud/dialogs": "^5.3.1",
