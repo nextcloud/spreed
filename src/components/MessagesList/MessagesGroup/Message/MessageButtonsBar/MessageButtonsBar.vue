@@ -264,9 +264,6 @@
 </template>
 
 <script>
-import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
-import data from 'emoji-mart-vue-fast/data/all.json'
-
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
@@ -301,6 +298,7 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import { emojiSearch } from '@nextcloud/vue/dist/Functions/emoji.js'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
@@ -309,7 +307,6 @@ import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
 
-const EmojiIndex = new EmojiIndexFactory(data)
 const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
 const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
 const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
@@ -812,9 +809,7 @@ export default {
 		},
 
 		updateFrequentlyUsedEmojis() {
-			this.frequentlyUsedEmojis = frequently.get(5).map(emojiStrings => {
-				return EmojiIndex.emoji(emojiStrings).native
-			})
+			this.frequentlyUsedEmojis = emojiSearch('', 5).map(emoji => emoji.native)
 		},
 
 		getTimestamp(momentObject) {
