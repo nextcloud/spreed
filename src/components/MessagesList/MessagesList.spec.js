@@ -7,12 +7,13 @@ import MessagesList from './MessagesList.vue'
 import { ATTENDEE } from '../../constants.js'
 import storeConfig from '../../store/storeConfig.js'
 
+const fakeTimestamp = (value) => new Date(value).getTime() / 1000
+
 describe('MessagesList.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
 	let localVue
 	let testStoreConfig
-	const messagesListMock = jest.fn()
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
@@ -20,8 +21,6 @@ describe('MessagesList.vue', () => {
 		localVue.use(Vuex)
 
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.messagesStore.getters.messagesList
-			= jest.fn().mockReturnValue(messagesListMock)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
 			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
 		// eslint-disable-next-line import/no-named-as-default-member
@@ -44,76 +43,103 @@ describe('MessagesList.vue', () => {
 		jest.clearAllMocks()
 	})
 
+	const messagesGroup1 = [{
+		id: 100,
+		token: TOKEN,
+		actorId: 'alice',
+		actorDisplayName: 'Alice',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'hello',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: fakeTimestamp('2024-05-01T12:05:00'),
+		isReplyable: true,
+	}, {
+		id: 110,
+		token: TOKEN,
+		actorId: 'alice',
+		actorDisplayName: 'Alice',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'how are you ?',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: fakeTimestamp('2024-05-01T12:06:00'),
+		isReplyable: true,
+	}]
+
+	const messagesGroup2 = [{
+		id: 200,
+		token: TOKEN,
+		actorId: 'bob',
+		actorDisplayName: 'Bob',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'hello!',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: fakeTimestamp('2024-05-01T12:30:00'),
+		isReplyable: true,
+	}, {
+		id: 210,
+		token: TOKEN,
+		actorId: 'bob',
+		actorDisplayName: 'Bob',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'fine... how about you ?',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: fakeTimestamp('2024-05-01T12:31:00'),
+		isReplyable: true,
+	}]
+
+	const messagesGroup3 = [{
+		id: 'temp-300',
+		token: TOKEN,
+		actorId: 'alice',
+		actorDisplayName: 'Alice',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'fine as well, thanks!',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: 0, // temporary
+		isReplyable: true,
+	}]
+
 	describe('message grouping', () => {
-		test('groups consecutive messages by author', () => {
-			const messagesGroup1 = [{
-				id: 100,
-				token: TOKEN,
-				actorId: 'alice',
-				actorDisplayName: 'Alice',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				message: 'hello',
-				messageType: 'comment',
-				messageParameters: {},
-				systemMessage: '',
-				timestamp: 100,
-				isReplyable: true,
-			}, {
-				id: 110,
-				token: TOKEN,
-				actorId: 'alice',
-				actorDisplayName: 'Alice',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				message: 'how are you ?',
-				messageType: 'comment',
-				messageParameters: {},
-				systemMessage: '',
-				timestamp: 200,
-				isReplyable: true,
-			}]
+		/**
+		 * @param {Array} messagesGroups List of messages that should be grouped
+		 */
+		function testGrouped(...messagesGroups) {
+			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			const wrapper = shallowMount(MessagesList, {
+				localVue,
+				store,
+				propsData: {
+					token: TOKEN,
+					isChatScrolledToBottom: true,
+				},
+			})
 
-			const messagesGroup2 = [{
-				id: 200,
-				token: TOKEN,
-				actorId: 'bob',
-				actorDisplayName: 'Bob',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				message: 'hello!',
-				messageType: 'comment',
-				messageParameters: {},
-				systemMessage: '',
-				timestamp: 300,
-				isReplyable: true,
-			}, {
-				id: 210,
-				token: TOKEN,
-				actorId: 'bob',
-				actorDisplayName: 'Bob',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				message: 'fine... how abouty you ?',
-				messageType: 'comment',
-				messageParameters: {},
-				systemMessage: '',
-				timestamp: 400,
-				isReplyable: true,
-			}]
+			const groups = wrapper.findAll('.messages-group')
 
-			const messagesGroup3 = [{
-				id: 300,
-				token: TOKEN,
-				actorId: 'alice',
-				actorDisplayName: 'Alice',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				message: 'fine as well, thanks!',
-				messageType: 'comment',
-				messageParameters: {},
-				systemMessage: '',
-				timestamp: 0, // temporary
-				isReplyable: true,
-			}]
+			expect(groups.exists()).toBeTruthy()
 
-			const allMessages = messagesGroup1.concat(messagesGroup2.concat(messagesGroup3))
-			messagesListMock.mockReturnValue(allMessages)
+			groups.wrappers.forEach((group, index) => {
+				expect(group.props('messages')).toStrictEqual(messagesGroups[index])
+			})
+
+			return { wrapper, groups }
+		}
+
+		/**
+		 * @param {Array} messages List of messages that should not be grouped
+		 */
+		function testNotGrouped(messages) {
+			messages.forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
@@ -124,30 +150,34 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			const groups = wrapper.findAll('.messages-group')
 
-			expect(groups.exists()).toBe(true)
+			expect(groups.exists()).toBeTruthy()
 
-			let group = groups.at(0)
-			expect(group.props('messages')).toStrictEqual(messagesGroup1)
-			expect(group.props('previousMessageId')).toBe(0)
-			expect(group.props('nextMessageId')).toBe(200)
+			groups.wrappers.forEach((group, index) => {
+				expect(group.props('messages')).toStrictEqual([messages[index]])
+			})
 
-			group = groups.at(1)
-			expect(group.props('messages')).toStrictEqual(messagesGroup2)
-			expect(group.props('previousMessageId')).toBe(110)
-			expect(group.props('nextMessageId')).toBe(300)
+			return { wrapper, groups }
+		}
 
-			group = groups.at(2)
-			expect(group.props('messages')).toStrictEqual(messagesGroup3)
-			expect(group.props('previousMessageId')).toBe(210)
-			expect(group.props('nextMessageId')).toBe(0)
+		test('groups consecutive messages by author', () => {
+			const { groups } = testGrouped(messagesGroup1, messagesGroup2, messagesGroup3)
 
-			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
+			expect(groups.at(0).props('previousMessageId')).toBe(0)
+			expect(groups.at(0).props('nextMessageId')).toBe(200)
+
+			expect(groups.at(1).props('previousMessageId')).toBe(110)
+			expect(groups.at(1).props('nextMessageId')).toBe('temp-300')
+
+			expect(groups.at(2).props('previousMessageId')).toBe(210)
+			expect(groups.at(2).props('nextMessageId')).toBe(0)
 		})
 
 		test('displays a date separator between days', () => {
-			const messages = [{
+			jest.useFakeTimers().setSystemTime(new Date('2020-05-11T13:00:00'))
+
+			const { wrapper } = testNotGrouped([{
 				id: 100,
 				token: TOKEN,
 				actorId: 'alice',
@@ -155,9 +185,9 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'hello',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: '',
-				timestamp: new Date('2020-05-09 13:00:00').getTime() / 1000,
+				timestamp: fakeTimestamp('2020-05-09T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 110,
@@ -167,9 +197,9 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'no one here ?',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: '',
-				timestamp: new Date('2020-05-10 13:00:00').getTime() / 1000,
+				timestamp: fakeTimestamp('2020-05-10T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 'temp-120',
@@ -179,45 +209,21 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'seems no one is there...',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: '',
 				timestamp: 0, // temporary, matches current date
 				isReplyable: true,
-			}]
-
-			const mockDate = new Date('2020-05-11 13:00:00')
-			jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate)
-
-			messagesListMock.mockReturnValue(messages)
-
-			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
-					token: TOKEN,
-					isChatScrolledToBottom: true,
-				},
-			})
-
-			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-
-			expect(groups.exists()).toBeTruthy()
-
-			groups.wrappers.forEach((group, index) => {
-				expect(group.props('messages')).toStrictEqual([messages[index]])
-			})
+			}])
 
 			const dateSeparators = wrapper.findAll('.messages-group__date')
 			expect(dateSeparators).toHaveLength(3)
 			expect(dateSeparators.at(0).text()).toBe('2 days ago, May 9, 2020')
 			expect(dateSeparators.at(1).text()).toBe('Yesterday, May 10, 2020')
 			expect(dateSeparators.at(2).text()).toBe('Today, May 11, 2020')
-
-			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
 		})
 
 		test('groups system messages with each other', () => {
-			const messages = [{
+			testGrouped([{
 				id: 100,
 				token: TOKEN,
 				actorId: 'alice',
@@ -225,9 +231,9 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Alice has entered the call',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: 'call_started',
-				timestamp: 100,
+				timestamp: fakeTimestamp('2020-05-09T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 110,
@@ -237,56 +243,12 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Alice has exited the call',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: 'call_ended',
-				timestamp: 200,
+				timestamp: fakeTimestamp('2020-05-09T13:02:00'),
 				isReplyable: true,
-			}]
-
-			messagesListMock.mockReturnValue(messages)
-
-			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
-					token: TOKEN,
-					isChatScrolledToBottom: true,
-				},
-			})
-
-			const groups = wrapper.findAll('.messages-group')
-
-			expect(groups.exists()).toBe(true)
-
-			const group = groups.at(0)
-			expect(group.props('messages')).toStrictEqual(messages)
-
-			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
+			}])
 		})
-
-		/**
-		 * @param {Array} messages List of messages that should not be grouped
-		 */
-		function testNotGrouped(messages) {
-			messagesListMock.mockReturnValue(messages)
-
-			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
-					token: TOKEN,
-					isChatScrolledToBottom: true,
-				},
-			})
-
-			const groups = wrapper.findAll('.messages-group')
-
-			expect(groups.exists()).toBeTruthy()
-
-			groups.wrappers.forEach((group, index) => {
-				expect(group.props('messages')).toStrictEqual([messages[index]])
-			})
-		}
 
 		test('does not group system messages with regular messages from the same author', () => {
 			testNotGrouped([{
@@ -297,9 +259,9 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Alice has entered the call',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: 'call_started',
-				timestamp: 100,
+				timestamp: fakeTimestamp('2020-05-09T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 110,
@@ -309,37 +271,37 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'hello',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: '',
-				timestamp: 200,
+				timestamp: fakeTimestamp('2020-05-09T13:02:00'),
 				isReplyable: true,
 			}])
 		})
 
-		test('does not group messages of changelog bot', () => {
-			testNotGrouped([{
+		test('groups messages of changelog bot', () => {
+			testGrouped([{
 				id: 100,
 				token: TOKEN,
 				actorId: ATTENDEE.CHANGELOG_BOT_ID,
-				actorDisplayName: 'Changelog bot',
+				actorDisplayName: 'Talk updates \u2705',
 				actorType: ATTENDEE.ACTOR_TYPE.BOTS,
-				message: 'Alice has entered the call',
+				message: 'New in Talk 16',
 				messageType: 'comment',
-				messageParameters: {},
-				systemMessage: 'call_started',
-				timestamp: 100,
+				messageParameters: [],
+				systemMessage: '',
+				timestamp: fakeTimestamp('2020-05-09T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 110,
 				token: TOKEN,
 				actorId: ATTENDEE.CHANGELOG_BOT_ID,
-				actorDisplayName: 'Changelog bot',
+				actorDisplayName: 'Talk updates \u2705',
 				actorType: ATTENDEE.ACTOR_TYPE.BOTS,
-				message: 'hello',
+				message: '- Calls can now be recorded',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: '',
-				timestamp: 200,
+				timestamp: fakeTimestamp('2020-05-09T13:02:00'),
 				isReplyable: true,
 			}])
 		})
@@ -353,9 +315,9 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				message: 'Alice has entered the call',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: 'call_started',
-				timestamp: 100,
+				timestamp: fakeTimestamp('2020-05-09T13:00:00'),
 				isReplyable: true,
 			}, {
 				id: 110,
@@ -365,16 +327,48 @@ describe('MessagesList.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 				message: 'hello',
 				messageType: 'comment',
-				messageParameters: {},
+				messageParameters: [],
 				systemMessage: '',
-				timestamp: 200,
+				timestamp: fakeTimestamp('2020-05-09T13:02:00'),
 				isReplyable: true,
 			}])
 		})
 
-		test('renders a placeholder while loading', () => {
-			messagesListMock.mockReturnValue([])
+		test('does not group edited messages', () => {
+			testNotGrouped([{
+				id: 100,
+				token: TOKEN,
+				actorId: 'alice',
+				actorDisplayName: 'Alice',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				message: 'hello',
+				messageType: 'comment',
+				messageParameters: [],
+				systemMessage: '',
+				timestamp: fakeTimestamp('2024-05-01T12:05:00'),
+				isReplyable: true,
+			}, {
+				id: 110,
+				token: TOKEN,
+				actorId: 'alice',
+				actorDisplayName: 'Alice',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				lastEditActorType: ATTENDEE.ACTOR_TYPE.USERS,
+				lastEditActorId: 'alice',
+				lastEditActorDisplayName: 'Alice',
+				lastEditTimestamp: fakeTimestamp('2024-05-01T12:07:00'),
+				message: 'how are you doing?',
+				messageType: 'comment',
+				messageParameters: [],
+				systemMessage: '',
+				timestamp: fakeTimestamp('2024-05-01T12:06:00'),
+				isReplyable: true,
+			}])
+		})
+	})
 
+	describe('message rendering', () => {
+		test('renders a placeholder while loading', () => {
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
 				store,
@@ -388,6 +382,24 @@ describe('MessagesList.vue', () => {
 			expect(groups.exists()).toBe(false)
 
 			const placeholder = wrapper.findAllComponents({ name: 'LoadingPlaceholder' })
+			expect(placeholder.exists()).toBe(true)
+		})
+
+		test('renders an empty content after loading', () => {
+			store.commit('loadedMessagesOfConversation', { token: TOKEN })
+			const wrapper = shallowMount(MessagesList, {
+				localVue,
+				store,
+				propsData: {
+					token: TOKEN,
+					isChatScrolledToBottom: true,
+				},
+			})
+
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.exists()).toBe(false)
+
+			const placeholder = wrapper.findAllComponents({ name: 'NcEmptyContent' })
 			expect(placeholder.exists()).toBe(true)
 		})
 	})
