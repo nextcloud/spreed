@@ -69,6 +69,21 @@ describe('MessagesList.vue', () => {
 		isReplyable: true,
 	}]
 
+	const messagesGroup1OldMessage = {
+		id: 90,
+		token: TOKEN,
+		actorId: 'alice',
+		actorDisplayName: 'Alice',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'old hello',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: fakeTimestamp('2024-05-01T12:04:00'),
+		isReplyable: true,
+	}
+	const messagesGroup1WithOld = [messagesGroup1OldMessage].concat(messagesGroup1)
+
 	const messagesGroup2 = [{
 		id: 200,
 		token: TOKEN,
@@ -94,6 +109,21 @@ describe('MessagesList.vue', () => {
 		timestamp: fakeTimestamp('2024-05-01T12:31:00'),
 		isReplyable: true,
 	}]
+
+	const messagesGroup2NewMessage = {
+		id: 220,
+		token: TOKEN,
+		actorId: 'bob',
+		actorDisplayName: 'Bob',
+		actorType: ATTENDEE.ACTOR_TYPE.USERS,
+		message: 'hello?',
+		messageType: 'comment',
+		messageParameters: [],
+		systemMessage: '',
+		timestamp: fakeTimestamp('2024-05-01T12:32:00'),
+		isReplyable: true,
+	}
+	const messagesGroup2WithNew = messagesGroup2.concat([messagesGroup2NewMessage])
 
 	const messagesGroup3 = [{
 		id: 'temp-300',
@@ -368,6 +398,23 @@ describe('MessagesList.vue', () => {
 	})
 
 	describe('message rendering', () => {
+		jest.useFakeTimers().setSystemTime(new Date('2024-05-01T17:00:00'))
+		/**
+		 *
+		 * @param {Array} messagesGroups initial messages groups
+		 */
+		function renderMessagesList(...messagesGroups) {
+			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			return shallowMount(MessagesList, {
+				localVue,
+				store,
+				propsData: {
+					token: TOKEN,
+					isChatScrolledToBottom: true,
+				},
+			})
+		}
+
 		test('renders a placeholder while loading', () => {
 			const wrapper = shallowMount(MessagesList, {
 				localVue,
@@ -401,6 +448,195 @@ describe('MessagesList.vue', () => {
 
 			const placeholder = wrapper.findAllComponents({ name: 'NcEmptyContent' })
 			expect(placeholder.exists()).toBe(true)
+		})
+
+		test('renders initial group of messages', () => {
+			// Act
+			const wrapper = renderMessagesList(messagesGroup1)
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+
+			// Assert: groups are rendered
+			expect(groups.exists()).toBe(true)
+			expect(groups.at(0).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup1,
+				previousMessageId: 0,
+				nextMessageId: 0,
+			})
+		})
+
+		test('updates rendered list of messages (add new group)', async () => {
+			// Arrange
+			const wrapper = renderMessagesList(messagesGroup1)
+
+			// Act: add new group to the store
+			messagesGroup2.forEach(message => store.commit('addMessage', { token: TOKEN, message }))
+			await wrapper.vm.$nextTick()
+
+			// Assert: old group nextMessageId is updated, new group is added
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.at(0).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup1,
+				previousMessageId: 0,
+				nextMessageId: 200,
+			})
+
+			expect(groups.at(1).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup2,
+				previousMessageId: 110,
+				nextMessageId: 0,
+			})
+		})
+
+		test('updates rendered list of messages (add messages to existing groups)', async () => {
+			// Arrange
+			const wrapper = renderMessagesList(messagesGroup1, messagesGroup2)
+
+			// Act: add new messages to the store
+			store.commit('addMessage', { token: TOKEN, message: messagesGroup1OldMessage })
+			store.commit('addMessage', { token: TOKEN, message: messagesGroup2NewMessage })
+			await wrapper.vm.$nextTick()
+
+			// Assert: both groups are updated
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.exists()).toBe(true)
+			expect(groups.length).toBe(2)
+			expect(groups.at(0).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup1WithOld,
+				previousMessageId: 0,
+				nextMessageId: 200,
+			})
+
+			expect(groups.at(1).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup2WithNew,
+				previousMessageId: 110,
+				nextMessageId: 0,
+			})
+		})
+
+		test('updates rendered list of messages (replace temporary message in separate group)', async () => {
+			// Arrange
+			const wrapper = renderMessagesList(messagesGroup1, messagesGroup3)
+
+			// Act: replace temporary message with returned from server
+			const message = {
+				...messagesGroup3[0],
+				id: 300,
+				timestamp: fakeTimestamp('2024-05-01T13:00:00'),
+			}
+			store.commit('deleteMessage', { token: TOKEN, id: messagesGroup3[0].id })
+			store.commit('addMessage', { token: TOKEN, message })
+			await wrapper.vm.$nextTick()
+
+			// Assert: old group nextMessageId is updated, new group is added
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.exists()).toBe(true)
+			expect(groups.length).toBe(2)
+			expect(groups.at(0).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup1,
+				previousMessageId: 0,
+				nextMessageId: 300,
+			})
+
+			expect(groups.at(1).props()).toMatchObject({
+				token: TOKEN,
+				messages: [message],
+				previousMessageId: 110,
+				nextMessageId: 0,
+			})
+		})
+
+		test('updates rendered list of messages (replace temporary message in same group)', async () => {
+			// Arrange
+			const messagesGroup2WithTemp = [messagesGroup2[0], {
+				...messagesGroup2[1],
+				id: 'temp-210',
+				timestamp: 0, // temporary
+			}]
+			const wrapper = renderMessagesList(messagesGroup1, messagesGroup2WithTemp)
+
+			// Act: replace temporary message with returned from server
+			store.commit('deleteMessage', { token: TOKEN, id: 'temp-210' })
+			store.commit('addMessage', { token: TOKEN, message: messagesGroup2[1] })
+			await wrapper.vm.$nextTick()
+
+			// Assert: old group nextMessageId is updated, new group is added
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.exists()).toBe(true)
+			expect(groups.length).toBe(2)
+
+			expect(groups.at(1).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup2,
+				previousMessageId: 110,
+				nextMessageId: 0,
+			})
+		})
+
+		test('updates rendered list of messages (clear history)', async () => {
+			// Arrange
+			const wrapper = renderMessagesList(messagesGroup1, messagesGroup2)
+
+			// Act: imitate clearing of history
+			const message = {
+				id: 400,
+				token: TOKEN,
+				actorId: 'alice',
+				actorDisplayName: 'Alice',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				message: '{actor} cleared the history of the conversation',
+				messageType: 'system',
+				messageParameters: [],
+				systemMessage: 'history_cleared',
+				timestamp: fakeTimestamp('2024-05-01T13:00:00'),
+				isReplyable: false,
+			}
+			store.commit('purgeMessagesStore', TOKEN)
+			store.commit('addMessage', { token: TOKEN, message })
+			await wrapper.vm.$nextTick()
+
+			// Assert: old messages are removed, system message is added
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.exists()).toBe(false)
+			const groupsSystem = wrapper.findAllComponents({ name: 'MessagesSystemGroup' })
+			expect(groupsSystem.length).toBe(1)
+			expect(groupsSystem.at(0).props()).toMatchObject({
+				token: TOKEN,
+				messages: [message],
+				previousMessageId: 0,
+				nextMessageId: 0,
+			})
+		})
+
+		test('updates rendered list of messages (remove messages from existing groups)', async () => {
+			// Arrange
+			const wrapper = renderMessagesList(messagesGroup1WithOld, messagesGroup2WithNew)
+
+			// Act: remove some messages from the store
+			store.commit('deleteMessage', { token: TOKEN, id: messagesGroup1OldMessage.id })
+			store.commit('deleteMessage', { token: TOKEN, id: messagesGroup2NewMessage.id })
+			await wrapper.vm.$nextTick()
+
+			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			expect(groups.length).toBe(2)
+			expect(groups.at(0).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup1,
+				previousMessageId: 0,
+				nextMessageId: 200,
+			})
+
+			expect(groups.at(1).props()).toMatchObject({
+				token: TOKEN,
+				messages: messagesGroup2,
+				previousMessageId: 110,
+				nextMessageId: 0,
+			})
 		})
 	})
 })
