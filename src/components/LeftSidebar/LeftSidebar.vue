@@ -1030,9 +1030,10 @@ export default {
 	display: flex;
 	padding: 8px 4px 8px 12px;
 	align-items: center;
+	border-bottom: 1px solid transparent;
 
 	&--scrolled-down {
-		border-bottom: 1px solid var(--color-placeholder-dark);
+		border-bottom-color: var(--color-placeholder-dark);
 	}
 
 	.filters {
