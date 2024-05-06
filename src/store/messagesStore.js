@@ -432,7 +432,7 @@ const mutations = {
 
 		if (state.messages[token]) {
 			for (const messageId of Object.keys(state.messages[token])) {
-				if (messageId < id) {
+				if (+messageId < id) {
 					Vue.delete(state.messages[token], messageId)
 				}
 			}
