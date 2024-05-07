@@ -237,10 +237,10 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				);
 				$message = $this->messageParser->createMessageFromProxyCache($room, $participant, $cachedMessage, $this->l10n);
 				$subtitle = $this->getSubtitleFromMessage($message);
-			} catch (DoesNotExistException $e) {
+			} catch (DoesNotExistException) {
 				// Fallback to empty subtitle
 			}
-		} elseif ($room->getLastMessageId() && !$room->isFederatedConversation()) {
+		} elseif ($room->getLastMessageId() && $room->getLastMessage() && !$room->isFederatedConversation()) {
 			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
 			$this->messageParser->parseMessage($message);
 			$subtitle = $this->getSubtitleFromMessage($message);
