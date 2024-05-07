@@ -1223,6 +1223,7 @@ OC.L10N.register(
     "Poll • Ended" : "Umfrage・Beendet",
     "Add more reactions" : "Weitere Reaktionen hinzufügen",
     "No permission to post reactions in this conversation" : "Keine Berechtigung zum Veröffentlichen von Reaktionen in dieser Unterhaltung",
+    "(edited)" : "(Bearbeitet)",
     "No messages" : "Keine Nachrichten",
     "All messages have expired or have been deleted." : "Alle Nachrichten sind abgelaufen oder wurden gelöscht.",
     "Today" : "Heute",
