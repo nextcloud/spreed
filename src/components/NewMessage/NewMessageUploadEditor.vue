@@ -55,7 +55,7 @@
 				<NcButton type="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton type="primary" @click="handleUpload({ caption: null, options: null})">
+				<NcButton ref="submitButton" type="primary" @click="handleUpload({ caption: null, options: null})">
 					{{ t('spreed', 'Send') }}
 				</NcButton>
 			</div>
@@ -169,21 +169,25 @@ export default {
 
 	watch: {
 		async showModal(show) {
-			if (show && this.supportMediaCaption) {
+			if (show) {
+				// Wait for modal content to be rendered
 				await this.getContainerId()
-				this.$nextTick(() => {
-					this.$refs.newMessage?.focusInput()
-				})
+				if (this.supportMediaCaption) {
+					// Wait for NewMessage to be rendered after containerId is set
+					await this.$nextTick()
+					this.$refs.newMessage.focusInput()
+				} else {
+					this.$refs.submitButton.$el.focus()
+				}
 			}
 		},
 	},
 
 	methods: {
 		async getContainerId() {
-			this.$nextTick(() => {
-				// Postpone render of NewMessage until modal container is mounted
-				this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
-			})
+			await this.$nextTick()
+			// Postpone render of NewMessage until modal container is mounted
+			this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
 		},
 
 		handleDismiss() {
