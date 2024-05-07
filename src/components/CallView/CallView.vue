@@ -13,10 +13,10 @@
 			:local-shared-data="localSharedData" />
 
 		<template v-else>
-			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
+			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive" :is-sidebar="isSidebar" />
 
 			<div id="videos">
-				<div v-if="!isGrid" class="video__promoted" :class="{'full-page': showFullPage}">
+				<div v-if="!isGrid || !callParticipantModels.length" class="video__promoted" :class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="selectedVideoPeerId"
@@ -81,7 +81,7 @@
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
-					:is-stripe="!isGrid"
+					:is-stripe="!isGrid || !callParticipantModels.length"
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
