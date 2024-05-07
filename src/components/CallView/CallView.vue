@@ -397,18 +397,6 @@ export default {
 			}
 		},
 
-		showSelectedVideo(newVal) {
-			if (newVal) {
-				this.$store.dispatch('setCallViewMode', { isGrid: false })
-			}
-		},
-
-		showSelectedScreen(newVal) {
-			if (newVal) {
-				this.$store.dispatch('setCallViewMode', { isGrid: false })
-			}
-		},
-
 		presenterVideoBlockerEnabled(value) {
 			this.showPresenterOverlay = value
 		},

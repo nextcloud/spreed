@@ -156,17 +156,16 @@ const actions = {
 		if (clearLast) {
 			context.commit('lastIsGrid', null)
 			context.commit('lastIsStripeOpen', null)
-		} else {
-			context.commit('lastIsGrid', context.getters.isGrid)
-			context.commit('lastIsStripeOpen', context.getters.isStripeOpen)
 		}
 
 		if (isGrid !== null) {
+			context.commit('lastIsGrid', context.getters.isGrid)
 			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', isGrid)
 			context.commit('isGrid', isGrid)
 		}
 
 		if (isStripeOpen !== null) {
+			context.commit('lastIsStripeOpen', context.getters.isStripeOpen)
 			context.commit('isStripeOpen', isStripeOpen)
 		}
 	},
