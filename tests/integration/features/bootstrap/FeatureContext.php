@@ -815,7 +815,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			usort($expected, [self::class, 'sortAttendees']);
 			usort($result, [self::class, 'sortAttendees']);
 
-			Assert::assertEquals($expected, $result);
+			Assert::assertEquals($expected, $result, print_r([
+				'original' => $formData->getHash(),
+				'expected' => $expected,
+				'actual' => $attendees,
+				'result' => $result,
+			]));
 		} else {
 			Assert::assertNull($formData);
 		}
