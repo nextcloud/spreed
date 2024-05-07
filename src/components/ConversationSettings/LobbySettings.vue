@@ -145,7 +145,7 @@ export default {
 				return ''
 			}
 			const date = new Date(this.lobbyTimer)
-			return t('spreed', 'Start time: {date}', { date })
+			return t('spreed', 'Start time: {date}', { date: date.toString() })
 		},
 
 		getRelativeTime() {
