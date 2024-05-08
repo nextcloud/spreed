@@ -216,12 +216,15 @@ const actions = {
 		if (!context.getters.presentationStarted) {
 			return
 		}
-
-		// restore previous state
-		context.dispatch('setCallViewMode', {
-			isGrid: context.getters.lastIsGrid,
-			isStripeOpen: context.getters.lastIsStripeOpen,
-		})
+		if (!context.getters.isGrid && !context.getters.isStripeOpen) {
+			// User didn't pick grid view during presentation
+			// restore previous state
+			context.dispatch('setCallViewMode', {
+				isGrid: context.getters.lastIsGrid,
+				isStripeOpen: context.getters.lastIsStripeOpen,
+				clearLast: false,
+			})
+		}
 		context.commit('presentationStarted', false)
 	},
 
