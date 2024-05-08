@@ -37,6 +37,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -56,6 +57,8 @@ class RecordingService {
 	public const CONSENT_REQUIRED_NO = 0;
 	public const CONSENT_REQUIRED_YES = 1;
 	public const CONSENT_REQUIRED_OPTIONAL = 2;
+
+	public const APPCONFIG_PREFIX = 'recording/';
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
@@ -82,6 +85,7 @@ class RecordingService {
 		protected ITimeFactory $timeFactory,
 		protected Config $config,
 		protected IConfig $serverConfig,
+		protected IAppConfig $appConfig,
 		protected RoomService $roomService,
 		protected ShareManager $shareManager,
 		protected ChatManager $chatManager,
@@ -110,6 +114,7 @@ class RecordingService {
 
 		$startingStatus = $status === Room::RECORDING_VIDEO ? Room::RECORDING_VIDEO_STARTING : Room::RECORDING_AUDIO_STARTING;
 		$this->roomService->setCallRecording($room, $startingStatus);
+		$this->appConfig->setAppValueString(self::APPCONFIG_PREFIX . $room->getToken(), $owner, true, true);
 	}
 
 	public function stop(Room $room, ?Participant $participant = null): void {
@@ -128,6 +133,7 @@ class RecordingService {
 	}
 
 	public function store(Room $room, string $owner, array $file): void {
+		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException $e) {
@@ -188,6 +194,35 @@ class RecordingService {
 		} catch (NotPermittedException) {
 			throw new InvalidArgumentException('owner_permission');
 		}
+	}
+
+	/**
+	 * @throws InvalidArgumentException
+	 */
+	public function notifyAboutFailedStore(Room $room): void {
+		$owner = $this->appConfig->getAppValueString(self::APPCONFIG_PREFIX . $room->getToken(), lazy: true);
+		if ($owner === '') {
+			return;
+		}
+
+		try {
+			$participant = $this->participantService->getParticipant($room, $owner);
+		} catch (ParticipantNotFoundException) {
+			$this->logger->warning('Could not determinate conversation when trying to notify about failed upload of call recording');
+			throw new InvalidArgumentException('owner_participant');
+		}
+
+		$attendee = $participant->getAttendee();
+
+		$notification = $this->notificationManager->createNotification();
+
+		$notification
+			->setApp('spreed')
+			->setDateTime($this->timeFactory->getDateTime())
+			->setObject('recording_information', $room->getToken())
+			->setUser($attendee->getActorId())
+			->setSubject('record_file_store_fail');
+		$this->notificationManager->notify($notification);
 	}
 
 	public function notifyAboutFailedTranscript(string $owner, File $recording): void {
