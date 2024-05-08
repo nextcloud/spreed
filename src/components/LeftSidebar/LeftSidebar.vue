@@ -73,7 +73,7 @@
 						{{ t('spreed', 'Create a new conversation') }}
 					</NcActionButton>
 
-					<NcActionButton v-if="!hasNoteToSelf"
+					<NcActionButton v-if="canNoteToSelf && !hasNoteToSelf"
 						close-after-click
 						@click="restoreNoteToSelfConversation">
 						<template #icon>
@@ -357,6 +357,7 @@ const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip
 	&& getCapabilities()?.spreed?.config.call['sip-enabled']
 	&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
 	&& getCapabilities()?.spreed?.config.call['can-enable-sip']
+const canNoteToSelf = getCapabilities()?.spreed?.features?.includes('note-to-self')
 
 export default {
 	name: 'LeftSidebar',
@@ -417,6 +418,7 @@ export default {
 			isMobile,
 			canModerateSipDialOut,
 			isFederationEnabled,
+			canNoteToSelf,
 		}
 	},
 
