@@ -508,7 +508,7 @@ Feature: callapi/recording
       | spreed | recording   | room1     | Failed to transcript call recording | The server failed to transcript the recording at /Talk/Recording/ROOM(room1)/leave_call.ogg for the call in room1. Please reach out to the administration. |
       | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg.  |
 
-  Scenario: Store recording with failure
+  Scenario: Store recording with failure exceeding the upload_max_filesize
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -520,6 +520,28 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
+
+  Scenario: Store recording with failure exceeding the post_max_size
+    Given recording server is started
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
+    When user "participant1" ends call "room1" with 200 (v4)
+    Then recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":[]} |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    When user "NULL" store recording file "big" in room "room1" with 400 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type           | object_id | subject                         |
+      | spreed | recording_information | room1     | Failed to upload call recording |
 
   Scenario: Stop recording automatically when end the call
     Given recording server is started

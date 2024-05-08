@@ -181,9 +181,9 @@ export type operations = {
   /** Store the recording */
   "recording-store": {
     parameters: {
-      query: {
-        /** @description User that will own the recording file */
-        owner: string;
+      query?: {
+        /** @description User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error". */
+        owner?: string | null;
       };
       header: {
         /** @description Required to be true for the API request to pass */

@@ -4102,8 +4102,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @When /^user "([^"]*)" store recording file "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userStoreRecordingFileInRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
-		$this->setCurrentUser($user);
-
 		$recordingServerSharedSecret = 'the secret';
 		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['secret' => $recordingServerSharedSecret])]]));
 		$validRandom = md5((string) rand());
@@ -4112,7 +4110,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'TALK_RECORDING_RANDOM' => $validRandom,
 			'TALK_RECORDING_CHECKSUM' => $validChecksum,
 		];
-		$options = ['multipart' => [['name' => 'owner', 'contents' => $user]]];
+
+		$options = ['multipart' => []];
+		if ($user !== 'NULL') {
+			// When exceeding post_max_size, the owner parameter is not sent:
+			// RecordingController::store(): Argument #1 ($owner) must be of type string, null given
+			$options['multipart'][] = ['name' => 'owner', 'contents' => $user];
+		}
+
 		if ($file === 'invalid') {
 			// Create invalid content
 			$options['multipart'][] = [
