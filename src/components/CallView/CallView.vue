@@ -376,8 +376,8 @@ export default {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
 				this.$store.dispatch('startPresentation')
-			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen) {
-				// last screen share stopped, reopening stripe
+			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen && !this.selectedVideoPeerId) {
+				// last screen share stopped and no selected video, restoring previous state
 				this.$store.dispatch('stopPresentation')
 			}
 		},
@@ -385,7 +385,8 @@ export default {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
 				this.$store.dispatch('startPresentation')
-			} else if (this.callParticipantModelsWithScreen.length === 0) {
+			} else if (this.callParticipantModelsWithScreen.length === 0 && !this.selectedVideoPeerId) {
+				// last screen share stopped and no selected video, restoring previous state
 				this.$store.dispatch('stopPresentation')
 			}
 		},
@@ -634,9 +635,8 @@ export default {
 			if (this.isSidebar) {
 				return
 			}
-			this.$store.dispatch('startPresentation')
 			this.$store.dispatch('selectedVideoPeerId', peerId)
-			this.isLocalVideoSelected = false
+			this.$store.dispatch('startPresentation')
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
