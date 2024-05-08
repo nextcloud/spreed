@@ -125,6 +125,7 @@ class Capabilities implements IPublicCapability {
 				'silent-send-state',
 				'chat-read-last',
 				'federation-v1',
+				'ban-v1',
 			],
 			'config' => [
 				'attachments' => [

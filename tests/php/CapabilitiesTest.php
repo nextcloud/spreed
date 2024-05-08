@@ -135,6 +135,7 @@ class CapabilitiesTest extends TestCase {
 			'silent-send-state',
 			'chat-read-last',
 			'federation-v1',
+			'ban-v1',
 			'message-expiration',
 			'reactions',
 		];

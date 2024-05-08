@@ -10,6 +10,16 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 /**
+ * @psalm-type TalkBan = array{
+ *     id: int,
+ *     actorType: string,
+ *     actorId: string,
+ *     bannedType: string,
+ *     bannedId: string,
+ *     bannedTime: int,
+ *     internalNote: string,
+ * }
+ *
  * @psalm-type TalkBot = array{
  *     description: ?string,
  *     id: int,

@@ -149,3 +149,6 @@
 * `config => federation => incoming-enabled` - Boolean, whether users are allowed to be invited into federated conversations on other servers
 * `config => federation => outgoing-enabled` - Boolean, whether users are allowed to invited federated users of other servers into conversations
 * `config => federation => only-trusted-servers` - Boolean, whether federation invites are limited to trusted servers
+
+## 20
+* `ban-v1` - Whether the API to ban attendees is available

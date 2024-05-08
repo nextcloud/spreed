@@ -26,6 +26,23 @@ export type paths = {
     /** Get the dark mode avatar of a room */
     get: operations["avatar-get-avatar-dark"];
   };
+  "/ocs/v2.php/apps/spreed/api/{apiVersion}/ban/{token}": {
+    /**
+     * List the bans of a conversation
+     * @description Required capability: `ban-v1`
+     */
+    get: operations["ban-list-bans"];
+    /**
+     * Ban an actor or IP address
+     * @description Required capability: `ban-v1`
+     */
+    post: operations["ban-ban-actor"];
+    /**
+     * Unban an actor or IP address
+     * @description Required capability: `ban-v1`
+     */
+    delete: operations["ban-unban-actor"];
+  };
   "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}": {
     /** List bots */
     get: operations["bot-list-bots"];
@@ -385,6 +402,17 @@ export type webhooks = Record<string, never>;
 
 export type components = {
   schemas: {
+    Ban: {
+      /** Format: int64 */
+      id: number;
+      actorType: string;
+      actorId: string;
+      bannedType: string;
+      bannedId: string;
+      /** Format: int64 */
+      bannedTime: number;
+      internalNote: string;
+    };
     BaseMessage: {
       actorDisplayName: string;
       actorId: string;
@@ -914,6 +942,118 @@ export type operations = {
       200: {
         content: {
           "*/*": string;
+        };
+      };
+    };
+  };
+  /**
+   * List the bans of a conversation
+   * @description Required capability: `ban-v1`
+   */
+  "ban-list-bans": {
+    parameters: {
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+      };
+    };
+    responses: {
+      /** @description List all bans */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: components["schemas"]["Ban"][];
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
+   * Ban an actor or IP address
+   * @description Required capability: `ban-v1`
+   */
+  "ban-ban-actor": {
+    parameters: {
+      query: {
+        /** @description Type of actor to ban, or `ip` when banning a clients remote address */
+        actorType: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "ip";
+        /** @description Actor ID or the IP address or range in case of type `ip` */
+        actorId: string;
+        /** @description Optional internal note */
+        internalNote?: string;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+      };
+    };
+    responses: {
+      /** @description Ban successfully */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: components["schemas"]["Ban"];
+            };
+          };
+        };
+      };
+      /** @description Actor information is invalid */
+      400: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: {
+                error: string;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  /**
+   * Unban an actor or IP address
+   * @description Required capability: `ban-v1`
+   */
+  "ban-unban-actor": {
+    parameters: {
+      query: {
+        /** @description ID of the ban to be removed */
+        banId: number;
+      };
+      header: {
+        /** @description Required to be true for the API request to pass */
+        "OCS-APIRequest": boolean;
+      };
+      path: {
+        apiVersion: "v1";
+        token: string;
+      };
+    };
+    responses: {
+      /** @description Unban successfully or not found */
+      200: {
+        content: {
+          "application/json": {
+            ocs: {
+              meta: components["schemas"]["OCSMeta"];
+              data: unknown;
+            };
+          };
         };
       };
     };
@@ -4500,7 +4640,10 @@ export type operations = {
           "application/json": {
             ocs: {
               meta: components["schemas"]["OCSMeta"];
-              data: unknown;
+              data: {
+                /** @enum {string} */
+                error: "ban" | "password";
+              };
             };
           };
         };
