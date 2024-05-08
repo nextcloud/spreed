@@ -192,7 +192,6 @@ import Creation from 'vue-material-design-icons/Creation.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -215,12 +214,10 @@ import { useDevices } from '../../composables/useDevices.js'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { AVATAR, CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
-
-const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
-const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent']
 
 export default {
 	name: 'MediaSettings',
@@ -392,12 +389,16 @@ export default {
 		},
 
 		canModerateRecording() {
-			return this.canFullModerate && recordingEnabled
+			return this.canFullModerate && (getTalkConfig(this.token, 'call', 'recording') || false)
+		},
+
+		recordingConsent() {
+			return getTalkConfig(this.token, 'call', 'recording-consent')
 		},
 
 		isRecordingConsentRequired() {
-			return recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
-				|| (recordingConsent === CALL.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED)
+			return this.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
+				|| (this.recordingConsent === CALL.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED)
 		},
 
 		showRecordingWarning() {

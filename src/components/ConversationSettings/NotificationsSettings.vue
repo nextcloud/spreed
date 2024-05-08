@@ -37,13 +37,10 @@ import Account from 'vue-material-design-icons/Account.vue'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { PARTICIPANT } from '../../constants.js'
-
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
@@ -80,7 +77,7 @@ export default {
 
 	computed: {
 		showCallNotificationSettings() {
-			return (!supportFederationV1 || !this.conversation.remoteServer)
+			return (!hasTalkFeature(this.conversation.token, 'federation-v1') || !this.conversation.remoteServer)
 		}
 	},
 

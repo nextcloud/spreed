@@ -91,7 +91,6 @@ import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.v
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
@@ -108,8 +107,7 @@ import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
-
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 export default {
 	name: 'RightSidebar',
@@ -250,9 +248,13 @@ export default {
 			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
 
+		supportFederationV1() {
+			return hasTalkFeature(this.token, 'federation-v1')
+		},
+
 		showBreakoutRoomsTab() {
 			return this.getUserId && !this.isOneToOne
-				&& (!supportFederationV1 || !this.conversation.remoteServer)
+				&& (!this.supportFederationV1 || !this.conversation.remoteServer)
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 		},
 
@@ -261,7 +263,7 @@ export default {
 		},
 
 		showSharedItemsTab() {
-			return this.getUserId && (!supportFederationV1 || !this.conversation.remoteServer)
+			return this.getUserId && (!this.supportFederationV1 || !this.conversation.remoteServer)
 		},
 
 		showDetailsTab() {

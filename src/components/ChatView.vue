@@ -61,8 +61,6 @@
 <script>
 import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
@@ -72,11 +70,9 @@ import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../constants.js'
+import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
-
-const attachmentsAllowed = getCapabilities()?.spreed?.config?.attachments?.allowed
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 
@@ -124,10 +120,10 @@ export default {
 		},
 
 		canUploadFiles() {
-			return attachmentsAllowed && this.$store.getters.getUserId()
+			return getTalkConfig(this.token, 'attachments', 'allowed') && this.$store.getters.getUserId()
 				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
-				&& (!supportFederationV1 || !this.conversation.remoteServer)
+				&& (!hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
 		},
 
 		isDragAndDropBlocked() {

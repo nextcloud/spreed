@@ -72,7 +72,7 @@
 			</NcAppSettingsSection>
 
 			<!-- Bots settings -->
-			<NcAppSettingsSection v-if="selfIsOwnerOrModerator && hasBotV1API"
+			<NcAppSettingsSection v-if="selfIsOwnerOrModerator && supportBotsV1"
 				id="bots"
 				:name="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
@@ -92,7 +92,6 @@
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -116,12 +115,8 @@ import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 
 import { CALL, PARTICIPANT, CONVERSATION } from '../../constants.js'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
-
-const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
-const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
-const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent'] !== CALL.RECORDING_CONSENT.OFF
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -181,7 +176,7 @@ export default {
 		},
 
 		showMediaSettingsToggle() {
-			return (!supportFederationV1 || !this.conversation.remoteServer)
+			return (!hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
 		},
 
 		showMediaSettings() {
@@ -218,19 +213,20 @@ export default {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 		},
 
-		hasBotV1API() {
-			return getCapabilities()?.spreed?.features?.includes('bots-v1')
+		supportBotsV1() {
+			return hasTalkFeature(this.token, 'bots-v1')
 		},
 
 		canConfigureBreakoutRooms() {
-			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms'] || false
 			return this.canFullModerate
-				&& breakoutRoomsEnabled
+				&& (getTalkConfig(this.token, 'call', 'breakout-rooms') || false)
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
 		},
 
 		recordingConsentAvailable() {
-			return recordingEnabled && recordingConsentCapability && recordingConsent
+			return (getTalkConfig(this.token, 'call', 'recording') || false)
+				&& hasTalkFeature(this.token, 'recording-consent')
+				&& getTalkConfig(this.token, 'call', 'recording-consent') !== CALL.RECORDING_CONSENT.OFF
 		},
 
 		recordingConsentRequired() {

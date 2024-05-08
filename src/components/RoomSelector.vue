@@ -52,8 +52,6 @@ import { provide, ref } from 'vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -62,9 +60,8 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
 
 import { CONVERSATION } from '../constants.js'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { searchListedConversations, fetchConversations } from '../services/conversationsService.js'
-
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'RoomSelector',
@@ -180,7 +177,7 @@ export default {
 				: await fetchConversations({})
 
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)
-				.filter(conversation => !supportFederationV1 || !conversation.remoteServer)
+				.filter(conversation => !hasTalkFeature(this.currentRoom, 'federation-v1') || !conversation.remoteServer)
 			this.loading = false
 		},
 

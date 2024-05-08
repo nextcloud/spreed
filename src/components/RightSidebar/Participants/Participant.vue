@@ -337,7 +337,6 @@ import PhonePaused from 'vue-material-design-icons/PhonePaused.vue'
 import Tune from 'vue-material-design-icons/Tune.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
@@ -362,11 +361,10 @@ import {
 	callSIPUnmutePhone,
 	callSIPSendDTMF,
 } from '../../../services/callsService.js'
+import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getStatusMessage } from '../../../utils/userStatus.js'
-
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'Participant',
@@ -745,7 +743,7 @@ export default {
 		isOffline() {
 			return !this.sessionIds.length && !this.isSearched
 				&& (this.isUserActor || this.isFederatedActor || this.isGuestActor)
-				&& (!supportFederationV1 || (!this.conversation.remoteServer && !this.isFederatedActor))
+				&& (!hasTalkFeature(this.token, 'federation-v1') || (!this.conversation.remoteServer && !this.isFederatedActor))
 		},
 
 		isGuest() {

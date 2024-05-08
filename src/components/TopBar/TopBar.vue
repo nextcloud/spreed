@@ -124,7 +124,6 @@ import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
@@ -144,6 +143,7 @@ import ConversationIcon from '../ConversationIcon.vue'
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
@@ -287,7 +287,7 @@ export default {
 		},
 
 		supportedReactions() {
-			return getCapabilities()?.spreed?.config?.call?.['supported-reactions']
+			return getTalkConfig(this.token, 'call', 'supported-reactions')
 		},
 
 		hasReactionSupport() {
