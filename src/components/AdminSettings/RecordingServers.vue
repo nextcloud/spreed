@@ -76,7 +76,6 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
@@ -90,8 +89,9 @@ import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { CALL } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
-const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
+const recordingConsentCapability = hasTalkFeature('local', 'recording-consent')
 const recordingConsentOptions = [
 	{ value: CALL.RECORDING_CONSENT.OFF, label: t('spreed', 'Disabled for all calls') },
 	{ value: CALL.RECORDING_CONSENT.REQUIRED, label: t('spreed', 'Enabled for all calls') },

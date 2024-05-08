@@ -4,7 +4,6 @@
  */
 
 import Axios from '@nextcloud/axios'
-import { getCapabilities } from '@nextcloud/capabilities'
 
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
 import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
@@ -19,6 +18,7 @@ import SpeakingStatusHandler from './SpeakingStatusHandler.js'
 import initWebRtc from './webrtc.js'
 import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
 import { isSafari } from '../browserCheck.js'
@@ -38,7 +38,7 @@ let speakingStatusHandler = null
 
 // This does not really belongs here, as it is unrelated to WebRTC, but it is
 // included here for the time being until signaling and WebRTC are split.
-const enableTypingIndicators = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] === PRIVACY.PUBLIC
+const enableTypingIndicators = getTalkConfig('local', 'chat', 'typing-privacy') === PRIVACY.PUBLIC
 const signalingTypingHandler = enableTypingIndicators ? new SignalingTypingHandler(store) : null
 
 let cancelFetchSignalingSettings = null

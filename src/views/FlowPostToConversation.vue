@@ -21,14 +21,14 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import { getCapabilities } from '@nextcloud/capabilities'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.js'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
+const supportFederationV1 = hasTalkFeature('local', 'federation-v1')
 
 export default {
 	name: 'FlowPostToConversation',

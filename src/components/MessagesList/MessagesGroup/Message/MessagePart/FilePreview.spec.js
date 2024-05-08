@@ -9,7 +9,6 @@ import Vuex from 'vuex'
 
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 
@@ -20,7 +19,15 @@ import FilePreview from './FilePreview.vue'
 import storeConfig from '../../../../../store/storeConfig.js'
 
 jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(),
+	getCapabilities: jest.fn(() => ({
+		spreed: {
+			config: {
+				previews: {
+					'max-gif-size': 1024,
+				},
+			},
+		}
+	})),
 }))
 
 describe('FilePreview.vue', () => {
@@ -252,18 +259,6 @@ describe('FilePreview.vue', () => {
 				propsData.mimetype = 'image/gif'
 				propsData.name = 'test %20.gif'
 				propsData.path = 'path/to/test %20.gif'
-
-				getCapabilities.mockImplementation(() => {
-					return {
-						spreed: {
-							config: {
-								previews: {
-									'max-gif-size': 1024,
-								},
-							},
-						},
-					}
-				})
 			})
 			test('directly renders small GIF files', async () => {
 				propsData.size = '128'

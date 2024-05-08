@@ -78,18 +78,16 @@ import CheckBold from 'vue-material-design-icons/CheckBold.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
-const canUploadBackgrounds = getCapabilities()?.spreed?.config?.call?.['can-upload-background']
-const predefinedBackgrounds = getCapabilities()?.spreed?.config?.call?.['predefined-backgrounds']
 const predefinedBackgroundLabels = {
 	'1_office': t('spreed', 'Select virtual office background'),
 	'2_home': t('spreed', 'Select virtual home background'),
@@ -124,15 +122,14 @@ export default {
 
 	setup() {
 		return {
-			canUploadBackgrounds,
-			predefinedBackgrounds,
+			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
+			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
 		}
 	},
 
 	data() {
 		return {
 			selectedBackground: undefined,
-			getCapabilities,
 			showFilePicker: false,
 		}
 	},
@@ -145,13 +142,9 @@ export default {
 		},
 
 		predefinedBackgroundsURLs() {
-			return predefinedBackgrounds.map(fileName => {
+			return this.predefinedBackgrounds.map(fileName => {
 				return imagePath('spreed', 'backgrounds/' + fileName)
 			})
-		},
-
-		hasBackgroundsCapability() {
-			return !!predefinedBackgrounds
 		},
 
 		relativeBackgroundsFolderPath() {

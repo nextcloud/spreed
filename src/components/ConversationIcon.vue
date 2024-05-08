@@ -58,15 +58,14 @@ import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { isDarkTheme } from '../utils/isDarkTheme.js'
 
-const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 export default {
 	name: 'ConversationIcon',
