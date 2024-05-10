@@ -209,8 +209,8 @@ const getters = {
 		return null
 	},
 
-	getLastCallStartedMessageId: (state, getters, rootState, rootGetters) => {
-		return getters.messagesList(rootGetters.getToken()).findLast((message) => message.systemMessage === 'call_started')?.id
+	getLastCallStartedMessageId: (state, getters) => (token) => {
+		return getters.messagesList(token).findLast((message) => message.systemMessage === 'call_started')?.id
 	},
 
 	getFirstDisplayableMessageIdAfterReadMarker: (state, getters) => (token, readMessageId) => {

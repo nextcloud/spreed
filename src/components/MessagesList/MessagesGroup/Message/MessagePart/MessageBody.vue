@@ -312,7 +312,7 @@ export default {
 		},
 
 		isLastCallStartedMessage() {
-			return this.systemMessage === 'call_started' && this.id === this.$store.getters.getLastCallStartedMessageId
+			return this.systemMessage === 'call_started' && this.id === this.$store.getters.getLastCallStartedMessageId(this.token)
 		},
 
 		showJoinCallButton() {
