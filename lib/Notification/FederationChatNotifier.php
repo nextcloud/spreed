@@ -80,9 +80,11 @@ class FederationChatNotifier {
 			}
 		} elseif ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_ALWAYS
 			|| ($defaultLevel === Participant::NOTIFY_ALWAYS && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
-			$notification = $this->createNotification($room, $message, 'chat');
-			$notification->setUser($participant->getAttendee()->getActorId());
-			$this->notificationManager->notify($notification);
+			if ($this->isUserMessageOrRelevantSystemMessage($message->getSystemMessage())) {
+				$notification = $this->createNotification($room, $message, 'chat');
+				$notification->setUser($participant->getAttendee()->getActorId());
+				$this->notificationManager->notify($notification);
+			}
 		}
 	}
 
@@ -126,6 +128,14 @@ class FederationChatNotifier {
 		}
 
 		return false;
+	}
+
+	protected function isUserMessageOrRelevantSystemMessage(?string $systemMessage): bool {
+		return $systemMessage === null
+			|| $systemMessage === ''
+			|| $systemMessage === 'object_shared'
+			|| $systemMessage === 'poll_closed'
+			|| $systemMessage === 'file_shared';
 	}
 
 	/**
