@@ -147,8 +147,18 @@ class Capabilities implements IPublicCapability {
 		'conversations' => [
 			'can-create',
 		],
+		'federation' => [
+			'enabled',
+			'incoming-enabled',
+			'outgoing-enabled',
+			'only-trusted-servers',
+		],
 		'previews' => [
 			'max-gif-size',
+		],
+		'signaling' => [
+			'session-ping-limit',
+			'hello-v2-token-key',
 		],
 	];
 
@@ -184,6 +194,7 @@ class Capabilities implements IPublicCapability {
 			'config' => [
 				'attachments' => [
 					'allowed' => $user instanceof IUser,
+					// 'folder' => string,
 				],
 				'call' => [
 					'enabled' => ((int) $this->serverConfig->getAppValue('spreed', 'start_calls', (string) Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
@@ -191,8 +202,11 @@ class Capabilities implements IPublicCapability {
 					'recording' => $this->talkConfig->isRecordingEnabled(),
 					'recording-consent' => $this->talkConfig->recordingConsentRequired(),
 					'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
+					// 'predefined-backgrounds' => list<string>,
+					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
+					'can-enable-sip' => false,
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -214,6 +228,7 @@ class Capabilities implements IPublicCapability {
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
+					// 'hello-v2-token-key' => string,
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,
@@ -294,9 +309,6 @@ class Capabilities implements IPublicCapability {
 			}
 			$capabilities['config']['call']['can-upload-background'] = $quota === 'none' || $quota > 0;
 			$capabilities['config']['call']['can-enable-sip'] = $this->talkConfig->canUserEnableSIP($user);
-		} else {
-			$capabilities['config']['call']['can-upload-background'] = false;
-			$capabilities['config']['call']['can-enable-sip'] = false;
 		}
 
 		return [

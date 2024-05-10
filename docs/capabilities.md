@@ -101,8 +101,8 @@
 * `silent-call` - Allow to start calls without sending notification
 * `talk-polls` - Polls feature is available to use in the chat
 * `config => call => enabled` - Whether calling is enabled on the instance or not
-* `config => signaling => session-ping-limit` - Number of sessions the HPB is allowed to ping in the same request
-* `config => signaling => hello-v2-token-key` - Public key to use when verifying JWT auth tokens for hello V2.
+* `config => signaling => session-ping-limit` (local) - Number of sessions the HPB is allowed to ping in the same request
+* `config => signaling => hello-v2-token-key` (local) - Public key to use when verifying JWT auth tokens for hello V2.
 
 ## 16
 * `breakout-rooms-v1` - Whether breakout-rooms API v1 is available
@@ -145,7 +145,7 @@
 * `silent-send-state` - Whether messages contain a flag that they were sent silently
 * `chat-read-last` - Whether chat can be marked read without giving a message ID (will fall back to the conversations last message ID)
 * `federation-v1` - Whether basic chatting is possible with federation
-* `config => federation => enabled` - Boolean, whether federation is enabled on instance
-* `config => federation => incoming-enabled` - Boolean, whether users are allowed to be invited into federated conversations on other servers
-* `config => federation => outgoing-enabled` - Boolean, whether users are allowed to invited federated users of other servers into conversations
-* `config => federation => only-trusted-servers` - Boolean, whether federation invites are limited to trusted servers
+* `config => federation => enabled` (local) - Boolean, whether federation is enabled on instance
+* `config => federation => incoming-enabled` (local) - Boolean, whether users are allowed to be invited into federated conversations on other servers
+* `config => federation => outgoing-enabled` (local) - Boolean, whether users are allowed to invited federated users of other servers into conversations
+* `config => federation => only-trusted-servers` (local) - Boolean, whether federation invites are limited to trusted servers
