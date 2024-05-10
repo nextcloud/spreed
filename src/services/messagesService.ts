@@ -46,7 +46,7 @@ type EditMessagePayload = { token: string, messageId: number, updatedMessage: ed
  * @param [data.limit=100] Number of messages to load
  * @param options options;
  */
-const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit = 100 }: ReceiveMessagesPayload, options: object): receiveMessagesResponse {
+const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit = 100 }: ReceiveMessagesPayload, options?: object): receiveMessagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		...options,
 		params: {
@@ -69,7 +69,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param [data.limit=100] Number of messages to load
  * @param options options
  */
-const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }: ReceiveMessagesPayload, options: object): receiveMessagesResponse => {
+const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }: ReceiveMessagesPayload, options?: object): receiveMessagesResponse => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), {
 		...options,
 		params: {
@@ -94,7 +94,7 @@ const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }: Re
  * @param [data.limit=50] Number of messages to load
  * @param options options;
  */
-const getMessageContext = async function({ token, messageId, limit = 50 }: GetMessageContextPayload, options: object): getMessageContextResponse {
+const getMessageContext = async function({ token, messageId, limit = 50 }: GetMessageContextPayload, options?: object): getMessageContextResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/context', { token, messageId }, options), {
 		...options,
 		params: {
@@ -129,9 +129,10 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
  * Clears the conversation history
  *
  * @param token The token of the conversation to be deleted.
+ * @param options request options
  */
-const clearConversationHistory = async function(token: string): clearHistoryResponse {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }))
+const clearConversationHistory = async function(token: string, options?: object): clearHistoryResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }, options), options)
 }
 
 /**
@@ -142,7 +143,7 @@ const clearConversationHistory = async function(token: string): clearHistoryResp
  * @param param0.id The id of the message to be deleted
  * @param options request options
  */
-const deleteMessage = async function({ token, id }: DeleteMessagePayload, options: object): deleteMessageResponse {
+const deleteMessage = async function({ token, id }: DeleteMessagePayload, options?: object): deleteMessageResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{id}', { token, id }, options), options)
 }
 
@@ -155,7 +156,7 @@ const deleteMessage = async function({ token, id }: DeleteMessagePayload, option
  * @param param0.updatedMessage The modified text of the message / file share caption
  * @param options request options
  */
-const editMessage = async function({ token, messageId, updatedMessage }: EditMessagePayload, options: object): editMessageResponse {
+const editMessage = async function({ token, messageId, updatedMessage }: EditMessagePayload, options?: object): editMessageResponse {
 	return axios.put(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}', { token, messageId }, options), {
 		message: updatedMessage,
 	} as editMessageParams, options)
@@ -172,7 +173,7 @@ const editMessage = async function({ token, messageId, updatedMessage }: EditMes
  * @param data.referenceId generated reference id, leave empty to generate it based on the other args
  * @param options request options
  */
-const postRichObjectToConversation = async function(token: string, { objectType, objectId, metaData, referenceId }: postRichObjectParams, options: object): postRichObjectResponse {
+const postRichObjectToConversation = async function(token: string, { objectType, objectId, metaData, referenceId }: postRichObjectParams, options?: object): postRichObjectResponse {
 	if (!referenceId) {
 		const tempId = 'richobject-' + objectType + '-' + objectId + '-' + token + '-' + (new Date().getTime())
 		referenceId = Hex.stringify(SHA256(tempId))
@@ -192,7 +193,7 @@ const postRichObjectToConversation = async function(token: string, { objectType,
  * @param lastReadMessage id of the last read message to set
  * @param options request options
  */
-const updateLastReadMessage = async function(token: string, lastReadMessage: setReadMarkerParams, options: object): setReadMarkerResponse {
+const updateLastReadMessage = async function(token: string, lastReadMessage?: number|null, options?: object): setReadMarkerResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }, options), {
 		lastReadMessage,
 	} as setReadMarkerParams, options)
@@ -202,9 +203,10 @@ const updateLastReadMessage = async function(token: string, lastReadMessage: set
  * Set conversation as unread
  *
  * @param token The token of the conversation to be set as unread
+ * @param options request options
  */
-const setConversationUnread = async function(token: string): markUnreadResponse {
-	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }))
+const setConversationUnread = async function(token: string, options?: object): markUnreadResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }, options), options)
 }
 
 export {
