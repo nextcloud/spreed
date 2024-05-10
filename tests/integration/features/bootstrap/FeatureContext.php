@@ -2490,7 +2490,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$expected = $formData->getHash();
+		$expected = array_map(static function (array $message) {
+			if (isset($message['messageParameters'])) {
+				$result = preg_match('/POLL_ID\(([^)]+)\)/', $message['messageParameters'], $matches);
+				if ($result) {
+					$message['messageParameters'] = str_replace($matches[0], '"' . self::$questionToPollId[$matches[1]] . '"', $message['messageParameters']);
+				}
+			}
+			return $message;
+		}, $formData->getHash());
+
 
 		Assert::assertCount(count($expected), $messages, 'Message count does not match');
 		Assert::assertEquals($expected, array_map(function ($message, $expected) {
@@ -2511,6 +2520,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			if (isset($expected['messageParameters'])) {
 				$data['messageParameters'] = json_encode($message['messageParameters']);
+				if ($expected['messageParameters'] === '"IGNORE"') {
+					$data['messageParameters'] = '"IGNORE"';
+				}
 			}
 
 			return $data;
