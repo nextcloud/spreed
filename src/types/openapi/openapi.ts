@@ -417,6 +417,7 @@ export type components = {
     };
     Capabilities: {
       features: string[];
+      "features-local": string[];
       config: {
         attachments: {
           allowed: boolean;
@@ -462,6 +463,9 @@ export type components = {
           "session-ping-limit": number;
           "hello-v2-token-key"?: string;
         };
+      };
+      "config-local": {
+        [key: string]: string[];
       };
       version: string;
     };
