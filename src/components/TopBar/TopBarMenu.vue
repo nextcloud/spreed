@@ -62,20 +62,19 @@
 					{{ t('spreed', 'Media settings') }}
 				</NcActionButton>
 				<NcActionSeparator />
+				<!-- Call layout switcher -->
+				<NcActionButton v-if="showCallLayoutSwitch"
+					close-after-click
+					@click="changeView">
+					<template #icon>
+						<GridView v-if="!isGrid"
+							:size="20" />
+						<PromotedView v-else
+							:size="20" />
+					</template>
+					{{ changeViewText }}
+				</NcActionButton>
 			</template>
-
-			<!-- Call layout switcher -->
-			<NcActionButton v-if="showActions && isInCall"
-				close-after-click
-				@click="changeView">
-				<template #icon>
-					<GridView v-if="!isGrid"
-						:size="20" />
-					<PromotedView v-else
-						:size="20" />
-				</template>
-				{{ changeViewText }}
-			</NcActionButton>
 
 			<!-- Fullscreen -->
 			<NcActionButton :aria-label="t('spreed', 'Toggle full screen')"
@@ -370,6 +369,10 @@ export default {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 				&& this.isInCall
 		},
+
+		showCallLayoutSwitch() {
+			return !this.$store.getters.isEmptyCallView
+		}
 	},
 
 	methods: {

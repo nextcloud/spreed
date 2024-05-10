@@ -13,7 +13,7 @@
 			:local-shared-data="localSharedData" />
 
 		<template v-else>
-			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive" :is-sidebar="isSidebar" />
+			<EmptyCallView v-if="showEmptyCallView" :is-sidebar="isSidebar" />
 
 			<div id="videos">
 				<div v-if="!isGrid || !callParticipantModels.length" class="video__promoted" :class="{'full-page': showFullPage}">
@@ -322,12 +322,16 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
-			return this.shownRemoteScreenCallParticipantModel.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+			return this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
 
 		},
 
 		presenterVideoBlockerEnabled() {
 			return this.sharedDatas[this.shownRemoteScreenPeerId]?.remoteVideoBlocker?.isVideoEnabled()
+		},
+
+		showEmptyCallView() {
+			return !this.callParticipantModels.length && !this.screenSharingActive
 		},
 	},
 
@@ -401,6 +405,10 @@ export default {
 		presenterVideoBlockerEnabled(value) {
 			this.showPresenterOverlay = value
 		},
+
+		showEmptyCallView(value) {
+			this.$store.dispatch('isEmptyCallView', value)
+		},
 	},
 
 	created() {
@@ -422,6 +430,7 @@ export default {
 
 	beforeDestroy() {
 		this.debounceFetchPeers.clear?.()
+		this.$store.dispatch('isEmptyCallView', true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)

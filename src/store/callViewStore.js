@@ -15,6 +15,7 @@ const state = {
 	isViewerOverlay: false,
 	isGrid: false,
 	isStripeOpen: true,
+	isEmptyCallView: true,
 	lastIsGrid: null,
 	lastIsStripeOpen: null,
 	presentationStarted: false,
@@ -29,6 +30,7 @@ const getters = {
 	isViewerOverlay: (state) => state.isViewerOverlay,
 	isGrid: (state) => state.isGrid,
 	isStripeOpen: (state) => state.isStripeOpen,
+	isEmptyCallView: (state) => state.isEmptyCallView,
 	lastIsGrid: (state) => state.lastIsGrid,
 	lastIsStripeOpen: (state) => state.lastIsStripeOpen,
 	presentationStarted: (state) => state.presentationStarted,
@@ -67,6 +69,9 @@ const mutations = {
 	},
 	isStripeOpen(state, value) {
 		state.isStripeOpen = value
+	},
+	isEmptyCallView(state, value) {
+		state.isEmptyCallView = value
 	},
 	lastIsGrid(state, value) {
 		state.lastIsGrid = value
@@ -230,6 +235,10 @@ const actions = {
 
 	dismissQualityWarningTooltip(context) {
 		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
+	},
+
+	isEmptyCallView(context, value) {
+		context.commit('isEmptyCallView', value)
 	},
 }
 
