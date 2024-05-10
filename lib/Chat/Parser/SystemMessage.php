@@ -645,6 +645,8 @@ class SystemMessage implements IEventListener {
 			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];
 			$parsedMessage = $this->l->t('Someone voted on the poll {poll}');
 			unset($parsedParameters['actor']);
+
+			$chatMessage->setActor(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_SYSTEM, '');
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
