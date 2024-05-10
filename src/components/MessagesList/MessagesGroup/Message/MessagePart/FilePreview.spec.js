@@ -18,18 +18,6 @@ import FilePreview from './FilePreview.vue'
 
 import storeConfig from '../../../../../store/storeConfig.js'
 
-jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(() => ({
-		spreed: {
-			config: {
-				previews: {
-					'max-gif-size': 1024,
-				},
-			},
-		}
-	})),
-}))
-
 describe('FilePreview.vue', () => {
 	let store
 	let localVue
@@ -312,8 +300,8 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('renders static preview for big GIF files', async () => {
-				// bigger than max from capability
-				propsData.size = '2048'
+				// 4 MB, bigger than max from capability (3 MB)
+				propsData.size = '4194304'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,

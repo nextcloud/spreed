@@ -9,10 +9,12 @@ import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'
 import { useStore } from '../useStore.js'
 
+// Test messages with 'edit-messages' and without 'delete-messages-unlimited' feature
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
 		spreed: {
 			features: ['edit-messages'],
+			'features-local': [],
 		},
 	}))
 }))
