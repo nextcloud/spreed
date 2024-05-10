@@ -35,7 +35,6 @@ class CapabilitiesTest extends TestCase {
 	protected ITranslationManager&MockObject $translationManager;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected ICache&MockObject $talkCache;
-	protected ?array $baseFeatures = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -61,84 +60,6 @@ class CapabilitiesTest extends TestCase {
 			->method('getAppVersion')
 			->with('spreed')
 			->willReturn('1.2.3');
-
-		$this->baseFeatures = [
-			'audio',
-			'video',
-			'chat-v2',
-			'conversation-v4',
-			'guest-signaling',
-			'empty-group-room',
-			'guest-display-names',
-			'multi-room-users',
-			'favorites',
-			'last-room-activity',
-			'no-ping',
-			'system-messages',
-			'delete-messages',
-			'mention-flag',
-			'in-call-flags',
-			'conversation-call-flags',
-			'notification-levels',
-			'invite-groups-and-mails',
-			'locked-one-to-one-rooms',
-			'read-only-rooms',
-			'listable-rooms',
-			'chat-read-marker',
-			'chat-unread',
-			'webinary-lobby',
-			'start-call-flag',
-			'chat-replies',
-			'circles-support',
-			'force-mute',
-			'sip-support',
-			'sip-support-nopin',
-			'chat-read-status',
-			'phonebook-search',
-			'raise-hand',
-			'room-description',
-			'rich-object-sharing',
-			'temp-user-avatar-api',
-			'geo-location-sharing',
-			'voice-message-sharing',
-			'signaling-v3',
-			'publishing-permissions',
-			'clear-history',
-			'direct-mention-flag',
-			'notification-calls',
-			'conversation-permissions',
-			'rich-object-list-media',
-			'rich-object-delete',
-			'unified-search',
-			'chat-permission',
-			'silent-send',
-			'silent-call',
-			'send-call-notification',
-			'talk-polls',
-			'breakout-rooms-v1',
-			'recording-v1',
-			'avatar',
-			'chat-get-context',
-			'single-conversation-status',
-			'chat-keep-notifications',
-			'typing-privacy',
-			'remind-me-later',
-			'bots-v1',
-			'markdown-messages',
-			'media-caption',
-			'session-state',
-			'note-to-self',
-			'recording-consent',
-			'sip-support-dialout',
-			'delete-messages-unlimited',
-			'edit-messages',
-			'silent-send-state',
-			'chat-read-last',
-			'federation-v1',
-			'ban-v1',
-			'message-expiration',
-			'reactions',
-		];
 	}
 
 	public function testGetCapabilitiesGuest(): void {
@@ -177,7 +98,13 @@ class CapabilitiesTest extends TestCase {
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
 			'spreed' => [
-				'features' => $this->baseFeatures,
+				'features' => array_merge(
+					Capabilities::FEATURES, [
+						'message-expiration',
+						'reactions',
+					]
+				),
+				'features-local' => Capabilities::LOCAL_FEATURES,
 				'config' => [
 					'attachments' => [
 						'allowed' => false,
@@ -188,8 +115,10 @@ class CapabilitiesTest extends TestCase {
 						'recording' => false,
 						'recording-consent' => 0,
 						'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
+						'can-upload-background' => false,
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
+						'can-enable-sip' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -200,8 +129,6 @@ class CapabilitiesTest extends TestCase {
 							'7_library.jpg',
 							'8_space_station.jpg',
 						],
-						'can-upload-background' => false,
-						'can-enable-sip' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -225,6 +152,7 @@ class CapabilitiesTest extends TestCase {
 						'session-ping-limit' => 200,
 					],
 				],
+				'config-local' => Capabilities::LOCAL_CONFIGS,
 				'version' => '1.2.3',
 			],
 		], $capabilities->getCapabilities());
@@ -303,10 +231,13 @@ class CapabilitiesTest extends TestCase {
 		$this->assertSame([
 			'spreed' => [
 				'features' => array_merge(
-					$this->baseFeatures, [
-						'chat-reference-id'
+					Capabilities::FEATURES, [
+						'message-expiration',
+						'reactions',
+						'chat-reference-id',
 					]
 				),
+				'features-local' => Capabilities::LOCAL_FEATURES,
 				'config' => [
 					'attachments' => [
 						'allowed' => true,
@@ -318,8 +249,10 @@ class CapabilitiesTest extends TestCase {
 						'recording' => false,
 						'recording-consent' => 0,
 						'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
+						'can-upload-background' => $canUpload,
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
+						'can-enable-sip' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -330,8 +263,6 @@ class CapabilitiesTest extends TestCase {
 							'7_library.jpg',
 							'8_space_station.jpg',
 						],
-						'can-upload-background' => $canUpload,
-						'can-enable-sip' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -355,17 +286,26 @@ class CapabilitiesTest extends TestCase {
 						'session-ping-limit' => 50,
 					],
 				],
+				'config-local' => Capabilities::LOCAL_CONFIGS,
 				'version' => '1.2.3',
 			],
 		], $data);
 
 		foreach ($data['spreed']['features'] as $feature) {
-			$this->assertCapabilityIsDocumented("`$feature`");
+			$suffix = '';
+			if (in_array($feature, $data['spreed']['features-local'])) {
+				$suffix = ' (local)';
+			}
+			$this->assertCapabilityIsDocumented("`$feature`" . $suffix);
 		}
 
 		foreach ($data['spreed']['config'] as $feature => $configs) {
-			foreach ($configs as $config => $data) {
-				$this->assertCapabilityIsDocumented("`config => $feature => $config`");
+			foreach ($configs as $config => $configData) {
+				$suffix = '';
+				if (isset($data['spreed']['config-local'][$feature]) && in_array($config, $data['spreed']['config-local'][$feature])) {
+					$suffix = ' (local)';
+				}
+				$this->assertCapabilityIsDocumented("`config => $feature => $config`" . $suffix);
 			}
 		}
 	}

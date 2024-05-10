@@ -91,11 +91,19 @@
                 "type": "object",
                 "required": [
                     "features",
+                    "features-local",
                     "config",
+                    "config-local",
                     "version"
                 ],
                 "properties": {
                     "features": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "features-local": {
                         "type": "array",
                         "items": {
                             "type": "string"
@@ -267,6 +275,15 @@
                                         "type": "string"
                                     }
                                 }
+                            }
+                        }
+                    },
+                    "config-local": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
                             }
                         }
                     },
