@@ -26,8 +26,11 @@
 		</h4>
 
 		<template v-if="canModerate">
+			<p v-if="hasBreakoutRooms" class="app-settings-section__hint">
+				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
+			</p>
 			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
-				:disabled="isSaving"
+				:disabled="hasBreakoutRooms || isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
 				@update:checked="toggleGuests">
@@ -149,18 +152,16 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
+		hasBreakoutRooms() {
+			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+		},
+
 		isPasswordProtectionChecked() {
 			return this.conversation.hasPassword || this.showPasswordField
 		},
 	},
 
 	methods: {
-		focus() {
-			this.$nextTick(() => {
-				this.$refs.toggleGuests.focus()
-			})
-		},
-
 		async setConversationPassword(newPassword) {
 			this.isSaving = true
 			try {
@@ -185,27 +186,9 @@ export default {
 		},
 
 		async toggleGuests() {
-			const enabled = this.conversation.type !== CONVERSATION.TYPE.PUBLIC
+			const allowGuests = this.conversation.type !== CONVERSATION.TYPE.PUBLIC
 			this.isSaving = true
-			try {
-				await this.$store.dispatch('toggleGuests', {
-					token: this.token,
-					allowGuests: enabled,
-				})
-
-				if (enabled) {
-					showSuccess(t('spreed', 'You allowed guests'))
-				} else {
-					showSuccess(t('spreed', 'You disallowed guests'))
-				}
-			} catch (e) {
-				if (enabled) {
-					showError(t('spreed', 'Error occurred while allowing guests'))
-				} else {
-					showError(t('spreed', 'Error occurred while disallowing guests'))
-				}
-				console.error('Error toggling guest mode', e)
-			}
+			await this.$store.dispatch('toggleGuests', { token: this.token, allowGuests })
 			this.isSaving = false
 		},
 

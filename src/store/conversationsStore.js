@@ -488,17 +488,22 @@ const actions = {
 		}
 
 		try {
-			const conversation = Object.assign({}, getters.conversations[token])
+			const conversation = Object.assign({}, getters.conversation(token))
 			if (allowGuests) {
 				await makeConversationPublic(token)
 				conversation.type = CONVERSATION.TYPE.PUBLIC
+				showSuccess(t('spreed', 'You allowed guests'))
 			} else {
 				await makeConversationPrivate(token)
 				conversation.type = CONVERSATION.TYPE.GROUP
+				showSuccess(t('spreed', 'You disallowed guests'))
 			}
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the conversation public status: ', error)
+			showError(allowGuests
+				? t('spreed', 'Error occurred while allowing guests')
+				: t('spreed', 'Error occurred while disallowing guests'))
 		}
 	},
 
