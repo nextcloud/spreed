@@ -26,7 +26,6 @@
 				<CallView v-if="isInCall"
 					:token="token"
 					:is-sidebar="true" />
-				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
 				<PollViewer />
@@ -37,8 +36,6 @@
 </template>
 
 <script>
-import PreventUnload from 'vue-prevent-unload'
-
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -64,7 +61,6 @@ import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
-
 	name: 'PublicShareSidebar',
 
 	components: {
@@ -74,7 +70,6 @@ export default {
 		MediaSettings,
 		NcButton,
 		PollViewer,
-		PreventUnload,
 		TopBar,
 		TransitionWrapper,
 	},
@@ -126,6 +121,10 @@ export default {
 		},
 	},
 
+	created() {
+		window.addEventListener('beforeunload', this.preventUnload)
+	},
+
 	beforeMount() {
 		window.addEventListener('unload', () => {
 			if (this.token) {
@@ -139,7 +138,18 @@ export default {
 		})
 	},
 
+	beforeDestroy() {
+		window.removeEventListener('beforeunload', this.preventUnload)
+	},
+
 	methods: {
+		preventUnload(event) {
+			if (!this.warnLeaving) {
+				return
+			}
+
+			event.preventDefault()
+		},
 
 		async joinConversation() {
 			checkBrowser()

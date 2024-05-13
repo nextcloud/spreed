@@ -13,7 +13,6 @@
 			<router-view />
 		</NcAppContent>
 		<RightSidebar :is-in-call="isInCall" />
-		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
@@ -23,7 +22,6 @@
 <script>
 import debounce from 'debounce'
 import { provide } from 'vue'
-import PreventUnload from 'vue-prevent-unload'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -58,7 +56,6 @@ export default {
 		NcAppContent,
 		NcContent,
 		LeftSidebar,
-		PreventUnload,
 		RightSidebar,
 		SettingsDialog,
 		ConversationSettingsDialog,
@@ -246,6 +243,10 @@ export default {
 		}
 	},
 
+	created() {
+		window.addEventListener('beforeunload', this.preventUnload)
+	},
+
 	beforeDestroy() {
 		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
@@ -254,6 +255,8 @@ export default {
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 
 		unsubscribe('notifications:action:execute', this.interceptNotificationActions)
+
+		window.removeEventListener('beforeunload', this.preventUnload)
 	},
 
 	beforeMount() {
@@ -669,6 +672,14 @@ export default {
 
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
+		},
+
+		preventUnload(event) {
+			if (!this.warnLeaving && !this.isSendingMessages) {
+				return
+			}
+
+			event.preventDefault()
 		},
 
 		/**

@@ -11,13 +11,10 @@
 		<CallView v-if="showCallView"
 			:token="token"
 			:is-sidebar="true" />
-		<PreventUnload :when="warnLeaving" />
 	</div>
 </template>
 
 <script>
-import PreventUnload from 'vue-prevent-unload'
-
 import LoadingComponent from './components/LoadingComponent.vue'
 
 import { useHashCheck } from './composables/useHashCheck.js'
@@ -35,7 +32,6 @@ export default {
 				render: (h) => h(LoadingComponent, { class: 'call-loading' }),
 			},
 		}),
-		PreventUnload,
 		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
 	},
 
@@ -147,7 +143,23 @@ export default {
 		},
 	},
 
+	created() {
+		window.addEventListener('beforeunload', this.preventUnload)
+	},
+
+	beforeDestroy() {
+		window.removeEventListener('beforeunload', this.preventUnload)
+	},
+
 	methods: {
+		preventUnload(event) {
+			if (!this.warnLeaving) {
+				return
+			}
+
+			event.preventDefault()
+		},
+
 		setFileInfo(fileInfo) {
 		},
 
