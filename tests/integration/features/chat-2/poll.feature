@@ -97,11 +97,11 @@ Feature: chat-2/poll
       | votedSelf  | not voted |
       | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}] |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | poll_closed          | You ended the poll {poll}        | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | poll_closed          | You ended the poll {poll}        | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Participants can update their votes but only while open
     Given user "participant1" creates room "room" (v4)
@@ -154,11 +154,11 @@ Feature: chat-2/poll
       | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}] |
     Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 400
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | poll_closed          | You ended the poll {poll}        | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | poll_closed          | You ended the poll {poll}        | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Participants can only vote for valid options
     Given user "participant1" creates room "room" (v4)
@@ -172,8 +172,8 @@ Feature: chat-2/poll
     Then user "participant1" votes for options "[-1]" on poll "What is the question?" in room "room" with 400
     Then user "participant1" votes for options "[2]" on poll "What is the question?" in room "room" with 400
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Participants can not exceed the maxVotes
     Given user "participant1" creates room "room" (v4)
@@ -186,8 +186,8 @@ Feature: chat-2/poll
       | maxVotes   | 1 |
     Then user "participant1" votes for options "[0,1]" on poll "What is the question?" in room "room" with 400
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Participants can vote for multiple options
     Given user "participant1" creates room "room" (v4)
@@ -212,9 +212,9 @@ Feature: chat-2/poll
       | status     | open |
       | votedSelf  | [0,1] |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Participants can not vote for the same option multiple times
     Given user "participant1" creates room "room" (v4)
@@ -227,8 +227,8 @@ Feature: chat-2/poll
       | maxVotes   | unlimited |
     Then user "participant1" votes for options "[1,1]" on poll "What is the question?" in room "room" with 400
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Non-moderators can also create polls and close it themselves
     Given user "participant1" creates room "room" (v4)
@@ -258,10 +258,10 @@ Feature: chat-2/poll
       | votedSelf  | not voted |
       | details    | {} |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant2 | poll_closed          | {actor} ended the poll {poll}    | !ISSET | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant2 | poll_closed          | {actor} ended the poll {poll}    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Non-moderators can not create polls without chat permission
     Given user "participant1" creates room "room" (v4)
@@ -301,10 +301,10 @@ Feature: chat-2/poll
       | votedSelf  | not voted |
       | details    | {} |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | poll_closed          | You ended the poll {poll}        | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | poll_closed          | You ended the poll {poll}        | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: There are system messages for opening, voting and closing on public polls
     Given user "participant1" creates room "room" (v4)
@@ -357,12 +357,12 @@ Feature: chat-2/poll
       | votedSelf  | [0] |
       | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":0},{"actorType":"users","actorId":"participant2","actorDisplayName":"participant2-displayname","optionId":1}] |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users     | participant1 | poll_closed          | You ended the poll {poll}        | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users     | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users     | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users     | participant1 | poll_closed          | You ended the poll {poll}        | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users     | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users     | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     Then user "participant1" sees the following messages in room "room" with 200 (v1)
       | room | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
@@ -504,10 +504,10 @@ Feature: chat-2/poll
       | status     | closed |
       | votedSelf  | not voted |
     Then user "participant1" sees the following system messages in room "room" with 200
-      | room | actorType | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users     | participant1 | poll_closed          | You ended the poll {poll}        | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users     | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users     | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users     | participant1 | poll_closed          | You ended the poll {poll}        | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users     | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users     | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Number of voters and votes are restricted to the very same poll
     Given user "participant1" creates room "room" (v4)
@@ -564,11 +564,11 @@ Feature: chat-2/poll
       | status     | open |
       | votedSelf  | [1] |
     Then user "participant1" sees the following system messages in room "room" with 200
-      | room | actorType | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(Another one ...),"name":"Another one ..."}} |
-      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users     | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users     | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType | actorId      | systemMessage        | message                          | messageParameters |
+      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(Another one ...),"name":"Another one ..."}} |
+      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users     | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users     | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Remove all votes
     Given user "participant1" creates room "room" (v4)
@@ -620,11 +620,11 @@ Feature: chat-2/poll
       | status     | open |
       | votedSelf  | [] |
     Then user "participant1" sees the following system messages in room "room" with 200
-      | room | actorType | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users     | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users     | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType | actorId      | systemMessage        | message                          | messageParameters |
+      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests    | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users     | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users     | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Empty question and options
     Given user "participant1" creates room "room" (v4)
@@ -704,12 +704,12 @@ Feature: chat-2/poll
       | votedSelf  | [] |
       | details    | [{"actorType":"deleted_users","actorId":"deleted_users","actorDisplayName":"","optionId":0}] |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | admin        | user_removed         | {actor} removed {user}           | !ISSET | "IGNORE" |
-      | room | deleted_users | deleted_users | poll_closed         | {actor} ended the poll {poll}        | !ISSET | {"actor":{"type":"highlight","id":"deleted_users","name":"Deleted user"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | !ISSET | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"highlight","id":"deleted_users","name":"Deleted user"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | admin        | user_removed         | {actor} removed {user}           | "IGNORE" |
+      | room | deleted_users | deleted_users | poll_closed         | {actor} ended the poll {poll}        | {"actor":{"type":"highlight","id":"deleted_users","name":"Deleted user"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"highlight","id":"deleted_users","name":"Deleted user"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Deleting the poll message removes all details
     Given user "participant1" creates room "room" (v4)
@@ -735,10 +735,10 @@ Feature: chat-2/poll
       | room | actorType | actorId      | actorDisplayName         | message                | messageParameters |
       | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | message_deleted      | You deleted a message            | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | message_deleted      | You deleted a message            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Deleting a closed poll message removes also the close message
     Given user "participant1" creates room "room" (v4)
@@ -779,11 +779,11 @@ Feature: chat-2/poll
       | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
       | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | message_deleted      | You deleted a message            | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
-      | room | users         | participant1 | message_deleted      | You deleted a message            | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
-      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | message_deleted      | You deleted a message            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | message_deleted      | You deleted a message            | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Deleting the chat history also deletes polls
     Given user "participant1" creates room "room" (v4)
@@ -803,5 +803,5 @@ Feature: chat-2/poll
     Then user "participant2" sees poll "What is the question?" in room "room" with 404
     And user "participant1" sees the following messages in room "room" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
-      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
-      | room | users         | participant1 | history_cleared      | You cleared the history of the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+      | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
+      | room | users         | participant1 | history_cleared      | You cleared the history of the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
