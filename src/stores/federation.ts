@@ -33,11 +33,13 @@ import type { Conversation, FederationInvite, NotificationInvite } from '../type
 type State = {
 	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>,
 	acceptedShares: Record<string, FederationInvite>,
+	pendingSharesCount: number,
 }
 export const useFederationStore = defineStore('federation', {
 	state: (): State => ({
 		pendingShares: {},
 		acceptedShares: {},
+		pendingSharesCount: 0,
 	}),
 
 	actions: {
@@ -54,6 +56,7 @@ export const useFederationStore = defineStore('federation', {
 						Vue.set(this.pendingShares, item.id, item)
 					}
 				})
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 			} catch (error) {
 				console.error(error)
 			}
@@ -84,6 +87,7 @@ export const useFederationStore = defineStore('federation', {
 				inviterDisplayName: name,
 			}
 			Vue.set(this.pendingShares, invitation.id, invitation)
+			this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 		},
 
 		/**
@@ -118,6 +122,7 @@ export const useFederationStore = defineStore('federation', {
 				Vue.set(this.pendingShares[id], 'loading', 'accept')
 				const response = await acceptShare(id)
 				this.markInvitationAccepted(id, response.data.ocs.data)
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 				return response.data.ocs.data
 			} catch (error) {
 				console.error(error)
@@ -137,11 +142,21 @@ export const useFederationStore = defineStore('federation', {
 			try {
 				Vue.set(this.pendingShares[id], 'loading', 'reject')
 				await rejectShare(id)
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 				Vue.delete(this.pendingShares, id)
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while rejecting an invitation'))
 			}
+		},
+
+		/**
+		 * Update pending shares count.
+		 *
+		 * @param value amount of pending shares
+		 */
+		updatePendingSharesCount(value?: string|number) {
+			Vue.set(this, 'pendingSharesCount', value ? +value : 0)
 		},
 	},
 })
