@@ -534,7 +534,7 @@ export default {
 
 		pendingInvitationsCount() {
 			return isFederationEnabled
-				? Object.keys(this.federationStore.pendingShares).length
+				? this.federationStore.pendingSharesCount
 				: 0
 		},
 
@@ -593,10 +593,6 @@ export default {
 			this.refreshTimer = window.setInterval(() => {
 				this.fetchConversations()
 			}, 30000)
-
-			if (isFederationEnabled) {
-				this.federationStore.getShares()
-			}
 		})
 
 		talkBroadcastChannel.addEventListener('message', (event) => {
