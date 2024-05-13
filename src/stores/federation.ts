@@ -32,13 +32,17 @@ export const useFederationStore = defineStore('federation', {
 		async getShares() {
 			try {
 				const response = await getShares()
+				const acceptedShares: State['acceptedShares'] = {}
+				const pendingShares: State['pendingShares'] = {}
 				response.data.ocs.data.forEach(item => {
 					if (item.state === FEDERATION.STATE.ACCEPTED) {
-						Vue.set(this.acceptedShares, item.id, item)
+						acceptedShares[item.id] = item
 					} else {
-						Vue.set(this.pendingShares, item.id, item)
+						pendingShares[item.id] = item
 					}
 				})
+				Vue.set(this, 'acceptedShares', acceptedShares)
+				Vue.set(this, 'pendingShares', pendingShares)
 				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 			} catch (error) {
 				console.error(error)
@@ -110,6 +114,11 @@ export const useFederationStore = defineStore('federation', {
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while accepting an invitation'))
+				// Dismiss the loading state, refresh the list
+				await this.getShares()
+				if (this.pendingShares[id]) {
+					Vue.delete(this.pendingShares[id], 'loading')
+				}
 			}
 		},
 
@@ -130,6 +139,11 @@ export const useFederationStore = defineStore('federation', {
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while rejecting an invitation'))
+				// Dismiss the loading state, refresh the list
+				await this.getShares()
+				if (this.pendingShares[id]) {
+					Vue.delete(this.pendingShares[id], 'loading')
+				}
 			}
 		},
 

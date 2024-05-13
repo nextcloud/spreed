@@ -124,6 +124,23 @@ describe('federationStore', () => {
 		expect(federationStore.pendingSharesCount).toBe(1)
 	})
 
+	it('processes a response from server and remove outdated invites', async () => {
+		// Arrange
+		const response = generateOCSResponse({ payload: invites })
+		getShares.mockResolvedValueOnce(response)
+		await federationStore.getShares()
+
+		// Act: load empty response from server
+		const responseEmpty = generateOCSResponse({ payload: [] })
+		getShares.mockResolvedValueOnce(responseEmpty)
+		await federationStore.getShares()
+
+		// Assert
+		expect(federationStore.pendingShares).toStrictEqual({})
+		expect(federationStore.acceptedShares).toStrictEqual({})
+		expect(federationStore.pendingSharesCount).toBe(0)
+	})
+
 	it('handles error in server request for getShares', async () => {
 		// Arrange
 		const response = generateOCSErrorResponse({ status: 404, payload: [] })
