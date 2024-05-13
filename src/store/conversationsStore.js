@@ -55,6 +55,7 @@ import {
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useBreakoutRoomsStore } from '../stores/breakoutRooms.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
+import { useFederationStore } from '../stores/federation.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 
@@ -845,6 +846,7 @@ const actions = {
 
 	async fetchConversations({ dispatch }, { modifiedSince }) {
 		const talkHashStore = useTalkHashStore()
+		const federationStore = useFederationStore()
 		try {
 			talkHashStore.clearMaintenanceMode()
 			modifiedSince = modifiedSince || 0
@@ -860,6 +862,7 @@ const actions = {
 
 			const response = await fetchConversations(options)
 			talkHashStore.updateTalkVersionHash(response)
+			federationStore.updatePendingSharesCount(response.headers['x-nextcloud-talk-federation-invites'])
 
 			dispatch('patchConversations', {
 				conversations: response.data.ocs.data,
