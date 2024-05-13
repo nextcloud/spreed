@@ -5,7 +5,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -33,7 +32,6 @@ describe('MessageButtonsBar.vue', () => {
 
 	beforeEach(() => {
 		localVue = createLocalVue()
-		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 

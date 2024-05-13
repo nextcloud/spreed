@@ -275,6 +275,7 @@ import Translate from 'vue-material-design-icons/Translate.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
+import { vOnClickOutside as ClickOutside } from '@vueuse/components'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
@@ -330,6 +331,10 @@ export default {
 		Reply,
 		Share,
 		Translate,
+	},
+
+	directives: {
+		ClickOutside,
 	},
 
 	inject: ['getMessagesListScroller'],

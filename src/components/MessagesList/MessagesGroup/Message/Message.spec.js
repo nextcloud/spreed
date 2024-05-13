@@ -6,7 +6,6 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
 
 import Check from 'vue-material-design-icons/Check.vue'
@@ -55,7 +54,6 @@ describe('Message.vue', () => {
 
 	beforeEach(() => {
 		localVue = createLocalVue()
-		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
