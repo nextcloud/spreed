@@ -15,6 +15,7 @@ const state = {
 	isViewerOverlay: false,
 	isGrid: false,
 	isStripeOpen: true,
+	isEmptyCallView: true,
 	lastIsGrid: null,
 	lastIsStripeOpen: null,
 	presentationStarted: false,
@@ -29,6 +30,7 @@ const getters = {
 	isViewerOverlay: (state) => state.isViewerOverlay,
 	isGrid: (state) => state.isGrid,
 	isStripeOpen: (state) => state.isStripeOpen,
+	isEmptyCallView: (state) => state.isEmptyCallView,
 	lastIsGrid: (state) => state.lastIsGrid,
 	lastIsStripeOpen: (state) => state.lastIsStripeOpen,
 	presentationStarted: (state) => state.presentationStarted,
@@ -67,6 +69,9 @@ const mutations = {
 	},
 	isStripeOpen(state, value) {
 		state.isStripeOpen = value
+	},
+	isEmptyCallView(state, value) {
+		state.isEmptyCallView = value
 	},
 	lastIsGrid(state, value) {
 		state.lastIsGrid = value
@@ -156,17 +161,16 @@ const actions = {
 		if (clearLast) {
 			context.commit('lastIsGrid', null)
 			context.commit('lastIsStripeOpen', null)
-		} else {
-			context.commit('lastIsGrid', context.getters.isGrid)
-			context.commit('lastIsStripeOpen', context.getters.isStripeOpen)
 		}
 
 		if (isGrid !== null) {
+			context.commit('lastIsGrid', context.getters.isGrid)
 			BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', isGrid)
 			context.commit('isGrid', isGrid)
 		}
 
 		if (isStripeOpen !== null) {
+			context.commit('lastIsStripeOpen', context.getters.isStripeOpen)
 			context.commit('isStripeOpen', isStripeOpen)
 		}
 	},
@@ -217,17 +221,24 @@ const actions = {
 		if (!context.getters.presentationStarted) {
 			return
 		}
-
-		// restore previous state
-		context.dispatch('setCallViewMode', {
-			isGrid: context.getters.lastIsGrid,
-			isStripeOpen: context.getters.lastIsStripeOpen,
-		})
+		if (!context.getters.isGrid && !context.getters.isStripeOpen) {
+			// User didn't pick grid view during presentation
+			// restore previous state
+			context.dispatch('setCallViewMode', {
+				isGrid: context.getters.lastIsGrid,
+				isStripeOpen: context.getters.lastIsStripeOpen,
+				clearLast: false,
+			})
+		}
 		context.commit('presentationStarted', false)
 	},
 
 	dismissQualityWarningTooltip(context) {
 		context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
+	},
+
+	isEmptyCallView(context, value) {
+		context.commit('isEmptyCallView', value)
 	},
 }
 

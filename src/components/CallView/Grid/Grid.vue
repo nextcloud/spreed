@@ -78,8 +78,8 @@
 						<LocalVideo v-if="!isStripe && !isRecording && !screenshotMode"
 							ref="localVideo"
 							class="video"
-							:is-grid="true"
-							:fit-video="isStripe"
+							is-grid
+							:fit-video="false"
 							:token="token"
 							:local-media-model="localMediaModel"
 							:local-call-participant-model="localCallParticipantModel"
@@ -801,7 +801,7 @@ export default {
 		},
 
 		handleClickStripeCollapse() {
-			this.$store.dispatch('setCallViewMode', { isStripeOpen: !this.stripeOpen })
+			this.$store.dispatch('setCallViewMode', { isStripeOpen: !this.stripeOpen, clearLast: false })
 		},
 
 		handleMovement() {

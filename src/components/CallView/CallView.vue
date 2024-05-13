@@ -13,10 +13,10 @@
 			:local-shared-data="localSharedData" />
 
 		<template v-else>
-			<EmptyCallView v-if="!callParticipantModels.length && !screenSharingActive && !isGrid" :is-sidebar="isSidebar" />
+			<EmptyCallView v-if="showEmptyCallView" :is-sidebar="isSidebar" />
 
 			<div id="videos">
-				<div v-if="!isGrid" class="video__promoted" :class="{'full-page': showFullPage}">
+				<div v-if="!isGrid || !callParticipantModels.length" class="video__promoted" :class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="selectedVideoPeerId"
@@ -81,7 +81,7 @@
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
-					:is-stripe="!isGrid"
+					:is-stripe="!isGrid || !callParticipantModels.length"
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
@@ -322,12 +322,16 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
-			return this.shownRemoteScreenCallParticipantModel.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+			return this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
 
 		},
 
 		presenterVideoBlockerEnabled() {
 			return this.sharedDatas[this.shownRemoteScreenPeerId]?.remoteVideoBlocker?.isVideoEnabled()
+		},
+
+		showEmptyCallView() {
+			return !this.callParticipantModels.length && !this.screenSharingActive
 		},
 	},
 
@@ -376,8 +380,8 @@ export default {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
 				this.$store.dispatch('startPresentation')
-			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen) {
-				// last screen share stopped, reopening stripe
+			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen && !this.selectedVideoPeerId) {
+				// last screen share stopped and no selected video, restoring previous state
 				this.$store.dispatch('stopPresentation')
 			}
 		},
@@ -385,7 +389,8 @@ export default {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
 				this.$store.dispatch('startPresentation')
-			} else if (this.callParticipantModelsWithScreen.length === 0) {
+			} else if (this.callParticipantModelsWithScreen.length === 0 && !this.selectedVideoPeerId) {
+				// last screen share stopped and no selected video, restoring previous state
 				this.$store.dispatch('stopPresentation')
 			}
 		},
@@ -397,20 +402,12 @@ export default {
 			}
 		},
 
-		showSelectedVideo(newVal) {
-			if (newVal) {
-				this.$store.dispatch('setCallViewMode', { isGrid: false })
-			}
-		},
-
-		showSelectedScreen(newVal) {
-			if (newVal) {
-				this.$store.dispatch('setCallViewMode', { isGrid: false })
-			}
-		},
-
 		presenterVideoBlockerEnabled(value) {
 			this.showPresenterOverlay = value
+		},
+
+		showEmptyCallView(value) {
+			this.$store.dispatch('isEmptyCallView', value)
 		},
 	},
 
@@ -433,6 +430,7 @@ export default {
 
 	beforeDestroy() {
 		this.debounceFetchPeers.clear?.()
+		this.$store.dispatch('isEmptyCallView', true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
@@ -646,9 +644,8 @@ export default {
 			if (this.isSidebar) {
 				return
 			}
-			this.$store.dispatch('startPresentation')
 			this.$store.dispatch('selectedVideoPeerId', peerId)
-			this.isLocalVideoSelected = false
+			this.$store.dispatch('startPresentation')
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
