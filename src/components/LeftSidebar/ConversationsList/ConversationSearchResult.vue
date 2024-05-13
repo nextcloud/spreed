@@ -8,8 +8,8 @@
 		:name="item.displayName"
 		:title="item.displayName"
 		:active="item.token === selectedRoom?.token"
-		:bold="exposeMessages && !!item.unreadMessages"
-		:counter-number="exposeMessages ? item.unreadMessages : 0"
+		:bold="exposeMessagesRef && !!item.unreadMessages"
+		:counter-number="exposeMessagesRef ? item.unreadMessages : 0"
 		:counter-type="counterType"
 		@click="onClick">
 		<template #icon>
@@ -65,12 +65,18 @@ export default {
 		const { item } = toRefs(props)
 		const selectedRoom = inject('selectedRoom', null)
 		const exposeDescriptionRef = inject('exposeDescription', ref(false))
-		const { counterType, conversationInformation } = useConversationInfo({ item, exposeDescriptionRef })
+		const exposeMessagesRef = inject('exposeMessages', ref(false))
+		const { counterType, conversationInformation } = useConversationInfo({
+			item,
+			exposeDescriptionRef,
+			exposeMessagesRef,
+		})
 
 		return {
 			selectedRoom,
 			counterType,
 			conversationInformation,
+			exposeMessagesRef,
 		}
 	},
 
