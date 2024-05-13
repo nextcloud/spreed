@@ -20,120 +20,120 @@
 -->
 
 <template>
-	<Fragment>
-		<NcListItem ref="listItem"
-			:key="item.token"
-			:name="item.displayName"
-			:title="item.displayName"
-			class="conversation-item"
-			:class="{'unread-mention-conversation': item.unreadMention}"
-			:data-nav-id="`conversation_${item.token}`"
-			:actions-aria-label="t('spreed', 'Conversation actions')"
-			:to="to"
-			:bold="!!item.unreadMessages"
-			:counter-number="item.unreadMessages"
-			:counter-type="counterType"
-			@click="onClick">
-			<template #icon>
-				<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
+	<NcListItem ref="listItem"
+		:key="item.token"
+		:name="item.displayName"
+		:title="item.displayName"
+		class="conversation-item"
+		:class="{'unread-mention-conversation': item.unreadMention}"
+		:data-nav-id="`conversation_${item.token}`"
+		:actions-aria-label="t('spreed', 'Conversation actions')"
+		:to="to"
+		:bold="!!item.unreadMessages"
+		:counter-number="item.unreadMessages"
+		:counter-type="counterType"
+		@click="onClick">
+		<template #icon>
+			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
+		</template>
+		<template #subname>
+			<strong v-if="item.unreadMessages"
+				class="subtitle">
+				{{ conversationInformation }}
+			</strong>
+			<template v-else>
+				{{ conversationInformation }}
 			</template>
-			<template #subname>
-				<strong v-if="item.unreadMessages"
-					class="subtitle">
-					{{ conversationInformation }}
-				</strong>
-				<template v-else>
-					{{ conversationInformation }}
+		</template>
+		<template v-if="!isSearchResult" #actions>
+			<NcActionButton v-if="canFavorite"
+				:close-after-click="true"
+				@click="toggleFavoriteConversation">
+				<template #icon>
+					<Star v-if="item.isFavorite" :size="20" />
+					<Star v-else :size="20" :fill-color="'#FFCC00'" />
 				</template>
-			</template>
-			<template v-if="!isSearchResult" #actions>
-				<NcActionButton v-if="canFavorite"
-					:close-after-click="true"
-					@click="toggleFavoriteConversation">
-					<template #icon>
-						<Star v-if="item.isFavorite" :size="20" />
-						<Star v-else :size="20" :fill-color="'#FFCC00'" />
-					</template>
-					{{ labelFavorite }}
-				</NcActionButton>
-				<NcActionButton icon="icon-clippy"
-					@click.stop="handleCopyLink">
-					{{ t('spreed', 'Copy link') }}
-				</NcActionButton>
-				<NcActionButton v-if="item.unreadMessages"
-					:close-after-click="true"
-					@click="markConversationAsRead">
-					<template #icon>
-						<EyeOutline :size="16" />
-					</template>
-					{{ t('spreed', 'Mark as read') }}
-				</NcActionButton>
-				<NcActionButton v-else
-					:close-after-click="true"
-					@click="markConversationAsUnread">
-					<template #icon>
-						<EyeOffOutline :size="16" />
-					</template>
-					{{ t('spreed', 'Mark as unread') }}
-				</NcActionButton>
-				<NcActionButton :close-after-click="true"
-					@click="showConversationSettings">
-					<template #icon>
-						<Cog :size="20" />
-					</template>
-					{{ t('spreed', 'Conversation settings') }}
-				</NcActionButton>
-				<NcActionButton v-if="canLeaveConversation"
-					:close-after-click="true"
-					@click="leaveConversation">
-					<template #icon>
-						<ExitToApp :size="16" />
-					</template>
-					{{ t('spreed', 'Leave conversation') }}
-				</NcActionButton>
-				<NcActionButton v-if="canDeleteConversation"
-					:close-after-click="true"
-					class="critical"
-					@click="showDialog">
-					<template #icon>
-						<Delete :size="16" />
-					</template>
-					{{ t('spreed', 'Delete conversation') }}
-				</NcActionButton>
-			</template>
-			<template v-else-if="item.token" #actions>
-				<NcActionButton close-after-click @click="onActionClick">
-					<template #icon>
-						<ArrowRight :size="16" />
-					</template>
-					{{ t('spreed', 'Join conversation') }}
-				</NcActionButton>
-				<NcActionButton icon="icon-clippy"
-					@click.stop="handleCopyLink">
-					{{ t('spreed', 'Copy link') }}
-				</NcActionButton>
-			</template>
-		</NcListItem>
+				{{ labelFavorite }}
+			</NcActionButton>
+			<NcActionButton icon="icon-clippy"
+				@click.stop="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcActionButton>
+			<NcActionButton v-if="item.unreadMessages"
+				:close-after-click="true"
+				@click="markConversationAsRead">
+				<template #icon>
+					<EyeOutline :size="16" />
+				</template>
+				{{ t('spreed', 'Mark as read') }}
+			</NcActionButton>
+			<NcActionButton v-else
+				:close-after-click="true"
+				@click="markConversationAsUnread">
+				<template #icon>
+					<EyeOffOutline :size="16" />
+				</template>
+				{{ t('spreed', 'Mark as unread') }}
+			</NcActionButton>
+			<NcActionButton :close-after-click="true"
+				@click="showConversationSettings">
+				<template #icon>
+					<Cog :size="20" />
+				</template>
+				{{ t('spreed', 'Conversation settings') }}
+			</NcActionButton>
+			<NcActionButton v-if="canLeaveConversation"
+				:close-after-click="true"
+				@click="leaveConversation">
+				<template #icon>
+					<ExitToApp :size="16" />
+				</template>
+				{{ t('spreed', 'Leave conversation') }}
+			</NcActionButton>
+			<NcActionButton v-if="canDeleteConversation"
+				:close-after-click="true"
+				class="critical"
+				@click="isDialogOpen = true">
+				<template #icon>
+					<Delete :size="16" />
+				</template>
+				{{ t('spreed', 'Delete conversation') }}
+			</NcActionButton>
+		</template>
+		<template v-else-if="item.token" #actions>
+			<NcActionButton close-after-click @click="onActionClick">
+				<template #icon>
+					<ArrowRight :size="16" />
+				</template>
+				{{ t('spreed', 'Join conversation') }}
+			</NcActionButton>
+			<NcActionButton icon="icon-clippy"
+				@click.stop="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcActionButton>
+		</template>
+
 		<!-- confirmation required to delete conversation -->
-		<NcDialog :open.sync="isDialogOpen"
-			:name="t('spreed','Delete Conversation')"
-			:message="dialogMessage"
-			:container="container">
-			<template #actions>
-				<NcButton type="tertiary" @click="closeDialog">
-					{{ t('spreed', 'No') }}
-				</NcButton>
-				<NcButton type="error" @click="deleteConversation">
-					{{ t('spreed', 'Yes') }}
-				</NcButton>
-			</template>
-		</NcDialog>
-	</Fragment>
+		<template v-if="isDialogOpen" #extra>
+			<NcDialog :open.sync="isDialogOpen"
+				:name="t('spreed','Delete Conversation')"
+				:message="dialogMessage"
+				:container="container">
+				<template #actions>
+					<NcButton type="tertiary" @click="isDialogOpen = false">
+						{{ t('spreed', 'No') }}
+					</NcButton>
+					<NcButton type="error" @click="deleteConversation">
+						{{ t('spreed', 'Yes') }}
+					</NcButton>
+				</template>
+			</NcDialog>
+		</template>
+	</NcListItem>
 </template>
 
 <script>
 
-import { Fragment } from 'vue-frag'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
@@ -166,7 +166,6 @@ export default {
 		NcActionButton,
 		NcDialog,
 		NcListItem,
-		Fragment,
 		// Icons
 		ArrowRight,
 		Cog,
@@ -433,14 +432,6 @@ export default {
 				params: { token: this.item.token },
 			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
-
-		showDialog() {
-			this.isDialogOpen = true
-		},
-
-		closeDialog() {
-			this.isDialogOpen = false
-		}
 	},
 }
 </script>
