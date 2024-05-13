@@ -706,9 +706,9 @@ Feature: chat-2/poll
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
       | room | actorType     | actorId      | systemMessage        | message                          | messageParameters |
       | room | users         | admin        | user_removed         | {actor} removed {user}           | "IGNORE" |
-      | room | deleted_users | deleted_users | poll_closed         | {actor} ended the poll {poll}        | {"actor":{"type":"highlight","id":"deleted_users","name":"Deleted user"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | deleted_users | deleted_users | poll_closed         | {actor} ended the poll {poll}        | {"actor":{"type":"highlight","id":"deleted_user","name":"Deleted user"},"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
       | room | guests        | system       | poll_voted           | Someone voted on the poll {poll} | {"poll":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
-      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"highlight","id":"deleted_users","name":"Deleted user"}} |
+      | room | users         | participant1 | user_added           | You added {user}                 | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"highlight","id":"deleted_user","name":"Deleted user"}} |
       | room | users         | participant1 | conversation_created | You created the conversation     | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Deleting the poll message removes all details
