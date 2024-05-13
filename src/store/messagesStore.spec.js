@@ -53,6 +53,15 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 }))
 
+// Test actions with 'chat-read-last' feature
+jest.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: jest.fn(() => ({
+		spreed: {
+			features: ['chat-read-last'],
+		},
+	}))
+}))
+
 describe('messagesStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	let localVue = null
@@ -665,8 +674,30 @@ describe('messagesStore', () => {
 				lastReadMessage: 123,
 			})
 
-			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 123)
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, null)
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(100)
+		})
+
+		test('clears last read message for federated conversation', async () => {
+			getUserIdMock.mockReturnValue('federated-user-1')
+			conversationMock.mockReturnValue({
+				lastMessage: {},
+				remoteServer: 'nextcloud.com',
+			})
+
+			store.commit('addMessage', { token: TOKEN, message: { id: 123 } })
+			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
+			await store.dispatch('clearLastReadMessage', {
+				token: TOKEN,
+				updateVisually: true,
+			})
+
+			expect(conversationMock).toHaveBeenCalled()
+			expect(getUserIdMock).toHaveBeenCalled()
+			expect(updateConversationLastReadMessageMock).not.toHaveBeenCalled()
+
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, null)
+			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(123)
 		})
 
 		test('clears last read message and update visually', async () => {
@@ -685,7 +716,7 @@ describe('messagesStore', () => {
 				lastReadMessage: 123,
 			})
 
-			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, 123)
+			expect(updateLastReadMessage).toHaveBeenCalledWith(TOKEN, null)
 			expect(store.getters.getVisualLastReadMessageId(TOKEN)).toBe(123)
 		})
 
