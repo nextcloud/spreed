@@ -13,7 +13,8 @@ import { generateFilePath, generateUrl } from '@nextcloud/router'
 import { postRichObjectToConversation } from './services/messagesService.ts'
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
-import '@nextcloud/dialogs/style.css'
+// eslint-disable-next-line
+// import '@nextcloud/dialogs/style.css'
 
 /**
  * @param {object} card The card object given by the deck app
