@@ -15,6 +15,9 @@ import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
 import { Sounds } from '../sounds.js'
 
+const TOAST_DEFAULT_TIMEOUT = 7000
+const TOAST_PERMANENT_TIMEOUT = -1
+
 let webrtc
 const spreedPeerConnectionTable = []
 

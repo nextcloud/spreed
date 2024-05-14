@@ -110,6 +110,8 @@ import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
 
+const TOAST_DEFAULT_TIMEOUT = 7000
+
 const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-translation-providers']
 	// Fallback for the desktop client when connecting to Talk 17
 	?? getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
