@@ -50,7 +50,6 @@
     "lodash": "^4.17.21",
     "mitt": "^3.0.1",
     "mockconsole": "0.0.1",
-    "nextcloud-vue-collections": "^0.12.0",
     "pinia": "^2.1.7",
     "ua-parser-js": "^1.0.37",
     "util": "^0.12.5",
