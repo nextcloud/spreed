@@ -5,8 +5,8 @@
  */
 
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 
-import { useStore } from './useStore.js'
 import { ATTENDEE, PARTICIPANT } from '../constants.js'
 import { isDoNotDisturb } from '../utils/userStatus.js'
 

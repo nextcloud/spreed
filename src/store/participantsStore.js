@@ -56,7 +56,7 @@ function emitUserStatusUpdated(participant) {
 	}
 }
 
-const state = {
+const state = () => ({
 	attendees: {
 	},
 	peers: {
@@ -80,7 +80,7 @@ const state = {
 	 */
 	cancelFetchParticipants: null,
 	speakingInterval: null,
-}
+})
 
 const getters = {
 	isInCall: (state) => (token) => {

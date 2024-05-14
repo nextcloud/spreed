@@ -4,9 +4,9 @@
  */
 
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
 import { SESSION } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'

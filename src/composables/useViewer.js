@@ -4,9 +4,9 @@
  */
 
 import { computed, nextTick, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
 
 /**
  * @callback OpenViewer

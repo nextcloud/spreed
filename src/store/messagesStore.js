@@ -83,7 +83,7 @@ function isMessageVisible(messageId) {
 	return element !== null && element.offsetParent !== null
 }
 
-const state = {
+const state = () => ({
 	/**
 	 * Map of conversation token to message list
 	 */
@@ -133,7 +133,7 @@ const state = {
 	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
 	cancelPostNewMessage: {},
-}
+})
 
 const getters = {
 	/**

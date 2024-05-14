@@ -10,7 +10,7 @@ import {
 } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
 
-const state = {
+const state = () => ({
 	forceCallView: false,
 	isViewerOverlay: false,
 	isGrid: false,
@@ -23,7 +23,7 @@ const state = {
 	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
-}
+})
 
 const getters = {
 	forceCallView: (state) => state.forceCallView,

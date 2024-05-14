@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-const state = {
+const state = () => ({
 	visible: true,
 	fullscreen: false,
-}
+})
 
 const getters = {
 	windowIsVisible: (state) => () => {

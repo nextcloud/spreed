@@ -4,11 +4,11 @@
  */
 
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 
 import moment from '@nextcloud/moment'
 
 import { useConversationInfo } from './useConversationInfo.js'
-import { useStore } from './useStore.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 /**
