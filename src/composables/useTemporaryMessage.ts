@@ -5,10 +5,10 @@
 
 import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
 
+import { useStore } from 'vuex'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
-import { useStore } from './useStore.js'
 
 /**
  * Composable to generate temporary messages using defined in store information

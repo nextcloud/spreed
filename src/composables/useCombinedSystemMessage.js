@@ -5,8 +5,8 @@
 
 import { n, t } from '@nextcloud/l10n'
 import cloneDeep from 'lodash/cloneDeep.js'
+import { useStore } from 'vuex'
 import { useActorStore } from '../stores/actor.ts'
-import { useStore } from './useStore.js'
 
 /**
  * Create combined system message from the passed object

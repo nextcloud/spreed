@@ -4,12 +4,12 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.js'
-import { useStore } from '../useStore.js'
 
 // Test messages with 'edit-messages' and without 'delete-messages-unlimited' feature
 jest.mock('@nextcloud/capabilities', () => ({
@@ -20,7 +20,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 		},
 	})),
 }))
-jest.mock('../useStore.js')
+jest.mock('vuex')
 jest.mock('../useConversationInfo.ts')
 
 describe('message actions', () => {

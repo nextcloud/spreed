@@ -21,7 +21,6 @@ import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconTalk from '../../../img/app-dark.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { useStore } from '../../composables/useStore.js'
 import { CONVERSATION } from '../../constants.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 

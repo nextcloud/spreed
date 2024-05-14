@@ -9,11 +9,11 @@ import type { Conversation } from '../types/index.ts'
 import { t } from '@nextcloud/l10n'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { hasCall, hasUnreadMentions } from '../utils/conversation.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
-import { useStore } from './useStore.js'
 
 type LastMessageMap = {
 	[token: string]: {
