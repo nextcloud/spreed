@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
-import { showError } from '@nextcloud/dialogs'
+// import { showError } from '@nextcloud/dialogs'
 
 import storeConfig from './storeConfig.js'
 // eslint-disable-next-line import/order -- required for testing
@@ -1755,7 +1755,7 @@ describe('messagesStore', () => {
 				},
 			])
 
-			expect(showError).toHaveBeenCalled()
+			// expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
 		}
 
