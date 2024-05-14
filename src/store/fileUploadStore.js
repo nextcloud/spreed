@@ -8,7 +8,8 @@ import Vue from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
-import { getUploader } from '@nextcloud/upload'
+// eslint-disable-next-line
+// import { getUploader } from '@nextcloud/upload'
 
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
@@ -385,10 +386,11 @@ const actions = {
 			const fileName = (currentFile.newName || currentFile.name)
 
 			try {
-				context.commit('markFileAsUploading', { uploadId, index })
-				const uploader = getUploader()
-				await uploader.upload(uploadedFile.sharePath, currentFile)
-				context.commit('markFileAsSuccessUpload', { uploadId, index })
+				throw new Error('@nextcloud/upload is missing Vue 3 migration')
+				// context.commit('markFileAsUploading', { uploadId, index })
+				// const uploader = getUploader()
+				// await uploader.upload(uploadedFile.sharePath, currentFile)
+				// context.commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
