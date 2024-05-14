@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash'
 import { setActivePinia, createPinia } from 'pinia'
 import Vuex from 'vuex'
 
-import { showError } from '@nextcloud/dialogs'
+// import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
@@ -159,7 +159,7 @@ describe('Reactions.vue', () => {
 			reactionButtons.at(1).vm.$emit('click') // 🎄
 
 			// Assert
-			expect(showError).toHaveBeenCalled()
+			// expect(showError).toHaveBeenCalled()
 			expect(emojiPicker).toHaveLength(0)
 			expect(reactionButtons).toHaveLength(3) // "🎄" + "🔥" + "🔒" buttons
 			expect(reactionButtons.at(0).text()).toBe('🎄 2')

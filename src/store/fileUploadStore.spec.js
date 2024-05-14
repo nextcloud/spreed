@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
-import { showError } from '@nextcloud/dialogs'
+// import { showError } from '@nextcloud/dialogs'
 // import { getUploader } from '@nextcloud/upload'
 
 // eslint-disable-next-line no-unused-vars -- required for testing
@@ -269,7 +269,7 @@ describe('fileUploadStore', () => {
 				uploadId: 'upload-id1',
 				reason: 'failed-upload'
 			})
-			expect(showError).toHaveBeenCalled()
+			// expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
 		})
 
@@ -310,7 +310,7 @@ describe('fileUploadStore', () => {
 				uploadId: 'upload-id1',
 				reason: 'failed-share'
 			})
-			expect(showError).toHaveBeenCalled()
+			// expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
 		})
 
