@@ -552,11 +552,11 @@ export default {
 			// sometimes the nick name is not available yet...
 			if (nickName) {
 				if (raisedHand?.state) {
-					showMessage(t('spreed', '{nickName} raised their hand.', { nickName }))
+					window.OCP.Toast.message(t('spreed', '{nickName} raised their hand.', { nickName }))
 				}
 			} else {
 				if (raisedHand?.state) {
-					showMessage(t('spreed', 'A participant raised their hand.'))
+					window.OCP.Toast.message(t('spreed', 'A participant raised their hand.'))
 				}
 			}
 
