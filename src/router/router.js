@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 
 import { getRootUrl, generateUrl } from '@nextcloud/router'
 
@@ -13,8 +12,6 @@ import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import SessionConflictView from '../views/SessionConflictView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
-
-Vue.use(Router)
 
 /**
  * Generate base url for Talk Web app based on server's root
@@ -31,10 +28,9 @@ function generateTalkWebBasePath() {
 	})
 }
 
-export default new Router({
+export default createRouter({
 	// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
-	mode: !IS_DESKTOP ? 'history' : 'hash',
-	base: !IS_DESKTOP ? generateTalkWebBasePath() : '',
+	history: !IS_DESKTOP ? createWebHistory(generateTalkWebBasePath()) : createWebHashHistory(''),
 
 	linkActiveClass: 'active',
 
