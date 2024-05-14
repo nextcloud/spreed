@@ -67,7 +67,7 @@
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl, generateUrl, imagePath } from '@nextcloud/router'
-import { getUploader } from '@nextcloud/upload'
+// import { getUploader } from '@nextcloud/upload'
 import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -405,7 +405,9 @@ export default {
 		},
 
 		upload() {
-			return this.uploadManager?.queue.find((item) => item._source.includes(this.uploadFile?.sharePath))
+			console.error('@nextcloud/upload is missing Vue 3 migration')
+			return null
+			// return this.uploadManager?.queue.find((item) => item._source.includes(this.uploadFile?.sharePath))
 		},
 
 		uploadProgress() {
@@ -453,7 +455,7 @@ export default {
 
 	mounted() {
 		if (this.isTemporaryUpload && !this.isUploadEditor) {
-			this.uploadManager = getUploader()
+			// this.uploadManager = getUploader()
 		}
 
 		if (this.file.blurhash && this.file.width && this.file.height) {

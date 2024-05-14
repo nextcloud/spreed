@@ -1,5 +1,5 @@
 import { showError } from '@nextcloud/dialogs'
-import { getUploader } from '@nextcloud/upload'
+// import { getUploader } from '@nextcloud/upload'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -74,7 +74,7 @@ describe('fileUploadStore', () => {
 			storeConfig.getters.getAttachmentFolder = jest.fn().mockReturnValue(() => '/Talk')
 			store = new Vuex.Store(storeConfig)
 			getDavClient.mockReturnValue(client)
-			getUploader.mockReturnValue({ upload: uploadMock })
+			// getUploader.mockReturnValue({ upload: uploadMock })
 			console.error = jest.fn()
 		})
 
