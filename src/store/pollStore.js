@@ -159,7 +159,7 @@ const actions = {
 		const pollId = message.messageParameters.object.id
 		const name = message.messageParameters.object.name
 
-		const toast = showInfo(t('spreed', 'Poll "{name}" was created by {user}. Click to vote', {
+		const toast = window.OCP.Toast.info(t('spreed', 'Poll "{name}" was created by {user}. Click to vote', {
 			name,
 			user: message.actorDisplayName,
 		}), {

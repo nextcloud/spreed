@@ -970,9 +970,9 @@ const actions = {
 
 		if (previousCallRecordingStatus === CALL.RECORDING.AUDIO_STARTING
 			|| previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING) {
-			showInfo(t('spreed', 'Call recording stopped while starting.'))
+			window.OCP.Toast.info(t('spreed', 'Call recording stopped while starting.'))
 		} else {
-			showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'), {
+			window.OCP.Toast.info(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}

@@ -306,7 +306,7 @@ export default {
 			// be shown to guests too, a generic selector valid both for logged-in
 			// users and guests needs to be used instead (undefined selects
 			// the body element).
-			showInfo(t('spreed', 'You have been muted by a moderator'), { selector: undefined })
+			window.OCP.Toast.info(t('spreed', 'You have been muted by a moderator'), { selector: undefined })
 		},
 
 		_setLocalStream(localStream) {
