@@ -14,8 +14,7 @@
 			- Use full version of the Portal library (doesn't solve the same problem with Viewer)
 			- Use a new child of #content-vue as Talk Vue app
 		-->
-		<!-- Also Portal's selector is not reactive. We need to re-mount the node on selector change using key -->
-		<Portal :key="portalSelector" :selector="portalSelector">
+		<Teleport :to="portalSelector">
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
 			<div class="viewer-overlay app-talk"
 				:style="{
@@ -104,13 +103,11 @@
 					</div>
 				</TransitionWrapper>
 			</div>
-		</Portal>
+		</Teleport>
 	</div>
 </template>
 
 <script>
-import { Portal } from '@linusborg/vue-simple-portal'
-
 import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
@@ -134,7 +131,6 @@ export default {
 		EmptyCallView,
 		LocalAudioControlButton,
 		LocalVideoControlButton,
-		Portal,
 		Screen,
 		LocalVideo,
 		ChevronUp,
