@@ -115,7 +115,7 @@ export const useFederationStore = defineStore('federation', {
 				return response.data.ocs.data
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while accepting an invitation'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while accepting an invitation'))
 				// Dismiss the loading state, refresh the list
 				await this.getShares()
 				if (this.pendingShares[id]) {
@@ -140,7 +140,7 @@ export const useFederationStore = defineStore('federation', {
 				Vue.delete(this.pendingShares, id)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while rejecting an invitation'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while rejecting an invitation'))
 				// Dismiss the loading state, refresh the list
 				await this.getShares()
 				if (this.pendingShares[id]) {

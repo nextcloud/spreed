@@ -143,7 +143,7 @@ export default {
 				this.closeModal()
 			} catch (exception) {
 				console.debug(exception)
-				showError(t('spreed', 'An error occurred while calling a phone number'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while calling a phone number'))
 				if (conversation) {
 					this.$store.dispatch('deleteConversationFromServer', { token: conversation.token })
 				}
@@ -177,12 +177,12 @@ export default {
 				await callSIPDialOut(token, attendeeId)
 			} catch (error) {
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(t('spreed', 'Phone number could not be called: {error}', {
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called: {error}', {
 						error: error?.response?.data?.ocs?.data?.message
 					}))
 				} else {
 					console.error(error)
-					showError(t('spreed', 'Phone number could not be called'))
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called'))
 				}
 			}
 		},

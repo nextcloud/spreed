@@ -126,7 +126,7 @@ export default {
 					}))
 				}
 			} catch (error) {
-				showError(t('spreed', 'Error when trying to set message expiration'))
+				window.OCP.Toast.error(t('spreed', 'Error when trying to set message expiration'))
 				console.error(error)
 			}
 

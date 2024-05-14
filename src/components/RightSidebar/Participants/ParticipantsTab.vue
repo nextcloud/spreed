@@ -272,7 +272,7 @@ export default {
 					return
 				}
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -290,7 +290,7 @@ export default {
 				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
-				showError(t('spreed', 'An error occurred while adding the participants'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while adding the participants'))
 			}
 		},
 

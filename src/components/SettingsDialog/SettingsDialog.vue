@@ -293,7 +293,7 @@ export default {
 			try {
 				this.$store.dispatch('setAttachmentFolder', path)
 			} catch (exception) {
-				showError(t('spreed', 'Error while setting attachment folder'))
+				window.OCP.Toast.error(t('spreed', 'Error while setting attachment folder'))
 			}
 			this.attachmentFolderLoading = false
 		},
@@ -306,7 +306,7 @@ export default {
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
-				showError(t('spreed', 'Error while setting read status privacy'))
+				window.OCP.Toast.error(t('spreed', 'Error while setting read status privacy'))
 			}
 			this.privacyLoading = false
 		},
@@ -319,7 +319,7 @@ export default {
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
-				showError(t('spreed', 'Error while setting typing status privacy'))
+				window.OCP.Toast.error(t('spreed', 'Error while setting typing status privacy'))
 			}
 			this.privacyLoading = false
 		},
@@ -336,11 +336,11 @@ export default {
 				try {
 					await this.$store.dispatch('setPlaySounds', !this.playSounds)
 				} catch (e) {
-					showError(t('spreed', 'Failed to save sounds setting'))
+					window.OCP.Toast.error(t('spreed', 'Failed to save sounds setting'))
 				}
 				showSuccess(t('spreed', 'Sounds setting saved'))
 			} catch (exception) {
-				showError(t('spreed', 'Error while saving sounds setting'))
+				window.OCP.Toast.error(t('spreed', 'Error while saving sounds setting'))
 			}
 			this.playSoundsLoading = false
 		},

@@ -121,7 +121,7 @@ export default {
 				this.isEditingName = false
 			} catch (error) {
 				console.error('Error while setting conversation name', error)
-				showError(t('spreed', 'Error while updating conversation name'))
+				window.OCP.Toast.error(t('spreed', 'Error while updating conversation name'))
 			}
 			this.isNameLoading = false
 		},
@@ -140,7 +140,7 @@ export default {
 				this.isEditingDescription = false
 			} catch (error) {
 				console.error('Error while setting conversation description', error)
-				showError(t('spreed', 'Error while updating conversation description'))
+				window.OCP.Toast.error(t('spreed', 'Error while updating conversation description'))
 			}
 			this.isDescriptionLoading = false
 		},

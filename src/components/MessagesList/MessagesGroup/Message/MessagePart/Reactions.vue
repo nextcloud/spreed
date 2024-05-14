@@ -199,7 +199,7 @@ export default {
 
 		async handleReactionClick(clickedEmoji) {
 			if (!this.canReact) {
-				showError(t('spreed', 'No permission to post reactions in this conversation'))
+				window.OCP.Toast.error(t('spreed', 'No permission to post reactions in this conversation'))
 				return
 			}
 

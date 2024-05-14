@@ -232,7 +232,7 @@ export default {
 
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Error while uploading the file'))
+				window.OCP.Toast.error(t('spreed', 'Error while uploading the file'))
 			}
 		},
 

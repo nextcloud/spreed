@@ -102,7 +102,7 @@ export default {
 				})
 				showSuccess(t('spreed', 'Recording consent requirement was updated'))
 			} catch (error) {
-				showError(t('spreed', 'Error occurred while updating recording consent'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred while updating recording consent'))
 				console.error(error)
 			}
 			this.loading = false

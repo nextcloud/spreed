@@ -42,9 +42,9 @@ async function postCardToRoom(card, { token, displayName }) {
 	} catch (exception) {
 		console.error('Error posting deck card to conversation', exception, exception.response?.status)
 		if (exception.response?.status === 403) {
-			showError(t('spreed', 'No permission to post messages in this conversation'))
+			window.OCP.Toast.error(t('spreed', 'No permission to post messages in this conversation'))
 		} else {
-			showError(t('spreed', 'An error occurred while posting deck card to conversation'))
+			window.OCP.Toast.error(t('spreed', 'An error occurred while posting deck card to conversation'))
 		}
 	}
 }

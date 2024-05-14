@@ -922,7 +922,7 @@ export default {
 				})
 				showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: this.participant.actorId }))
 			} catch (error) {
-				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
+				window.OCP.Toast.error(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
 			}
 		},
 
@@ -935,7 +935,7 @@ export default {
 				showSuccess(t('spreed', 'Notification was sent to {displayName}', { displayName: this.participant.displayName }))
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Could not send notification to {displayName}', { displayName: this.participant.displayName }))
+				window.OCP.Toast.error(t('spreed', 'Could not send notification to {displayName}', { displayName: this.participant.displayName }))
 			}
 		},
 
@@ -951,7 +951,7 @@ export default {
 				this.$store.dispatch('grantAllPermissionsToParticipant', { token: this.token, attendeeId: this.attendeeId })
 				showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 
@@ -960,7 +960,7 @@ export default {
 				this.$store.dispatch('removeAllPermissionsFromParticipant', { token: this.token, attendeeId: this.attendeeId })
 				showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 
@@ -977,7 +977,7 @@ export default {
 				this.$store.dispatch('setPermissions', { token: this.token, attendeeId: this.attendeeId, permissions: PARTICIPANT.PERMISSIONS.DEFAULT })
 				showSuccess(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.computedName }))
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 
@@ -995,7 +995,7 @@ export default {
 					showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
 				}
 			} catch (error) {
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
 
@@ -1021,12 +1021,12 @@ export default {
 			} catch (error) {
 				this.disabled = false
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(t('spreed', 'Phone number could not be called: {error}', {
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called: {error}', {
 						error: error?.response?.data?.ocs?.data?.message
 					}))
 				} else {
 					console.error(error)
-					showError(t('spreed', 'Phone number could not be called'))
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called'))
 				}
 			}
 		},
@@ -1036,7 +1036,7 @@ export default {
 				this.disabled = true
 				await callSIPHangupPhone(this.sessionIds[0])
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be hung up'))
+				window.OCP.Toast.error(t('spreed', 'Phone number could not be hung up'))
 				this.disabled = false
 			}
 		},
@@ -1048,7 +1048,7 @@ export default {
 					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE | PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_SPEAKER,
 				})
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be put on hold'))
+				window.OCP.Toast.error(t('spreed', 'Phone number could not be put on hold'))
 			}
 		},
 		async mutePhoneNumber() {
@@ -1059,7 +1059,7 @@ export default {
 					value: PARTICIPANT.SIP_DIALOUT_FLAG.MUTE_MICROPHONE,
 				})
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be muted'))
+				window.OCP.Toast.error(t('spreed', 'Phone number could not be muted'))
 			}
 		},
 		async unmutePhoneNumber() {
@@ -1070,14 +1070,14 @@ export default {
 					value: PARTICIPANT.SIP_DIALOUT_FLAG.NONE,
 				})
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be unmuted'))
+				window.OCP.Toast.error(t('spreed', 'Phone number could not be unmuted'))
 			}
 		},
 		async dialType(value) {
 			try {
 				await callSIPSendDTMF(this.sessionIds[0], value)
 			} catch (error) {
-				showError(t('spreed', 'DTMF message could not be sent'))
+				window.OCP.Toast.error(t('spreed', 'DTMF message could not be sent'))
 			}
 		},
 
@@ -1086,7 +1086,7 @@ export default {
 				await navigator.clipboard.writeText(this.participant.phoneNumber)
 				showSuccess(t('spreed', 'Phone number copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Phone number could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Phone number could not be copied'))
 			}
 		},
 	},

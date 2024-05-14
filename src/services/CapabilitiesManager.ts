@@ -74,7 +74,7 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 
 	// As normal capabilities update, requires a reload to take effect
-	showError(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
+	window.OCP.Toast.error(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
 		timeout: TOAST_PERMANENT_TIMEOUT,
 	})
 }
