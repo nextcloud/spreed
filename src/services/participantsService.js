@@ -42,7 +42,7 @@ const joinConversation = async ({ token, forceJoin = false }, options) => {
 		)
 		const throttleMs = parseInt(response.headers.get('X-Nextcloud-Bruteforce-Throttled'), 10)
 		if (throttleMs > 5000) {
-			showWarning(
+			window.OCP.Toast.warning(
 				t('spreed', 'Your requests are throttled at the moment due to brute force protection')
 			)
 		}

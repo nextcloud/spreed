@@ -816,7 +816,7 @@ export default {
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			if (!this.canUploadFiles) {
-				showWarning(t('spreed', 'File upload is not available in this conversation'))
+				window.OCP.Toast.warning(t('spreed', 'File upload is not available in this conversation'))
 				return
 			}
 			// Create a unique id for the upload operation
