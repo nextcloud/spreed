@@ -138,7 +138,7 @@
 						@click="action.callback(messageApiData)">
 						{{ action.label }}
 					</NcActionButton>
-					<NcActionButton v-if="isTranslationAvailable"
+					<NcActionButton v-if="isTranslationAvailable && !isFileShareWithoutCaption"
 						close-after-click
 						@click.stop="$emit('show-translate-dialog', true)"
 						@close="$emit('show-translate-dialog', false)">
