@@ -91,13 +91,13 @@
 			</div>
 		</div>
 
-		<FilePickerVue v-if="showFilePicker"
+		<!-- <FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'Choose your conversation picture')"
 			container="#vue-avatar-section"
 			:buttons="filePickerButtons"
 			:multiselect="false"
 			:mimetype-filter="validMimeTypes"
-			@close="showFilePicker = false" />
+			@close="showFilePicker = false" /> -->
 	</section>
 </template>
 
@@ -114,7 +114,7 @@ import { getRequestToken } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 // eslint-disable-next-line
 // import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -136,7 +136,7 @@ export default {
 
 	components: {
 		ConversationIcon,
-		FilePickerVue,
+		// FilePickerVue,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
