@@ -226,7 +226,7 @@ export default {
 		async handleCopyTranslation() {
 			try {
 				await navigator.clipboard.writeText(this.translatedMessage)
-				showSuccess(t('spreed', 'Translation copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Translation copied to clipboard'))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Translation could not be copied'))
 			}

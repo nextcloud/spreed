@@ -83,11 +83,11 @@ export default {
 					state,
 				})
 				if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED_NO_PIN) {
-					showSuccess(t('spreed', 'SIP dial-in is now possible without PIN requirement'))
+					window.OCP.Toast.success(t('spreed', 'SIP dial-in is now possible without PIN requirement'))
 				} else if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED) {
-					showSuccess(t('spreed', 'SIP dial-in is now enabled'))
+					window.OCP.Toast.success(t('spreed', 'SIP dial-in is now enabled'))
 				} else {
-					showSuccess(t('spreed', 'SIP dial-in is now disabled'))
+					window.OCP.Toast.success(t('spreed', 'SIP dial-in is now disabled'))
 				}
 			} catch (e) {
 				// TODO check "precondition failed"

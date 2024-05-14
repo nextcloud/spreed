@@ -96,7 +96,7 @@ export default {
 					attendeeId: this.attendeeId,
 					permissions,
 				})
-				showSuccess(t('spreed', 'Permissions modified for {displayName}', { displayName: this.displayName }))
+				window.OCP.Toast.success(t('spreed', 'Permissions modified for {displayName}', { displayName: this.displayName }))
 			} catch (error) {
 				console.debug(error)
 				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.displayName }))

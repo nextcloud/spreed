@@ -147,11 +147,11 @@ export default {
 					this.lastNotification = null
 				}
 				if (listable === CONVERSATION.LISTABLE.NONE) {
-					this.lastNotification = showSuccess(t('spreed', 'You limited the conversation to the current participants'))
+					this.lastNotification = window.OCP.Toast.success(t('spreed', 'You limited the conversation to the current participants'))
 				} else if (listable === CONVERSATION.LISTABLE.USERS) {
-					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to registered users'))
+					this.lastNotification = window.OCP.Toast.success(t('spreed', 'You opened the conversation to registered users'))
 				} else if (listable === CONVERSATION.LISTABLE.ALL) {
-					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to both registered users and users created with the Guests app'))
+					this.lastNotification = window.OCP.Toast.success(t('spreed', 'You opened the conversation to both registered users and users created with the Guests app'))
 				}
 				this.listable = listable
 			} catch (e) {

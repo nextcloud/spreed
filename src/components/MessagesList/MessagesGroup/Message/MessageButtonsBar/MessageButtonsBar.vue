@@ -577,7 +577,7 @@ export default {
 
 			try {
 				await navigator.clipboard.writeText(parsedText)
-				showSuccess(t('spreed', 'Message text copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Message text copied to clipboard'))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Message text could not be copied'))
 			}
@@ -650,7 +650,7 @@ export default {
 				await this.$store.dispatch('forwardMessage', {
 					messageToBeForwarded: this.$store.getters.message(this.message.token, this.message.id)
 				})
-				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
+				window.OCP.Toast.success(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
 				console.error('Error while forwarding message to "Note to self"', error)
 				window.OCP.Toast.error(t('spreed', 'Error while forwarding message to "Note to self"'))
@@ -698,7 +698,7 @@ export default {
 		async removeReminder() {
 			try {
 				await removeMessageReminder(this.message.token, this.message.id)
-				showSuccess(t('spreed', 'A reminder was successfully removed'))
+				window.OCP.Toast.success(t('spreed', 'A reminder was successfully removed'))
 			} catch (error) {
 				console.error(error)
 				window.OCP.Toast.error(t('spreed', 'Error occurred when removing a reminder'))
@@ -708,7 +708,7 @@ export default {
 		async setReminder(timestamp) {
 			try {
 				await setMessageReminder(this.message.token, this.message.id, timestamp / 1000)
-				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
+				window.OCP.Toast.success(t('spreed', 'A reminder was successfully set at {datetime}', {
 					datetime: moment(timestamp).format('LLL'),
 				}))
 			} catch (error) {

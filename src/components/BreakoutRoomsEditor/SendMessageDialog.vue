@@ -99,7 +99,7 @@ export default {
 
 	methods: {
 		handleMessageSent() {
-			showSuccess(this.broadcast
+			window.OCP.Toast.success(this.broadcast
 				? t('spreed', 'The message was sent to all breakout rooms')
 				: t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
 			this.$emit('close')

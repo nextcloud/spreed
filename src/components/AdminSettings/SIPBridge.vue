@@ -197,7 +197,7 @@ export default {
 
 			this.loading = false
 			this.saveCurrentSetup()
-			showSuccess(t('spreed', 'SIP configuration saved!'))
+			window.OCP.Toast.success(t('spreed', 'SIP configuration saved!'))
 		},
 
 		async isDialoutSupported() {

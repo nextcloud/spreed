@@ -116,9 +116,9 @@ export default {
 				})
 
 				if (expiration.id === 0) {
-					showSuccess(t('spreed', 'Message expiration disabled'))
+					window.OCP.Toast.success(t('spreed', 'Message expiration disabled'))
 				} else {
-					showSuccess(t('spreed', 'Message expiration set: {duration}', {
+					window.OCP.Toast.success(t('spreed', 'Message expiration set: {duration}', {
 						duration: expiration.label,
 					}))
 				}

@@ -79,9 +79,9 @@ export default {
 					readOnly: newReadOnly,
 				})
 				if (newReadOnly) {
-					showSuccess(t('spreed', 'You locked the conversation'))
+					window.OCP.Toast.success(t('spreed', 'You locked the conversation'))
 				} else {
-					showSuccess(t('spreed', 'You unlocked the conversation'))
+					window.OCP.Toast.success(t('spreed', 'You unlocked the conversation'))
 				}
 			} catch (e) {
 				if (newReadOnly) {
