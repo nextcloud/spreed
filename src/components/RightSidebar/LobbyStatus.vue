@@ -7,11 +7,11 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import IconLockOpen from 'vue-material-design-icons/LockOpen.vue'
 import ImportEmailsDialog from '../ImportEmailsDialog.vue'
-import { useStore } from '../../composables/useStore.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const props = defineProps<{

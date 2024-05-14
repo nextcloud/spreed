@@ -121,11 +121,11 @@ function emitUserStatusUpdated(conversation) {
 	})
 }
 
-const state = {
+const state = () => ({
 	conversations: {
 	},
 	conversationsInitialised: false,
-}
+})
 
 const getters = {
 	conversations: (state) => state.conversations,

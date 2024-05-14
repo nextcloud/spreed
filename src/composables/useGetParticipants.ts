@@ -13,6 +13,7 @@ import type {
 
 import { createSharedComposable } from '@vueuse/core'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import { CONFIG, CONVERSATION } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -21,7 +22,6 @@ import { useSessionStore } from '../stores/session.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
 
 const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.UPDATE_PARTICIPANTS
 

@@ -10,11 +10,11 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { toRef } from '@vueuse/core'
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
-import { useStore } from './useStore.js'
 
 type Payload = {
 	item: Ref<Conversation> | ComputedRef<Conversation>
