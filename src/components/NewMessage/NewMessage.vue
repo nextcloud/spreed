@@ -722,7 +722,7 @@ export default {
 				this.focusInput()
 			} catch {
 				this.$emit('failure')
-				showError(t('spreed', 'The message could not be edited'))
+				window.OCP.Toast.error(t('spreed', 'The message could not be edited'))
 			}
 		},
 

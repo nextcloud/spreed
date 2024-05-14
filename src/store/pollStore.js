@@ -131,7 +131,7 @@ const actions = {
 			context.dispatch('addPoll', { token, poll })
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'An error occurred while submitting your vote'))
+			window.OCP.Toast.error(t('spreed', 'An error occurred while submitting your vote'))
 		}
 	},
 
@@ -143,7 +143,7 @@ const actions = {
 			context.dispatch('addPoll', { token, poll })
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'An error occurred while ending the poll'))
+			window.OCP.Toast.error(t('spreed', 'An error occurred while ending the poll'))
 		}
 	},
 

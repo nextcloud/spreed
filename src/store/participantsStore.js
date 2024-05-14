@@ -647,7 +647,7 @@ const actions = {
 				context.dispatch('fetchConversation', { token })
 			} else if (!CancelableRequest.isCancel(exception)) {
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while fetching the participants'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
 			}
 			return null
 		}
@@ -872,7 +872,7 @@ const actions = {
 				}
 			} else {
 				console.error(error)
-				showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
+				window.OCP.Toast.error(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
 			}
 		}
 	},

@@ -162,9 +162,9 @@ export default {
 			} catch (error) {
 				console.error('Error saving conversation password', error)
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(error.response.data.ocs.data.message)
+					window.OCP.Toast.error(error.response.data.ocs.data.message)
 				} else {
-					showError(t('spreed', 'Error occurred while saving conversation password'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred while saving conversation password'))
 				}
 			}
 			this.isSaving = false
@@ -219,7 +219,7 @@ export default {
 				await this.$store.dispatch('resendInvitations', { token: this.token })
 				showSuccess(t('spreed', 'Invitations sent'))
 			} catch (e) {
-				showError(t('spreed', 'Error occurred when sending invitations'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when sending invitations'))
 			}
 			this.isSendingInvitations = false
 		},

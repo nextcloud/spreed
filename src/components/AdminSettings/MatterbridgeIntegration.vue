@@ -125,7 +125,7 @@ export default {
 		async enableMatterbridgeApp() {
 			if (OC.PasswordConfirmation.requiresPasswordConfirmation()) {
 				OC.PasswordConfirmation.requirePasswordConfirmation(this.enableMatterbridgeAppCallback, {}, () => {
-					showError(t('spreed', 'An error occurred while installing the Matterbridge app'))
+					window.OCP.Toast.error(t('spreed', 'An error occurred while installing the Matterbridge app'))
 				})
 			}
 
@@ -137,7 +137,7 @@ export default {
 			try {
 				await enableMatterbridgeApp()
 			} catch (e) {
-				showError(t('spreed', 'An error occurred while installing the Talk Matterbridge. Please install it manually'), {
+				window.OCP.Toast.error(t('spreed', 'An error occurred while installing the Talk Matterbridge. Please install it manually'), {
 					onClick: () => {
 						window.open('https://apps.nextcloud.com/apps/talk_matterbridge', '_blank')
 					},
@@ -153,7 +153,7 @@ export default {
 				this.error = ''
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Failed to execute Matterbridge binary.'))
+				window.OCP.Toast.error(t('spreed', 'Failed to execute Matterbridge binary.'))
 				if (error?.response?.data?.ocs?.data?.error) {
 					this.error = error.response.data.ocs.data.error
 				} else {

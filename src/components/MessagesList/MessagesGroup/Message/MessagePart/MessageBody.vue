@@ -403,7 +403,7 @@ export default {
 				await navigator.clipboard.writeText(code)
 				showSuccess(t('spreed', 'Code block copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Code block could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Code block could not be copied'))
 			}
 		},
 
@@ -460,7 +460,7 @@ export default {
 				})
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Could not update the message'))
+				window.OCP.Toast.error(t('spreed', 'Could not update the message'))
 			}
 		}
 	},

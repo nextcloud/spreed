@@ -485,7 +485,7 @@ const actions = {
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the conversation public status: ', error)
-			showError(allowGuests
+			window.OCP.Toast.error(allowGuests
 				? t('spreed', 'Error occurred while allowing guests')
 				: t('spreed', 'Error occurred while disallowing guests'))
 		}
@@ -1008,7 +1008,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture deleted'))
 		} catch (error) {
-			showError(t('spreed', 'Could not delete the conversation picture'))
+			window.OCP.Toast.error(t('spreed', 'Could not delete the conversation picture'))
 		}
 	},
 }

@@ -189,9 +189,9 @@ export default {
 				console.debug(exception)
 				this.killStreams()
 				if (exception.name === 'NotAllowedError') {
-					showError(t('spreed', 'Access to the microphone was denied'))
+					window.OCP.Toast.error(t('spreed', 'Access to the microphone was denied'))
 				} else {
-					showError(t('spreed', 'Microphone either not available or disabled in settings'))
+					window.OCP.Toast.error(t('spreed', 'Microphone either not available or disabled in settings'))
 				}
 				return
 			}
@@ -205,7 +205,7 @@ export default {
 				console.debug(exception)
 				this.killStreams()
 				this.audioStream = null
-				showError(t('spreed', 'Error while recording audio'))
+				window.OCP.Toast.error(t('spreed', 'Error while recording audio'))
 				return
 			}
 
@@ -226,7 +226,7 @@ export default {
 				this.stop()
 				this.killStreams()
 				this.resetComponentData()
-				showError(t('spreed', 'Error while recording audio'))
+				window.OCP.Toast.error(t('spreed', 'Error while recording audio'))
 				return
 			}
 

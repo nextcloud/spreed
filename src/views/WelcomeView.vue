@@ -105,7 +105,7 @@ export default {
 					params: { token: newConversation.token },
 				})
 			} catch (error) {
-				showError(t('spreed', 'Error while joining the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error while joining the conversation'))
 				console.error(error)
 				this.$router.push({ name: 'notfound' })
 			}

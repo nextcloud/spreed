@@ -517,11 +517,11 @@ export default {
 				}
 			} catch (e) {
 				if (e?.response?.status === 400) {
-					showError(t('spreed', 'Message could not be deleted because it is too old'))
+					window.OCP.Toast.error(t('spreed', 'Message could not be deleted because it is too old'))
 				} else if (e?.response?.status === 405) {
-					showError(t('spreed', 'Only normal chat messages can be deleted'))
+					window.OCP.Toast.error(t('spreed', 'Only normal chat messages can be deleted'))
 				} else {
-					showError(t('spreed', 'An error occurred while deleting the message'))
+					window.OCP.Toast.error(t('spreed', 'An error occurred while deleting the message'))
 					console.error(e)
 				}
 				this.isDeleting = false

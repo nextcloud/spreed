@@ -731,7 +731,7 @@ export default {
 					return
 				}
 				console.error('Error searching for possible conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -752,7 +752,7 @@ export default {
 					return
 				}
 				console.error('Error searching for open conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 

@@ -58,6 +58,6 @@ export const unsupportedWarning = t('spreed', "The browser you're using is not f
 export function checkBrowser() {
 	console.info('Detected browser ' + browser.name + ' ' + majorVersion + ' (' + browser.version + ')')
 	if (!isFullySupported) {
-		showError(unsupportedWarning, { timeout: TOAST_PERMANENT_TIMEOUT })
+		window.OCP.Toast.error(unsupportedWarning, { timeout: TOAST_PERMANENT_TIMEOUT })
 	}
 }

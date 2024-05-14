@@ -156,7 +156,7 @@ export default {
 				this.listable = listable
 			} catch (e) {
 				console.error('Error occurred when opening or limiting the conversation', e)
-				showError(t('spreed', 'Error occurred when opening or limiting the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when opening or limiting the conversation'))
 				this.listable = this.conversation.listable
 			}
 			this.isListableLoading = false

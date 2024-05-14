@@ -1307,21 +1307,21 @@ const actions = {
 
 			// 403 when room is read-only, 412 when switched to lobby mode
 			if (statusCode === 403) {
-				showError(t('spreed', 'No permission to post messages in this conversation'))
+				window.OCP.Toast.error(t('spreed', 'No permission to post messages in this conversation'))
 				context.dispatch('markTemporaryMessageAsFailed', {
 					token,
 					id: temporaryMessage.id,
 					reason: 'read-only',
 				})
 			} else if (statusCode === 412) {
-				showError(t('spreed', 'No permission to post messages in this conversation'))
+				window.OCP.Toast.error(t('spreed', 'No permission to post messages in this conversation'))
 				context.dispatch('markTemporaryMessageAsFailed', {
 					token,
 					id: temporaryMessage.id,
 					reason: 'lobby',
 				})
 			} else {
-				showError(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
+				window.OCP.Toast.error(t('spreed', 'Could not post message: {errorMessage}', { errorMessage: error.message || error }))
 				context.dispatch('markTemporaryMessageAsFailed', {
 					token,
 					id: temporaryMessage.id,

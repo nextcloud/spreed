@@ -217,7 +217,7 @@ export default {
 				this.translatedMessage = response.data.ocs.data.text
 			} catch (error) {
 				console.error(error)
-				showError(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
+				window.OCP.Toast.error(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
 			} finally {
 				this.isLoading = false
 			}
@@ -228,7 +228,7 @@ export default {
 				await navigator.clipboard.writeText(this.translatedMessage)
 				showSuccess(t('spreed', 'Translation copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Translation could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Translation could not be copied'))
 			}
 		},
 	},
