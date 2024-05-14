@@ -4,8 +4,7 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep.js'
-
-import { useStore } from './useStore.js'
+import { useStore } from 'vuex'
 
 /**
  * Create combined system message from the passed object

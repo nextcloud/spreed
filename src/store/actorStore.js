@@ -12,14 +12,14 @@
 
 import { ATTENDEE, PARTICIPANT } from '../constants.js'
 
-const state = {
+const state = () => ({
 	userId: null,
 	sessionId: null,
 	attendeeId: null,
 	actorId: null,
 	actorType: null,
 	displayName: '',
-}
+})
 
 const getters = {
 	getUserId: (state) => () => {

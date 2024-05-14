@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-const state = {
+const state = () => ({
 	show: true,
 	isRenamingConversation: false,
 	sidebarOpenBeforeEditing: null,
 
-}
+})
 
 const getters = {
 	getSidebarStatus: (state) => {

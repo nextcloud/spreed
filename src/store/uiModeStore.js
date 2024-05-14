@@ -9,9 +9,9 @@
  * verification page...).
  */
 
-const state = {
+const state = () => ({
 	mainContainerSelector: undefined,
-}
+})
 
 const getters = {
 	getMainContainerSelector: (state, getters, rootState, rootGetters) => () => {

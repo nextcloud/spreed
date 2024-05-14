@@ -4,12 +4,12 @@
  */
 
 import { computed, unref, ref } from 'vue'
+import { useStore } from 'vuex'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import moment from '@nextcloud/moment'
 
 import { useConversationInfo } from './useConversationInfo.js'
-import { useStore } from './useStore.js'
 
 const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
 const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')

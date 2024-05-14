@@ -99,10 +99,10 @@ function emitUserStatusUpdated(conversation) {
 	})
 }
 
-const state = {
+const state = () => ({
 	conversations: {
 	},
-}
+})
 
 const getters = {
 	conversations: state => state.conversations,
