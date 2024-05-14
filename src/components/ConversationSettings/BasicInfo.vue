@@ -4,52 +4,49 @@
 -->
 
 <template>
-	<Fragment>
-		<!-- eslint-disable-next-line vue/no-v-html -->
-		<p v-if="canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
+	<!-- eslint-disable-next-line vue/no-v-html -->
+	<p v-if="canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
+	<h4 class="app-settings-section__subtitle">
+		{{ t('spreed', 'Name') }}
+	</h4>
+	<EditableTextField :editable="canFullModerate && !isEventConversation"
+		:initial-text="conversationName"
+		:editing="isEditingName"
+		:loading="isNameLoading"
+		:placeholder="t('spreed', 'Enter a name for this conversation')"
+		:edit-button-aria-label="t('spreed', 'Edit conversation name')"
+		:max-length="CONVERSATION.MAX_NAME_LENGTH"
+		@submit-text="handleUpdateName"
+		@update:editing="handleEditName" />
+	<template v-if="!isOneToOne">
 		<h4 class="app-settings-section__subtitle">
-			{{ t('spreed', 'Name') }}
+			{{ t('spreed', 'Description') }}
 		</h4>
 		<EditableTextField :editable="canFullModerate && !isEventConversation"
-			:initial-text="conversationName"
-			:editing="isEditingName"
-			:loading="isNameLoading"
-			:placeholder="t('spreed', 'Enter a name for this conversation')"
-			:edit-button-aria-label="t('spreed', 'Edit conversation name')"
-			:max-length="CONVERSATION.MAX_NAME_LENGTH"
-			@submit-text="handleUpdateName"
-			@update:editing="handleEditName" />
-		<template v-if="!isOneToOne">
-			<h4 class="app-settings-section__subtitle">
-				{{ t('spreed', 'Description') }}
-			</h4>
-			<EditableTextField :editable="canFullModerate && !isEventConversation"
-				:initial-text="description"
-				:editing="isEditingDescription"
-				:loading="isDescriptionLoading"
-				:edit-button-aria-label="t('spreed', 'Edit conversation description')"
-				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				:max-length="maxDescriptionLength"
-				multiline
-				use-markdown
-				@submit-text="handleUpdateDescription"
-				@update:editing="handleEditDescription" />
-		</template>
-		<template v-if="supportsAvatar">
-			<h4 class="app-settings-section__subtitle">
-				{{ t('spreed', 'Picture') }}
-			</h4>
-			<ConversationAvatarEditor :conversation="conversation"
-				:editable="canFullModerate" />
-		</template>
-	</Fragment>
+			:initial-text="description"
+			:editing="isEditingDescription"
+			:loading="isDescriptionLoading"
+			:edit-button-aria-label="t('spreed', 'Edit conversation description')"
+			:placeholder="t('spreed', 'Enter a description for this conversation')"
+			:max-length="maxDescriptionLength"
+			multiline
+			use-markdown
+			@submit-text="handleUpdateDescription"
+			@update:editing="handleEditDescription" />
+	</template>
+	<template v-if="supportsAvatar">
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Picture') }}
+		</h4>
+		<ConversationAvatarEditor :conversation="conversation"
+			:editable="canFullModerate" />
+	</template>
 </template>
 
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { Fragment } from 'vue-frag'
 import EditableTextField from '../UIShared/EditableTextField.vue'
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import { CONVERSATION } from '../../constants.ts'
@@ -63,7 +60,6 @@ export default {
 
 	components: {
 		EditableTextField,
-		Fragment,
 		ConversationAvatarEditor,
 	},
 
