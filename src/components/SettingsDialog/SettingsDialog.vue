@@ -29,7 +29,7 @@
 					@click="showFilePicker = true">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
-				<FilePickerVue v-if="showFilePicker"
+				<!-- <FilePickerVue v-if="showFilePicker"
 					:name="t('spreed', 'Select location for attachments')"
 					:path="attachmentFolder"
 					container=".app-settings-section__wrapper"
@@ -37,7 +37,7 @@
 					:multiselect="false"
 					:mimetype-filter="['httpd/unix-directory']"
 					allow-pick-directory
-					@close="showFilePicker = false" />
+					@close="showFilePicker = false" /> -->
 			</div>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
@@ -166,7 +166,7 @@
 import { getCapabilities } from '@nextcloud/capabilities'
 // eslint-disable-next-line
 // import { showError, showSuccess } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
@@ -187,7 +187,7 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
-		FilePickerVue,
+		// FilePickerVue,
 		MediaDevicesPreview,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
