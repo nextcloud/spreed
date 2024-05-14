@@ -11,7 +11,4 @@
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"types": [],
 	},
-	"vueCompilerOptions": {
-		"target": 2.7,
-	}
 }
