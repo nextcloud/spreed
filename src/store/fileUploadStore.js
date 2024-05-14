@@ -28,7 +28,7 @@ import {
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
 
-const state = {
+const state = () => ({
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
 	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
 	uploads: {},
@@ -36,7 +36,7 @@ const state = {
 	localUrls: {},
 	fileTemplatesInitialised: false,
 	fileTemplates: [],
-}
+})
 
 const getters = {
 

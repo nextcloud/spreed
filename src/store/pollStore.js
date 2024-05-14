@@ -12,12 +12,12 @@ import pollService from '../services/pollService.js'
 
 const TOAST_PERMANENT_TIMEOUT = -1
 
-const state = {
+const state = () => ({
 	polls: {},
 	pollDebounceFunctions: {},
 	activePoll: null,
 	pollToastsQueue: {},
-}
+})
 
 const getters = {
 	getPoll: (state) => (token, id) => {
