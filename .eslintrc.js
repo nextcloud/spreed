@@ -21,10 +21,10 @@ module.exports = {
 		// Forbid import without extension even when TS is used
 		// TODO: fix in @nextcloud/eslint-config/typescript
 		'import/extensions': 'error',
-		'import/newline-after-import': 'warn',
+		'import/newline-after-import': 'error',
 		'import/no-named-as-default-member': 'off',
 		'import/order': [
-			'warn',
+			'error',
 			{
 				groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index'], 'unknown'],
 				pathGroups: [
