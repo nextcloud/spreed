@@ -9,7 +9,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
-import { getUploader } from '@nextcloud/upload'
+// import { getUploader } from '@nextcloud/upload'
 
 // eslint-disable-next-line no-unused-vars -- required for testing
 import storeConfig from './storeConfig.js'
@@ -99,7 +99,7 @@ describe('fileUploadStore', () => {
 			store = new Vuex.Store(storeConfig)
 			restoreConsole = mockConsole(['error', 'debug'])
 			getDavClient.mockReturnValue(client)
-			getUploader.mockReturnValue({ upload: uploadMock })
+			// getUploader.mockReturnValue({ upload: uploadMock })
 		})
 
 		afterEach(() => {
