@@ -24,7 +24,6 @@
     "analyze:report": "webpack-bundle-analyzer js/stats.json js/ --mode static --report js/stats/report.html"
   },
   "dependencies": {
-    "@linusborg/vue-simple-portal": "^0.1.5",
     "@nextcloud/auth": "^2.3.0",
     "@nextcloud/axios": "^2.5.0",
     "@nextcloud/browser-storage": "^0.4.0",
@@ -60,7 +59,6 @@
     "vue": "^2.7.16",
     "vue-cropperjs": "^4.2.0",
     "vue-draggable-resizable": "^2.3.0",
-    "vue-frag": "^1.4.3",
     "vue-material-design-icons": "^5.3.0",
     "vue-observe-visibility": "^1.0.0",
     "vue-router": "^3.6.5",
@@ -96,7 +94,6 @@
     "openapi-typescript": "^6.7.5",
     "regenerator-runtime": "^0.14.1",
     "ts-jest": "^29.1.2",
-    "vue-template-compiler": "^2.7.16",
     "wasm-check": "^2.1.2",
     "webpack-bundle-analyzer": "^4.10.2",
     "worker-loader": "^3.0.8"
