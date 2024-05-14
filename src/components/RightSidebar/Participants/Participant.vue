@@ -920,7 +920,7 @@ export default {
 					token: this.token,
 					attendeeId: this.attendeeId,
 				})
-				showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: this.participant.actorId }))
+				window.OCP.Toast.success(t('spreed', 'Invitation was sent to {actorId}', { actorId: this.participant.actorId }))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
 			}
@@ -932,7 +932,7 @@ export default {
 					token: this.token,
 					attendeeId: this.attendeeId,
 				})
-				showSuccess(t('spreed', 'Notification was sent to {displayName}', { displayName: this.participant.displayName }))
+				window.OCP.Toast.success(t('spreed', 'Notification was sent to {displayName}', { displayName: this.participant.displayName }))
 			} catch (error) {
 				console.error(error)
 				window.OCP.Toast.error(t('spreed', 'Could not send notification to {displayName}', { displayName: this.participant.displayName }))
@@ -949,7 +949,7 @@ export default {
 		grantAllPermissions() {
 			try {
 				this.$store.dispatch('grantAllPermissionsToParticipant', { token: this.token, attendeeId: this.attendeeId })
-				showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.success(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
@@ -958,7 +958,7 @@ export default {
 		removeAllPermissions() {
 			try {
 				this.$store.dispatch('removeAllPermissionsFromParticipant', { token: this.token, attendeeId: this.attendeeId })
-				showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.success(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
@@ -975,7 +975,7 @@ export default {
 		applyDefaultPermissions() {
 			try {
 				this.$store.dispatch('setPermissions', { token: this.token, attendeeId: this.attendeeId, permissions: PARTICIPANT.PERMISSIONS.DEFAULT })
-				showSuccess(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.computedName }))
+				window.OCP.Toast.success(t('spreed', 'Permissions set to default for {displayName}', { displayName: this.computedName }))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
@@ -990,9 +990,9 @@ export default {
 					permissions: PARTICIPANT.PERMISSIONS.LOBBY_IGNORE,
 				})
 				if (value) {
-					showSuccess(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
+					window.OCP.Toast.success(t('spreed', 'Permissions granted to {displayName}', { displayName: this.computedName }))
 				} else {
-					showSuccess(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
+					window.OCP.Toast.success(t('spreed', 'Permissions removed for {displayName}', { displayName: this.computedName }))
 				}
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
@@ -1084,7 +1084,7 @@ export default {
 		async copyPhoneNumber() {
 			try {
 				await navigator.clipboard.writeText(this.participant.phoneNumber)
-				showSuccess(t('spreed', 'Phone number copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Phone number copied to clipboard'))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Phone number could not be copied'))
 			}

@@ -47,7 +47,7 @@ export default {
 					token: this.token,
 					enableLobby: false,
 				})
-				showSuccess(t('spreed', 'You opened the conversation to everyone'))
+				window.OCP.Toast.success(t('spreed', 'You opened the conversation to everyone'))
 			} catch (e) {
 				console.error('Error occurred when opening the conversation to everyone', e)
 				window.OCP.Toast.error(t('spreed', 'Error occurred when opening the conversation to everyone'))

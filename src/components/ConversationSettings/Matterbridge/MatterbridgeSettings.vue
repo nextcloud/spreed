@@ -600,7 +600,7 @@ export default {
 				const result = await editBridge(this.token, this.enabled, this.parts)
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
-				showSuccess(t('spreed', 'Bridge saved'))
+				window.OCP.Toast.success(t('spreed', 'Bridge saved'))
 			} catch (exception) {
 				console.error(exception)
 			}

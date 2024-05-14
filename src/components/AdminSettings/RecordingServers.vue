@@ -182,7 +182,7 @@ export default {
 				secret: this.secret,
 			}), {
 				success: () => {
-					showSuccess(t('spreed', 'Recording backend settings saved'))
+					window.OCP.Toast.success(t('spreed', 'Recording backend settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

@@ -140,7 +140,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
 				success: () => {
-					showSuccess(t('spreed', 'Missing high-performance backend warning hidden'))
+					window.OCP.Toast.success(t('spreed', 'Missing high-performance backend warning hidden'))
 					this.loading = false
 					this.toggleSave()
 				},
@@ -162,7 +162,7 @@ export default {
 				secret: this.secret,
 			}), {
 				success: () => {
-					showSuccess(t('spreed', 'High-performance backend settings saved'))
+					window.OCP.Toast.success(t('spreed', 'High-performance backend settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

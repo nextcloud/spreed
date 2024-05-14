@@ -34,11 +34,11 @@ async function postCardToRoom(card, { token, displayName }) {
 		const messageId = response.data.ocs.data.id
 		const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
 
-		showSuccess(t('spreed', 'Deck card has been posted to {conversation}')
+		window.OCP.Toast.success(t('spreed', 'Deck card has been posted to {conversation}')
 			.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
-			{
-				isHTML: true,
-			})
+		{
+			isHTML: true,
+		})
 	} catch (exception) {
 		console.error('Error posting deck card to conversation', exception, exception.response?.status)
 		if (exception.response?.status === 403) {

@@ -164,9 +164,9 @@ export default {
 					enableLobby: newLobbyState,
 				})
 				if (newLobbyState) {
-					showSuccess(t('spreed', 'You restricted the conversation to moderators'))
+					window.OCP.Toast.success(t('spreed', 'You restricted the conversation to moderators'))
 				} else {
-					showSuccess(t('spreed', 'You opened the conversation to everyone'))
+					window.OCP.Toast.success(t('spreed', 'You opened the conversation to everyone'))
 				}
 			} catch (e) {
 				if (newLobbyState) {
@@ -188,7 +188,7 @@ export default {
 					token: this.token,
 					timestamp: timestamp ? (timestamp / 1000) : 0,
 				})
-				showSuccess(t('spreed', 'Start time has been updated'))
+				window.OCP.Toast.success(t('spreed', 'Start time has been updated'))
 			} catch (e) {
 				console.error('Error occurred while updating start time', e)
 				window.OCP.Toast.error(t('spreed', 'Error occurred while updating start time'))

@@ -401,7 +401,7 @@ export default {
 			const code = this.codeBlocks[this.currentCodeBlock].textContent
 			try {
 				await navigator.clipboard.writeText(code)
-				showSuccess(t('spreed', 'Code block copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Code block copied to clipboard'))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Code block could not be copied'))
 			}

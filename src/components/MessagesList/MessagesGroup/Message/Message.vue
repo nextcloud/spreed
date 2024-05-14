@@ -513,7 +513,7 @@ export default {
 						timeout: TOAST_DEFAULT_TIMEOUT * 2,
 					})
 				} else if (statusCode === 200) {
-					showSuccess(t('spreed', 'Message deleted successfully'))
+					window.OCP.Toast.success(t('spreed', 'Message deleted successfully'))
 				}
 			} catch (e) {
 				if (e?.response?.status === 400) {

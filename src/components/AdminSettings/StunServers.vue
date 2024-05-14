@@ -120,7 +120,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
 				success: () => {
-					showSuccess(t('spreed', 'STUN settings saved'))
+					window.OCP.Toast.success(t('spreed', 'STUN settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},
