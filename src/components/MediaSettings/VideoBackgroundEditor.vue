@@ -61,13 +61,13 @@
 			aria-hidden="true"
 			@change="handleFileInput">
 
-		<FilePickerVue v-if="showFilePicker"
+		<!-- <FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
 			:path="relativeBackgroundsFolderPath"
 			container=".background-editor"
 			:buttons="filePickerButtons"
 			:multiselect="false"
-			@close="showFilePicker = false" />
+			@close="showFilePicker = false" /> -->
 	</div>
 </template>
 
@@ -80,7 +80,7 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 
 // eslint-disable-next-line
 // import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
@@ -108,7 +108,7 @@ export default {
 		Blur,
 		Cancel,
 		CheckBold,
-		FilePickerVue,
+		// FilePickerVue,
 		Folder,
 		Upload,
 	},

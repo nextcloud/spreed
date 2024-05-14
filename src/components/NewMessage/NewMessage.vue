@@ -162,12 +162,12 @@
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
 
-		<FilePickerVue v-if="showFilePicker"
+		<!-- <FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
 			:container="container"
 			:buttons="filePickerButtons"
 			allow-pick-directory
-			@close="showFilePicker = false" />
+			@close="showFilePicker = false" /> -->
 	</div>
 </template>
 
@@ -182,7 +182,7 @@ import SendIcon from 'vue-material-design-icons/Send.vue'
 
 // eslint-disable-next-line
 // import { showError, showWarning } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
@@ -224,7 +224,7 @@ export default {
 	disableKeyboardShortcuts,
 
 	components: {
-		FilePickerVue,
+		// FilePickerVue,
 		NcActionButton,
 		NcActions,
 		NcButton,
