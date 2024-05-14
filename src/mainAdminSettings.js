@@ -7,7 +7,8 @@ import Vue from 'vue'
 
 import AdminSettings from './views/AdminSettings.vue'
 
-import '@nextcloud/dialogs/style.css'
+// eslint-disable-next-line
+// import '@nextcloud/dialogs/style.css'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
