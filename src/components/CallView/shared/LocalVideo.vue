@@ -63,6 +63,8 @@ import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 export default {
 
 	name: 'LocalVideo',

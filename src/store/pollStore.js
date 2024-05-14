@@ -10,6 +10,8 @@ import Vue from 'vue'
 
 import pollService from '../services/pollService.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const state = {
 	polls: {},
 	pollDebounceFunctions: {},

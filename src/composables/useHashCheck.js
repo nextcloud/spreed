@@ -10,6 +10,8 @@ import { watch, computed } from 'vue'
 
 import { useTalkHashStore } from '../stores/talkHash.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 /**
  * Check whether the conflicting session detected or not, and navigate to another page
  *

@@ -10,6 +10,8 @@ import { defineStore } from 'pinia'
 
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 /**
  * @typedef {object} State
  * @property {string} initialNextcloudTalkHash - The absence status per conversation.

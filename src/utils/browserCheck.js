@@ -9,6 +9,8 @@ import UAParser from 'ua-parser-js'
 // import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const parser = new UAParser()
 const browser = parser.getBrowser()
 
