@@ -77,7 +77,8 @@ import debounce from 'debounce'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
 

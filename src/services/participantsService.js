@@ -4,9 +4,9 @@
  */
 
 import axios from '@nextcloud/axios'
-import {
+/* import {
 	showWarning
-} from '@nextcloud/dialogs'
+} from '@nextcloud/dialogs' */
 import {
 	generateOcsUrl,
 } from '@nextcloud/router'

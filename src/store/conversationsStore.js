@@ -5,7 +5,8 @@
 import Vue from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import {

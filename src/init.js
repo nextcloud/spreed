@@ -6,7 +6,8 @@
 // The purpose of this file is to wrap the logic shared by the different talk
 // entry points
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'

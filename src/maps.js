@@ -6,7 +6,8 @@
 import escapeHtml from 'escape-html'
 
 import { getRequestToken } from '@nextcloud/auth'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 

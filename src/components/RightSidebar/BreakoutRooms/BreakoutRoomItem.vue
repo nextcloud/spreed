@@ -66,7 +66,8 @@ import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import MenuRight from 'vue-material-design-icons/MenuRight.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
-import { showWarning } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showWarning } from '@nextcloud/dialogs'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'

@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'

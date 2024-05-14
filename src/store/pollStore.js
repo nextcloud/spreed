@@ -5,7 +5,8 @@
 import debounce from 'debounce'
 import Vue from 'vue'
 
-import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import pollService from '../services/pollService.js'
 
