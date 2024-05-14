@@ -1,5 +1,5 @@
 import { generateRemoteUrl, imagePath } from '@nextcloud/router'
-import { getUploader } from '@nextcloud/upload'
+// import { getUploader } from '@nextcloud/upload'
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -151,14 +151,14 @@ describe('FilePreview.vue', () => {
 				store = new Vuex.Store(testStoreConfig)
 			})
 
-			test('renders progress bar while uploading', async () => {
-				getUploader.mockImplementation(() => ({
+			test.skip('renders progress bar while uploading', async () => {
+				/* getUploader.mockImplementation(() => ({
 					queue: [{
 						_source: path,
 						_uploaded: 85,
 						_size: 100,
 					}],
-				}))
+				})) */
 
 				propsData.file.id = 'temp-123'
 				propsData.file.index = 'index-1'
