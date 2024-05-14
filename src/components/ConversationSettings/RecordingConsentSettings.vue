@@ -100,7 +100,7 @@ export default {
 					token: this.token,
 					state: value ? CALL.RECORDING_CONSENT.REQUIRED : CALL.RECORDING_CONSENT.OFF,
 				})
-				showSuccess(t('spreed', 'Recording consent requirement was updated'))
+				window.OCP.Toast.success(t('spreed', 'Recording consent requirement was updated'))
 			} catch (error) {
 				window.OCP.Toast.error(t('spreed', 'Error occurred while updating recording consent'))
 				console.error(error)

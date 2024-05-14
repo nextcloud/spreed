@@ -185,7 +185,7 @@ export default {
 					token: this.token,
 					permissions,
 				})
-				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
+				window.OCP.Toast.success(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
 
 				// Modify the radio buttons value
 				this.radioValue = this.getPermissionRadioValue(permissions)

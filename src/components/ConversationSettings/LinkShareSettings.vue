@@ -157,9 +157,9 @@ export default {
 					newPassword,
 				})
 				if (newPassword !== '') {
-					showSuccess(t('spreed', 'Conversation password has been saved'))
+					window.OCP.Toast.success(t('spreed', 'Conversation password has been saved'))
 				} else {
-					showSuccess(t('spreed', 'Conversation password has been removed'))
+					window.OCP.Toast.success(t('spreed', 'Conversation password has been removed'))
 				}
 			} catch (error) {
 				console.error('Error saving conversation password', error)
@@ -219,7 +219,7 @@ export default {
 			this.isSendingInvitations = true
 			try {
 				await this.$store.dispatch('resendInvitations', { token: this.token })
-				showSuccess(t('spreed', 'Invitations sent'))
+				window.OCP.Toast.success(t('spreed', 'Invitations sent'))
 			} catch (e) {
 				window.OCP.Toast.error(t('spreed', 'Error occurred when sending invitations'))
 			}

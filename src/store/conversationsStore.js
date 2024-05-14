@@ -480,11 +480,11 @@ const actions = {
 			if (allowGuests) {
 				await makeConversationPublic(token)
 				conversation.type = CONVERSATION.TYPE.PUBLIC
-				showSuccess(t('spreed', 'You allowed guests'))
+				window.OCP.Toast.success(t('spreed', 'You allowed guests'))
 			} else {
 				await makeConversationPrivate(token)
 				conversation.type = CONVERSATION.TYPE.GROUP
-				showSuccess(t('spreed', 'You disallowed guests'))
+				window.OCP.Toast.success(t('spreed', 'You disallowed guests'))
 			}
 			commit('addConversation', conversation)
 		} catch (error) {
@@ -984,7 +984,7 @@ const actions = {
 
 		const startingCallRecording = callRecording === CALL.RECORDING.VIDEO ? CALL.RECORDING.VIDEO_STARTING : CALL.RECORDING.AUDIO_STARTING
 
-		showSuccess(t('spreed', 'Call recording is starting.'))
+		window.OCP.Toast.success(t('spreed', 'Call recording is starting.'))
 		context.commit('setCallRecording', { token, callRecording: startingCallRecording })
 	},
 
@@ -1013,7 +1013,7 @@ const actions = {
 			const response = await setConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'Conversation picture set'))
+			window.OCP.Toast.success(t('spreed', 'Conversation picture set'))
 		} catch (error) {
 			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
 		}
@@ -1024,7 +1024,7 @@ const actions = {
 			const response = await setConversationEmojiAvatar(token, emoji, color)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'Conversation picture set'))
+			window.OCP.Toast.success(t('spreed', 'Conversation picture set'))
 		} catch (error) {
 			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
 		}
@@ -1035,7 +1035,7 @@ const actions = {
 			const response = await deleteConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'Conversation picture deleted'))
+			window.OCP.Toast.success(t('spreed', 'Conversation picture deleted'))
 		} catch (error) {
 			window.OCP.Toast.error(t('spreed', 'Could not delete the conversation picture'))
 		}

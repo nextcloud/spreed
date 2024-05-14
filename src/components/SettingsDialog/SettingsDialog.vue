@@ -304,7 +304,7 @@ export default {
 				await this.settingsStore.updateReadStatusPrivacy(
 					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
-				showSuccess(t('spreed', 'Your privacy setting has been saved'))
+				window.OCP.Toast.success(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				window.OCP.Toast.error(t('spreed', 'Error while setting read status privacy'))
 			}
@@ -317,7 +317,7 @@ export default {
 				await this.settingsStore.updateTypingStatusPrivacy(
 					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
-				showSuccess(t('spreed', 'Your privacy setting has been saved'))
+				window.OCP.Toast.success(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				window.OCP.Toast.error(t('spreed', 'Error while setting typing status privacy'))
 			}
@@ -338,7 +338,7 @@ export default {
 				} catch (e) {
 					window.OCP.Toast.error(t('spreed', 'Failed to save sounds setting'))
 				}
-				showSuccess(t('spreed', 'Sounds setting saved'))
+				window.OCP.Toast.success(t('spreed', 'Sounds setting saved'))
 			} catch (exception) {
 				window.OCP.Toast.error(t('spreed', 'Error while saving sounds setting'))
 			}

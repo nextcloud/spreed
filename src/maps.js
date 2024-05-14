@@ -33,7 +33,7 @@ async function postLocationToRoom(location, { token, displayName }) {
 		const messageId = response.data.ocs.data.id
 		const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
 
-		showSuccess(t('spreed', 'Location has been posted to {conversation}')
+		window.OCP.Toast.success(t('spreed', 'Location has been posted to {conversation}')
 			.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
 		{
 			isHTML: true,
