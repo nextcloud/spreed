@@ -248,6 +248,7 @@
 </template>
 
 <script>
+import { vOnClickOutside as ClickOutside } from '@vueuse/components'
 import { toRefs } from 'vue'
 
 import AccountIcon from 'vue-material-design-icons/Account.vue'
@@ -275,7 +276,6 @@ import Translate from 'vue-material-design-icons/Translate.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
-import { vOnClickOutside as ClickOutside } from '@vueuse/components'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
