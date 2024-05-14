@@ -257,15 +257,15 @@ export default {
 			handler(error) {
 				if (error) {
 					if (error.name === 'NotAllowedError') {
-						this.notificationHandle = showError(t('spreed', 'Access to camera was denied'))
+						this.notificationHandle = window.OCP.Toast.error(t('spreed', 'Access to camera was denied'))
 					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
 						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
-						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: It is likely in use by another program'), {
+						this.notificationHandle = window.OCP.Toast.error(t('spreed', 'Error while accessing camera: It is likely in use by another program'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					} else {
 						console.error('Error while accessing camera: ', error.message, error.name)
-						this.notificationHandle = showError(t('spreed', 'Error while accessing camera'), {
+						this.notificationHandle = window.OCP.Toast.error(t('spreed', 'Error while accessing camera'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					}

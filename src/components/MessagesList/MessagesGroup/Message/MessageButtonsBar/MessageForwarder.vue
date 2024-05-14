@@ -120,7 +120,7 @@ export default {
 				this.showForwardedConfirmation = true
 			} catch (error) {
 				console.error('Error while forwarding message', error)
-				showError(t('spreed', 'Error while forwarding message'))
+				window.OCP.Toast.error(t('spreed', 'Error while forwarding message'))
 			}
 		},
 

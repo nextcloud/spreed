@@ -450,12 +450,12 @@ export default {
 				await callSIPDialOut(this.token, attendeeId)
 			} catch (error) {
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(t('spreed', 'Phone number could not be called: {error}', {
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called: {error}', {
 						error: error?.response?.data?.ocs?.data?.message
 					}))
 				} else {
 					console.error(error)
-					showError(t('spreed', 'Phone number could not be called'))
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called'))
 				}
 			}
 		},

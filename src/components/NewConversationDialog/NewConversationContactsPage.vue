@@ -219,7 +219,7 @@ export default {
 					return
 				}
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			} finally {
 				this.contactsLoading = false
 			}

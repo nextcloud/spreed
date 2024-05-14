@@ -99,7 +99,7 @@ export default {
 				showSuccess(t('spreed', 'Permissions modified for {displayName}', { displayName: this.displayName }))
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.displayName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.displayName }))
 			} finally {
 				// Closes the modal window
 				this.$emit('close')

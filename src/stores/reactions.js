@@ -235,7 +235,7 @@ export const useReactionsStore = defineStore('reactions', {
 					messageId,
 					reaction: selectedEmoji,
 				})
-				showError(t('spreed', 'Failed to add reaction'))
+				window.OCP.Toast.error(t('spreed', 'Failed to add reaction'))
 			}
 		},
 
@@ -270,7 +270,7 @@ export const useReactionsStore = defineStore('reactions', {
 					reaction: selectedEmoji,
 				})
 				console.error(error)
-				showError(t('spreed', 'Failed to remove reaction'))
+				window.OCP.Toast.error(t('spreed', 'Failed to remove reaction'))
 			}
 		},
 

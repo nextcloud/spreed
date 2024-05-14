@@ -106,7 +106,7 @@ export default {
 		},
 
 		handleMessageFailure() {
-			showError(t('spreed', 'The message could not be sent'))
+			window.OCP.Toast.error(t('spreed', 'The message could not be sent'))
 			this.$emit('close')
 		},
 	},

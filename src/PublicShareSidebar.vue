@@ -164,7 +164,7 @@ export default {
 			} catch (exception) {
 				this.joiningConversation = false
 
-				showError(t('spreed', 'Error occurred when joining the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when joining the conversation'))
 
 				console.error(exception)
 

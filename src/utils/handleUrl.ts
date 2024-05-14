@@ -49,6 +49,6 @@ export async function copyConversationLinkToClipboard(token: string, messageId: 
 		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId))
 		showSuccess(t('spreed', 'Conversation link copied to clipboard'))
 	} catch (error) {
-		showError(t('spreed', 'The link could not be copied'))
+		window.OCP.Toast.error(t('spreed', 'The link could not be copied'))
 	}
 }

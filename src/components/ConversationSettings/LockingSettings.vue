@@ -86,10 +86,10 @@ export default {
 			} catch (e) {
 				if (newReadOnly) {
 					console.error('Error occurred when locking the conversation', e)
-					showError(t('spreed', 'Error occurred when locking the conversation'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when locking the conversation'))
 				} else {
 					console.error('Error updating read-only state', e)
-					showError(t('spreed', 'Error occurred when unlocking the conversation'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when unlocking the conversation'))
 				}
 			}
 			this.isReadOnlyStateLoading = false

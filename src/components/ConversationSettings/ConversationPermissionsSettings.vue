@@ -190,7 +190,7 @@ export default {
 				this.showPermissionsEditor = false
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
 
 				// Go back to the previous radio value
 				this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)

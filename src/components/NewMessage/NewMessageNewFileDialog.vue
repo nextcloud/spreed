@@ -204,10 +204,10 @@ export default {
 			} catch (error) {
 				console.error('Error while creating file', error)
 				if (error?.response?.data?.ocs?.meta?.message) {
-					showError(error.response.data.ocs.meta.message)
+					window.OCP.Toast.error(error.response.data.ocs.meta.message)
 					this.newFileError = error.response.data.ocs.meta.message
 				} else {
-					showError(t('spreed', 'Error while creating file'))
+					window.OCP.Toast.error(t('spreed', 'Error while creating file'))
 				}
 				return
 			}

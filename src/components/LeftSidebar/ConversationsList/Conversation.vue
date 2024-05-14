@@ -263,7 +263,7 @@ export default {
 				await this.$store.dispatch('deleteConversationFromServer', { token: this.item.token })
 			} catch (error) {
 				console.error(`Error while deleting conversation ${error}`)
-				showError(t('spreed', 'Error while deleting conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error while deleting conversation'))
 			}
 		},
 
@@ -280,7 +280,7 @@ export default {
 				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.item.token })
 			} catch (error) {
 				if (error?.response?.status === 400) {
-					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
+					window.OCP.Toast.error(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
 				} else {
 					console.error(`Error while removing yourself from conversation ${error}`)
 				}

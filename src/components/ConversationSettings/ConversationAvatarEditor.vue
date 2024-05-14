@@ -251,7 +251,7 @@ export default {
 			this.loading = true
 			const file = e.target.files[0]
 			if (!this.validMimeTypes.includes(file.type)) {
-				showError(t('spreed', 'Please select a valid PNG or JPG file'))
+				window.OCP.Toast.error(t('spreed', 'Please select a valid PNG or JPG file'))
 				this.cancel()
 				return
 			}
@@ -280,11 +280,11 @@ export default {
 					this.$refs.cropper.replace(tempAvatar)
 					this.showCropper = true
 				} else {
-					showError(data.data.message)
+					window.OCP.Toast.error(data.data.message)
 					this.cancel()
 				}
 			} catch (e) {
-				showError(t('spreed', 'Error setting conversation picture'))
+				window.OCP.Toast.error(t('spreed', 'Error setting conversation picture'))
 				this.cancel()
 			}
 		},
@@ -303,7 +303,7 @@ export default {
 					await this.savePictureAvatar()
 				}
 			} catch (error) {
-				showError(t('spreed', 'Could not set the conversation picture: {error}', { error: error.message }))
+				window.OCP.Toast.error(t('spreed', 'Could not set the conversation picture: {error}', { error: error.message }))
 				this.cancel()
 			} finally {
 				this.loading = false
@@ -347,7 +347,7 @@ export default {
 					token: this.conversation.token,
 				})
 			} catch (e) {
-				showError(t('spreed', 'Error removing conversation picture'))
+				window.OCP.Toast.error(t('spreed', 'Error removing conversation picture'))
 			} finally {
 				this.loading = false
 			}

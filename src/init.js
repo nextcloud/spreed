@@ -72,7 +72,7 @@ EventBus.on('signaling-recording-status-changed', (token, status) => {
 	const conversation = store.getters.conversation(store.getters.getToken())
 	if (conversation?.participantType === PARTICIPANT.TYPE.OWNER
 		|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR) {
-		showError(t('spreed', 'The recording failed. Please contact your administrator.'))
+		window.OCP.Toast.error(t('spreed', 'The recording failed. Please contact your administrator.'))
 	}
 })
 

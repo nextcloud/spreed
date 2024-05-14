@@ -120,7 +120,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				store.dispatch('showSidebar')
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while creating breakout rooms'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while creating breakout rooms'))
 			}
 		},
 
@@ -141,7 +141,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while re-ordering the attendees'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while re-ordering the attendees'))
 			}
 		},
 
@@ -159,7 +159,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				this.purgeBreakoutRoomsStore(token)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while deleting breakout rooms'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while deleting breakout rooms'))
 			}
 		},
 
@@ -188,7 +188,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				this.processConversations(token, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while starting breakout rooms'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while starting breakout rooms'))
 			}
 		},
 
@@ -203,7 +203,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				this.processConversations(token, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while stopping breakout rooms'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while stopping breakout rooms'))
 			}
 		},
 
@@ -219,7 +219,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				await broadcastMessageToBreakoutRooms(token, message)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while sending a message to the breakout rooms'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while sending a message to the breakout rooms'))
 			}
 		},
 
@@ -259,7 +259,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				this.processConversations(parentToken, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while requesting assistance'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while requesting assistance'))
 			}
 		},
 
@@ -275,7 +275,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				this.processConversations(parentToken, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while resetting the request for assistance'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while resetting the request for assistance'))
 			}
 		},
 
@@ -292,7 +292,7 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				this.processConversations(token, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'An error occurred while joining breakout room'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while joining breakout room'))
 			}
 		},
 	}

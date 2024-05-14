@@ -93,10 +93,10 @@ export default {
 				// TODO check "precondition failed"
 				if (!this.conversation.sipEnabled) {
 					console.error('Error occurred when enabling SIP dial-in', e)
-					showError(t('spreed', 'Error occurred when enabling SIP dial-in'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when enabling SIP dial-in'))
 				} else {
 					console.error('Error occurred when disabling SIP dial-in', e)
-					showError(t('spreed', 'Error occurred when disabling SIP dial-in'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when disabling SIP dial-in'))
 				}
 			}
 		},

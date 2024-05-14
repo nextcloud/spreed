@@ -350,7 +350,7 @@ const actions = {
 				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
 			} catch (exception) {
 				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-				showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				window.OCP.Toast.error(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				// Mark the upload as failed in the store
 				context.commit('markFileAsFailedUpload', { uploadId, index })
 				const { id } = uploadedFile.temporaryMessage
@@ -398,13 +398,13 @@ const actions = {
 					console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
 					if (exception.response.status === 507) {
 						reason = 'quota'
-						showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
+						window.OCP.Toast.error(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
 					} else {
-						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+						window.OCP.Toast.error(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 					}
 				} else {
 					console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					window.OCP.Toast.error(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				}
 
 				// Mark the upload as failed in the store
@@ -445,9 +445,9 @@ const actions = {
 				context.dispatch('markFileAsShared', { uploadId, index })
 			} catch (error) {
 				if (error?.response?.status === 403) {
-					showError(t('spreed', 'You are not allowed to share files'))
+					window.OCP.Toast.error(t('spreed', 'You are not allowed to share files'))
 				} else {
-					showError(t('spreed', 'An error happened when trying to share your file'))
+					window.OCP.Toast.error(t('spreed', 'An error happened when trying to share your file'))
 				}
 				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)

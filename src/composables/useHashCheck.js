@@ -31,7 +31,7 @@ export function useHashCheck() {
 	const showReloadWarning = () => {
 		reloadWarningShown = true
 
-		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
+		window.OCP.Toast.error(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
 			timeout: TOAST_PERMANENT_TIMEOUT,
 		})
 	}
