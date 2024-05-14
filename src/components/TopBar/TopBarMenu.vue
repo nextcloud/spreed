@@ -395,7 +395,7 @@ export default {
 				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
 					&& window.getComputedStyle(child).display !== 'none'
 			}).length !== 0) {
-				showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
+				window.OCP.Toast.warning(t('spreed', 'You need to close a dialog to toggle full screen'))
 				return
 			}
 

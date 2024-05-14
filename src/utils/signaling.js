@@ -653,7 +653,7 @@ Signaling.Standalone.prototype.connect = function() {
 	if (this.signalingConnectionError === null
 		&& this.signalingConnectionWarning === null) {
 		this.signalingConnectionTimeout = setTimeout(() => {
-			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
+			this.signalingConnectionWarning = window.OCP.Toast.warning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}, 2000)

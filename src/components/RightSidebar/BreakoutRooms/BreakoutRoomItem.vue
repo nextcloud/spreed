@@ -191,7 +191,7 @@ export default {
 	watch: {
 		showAssistanceButton(newValue) {
 			if (newValue) {
-				showWarning(t('spreed', 'Assistance requested in {roomName}', {
+				window.OCP.Toast.warning(t('spreed', 'Assistance requested in {roomName}', {
 					roomName: this.roomName,
 				}))
 			}
