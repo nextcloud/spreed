@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import PermissionEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 

@@ -4,11 +4,12 @@
  */
 
 import axios from '@nextcloud/axios'
-import {
+// eslint-disable-next-line
+/* import {
 	showError,
 	showWarning,
 	TOAST_PERMANENT_TIMEOUT,
-} from '@nextcloud/dialogs'
+} from '@nextcloud/dialogs' */
 import {
 	generateOcsUrl,
 	generateUrl,

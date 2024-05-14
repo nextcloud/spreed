@@ -8,7 +8,8 @@ import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import {
 	ATTENDEE,

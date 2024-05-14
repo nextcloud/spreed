@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 

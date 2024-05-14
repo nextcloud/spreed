@@ -5,7 +5,8 @@
 
 import { watch, computed } from 'vue'
 
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import { useTalkHashStore } from '../stores/talkHash.js'
 

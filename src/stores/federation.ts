@@ -6,7 +6,8 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { getBaseUrl } from '@nextcloud/router'
 
 import { FEDERATION } from '../constants.js'

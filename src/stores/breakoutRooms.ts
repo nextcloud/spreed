@@ -6,7 +6,8 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import {

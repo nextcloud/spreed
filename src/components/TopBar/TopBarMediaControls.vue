@@ -116,7 +116,8 @@ import MonitorOff from 'vue-material-design-icons/MonitorOff.vue'
 import MonitorShare from 'vue-material-design-icons/MonitorShare.vue'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'

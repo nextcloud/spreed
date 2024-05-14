@@ -43,7 +43,8 @@
 
 <script>
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from '../UIShared/EditableTextField.vue'

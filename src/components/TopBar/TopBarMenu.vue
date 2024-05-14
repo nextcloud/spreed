@@ -161,7 +161,8 @@ import PromotedView from 'vue-material-design-icons/ViewGallery.vue'
 import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showWarning } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'

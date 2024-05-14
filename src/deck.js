@@ -6,7 +6,8 @@
 import escapeHtml from 'escape-html'
 
 import { getRequestToken } from '@nextcloud/auth'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
@@ -35,9 +36,9 @@ async function postCardToRoom(card, { token, displayName }) {
 
 		showSuccess(t('spreed', 'Deck card has been posted to {conversation}')
 			.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
-		{
-			isHTML: true,
-		})
+			{
+				isHTML: true,
+			})
 	} catch (exception) {
 		console.error('Error posting deck card to conversation', exception, exception.response?.status)
 		if (exception.response?.status === 403) {

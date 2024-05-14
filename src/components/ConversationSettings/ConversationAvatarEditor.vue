@@ -112,7 +112,8 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getRequestToken } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { generateUrl } from '@nextcloud/router'
 
