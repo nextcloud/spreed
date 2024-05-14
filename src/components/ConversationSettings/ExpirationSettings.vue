@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'

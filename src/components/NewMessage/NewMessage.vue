@@ -180,7 +180,8 @@ import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import SendIcon from 'vue-material-design-icons/Send.vue'
 
-import { showError, showWarning } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'

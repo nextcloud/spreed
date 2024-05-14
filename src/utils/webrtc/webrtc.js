@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import {
+// eslint-disable-next-line
+/* import {
 	showError,
 	TOAST_PERMANENT_TIMEOUT,
 	TOAST_DEFAULT_TIMEOUT,
-} from '@nextcloud/dialogs'
+} from '@nextcloud/dialogs' */
 import { t } from '@nextcloud/l10n'
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'

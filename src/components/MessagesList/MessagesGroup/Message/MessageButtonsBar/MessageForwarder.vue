@@ -44,7 +44,8 @@ import { inject } from 'vue'
 
 import Check from 'vue-material-design-icons/Check.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 

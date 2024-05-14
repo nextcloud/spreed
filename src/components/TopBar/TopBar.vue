@@ -124,7 +124,8 @@ import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
 

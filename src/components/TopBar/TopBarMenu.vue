@@ -160,7 +160,8 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import PromotedView from 'vue-material-design-icons/ViewGallery.vue'
 import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
-import { showWarning } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 

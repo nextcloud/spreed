@@ -7,7 +7,8 @@ import SHA256 from 'crypto-js/sha256.js'
 import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import {
