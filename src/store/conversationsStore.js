@@ -63,6 +63,8 @@ import { useFederationStore } from '../stores/federation.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const DUMMY_CONVERSATION = {
 	token: '',
 	displayName: '',

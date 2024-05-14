@@ -114,6 +114,8 @@ import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
 
+const TOAST_DEFAULT_TIMEOUT = 7000
+
 export default {
 	name: 'Message',
 

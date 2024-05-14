@@ -11,6 +11,8 @@ import { t } from '@nextcloud/l10n'
 
 import pollService from '../services/pollService.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const state = {
 	polls: {},
 	pollDebounceFunctions: {},

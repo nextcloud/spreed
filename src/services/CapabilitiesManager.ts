@@ -15,6 +15,8 @@ import type { Capabilities, JoinRoomFullResponse } from '../types'
 type Config = Capabilities['spreed']['config']
 type RemoteCapabilities = Record<string, Capabilities & Partial<{ hash: string }>>
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const localCapabilities: Capabilities = _getCapabilities() as Capabilities
 const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
 

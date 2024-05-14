@@ -23,6 +23,8 @@ import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
 import store from '../store/index.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const Signaling = {
 	Base: {},
 	Internal: {},
