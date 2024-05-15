@@ -75,7 +75,7 @@
 				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
-					:value.sync="text"
+					v-model="text"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
@@ -86,7 +86,7 @@
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
-					@input="handleTyping"
+					@update:modelValue="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
 			</div>

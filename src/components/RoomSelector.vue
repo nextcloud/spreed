@@ -13,7 +13,7 @@
 			<p v-if="dialogSubtitle" class="selector__subtitle">
 				{{ dialogSubtitle }}
 			</p>
-			<NcTextField :value.sync="searchText"
+			<NcTextField v-model="searchText"
 				trailing-button-icon="close"
 				class="selector__search"
 				:label="t('spreed', 'Search conversations or users')"

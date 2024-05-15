@@ -192,7 +192,7 @@
 
 					<NcActionInput type="datetime-local"
 						is-native-picker
-						:value="customReminderDateTime"
+						:model-value="customReminderDateTime"
 						:min="new Date()"
 						@change="setCustomReminderDateTime">
 						<template #icon>

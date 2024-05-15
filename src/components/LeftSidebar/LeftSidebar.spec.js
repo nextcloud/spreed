@@ -639,7 +639,7 @@ describe('LeftSidebar.vue', () => {
 				expect(ncModalComponent.exists()).toBeTruthy()
 
 				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
-				expect(input.props('value')).toBe(groupsResults[1].label)
+				expect(input.props('modelValue')).toBe(groupsResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
@@ -661,7 +661,7 @@ describe('LeftSidebar.vue', () => {
 				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
 				expect(ncModalComponent.exists()).toBeTruthy()
 				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
-				expect(input.props('value')).toBe(circlesResults[1].label)
+				expect(input.props('modelValue')).toBe(circlesResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
