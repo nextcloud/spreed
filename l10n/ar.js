@@ -998,6 +998,7 @@ OC.L10N.register(
     "_%n day_::_%n days_" : ["%n أيام","%n يوم","%nأيام","%nأيام","%n أيام","%n أيام"],
     "_%n week_::_%n weeks_" : ["%n أسابيع","%n أسبوع","%n أسابيع","%n أسابيع","%n أسابيع","%n أسابيع"],
     "Guest access" : "وصول الضيف",
+    "Breakout rooms are not allowed in public conversations." : "الغرف الجانبية غير متاحة في حالة المحادثات العامة.",
     "Allow guests to join this conversation via link" : "السماح للضيوف بالانضمام إلى هذه المحادثة من خلال رابط",
     "Password protection" : "الحماية بكلمة السر",
     "Enter new password" : "أدخِل كلمة مرور جديدة",
