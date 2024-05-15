@@ -20,7 +20,7 @@ Vue.prototype.OCP = window.OCP
  * @return {Promise<object|null>} - resolves with the conversation of the selected room or null if canceled
  */
 export function requestRoomSelection(containerId, roomSelectorProps) {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		const container = document.createElement('div')
 		container.id = containerId
 		const body = document.getElementById('body-user')
@@ -40,7 +40,7 @@ export function requestRoomSelection(containerId, roomSelectorProps) {
 		vm.$root.$on('close', () => {
 			container.remove()
 			vm.$destroy()
-			reject(new Error('User cancelled resource selection'))
+			resolve(null)
 		})
 
 		vm.$root.$on('select', (conversation) => {
