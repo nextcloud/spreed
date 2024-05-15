@@ -15,7 +15,7 @@
 			<p class="poll-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<NcTextField :value.sync="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField v-model="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
 
 			<!-- Poll options -->
 			<p class="poll-editor__caption">
@@ -25,7 +25,7 @@
 				:key="index"
 				class="poll-editor__option">
 				<NcTextField ref="pollOption"
-					:value.sync="pollOptions[index]"
+					v-model="pollOptions[index]"
 					:label="t('spreed', 'Answer {option}', {option: index + 1})" />
 				<NcButton v-if="pollOptions.length > 2"
 					type="tertiary-no-background"

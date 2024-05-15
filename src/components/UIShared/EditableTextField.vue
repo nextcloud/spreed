@@ -14,7 +14,7 @@
 		<NcRichContenteditable v-else
 			ref="richContenteditable"
 			dir="auto"
-			:value.sync="text"
+			v-model="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
 			:multiline="multiline"

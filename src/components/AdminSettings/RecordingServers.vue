@@ -41,13 +41,13 @@
 		</NcButton>
 
 		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
+			:model-value="secret"
 			name="recording_secret"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:value="updateSecret" />
+			@update:modelValue="updateSecret" />
 
 		<template v-if="servers.length && recordingConsentCapability">
 			<h3>{{ t('spreed', 'Recording consent') }}</h3>

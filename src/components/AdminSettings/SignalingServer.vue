@@ -9,10 +9,10 @@
 			class="signaling-server__textfield"
 			name="signaling_server"
 			placeholder="wss://signaling.example.org"
-			:value="server"
+			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'High-performance backend URL')"
-			@update:value="updateServer" />
+			@update:modelValue="updateServer" />
 
 		<NcCheckboxRadioSwitch :checked="verify"
 			class="signaling-server__checkbox"

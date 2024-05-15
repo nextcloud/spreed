@@ -25,7 +25,7 @@
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="formatedTypes"
-						@input="clickAddPart">
+						@update:modelValue="clickAddPart">
 						<template #option="option">
 							<img class="icon-multiselect-service"
 								:src="option.iconUrl"
@@ -55,7 +55,7 @@
 						container=".matterbridge-settings"
 						@close="closeLogModal">
 						<div class="modal__content">
-							<NcTextArea :value="processLog"
+							<NcTextArea :model-value="processLog"
 								class="log-content"
 								:label="t('spreed', 'Log content')"
 								rows="29"

@@ -27,7 +27,7 @@
 				</div>
 				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
 					aria-describedby="moderation_settings_lobby_timer_hint"
-					:value="lobbyTimer"
+					:model-value="lobbyTimer"
 					:default-value="defaultLobbyTimer"
 					:placeholder="t('spreed', 'Start time (optional)')"
 					:disabled="lobbyTimerFieldDisabled"

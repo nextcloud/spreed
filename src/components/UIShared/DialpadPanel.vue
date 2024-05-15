@@ -26,7 +26,7 @@
 			<NcSelect v-if="!dialing"
 				ref="regionSelect"
 				class="dial-panel__select"
-				:value="region"
+				:model-value="region"
 				:options="options"
 				:append-to-body="false"
 				:clearable="false"
