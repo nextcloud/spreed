@@ -34,9 +34,6 @@
 </template>
 
 <script>
-
-import Vue from 'vue'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { BOT } from '../../constants.js'
@@ -87,7 +84,7 @@ export default {
 
 	async created() {
 		(await this.botsStore.loadConversationBots(this.token)).forEach(id => {
-			Vue.set(this.isLoading, id, false)
+			this.isLoading[id] = false
 		})
 	},
 
