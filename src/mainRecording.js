@@ -6,13 +6,12 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Vuex from 'vuex'
+import { createApp } from 'vue'
 import Recording from './Recording.vue'
 import router from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
@@ -34,25 +33,18 @@ __webpack_nonce__ = getCSPNonce()
 // We do not want the index.php since we're loading files
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(Vuex)
-Vue.use(VueRouter)
-
 window.store = store
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
 }
 
-const instance = new Vue({
-	el: '#content',
-	store,
-	pinia,
-	router,
-	render: (h) => h(Recording),
-})
+const instance = createApp(Recording)
+	.use(pinia)
+	.use(store)
+	.use(router)
+	.use(NextcloudGlobalsVuePlugin)
+	.mount('#content')
 
 // make the instance available to global components that might run on the same page
 OCA.Talk.instance = instance

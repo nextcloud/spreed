@@ -5,12 +5,12 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createApp } from 'vue'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 import './init.js'
 // Leaflet icon patch
@@ -26,11 +26,6 @@ __webpack_nonce__ = getCSPNonce()
 // OC.generateUrl ensure the index.php (or not)
 // We do not want the index.php since we're loading files
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
-
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(Vuex)
 
 /**
  * Wraps all the body contents in its own container.
@@ -92,20 +87,14 @@ function getShareToken() {
 	return shareTokenElement.value
 }
 
-const requestPasswordVm = new Vue({
-	store,
-	pinia,
-	id: 'talk-video-verification',
-	propsData: {
-		shareToken: getShareToken(),
-	},
-	...PublicShareAuthRequestPasswordButton,
-})
-requestPasswordVm.$mount('#request-password')
+createApp(PublicShareAuthRequestPasswordButton, { shareToken: getShareToken() })
+	.use(pinia)
+	.use(store)
+	.use(NextcloudGlobalsVuePlugin)
+	.mount('#request-password')
 
-const talkSidebarVm = new Vue({
-	store,
-	pinia,
-	...PublicShareAuthSidebar,
-})
-talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))
+createApp(PublicShareAuthSidebar)
+	.use(pinia)
+	.use(store)
+	.use(NextcloudGlobalsVuePlugin)
+	.mount(document.querySelector('#talk-sidebar'))

@@ -6,15 +6,14 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
-import Vue, { watch } from 'vue'
-import VueRouter from 'vue-router'
-import Vuex from 'vuex'
+import { createApp, watch } from 'vue'
 import App from './App.vue'
 import router from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 import './init.js'
 // Leaflet icon patch
@@ -33,22 +32,12 @@ if (!IS_DESKTOP) {
 	__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 }
 
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(Vuex)
-Vue.use(VueRouter)
-
-const instance = new Vue({
-	el: '#content',
-	store,
-	pinia,
-	router,
-	propsData: {
-		fileInfo: null,
-	},
-	render: (h) => h(App),
-})
+const instance = createApp(App, { fileInfo: null })
+	.use(store)
+	.use(pinia)
+	.use(router)
+	.use(NextcloudGlobalsVuePlugin)
+	.mount('#content')
 
 window.store = store
 
