@@ -9,12 +9,16 @@ const { resolve } = require('node:path')
 // TODO: find a way to consolidate this in one place, with webpack.common.js
 const ignorePatterns = [
 	'@mdi/svg',
+	'@ckpack',
 	'bail',
 	'ccount', // ESM dependency of remark-gfm
+	'character-entities',
 	'comma-separated-tokens',
 	'decode-named-character-reference',
 	'devlop',
+	'emoji-mart-vue-fast',
 	'escape-string-regexp',
+	'estree-util-is-identifier-name',
 	'hast-.*',
 	'is-.*',
 	'longest-streak', // ESM dependency of remark-gfm
@@ -56,7 +60,9 @@ module.exports = {
 	],
 
 	testEnvironment: 'jest-environment-jsdom',
-
+	testEnvironmentOptions: {
+		customExportConditions: ['node', 'node-addons'],
+	},
 	moduleFileExtensions: [
 		'js',
 		'ts',
@@ -77,7 +83,7 @@ module.exports = {
 			},
 		}],
 		'\\.js$': 'babel-jest',
-		'\\.vue$': '@vue/vue2-jest',
+		'\\.vue$': '@vue/vue3-jest',
 		'\\.tflite$': 'jest-transform-stub',
 		'\\.(css|scss)$': 'jest-transform-stub',
 	},
