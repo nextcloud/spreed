@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue from 'vue'
+import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
-import VueShortKey from 'vue-shortkey'
-import Vuex from 'vuex'
+import VueShortKey from 'vue3-shortkey'
 
 import { getRequestToken } from '@nextcloud/auth'
-import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
@@ -18,6 +16,7 @@ import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 
 import './init.js'
 import store from './store/index.js'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
@@ -37,32 +36,23 @@ __webpack_nonce__ = btoa(getRequestToken())
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-Vue.prototype.t = translate
-Vue.prototype.n = translatePlural
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(PiniaVuePlugin)
-Vue.use(Vuex)
-Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
-Vue.use(VueObserveVisibility)
-
 const pinia = createPinia()
 
 store.dispatch('setMainContainerSelector', '.talkChatTab')
 
-const newCallView = () => new Vue({
-	store,
-	pinia,
-	render: h => h(FilesSidebarCallViewApp),
-})
+const newCallView = () => createApp(FilesSidebarCallViewApp)
+	.use(store)
+	.use(pinia)
+	.use(VueObserveVisibility)
+	.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+	.use(NextcloudGlobalsVuePlugin)
 
-const newTab = () => new Vue({
-	store,
-	pinia,
-	id: 'talk-chat-tab',
-	render: h => h(FilesSidebarTabApp),
-})
+const newTab = () => createApp(FilesSidebarTabApp)
+	.use(store)
+	.use(pinia)
+	.use(VueObserveVisibility)
+	.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+	.use(NextcloudGlobalsVuePlugin)
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
