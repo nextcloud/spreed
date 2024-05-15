@@ -24,7 +24,8 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import { NcButton } from '@nextcloud/vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { PARTICIPANT } from '../../../constants.js'
 import BrowserStorage from '../../../services/BrowserStorage.js'
@@ -36,6 +37,10 @@ export default {
 		NcButton,
 		VideoIcon,
 		VideoOff,
+	},
+
+	directives: {
+		Tooltip,
 	},
 
 	props: {

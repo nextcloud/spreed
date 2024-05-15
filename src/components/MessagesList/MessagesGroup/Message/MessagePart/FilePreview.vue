@@ -94,7 +94,7 @@ export default {
 	},
 
 	directives: {
-		tooltip: Tooltip,
+		Tooltip,
 	},
 
 	props: {

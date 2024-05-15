@@ -105,8 +105,6 @@ import {
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService.js'
 
-Vue.directive('tooltip', Tooltip)
-
 export default {
 	name: 'MatterbridgeSettings',
 	components: {
@@ -120,10 +118,8 @@ export default {
 		Plus,
 	},
 
-	mixins: [
-	],
-
-	props: {
+	directives: {
+		Tooltip,
 	},
 
 	data() {

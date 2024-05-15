@@ -115,7 +115,7 @@ import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
-import { NcButton, Tooltip } from '@nextcloud/vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
@@ -143,10 +143,6 @@ export default {
 		TransitionWrapper,
 		VideoVue,
 		ArrowExpand,
-	},
-
-	directives: {
-		tooltip: Tooltip,
 	},
 
 	props: {
