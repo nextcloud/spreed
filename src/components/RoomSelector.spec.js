@@ -108,9 +108,11 @@ describe('RoomSelector', () => {
 		axios.get.mockResolvedValue(generateOCSResponse({ payload }))
 
 		const wrapper = shallowMount(RoomSelector, {
-			stubs: {
-				ConversationsSearchListVirtual: ConversationsSearchListVirtualStub,
-				ConversationSearchResult,
+			global: {
+				stubs: {
+					ConversationsSearchListVirtual: ConversationsSearchListVirtualStub,
+					ConversationSearchResult,
+				},
 			},
 			props,
 		})

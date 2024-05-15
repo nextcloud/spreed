@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
@@ -64,15 +63,12 @@ jest.mock('@nextcloud/capabilities', () => ({
 
 describe('messagesStore', () => {
 	const TOKEN = 'XXTOKENXX'
-	let localVue = null
 	let testStoreConfig
 	let store = null
 	let updateConversationLastActiveAction
 	let reactionsStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 
@@ -1858,9 +1854,6 @@ describe('messagesStore', () => {
 		let messageExpected
 
 		beforeEach(() => {
-			localVue = createLocalVue()
-			localVue.use(Vuex)
-
 			testStoreConfig = cloneDeep(storeConfig)
 			store = new Vuex.Store(testStoreConfig)
 
