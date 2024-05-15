@@ -146,7 +146,7 @@ describe('conversationsStore', () => {
 			})
 			store.dispatch('addConversation', testConversation)
 
-			expect(store.getters.conversation(testToken)).toBe(testConversation)
+			expect(store.getters.conversation(testToken)).toStrictEqual(testConversation)
 			expect(store.getters.conversation('ANOTHER')).toBeUndefined()
 
 			expect(addParticipantOnceAction).toHaveBeenCalled()
@@ -177,7 +177,7 @@ describe('conversationsStore', () => {
 
 			store.dispatch('addConversation', testConversation)
 
-			expect(store.getters.conversation(testToken)).toBe(testConversation)
+			expect(store.getters.conversation(testToken)).toStrictEqual(testConversation)
 
 			expect(addParticipantOnceAction).toHaveBeenCalled()
 			expect(addParticipantOnceAction.mock.calls[0][1]).toStrictEqual({
@@ -1028,7 +1028,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 
 		test('ignore update from bot', () => {
@@ -1050,7 +1050,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update from bot but not from changelog', () => {
@@ -1072,7 +1072,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 
 		test('ignore update reactions', () => {
@@ -1094,7 +1094,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update from the action of deleting reactions', () => {
@@ -1116,7 +1116,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update deleted reactions (only theory as the action of deleting would come after it anyway)', () => {
@@ -1138,7 +1138,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('ignore update from deleting a message', () => {
@@ -1160,7 +1160,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(previousLastMessage)
 		})
 
 		test('successfully update temporary messages', () => {
@@ -1182,7 +1182,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 
 		test('successfully update also posted messages which start with a slash', () => {
@@ -1204,7 +1204,7 @@ describe('conversationsStore', () => {
 			})
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastMessage).toBe(testLastMessage)
+			expect(changedConversation.lastMessage).toStrictEqual(testLastMessage)
 		})
 	})
 

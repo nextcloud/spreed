@@ -86,7 +86,7 @@ describe('AvatarWrapper.vue', () => {
 			expect(avatar.props('menuContainer')).toBe(MENU_CONTAINER)
 			expect(avatar.props('showUserStatus')).toBe(true)
 			expect(avatar.props('showUserStatusCompact')).toBe(false)
-			expect(avatar.props('preloadedUserStatus')).toBe(PRELOADED_USER_STATUS)
+			expect(avatar.props('preloadedUserStatus')).toStrictEqual(PRELOADED_USER_STATUS)
 			expect(avatar.props('size')).toBe(44)
 		})
 	})

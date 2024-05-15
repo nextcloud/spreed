@@ -162,7 +162,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 1 },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 42 },
@@ -179,7 +179,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ actorType: 'users', actorId: 'admin' },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ actorType: 'groups', actorId: 'admin' }, // Actor type mismatch
@@ -200,7 +200,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ sessionId: '1234567890' },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ sessionId: 'abcdefghi' },
