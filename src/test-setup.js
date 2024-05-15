@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { config } from '@vue/test-utils'
 // eslint-disable-next-line
 import 'regenerator-runtime/runtime'
-import Vue from 'vue'
 
 import { mockedCapabilities } from './__mocks__/capabilities.ts'
+
+config.global.renderStubDefaultSlot = true
 
 jest.mock('extendable-media-recorder', () => ({
 	MediaRecorder: jest.fn(),
@@ -114,5 +116,9 @@ global.BroadcastChannel = jest.fn(() => ({
 window.URL.createObjectURL = jest.fn()
 window.URL.revokeObjectURL = jest.fn()
 
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
+window.OCP.Toast = {
+	error: jest.fn(),
+	success: jest.fn(),
+	message: jest.fn(),
+	info: jest.fn(),
+}
