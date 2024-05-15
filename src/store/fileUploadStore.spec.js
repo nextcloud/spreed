@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
@@ -38,16 +37,12 @@ jest.mock('@nextcloud/dialogs', () => ({
 }))
 
 describe('fileUploadStore', () => {
-	let localVue = null
 	let storeConfig = null
 	let store = null
 	let mockedActions = null
 
 	beforeEach(() => {
 		let temporaryMessageCount = 0
-
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		mockedActions = {

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
@@ -31,7 +31,6 @@ jest.mock('debounce', () => jest.fn().mockImplementation(fn => fn))
 
 describe('LeftSidebar.vue', () => {
 	let store
-	let localVue
 	let testStoreConfig
 	let loadStateSettings
 	let conversationsListMock
@@ -43,28 +42,24 @@ describe('LeftSidebar.vue', () => {
 
 	const mountComponent = () => {
 		return mount(LeftSidebar, {
-			localVue,
-			router,
-			store,
-			provide: {
-				'NcContent:setHasAppNavigation': () => {}
-			},
-			stubs: {
-				// to prevent user status fetching
-				NcAvatar: true,
-				// to prevent complex dialog logic
-				NcActions: true,
-				NcModal: true,
+			global: {
+				plugins: [router, store],
+				stubs: {
+					// to prevent user status fetching
+					NcAvatar: true,
+					// to prevent complex dialog logic
+					NcActions: true,
+					NcModal: true,
+				},
+				provide: {
+					'NcContent:setHasAppNavigation': () => {}
+				},
 			},
 		})
 	}
 
 	beforeEach(() => {
 		jest.useFakeTimers()
-
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-		localVue.use(VueRouter)
 		setActivePinia(createPinia())
 
 		loadStateSettings = {
@@ -103,7 +98,10 @@ describe('LeftSidebar.vue', () => {
 	describe('conversation list', () => {
 		let conversationsList
 
-		beforeEach(() => {
+		beforeEach(async () => {
+			router.push({ name: 'root' })
+			await router.isReady()
+
 			conversationsList = [{
 				id: 100,
 				token: 't100',
@@ -602,6 +600,8 @@ describe('LeftSidebar.vue', () => {
 				expect(conversationListItems).toHaveLength(conversationList.length)
 
 				await conversationListItems.at(3).find('a').trigger('click')
+				await flushPromises()
+
 				expect(addConversationAction).toHaveBeenCalledWith(expect.anything(), conversationList[3])
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: conversationList[3].token })
@@ -620,6 +620,8 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems).toHaveLength(resultsList.length)
 
 				await resultsListItems.at(1).findAll('a').trigger('click')
+				await flushPromises()
+
 				expect(createOneToOneConversationAction).toHaveBeenCalledWith(expect.anything(), resultsList[1].id)
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: 'new-conversation' })

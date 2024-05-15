@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
@@ -17,13 +17,10 @@ import { useGuestNameStore } from '../../../stores/guestName.js'
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
-	let localVue
 	let testStoreConfig
 	let guestNameStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		guestNameStore = useGuestNameStore()
@@ -39,8 +36,9 @@ describe('MessagesGroup.vue', () => {
 
 	test('renders grouped messages', () => {
 		const wrapper = shallowMount(MessagesGroup, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+			},
 			props: {
 				id: 123,
 				token: TOKEN,
@@ -148,8 +146,9 @@ describe('MessagesGroup.vue', () => {
 		}]
 
 		const wrapper = shallowMount(MessagesSystemGroup, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+			},
 			props: {
 				id: 123,
 				token: TOKEN,
@@ -194,8 +193,9 @@ describe('MessagesGroup.vue', () => {
 		}, { noUpdate: false })
 
 		const wrapper = shallowMount(MessagesGroup, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+			},
 			props: {
 				id: 123,
 				token: TOKEN,
@@ -249,8 +249,9 @@ describe('MessagesGroup.vue', () => {
 
 	test('renders deleted guest display name', () => {
 		const wrapper = shallowMount(MessagesGroup, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+			},
 			props: {
 				id: 123,
 				token: TOKEN,

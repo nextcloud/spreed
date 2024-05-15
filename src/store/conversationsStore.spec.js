@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
@@ -85,14 +84,11 @@ describe('conversationsStore', () => {
 	}
 	let testStoreConfig = null
 	let testConversation
-	let localVue = null
 	let store = null
 	let addParticipantOnceAction = null
 	const permissions = PARTICIPANT.PERMISSIONS.MAX_CUSTOM
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		testConversation = {

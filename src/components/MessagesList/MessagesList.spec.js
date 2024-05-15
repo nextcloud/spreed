@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -16,14 +16,10 @@ const fakeTimestamp = (value) => new Date(value).getTime() / 1000
 describe('MessagesList.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
-	let localVue
 	let testStoreConfig
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
 			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
@@ -150,8 +146,9 @@ describe('MessagesList.vue', () => {
 		function testGrouped(...messagesGroups) {
 			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
@@ -176,8 +173,9 @@ describe('MessagesList.vue', () => {
 			messages.forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
@@ -410,8 +408,9 @@ describe('MessagesList.vue', () => {
 		function renderMessagesList(...messagesGroups) {
 			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 			return shallowMount(MessagesList, {
-				localVue,
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
@@ -421,8 +420,9 @@ describe('MessagesList.vue', () => {
 
 		test('renders a placeholder while loading', () => {
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
@@ -439,8 +439,9 @@ describe('MessagesList.vue', () => {
 		test('renders an empty content after loading', () => {
 			store.commit('loadedMessagesOfConversation', { token: TOKEN })
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -10,13 +9,9 @@ import storeConfig from './storeConfig.js'
 import { CONVERSATION } from '../constants.js'
 
 describe('callViewStore', () => {
-	let localVue = null
 	let store = null
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		const testStoreConfig = cloneDeep(storeConfig)
 
 		// remove participant store to avoid participant interaction

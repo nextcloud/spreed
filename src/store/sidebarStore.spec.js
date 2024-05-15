@@ -2,20 +2,15 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
 import sidebarStore from './sidebarStore.js'
 
 describe('sidebarStore', () => {
-	let localVue = null
 	let store = null
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(cloneDeep(sidebarStore))
 	})

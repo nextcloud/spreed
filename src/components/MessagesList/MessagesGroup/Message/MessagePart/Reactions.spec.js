@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { setActivePinia, createPinia } from 'pinia'
 import Vuex from 'vuex'
@@ -43,7 +43,6 @@ describe('Reactions.vue', () => {
 	let reactionsProps
 	let testStoreConfig
 	let store
-	let localVue
 	let messageMock
 	let getActorTypeMock
 	let getActorIdMock
@@ -51,11 +50,8 @@ describe('Reactions.vue', () => {
 	let message
 
 	beforeEach(() => {
-
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 
 		testStoreConfig = cloneDeep(storeConfig)
 		token = 'token1'
@@ -122,12 +118,13 @@ describe('Reactions.vue', () => {
 		test('shows reaction buttons with count and emoji picker', async () => {
 			// Arrange
 			const wrapper = shallowMount(Reactions, {
-				localVue,
-				store,
-				props: reactionsProps,
-				stubs: {
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
 			})
 
 			// Assert
@@ -146,12 +143,13 @@ describe('Reactions.vue', () => {
 			// Arrange
 			reactionsProps.canReact = false
 			const wrapper = shallowMount(Reactions, {
-				localVue,
-				store,
-				props: reactionsProps,
-				stubs: {
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
 			})
 			const reactionButtons = wrapper.findAllComponents(NcButton)
 			const emojiPicker = wrapper.findAllComponents(NcEmojiPicker)
@@ -184,13 +182,14 @@ describe('Reactions.vue', () => {
 			testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 			store = new Vuex.Store(testStoreConfig)
 			const wrapper = shallowMount(Reactions, {
-				props: reactionsProps,
-				localVue,
-				store,
-				stubs: {
-					NcEmojiPicker,
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcEmojiPicker,
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
 			})
 
 			// Assert
@@ -206,14 +205,15 @@ describe('Reactions.vue', () => {
 			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
+				global: {
+					plugins: [store],
+					stubs: {
+						NcEmojiPicker,
+					},
+				},
 				props: {
 					...reactionsProps,
 					showControls: true,
-				},
-				localVue,
-				store,
-				stubs: {
-					NcEmojiPicker,
 				},
 			})
 
@@ -240,13 +240,14 @@ describe('Reactions.vue', () => {
 			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
-				props: reactionsProps,
-				localVue,
-				store,
-				stubs: {
-					NcEmojiPicker,
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcEmojiPicker,
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
 			})
 			const addedReaction = {
 				...reactionsStored,
@@ -289,12 +290,13 @@ describe('Reactions.vue', () => {
 			jest.spyOn(reactionsStore, 'fetchReactions')
 
 			const wrapper = shallowMount(Reactions, {
-				props: reactionsProps,
-				localVue,
-				store,
-				stubs: {
-					NcPopover,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcPopover,
+					},
 				},
+				props: reactionsProps,
 			})
 			const response = generateOCSResponse({ payload: reactionsStored })
 			getReactionsDetails.mockResolvedValue(response)
