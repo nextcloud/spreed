@@ -144,7 +144,6 @@ import { loadState } from '@nextcloud/initial-state'
 import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
@@ -170,10 +169,6 @@ export default {
 		ChevronLeft,
 		ChevronUp,
 		ChevronDown,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
