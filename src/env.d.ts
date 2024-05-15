@@ -20,6 +20,20 @@ declare global {
 
 	const t: typeof translate
 	const n: typeof translatePlural
+
+	/* eslint @typescript-eslint/ban-types: 0 */
+	/* FIXME remove after @nextcloud/dialogs is restored */
+
+	interface Window {
+		OCP: {
+			Toast: {
+				error: Function,
+				success: Function,
+				message: Function,
+				info: Function,
+			}
+		};
+	}
 }
 
 export {}
