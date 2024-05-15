@@ -43,7 +43,7 @@ import {
 	LMarker,
 	LTileLayer,
 	LTooltip,
-} from 'vue2-leaflet'
+} from '@vue-leaflet/vue-leaflet'
 
 export default {
 	name: 'Location',
