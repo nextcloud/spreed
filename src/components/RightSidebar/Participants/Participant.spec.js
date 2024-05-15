@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -25,7 +25,6 @@ describe('Participant.vue', () => {
 	let conversation
 	let participant
 	let store
-	let localVue
 	let testStoreConfig
 	let tooltipMock
 
@@ -50,9 +49,6 @@ describe('Participant.vue', () => {
 	}
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		tooltipMock = jest.fn()
 
 		participant = {
@@ -96,14 +92,15 @@ describe('Participant.vue', () => {
 	 */
 	function mountParticipant(participant, showUserStatus = false) {
 		return shallowMount(Participant, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+				stubs: {
+					NcActionButton,
+				},
+			},
 			props: {
 				participant,
 				showUserStatus,
-			},
-			stubs: {
-				NcActionButton,
 			},
 			directives: {
 				tooltip: tooltipMock,

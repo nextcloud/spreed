@@ -31,7 +31,9 @@ describe('AvatarWrapper.vue', () => {
 	describe('render user avatar', () => {
 		test('component renders NcAvatar with standard size by default', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: USER_NAME,
 				},
@@ -44,7 +46,9 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component does not render NcAvatar for non-users', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: 'emails',
 					source: 'emails',
@@ -58,7 +62,9 @@ describe('AvatarWrapper.vue', () => {
 		test('component renders NcAvatar with specified size', () => {
 			const size = 22
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: USER_NAME,
 					size,
@@ -71,7 +77,9 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component pass props to NcAvatar correctly', async () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					id: USER_ID,
 					name: USER_NAME,
@@ -96,7 +104,9 @@ describe('AvatarWrapper.vue', () => {
 	describe('render specific icons', () => {
 		test('component render emails icon properly', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: 'emails',
 					source: 'emails',
@@ -110,7 +120,9 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component render groups icon properly', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: 'groups',
 					source: 'groups',
@@ -126,7 +138,9 @@ describe('AvatarWrapper.vue', () => {
 	describe('render guests', () => {
 		test('component render icon of guest properly', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: t('spreed', 'Guest'),
 					source: 'guests',
@@ -140,7 +154,9 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component render icon of guest with name properly', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: USER_NAME,
 					source: 'guests',
@@ -153,7 +169,9 @@ describe('AvatarWrapper.vue', () => {
 
 		test('component render icon of deleted user properly', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					name: USER_NAME,
 					source: 'deleted_users',

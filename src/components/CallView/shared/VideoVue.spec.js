@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
@@ -21,7 +21,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 }))
 
 describe('VideoVue.vue', () => {
-	let localVue
 	let store
 	let testStoreConfig
 
@@ -70,8 +69,6 @@ describe('VideoVue.vue', () => {
 	}
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -109,8 +106,9 @@ describe('VideoVue.vue', () => {
 		 */
 		function setupWrapper() {
 			wrapper = shallowMount(VideoVue, {
-				localVue,
-				store,
+				global: {
+					plugins: [store],
+				},
 				props: {
 					model: callParticipantModel,
 					token: 'theToken',

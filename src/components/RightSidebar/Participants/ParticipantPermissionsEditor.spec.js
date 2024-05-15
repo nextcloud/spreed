@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -16,13 +16,9 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
 	let participant
 	let store
-	let localVue
 	let testStoreConfig
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		participant = {
 			displayName: 'Alice',
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
@@ -63,8 +59,9 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	 */
 	const mountParticipantPermissionsEditor = (participant) => {
 		return mount(ParticipantPermissionsEditor, {
-			localVue,
-			store,
+			global: {
+				plugins: [store],
+			},
 			props: {
 				participant,
 				token: 'fdslk033',
