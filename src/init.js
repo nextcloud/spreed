@@ -6,7 +6,8 @@
 // The purpose of this file is to wrap the logic shared by the different talk
 // entry points
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'
@@ -14,7 +15,8 @@ import { EventBus } from './services/EventBus.js'
 import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 
-import '@nextcloud/dialogs/style.css'
+// eslint-disable-next-line
+// import '@nextcloud/dialogs/style.css'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
@@ -70,7 +72,7 @@ EventBus.on('signaling-recording-status-changed', (token, status) => {
 	const conversation = store.getters.conversation(store.getters.getToken())
 	if (conversation?.participantType === PARTICIPANT.TYPE.OWNER
 		|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR) {
-		showError(t('spreed', 'The recording failed. Please contact your administrator.'))
+		window.OCP.Toast.error(t('spreed', 'The recording failed. Please contact your administrator.'))
 	}
 })
 

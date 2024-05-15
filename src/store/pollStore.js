@@ -3,18 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import debounce from 'debounce'
-import Vue from 'vue'
 
-import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import pollService from '../services/pollService.js'
 
-const state = {
+const TOAST_PERMANENT_TIMEOUT = -1
+
+const state = () => ({
 	polls: {},
 	pollDebounceFunctions: {},
 	activePoll: null,
 	pollToastsQueue: {},
-}
+})
 
 const getters = {
 	getPoll: (state) => (token, id) => {
@@ -33,45 +35,45 @@ const getters = {
 const mutations = {
 	addPoll(state, { token, poll }) {
 		if (!state.polls[token]) {
-			Vue.set(state.polls, token, {})
+			state.polls[token] = {}
 		}
-		Vue.set(state.polls[token], poll.id, poll)
+		state.polls[token][poll.id] = poll
 	},
 
 	setActivePoll(state, { token, pollId, name }) {
-		Vue.set(state, 'activePoll', { token, id: pollId, name })
+		state.activePoll = { token, id: pollId, name }
 	},
 
 	removeActivePoll(state) {
 		if (state.activePoll) {
-			Vue.set(state, 'activePoll', null)
+			state.activePoll = null
 		}
 	},
 
 	addPollToast(state, { pollId, toast }) {
-		Vue.set(state.pollToastsQueue, pollId, toast)
+		state.pollToastsQueue[pollId] = toast
 	},
 
 	hidePollToast(state, id) {
 		if (state.pollToastsQueue[id]) {
 			state.pollToastsQueue[id].hideToast()
-			Vue.delete(state.pollToastsQueue, id)
+			delete state.pollToastsQueue[id]
 		}
 	},
 
 	hideAllPollToasts(state) {
 		for (const id in state.pollToastsQueue) {
 			state.pollToastsQueue[id].hideToast()
-			Vue.delete(state.pollToastsQueue, id)
+			delete state.pollToastsQueue[id]
 		}
 	},
 
 	// Add debounce function for getting the poll data
 	addDebounceGetPollDataFunction(state, { token, pollId, debounceGetPollDataFunction }) {
 		if (!state.pollDebounceFunctions[token]) {
-			Vue.set(state.pollDebounceFunctions, token, {})
+			state.pollDebounceFunctions[token] = {}
 		}
-		Vue.set(state.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
+		state.pollDebounceFunctions[token][pollId] = debounceGetPollDataFunction
 	},
 }
 
@@ -130,7 +132,7 @@ const actions = {
 			context.dispatch('addPoll', { token, poll })
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'An error occurred while submitting your vote'))
+			window.OCP.Toast.error(t('spreed', 'An error occurred while submitting your vote'))
 		}
 	},
 
@@ -142,7 +144,7 @@ const actions = {
 			context.dispatch('addPoll', { token, poll })
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'An error occurred while ending the poll'))
+			window.OCP.Toast.error(t('spreed', 'An error occurred while ending the poll'))
 		}
 	},
 
@@ -158,7 +160,7 @@ const actions = {
 		const pollId = message.messageParameters.object.id
 		const name = message.messageParameters.object.name
 
-		const toast = showInfo(t('spreed', 'Poll "{name}" was created by {user}. Click to vote', {
+		const toast = window.OCP.Toast.info(t('spreed', 'Poll "{name}" was created by {user}. Click to vote', {
 			name,
 			user: message.actorDisplayName,
 		}), {

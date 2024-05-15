@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
@@ -115,14 +116,14 @@ export default {
 				})
 
 				if (expiration.id === 0) {
-					showSuccess(t('spreed', 'Message expiration disabled'))
+					window.OCP.Toast.success(t('spreed', 'Message expiration disabled'))
 				} else {
-					showSuccess(t('spreed', 'Message expiration set: {duration}', {
+					window.OCP.Toast.success(t('spreed', 'Message expiration set: {duration}', {
 						duration: expiration.label,
 					}))
 				}
 			} catch (error) {
-				showError(t('spreed', 'Error when trying to set message expiration'))
+				window.OCP.Toast.error(t('spreed', 'Error when trying to set message expiration'))
 				console.error(error)
 			}
 

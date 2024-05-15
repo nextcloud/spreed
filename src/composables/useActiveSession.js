@@ -4,11 +4,11 @@
  */
 
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
 import { SESSION } from '../constants.js'
 import { setSessionState } from '../services/participantsService.js'
 

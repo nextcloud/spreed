@@ -116,7 +116,8 @@ import MonitorOff from 'vue-material-design-icons/MonitorOff.vue'
 import MonitorShare from 'vue-material-design-icons/MonitorShare.vue'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -451,9 +452,9 @@ export default {
 			// webrtcsupport considers screen share supported only via HTTPS, even if it is actually supported in the browser/desktop
 			if (!this.model.getWebRtc().capabilities.supportScreenSharing && !IS_DESKTOP) {
 				if (window.location.protocol === 'https:') {
-					showMessage(t('spreed', 'Screen sharing is not supported by your browser.'))
+					window.OCP.Toast.message(t('spreed', 'Screen sharing is not supported by your browser.'))
 				} else {
-					showMessage(t('spreed', 'Screen sharing requires the page to be loaded through HTTPS.'))
+					window.OCP.Toast.message(t('spreed', 'Screen sharing requires the page to be loaded through HTTPS.'))
 				}
 				return
 			}
@@ -483,14 +484,14 @@ export default {
 
 				switch (err.name) {
 				case 'HTTPS_REQUIRED':
-					showMessage(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
+					window.OCP.Toast.message(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'))
 					break
 				case 'PERMISSION_DENIED':
 				case 'NotAllowedError':
 				case 'CEF_GETSCREENMEDIA_CANCELED': // Experimental, may go away in the future.
 					break
 				case 'FF52_REQUIRED':
-					showMessage(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
+					window.OCP.Toast.message(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'))
 					break
 				case 'EXTENSION_UNAVAILABLE':
 					if (window.chrome) { // Chrome
@@ -501,13 +502,13 @@ export default {
 						const text = t('spreed', 'Screensharing extension is required to share your screen.')
 						const element = '<a href="' + extensionURL + '" target="_blank">' + escapeHtml(text) + '</a>'
 
-						showMessage(element, { isHTML: true })
+						window.OCP.Toast.message(element, { isHTML: true })
 					} else {
-						showMessage(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
+						window.OCP.Toast.message(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'))
 					}
 					break
 				default:
-					showMessage(t('spreed', 'An error occurred while starting screensharing.'))
+					window.OCP.Toast.message(t('spreed', 'An error occurred while starting screensharing.'))
 					break
 				}
 			})

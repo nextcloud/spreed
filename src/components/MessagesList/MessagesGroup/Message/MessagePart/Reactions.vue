@@ -71,7 +71,8 @@
 import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
@@ -195,7 +196,7 @@ export default {
 
 		async handleReactionClick(clickedEmoji) {
 			if (!this.canReact) {
-				showError(t('spreed', 'No permission to post reactions in this conversation'))
+				window.OCP.Toast.error(t('spreed', 'No permission to post reactions in this conversation'))
 				return
 			}
 

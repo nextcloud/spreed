@@ -274,7 +274,8 @@ import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -664,9 +665,9 @@ export default {
 
 			try {
 				await navigator.clipboard.writeText(parsedText)
-				showSuccess(t('spreed', 'Message text copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Message text copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Message text could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Message text could not be copied'))
 			}
 		},
 
@@ -733,10 +734,10 @@ export default {
 				await this.$store.dispatch('forwardMessage', {
 					messageToBeForwarded: this.$store.getters.message(this.token, this.id)
 				})
-				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
+				window.OCP.Toast.success(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
 				console.error('Error while forwarding message to "Note to self"', error)
-				showError(t('spreed', 'Error while forwarding message to "Note to self"'))
+				window.OCP.Toast.error(t('spreed', 'Error while forwarding message to "Note to self"'))
 			}
 		},
 
@@ -781,22 +782,22 @@ export default {
 		async removeReminder() {
 			try {
 				await removeMessageReminder(this.token, this.id)
-				showSuccess(t('spreed', 'A reminder was successfully removed'))
+				window.OCP.Toast.success(t('spreed', 'A reminder was successfully removed'))
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Error occurred when removing a reminder'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when removing a reminder'))
 			}
 		},
 
 		async setReminder(timestamp) {
 			try {
 				await setMessageReminder(this.token, this.id, timestamp / 1000)
-				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
+				window.OCP.Toast.success(t('spreed', 'A reminder was successfully set at {datetime}', {
 					datetime: moment(timestamp).format('LLL'),
 				}))
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Error occurred when creating a reminder'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when creating a reminder'))
 			}
 		},
 

@@ -87,7 +87,8 @@ import Vue from 'vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -599,7 +600,7 @@ export default {
 				const result = await editBridge(this.token, this.enabled, this.parts)
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
-				showSuccess(t('spreed', 'Bridge saved'))
+				window.OCP.Toast.success(t('spreed', 'Bridge saved'))
 			} catch (exception) {
 				console.error(exception)
 			}

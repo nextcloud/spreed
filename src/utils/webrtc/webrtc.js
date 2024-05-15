@@ -3,16 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import {
+// eslint-disable-next-line
+/* import {
 	showError,
 	TOAST_PERMANENT_TIMEOUT,
 	TOAST_DEFAULT_TIMEOUT,
-} from '@nextcloud/dialogs'
+} from '@nextcloud/dialogs' */
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
 import { Sounds } from '../sounds.js'
+
+const TOAST_DEFAULT_TIMEOUT = 7000
+const TOAST_PERMANENT_TIMEOUT = -1
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -767,7 +771,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	 */
 	function handleIceConnectionStateFailed(peer) {
 		if (!showedTURNWarning && !signaling.settings.turnservers.length) {
-			showError(
+			window.OCP.Toast.error(
 				t('spreed', 'Could not establish a connection with at least one participant. A TURN server might be needed for your scenario. Please ask your administrator to set one up following {linkstart}this documentation{linkend}.')
 					.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">')
 					.replace('{linkend}', ' ↗</a>'),
@@ -1418,7 +1422,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		localStreamRequestedTimeout = setTimeout(function() {
 			// FIXME emit an event and handle it as needed instead of
 			// calling UI code from here.
-			localStreamRequestedTimeoutNotification = showError(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), {
+			localStreamRequestedTimeoutNotification = window.OCP.Toast.error(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}, 10000)
@@ -1555,7 +1559,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			console.error('Error while accessing microphone & camera: ', error.message, error.name)
 		}
 
-		errorNotificationHandle = showError(message, {
+		errorNotificationHandle = window.OCP.Toast.error(message, {
 			timeout,
 		})
 	})

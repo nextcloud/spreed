@@ -78,7 +78,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -155,7 +156,7 @@ export default {
 				this.hideConversationSettings()
 			} catch (error) {
 				if (error?.response?.status === 400) {
-					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation'))
+					window.OCP.Toast.error(t('spreed', 'You need to promote a new moderator before you can leave the conversation'))
 				} else {
 					console.error(`error while removing yourself from conversation ${error}`)
 				}
@@ -179,7 +180,7 @@ export default {
 				this.hideConversationSettings()
 			} catch (error) {
 				console.debug(`error while deleting conversation ${error}`)
-				showError(t('spreed', 'Error while deleting conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error while deleting conversation'))
 			}
 		},
 
@@ -194,7 +195,7 @@ export default {
 				this.hideConversationSettings()
 			} catch (error) {
 				console.debug(`error while clearing chat history ${error}`)
-				showError(t('spreed', 'Error while clearing chat history'))
+				window.OCP.Toast.error(t('spreed', 'Error while clearing chat history'))
 			}
 		},
 

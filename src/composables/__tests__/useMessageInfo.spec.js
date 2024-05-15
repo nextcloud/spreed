@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'
-import { useStore } from '../useStore.js'
 
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
@@ -16,7 +16,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 		},
 	}))
 }))
-jest.mock('../useStore.js')
+jest.mock('vuex')
 jest.mock('../useConversationInfo.js')
 
 describe('message actions', () => {

@@ -120,7 +120,8 @@ import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
 import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -400,9 +401,9 @@ export default {
 			const code = this.codeBlocks[this.currentCodeBlock].textContent
 			try {
 				await navigator.clipboard.writeText(code)
-				showSuccess(t('spreed', 'Code block copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Code block copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Code block could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Code block could not be copied'))
 			}
 		},
 
@@ -459,7 +460,7 @@ export default {
 				})
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Could not update the message'))
+				window.OCP.Toast.error(t('spreed', 'Could not update the message'))
 			}
 		}
 	},

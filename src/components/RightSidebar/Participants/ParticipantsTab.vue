@@ -56,7 +56,8 @@ import debounce from 'debounce'
 import { ref, toRefs } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
@@ -270,7 +271,7 @@ export default {
 					return
 				}
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -288,7 +289,7 @@ export default {
 				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
-				showError(t('spreed', 'An error occurred while adding the participants'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while adding the participants'))
 			}
 		},
 

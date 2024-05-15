@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
@@ -98,14 +99,14 @@ export default {
 
 	methods: {
 		handleMessageSent() {
-			showSuccess(this.broadcast
+			window.OCP.Toast.success(this.broadcast
 				? t('spreed', 'The message was sent to all breakout rooms')
 				: t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
 			this.$emit('close')
 		},
 
 		handleMessageFailure() {
-			showError(t('spreed', 'The message could not be sent'))
+			window.OCP.Toast.error(t('spreed', 'The message could not be sent'))
 			this.$emit('close')
 		},
 	},

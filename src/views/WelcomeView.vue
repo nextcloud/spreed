@@ -14,7 +14,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 
 import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
@@ -104,7 +105,7 @@ export default {
 					params: { token: newConversation.token },
 				})
 			} catch (error) {
-				showError(t('spreed', 'Error while joining the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error while joining the conversation'))
 				console.error(error)
 				this.$router.push({ name: 'notfound' })
 			}

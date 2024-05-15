@@ -5,8 +5,11 @@
 
 import UAParser from 'ua-parser-js'
 
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
+
+const TOAST_PERMANENT_TIMEOUT = -1
 
 const parser = new UAParser()
 const browser = parser.getBrowser()
@@ -57,6 +60,6 @@ export const unsupportedWarning = t('spreed', "The browser you're using is not f
 export function checkBrowser() {
 	console.info('Detected browser ' + browser.name + ' ' + majorVersion + ' (' + browser.version + ')')
 	if (!isFullySupported) {
-		showError(unsupportedWarning, { timeout: TOAST_PERMANENT_TIMEOUT })
+		window.OCP.Toast.error(unsupportedWarning, { timeout: TOAST_PERMANENT_TIMEOUT })
 	}
 }

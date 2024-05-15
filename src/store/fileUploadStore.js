@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
-import { getUploader } from '@nextcloud/upload'
+// eslint-disable-next-line
+// import { getUploader } from '@nextcloud/upload'
 
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
@@ -26,7 +26,7 @@ import {
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
 
-const state = {
+const state = () => ({
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
 	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
 	uploads: {},
@@ -34,7 +34,7 @@ const state = {
 	localUrls: {},
 	fileTemplatesInitialised: false,
 	fileTemplates: [],
-}
+})
 
 const getters = {
 
@@ -113,18 +113,18 @@ const mutations = {
 		const index = temporaryMessage.messageParameters.file.index
 		// Create upload id if not present
 		if (!state.uploads[uploadId]) {
-			Vue.set(state.uploads, uploadId, {
+			state.uploads[uploadId] = {
 				token,
 				files: {},
-			})
+			}
 		}
-		Vue.set(state.uploads[uploadId].files, index, {
+		state.uploads[uploadId].files[index] = {
 			file,
 			status: 'initialised',
 			totalSize: file.size,
 			temporaryMessage,
-		 })
-		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
+		}
+		state.localUrls[temporaryMessage.referenceId] = localUrl
 	},
 
 	// Marks a given file as initialized (for retry)
@@ -135,7 +135,7 @@ const mutations = {
 	// Marks a given file as ready to be uploaded (after propfind)
 	markFileAsPendingUpload(state, { uploadId, index, sharePath }) {
 		state.uploads[uploadId].files[index].status = 'pendingUpload'
-		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
+		state.uploads[uploadId].files[index].sharePath = sharePath
 	},
 
 	// Marks a given file as failed upload
@@ -176,7 +176,7 @@ const mutations = {
 	// Set temporary message for each file
 	setTemporaryMessageForFile(state, { uploadId, index, temporaryMessage }) {
 		console.debug('uploadId: ' + uploadId + ' index: ' + index)
-		Vue.set(state.uploads[uploadId].files[index], 'temporaryMessage', temporaryMessage)
+		state.uploads[uploadId].files[index].temporaryMessage = temporaryMessage
 	},
 
 	// Sets the id of the current upload operation
@@ -188,13 +188,13 @@ const mutations = {
 		const uploadId = state.currentUploadId
 		for (const key in state.uploads[uploadId].files) {
 			if (state.uploads[uploadId].files[key].temporaryMessage.id === temporaryMessageId) {
-				Vue.delete(state.uploads[uploadId].files, key)
+				delete state.uploads[uploadId].files[key]
 			}
 		}
 	},
 
 	discardUpload(state, { uploadId }) {
-		Vue.delete(state.uploads, uploadId)
+		delete state.uploads[uploadId]
 	},
 
 	storeFilesTemplates(state, { template }) {
@@ -348,7 +348,7 @@ const actions = {
 				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
 			} catch (exception) {
 				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-				showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				window.OCP.Toast.error(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				// Mark the upload as failed in the store
 				context.commit('markFileAsFailedUpload', { uploadId, index })
 				const { id } = uploadedFile.temporaryMessage
@@ -385,23 +385,24 @@ const actions = {
 			const fileName = (currentFile.newName || currentFile.name)
 
 			try {
-				context.commit('markFileAsUploading', { uploadId, index })
-				const uploader = getUploader()
-				await uploader.upload(uploadedFile.sharePath, currentFile)
-				context.commit('markFileAsSuccessUpload', { uploadId, index })
+				throw new Error('@nextcloud/upload is missing Vue 3 migration')
+				// context.commit('markFileAsUploading', { uploadId, index })
+				// const uploader = getUploader()
+				// await uploader.upload(uploadedFile.sharePath, currentFile)
+				// context.commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
 					console.error(`Error while uploading file "${fileName}":` + exception, fileName, exception.response.status)
 					if (exception.response.status === 507) {
 						reason = 'quota'
-						showError(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
+						window.OCP.Toast.error(t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName }))
 					} else {
-						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+						window.OCP.Toast.error(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 					}
 				} else {
 					console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-					showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					window.OCP.Toast.error(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
 				}
 
 				// Mark the upload as failed in the store
@@ -442,9 +443,9 @@ const actions = {
 				context.dispatch('markFileAsShared', { uploadId, index })
 			} catch (error) {
 				if (error?.response?.status === 403) {
-					showError(t('spreed', 'You are not allowed to share files'))
+					window.OCP.Toast.error(t('spreed', 'You are not allowed to share files'))
 				} else {
-					showError(t('spreed', 'An error happened when trying to share your file'))
+					window.OCP.Toast.error(t('spreed', 'An error happened when trying to share your file'))
 				}
 				context.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
 				console.error('An error happened when trying to share your file: ', error)

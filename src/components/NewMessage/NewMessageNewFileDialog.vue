@@ -50,7 +50,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -203,10 +204,10 @@ export default {
 			} catch (error) {
 				console.error('Error while creating file', error)
 				if (error?.response?.data?.ocs?.meta?.message) {
-					showError(error.response.data.ocs.meta.message)
+					window.OCP.Toast.error(error.response.data.ocs.meta.message)
 					this.newFileError = error.response.data.ocs.meta.message
 				} else {
-					showError(t('spreed', 'Error while creating file'))
+					window.OCP.Toast.error(t('spreed', 'Error while creating file'))
 				}
 				return
 			}

@@ -29,7 +29,8 @@
 
 <script>
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
@@ -99,9 +100,9 @@ export default {
 					token: this.token,
 					state: value ? CALL.RECORDING_CONSENT.REQUIRED : CALL.RECORDING_CONSENT.OFF,
 				})
-				showSuccess(t('spreed', 'Recording consent requirement was updated'))
+				window.OCP.Toast.success(t('spreed', 'Recording consent requirement was updated'))
 			} catch (error) {
-				showError(t('spreed', 'Error occurred while updating recording consent'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred while updating recording consent'))
 				console.error(error)
 			}
 			this.loading = false

@@ -50,7 +50,8 @@
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
-import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -61,6 +62,8 @@ import { AVATAR } from '../../../constants.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+
+const TOAST_PERMANENT_TIMEOUT = -1
 
 export default {
 
@@ -256,15 +259,15 @@ export default {
 			handler(error) {
 				if (error) {
 					if (error.name === 'NotAllowedError') {
-						this.notificationHandle = showError(t('spreed', 'Access to camera was denied'))
+						this.notificationHandle = window.OCP.Toast.error(t('spreed', 'Access to camera was denied'))
 					} else if (error.name === 'NotReadableError' || error.name === 'AbortError') {
 						// when camera in use, Chrome gives NotReadableError, Firefox gives AbortError
-						this.notificationHandle = showError(t('spreed', 'Error while accessing camera: It is likely in use by another program'), {
+						this.notificationHandle = window.OCP.Toast.error(t('spreed', 'Error while accessing camera: It is likely in use by another program'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					} else {
 						console.error('Error while accessing camera: ', error.message, error.name)
-						this.notificationHandle = showError(t('spreed', 'Error while accessing camera'), {
+						this.notificationHandle = window.OCP.Toast.error(t('spreed', 'Error while accessing camera'), {
 							timeout: TOAST_PERMANENT_TIMEOUT,
 						})
 					}
@@ -305,7 +308,7 @@ export default {
 			// be shown to guests too, a generic selector valid both for logged-in
 			// users and guests needs to be used instead (undefined selects
 			// the body element).
-			showInfo(t('spreed', 'You have been muted by a moderator'), { selector: undefined })
+			window.OCP.Toast.info(t('spreed', 'You have been muted by a moderator'), { selector: undefined })
 		},
 
 		_setLocalStream(localStream) {

@@ -6,14 +6,16 @@
 import escapeHtml from 'escape-html'
 
 import { getRequestToken } from '@nextcloud/auth'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
 import { postRichObjectToConversation } from './services/messagesService.ts'
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
-import '@nextcloud/dialogs/style.css'
+// eslint-disable-next-line
+// import '@nextcloud/dialogs/style.css'
 
 /**
  * @param {object} location Geo location object
@@ -31,7 +33,7 @@ async function postLocationToRoom(location, { token, displayName }) {
 		const messageId = response.data.ocs.data.id
 		const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
 
-		showSuccess(t('spreed', 'Location has been posted to {conversation}')
+		window.OCP.Toast.success(t('spreed', 'Location has been posted to {conversation}')
 			.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(displayName)} ↗</a>`),
 		{
 			isHTML: true,
@@ -39,9 +41,9 @@ async function postLocationToRoom(location, { token, displayName }) {
 	} catch (exception) {
 		console.error('Error posting location to conversation', exception, exception.response?.status)
 		if (exception.response?.status === 403) {
-			showError(t('spreed', 'No permission to post messages in this conversation'))
+			window.OCP.Toast.error(t('spreed', 'No permission to post messages in this conversation'))
 		} else {
-			showError(t('spreed', 'An error occurred while posting location to conversation'))
+			window.OCP.Toast.error(t('spreed', 'An error occurred while posting location to conversation'))
 		}
 	}
 }

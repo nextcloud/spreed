@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDateTimePicker from '@nextcloud/vue/dist/Components/NcDateTimePicker.js'
@@ -163,17 +164,17 @@ export default {
 					enableLobby: newLobbyState,
 				})
 				if (newLobbyState) {
-					showSuccess(t('spreed', 'You restricted the conversation to moderators'))
+					window.OCP.Toast.success(t('spreed', 'You restricted the conversation to moderators'))
 				} else {
-					showSuccess(t('spreed', 'You opened the conversation to everyone'))
+					window.OCP.Toast.success(t('spreed', 'You opened the conversation to everyone'))
 				}
 			} catch (e) {
 				if (newLobbyState) {
 					console.error('Error occurred when restricting the conversation to moderator', e)
-					showError(t('spreed', 'Error occurred when restricting the conversation to moderator'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when restricting the conversation to moderator'))
 				} else {
 					console.error('Error occurred when opening the conversation to everyone', e)
-					showError(t('spreed', 'Error occurred when opening the conversation to everyone'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when opening the conversation to everyone'))
 				}
 			}
 			this.isLobbyStateLoading = false
@@ -187,10 +188,10 @@ export default {
 					token: this.token,
 					timestamp: timestamp ? (timestamp / 1000) : 0,
 				})
-				showSuccess(t('spreed', 'Start time has been updated'))
+				window.OCP.Toast.success(t('spreed', 'Start time has been updated'))
 			} catch (e) {
 				console.error('Error occurred while updating start time', e)
-				showError(t('spreed', 'Error occurred while updating start time'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred while updating start time'))
 			}
 
 			this.isLobbyTimerLoading = false

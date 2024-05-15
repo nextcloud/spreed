@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 
 /**
@@ -30,10 +31,10 @@ const shareFile = async function(path, token, referenceId, metadata) {
 		// FIXME: errors should be handled by called instead
 		if (error?.response?.data?.ocs?.meta?.message) {
 			console.error('Error while sharing file: ' + error.response.data.ocs.meta.message)
-			showError(error.response.data.ocs.meta.message)
+			window.OCP.Toast.error(error.response.data.ocs.meta.message)
 		} else {
 			console.error('Error while sharing file: Unknown error')
-			showError(t('spreed', 'Error while sharing file'))
+			window.OCP.Toast.error(t('spreed', 'Error while sharing file'))
 		}
 	}
 }

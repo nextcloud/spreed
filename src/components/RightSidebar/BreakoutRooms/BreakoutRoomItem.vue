@@ -66,7 +66,8 @@ import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import MenuRight from 'vue-material-design-icons/MenuRight.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
-import { showWarning } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showWarning } from '@nextcloud/dialogs'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -190,7 +191,7 @@ export default {
 	watch: {
 		showAssistanceButton(newValue) {
 			if (newValue) {
-				showWarning(t('spreed', 'Assistance requested in {roomName}', {
+				window.OCP.Toast.warning(t('spreed', 'Assistance requested in {roomName}', {
 					roomName: this.roomName,
 				}))
 			}

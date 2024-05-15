@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
@@ -78,17 +79,17 @@ export default {
 					readOnly: newReadOnly,
 				})
 				if (newReadOnly) {
-					showSuccess(t('spreed', 'You locked the conversation'))
+					window.OCP.Toast.success(t('spreed', 'You locked the conversation'))
 				} else {
-					showSuccess(t('spreed', 'You unlocked the conversation'))
+					window.OCP.Toast.success(t('spreed', 'You unlocked the conversation'))
 				}
 			} catch (e) {
 				if (newReadOnly) {
 					console.error('Error occurred when locking the conversation', e)
-					showError(t('spreed', 'Error occurred when locking the conversation'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when locking the conversation'))
 				} else {
 					console.error('Error updating read-only state', e)
-					showError(t('spreed', 'Error occurred when unlocking the conversation'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when unlocking the conversation'))
 				}
 			}
 			this.isReadOnlyStateLoading = false

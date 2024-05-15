@@ -81,7 +81,8 @@
 <script>
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -182,14 +183,14 @@ export default {
 					token: this.token,
 					permissions,
 				})
-				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
+				window.OCP.Toast.success(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
 
 				// Modify the radio buttons value
 				this.radioValue = this.getPermissionRadioValue(permissions)
 				this.showPermissionsEditor = false
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
 
 				// Go back to the previous radio value
 				this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)

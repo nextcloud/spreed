@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
@@ -82,20 +83,20 @@ export default {
 					state,
 				})
 				if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED_NO_PIN) {
-					showSuccess(t('spreed', 'SIP dial-in is now possible without PIN requirement'))
+					window.OCP.Toast.success(t('spreed', 'SIP dial-in is now possible without PIN requirement'))
 				} else if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED) {
-					showSuccess(t('spreed', 'SIP dial-in is now enabled'))
+					window.OCP.Toast.success(t('spreed', 'SIP dial-in is now enabled'))
 				} else {
-					showSuccess(t('spreed', 'SIP dial-in is now disabled'))
+					window.OCP.Toast.success(t('spreed', 'SIP dial-in is now disabled'))
 				}
 			} catch (e) {
 				// TODO check "precondition failed"
 				if (!this.conversation.sipEnabled) {
 					console.error('Error occurred when enabling SIP dial-in', e)
-					showError(t('spreed', 'Error occurred when enabling SIP dial-in'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when enabling SIP dial-in'))
 				} else {
 					console.error('Error occurred when disabling SIP dial-in', e)
-					showError(t('spreed', 'Error occurred when disabling SIP dial-in'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when disabling SIP dial-in'))
 				}
 			}
 		},

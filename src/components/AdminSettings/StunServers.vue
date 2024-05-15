@@ -43,7 +43,8 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -119,7 +120,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
 				success: () => {
-					showSuccess(t('spreed', 'STUN settings saved'))
+					window.OCP.Toast.success(t('spreed', 'STUN settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

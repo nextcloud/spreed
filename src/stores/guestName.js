@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 
 import { emit } from '@nextcloud/event-bus'
 
@@ -57,17 +56,17 @@ export const useGuestNameStore = defineStore('guestName', {
 		 */
 		addGuestName({ token, actorId, actorDisplayName }, { noUpdate }) {
 			if (!this.guestNames[token]) {
-				Vue.set(this.guestNames, token, {})
+				this.guestNames[token] = {}
 
 			}
 			if (!this.guestNames[token][actorId] || actorDisplayName === '') {
-				Vue.set(this.guestNames[token], actorId, t('spreed', 'Guest'))
+				this.guestNames[token][actorId] = t('spreed', 'Guest')
 			} else if (noUpdate) {
 				return
 			}
 
 			if (actorDisplayName) {
-				Vue.set(this.guestNames[token], actorId, actorDisplayName)
+				this.guestNames[token][actorId] = actorDisplayName
 			}
 		},
 

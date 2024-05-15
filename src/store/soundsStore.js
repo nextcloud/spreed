@@ -9,7 +9,7 @@ import { generateFilePath } from '@nextcloud/router'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { setPlaySounds } from '../services/settingsService.js'
 
-const state = {
+const state = () => ({
 	userId: undefined,
 	playSoundsUser: loadState('spreed', 'play_sounds', false),
 	playSoundsGuest: BrowserStorage.getItem('play_sounds') !== 'no',
@@ -17,7 +17,7 @@ const state = {
 	joinAudioObject: null,
 	leaveAudioObject: null,
 	waitAudioObject: null,
-}
+})
 
 const getters = {
 	playSounds: (state) => {

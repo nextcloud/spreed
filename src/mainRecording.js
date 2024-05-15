@@ -4,15 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue from 'vue'
+import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
-import VueRouter from 'vue-router'
-import VueShortKey from 'vue-shortkey'
-import Vuex from 'vuex'
+import VueShortKey from 'vue3-shortkey'
 
 import { getRequestToken } from '@nextcloud/auth'
-import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
 import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -21,13 +18,15 @@ import Recording from './Recording.vue'
 
 import router from './router/router.js'
 import store from './store/index.js'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
 	signalingKill,
 } from './utils/webrtc/index.js'
 
-import '@nextcloud/dialogs/style.css'
+// eslint-disable-next-line
+// import '@nextcloud/dialogs/style.css'
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
@@ -46,17 +45,6 @@ __webpack_nonce__ = btoa(getRequestToken())
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-Vue.prototype.t = translate
-Vue.prototype.n = translatePlural
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(PiniaVuePlugin)
-Vue.use(Vuex)
-Vue.use(VueRouter)
-Vue.use(VueObserveVisibility)
-Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
-
 const pinia = createPinia()
 
 TooltipOptions.container = '#call-container'
@@ -68,13 +56,14 @@ if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
 }
 
-const instance = new Vue({
-	el: '#content',
-	store,
-	pinia,
-	router,
-	render: h => h(Recording),
-})
+const instance = createApp(Recording)
+	.use(pinia)
+	.use(store)
+	.use(router)
+	.use(VueObserveVisibility)
+	.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+	.use(NextcloudGlobalsVuePlugin)
+	.mount('#content')
 
 // make the instance available to global components that might run on the same page
 OCA.Talk.instance = instance

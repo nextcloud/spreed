@@ -4,28 +4,24 @@
 -->
 
 <template>
-	<Fragment>
-		<!-- "submit-wrapper" is used to mimic the login button and thus get
-			automatic colouring of the confirm icon by the Theming app. -->
-		<div id="submit-wrapper" class="request-password-wrapper">
-			<NcButton id="request-password-button"
-				type="primary"
-				:wide="true"
-				:disabled="isRequestInProgress"
-				@click="requestPassword"
-				@keydown.enter="requestPassword">
-				{{ t('spreed', 'Request password') }}
-			</NcButton>
-		</div>
-		<p v-if="hasRequestFailed" class="warning error-message">
-			{{ t('spreed', 'Error requesting the password.') }}
-		</p>
-	</Fragment>
+	<!-- "submit-wrapper" is used to mimic the login button and thus get
+		automatic colouring of the confirm icon by the Theming app. -->
+	<div id="submit-wrapper" class="request-password-wrapper">
+		<NcButton id="request-password-button"
+			type="primary"
+			:wide="true"
+			:disabled="isRequestInProgress"
+			@click="requestPassword"
+			@keydown.enter="requestPassword">
+			{{ t('spreed', 'Request password') }}
+		</NcButton>
+	</div>
+	<p v-if="hasRequestFailed" class="warning error-message">
+		{{ t('spreed', 'Error requesting the password.') }}
+	</p>
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
@@ -37,7 +33,6 @@ export default {
 
 	components: {
 		NcButton,
-		Fragment,
 	},
 
 	props: {

@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -163,7 +164,7 @@ export default {
 			} catch (exception) {
 				this.joiningConversation = false
 
-				showError(t('spreed', 'Error occurred when joining the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when joining the conversation'))
 
 				console.error(exception)
 

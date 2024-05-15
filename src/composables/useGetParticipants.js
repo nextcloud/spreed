@@ -4,11 +4,11 @@
  */
 import debounce from 'debounce'
 import { ref, nextTick, computed, watch, onBeforeUnmount, onMounted } from 'vue'
+import { useStore } from 'vuex'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
 import { CONVERSATION } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 

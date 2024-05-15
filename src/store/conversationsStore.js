@@ -2,10 +2,10 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import Vue from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import {
@@ -58,6 +58,8 @@ import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
 
+const TOAST_PERMANENT_TIMEOUT = -1
+
 const DUMMY_CONVERSATION = {
 	token: '',
 	displayName: '',
@@ -94,10 +96,10 @@ function emitUserStatusUpdated(conversation) {
 	})
 }
 
-const state = {
+const state = () => ({
 	conversations: {
 	},
-}
+})
 
 const getters = {
 	conversations: state => state.conversations,
@@ -161,7 +163,7 @@ const mutations = {
 	 * @param {object} conversation the conversation;
 	 */
 	addConversation(state, conversation) {
-		Vue.set(state.conversations, conversation.token, conversation)
+		state.conversations[conversation.token] = conversation
 	},
 
 	/**
@@ -181,59 +183,59 @@ const mutations = {
 	 * @param {string} token the token of the conversation to delete;
 	 */
 	deleteConversation(state, token) {
-		Vue.delete(state.conversations, token)
+		delete state.conversations[token]
 	},
 
 	setConversationDescription(state, { token, description }) {
-		Vue.set(state.conversations[token], 'description', description)
+		state.conversations[token].description = description
 	},
 
 	updateConversationLastReadMessage(state, { token, lastReadMessage }) {
-		Vue.set(state.conversations[token], 'lastReadMessage', lastReadMessage)
+		state.conversations[token].lastReadMessage = lastReadMessage
 	},
 
 	updateConversationLastMessage(state, { token, lastMessage }) {
-		Vue.set(state.conversations[token], 'lastMessage', lastMessage)
+		state.conversations[token].lastMessage = lastMessage
 	},
 
 	updateUnreadMessages(state, { token, unreadMessages, unreadMention, unreadMentionDirect }) {
 		if (unreadMessages !== undefined) {
-			Vue.set(state.conversations[token], 'unreadMessages', unreadMessages)
+			state.conversations[token].unreadMessages = unreadMessages
 		}
 		if (unreadMention !== undefined) {
-			Vue.set(state.conversations[token], 'unreadMention', unreadMention)
+			state.conversations[token].unreadMention = unreadMention
 		}
 		if (unreadMentionDirect !== undefined) {
-			Vue.set(state.conversations[token], 'unreadMentionDirect', unreadMentionDirect)
+			state.conversations[token].unreadMentionDirect = unreadMentionDirect
 		}
 	},
 
 	setNotificationLevel(state, { token, notificationLevel }) {
-		Vue.set(state.conversations[token], 'notificationLevel', notificationLevel)
+		state.conversations[token].notificationLevel = notificationLevel
 	},
 
 	setNotificationCalls(state, { token, notificationCalls }) {
-		Vue.set(state.conversations[token], 'notificationCalls', notificationCalls)
+		state.conversations[token].notificationCalls = notificationCalls
 	},
 
 	setConversationPermissions(state, { token, permissions }) {
-		Vue.set(state.conversations[token], 'defaultPermissions', permissions)
+		state.conversations[token].defaultPermissions = permissions
 	},
 
 	setCallPermissions(state, { token, permissions }) {
-		Vue.set(state.conversations[token], 'callPermissions', permissions)
+		state.conversations[token].callPermissions = permissions
 	},
 
 	setCallRecording(state, { token, callRecording }) {
-		Vue.set(state.conversations[token], 'callRecording', callRecording)
+		state.conversations[token].callRecording = callRecording
 	},
 
 	setMessageExpiration(state, { token, seconds }) {
-		Vue.set(state.conversations[token], 'messageExpiration', seconds)
+		state.conversations[token].messageExpiration = seconds
 	},
 
 	setConversationHasPassword(state, { token, hasPassword }) {
-		Vue.set(state.conversations[token], 'hasPassword', hasPassword)
+		state.conversations[token].hasPassword = hasPassword
 	},
 }
 
@@ -475,16 +477,16 @@ const actions = {
 			if (allowGuests) {
 				await makeConversationPublic(token)
 				conversation.type = CONVERSATION.TYPE.PUBLIC
-				showSuccess(t('spreed', 'You allowed guests'))
+				window.OCP.Toast.success(t('spreed', 'You allowed guests'))
 			} else {
 				await makeConversationPrivate(token)
 				conversation.type = CONVERSATION.TYPE.GROUP
-				showSuccess(t('spreed', 'You disallowed guests'))
+				window.OCP.Toast.success(t('spreed', 'You disallowed guests'))
 			}
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the conversation public status: ', error)
-			showError(allowGuests
+			window.OCP.Toast.error(allowGuests
 				? t('spreed', 'Error occurred while allowing guests')
 				: t('spreed', 'Error occurred while disallowing guests'))
 		}
@@ -954,7 +956,7 @@ const actions = {
 
 		const startingCallRecording = callRecording === CALL.RECORDING.VIDEO ? CALL.RECORDING.VIDEO_STARTING : CALL.RECORDING.AUDIO_STARTING
 
-		showSuccess(t('spreed', 'Call recording is starting.'))
+		window.OCP.Toast.success(t('spreed', 'Call recording is starting.'))
 		context.commit('setCallRecording', { token, callRecording: startingCallRecording })
 	},
 
@@ -969,9 +971,9 @@ const actions = {
 
 		if (previousCallRecordingStatus === CALL.RECORDING.AUDIO_STARTING
 			|| previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING) {
-			showInfo(t('spreed', 'Call recording stopped while starting.'))
+			window.OCP.Toast.info(t('spreed', 'Call recording stopped while starting.'))
 		} else {
-			showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'), {
+			window.OCP.Toast.info(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
@@ -983,7 +985,7 @@ const actions = {
 			const response = await setConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'Conversation picture set'))
+			window.OCP.Toast.success(t('spreed', 'Conversation picture set'))
 		} catch (error) {
 			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
 		}
@@ -994,7 +996,7 @@ const actions = {
 			const response = await setConversationEmojiAvatar(token, emoji, color)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'Conversation picture set'))
+			window.OCP.Toast.success(t('spreed', 'Conversation picture set'))
 		} catch (error) {
 			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
 		}
@@ -1005,9 +1007,9 @@ const actions = {
 			const response = await deleteConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'Conversation picture deleted'))
+			window.OCP.Toast.success(t('spreed', 'Conversation picture deleted'))
 		} catch (error) {
-			showError(t('spreed', 'Could not delete the conversation picture'))
+			window.OCP.Toast.error(t('spreed', 'Could not delete the conversation picture'))
 		}
 	},
 }

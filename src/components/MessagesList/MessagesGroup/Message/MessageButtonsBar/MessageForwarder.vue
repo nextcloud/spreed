@@ -44,7 +44,8 @@ import { inject } from 'vue'
 
 import Check from 'vue-material-design-icons/Check.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -119,7 +120,7 @@ export default {
 				this.showForwardedConfirmation = true
 			} catch (error) {
 				console.error('Error while forwarding message', error)
-				showError(t('spreed', 'Error while forwarding message'))
+				window.OCP.Toast.error(t('spreed', 'Error while forwarding message'))
 			}
 		},
 

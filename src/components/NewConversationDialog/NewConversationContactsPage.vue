@@ -63,7 +63,8 @@ import { ref } from 'vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -218,7 +219,7 @@ export default {
 					return
 				}
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			} finally {
 				this.contactsLoading = false
 			}

@@ -15,7 +15,8 @@
 <script>
 import LockOpen from 'vue-material-design-icons/LockOpen.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -46,10 +47,10 @@ export default {
 					token: this.token,
 					enableLobby: false,
 				})
-				showSuccess(t('spreed', 'You opened the conversation to everyone'))
+				window.OCP.Toast.success(t('spreed', 'You opened the conversation to everyone'))
 			} catch (e) {
 				console.error('Error occurred when opening the conversation to everyone', e)
-				showError(t('spreed', 'Error occurred when opening the conversation to everyone'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when opening the conversation to everyone'))
 			}
 			this.isLobbyStateLoading = false
 		},

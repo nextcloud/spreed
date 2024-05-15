@@ -308,7 +308,8 @@ import Phone from 'vue-material-design-icons/Phone.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -730,7 +731,7 @@ export default {
 					return
 				}
 				console.error('Error searching for possible conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -751,7 +752,7 @@ export default {
 					return
 				}
 				console.error('Error searching for open conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 

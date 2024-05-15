@@ -52,9 +52,8 @@
 		<template v-if="servers.length && recordingConsentCapability">
 			<h3>{{ t('spreed', 'Recording consent') }}</h3>
 
-			<template v-for="level in recordingConsentOptions">
-				<NcCheckboxRadioSwitch :key="level.value + '_radio'"
-					:value="level.value.toString()"
+			<template v-for="level in recordingConsentOptions" :key="level.value">
+				<NcCheckboxRadioSwitch :value="level.value.toString()"
 					:checked.sync="recordingConsentSelected"
 					name="recording-consent"
 					type="radio"
@@ -63,7 +62,7 @@
 					{{ level.label }}
 				</NcCheckboxRadioSwitch>
 
-				<p :key="level.value + '_description'" class="consent-description">
+				<p class="consent-description">
 					{{ getRecordingConsentDescription(level.value) }}
 				</p>
 			</template>
@@ -77,7 +76,8 @@ import debounce from 'debounce'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -181,7 +181,7 @@ export default {
 				secret: this.secret,
 			}), {
 				success: () => {
-					showSuccess(t('spreed', 'Recording backend settings saved'))
+					window.OCP.Toast.success(t('spreed', 'Recording backend settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

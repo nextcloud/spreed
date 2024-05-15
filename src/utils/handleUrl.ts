@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import type { UrlOptions } from '@nextcloud/router'
 
@@ -46,8 +47,8 @@ export function generateFullConversationLink(token: string, messageId?: string):
 export async function copyConversationLinkToClipboard(token: string, messageId: string) {
 	try {
 		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId))
-		showSuccess(t('spreed', 'Conversation link copied to clipboard'))
+		window.OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard'))
 	} catch (error) {
-		showError(t('spreed', 'The link could not be copied'))
+		window.OCP.Toast.error(t('spreed', 'The link could not be copied'))
 	}
 }

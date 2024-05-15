@@ -125,7 +125,8 @@ import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -355,7 +356,7 @@ export default {
 				this.unreadNotificationHandle = null
 			}
 			if (message) {
-				this.unreadNotificationHandle = showMessage(message, {
+				this.unreadNotificationHandle = window.OCP.Toast.message(message, {
 					onClick: () => {
 						this.openSidebar('chat')
 					},

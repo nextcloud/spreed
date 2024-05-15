@@ -29,7 +29,7 @@
 					@click="showFilePicker = true">
 					{{ t('spreed', 'Browse …') }}
 				</NcButton>
-				<FilePickerVue v-if="showFilePicker"
+				<!-- <FilePickerVue v-if="showFilePicker"
 					:name="t('spreed', 'Select location for attachments')"
 					:path="attachmentFolder"
 					container=".app-settings-section__wrapper"
@@ -37,7 +37,7 @@
 					:multiselect="false"
 					:mimetype-filter="['httpd/unix-directory']"
 					allow-pick-directory
-					@close="showFilePicker = false" />
+					@close="showFilePicker = false" /> -->
 			</div>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
@@ -164,8 +164,9 @@
 
 <script>
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
@@ -186,7 +187,7 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
-		FilePickerVue,
+		// FilePickerVue,
 		MediaDevicesPreview,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
@@ -290,7 +291,7 @@ export default {
 			try {
 				this.$store.dispatch('setAttachmentFolder', path)
 			} catch (exception) {
-				showError(t('spreed', 'Error while setting attachment folder'))
+				window.OCP.Toast.error(t('spreed', 'Error while setting attachment folder'))
 			}
 			this.attachmentFolderLoading = false
 		},
@@ -301,9 +302,9 @@ export default {
 				await this.settingsStore.updateReadStatusPrivacy(
 					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
-				showSuccess(t('spreed', 'Your privacy setting has been saved'))
+				window.OCP.Toast.success(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
-				showError(t('spreed', 'Error while setting read status privacy'))
+				window.OCP.Toast.error(t('spreed', 'Error while setting read status privacy'))
 			}
 			this.privacyLoading = false
 		},
@@ -314,9 +315,9 @@ export default {
 				await this.settingsStore.updateTypingStatusPrivacy(
 					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
-				showSuccess(t('spreed', 'Your privacy setting has been saved'))
+				window.OCP.Toast.success(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
-				showError(t('spreed', 'Error while setting typing status privacy'))
+				window.OCP.Toast.error(t('spreed', 'Error while setting typing status privacy'))
 			}
 			this.privacyLoading = false
 		},
@@ -333,11 +334,11 @@ export default {
 				try {
 					await this.$store.dispatch('setPlaySounds', !this.playSounds)
 				} catch (e) {
-					showError(t('spreed', 'Failed to save sounds setting'))
+					window.OCP.Toast.error(t('spreed', 'Failed to save sounds setting'))
 				}
-				showSuccess(t('spreed', 'Sounds setting saved'))
+				window.OCP.Toast.success(t('spreed', 'Sounds setting saved'))
 			} catch (exception) {
-				showError(t('spreed', 'Error while saving sounds setting'))
+				window.OCP.Toast.error(t('spreed', 'Error while saving sounds setting'))
 			}
 			this.playSoundsLoading = false
 		},

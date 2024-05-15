@@ -80,7 +80,8 @@
 import debounce from 'debounce'
 
 import axios from '@nextcloud/axios'
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
@@ -196,7 +197,7 @@ export default {
 
 			this.loading = false
 			this.saveCurrentSetup()
-			showSuccess(t('spreed', 'SIP configuration saved!'))
+			window.OCP.Toast.success(t('spreed', 'SIP configuration saved!'))
 		},
 
 		async isDialoutSupported() {
