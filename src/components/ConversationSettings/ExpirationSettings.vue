@@ -15,7 +15,7 @@
 		<template v-if="canModerate">
 			<NcSelect id="moderation_settings_message_expiration"
 				:input-label="t('spreed', 'Set message expiration')"
-				:value="selectedOption"
+				:model-value="selectedOption"
 				:options="expirationOptions"
 				label="label"
 				close-on-select

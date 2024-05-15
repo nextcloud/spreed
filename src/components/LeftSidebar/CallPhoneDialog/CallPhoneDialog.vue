@@ -18,7 +18,7 @@
 					class="call-phone__form-input"
 					:label="t('spreed', 'Search participants or phone numbers')"
 					label-visible
-					:value.sync="searchText"
+					v-model="searchText"
 					@keydown.enter="createConversation(participantPhoneItem)" />
 				<DialpadPanel container=".call-phone__form"
 					:value.sync="searchText"

@@ -55,13 +55,13 @@
 		</template>
 
 		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
+			:model-value="secret"
 			name="signaling_secret"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:value="updateSecret" />
+			@update:modelValue="updateSecret" />
 	</section>
 </template>
 

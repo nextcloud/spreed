@@ -18,7 +18,7 @@
 					</p>
 					<NcInputField id="room-number"
 						ref="inputField"
-						:value.sync="amount"
+						v-model="amount"
 						class="breakout-rooms-editor__number-input"
 						type="number"
 						min="1"

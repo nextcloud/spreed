@@ -19,7 +19,7 @@
 
 			<label for="textField">{{ t('spreed', 'Enter your name') }}</label>
 			<NcTextField id="textField"
-				:value.sync="guestUserName"
+				v-model="guestUserName"
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
 				:show-trailing-button="false"
