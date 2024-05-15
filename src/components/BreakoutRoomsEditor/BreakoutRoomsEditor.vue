@@ -26,19 +26,19 @@
 
 					<label class="breakout-rooms-editor__caption">{{ t('spreed', 'Assignment method') }}</label>
 					<fieldset>
-						<NcCheckboxRadioSwitch :checked.sync="mode"
+						<NcCheckboxRadioSwitch v-model="mode"
 							value="1"
 							name="mode_radio"
 							type="radio">
 							{{ t('spreed', 'Automatically assign participants') }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch :checked.sync="mode"
+						<NcCheckboxRadioSwitch v-model="mode"
 							value="2"
 							name="mode_radio"
 							type="radio">
 							{{ t('spreed', 'Manually assign participants') }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch :checked.sync="mode"
+						<NcCheckboxRadioSwitch v-model="mode"
 							value="3"
 							name="mode_radio"
 							type="radio">

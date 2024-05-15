@@ -14,9 +14,9 @@
 			:label="t('spreed', 'High-performance backend URL')"
 			@update:modelValue="updateServer" />
 
-		<NcCheckboxRadioSwitch :checked="verify"
+		<NcCheckboxRadioSwitch :model-value="verify"
 			class="signaling-server__checkbox"
-			@update:checked="updateVerify">
+			@update:modelValue="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 

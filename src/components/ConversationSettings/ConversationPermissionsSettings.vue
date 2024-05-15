@@ -17,12 +17,12 @@
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<NcCheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch v-model="radioValue"
 				:disabled="loading"
 				value="all"
 				name="permission_radio"
 				type="radio"
-				@update:checked="handleSubmitPermissions">
+				@update:modelValue="handleSubmitPermissions">
 				{{ t('spreed', 'All permissions') }}
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
@@ -33,12 +33,12 @@
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<NcCheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch v-model="radioValue"
 				value="restricted"
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
-				@update:checked="handleSubmitPermissions">
+				@update:modelValue="handleSubmitPermissions">
 				{{ t('spreed', 'Restricted') }}
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
@@ -49,12 +49,12 @@
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
-			<NcCheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch v-model="radioValue"
 				value="advanced"
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
-				@update:checked="showPermissionsEditor = true">
+				@update:modelValue="showPermissionsEditor = true">
 				{{ t('spreed', 'Advanced permissions') }}
 			</NcCheckboxRadioSwitch>
 

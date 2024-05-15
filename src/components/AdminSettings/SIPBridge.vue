@@ -13,7 +13,7 @@
 
 		<template v-else>
 			<NcCheckboxRadioSwitch type="switch"
-				:checked.sync="dialOutEnabled"
+				v-model="dialOutEnabled"
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>

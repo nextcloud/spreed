@@ -10,34 +10,34 @@
 			<small>{{ t('spreed', 'Beta') }}</small>
 		</h2>
 
-		<NcCheckboxRadioSwitch :checked="isFederationEnabled"
+		<NcCheckboxRadioSwitch :model-value="isFederationEnabled"
 			:disabled="loading"
 			type="switch"
-			@update:checked="saveFederationEnabled">
+			@update:modelValue="saveFederationEnabled">
 			{{ t('spreed', 'Enable Federation in Talk app') }}
 		</NcCheckboxRadioSwitch>
 
 		<template v-if="isFederationEnabled">
 			<h3>{{ t('spreed', 'Permissions') }}</h3>
 
-			<NcCheckboxRadioSwitch :checked="isFederationIncomingEnabled"
+			<NcCheckboxRadioSwitch :model-value="isFederationIncomingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:checked="saveFederationIncomingEnabled">
+				@update:modelValue="saveFederationIncomingEnabled">
 				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
 			</NcCheckboxRadioSwitch>
 
-			<NcCheckboxRadioSwitch :checked="isFederationOutgoingEnabled"
+			<NcCheckboxRadioSwitch :model-value="isFederationOutgoingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:checked="saveFederationOutgoingEnabled">
+				@update:modelValue="saveFederationOutgoingEnabled">
 				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
 			</NcCheckboxRadioSwitch>
 
-			<NcCheckboxRadioSwitch :checked="isFederationOnlyTrustedServersEnabled"
+			<NcCheckboxRadioSwitch :model-value="isFederationOnlyTrustedServersEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:checked="saveFederationOnlyTrustedServersEnabled">
+				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
 				{{ t('spreed', 'Only allow to federate with trusted servers') }}
 			</NcCheckboxRadioSwitch>
 			<!-- eslint-disable-next-line vue/no-v-html -->
