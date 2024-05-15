@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-
 // eslint-disable-next-line
 // import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
@@ -116,18 +114,18 @@ const mutations = {
 		const index = temporaryMessage.messageParameters.file.index
 		// Create upload id if not present
 		if (!state.uploads[uploadId]) {
-			Vue.set(state.uploads, uploadId, {
+			state.uploads[uploadId] = {
 				token,
 				files: {},
-			})
+			}
 		}
-		Vue.set(state.uploads[uploadId].files, index, {
+		state.uploads[uploadId].files[index] = {
 			file,
 			status: 'initialised',
 			totalSize: file.size,
 			temporaryMessage,
-		 })
-		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
+		}
+		state.localUrls[temporaryMessage.referenceId] = localUrl
 	},
 
 	// Marks a given file as initialized (for retry)
@@ -138,7 +136,7 @@ const mutations = {
 	// Marks a given file as ready to be uploaded (after propfind)
 	markFileAsPendingUpload(state, { uploadId, index, sharePath }) {
 		state.uploads[uploadId].files[index].status = 'pendingUpload'
-		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
+		state.uploads[uploadId].files[index].sharePath = sharePath
 	},
 
 	// Marks a given file as failed upload
@@ -179,7 +177,7 @@ const mutations = {
 	// Set temporary message for each file
 	setTemporaryMessageForFile(state, { uploadId, index, temporaryMessage }) {
 		console.debug('uploadId: ' + uploadId + ' index: ' + index)
-		Vue.set(state.uploads[uploadId].files[index], 'temporaryMessage', temporaryMessage)
+		state.uploads[uploadId].files[index].temporaryMessage = temporaryMessage
 	},
 
 	// Sets the id of the current upload operation
@@ -191,13 +189,13 @@ const mutations = {
 		const uploadId = state.currentUploadId
 		for (const key in state.uploads[uploadId].files) {
 			if (state.uploads[uploadId].files[key].temporaryMessage.id === temporaryMessageId) {
-				Vue.delete(state.uploads[uploadId].files, key)
+				delete state.uploads[uploadId].files[key]
 			}
 		}
 	},
 
 	discardUpload(state, { uploadId }) {
-		Vue.delete(state.uploads, uploadId)
+		delete state.uploads[uploadId]
 	},
 
 	storeFilesTemplates(state, { template }) {

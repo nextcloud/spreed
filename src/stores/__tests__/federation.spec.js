@@ -249,7 +249,7 @@ describe('federationStore', () => {
 		expect(rejectShare).toHaveBeenCalledWith(invites[0].id)
 		expect(federationStore.pendingShares).toStrictEqual({})
 		expect(federationStore.acceptedShares).toMatchObject({ [invites[1].id]: invites[1] })
-		expect(federationStore.pendingSharesCount).toBe(1)
+		expect(federationStore.pendingSharesCount).toBe(0)
 	})
 
 	it('skip already rejected invitations', async () => {
