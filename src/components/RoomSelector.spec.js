@@ -112,7 +112,7 @@ describe('RoomSelector', () => {
 				ConversationsSearchListVirtual: ConversationsSearchListVirtualStub,
 				ConversationSearchResult,
 			},
-			propsData: props,
+			props,
 		})
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await flushPromises()

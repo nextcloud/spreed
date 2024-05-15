@@ -99,7 +99,7 @@ describe('Conversation.vue', () => {
 			stubs: {
 				RouterLink: RouterLinkStub,
 			},
-			propsData: {
+			props: {
 				isSearchResult: false,
 				item,
 			},
@@ -128,7 +128,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					RouterLink: RouterLinkStub,
 				},
-				propsData: {
+				props: {
 					isSearchResult,
 					item,
 				},
@@ -225,7 +225,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					RouterLink: RouterLinkStub,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -276,7 +276,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					RouterLink: RouterLinkStub,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -302,7 +302,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcListItem,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -353,7 +353,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -425,7 +425,7 @@ describe('Conversation.vue', () => {
 						NcDialog,
 						NcButton,
 					},
-					propsData: {
+					props: {
 						isSearchResult: false,
 						item,
 					},
@@ -473,7 +473,7 @@ describe('Conversation.vue', () => {
 						NcDialog,
 						NcButton,
 					},
-					propsData: {
+					props: {
 						isSearchResult: false,
 						item,
 					},
@@ -518,7 +518,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -553,7 +553,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -584,7 +584,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: false,
 					item,
 				},
@@ -632,7 +632,7 @@ describe('Conversation.vue', () => {
 				stubs: {
 					NcActionButton,
 				},
-				propsData: {
+				props: {
 					isSearchResult: true,
 					item,
 				},

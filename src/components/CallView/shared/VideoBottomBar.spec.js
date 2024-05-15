@@ -103,7 +103,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 				expect(wrapper.exists()).toBeTruthy()
 				expect(wrapper.classes('wrapper')).toBeDefined()
@@ -114,7 +114,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 				expect(wrapper.exists()).toBeTruthy()
 				expect(wrapper.classes('wrapper--big')).toBeDefined()
@@ -124,7 +124,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 
 				const indicators = wrapper.findAllComponents(NcButton)
@@ -136,7 +136,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 
 				const indicators = wrapper.findAllComponents(NcButton)
@@ -147,7 +147,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 
 				componentProps.showVideoOverlay = false
@@ -164,7 +164,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 
 				const participantName = wrapper.find('.participant-name')
@@ -180,7 +180,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 
 				const participantName = wrapper.find('.participant-name')
@@ -193,7 +193,7 @@ describe('VideoBottomBar.vue', () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
-					propsData: componentProps,
+					props: componentProps,
 				})
 
 				const participantName = wrapper.find('.participant-name')
@@ -208,7 +208,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const iceFailedIndicator = wrapper.findComponent(AlertCircle)
@@ -229,7 +229,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const iceFailedIndicator = wrapper.findComponent(AlertCircle)
@@ -250,7 +250,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
@@ -262,7 +262,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
@@ -277,7 +277,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.exists()).toBeTruthy()
@@ -287,7 +287,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
@@ -299,7 +299,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
@@ -312,7 +312,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
@@ -323,7 +323,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
@@ -335,7 +335,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.attributes('disabled')).toBeTruthy()
@@ -348,7 +348,7 @@ describe('VideoBottomBar.vue', () => {
 						stubs: {
 							NcButton,
 						},
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
@@ -363,7 +363,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.exists()).toBeTruthy()
@@ -373,7 +373,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
@@ -385,7 +385,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
@@ -399,7 +399,7 @@ describe('VideoBottomBar.vue', () => {
 						stubs: {
 							NcButton,
 						},
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const videoOnIcon = wrapper.findComponent(VideoIcon)
@@ -414,7 +414,7 @@ describe('VideoBottomBar.vue', () => {
 						stubs: {
 							NcButton,
 						},
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const videoOffIcon = wrapper.findComponent(VideoOff)
@@ -428,7 +428,7 @@ describe('VideoBottomBar.vue', () => {
 						stubs: {
 							NcButton,
 						},
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
@@ -444,7 +444,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
@@ -455,7 +455,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
@@ -467,7 +467,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
@@ -481,7 +481,7 @@ describe('VideoBottomBar.vue', () => {
 						stubs: {
 							NcButton,
 						},
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
@@ -496,7 +496,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeFalsy()
@@ -507,7 +507,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeFalsy()
@@ -522,7 +522,7 @@ describe('VideoBottomBar.vue', () => {
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
 						store,
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
@@ -541,7 +541,7 @@ describe('VideoBottomBar.vue', () => {
 						stubs: {
 							NcButton,
 						},
-						propsData: componentProps,
+						props: componentProps,
 					})
 
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
