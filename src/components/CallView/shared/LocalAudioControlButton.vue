@@ -24,7 +24,8 @@
 <script>
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import { NcButton } from '@nextcloud/vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 
@@ -37,6 +38,10 @@ export default {
 	components: {
 		NcButton,
 		VolumeIndicator,
+	},
+
+	directives: {
+		Tooltip,
 	},
 
 	props: {

@@ -95,7 +95,7 @@ export default {
 	name: 'TurnServer',
 
 	directives: {
-		tooltip: Tooltip,
+		Tooltip,
 	},
 
 	components: {

@@ -170,6 +170,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -201,6 +202,10 @@ export default {
 		RecordCircle,
 		StopIcon,
 		VideoIcon,
+	},
+
+	directives: {
+		Tooltip,
 	},
 
 	props: {

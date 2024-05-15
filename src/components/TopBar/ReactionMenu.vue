@@ -36,6 +36,7 @@ import { emit } from '@nextcloud/event-bus'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 export default {
 	name: 'ReactionMenu',
@@ -45,6 +46,10 @@ export default {
 		NcActionButton,
 		NcActionButtonGroup,
 		EmoticonOutline,
+	},
+
+	directives: {
+		Tooltip,
 	},
 
 	props: {

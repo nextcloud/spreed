@@ -120,7 +120,7 @@ export default {
 	},
 
 	directives: {
-		tooltip: Tooltip,
+		Tooltip,
 	},
 
 	inheritAttrs: false,

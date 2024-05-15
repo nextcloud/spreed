@@ -139,7 +139,7 @@ export default {
 	name: 'TopBarMediaControls',
 
 	directives: {
-		tooltip: Tooltip,
+		Tooltip,
 	},
 	components: {
 		LocalAudioControlButton,

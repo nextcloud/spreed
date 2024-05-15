@@ -53,7 +53,7 @@ export default {
 	name: 'WebServerSetupChecks',
 
 	directives: {
-		tooltip: Tooltip,
+		Tooltip,
 	},
 
 	components: {
