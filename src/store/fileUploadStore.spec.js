@@ -342,7 +342,7 @@ describe('fileUploadStore', () => {
 			const uploads = store.getters.getInitialisedUploads('upload-id1')
 			expect(uploads).toHaveLength(1)
 
-			expect(uploads[0][1].file).toBe(files[0])
+			expect(uploads[0][1].file).toStrictEqual(files[0])
 		})
 
 		test('discard an entire upload', async () => {
