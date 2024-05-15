@@ -21,12 +21,12 @@ import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton } from '../../../test-helpers.js'
-
+/*
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
 	showError: jest.fn(),
 }))
-
+*/
 jest.mock('../../../services/participantsService', () => ({
 	leaveConversation: jest.fn(),
 }))

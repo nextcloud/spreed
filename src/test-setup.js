@@ -25,11 +25,11 @@ jest.mock('@nextcloud/initial-state', () => ({
 		return fallback
 	}),
 }))
-
+/*
 jest.mock('@nextcloud/upload', () => ({
 	getUploader: jest.fn(),
 }))
-
+*/
 window.IntersectionObserver = jest.fn(() => ({
 	observe: jest.fn(),
 	unobserve: jest.fn(),
