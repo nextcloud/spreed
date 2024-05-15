@@ -10,19 +10,19 @@
 		</h4>
 
 		<div>
-			<NcCheckboxRadioSwitch :checked="hasSIPEnabled"
+			<NcCheckboxRadioSwitch :model-value="hasSIPEnabled"
 				type="switch"
 				aria-describedby="sip_settings_hint"
 				:disabled="isSipLoading"
-				@update:checked="toggleSetting('enable')">
+				@update:modelValue="toggleSetting('enable')">
 				{{ t('spreed', 'Enable phone and SIP dial-in') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasSIPEnabled">
-			<NcCheckboxRadioSwitch :checked="noPinRequired"
+			<NcCheckboxRadioSwitch :model-value="noPinRequired"
 				type="switch"
 				:disabled="isSipLoading || !hasSIPEnabled"
-				@update:checked="toggleSetting('nopin')">
+				@update:modelValue="toggleSetting('nopin')">
 				{{ t('spreed', 'Allow to dial-in without a PIN') }}
 			</NcCheckboxRadioSwitch>
 		</div>

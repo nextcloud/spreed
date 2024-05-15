@@ -28,7 +28,7 @@
 					<NewMessageTemplatePreview v-for="template in templates"
 						:key="template.fileid"
 						:basename="template.basename"
-						:checked="checked === template.fileid"
+						:model-value="checked === template.fileid"
 						:fileid="template.fileid"
 						:filename="template.filename"
 						:preview-url="template.previewUrl"

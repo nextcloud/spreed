@@ -54,11 +54,11 @@
 
 			<template v-for="level in recordingConsentOptions" :key="level.value">
 				<NcCheckboxRadioSwitch :value="level.value.toString()"
-					:checked.sync="recordingConsentSelected"
+					v-model="recordingConsentSelected"
 					name="recording-consent"
 					type="radio"
 					:disabled="loading"
-					@update:checked="setRecordingConsent">
+					@update:modelValue="setRecordingConsent">
 					{{ level.label }}
 				</NcCheckboxRadioSwitch>
 
