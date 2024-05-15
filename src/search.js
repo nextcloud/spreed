@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-
 import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
-import { t, n } from '@nextcloud/l10n'
+import { t } from '@nextcloud/l10n'
 import { generateFilePath, imagePath } from '@nextcloud/router'
+
+import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -25,38 +25,19 @@ function init() {
 		appId: 'spreed',
 		label: t('spreed', 'In conversation'),
 		icon: imagePath('spreed', 'app.svg'),
-		callback: () => {
-			const container = document.createElement('div')
-			container.id = 'spreed-unified-search-conversation-select'
-			const body = document.getElementById('body-user')
-			body.appendChild(container)
-
-			const RoomSelector = () => import('./components/RoomSelector.vue')
-			const vm = new Vue({
-				el: container,
-				render: h => h(RoomSelector, {
-					props: {
-						dialogTitle: t('spreed', 'Select conversation'),
-						isPlugin: true,
-					},
-				}),
+		callback: async () => {
+			const conversation = await requestRoomSelection('spreed-unified-search-conversation-select', {
+				dialogTitle: t('spreed', 'Select conversation'),
 			})
 
-			vm.$root.$on('close', () => {
-				vm.$el.remove()
-				vm.$destroy()
-			})
-			vm.$root.$on('select', (conversation) => {
-				vm.$el.remove()
-				vm.$destroy()
-
+			if (conversation) {
 				emit('nextcloud:unified-search:add-filter', {
 					id: 'talk-message',
 					payload: conversation,
 					filterUpdateText: t('spreed', 'Search in conversation: {conversation}', { conversation: conversation.displayName }),
 					filterParams: { conversation: conversation.token }
 				})
-			})
+			}
 		},
 	})
 }
@@ -71,10 +52,5 @@ __webpack_nonce__ = btoa(getRequestToken())
 // We do not want the index.php since we're loading files
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
-
-Vue.prototype.t = t
-Vue.prototype.n = n
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
 
 document.addEventListener('DOMContentLoaded', init)

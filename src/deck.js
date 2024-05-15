@@ -4,14 +4,14 @@
  */
 
 import escapeHtml from 'escape-html'
-import Vue from 'vue'
 
 import { getRequestToken } from '@nextcloud/auth'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
+import { t } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
 import { postRichObjectToConversation } from './services/messagesService.ts'
+import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -58,34 +58,14 @@ function init() {
 	window.OCA.Deck.registerCardAction({
 		label: t('spreed', 'Post to a conversation'),
 		icon: 'icon-talk',
-		callback: (card) => {
-			const container = document.createElement('div')
-			container.id = 'spreed-post-card-to-room-select'
-			const body = document.getElementById('body-user')
-			body.appendChild(container)
-
-			const RoomSelector = () => import('./components/RoomSelector.vue')
-			const vm = new Vue({
-				el: container,
-				render: h => h(RoomSelector, {
-					props: {
-						dialogTitle: t('spreed', 'Post to conversation'),
-						showPostableOnly: true,
-						isPlugin: true,
-					},
-				}),
+		callback: async (card) => {
+			const conversation = await requestRoomSelection('spreed-post-card-to-room-select', {
+				dialogTitle: t('spreed', 'Post to conversation'),
+				showPostableOnly: true,
 			})
-
-			vm.$root.$on('close', () => {
-				vm.$el.remove()
-				vm.$destroy()
-			})
-			vm.$root.$on('select', (conversation) => {
-				vm.$el.remove()
-				vm.$destroy()
-
+			if (conversation) {
 				postCardToRoom(card, conversation)
-			})
+			}
 		},
 	})
 }
@@ -100,10 +80,5 @@ __webpack_nonce__ = btoa(getRequestToken())
 // We do not want the index.php since we're loading files
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
-
-Vue.prototype.t = t
-Vue.prototype.n = n
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
 
 document.addEventListener('DOMContentLoaded', init)
