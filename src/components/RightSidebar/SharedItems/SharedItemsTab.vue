@@ -37,14 +37,16 @@
 				@has-resources="value => hasRelatedResources = value" />
 
 			<!-- Shared from "Projects" app -->
-			<template v-if="projectsEnabled">
+			<!-- <template v-if="projectsEnabled">
 				<NcAppNavigationCaption :name="t('spreed', 'Projects')" />
 				<CollectionList v-if="getUserId && token"
 					:id="token"
 					type="room"
 					:name="conversation.displayName"
 					:is-active="active" />
-			</template>
+			</template> -->
+
+			<template v-if="false" />
 
 			<!-- No shared content -->
 			<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
@@ -66,7 +68,7 @@
 </template>
 
 <script>
-import { CollectionList } from 'nextcloud-vue-collections'
+// import { CollectionList } from 'nextcloud-vue-collections'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
@@ -95,7 +97,7 @@ export default {
 	name: 'SharedItemsTab',
 
 	components: {
-		CollectionList,
+		// CollectionList,
 		DotsHorizontal,
 		FolderMultipleImage,
 		LoadingComponent,
