@@ -2,8 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { shallowMount } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
+import { shallowMount, flushPromises } from '@vue/test-utils'
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
