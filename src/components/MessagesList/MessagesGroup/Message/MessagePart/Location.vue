@@ -41,7 +41,7 @@ import {
 	LMap,
 	LMarker,
 	LTileLayer,
-} from 'vue2-leaflet'
+} from '@vue-leaflet/vue-leaflet'
 
 import { t } from '@nextcloud/l10n'
 
