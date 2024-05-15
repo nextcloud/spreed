@@ -3,11 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue, { defineAsyncComponent } from 'vue'
-
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
-Vue.prototype.OCP = window.OCP
+import { createApp, defineAsyncComponent } from 'vue'
+import { NextcloudGlobalsVuePlugin } from './NextcloudGlobalsVuePlugin.js'
 
 /**
  *
@@ -24,25 +21,20 @@ export function requestRoomSelection(containerId, roomSelectorProps) {
 
 		const RoomSelector = defineAsyncComponent(() => import('../components/RoomSelector.vue'))
 
-		const vm = new Vue({
-			render: (h) => h(RoomSelector, {
-				props: {
-					isPlugin: true,
-					...roomSelectorProps,
-				},
-			}),
-		}).$mount(container)
-
-		vm.$root.$on('close', () => {
-			container.remove()
-			vm.$destroy()
-			resolve(null)
-		})
-
-		vm.$root.$on('select', (conversation) => {
-			container.remove()
-			vm.$destroy()
-			resolve(conversation)
-		})
+		const app = createApp(RoomSelector, {
+			isPlugin: true,
+			...roomSelectorProps,
+			onClose: () => {
+				container.remove()
+				app.unmount()
+				resolve(null)
+			},
+			onSelect: (conversation) => {
+				container.remove()
+				app.unmount()
+				resolve(conversation)
+			},
+		}).use(NextcloudGlobalsVuePlugin)
+		app.mount(container)
 	})
 }

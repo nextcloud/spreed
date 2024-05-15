@@ -21,7 +21,7 @@ export default class FilesSidebarCallView {
 		this.$el = document.createElement('div')
 		this.id = 'FilesSidebarCallView'
 
-		this.callViewInstance.$mount(this.$el)
+		this.callViewInstance.mount(this.$el)
 		this.$el = this.callViewInstance.$el
 
 		this.$el.replaceAll = function(target) {
