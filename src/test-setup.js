@@ -25,10 +25,11 @@ jest.mock('@nextcloud/initial-state', () => ({
 		return fallback
 	}),
 }))
-
+/*
 jest.mock('@nextcloud/upload', () => ({
 	getUploader: jest.fn(),
 }))
+*/
 
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => mockedCapabilities),

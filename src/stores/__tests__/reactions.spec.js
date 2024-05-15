@@ -16,12 +16,12 @@ jest.mock('../../services/reactionsService', () => ({
 	addReactionToMessage: jest.fn(),
 	removeReactionFromMessage: jest.fn(),
 }))
-
+/*
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
 	showError: jest.fn(),
 }))
-
+*/
 describe('reactionsStore', () => {
 	let reactionsStore
 	let token

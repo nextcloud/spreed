@@ -31,11 +31,11 @@ jest.mock('../../../../../services/reactionsService', () => ({
 	addReactionToMessage: jest.fn(),
 	removeReactionFromMessage: jest.fn(),
 }))
-
+/*
 jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 }))
-
+*/
 describe('Reactions.vue', () => {
 	let reactionsStore
 	let token

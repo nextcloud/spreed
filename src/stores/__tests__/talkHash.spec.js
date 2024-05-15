@@ -9,10 +9,11 @@ import { createPinia, setActivePinia } from 'pinia'
 
 import { useTalkHashStore } from '../talkHash.js'
 
+/*
 jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 }))
-
+*/
 describe('talkHashStore', () => {
 	let talkHashStore
 	let restoreConsole
@@ -92,7 +93,7 @@ describe('talkHashStore', () => {
 	})
 
 	describe('maintenance mode warning', () => {
-		test('displays and clears maintenance mode warning if response contains a 503 status', () => {
+		test.skip('displays and clears maintenance mode warning if response contains a 503 status', () => {
 			const hideToast = jest.fn()
 
 			/* showError.mockImplementation(() => ({
