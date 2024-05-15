@@ -124,7 +124,7 @@ describe('Reactions.vue', () => {
 			const wrapper = shallowMount(Reactions, {
 				localVue,
 				store,
-				propsData: reactionsProps,
+				props: reactionsProps,
 				stubs: {
 					NcPopover,
 				},
@@ -148,7 +148,7 @@ describe('Reactions.vue', () => {
 			const wrapper = shallowMount(Reactions, {
 				localVue,
 				store,
-				propsData: reactionsProps,
+				props: reactionsProps,
 				stubs: {
 					NcPopover,
 				},
@@ -184,7 +184,7 @@ describe('Reactions.vue', () => {
 			testStoreConfig.modules.messagesStore.getters.message = () => messageMock
 			store = new Vuex.Store(testStoreConfig)
 			const wrapper = shallowMount(Reactions, {
-				propsData: reactionsProps,
+				props: reactionsProps,
 				localVue,
 				store,
 				stubs: {
@@ -206,7 +206,7 @@ describe('Reactions.vue', () => {
 			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
-				propsData: {
+				props: {
 					...reactionsProps,
 					showControls: true,
 				},
@@ -240,7 +240,7 @@ describe('Reactions.vue', () => {
 			vuexStore.dispatch('processMessage', { token, message })
 
 			const wrapper = shallowMount(Reactions, {
-				propsData: reactionsProps,
+				props: reactionsProps,
 				localVue,
 				store,
 				stubs: {
@@ -289,7 +289,7 @@ describe('Reactions.vue', () => {
 			jest.spyOn(reactionsStore, 'fetchReactions')
 
 			const wrapper = shallowMount(Reactions, {
-				propsData: reactionsProps,
+				props: reactionsProps,
 				localVue,
 				store,
 				stubs: {

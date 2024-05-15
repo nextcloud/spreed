@@ -22,7 +22,7 @@ describe('FilePreview.vue', () => {
 	let store
 	let localVue
 	let testStoreConfig
-	let propsData
+	let props
 	let imageMock
 	let getUserIdMock
 	let oldPixelRatio
@@ -49,7 +49,7 @@ describe('FilePreview.vue', () => {
 				return imageMock
 			})
 
-		propsData = {
+		props = {
 			token: 'TOKEN',
 			id: '123',
 			name: 'test.jpg',
@@ -79,7 +79,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onload()
@@ -96,13 +96,13 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders file preview for guests', async () => {
-			propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
+			props.link = 'https://localhost/nc-webroot/s/xtokenx'
 			getUserIdMock.mockClear().mockReturnValue(null)
 
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onload()
@@ -124,7 +124,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onload()
@@ -135,12 +135,12 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders small previews when requested', async () => {
-			propsData.smallPreview = true
+			props.smallPreview = true
 
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onload()
@@ -172,15 +172,15 @@ describe('FilePreview.vue', () => {
 					}],
 				})) */
 
-				propsData.id = 'temp-123'
-				propsData.index = 'index-1'
-				propsData.uploadId = 1000
-				propsData.localUrl = 'blob:XYZ'
+				props.id = 'temp-123'
+				props.index = 'index-1'
+				props.uploadId = 1000
+				props.localUrl = 'blob:XYZ'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -200,7 +200,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			expect(wrapper.element.tagName).toBe('A')
@@ -213,7 +213,7 @@ describe('FilePreview.vue', () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onerror()
@@ -224,13 +224,13 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders generic mime type icon for unknown mime types', async () => {
-			propsData.previewAvailable = 'no'
+			props.previewAvailable = 'no'
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onload()
@@ -244,17 +244,17 @@ describe('FilePreview.vue', () => {
 
 		describe('gif rendering', () => {
 			beforeEach(() => {
-				propsData.mimetype = 'image/gif'
-				propsData.name = 'test %20.gif'
-				propsData.path = 'path/to/test %20.gif'
+				props.mimetype = 'image/gif'
+				props.name = 'test %20.gif'
+				props.path = 'path/to/test %20.gif'
 			})
 			test('directly renders small GIF files', async () => {
-				propsData.size = '128'
+				props.size = '128'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -265,13 +265,13 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('directly renders small GIF files (absolute path)', async () => {
-				propsData.size = '128'
-				propsData.path = '/path/to/test %20.gif'
+				props.size = '128'
+				props.path = '/path/to/test %20.gif'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -282,31 +282,31 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('directly renders small GIF files for guests', async () => {
-				propsData.size = '128'
-				propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
+				props.size = '128'
+				props.link = 'https://localhost/nc-webroot/s/xtokenx'
 				getUserIdMock.mockClear().mockReturnValue(null)
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
-					.toBe(propsData.link + '/download/test%20%2520.gif')
+					.toBe(props.link + '/download/test%20%2520.gif')
 			})
 
 			test('renders static preview for big GIF files', async () => {
 				// 4 MB, bigger than max from capability (3 MB)
-				propsData.size = '4194304'
+				props.size = '4194304'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -365,7 +365,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -399,7 +399,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -414,7 +414,7 @@ describe('FilePreview.vue', () => {
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
 					store,
-					propsData,
+					props,
 				})
 
 				await imageMock.onload()
@@ -425,9 +425,9 @@ describe('FilePreview.vue', () => {
 
 			describe('play icon for video', () => {
 				beforeEach(() => {
-					propsData.mimetype = 'video/mp4'
-					propsData.name = 'test.mp4'
-					propsData.path = 'path/to/test.mp4'
+					props.mimetype = 'video/mp4'
+					props.name = 'test.mp4'
+					props.path = 'path/to/test.mp4'
 
 					// viewer needs to be available
 					OCA.Viewer = {
@@ -445,7 +445,7 @@ describe('FilePreview.vue', () => {
 					const wrapper = shallowMount(FilePreview, {
 						localVue,
 						store,
-						propsData,
+						props,
 					})
 
 					await imageMock.onload()
@@ -460,25 +460,25 @@ describe('FilePreview.vue', () => {
 
 				test('does not render play icon for direct renders', async () => {
 					// gif is directly rendered
-					propsData.mimetype = 'image/gif'
-					propsData.name = 'test.gif'
-					propsData.path = 'path/to/test.gif'
+					props.mimetype = 'image/gif'
+					props.name = 'test.gif'
+					props.path = 'path/to/test.gif'
 
 					await testPlayButtonVisible(false)
 				})
 
 				test('render play icon gif previews with big size', async () => {
 					// gif is directly rendered
-					propsData.mimetype = 'image/gif'
-					propsData.name = 'test.gif'
-					propsData.path = 'path/to/test.gif'
-					propsData.size = '10000000' // bigger than default max
+					props.mimetype = 'image/gif'
+					props.name = 'test.gif'
+					props.path = 'path/to/test.gif'
+					props.size = '10000000' // bigger than default max
 
 					await testPlayButtonVisible(true)
 				})
 
 				test('does not render play icon for small previews', async () => {
-					propsData.smallPreview = true
+					props.smallPreview = true
 					await testPlayButtonVisible(false)
 				})
 
@@ -486,7 +486,7 @@ describe('FilePreview.vue', () => {
 					const wrapper = shallowMount(FilePreview, {
 						localVue,
 						store,
-						propsData,
+						props,
 					})
 
 					await imageMock.onerror()
@@ -502,9 +502,9 @@ describe('FilePreview.vue', () => {
 
 				test('does not render play icon for non-videos', async () => {
 					// viewer supported, but not a video
-					propsData.mimetype = 'image/png'
-					propsData.name = 'test.png'
-					propsData.path = 'path/to/test.png'
+					props.mimetype = 'image/png'
+					props.name = 'test.png'
+					props.path = 'path/to/test.png'
 					await testPlayButtonVisible(false)
 				})
 			})
@@ -513,13 +513,13 @@ describe('FilePreview.vue', () => {
 
 	describe('in upload editor', () => {
 		beforeEach(() => {
-			propsData.isUploadEditor = true
+			props.isUploadEditor = true
 		})
 		test('emits event when clicking remove button when inside upload editor', async () => {
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
-				propsData,
+				props,
 			})
 
 			await imageMock.onload()

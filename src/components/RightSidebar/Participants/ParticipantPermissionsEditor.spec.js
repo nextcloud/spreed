@@ -65,7 +65,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		return mount(ParticipantPermissionsEditor, {
 			localVue,
 			store,
-			propsData: {
+			props: {
 				participant,
 				token: 'fdslk033',
 			},
