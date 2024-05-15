@@ -48,10 +48,11 @@ jest.mock('../services/conversationsService', () => ({
 }))
 
 jest.mock('../utils/cancelableRequest')
+/*
 jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 }))
-
+*/
 // Test actions with 'chat-read-last' feature
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
