@@ -13,32 +13,32 @@
 				<p class="title" v-html="modalTitle" />
 				<form @submit.prevent="handleSubmitPermissions">
 					<NcCheckboxRadioSwitch ref="callStart"
-						:checked.sync="callStart"
+						v-model="callStart"
 						class="checkbox">
 						{{ t('spreed', 'Start a call') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="lobbyIgnore"
-						:checked.sync="lobbyIgnore"
+						v-model="lobbyIgnore"
 						class="checkbox">
 						{{ t('spreed', 'Skip the lobby') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="chatMessagesAndReactions"
-						:checked.sync="chatMessagesAndReactions"
+						v-model="chatMessagesAndReactions"
 						class="checkbox">
 						{{ t('spreed', 'Can post messages and reactions') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="publishAudio"
-						:checked.sync="publishAudio"
+						v-model="publishAudio"
 						class="checkbox">
 						{{ t('spreed', 'Enable the microphone') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="publishVideo"
-						:checked.sync="publishVideo"
+						v-model="publishVideo"
 						class="checkbox">
 						{{ t('spreed', 'Enable the camera') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch ref="publishScreen"
-						:checked.sync="publishScreen"
+						v-model="publishScreen"
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</NcCheckboxRadioSwitch>

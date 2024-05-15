@@ -13,26 +13,26 @@
 			<p v-if="hasBreakoutRooms" class="app-settings-section__hint">
 				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
 			</p>
-			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
+			<NcCheckboxRadioSwitch :model-value="isSharedPublicly"
 				:disabled="hasBreakoutRooms || isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
-				@update:checked="toggleGuests">
+				@update:modelValue="toggleGuests">
 				{{ t('spreed', 'Allow guests to join this conversation via link') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
-				:checked="isPasswordProtectionChecked"
+				:model-value="isPasswordProtectionChecked"
 				:disabled="isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_password_hint"
-				@update:checked="togglePassword">
+				@update:modelValue="togglePassword">
 				{{ t('spreed', 'Password protection') }}
 			</NcCheckboxRadioSwitch>
 
 			<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
 				<NcPasswordField ref="passwordField"
-					:value.sync="password"
+					v-model="password"
 					autocomplete="new-password"
 					check-password-strength
 					:disabled="isSaving"

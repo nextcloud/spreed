@@ -5,18 +5,18 @@
 
 <template>
 	<div v-if="canModerate">
-		<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
+		<NcCheckboxRadioSwitch :model-value="listable !== LISTABLE.NONE"
 			:disabled="isListableLoading"
 			type="switch"
-			@update:checked="toggleListableUsers">
+			@update:modelValue="toggleListableUsers">
 			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
 		</NcCheckboxRadioSwitch>
 		<NcCheckboxRadioSwitch v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
 			class="additional-top-margin"
-			:checked="listable === LISTABLE.ALL"
+			:model-value="listable === LISTABLE.ALL"
 			:disabled="isListableLoading"
 			type="switch"
-			@update:checked="toggleListableGuests">
+			@update:modelValue="toggleListableGuests">
 			{{ t('spreed', 'Also open to users created with the Guests app') }}
 		</NcCheckboxRadioSwitch>
 	</div>

@@ -38,12 +38,12 @@
 		<label class="new-group-conversation__label">
 			{{ t('spreed', 'Conversation visibility') }}
 		</label>
-		<NcCheckboxRadioSwitch :checked.sync="isPublic"
+		<NcCheckboxRadioSwitch v-model="isPublic"
 			type="switch">
 			{{ t('spreed', 'Allow guests to join via link') }}
 		</NcCheckboxRadioSwitch>
 		<div class="new-group-conversation__wrapper">
-			<NcCheckboxRadioSwitch :checked.sync="hasPassword"
+			<NcCheckboxRadioSwitch v-model="hasPassword"
 				type="switch"
 				:disabled="!isPublic">
 				<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>

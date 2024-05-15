@@ -13,9 +13,9 @@
 		</div>
 		<NcCheckboxRadioSwitch v-if="canModerate && !isGlobalConsent"
 			type="switch"
-			:checked.sync="recordingConsentSelected"
+			v-model="recordingConsentSelected"
 			:disabled="disabled"
-			@update:checked="setRecordingConsent">
+			@update:modelValue="setRecordingConsent">
 			{{ t('spreed', 'Require recording consent before joining call in this conversation') }}
 		</NcCheckboxRadioSwitch>
 		<p v-else-if="isGlobalConsent">

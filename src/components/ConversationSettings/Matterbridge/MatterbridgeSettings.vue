@@ -36,9 +36,9 @@
 				</div>
 				<div v-show="parts.length > 0"
 					class="enable-switch-line">
-					<NcCheckboxRadioSwitch :checked="enabled"
+					<NcCheckboxRadioSwitch :model-value="enabled"
 						type="switch"
-						@update:checked="onEnabled">
+						@update:modelValue="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>

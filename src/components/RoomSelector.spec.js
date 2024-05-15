@@ -168,7 +168,7 @@ describe('RoomSelector', () => {
 
 			// Act: type 'conversation'
 			const input = wrapper.findComponent({ name: 'NcTextField' })
-			await input.vm.$emit('update:value', 'conversation')
+			await input.vm.$emit('update:modelValue', 'conversation')
 
 			// Assert
 			const list = wrapper.findAllComponents({ name: 'NcListItem' })
@@ -182,7 +182,7 @@ describe('RoomSelector', () => {
 
 			// Act: type 'conversation'
 			const input = wrapper.findComponent({ name: 'NcTextField' })
-			await input.vm.$emit('update:value', 'qwerty')
+			await input.vm.$emit('update:modelValue', 'qwerty')
 
 			// Assert
 			const list = wrapper.findAllComponents({ name: 'NcListItem' })
@@ -195,7 +195,7 @@ describe('RoomSelector', () => {
 
 			// Act: type 'conversation'
 			const input = wrapper.findComponent({ name: 'NcTextField' })
-			await input.vm.$emit('update:value', 'qwerty')
+			await input.vm.$emit('update:modelValue', 'qwerty')
 
 			// Assert
 			const list = wrapper.findAllComponents({ name: 'NcListItem' })
@@ -208,7 +208,7 @@ describe('RoomSelector', () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()
 			const input = wrapper.findComponent({ name: 'NcTextField' })
-			await input.vm.$emit('update:value', 'conversation')
+			await input.vm.$emit('update:modelValue', 'conversation')
 
 			// Act: click trailing button
 			await input.vm.$emit('trailing-button-click')

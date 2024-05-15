@@ -45,20 +45,20 @@
 			:name="t('spreed', 'Privacy')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="read_status_privacy"
-				:checked="readStatusPrivacyIsPublic"
+				:model-value="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
-				@update:checked="toggleReadStatusPrivacy">
+				@update:modelValue="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-if="supportTypingStatus"
 				id="typing_status_privacy"
-				:checked="typingStatusPrivacyIsPublic"
+				:model-value="typingStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
-				@update:checked="toggleTypingStatusPrivacy">
+				@update:modelValue="toggleTypingStatusPrivacy">
 				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
@@ -66,11 +66,11 @@
 			:name="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="play_sounds"
-				:checked="playSounds"
+				:model-value="playSounds"
 				:disabled="playSoundsLoading"
 				type="switch"
 				class="checkbox"
-				@update:checked="togglePlaySounds">
+				@update:modelValue="togglePlaySounds">
 				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
 			</NcCheckboxRadioSwitch>
 			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
@@ -86,10 +86,10 @@
 			:name="t('spreed', 'Performance')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="blur-call-background"
-				:checked="isBackgroundBlurred"
+				:model-value="isBackgroundBlurred"
 				type="switch"
 				class="checkbox"
-				@update:checked="toggleBackgroundBlurred">
+				@update:modelValue="toggleBackgroundBlurred">
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>

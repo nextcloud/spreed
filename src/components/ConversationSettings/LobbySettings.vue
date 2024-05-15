@@ -10,10 +10,10 @@
 				{{ t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.') }}
 			</NcNoteCard>
 			<div>
-				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+				<NcCheckboxRadioSwitch :model-value="hasLobbyEnabled"
 					type="switch"
 					:disabled="isLobbyStateLoading"
-					@update:checked="toggleLobby">
+					@update:modelValue="toggleLobby">
 					{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 				</NcCheckboxRadioSwitch>
 			</div>
