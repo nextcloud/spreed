@@ -996,6 +996,7 @@
     "_%n day_::_%n days_" : ["%n 天"],
     "_%n week_::_%n weeks_" : ["%n個星期"],
     "Guest access" : "訪客存取",
+    "Breakout rooms are not allowed in public conversations." : "公共對話中不允許分組討論。",
     "Allow guests to join this conversation via link" : "允許訪客透過連結加入此對話",
     "Password protection" : "密碼保護",
     "Enter new password" : "輸入新密碼",
