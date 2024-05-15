@@ -4,7 +4,6 @@
  */
 
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 
 import { getSharedItemsOverview, getSharedItems } from '../services/sharedItemsService.js'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
@@ -46,7 +45,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 	getters: {
 		sharedItems: (state) => (token) => {
 			if (!state.sharedItemsPool[token]) {
-				Vue.set(state.sharedItemsPool, token, {})
+				state.sharedItemsPool[token] = {}
 			}
 
 			return state.sharedItemsPool[token]
@@ -56,10 +55,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 	actions: {
 		checkForExistence(token, type) {
 			if (token && !this.sharedItemsPool[token]) {
-				Vue.set(this.sharedItemsPool, token, {})
+				this.sharedItemsPool[token] = {}
 			}
 			if (type && !this.sharedItemsPool[token][type]) {
-				Vue.set(this.sharedItemsPool[token], type, {})
+				this.sharedItemsPool[token][type] = {}
 			}
 		},
 
@@ -73,13 +72,13 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 					this.checkForExistence(token, type)
 					for (const message of data[type]) {
 						if (!this.sharedItemsPool[token][type][message.id]) {
-							Vue.set(this.sharedItemsPool[token][type], message.id, message)
+							this.sharedItemsPool[token][type][message.id] = message
 						}
 					}
 				}
 			}
 
-			Vue.set(this.overviewLoaded, token, true)
+			this.overviewLoaded[token] = true
 		},
 
 		/**
@@ -91,7 +90,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 			this.checkForExistence(token, type)
 
 			if (!this.sharedItemsPool[token][type][message.id]) {
-				Vue.set(this.sharedItemsPool[token][type], message.id, message)
+				this.sharedItemsPool[token][type][message.id] = message
 			}
 		},
 
@@ -105,7 +104,7 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 
 			messages.forEach(message => {
 				if (!this.sharedItemsPool[token][type][message.id]) {
-					Vue.set(this.sharedItemsPool[token][type], message.id, message)
+					this.sharedItemsPool[token][type][message.id] = message
 				}
 			})
 		},

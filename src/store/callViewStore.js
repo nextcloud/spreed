@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-
 import {
 	CONVERSATION,
 } from '../constants.js'
@@ -93,16 +91,16 @@ const mutations = {
 			throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
 		}
 		if (raisedHand && raisedHand.state) {
-			Vue.set(state.participantRaisedHands, sessionId, raisedHand)
+			state.participantRaisedHands[sessionId] = raisedHand
 		} else {
-			Vue.delete(state.participantRaisedHands, sessionId)
+			delete state.participantRaisedHands[sessionId]
 		}
 	},
 	clearParticipantHandRaised(state) {
 		state.participantRaisedHands = {}
 	},
 	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
-		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
+		state.backgroundImageAverageColorCache[videoBackgroundId] = backgroundImageAverageColor
 	},
 	clearBackgroundImageAverageColorCache(state) {
 		state.backgroundImageAverageColorCache = {}

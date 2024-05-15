@@ -4,7 +4,6 @@
  */
 
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 
 // eslint-disable-next-line
 // import { showError } from '@nextcloud/dialogs'
@@ -33,9 +32,9 @@ export const useFederationStore = defineStore('federation', {
 				const response = await getShares()
 				response.data.ocs.data.forEach(item => {
 					if (item.state === FEDERATION.STATE.ACCEPTED) {
-						Vue.set(this.acceptedShares, item.id, item)
+						this.acceptedShares[item.id] = item
 					} else {
-						Vue.set(this.pendingShares, item.id, item)
+						this.pendingShares[item.id] = item
 					}
 				})
 			} catch (error) {
@@ -67,7 +66,7 @@ export const useFederationStore = defineStore('federation', {
 				inviterCloudId: id + '@' + remoteServerUrl,
 				inviterDisplayName: name,
 			}
-			Vue.set(this.pendingShares, invitation.id, invitation)
+			this.pendingShares[invitation.id] = invitation
 		},
 
 		/**
@@ -80,13 +79,13 @@ export const useFederationStore = defineStore('federation', {
 			if (!this.pendingShares[id]) {
 				return
 			}
-			Vue.delete(this.pendingShares[id], 'loading')
-			Vue.set(this.acceptedShares, id, {
+			delete this.pendingShares[id].loading
+			this.acceptedShares[id] = {
 				...this.pendingShares[id],
 				localToken: conversation.token,
 				state: FEDERATION.STATE.ACCEPTED,
-			})
-			Vue.delete(this.pendingShares, id)
+			}
+			delete this.pendingShares[id]
 		},
 
 		/**
@@ -99,7 +98,7 @@ export const useFederationStore = defineStore('federation', {
 				return
 			}
 			try {
-				Vue.set(this.pendingShares[id], 'loading', 'accept')
+				this.pendingShares[id].loading = 'accept'
 				const response = await acceptShare(id)
 				this.markInvitationAccepted(id, response.data.ocs.data)
 				return response.data.ocs.data
@@ -119,9 +118,9 @@ export const useFederationStore = defineStore('federation', {
 				return
 			}
 			try {
-				Vue.set(this.pendingShares[id], 'loading', 'reject')
+				this.pendingShares[id].loading = 'reject'
 				await rejectShare(id)
-				Vue.delete(this.pendingShares, id)
+				delete this.pendingShares[id]
 			} catch (error) {
 				console.error(error)
 				window.OCP.Toast.error(t('spreed', 'An error occurred while rejecting an invitation'))

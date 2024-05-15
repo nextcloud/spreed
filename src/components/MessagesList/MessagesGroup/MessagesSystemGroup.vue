@@ -231,7 +231,7 @@ export default {
 		},
 
 		toggleCollapsed(group) {
-			this.$set(group, 'collapsed', !group.collapsed)
+			group.collapsed = !group.collapsed
 			this.groupIsCollapsed[group.id] = group.collapsed
 		},
 

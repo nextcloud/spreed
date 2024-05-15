@@ -393,11 +393,11 @@ export default {
 						this.softUpdateAuthorGroups(oldDateGroups[dateTimestamp], newDateGroups[dateTimestamp], dateTimestamp)
 					} else {
 						// the group is new
-						this.$set(this.messagesGroupedByDateByAuthor, dateTimestamp, newDateGroups[dateTimestamp])
+						this.messagesGroupedByDateByAuthor[dateTimestamp] = newDateGroups[dateTimestamp]
 					}
 				} else {
 					// the group is not in the new list, remove it
-					this.$delete(this.messagesGroupedByDateByAuthor, dateTimestamp)
+					delete this.messagesGroupedByDateByAuthor[dateTimestamp]
 				}
 			})
 		},
@@ -415,7 +415,7 @@ export default {
 				if (oldGroup.messages.some(message => !newGroupIdSet.has(message.id))) {
 					// Delete groups of normal and temporary messages,
 					// if at least one message from the group is no longer in the store
-					this.$delete(this.messagesGroupedByDateByAuthor[dateTimestamp], id)
+					delete this.messagesGroupedByDateByAuthor[dateTimestamp][id]
 				}
 			})
 			Object.entries(newGroups).forEach(([id, newGroup]) => {
@@ -424,13 +424,13 @@ export default {
 						.find(key => +id < +key && oldGroups[key].nextMessageId <= newGroup.nextMessageId)
 					if (oldId) {
 						// newGroup includes oldGroup and more old messages, remove oldGroup
-						this.$delete(this.messagesGroupedByDateByAuthor[dateTimestamp], oldId)
+						delete this.messagesGroupedByDateByAuthor[dateTimestamp][oldId]
 					}
 					// newGroup is not presented in the list, add it
-					this.$set(this.messagesGroupedByDateByAuthor[dateTimestamp], id, newGroup)
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
 				} else if (!this.areGroupsIdentical(newGroup, oldGroups[id])) {
 					// newGroup includes oldGroup and more recent messages
-					this.$set(this.messagesGroupedByDateByAuthor[dateTimestamp], id, newGroup)
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroup
 				}
 			})
 		},

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import debounce from 'debounce'
-import Vue from 'vue'
 
 // eslint-disable-next-line
 // import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
@@ -36,45 +35,45 @@ const getters = {
 const mutations = {
 	addPoll(state, { token, poll }) {
 		if (!state.polls[token]) {
-			Vue.set(state.polls, token, {})
+			state.polls[token] = {}
 		}
-		Vue.set(state.polls[token], poll.id, poll)
+		state.polls[token][poll.id] = poll
 	},
 
 	setActivePoll(state, { token, pollId, name }) {
-		Vue.set(state, 'activePoll', { token, id: pollId, name })
+		state.activePoll = { token, id: pollId, name }
 	},
 
 	removeActivePoll(state) {
 		if (state.activePoll) {
-			Vue.set(state, 'activePoll', null)
+			state.activePoll = null
 		}
 	},
 
 	addPollToast(state, { pollId, toast }) {
-		Vue.set(state.pollToastsQueue, pollId, toast)
+		state.pollToastsQueue[pollId] = toast
 	},
 
 	hidePollToast(state, id) {
 		if (state.pollToastsQueue[id]) {
 			state.pollToastsQueue[id].hideToast()
-			Vue.delete(state.pollToastsQueue, id)
+			delete state.pollToastsQueue[id]
 		}
 	},
 
 	hideAllPollToasts(state) {
 		for (const id in state.pollToastsQueue) {
 			state.pollToastsQueue[id].hideToast()
-			Vue.delete(state.pollToastsQueue, id)
+			delete state.pollToastsQueue[id]
 		}
 	},
 
 	// Add debounce function for getting the poll data
 	addDebounceGetPollDataFunction(state, { token, pollId, debounceGetPollDataFunction }) {
 		if (!state.pollDebounceFunctions[token]) {
-			Vue.set(state.pollDebounceFunctions, token, {})
+			state.pollDebounceFunctions[token] = {}
 		}
-		Vue.set(state.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
+		state.pollDebounceFunctions[token][pollId] = debounceGetPollDataFunction
 	},
 }
 
