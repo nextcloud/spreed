@@ -19,7 +19,7 @@
 			group>
 			<StunServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:server.sync="servers[index]"
+				v-model:server="servers[index]"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"

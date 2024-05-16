@@ -62,7 +62,7 @@
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:token="token"
 			:shared-items="sharedItems"
-			:active-tab.sync="browserActiveTab"
+			v-model:active-tab="browserActiveTab"
 			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>

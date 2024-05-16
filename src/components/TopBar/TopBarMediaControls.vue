@@ -76,7 +76,7 @@
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
 			:container="container"
-			:open.sync="screenSharingMenuOpen">
+			v-model:open="screenSharingMenuOpen">
 			<template #icon>
 				<MonitorOff :size="20" />
 			</template>

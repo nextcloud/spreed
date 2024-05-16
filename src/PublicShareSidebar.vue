@@ -29,7 +29,7 @@
 				<CallButton class="call-button" />
 				<ChatView />
 				<PollViewer />
-				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>
