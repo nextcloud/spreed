@@ -182,7 +182,7 @@ class CallController extends AEnvironmentAwareController {
 	 * Ring an attendee
 	 *
 	 * @param int $attendeeId ID of the attendee to ring
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Attendee rang successfully
 	 * 400: Ringing attendee is not possible
