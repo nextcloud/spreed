@@ -16,7 +16,7 @@
 				<CallView :token="token" :is-sidebar="true" />
 				<ChatView />
 				<PollViewer />
-				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>

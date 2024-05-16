@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcAppSettingsDialog :open.sync="showSettings"
+	<NcAppSettingsDialog v-model:open="showSettings"
 		:name="t('spreed', 'Talk settings')"
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"

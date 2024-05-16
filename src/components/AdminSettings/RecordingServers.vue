@@ -20,8 +20,8 @@
 			group>
 			<RecordingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:server.sync="servers[index].server"
-				:verify.sync="servers[index].verify"
+				v-model:server="servers[index].server"
+				v-model:verify="servers[index].verify"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
