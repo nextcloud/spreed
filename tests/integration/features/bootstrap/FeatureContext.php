@@ -768,6 +768,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 				$result[] = $data;
 			}
+			usort($result, [self::class, 'sortAttendees']);
 
 			$expected = array_map(function ($attendee, $actual) {
 				if (isset($attendee['actorId']) && substr($attendee['actorId'], 0, strlen('"guest')) === '"guest') {
@@ -813,7 +814,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}, $result);
 
 			usort($expected, [self::class, 'sortAttendees']);
-			usort($result, [self::class, 'sortAttendees']);
 
 			Assert::assertEquals($expected, $result, print_r([
 				'original' => $formData->getHash(),
