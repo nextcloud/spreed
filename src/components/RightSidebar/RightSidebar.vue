@@ -4,13 +4,27 @@
 -->
 
 <template>
-	<NcAppSidebar v-show="opened"
+	<NcAppSidebar v-if="token"
+		:open="opened"
 		:name="conversation.displayName"
 		:title="conversation.displayName"
 		:active.sync="activeTab"
 		:class="'active-tab-' + activeTab"
+		:toggle-classes="{ 'chat-button-sidebar-toggle': isInCall }"
+		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"
+		@update:open="handleUpdateOpen"
+		@update:active="handleUpdateActive"
 		@closed="handleClosed"
 		@close="handleClose">
+		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
+		<template v-if="isInCall" #toggle-icon>
+			<MessageText :size="20" />
+			<NcCounterBubble v-if="unreadMessagesCounter > 0"
+				class="chat-button__unread-messages-counter"
+				:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
+				{{ unreadMessagesCounter }}
+			</NcCounterBubble>
+		</template>
 		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
@@ -94,13 +108,16 @@ import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
+import MessageText from 'vue-material-design-icons/MessageText.vue'
 
+import { showMessage } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import LobbyStatus from './LobbyStatus.vue'
@@ -123,6 +140,7 @@ export default {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcButton,
+		NcCounterBubble,
 		ParticipantsTab,
 		SetGuestUsername,
 		SharedItemsTab,
@@ -134,6 +152,7 @@ export default {
 		FolderMultipleImage,
 		InformationOutline,
 		Message,
+		MessageText,
 	},
 
 	props: {
@@ -147,6 +166,7 @@ export default {
 		return {
 			activeTab: 'participants',
 			contactsLoading: false,
+			unreadNotificationHandle: null,
 		}
 	},
 
@@ -155,7 +175,7 @@ export default {
 			return this.$store.getters.getSidebarStatus
 		},
 		opened() {
-			return !!this.token && !this.isInLobby && this.show
+			return !this.isInLobby && this.show
 		},
 		token() {
 			return this.$store.getters.getToken()
@@ -257,6 +277,21 @@ export default {
 		breakoutRoomsText() {
 			return t('spreed', 'Breakout rooms')
 		},
+
+		unreadMessagesCounter() {
+			return this.conversation.unreadMessages
+		},
+		hasUnreadMentions() {
+			return this.conversation.unreadMention
+		},
+
+		inCallToggleAttrs() {
+			return {
+				'data-theme-dark': true,
+				'aria-label': t('spreed', 'Open chat'),
+				title: t('spreed', 'Open chat')
+			}
+		},
 	},
 
 	watch: {
@@ -287,12 +322,36 @@ export default {
 			},
 		},
 
+		unreadMessagesCounter(newValue, oldValue) {
+			if (!this.isInCall || this.opened) {
+				return
+			}
+
+			// new messages arrived
+			if (newValue > 0 && oldValue === 0 && !this.hasUnreadMentions) {
+				this.notifyUnreadMessages(t('spreed', 'You have new unread messages in the chat.'))
+			}
+		},
+
+		hasUnreadMentions(newValue) {
+			if (!this.isInCall || this.opened) {
+				return
+			}
+
+			if (newValue) {
+				this.notifyUnreadMessages(t('spreed', 'You have been mentioned in the chat.'))
+			}
+		},
+
 		isInCall(newValue) {
 			if (newValue) {
 				// Set 'chat' tab as active, and switch to it if sidebar is open
 				this.activeTab = 'chat'
 				return
 			}
+
+			// discard notification if the call ends
+			this.notifyUnreadMessages(null)
 
 			// If 'chat' tab wasn't active, leave it as is
 			if (this.activeTab !== 'chat') {
@@ -335,9 +394,28 @@ export default {
 
 	methods: {
 		t,
+
+		openSidebar() {
+			// In call by default open on chat
+			if (this.isInCall) {
+				this.activeTab = 'chat'
+			}
+
+			this.$store.dispatch('showSidebar')
+			BrowserStorage.setItem('sidebarOpen', 'true')
+		},
+
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'false')
+		},
+
+		handleUpdateOpen(open) {
+			if (open) {
+				this.openSidebar()
+			} else {
+				this.handleClose()
+			}
 		},
 
 		handleUpdateActive(active) {
@@ -350,6 +428,21 @@ export default {
 
 		handleClosed() {
 			emit('files:sidebar:closed', {})
+		},
+
+		notifyUnreadMessages(message) {
+			if (this.unreadNotificationHandle) {
+				this.unreadNotificationHandle.hideToast()
+				this.unreadNotificationHandle = null
+			}
+			if (message) {
+				this.unreadNotificationHandle = showMessage(message, {
+					onClick: () => {
+						this.activeTab = 'chat'
+						this.openSidebar()
+					},
+				})
+			}
 		},
 	},
 }
@@ -391,4 +484,26 @@ export default {
 	height: 100%;
 }
 
+.chat-button__unread-messages-counter {
+	position: absolute;
+	bottom: 2px;
+	right: 2px;
+	pointer-events: none;
+
+	&.counter-bubble__counter--highlighted {
+		color: var(--color-primary-text);
+	}
+}
+</style>
+
+<style lang="scss">
+/*
+ * NcAppSidebar toggle it rendered on the page outside the sidebar element, so we need global styles here.
+ * It is _quite_ safe, as chat-button-sidebar-toggle class is defined here manually, not an internal class.
+ */
+.chat-button-sidebar-toggle {
+	position: relative;
+	// Allow unread counter to overflow rounded button
+	overflow: visible !important;
+}
 </style>

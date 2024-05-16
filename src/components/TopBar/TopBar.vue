@@ -80,38 +80,6 @@
 
 		<CallButton shrink-on-mobile :is-screensharing="!!localMediaModel.attributes.localScreen" />
 
-		<!-- sidebar toggle -->
-		<template v-if="showOpenSidebarButton">
-			<!-- in chat: open last tab -->
-			<NcButton v-if="!isInCall"
-				:aria-label="t('spreed', 'Open sidebar')"
-				:title="t('spreed', 'Open sidebar')"
-				close-after-click="true"
-				type="tertiary"
-				@click="openSidebar">
-				<template #icon>
-					<MenuIcon :size="20" />
-				</template>
-			</NcButton>
-
-			<!-- in call: open chat tab -->
-			<NcButton v-else
-				:aria-label="t('spreed', 'Open chat')"
-				:title="t('spreed', 'Open chat')"
-				class="chat-button"
-				type="tertiary"
-				@click="openSidebar('chat')">
-				<template #icon>
-					<MessageText :size="20" />
-					<NcCounterBubble v-if="unreadMessagesCounter > 0"
-						class="chat-button__unread-messages-counter"
-						:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
-						{{ unreadMessagesCounter }}
-					</NcCounterBubble>
-				</template>
-			</NcButton>
-		</template>
-
 		<!-- Breakout rooms editor -->
 		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
 			:token="token"
@@ -121,15 +89,11 @@
 
 <script>
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import MenuIcon from 'vue-material-design-icons/Menu.vue'
-import MessageText from 'vue-material-design-icons/MessageText.vue'
 
-import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
@@ -163,13 +127,10 @@ export default {
 		ConversationIcon,
 		TopBarMediaControls,
 		NcButton,
-		NcCounterBubble,
 		TopBarMenu,
 		ReactionMenu,
 		// Icons
 		AccountMultiple,
-		MenuIcon,
-		MessageText,
 	},
 
 	mixins: [richEditor],
@@ -199,7 +160,6 @@ export default {
 
 	data: () => {
 		return {
-			unreadNotificationHandle: null,
 			showBreakoutRoomsEditor: false,
 		}
 	},
@@ -207,10 +167,6 @@ export default {
 	computed: {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
-		},
-
-		showOpenSidebarButton() {
-			return !this.$store.getters.getSidebarStatus
 		},
 
 		isOneToOneConversation() {
@@ -236,13 +192,6 @@ export default {
 
 		statusMessage() {
 			return getStatusMessage(this.conversation)
-		},
-
-		unreadMessagesCounter() {
-			return this.conversation.unreadMessages
-		},
-		hasUnreadMentions() {
-			return this.conversation.unreadMention
 		},
 
 		renderedDescription() {
@@ -302,36 +251,6 @@ export default {
 		},
 	},
 
-	watch: {
-		unreadMessagesCounter(newValue, oldValue) {
-			if (!this.isInCall || !this.showOpenSidebarButton) {
-				return
-			}
-
-			// new messages arrived
-			if (newValue > 0 && oldValue === 0 && !this.hasUnreadMentions) {
-				this.notifyUnreadMessages(t('spreed', 'You have new unread messages in the chat.'))
-			}
-		},
-
-		hasUnreadMentions(newValue) {
-			if (!this.isInCall || !this.showOpenSidebarButton) {
-				return
-			}
-
-			if (newValue) {
-				this.notifyUnreadMessages(t('spreed', 'You have been mentioned in the chat.'))
-			}
-		},
-
-		isInCall(newValue) {
-			if (!newValue) {
-				// discard notification if the call ends
-				this.notifyUnreadMessages(null)
-			}
-		},
-	},
-
 	mounted() {
 		document.body.classList.add('has-topbar')
 		document.addEventListener('fullscreenchange', this.fullScreenChanged, false)
@@ -352,20 +271,6 @@ export default {
 	methods: {
 		t,
 		n,
-		notifyUnreadMessages(message) {
-			if (this.unreadNotificationHandle) {
-				this.unreadNotificationHandle.hideToast()
-				this.unreadNotificationHandle = null
-			}
-			if (message) {
-				this.unreadNotificationHandle = showMessage(message, {
-					onClick: () => {
-						this.openSidebar('chat')
-					},
-				})
-			}
-		},
-
 		openSidebar(activeTab) {
 			if (typeof activeTab === 'string') {
 				emit('spreed:select-active-sidebar-tab', activeTab)
@@ -395,7 +300,9 @@ export default {
 	z-index: 10;
 	gap: 3px;
 	justify-content: flex-end;
-	padding: 8px;
+	padding: calc(2 * var(--default-grid-baseline));
+	// Reserve space for the sidebar toggle button
+	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset));
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border);
 
@@ -410,18 +317,6 @@ export default {
 		top: 0;
 		left: 0;
 		background-color: transparent;
-	}
-
-	.chat-button {
-		position: relative;
-		overflow: visible;
-		&__unread-messages-counter {
-			position: absolute;
-			top: 24px;
-			right: 2px;
-			pointer-events: none;
-			color: var(--color-primary-element);
-		}
 	}
 }
 
