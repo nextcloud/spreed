@@ -88,7 +88,7 @@ export default {
 		},
 	},
 
-	emits: ['recording', 'audio-file'],
+	emits: ['recording', 'audioFile'],
 
 	data() {
 		return {
@@ -268,7 +268,7 @@ export default {
 				// Convert blob to file
 				const audioFile = new File([this.blob], fileName)
 				audioFile.localURL = window.URL.createObjectURL(this.blob)
-				this.$emit('audio-file', audioFile)
+				this.$emit('audioFile', audioFile)
 				this.$emit('recording', false)
 			}
 			this.resetComponentData()

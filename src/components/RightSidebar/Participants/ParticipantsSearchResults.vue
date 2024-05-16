@@ -144,7 +144,7 @@ export default {
 		},
 	},
 
-	emits: ['click', 'click-search-hint'],
+	emits: ['click', 'clickSearchHint'],
 
 	setup() {
 		const { participantSearchActions } = useIntegrationsStore()
@@ -236,7 +236,7 @@ export default {
 		},
 
 		handleClickHint() {
-			this.$emit('click-search-hint')
+			this.$emit('clickSearchHint')
 		},
 
 		runIntegration(integration) {
