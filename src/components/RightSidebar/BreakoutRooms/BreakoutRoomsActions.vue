@@ -97,8 +97,7 @@
 				<BreakoutRoomsParticipantsEditor :token="mainToken"
 					:breakout-rooms="breakoutRooms"
 					:is-creating-rooms="false"
-					@close="closeParticipantsEditor"
-					v-on="$listeners" />
+					@close="closeParticipantsEditor" />
 			</div>
 		</NcModal>
 
