@@ -12,8 +12,8 @@
 		</NcNoteCard>
 
 		<template v-else>
-			<NcCheckboxRadioSwitch type="switch"
-				v-model="dialOutEnabled"
+			<NcCheckboxRadioSwitch v-model="dialOutEnabled"
+				type="switch"
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>

@@ -5,9 +5,9 @@
 
 <template>
 	<NcAppSettingsDialog id="conversation-settings-container"
+		v-model:open="showSettings"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
-		v-model:open="showSettings"
 		:show-navigation="true"
 		:container="container">
 		<NcAppSettingsSection id="basic-info"

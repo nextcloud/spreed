@@ -8,9 +8,9 @@
 		<div class="search-form">
 			<SearchBox v-if="canSearch"
 				ref="searchBox"
-				class="search-form__input"
 				v-model:value="searchText"
 				v-model:is-focused="isFocused"
+				class="search-form__input"
 				:placeholder-text="searchBoxPlaceholder"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
@@ -21,9 +21,9 @@
 		</div>
 
 		<SelectPhoneNumber v-if="canAddPhones"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			v-model:participant-phone-item="participantPhoneItem"
 			@select="addParticipants" />
 
 		<ParticipantsListVirtual v-if="!isSearching"

@@ -8,8 +8,8 @@
 		<!-- Search -->
 		<div class="set-contacts__form">
 			<NcTextField ref="setContacts"
-				v-observe-visibility="visibilityChanged"
 				v-model="searchText"
+				v-observe-visibility="visibilityChanged"
 				type="text"
 				class="set-contacts__form-input"
 				:label="textFieldLabel"
@@ -23,8 +23,8 @@
 				</template>
 			</NcTextField>
 			<DialpadPanel v-if="canModerateSipDialOut"
-				container=".set-contacts__form"
 				v-model:value="searchText"
+				container=".set-contacts__form"
 				@submit="addParticipantPhone" />
 		</div>
 
@@ -42,9 +42,9 @@
 
 		<!-- Search results -->
 		<SelectPhoneNumber v-if="canModerateSipDialOut"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			v-model:participant-phone-item="participantPhoneItem"
 			@select="addParticipantPhone" />
 		<ParticipantSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"
