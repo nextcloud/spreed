@@ -480,7 +480,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('talk:media-settings:show', this.showModal)
 		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},

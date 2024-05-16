@@ -90,7 +90,7 @@ export default {
 		this.servers = loadState('spreed', 'turn_servers')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

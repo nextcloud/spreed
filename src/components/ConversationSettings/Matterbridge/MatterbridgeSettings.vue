@@ -536,7 +536,7 @@ export default {
 	beforeMount() {
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 	},
 
 	methods: {

@@ -342,7 +342,7 @@ export default {
 		EventBus.on('highlight-message', this.highlightMessage)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('highlight-message', this.highlightMessage)
 	},
 

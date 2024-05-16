@@ -147,7 +147,7 @@ export default {
 		window.addEventListener('beforeunload', this.preventUnload)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.preventUnload)
 	},
 

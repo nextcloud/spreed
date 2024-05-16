@@ -171,7 +171,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 
 		this.cancelSearchPossibleConversations()

@@ -634,7 +634,7 @@ export default {
 		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 		this.debounceFetchConversations.clear?.()
 		this.debounceHandleScroll.clear?.()
