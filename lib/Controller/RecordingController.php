@@ -147,6 +147,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 */
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
+	#[BruteForceProtection(action: 'talkRecordingStatus')]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
@@ -199,6 +200,22 @@ class RecordingController extends AEnvironmentAwareController {
 					'message' => 'Room not found.',
 				],
 			], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getCallRecording() !== Room::RECORDING_VIDEO_STARTING && $room->getCallRecording() !== Room::RECORDING_AUDIO_STARTING) {
+			$this->logger->error('Recording backend tried to start recording in room {token}, but it was not requested by a moderator.', [
+				'token' => $token,
+				'app' => 'spreed-recording',
+			]);
+			$response = new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'no_such_room',
+					'message' => 'Room not found.',
+				],
+			], Http::STATUS_NOT_FOUND);
+			$response->throttle(['action' => 'talkRecordingStatus']);
+			return $response;
 		}
 
 		try {
