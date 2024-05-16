@@ -1367,9 +1367,7 @@
     "You: {lastMessage}" : "Zu: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Elkarrizketak eguneratu dira, mesedez freskatu orria",
-    "Post to conversation" : "Argitaratu elkarrizketan",
     "The recording failed. Please contact your administrator." : "Utzi grabaketaren hasiera",
-    "Share to conversation" : "Partekatu elkarrizketara",
     "Error while sharing file" : "Errorea fitxategia partekatzean",
     "Error while clearing conversation history" : "Errorea elkarrizketaren historia garbitzen",
     "Error occurred while allowing guests" : "Errorea gertatu da gonbidatuak baimentzean",
@@ -1474,6 +1472,8 @@
     "Your PIN: {attendeePin}" : "Zure PINa: {attendeePin}",
     "Start a conversation" : "Hasi elkarrizketa bat",
     "Mention room" : "Aipatu gela",
+    "Post to conversation" : "Argitaratu elkarrizketan",
+    "Share to conversation" : "Partekatu elkarrizketara",
     "Specify commands the users can use in chats" : "Zehaztu erabiltzaileek txatetan erabil ditzaketen komandoak",
     "Remove circle and members" : "Kendu taldea eta kideak"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

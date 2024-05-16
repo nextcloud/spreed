@@ -1028,7 +1028,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Vi: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu",
-    "Post to conversation" : "Objavi u razgovoru",
     "Error while sharing file" : "Pogreška pri dijeljenju datoteke",
     "Error while clearing conversation history" : "Pogreška pri brisanju povijesti razgovora",
     "Error occurred while allowing guests" : "Došlo je do pogreške pri omogućavanju pristupa gostima",
@@ -1112,6 +1111,7 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Vaš PIN: {attendeePin}",
     "Start a conversation" : "Započni razgovor",
     "Mention room" : "Spomeni sobu",
+    "Post to conversation" : "Objavi u razgovoru",
     "Specify commands the users can use in chats" : "Navedite naredbe koje korisnici mogu koristiti pri razmjeni poruka",
     "Remove circle and members" : "Ukloni krug i članove"
 },
