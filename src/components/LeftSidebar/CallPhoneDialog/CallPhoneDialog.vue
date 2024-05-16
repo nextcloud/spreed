@@ -21,13 +21,13 @@
 					v-model="searchText"
 					@keydown.enter="createConversation(participantPhoneItem)" />
 				<DialpadPanel container=".call-phone__form"
-					:value.sync="searchText"
+					v-model:value="searchText"
 					@submit="createConversation(participantPhoneItem)" />
 			</div>
 
 			<SelectPhoneNumber :name="t('spreed', 'Call a phone number')"
 				:value="searchText"
-				:participant-phone-item.sync="participantPhoneItem"
+				v-model:participant-phone-item="participantPhoneItem"
 				@select="createConversation" />
 		</template>
 

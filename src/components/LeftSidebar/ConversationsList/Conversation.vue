@@ -88,7 +88,7 @@
 
 		<!-- confirmation required to delete conversation -->
 		<template v-if="isDialogOpen" #extra>
-			<NcDialog :open.sync="isDialogOpen"
+			<NcDialog v-model:open="isDialogOpen"
 				:name="t('spreed','Delete conversation')"
 				:message="dialogMessage"
 				:container="container">

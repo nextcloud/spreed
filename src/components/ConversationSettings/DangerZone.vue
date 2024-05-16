@@ -32,7 +32,7 @@
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
-					:open.sync="isDeleteConversationDialogOpen"
+					v-model:open="isDeleteConversationDialogOpen"
 					:name="t('spreed','Delete conversation')"
 					:message="deleteConversationDialogMessage"
 					container=".danger-zone">
@@ -58,7 +58,7 @@
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
 				<NcDialog class="danger-zone__dialog"
-					:open.sync="isDeleteChatDialogOpen"
+					v-model:open="isDeleteChatDialogOpen"
 					:name="t('spreed','Delete all chat messages')"
 					:message="deleteChatDialogMessage"
 					container=".danger-zone">

@@ -12,7 +12,7 @@
 				<SelectableParticipant v-for="participant in unassignedParticipants"
 					:key="participant.attendeeId"
 					:value="participant.attendeeId"
-					:checked.sync="selectedParticipants"
+					v-model:checked="selectedParticipants"
 					:participant="participant" />
 			</BreakoutRoomItem>
 			<BreakoutRoomItem v-for="(item, index) in assignments"
@@ -22,7 +22,7 @@
 				<SelectableParticipant v-for="attendeeId in item"
 					:key="attendeeId"
 					:value="assignments"
-					:checked.sync="selectedParticipants"
+					v-model:checked="selectedParticipants"
 					:participant="attendeesById[attendeeId]" />
 			</BreakoutRoomItem>
 		</ul>
@@ -73,7 +73,7 @@
 			</NcButton>
 		</div>
 		<NcDialog v-if="showDialog"
-			:open.sync="showDialog"
+			v-model:open="showDialog"
 			:name="t('spreed','Delete breakout rooms')"
 			:message="dialogMessage"
 			container=".participants-editor">

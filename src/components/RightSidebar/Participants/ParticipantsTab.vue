@@ -9,21 +9,21 @@
 			<SearchBox v-if="canSearch"
 				ref="searchBox"
 				class="search-form__input"
-				:value.sync="searchText"
-				:is-focused.sync="isFocused"
+				v-model:value="searchText"
+				v-model:is-focused="isFocused"
 				:placeholder-text="searchBoxPlaceholder"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
 				@abort-search="abortSearch" />
 			<DialpadPanel v-if="canAddPhones"
-				:value.sync="searchText"
+				v-model:value="searchText"
 				@submit="addParticipants(participantPhoneItem)" />
 		</div>
 
 		<SelectPhoneNumber v-if="canAddPhones"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			:participant-phone-item.sync="participantPhoneItem"
+			v-model:participant-phone-item="participantPhoneItem"
 			@select="addParticipants" />
 
 		<ParticipantsListVirtual v-if="!isSearching"
