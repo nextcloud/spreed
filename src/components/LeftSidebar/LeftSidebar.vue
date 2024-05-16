@@ -154,7 +154,7 @@
 							:conversations="filteredConversationsList"
 							:loading="!initialisedConversations"
 							class="scroller h-100"
-							@scroll.native="debounceHandleScroll" />
+							@scroll="debounceHandleScroll" />
 					</li>
 					<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 						class="unread-mention-button"
