@@ -15,7 +15,7 @@
 			type="switch"
 			v-model="recordingConsentSelected"
 			:disabled="disabled"
-			@update:modelValue="setRecordingConsent">
+			@update:model-value="setRecordingConsent">
 			{{ t('spreed', 'Require recording consent before joining call in this conversation') }}
 		</NcCheckboxRadioSwitch>
 		<p v-else-if="isGlobalConsent">

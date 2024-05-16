@@ -9,7 +9,7 @@
 			:devices="devices"
 			:device-id="audioInputId"
 			@refresh="updateDevices"
-			@update:deviceId="audioInputId = $event" />
+			@update:device-id="audioInputId = $event" />
 		<div class="preview preview-audio">
 			<div v-if="!audioPreviewAvailable"
 				class="preview-not-available">
@@ -38,7 +38,7 @@
 			:devices="devices"
 			:device-id="videoInputId"
 			@refresh="updateDevices"
-			@update:deviceId="videoInputId = $event" />
+			@update:device-id="videoInputId = $event" />
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
 				class="preview-not-available">

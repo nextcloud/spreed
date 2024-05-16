@@ -14,7 +14,7 @@
 		pill
 		@focus="handleFocus"
 		@blur="handleBlur"
-		@update:modelValue="updateValue"
+		@update:model-value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
 		<Magnify :size="16" />

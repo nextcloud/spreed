@@ -13,11 +13,11 @@
 			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'Recording backend URL')"
-			@update:modelValue="updateServer" />
+			@update:model-value="updateServer" />
 
 		<NcCheckboxRadioSwitch :model-value="verify"
 			class="recording-server__checkbox"
-			@update:modelValue="updateVerify">
+			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
