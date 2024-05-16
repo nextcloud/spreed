@@ -5,7 +5,7 @@
 
 <template>
 	<!-- Message Actions -->
-	<div v-click-outside="handleClickOutside">
+	<div v-click-outside="handleClickOutside" :class="$props['class']">
 		<template v-if="!isReactionsMenuOpen">
 			<NcButton v-if="canReact"
 				type="tertiary"
@@ -343,6 +343,13 @@ export default {
 	inheritAttrs: false,
 
 	props: {
+		// Temporal variable to provide classes with inheritAttrs
+		// TODO: get rid of passing message object as v-bind="message"
+		class: {
+			type: [String, Object, Array],
+			default: '',
+		},
+
 		token: {
 			type: String,
 			required: true,
