@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { defineComponent, defineAsyncComponent, h } from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
@@ -51,11 +52,9 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
-		FilesSidebarChatView: () => ({
-			component: import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
-			loading: {
-				render: (h) => h(LoadingComponent, { class: 'tab-loading' }),
-			},
+		FilesSidebarChatView: defineAsyncComponent({
+			loader: () => import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
+			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'tab-loading' })),
 		}),
 		NcButton,
 	},
