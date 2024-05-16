@@ -4432,8 +4432,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Ringing attendee is not possible",
+                    "404": {
+                        "description": "Attendee could not be found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4460,8 +4460,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Attendee could not be found",
+                    "400": {
+                        "description": "Ringing attendee is not possible",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4480,7 +4480,17 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
