@@ -36,6 +36,7 @@ use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception as DBException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\Exceptions\ActionNotSupportedException;
@@ -79,6 +80,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		private ProxyCacheMessageService $pcmService,
 		private FederationChatNotifier $federationChatNotifier,
 		private UserConverter $userConverter,
+		private ITimeFactory $timeFactory,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;
@@ -385,7 +387,11 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
 					$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
 				}
-				$this->roomService->setLastMessageInfo($room, $lastMessageId, new \DateTime());
+
+				if ($notification['messageData']['systemMessage'] !== 'message_edited'
+					&& $notification['messageData']['systemMessage'] !== 'message_deleted') {
+					$this->roomService->setLastMessageInfo($room, $lastMessageId, $this->timeFactory->getDateTime());
+				}
 
 				if ($this->proxyCacheMessages instanceof ICache) {
 					$cacheKey = sha1(json_encode([$notification['remoteServerUrl'], $notification['remoteToken']]));

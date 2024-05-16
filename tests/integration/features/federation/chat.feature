@@ -371,6 +371,29 @@ Feature: federation/chat
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
 
+  Scenario: System messages don't trigger notifications
+    Given the following "spreed" app config is set
+      | federation_enabled | yes |
+    And user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id   | name | type | remoteServer | remoteToken |
+      | room | room | 3    | LOCAL        | room        |
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type |
+      | room | 3    |
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    When user "participant2" sets notifications to all for room "LOCAL::room" (v4)
+    And user "participant1" sets description for room "room" to "the description" with 200 (v4)
+    And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                | subject                                                                | message     |
+
   Scenario: Reaction on federated chat messages
     Given the following "spreed" app config is set
       | federation_enabled | yes |

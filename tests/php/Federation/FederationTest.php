@@ -135,6 +135,7 @@ class FederationTest extends TestCase {
 			$this->proxyCacheMessageService,
 			$this->federationChatNotifier,
 			$this->userConverter,
+			$this->timeFactory,
 			$this->cacheFactory,
 		);
 	}
