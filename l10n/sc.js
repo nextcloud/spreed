@@ -991,7 +991,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Tue: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud est istadu agiornadu, torra a carrigare sa pàgina",
-    "Post to conversation" : "Pùblica in sa resonada",
     "Error while sharing file" : "Errore in sa cumpartzidura de s'archìviu",
     "Error while clearing conversation history" : "Errore limpiende s'istòria de sa resonada",
     "Error occurred while allowing guests" : "B'at àpidu un'errore autorizende is persones invitadas",
@@ -1069,6 +1068,7 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Su PIN tuo: {attendeePin}",
     "Start a conversation" : "Cumintza una resonada",
     "Mention room" : "Mentova s'aposentu",
+    "Post to conversation" : "Pùblica in sa resonada",
     "Specify commands the users can use in chats" : "Ispetzìfica is commandos chi is utentes podent impreare in sa tzarrada",
     "Remove circle and members" : "Boga·nche giru e partetzipantes"
 },

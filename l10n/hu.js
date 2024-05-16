@@ -1476,9 +1476,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Ön: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "A Nextcloud Beszélgetés frissült, töltse újra az oldalt",
-    "Post to conversation" : "Elküldés egy beszélgetésbe",
     "The recording failed. Please contact your administrator." : "A felvétel sikertelen. Lépjen kapcsolatba a rendszergazdával.",
-    "Share to conversation" : "Megosztás beszélgetésben",
     "Error while sharing file" : "Hiba a fájl megosztása során",
     "Error while clearing conversation history" : "Hiba a beszélgetés előzményeinek törlése során",
     "Error occurred while allowing guests" : "Hiba történt a vendégek engedélyezése során",
@@ -1597,6 +1595,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Az Ön PIN-kódja: {attendeePin}",
     "Start a conversation" : "Beszélgetés indítása",
     "Mention room" : "Megemlítés szobája",
+    "Post to conversation" : "Elküldés egy beszélgetésbe",
+    "Share to conversation" : "Megosztás beszélgetésben",
     "Specify commands the users can use in chats" : "Adja meg a felhasználók által a csevegésekben használható parancsokat",
     "Delete Conversation" : "Beszélgetés törlése",
     "Remove circle and members" : "Kör és tagok eltávolítása"

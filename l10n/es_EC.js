@@ -1362,9 +1362,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Tú: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk fue actualizado, por favor recarga la página",
-    "Post to conversation" : "Publicar en la conversación",
     "The recording failed. Please contact your administrator." : "La grabación falló. Por favor, contacta a tu administrador.",
-    "Share to conversation" : "Compartir en la conversación",
     "Error while sharing file" : "Error al compartir el archivo",
     "Error while clearing conversation history" : "Error al borrar el historial de conversación",
     "Error occurred while allowing guests" : "Error al permitir invitados",
@@ -1481,6 +1479,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Tu PIN: {attendeePin}",
     "Start a conversation" : "Iniciar una conversación",
     "Mention room" : "Mencionarme a la sala",
+    "Post to conversation" : "Publicar en la conversación",
+    "Share to conversation" : "Compartir en la conversación",
     "Specify commands the users can use in chats" : "Especifica los comandos que los usuarios pueden usar en los chats",
     "Remove circle and members" : "Eliminar círculo y miembros"
 },

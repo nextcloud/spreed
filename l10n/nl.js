@@ -1135,8 +1135,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Jij: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk is bijgewerkt, herlaad de pagina",
-    "Post to conversation" : "Publiceren naar gesprek",
-    "Share to conversation" : "Deel naar gesprek",
     "Error while sharing file" : "Fout bij delen bestand",
     "Error while clearing conversation history" : "Fout bij het verwijderen van de gespreksgeschiedenis",
     "Error occurred while allowing guests" : "Fout bij toelaten gasten",
@@ -1233,6 +1231,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Je PIN: {attendeePin}",
     "Start a conversation" : "Begin een gesprek",
     "Mention room" : "Vermeld ruimte",
+    "Post to conversation" : "Publiceren naar gesprek",
+    "Share to conversation" : "Deel naar gesprek",
     "Specify commands the users can use in chats" : "Geef de commando's op die gebruikers in een gesprek kunnen gebruiken",
     "Remove circle and members" : "Verwijderen kring en leden"
 },

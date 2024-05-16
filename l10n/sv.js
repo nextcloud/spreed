@@ -962,7 +962,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk uppdaterades, ladda om sidan igen",
-    "Share to conversation" : "Dela till konversation",
     "Error while sharing file" : "Fel vid delning av fil",
     "An error occurred while fetching the participants" : "Ett fel uppstod när deltagarna hämtades",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud är i underhållsläge, ladda om sidan igen",
@@ -1031,6 +1030,7 @@ OC.L10N.register(
     "Add groups or circles" : "Lägg till grupper eller cirklar",
     "Start a conversation" : "Starta en konversation",
     "Mention room" : "Nämn rum",
+    "Share to conversation" : "Dela till konversation",
     "Specify commands the users can use in chats" : "Ange kommandon som användare kan använda i chattar"
 },
 "nplurals=2; plural=(n != 1);");

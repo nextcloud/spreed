@@ -1067,7 +1067,6 @@ OC.L10N.register(
     "Audio" : "Аудіо",
     "Other" : "Інші",
     "Show all media" : "Показати всі медіа",
-    "Post to conversation" : "Допис до розмови",
     "The recording failed. Please contact your administrator." : "Запис не відбувся. Зверніться до адміністратора.",
     "Error while sharing file" : "Помилка під час надання спільного доступу до файлу",
     "Error while clearing conversation history" : "Помилка під час очищення історії розмов",
@@ -1150,6 +1149,7 @@ OC.L10N.register(
     "Add circles" : "Додати кола",
     "Add users, groups or circles" : "Додати користувачів, групи або кола",
     "Add users or circles" : "Додати користувачів або кола",
+    "Post to conversation" : "Допис до розмови",
     "Specify commands the users can use in chats" : "Вкажіть команди, які користувачі можуть використовувати в чатах",
     "Remove circle and members" : "Вилучити кола та учасників"
 },
