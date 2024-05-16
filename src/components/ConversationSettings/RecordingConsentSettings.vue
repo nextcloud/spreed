@@ -12,8 +12,8 @@
 			{{ t('spreed', 'Recording consent cannot be changed once a call or breakout session has started.') }}
 		</div>
 		<NcCheckboxRadioSwitch v-if="canModerate && !isGlobalConsent"
-			type="switch"
 			v-model="recordingConsentSelected"
+			type="switch"
 			:disabled="disabled"
 			@update:model-value="setRecordingConsent">
 			{{ t('spreed', 'Require recording consent before joining call in this conversation') }}

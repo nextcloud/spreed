@@ -53,8 +53,8 @@
 			<h3>{{ t('spreed', 'Recording consent') }}</h3>
 
 			<template v-for="level in recordingConsentOptions" :key="level.value">
-				<NcCheckboxRadioSwitch :value="level.value.toString()"
-					v-model="recordingConsentSelected"
+				<NcCheckboxRadioSwitch v-model="recordingConsentSelected"
+					:value="level.value.toString()"
 					name="recording-consent"
 					type="radio"
 					:disabled="loading"

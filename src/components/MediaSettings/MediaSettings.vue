@@ -117,8 +117,8 @@
 
 			<!-- Moderator options before starting a call-->
 			<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-				class="checkbox"
-				v-model="isRecordingFromStart">
+				v-model="isRecordingFromStart"
+				class="checkbox">
 				{{ t('spreed', 'Start recording immediately with the call') }}
 			</NcCheckboxRadioSwitch>
 

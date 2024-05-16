@@ -11,8 +11,8 @@
 				:name="t('spreed', 'Unassigned participants')">
 				<SelectableParticipant v-for="participant in unassignedParticipants"
 					:key="participant.attendeeId"
-					:value="participant.attendeeId"
 					v-model:checked="selectedParticipants"
+					:value="participant.attendeeId"
 					:participant="participant" />
 			</BreakoutRoomItem>
 			<BreakoutRoomItem v-for="(item, index) in assignments"
@@ -21,8 +21,8 @@
 				:name="roomName(index)">
 				<SelectableParticipant v-for="attendeeId in item"
 					:key="attendeeId"
-					:value="assignments"
 					v-model:checked="selectedParticipants"
+					:value="assignments"
 					:participant="attendeesById[attendeeId]" />
 			</BreakoutRoomItem>
 		</ul>
