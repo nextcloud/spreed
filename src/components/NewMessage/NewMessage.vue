@@ -74,8 +74,8 @@
 					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
 				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
-					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					v-model="text"
+					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"

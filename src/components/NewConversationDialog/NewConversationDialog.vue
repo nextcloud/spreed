@@ -28,8 +28,8 @@
 
 				<!-- Second page -->
 				<NewConversationContactsPage v-if="page === 1"
-					class="new-group-conversation__content"
 					v-model:selected-participants="selectedParticipants"
+					class="new-group-conversation__content"
 					:can-moderate-sip-dial-out="canModerateSipDialOut"
 					:conversation-name="conversationName" />
 			</div>

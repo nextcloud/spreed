@@ -11,8 +11,8 @@
 
 		<NcCheckboxRadioSwitch v-for="level in notificationLevels"
 			:key="level.value"
-			:value="level.value.toString()"
 			v-model="notificationLevel"
+			:value="level.value.toString()"
 			name="notification_level"
 			type="radio"
 			@update:model-value="setNotificationLevel">
@@ -24,8 +24,8 @@
 
 		<NcCheckboxRadioSwitch v-if="showCallNotificationSettings"
 			id="notification_calls"
-			type="switch"
 			v-model="notifyCalls"
+			type="switch"
 			@update:model-value="setNotificationCalls">
 			{{ t('spreed', 'Notify about calls in this conversation') }}
 		</NcCheckboxRadioSwitch>

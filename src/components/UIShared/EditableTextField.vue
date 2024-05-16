@@ -13,8 +13,8 @@
 			:use-extended-markdown="useMarkdown" />
 		<NcRichContenteditable v-else
 			ref="richContenteditable"
-			dir="auto"
 			v-model="text"
+			dir="auto"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
 			:multiline="multiline"
