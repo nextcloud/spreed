@@ -89,7 +89,7 @@
 				<DialpadPanel :disabled="disabled"
 					container="#tab-participants"
 					dialing
-					@dial:type="dialType" />
+					@dial-type="dialType" />
 			</template>
 		</div>
 
@@ -431,7 +431,7 @@ export default {
 		},
 	},
 
-	emits: ['click-participant'],
+	emits: ['clickParticipant'],
 
 	setup() {
 		const isInCall = useIsInCall()
@@ -892,7 +892,7 @@ export default {
 		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
-				this.$emit('click-participant', this.participant)
+				this.$emit('clickParticipant', this.participant)
 			}
 		},
 

@@ -121,7 +121,7 @@ export default {
 		},
 	},
 
-	emits: ['update-background'],
+	emits: ['updateBackground'],
 
 	setup() {
 		return {
@@ -192,7 +192,7 @@ export default {
 
 	methods: {
 		handleSelectBackground(path) {
-			this.$emit('update-background', path)
+			this.$emit('updateBackground', path)
 			this.selectedBackground = path
 		},
 

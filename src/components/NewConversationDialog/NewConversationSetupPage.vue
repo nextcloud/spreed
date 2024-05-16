@@ -11,7 +11,7 @@
 			:label="t('spreed', 'Name')"
 			:error="!!nameErrorLabel"
 			label-visible
-			@keydown.enter="$emit('handle-enter')" />
+			@keydown.enter="$emit('handleEnter')" />
 		<span v-if="nameErrorLabel" class="new-group-conversation__error">
 			{{ nameErrorLabel }}
 		</span>
@@ -32,7 +32,7 @@
 				:conversation="newConversation"
 				controlled
 				editable
-				@avatar-edited="$emit('avatar-edited', $event)" />
+				@avatar-edited="$emit('avatarEdited', $event)" />
 		</template>
 
 		<label class="new-group-conversation__label">
@@ -102,7 +102,7 @@ export default {
 		}
 	},
 
-	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter'],
+	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatarEdited', 'handleEnter'],
 
 	setup() {
 		return { supportsAvatar }

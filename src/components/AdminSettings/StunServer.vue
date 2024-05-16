@@ -69,7 +69,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:server'],
+	emits: ['removeServer', 'update:server'],
 
 	computed: {
 		isValidServer() {
@@ -92,7 +92,7 @@ export default {
 
 	methods: {
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 		update(value) {
 			this.$emit('update:server', value)

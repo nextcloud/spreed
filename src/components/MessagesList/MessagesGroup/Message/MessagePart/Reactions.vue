@@ -124,7 +124,7 @@ export default {
 		},
 	},
 
-	emits: ['emoji-picker-toggled'],
+	emits: ['emojiPickerToggled'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
@@ -258,7 +258,7 @@ export default {
 		},
 
 		emitEmojiPickerStatus() {
-			this.$emit('emoji-picker-toggled')
+			this.$emit('emojiPickerToggled')
 		},
 
 		remainingReactionsLabel(reaction) {

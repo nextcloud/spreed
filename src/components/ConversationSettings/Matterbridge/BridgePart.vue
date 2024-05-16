@@ -33,7 +33,7 @@
 				<NcActionButton v-if="editable"
 					icon="icon-delete"
 					:close-after-click="true"
-					@click="$emit('delete-part')">
+					@click="$emit('deletePart')">
 					{{ t('spreed', 'Delete') }}
 				</NcActionButton>
 			</NcActions>
@@ -117,7 +117,7 @@ export default {
 		},
 	},
 
-	emits: ['delete-part', 'edit-clicked'],
+	emits: ['deletePart', 'editClicked'],
 
 	data() {
 		return {
@@ -158,7 +158,7 @@ export default {
 			return classes
 		},
 		onEditClick() {
-			this.$emit('edit-clicked')
+			this.$emit('editClicked')
 		},
 		// focus on main field when entering edition mode and when created
 		focusMainField() {
