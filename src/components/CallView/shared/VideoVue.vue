@@ -11,7 +11,7 @@
 		:class="containerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
-		@click="$emit('click-video')">
+		@click="$emit('clickVideo')">
 		<TransitionWrapper name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
@@ -27,7 +27,7 @@
 					:aria-label="t('spreed', 'Hide presenter video')"
 					:title="t('spreed', 'Hide presenter video')"
 					:size="32"
-					@click="$emit('click-presenter')" />
+					@click="$emit('clickPresenter')" />
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -181,7 +181,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video', 'click-presenter'],
+	emits: ['clickVideo', 'clickPresenter'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()

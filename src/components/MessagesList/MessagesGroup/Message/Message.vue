@@ -292,7 +292,7 @@ export default {
 		},
 	},
 
-	emits: ['toggle-combined-system-message'],
+	emits: ['toggleCombinedSystemMessage'],
 
 	setup() {
 		return {
@@ -534,7 +534,7 @@ export default {
 		},
 
 		toggleCombinedSystemMessage() {
-			this.$emit('toggle-combined-system-message')
+			this.$emit('toggleCombinedSystemMessage')
 		},
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen

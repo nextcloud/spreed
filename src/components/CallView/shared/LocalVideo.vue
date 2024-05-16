@@ -9,7 +9,7 @@
 		:class="videoContainerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
-		@click="$emit('click-video')">
+		@click="$emit('clickVideo')">
 		<div v-show="localMediaModel.attributes.videoEnabled"
 			:class="videoWrapperClass"
 			class="videoWrapper"
@@ -122,7 +122,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video'],
+	emits: ['clickVideo'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
