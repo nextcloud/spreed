@@ -6,7 +6,7 @@
 <template>
 	<NcModal :container="container"
 		:class="{'modal-mask__participants-step': isEditingParticipants}"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="breakout-rooms-editor"
 			:class="{'breakout-rooms-editor__participants-step': isEditingParticipants}">
 			<h2>{{ modalTitle }}</h2>
@@ -64,12 +64,12 @@
 			<template v-else>
 				<BreakoutRoomsParticipantsEditor :token="token"
 					:room-number="amount"
-					v-on="$listeners"
+					@close="$emit('close')"
 					@back="isEditingParticipants = false"
 					@create-rooms="handleCreateRooms" />
 			</template>
 		</div>
-	</ncmodal>
+	</NcModal>
 </template>
 
 <script>
