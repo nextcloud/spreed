@@ -132,7 +132,7 @@ export default {
 		},
 	},
 
-	emits: ['emoji-picker-toggled'],
+	emits: ['emojiPickerToggled'],
 
 	setup() {
 		return {
@@ -259,7 +259,7 @@ export default {
 		},
 
 		emitEmojiPickerStatus() {
-			this.$emit('emoji-picker-toggled')
+			this.$emit('emojiPickerToggled')
 		},
 
 		remainingReactionsLabel(reaction) {

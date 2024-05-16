@@ -14,7 +14,7 @@
 				:container="container"
 				:inline="editable ? 1 : 0"
 				placement="bottom">
-				<NcActionButton v-if="editable" close-after-click @click="$emit('edit-clicked')">
+				<NcActionButton v-if="editable" close-after-click @click="$emit('editClicked')">
 					<template #icon>
 						<IconCheck v-if="editing" :size="20" />
 						<IconPencil v-else :size="20" />
@@ -27,7 +27,7 @@
 					</template>
 					{{ t('spreed', 'More information') }}
 				</NcActionLink>
-				<NcActionButton v-if="editable" close-after-click @click="$emit('delete-part')">
+				<NcActionButton v-if="editable" close-after-click @click="$emit('deletePart')">
 					<template #icon>
 						<IconDelete :size="20" />
 					</template>
@@ -125,7 +125,7 @@ export default {
 		},
 	},
 
-	emits: ['delete-part', 'edit-clicked'],
+	emits: ['deletePart', 'editClicked'],
 
 	data() {
 		return {

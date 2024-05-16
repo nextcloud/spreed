@@ -71,7 +71,7 @@ export default {
 		},
 	},
 
-	emits: ['recording', 'audio-file'],
+	emits: ['recording', 'audioFile'],
 
 	setup() {
 		const encoderReady = useAudioEncoder()
@@ -245,7 +245,7 @@ export default {
 				const fileName = this.generateFileName()
 				// Convert blob to file
 				const audioFile = new File([this.blob], fileName, { type: 'audio/wav' })
-				this.$emit('audio-file', audioFile)
+				this.$emit('audioFile', audioFile)
 				this.$emit('recording', false)
 			}
 			this.resetComponentData()

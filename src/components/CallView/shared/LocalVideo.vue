@@ -9,7 +9,7 @@
 		:class="videoContainerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
-		@click="$emit('click-video')">
+		@click="$emit('clickVideo')">
 		<img v-if="screenshotModeUrl"
 			class="dev-mode-video--self videoWrapper"
 			alt="dev-mode-video--self"
@@ -29,7 +29,7 @@
 				:aria-label="t('spreed', 'Hide presenter video')"
 				:title="t('spreed', 'Hide presenter video')"
 				:size="32"
-				@click="$emit('click-presenter')" />
+				@click="$emit('clickPresenter')" />
 			<NcLoadingIcon v-if="isNotConnected"
 				:size="avatarSize / 2"
 				class="video-loading" />
@@ -149,7 +149,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video', 'click-presenter'],
+	emits: ['clickVideo', 'clickPresenter'],
 
 	setup() {
 		const devMode = inject('CallView:devModeEnabled', ref(false))

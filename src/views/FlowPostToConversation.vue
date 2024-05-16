@@ -45,7 +45,7 @@ export default {
 		},
 	},
 
-	emits: ['input', 'update:model-value'],
+	emits: ['input', 'update:modelValue'],
 
 	data() {
 		return {
@@ -115,7 +115,7 @@ export default {
 				return
 			}
 			this.$emit('input', JSON.stringify({ m: mode, t: token }))
-			this.$emit('update:model-value', JSON.stringify({ m: mode, t: token }))
+			this.$emit('update:modelValue', JSON.stringify({ m: mode, t: token }))
 		},
 	},
 }

@@ -77,7 +77,7 @@ export default {
 		},
 	},
 
-	emits: ['update:value', 'update:is-focused', 'input', 'abort-search', 'blur', 'focus'],
+	emits: ['update:value', 'update:isFocused', 'input', 'abortSearch', 'blur', 'focus'],
 
 	expose: ['focus'],
 
@@ -144,16 +144,16 @@ export default {
 		},
 
 		/**
-		 * Emits the abort-search event and blurs the input
+		 * Emits the abortSearch event and blurs the input
 		 */
 		abortSearch() {
 			this.updateValue('')
-			this.$emit('update:is-focused', false)
-			this.$emit('abort-search')
+			this.$emit('update:isFocused', false)
+			this.$emit('abortSearch')
 		},
 
 		handleFocus(event) {
-			this.$emit('update:is-focused', true)
+			this.$emit('update:isFocused', true)
 			this.$emit('focus', event)
 		},
 
@@ -175,7 +175,7 @@ export default {
 			// Blur in other cases
 			this.$emit('blur', event)
 			if (!this.isSearching) {
-				this.$emit('update:is-focused', false)
+				this.$emit('update:isFocused', false)
 			}
 		},
 

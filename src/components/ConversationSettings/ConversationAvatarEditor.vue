@@ -168,7 +168,7 @@ export default {
 		},
 	},
 
-	emits: ['avatar-edited'],
+	emits: ['avatarEdited'],
 
 	expose: ['saveAvatar'],
 
@@ -231,13 +231,13 @@ export default {
 	watch: {
 		showCropper(value) {
 			if (this.controlled) {
-				this.$emit('avatar-edited', value)
+				this.$emit('avatarEdited', value)
 			}
 		},
 
 		emojiAvatar(value) {
 			if (this.controlled) {
-				this.$emit('avatar-edited', !!value)
+				this.$emit('avatarEdited', !!value)
 			}
 		},
 	},

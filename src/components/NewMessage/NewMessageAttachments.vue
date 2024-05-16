@@ -15,7 +15,7 @@
 
 		<NcActionButton v-if="canUploadFiles"
 			close-after-click
-			@click="$emit('open-file-upload')">
+			@click="$emit('openFileUpload')">
 			<template #icon>
 				<Upload :size="20" />
 			</template>
@@ -24,7 +24,7 @@
 
 		<template v-if="canShareFiles">
 			<NcActionButton close-after-click
-				@click="$emit('handle-file-share')">
+				@click="$emit('handleFileShare')">
 				<template #icon>
 					<Folder :size="20" />
 				</template>
@@ -35,7 +35,7 @@
 				:key="index"
 				close-after-click
 				:icon="provider.iconClass"
-				@click="$emit('update-new-file-dialog', index)">
+				@click="$emit('updateNewFileDialog', index)">
 				<template v-if="provider.iconSvgInline" #icon>
 					<NcIconSvgWrapper :svg="provider.iconSvgInline" :size="20" />
 				</template>
@@ -116,7 +116,7 @@ export default {
 		},
 	},
 
-	emits: ['update-new-file-dialog', 'open-file-upload', 'handle-file-share'],
+	emits: ['updateNewFileDialog', 'openFileUpload', 'handleFileShare'],
 
 	computed: {
 		fileTemplateOptions() {

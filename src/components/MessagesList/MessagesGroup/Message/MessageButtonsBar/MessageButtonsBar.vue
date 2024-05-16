@@ -154,8 +154,8 @@
 					</NcActionButton>
 					<NcActionButton v-if="isTranslationAvailable && !isFileShareWithoutCaption"
 						close-after-click
-						@click.stop="$emit('show-translate-dialog', true)"
-						@close="$emit('show-translate-dialog', false)">
+						@click.stop="$emit('showTranslateDialog', true)"
+						@close="$emit('showTranslateDialog', false)">
 						<template #icon>
 							<Translate :size="16" />
 						</template>
@@ -401,7 +401,7 @@ export default {
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'showTranslateDialog', 'reply', 'edit'],
 
 	setup(props) {
 		const { message } = toRefs(props)

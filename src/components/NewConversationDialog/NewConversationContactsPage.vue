@@ -120,7 +120,7 @@ export default {
 		},
 	},
 
-	emits: ['update:selected-participants'],
+	emits: ['update:selectedParticipants'],
 
 	setup() {
 		const wrapper = ref(null)
@@ -263,7 +263,7 @@ export default {
 					})
 				: [...this.selectedParticipants, participant]
 
-			this.$emit('update:selected-participants', payload)
+			this.$emit('update:selectedParticipants', payload)
 		},
 
 		addParticipantPhone() {

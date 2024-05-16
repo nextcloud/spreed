@@ -182,7 +182,7 @@ export default {
 		},
 	},
 
-	emits: ['bottom-bar-hover'],
+	emits: ['bottomBarHover'],
 
 	setup() {
 		return {
@@ -282,7 +282,7 @@ export default {
 			if (!this.isBig) {
 				return
 			}
-			this.$emit('bottom-bar-hover', value)
+			this.$emit('bottomBarHover', value)
 		},
 	},
 

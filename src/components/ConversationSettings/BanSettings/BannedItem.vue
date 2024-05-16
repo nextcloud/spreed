@@ -11,7 +11,7 @@
 				<NcButton variant="tertiary" @click="showDetails = !showDetails">
 					{{ showDetails ? t('spreed', 'Hide details') : t('spreed', 'Show details') }}
 				</NcButton>
-				<NcButton @click="$emit('unban-participant')">
+				<NcButton @click="$emit('unbanParticipant')">
 					{{ t('spreed', 'Unban') }}
 				</NcButton>
 			</div>
@@ -44,7 +44,7 @@ export default {
 		},
 	},
 
-	emits: ['unban-participant'],
+	emits: ['unbanParticipant'],
 
 	data() {
 		return {

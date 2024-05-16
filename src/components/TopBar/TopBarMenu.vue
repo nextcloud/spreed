@@ -122,7 +122,7 @@
 			<!-- Breakout rooms -->
 			<NcActionButton v-if="canConfigureBreakoutRooms"
 				close-after-click
-				@click="$emit('open-breakout-rooms-editor')">
+				@click="$emit('openBreakoutRoomsEditor')">
 				<template #icon>
 					<IconDotsCircle :size="20" />
 				</template>
@@ -252,7 +252,7 @@ export default {
 		},
 	},
 
-	emits: ['open-breakout-rooms-editor'],
+	emits: ['openBreakoutRoomsEditor'],
 
 	setup() {
 		return {

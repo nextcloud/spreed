@@ -195,7 +195,7 @@ export default {
 		},
 	},
 
-	emits: ['toggle-combined-system-message'],
+	emits: ['toggleCombinedSystemMessage'],
 
 	setup(props) {
 		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
@@ -451,7 +451,7 @@ export default {
 		},
 
 		toggleCombinedSystemMessage() {
-			this.$emit('toggle-combined-system-message')
+			this.$emit('toggleCombinedSystemMessage')
 		},
 
 		toggleFollowUpEmojiPicker() {
