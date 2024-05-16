@@ -100,7 +100,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:server', 'update:verify'],
+	emits: ['removeServer', 'update:server', 'update:verify'],
 
 	data() {
 		return {
@@ -151,7 +151,7 @@ export default {
 	methods: {
 		t,
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 
 		updateVerify(checked) {

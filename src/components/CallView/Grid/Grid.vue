@@ -254,7 +254,7 @@ export default {
 		},
 	},
 
-	emits: ['select-video', 'click-local-video'],
+	emits: ['selectVideo', 'clickLocalVideo'],
 
 	setup() {
 		// Developer mode: If enabled it allows to debug the grid using dummy videos
@@ -861,11 +861,11 @@ export default {
 
 		handleClickVideo(event, peerId) {
 			console.debug('selected-video peer id', peerId)
-			this.$emit('select-video', peerId)
+			this.$emit('selectVideo', peerId)
 		},
 
 		handleClickLocalVideo() {
-			this.$emit('click-local-video')
+			this.$emit('clickLocalVideo')
 		},
 
 		isSelected(callParticipantModel) {

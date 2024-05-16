@@ -67,7 +67,7 @@ export default {
 		},
 	},
 
-	emits: ['close', 'update:active-tab'],
+	emits: ['close', 'update:activeTab'],
 
 	setup() {
 		const dialogHeaderId = `shared-items-browser-${useId()}`
@@ -112,7 +112,7 @@ export default {
 
 	methods: {
 		handleTabClick(type) {
-			this.$emit('update:active-tab', type)
+			this.$emit('update:activeTab', type)
 		},
 
 		firstFetchItems(type) {

@@ -11,7 +11,7 @@
 		:class="containerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
-		@click="$emit('click-video')">
+		@click="$emit('clickVideo')">
 		<TransitionWrapper name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
@@ -27,7 +27,7 @@
 					:aria-label="t('spreed', 'Hide presenter video')"
 					:title="t('spreed', 'Hide presenter video')"
 					:size="32"
-					@click="$emit('click-presenter')" />
+					@click="$emit('clickPresenter')" />
 				<NcLoadingIcon v-if="isLoading"
 					:size="avatarSize / 2"
 					class="video-loading" />
@@ -206,7 +206,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video', 'click-presenter', 'force-promote-video'],
+	emits: ['clickVideo', 'clickPresenter', 'forcePromoteVideo'],
 
 	setup() {
 		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
@@ -624,7 +624,7 @@ export default {
 		},
 
 		handleHoverEvent(value) {
-			this.$emit('force-promote-video', value ? this.model : null)
+			this.$emit('forcePromoteVideo', value ? this.model : null)
 		},
 	},
 

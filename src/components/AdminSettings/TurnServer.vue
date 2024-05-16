@@ -139,7 +139,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:schemes', 'update:server', 'update:secret', 'update:protocols'],
+	emits: ['removeServer', 'update:schemes', 'update:server', 'update:secret', 'update:protocols'],
 
 	data() {
 		return {
@@ -397,7 +397,7 @@ export default {
 		},
 
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 
 		updateSchemes(event) {

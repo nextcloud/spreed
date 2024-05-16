@@ -273,7 +273,7 @@ export default {
 		},
 	},
 
-	emits: ['update:recording-consent-given'],
+	emits: ['update:recordingConsentGiven'],
 
 	setup() {
 		const video = ref(null)
@@ -743,7 +743,7 @@ export default {
 		},
 
 		setRecordingConsentGiven(value) {
-			this.$emit('update:recording-consent-given', value)
+			this.$emit('update:recordingConsentGiven', value)
 		},
 
 		handleAudioInputIdChange(audioInputId) {

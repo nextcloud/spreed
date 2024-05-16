@@ -118,7 +118,7 @@ export default {
 		},
 	},
 
-	emits: ['update:is-chat-scrolled-to-bottom'],
+	emits: ['update:isChatScrolledToBottom'],
 
 	setup(props) {
 		const isDocumentVisible = useDocumentVisibility()
@@ -1248,7 +1248,7 @@ export default {
 				const scrollOffset = this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop
 				isScrolledToBottom = Math.abs(scrollOffset - this.$refs.scroller.clientHeight) < SCROLL_TOLERANCE
 			}
-			this.$emit('update:is-chat-scrolled-to-bottom', isScrolledToBottom)
+			this.$emit('update:isChatScrolledToBottom', isScrolledToBottom)
 			if (isScrolledToBottom) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocusing the window will remove the stickiness
