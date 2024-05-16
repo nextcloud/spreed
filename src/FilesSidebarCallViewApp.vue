@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { defineComponent, defineAsyncComponent, h } from 'vue'
+
 import LoadingComponent from './components/LoadingComponent.vue'
 
 import { useHashCheck } from './composables/useHashCheck.js'
@@ -22,17 +24,14 @@ import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 
 export default {
-
 	name: 'FilesSidebarCallViewApp',
 
 	components: {
-		CallView: () => ({
-			component: import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
-			loading: {
-				render: (h) => h(LoadingComponent, { class: 'call-loading' }),
-			},
+		CallView: defineAsyncComponent({
+			loader: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
+			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'call-loading' })),
 		}),
-		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
+		TopBar: defineAsyncComponent(() => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue')),
 	},
 
 	setup() {
