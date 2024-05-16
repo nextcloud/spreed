@@ -2506,7 +2506,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => (string) $message['actorType'],
-				'actorId' => ($message['actorType'] === 'guests') ? self::$sessionIdToUser[$message['actorId']] : (string) $message['actorId'],
+				'actorId' => ($message['actorType'] === 'guests' && $message['actorId'] !== 'system') ? self::$sessionIdToUser[$message['actorId']] : (string) $message['actorId'],
 				'systemMessage' => (string) $message['systemMessage'],
 			];
 
