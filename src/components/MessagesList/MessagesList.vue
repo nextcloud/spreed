@@ -308,7 +308,7 @@ export default {
 		}, 30000)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateReadMarkerPosition.clear?.()
 		this.debounceHandleScroll.clear?.()
 

@@ -347,7 +347,7 @@ export default {
 			this.showSettings = true
 		},
 
-		beforeDestroy() {
+		beforeUnmount() {
 			unsubscribe('show-settings', this.handleShowSettings)
 		},
 	},

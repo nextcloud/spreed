@@ -545,7 +545,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('focus-chat-input', this.focusInput)
 		EventBus.off('upload-start', this.handleUploadSideEffects)
 		EventBus.off('upload-discard', this.handleUploadSideEffects)

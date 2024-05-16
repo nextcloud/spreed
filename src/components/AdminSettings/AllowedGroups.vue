@@ -162,7 +162,7 @@ export default {
 		this.debounceSearchGroup('')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceSearchGroup.clear?.()
 	},
 

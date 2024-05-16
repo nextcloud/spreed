@@ -167,7 +167,7 @@ export default {
 		this.$store.dispatch('initializeAudioEncoder')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.killStreams()
 	},
 

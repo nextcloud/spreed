@@ -118,7 +118,7 @@ export default {
 		this.hideWarning = state.hideWarning
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

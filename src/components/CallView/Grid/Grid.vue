@@ -532,7 +532,7 @@ export default {
 
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceMakeGrid.clear?.()
 		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
