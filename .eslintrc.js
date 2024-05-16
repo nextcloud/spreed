@@ -4,8 +4,7 @@
  */
 module.exports = {
 	extends: [
-		'@nextcloud',
-		'@nextcloud/eslint-config/typescript',
+		'@nextcloud/eslint-config/vue3',
 	],
 	globals: {
 		// @nextcloud/webpack-vue-config globals
@@ -75,20 +74,6 @@ module.exports = {
 			// https://github.com/import-js/eslint-plugin-import/issues/2562
 			ignore: ['\\?raw$'],
 		}],
-		// Prepare for Vue 3 Migration
-		'vue/no-deprecated-data-object-declaration': 'warn',
-		'vue/no-deprecated-events-api': 'warn',
-		'vue/no-deprecated-filter': 'warn',
-		'vue/no-deprecated-functional-template': 'warn',
-		'vue/no-deprecated-html-element-is': 'warn',
-		'vue/no-deprecated-props-default-this': 'warn',
-		'vue/no-deprecated-router-link-tag-prop': 'warn',
-		'vue/no-deprecated-scope-attribute': 'warn',
-		'vue/no-deprecated-slot-attribute': 'warn',
-		'vue/no-deprecated-slot-scope-attribute': 'warn',
-		'vue/no-deprecated-v-is': 'warn',
-		'vue/no-deprecated-v-on-number-modifiers': 'warn',
-		'vue/require-explicit-emits': 'warn',
 	},
 	overrides: [
 		{
