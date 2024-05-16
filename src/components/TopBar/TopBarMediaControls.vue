@@ -403,7 +403,7 @@ export default {
 		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model, this)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.speakingWhileMutedWarner.destroy()
 	},
 

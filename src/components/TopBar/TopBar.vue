@@ -340,7 +340,7 @@ export default {
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.notifyUnreadMessages(null)
 		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)

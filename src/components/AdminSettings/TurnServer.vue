@@ -200,7 +200,7 @@ export default {
 		this.testingSuccess = false
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceTestServer.clear?.()
 	},
 

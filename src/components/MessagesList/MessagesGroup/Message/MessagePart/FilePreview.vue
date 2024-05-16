@@ -568,7 +568,7 @@ export default {
 		img.src = this.previewUrl
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.uploadManager = null
 	},
 

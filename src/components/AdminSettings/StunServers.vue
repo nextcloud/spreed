@@ -78,7 +78,7 @@ export default {
 		this.debounceUpdateServers = debounce(this.updateServers, 1000)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

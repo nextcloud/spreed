@@ -247,7 +247,7 @@ export default {
 		window.addEventListener('beforeunload', this.preventUnload)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
 			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)

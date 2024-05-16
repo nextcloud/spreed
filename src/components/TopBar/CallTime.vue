@@ -166,7 +166,7 @@ export default {
 		this.timer = setInterval(this.computeElapsedTime, 1000)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		clearInterval(this.timer)
 	},
 
