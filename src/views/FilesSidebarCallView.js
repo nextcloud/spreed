@@ -16,12 +16,12 @@
  */
 export default class FilesSidebarCallView {
 	constructor() {
-		this.callViewInstance = OCA.Talk.newCallView()
+		const callViewApp = OCA.Talk.newCallView()
 
-		this.$el = document.createElement('div')
-		this.id = 'FilesSidebarCallView'
+		const container = document.createElement('div')
+		container.id = 'FilesSidebarCallView'
 
-		this.callViewInstance.mount(this.$el)
+		this.callViewInstance = callViewApp.mount(container)
 		this.$el = this.callViewInstance.$el
 
 		this.$el.replaceAll = function(target) {
@@ -32,6 +32,6 @@ export default class FilesSidebarCallView {
 	setFileInfo(fileInfo) {
 		// The FilesSidebarCallViewApp is the first (and only) child of the Vue
 		// instance.
-		this.callViewInstance.$children[0].setFileInfo(fileInfo)
+		this.callViewInstance.setFileInfo(fileInfo)
 	}
 }
