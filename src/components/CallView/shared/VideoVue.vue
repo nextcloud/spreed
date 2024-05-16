@@ -39,7 +39,6 @@
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
 			<div v-if="showBackgroundAndAvatar"
-				:key="'backgroundAvatar'"
 				class="avatar-container">
 				<VideoBackground :display-name="participantName" :user="participantUserId" />
 				<AvatarWrapper :id="participantUserId"
@@ -54,7 +53,6 @@
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
 			<div v-if="showPlaceholderForPromoted"
-				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
 				<AccountCircle v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
 			</div>

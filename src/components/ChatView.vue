@@ -46,7 +46,6 @@
 
 		<!-- Input field -->
 		<NewMessage v-if="containerId"
-			:key="containerId"
 			role="region"
 			:token="token"
 			:container="containerId"

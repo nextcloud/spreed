@@ -33,8 +33,7 @@
 						is-upload-editor
 						v-bind="file[1].temporaryMessage.messageParameters.file"
 						@remove-file="handleRemoveFileFromSelection" />
-					<div :key="'addMore'"
-						class="add-more">
+					<div class="add-more">
 						<NcButton :aria-label="addMoreAriaLabel"
 							type="primary"
 							class="add-more__button"
