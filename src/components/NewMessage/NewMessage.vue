@@ -86,7 +86,7 @@
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
-					@update:modelValue="handleTyping"
+					@update:model-value="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
 			</div>

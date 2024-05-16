@@ -17,7 +17,7 @@
 				:disabled="hasBreakoutRooms || isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
-				@update:modelValue="toggleGuests">
+				@update:model-value="toggleGuests">
 				{{ t('spreed', 'Allow guests to join this conversation via link') }}
 			</NcCheckboxRadioSwitch>
 
@@ -26,7 +26,7 @@
 				:disabled="isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_password_hint"
-				@update:modelValue="togglePassword">
+				@update:model-value="togglePassword">
 				{{ t('spreed', 'Password protection') }}
 			</NcCheckboxRadioSwitch>
 

@@ -49,7 +49,7 @@
 			</p>
 			<NcCheckboxRadioSwitch v-model="hideWarning"
 				:disabled="loading"
-				@update:modelValue="updateHideWarning">
+				@update:model-value="updateHideWarning">
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
@@ -61,7 +61,7 @@
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:modelValue="updateSecret" />
+			@update:model-value="updateSecret" />
 	</section>
 </template>
 

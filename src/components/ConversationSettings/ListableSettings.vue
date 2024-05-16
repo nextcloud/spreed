@@ -8,7 +8,7 @@
 		<NcCheckboxRadioSwitch :model-value="listable !== LISTABLE.NONE"
 			:disabled="isListableLoading"
 			type="switch"
-			@update:modelValue="toggleListableUsers">
+			@update:model-value="toggleListableUsers">
 			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
 		</NcCheckboxRadioSwitch>
 		<NcCheckboxRadioSwitch v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
@@ -16,7 +16,7 @@
 			:model-value="listable === LISTABLE.ALL"
 			:disabled="isListableLoading"
 			type="switch"
-			@update:modelValue="toggleListableGuests">
+			@update:model-value="toggleListableGuests">
 			{{ t('spreed', 'Also open to users created with the Guests app') }}
 		</NcCheckboxRadioSwitch>
 	</div>

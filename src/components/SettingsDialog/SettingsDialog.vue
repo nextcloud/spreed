@@ -49,7 +49,7 @@
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
-				@update:modelValue="toggleReadStatusPrivacy">
+				@update:model-value="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-if="supportTypingStatus"
@@ -58,7 +58,7 @@
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
-				@update:modelValue="toggleTypingStatusPrivacy">
+				@update:model-value="toggleTypingStatusPrivacy">
 				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
@@ -70,7 +70,7 @@
 				:disabled="playSoundsLoading"
 				type="switch"
 				class="checkbox"
-				@update:modelValue="togglePlaySounds">
+				@update:model-value="togglePlaySounds">
 				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
 			</NcCheckboxRadioSwitch>
 			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
@@ -89,7 +89,7 @@
 				:model-value="isBackgroundBlurred"
 				type="switch"
 				class="checkbox"
-				@update:modelValue="toggleBackgroundBlurred">
+				@update:model-value="toggleBackgroundBlurred">
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>

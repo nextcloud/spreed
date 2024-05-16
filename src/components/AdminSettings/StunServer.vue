@@ -16,7 +16,7 @@
 				:model-value="server"
 				:disabled="loading"
 				:aria-label="t('spreed', 'STUN server URL')"
-				@update:modelValue="update" />
+				@update:model-value="update" />
 		</div>
 
 		<AlertCircle v-show="!isValidServer"
