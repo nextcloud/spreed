@@ -25,7 +25,7 @@
 			:aria-label="t('spreed', 'Conversation actions')"
 			type="tertiary"
 			:container="container"
-			@shortkey.native="toggleFullscreen">
+			@shortkey="toggleFullscreen">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
 				<DotsHorizontal :size="20" />
