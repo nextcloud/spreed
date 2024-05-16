@@ -7,7 +7,7 @@
 	<NcContent v-shortkey.once="disableKeyboardShortcuts ? null : ['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
-		@shortkey.native="handleAppSearch">
+		@shortkey="handleAppSearch">
 		<LeftSidebar v-if="getUserId && !isFullscreen" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
