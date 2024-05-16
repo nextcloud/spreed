@@ -16,7 +16,7 @@
 			label="label"
 			track-by="value"
 			no-wrap
-			@update:modelValue="updateSchemes" />
+			@update:model-value="updateSchemes" />
 
 		<NcTextField ref="turn_server"
 			v-tooltip.auto="turnServerError"
@@ -27,7 +27,7 @@
 			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'TURN server URL')"
-			@update:modelValue="updateServer" />
+			@update:model-value="updateServer" />
 
 		<NcTextField ref="turn_secret"
 			name="turn_secret"
@@ -36,7 +36,7 @@
 			:model-value="secret"
 			:disabled="loading"
 			:label="t('spreed', 'TURN server secret')"
-			@update:modelValue="updateSecret" />
+			@update:model-value="updateSecret" />
 
 		<NcSelect class="turn-server__select"
 			name="turn_protocols"
@@ -49,7 +49,7 @@
 			label="label"
 			track-by="value"
 			no-wrap
-			@update:modelValue="updateProtocols" />
+			@update:model-value="updateProtocols" />
 
 		<NcButton v-show="!loading"
 			type="tertiary-no-background"

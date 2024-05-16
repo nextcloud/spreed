@@ -47,7 +47,7 @@
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:modelValue="updateSecret" />
+			@update:model-value="updateSecret" />
 
 		<template v-if="servers.length && recordingConsentCapability">
 			<h3>{{ t('spreed', 'Recording consent') }}</h3>
@@ -58,7 +58,7 @@
 					name="recording-consent"
 					type="radio"
 					:disabled="loading"
-					@update:modelValue="setRecordingConsent">
+					@update:model-value="setRecordingConsent">
 					{{ level.label }}
 				</NcCheckboxRadioSwitch>
 

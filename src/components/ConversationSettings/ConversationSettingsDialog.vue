@@ -25,7 +25,7 @@
 					type="switch"
 					:disabled="recordingConsentRequired"
 					:model-value="showMediaSettings"
-					@update:modelValue="setShowMediaSettings">
+					@update:model-value="setShowMediaSettings">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
 				<p v-if="recordingConsentRequired">
