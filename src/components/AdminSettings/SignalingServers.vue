@@ -47,21 +47,21 @@
 			<p class="settings-hint additional-top-margin">
 				{{ t('spreed', 'Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}
 			</p>
-			<NcCheckboxRadioSwitch :checked.sync="hideWarning"
+			<NcCheckboxRadioSwitch v-model="hideWarning"
 				:disabled="loading"
-				@update:checked="updateHideWarning">
+				@update:modelValue="updateHideWarning">
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
 
 		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
+			:model-value="secret"
 			name="signaling_secret"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:value="updateSecret" />
+			@update:modelValue="updateSecret" />
 	</section>
 </template>
 

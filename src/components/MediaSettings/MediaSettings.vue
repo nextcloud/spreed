@@ -109,16 +109,16 @@
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
 				class="checkbox"
-				:checked="showMediaSettings || showRecordingWarning"
+				:model-value="showMediaSettings || showRecordingWarning"
 				:disabled="showRecordingWarning"
-				@update:checked="setShowMediaSettings">
+				@update:modelValue="setShowMediaSettings">
 				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
 
 			<!-- Moderator options before starting a call-->
 			<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
 				class="checkbox"
-				:checked.sync="isRecordingFromStart">
+				v-model="isRecordingFromStart">
 				{{ t('spreed', 'Start recording immediately with the call') }}
 			</NcCheckboxRadioSwitch>
 
@@ -135,8 +135,8 @@
 						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
 					</p>
 					<NcCheckboxRadioSwitch class="checkbox--warning"
-						:checked="recordingConsentGiven"
-						@update:checked="setRecordingConsentGiven">
+						:model-value="recordingConsentGiven"
+						@update:modelValue="setRecordingConsentGiven">
 						{{ t('spreed', 'Give consent to the recording of this call') }}
 					</NcCheckboxRadioSwitch>
 				</template>

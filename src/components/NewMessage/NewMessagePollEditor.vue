@@ -15,7 +15,7 @@
 			<p class="poll-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<NcTextField :value.sync="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField v-model="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
 
 			<!-- Poll options -->
 			<p class="poll-editor__caption">
@@ -25,7 +25,7 @@
 				:key="index"
 				class="poll-editor__option">
 				<NcTextField ref="pollOption"
-					:value.sync="pollOptions[index]"
+					v-model="pollOptions[index]"
 					:label="t('spreed', 'Answer {option}', {option: index + 1})" />
 				<NcButton v-if="pollOptions.length > 2"
 					type="tertiary-no-background"
@@ -50,10 +50,10 @@
 				{{ t('spreed', 'Settings') }}
 			</p>
 			<div class="poll-editor__settings">
-				<NcCheckboxRadioSwitch :checked.sync="isPrivate" type="checkbox">
+				<NcCheckboxRadioSwitch v-model="isPrivate" type="checkbox">
 					{{ t('spreed', 'Private poll') }}
 				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
+				<NcCheckboxRadioSwitch v-model="isMultipleAnswer" type="checkbox">
 					{{ t('spreed', 'Multiple answers') }}
 				</NcCheckboxRadioSwitch>
 			</div>

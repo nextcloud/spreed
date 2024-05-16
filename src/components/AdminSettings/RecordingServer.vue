@@ -10,14 +10,14 @@
 			class="recording-server__textfield"
 			name="recording_server"
 			placeholder="https://recording.example.org"
-			:value="server"
+			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'Recording backend URL')"
-			@update:value="updateServer" />
+			@update:modelValue="updateServer" />
 
-		<NcCheckboxRadioSwitch :checked="verify"
+		<NcCheckboxRadioSwitch :model-value="verify"
 			class="recording-server__checkbox"
-			@update:checked="updateVerify">
+			@update:modelValue="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 

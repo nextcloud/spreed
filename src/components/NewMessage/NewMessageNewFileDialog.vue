@@ -21,14 +21,14 @@
 					:helper-text="newFileError"
 					:label="t('spreed', 'Name of the new file')"
 					:placeholder="newFileTitle"
-					:value="newFileTitle"
-					@update:value="updateNewFileTitle" />
+					:model-value="newFileTitle"
+					@update:modelValue="updateNewFileTitle" />
 
 				<ul v-if="templates.length > 1" class="templates-picker__list">
 					<NewMessageTemplatePreview v-for="template in templates"
 						:key="template.fileid"
 						:basename="template.basename"
-						:checked="checked === template.fileid"
+						:model-value="checked === template.fileid"
 						:fileid="template.fileid"
 						:filename="template.filename"
 						:preview-url="template.previewUrl"

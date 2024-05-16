@@ -13,7 +13,7 @@
 
 		<template v-else>
 			<NcCheckboxRadioSwitch type="switch"
-				:checked.sync="dialOutEnabled"
+				v-model="dialOutEnabled"
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>
@@ -46,7 +46,7 @@
 				{{ t('spreed', 'Shared secret') }}
 			</label>
 			<NcTextField id="sip-shared-secret"
-				:value.sync="sharedSecret"
+				v-model="sharedSecret"
 				class="form"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
@@ -56,7 +56,7 @@
 				{{ t('spreed', 'Dial-in information') }}
 			</label>
 			<NcTextArea id="dial-in-info"
-				:value.sync="dialInInfo"
+				v-model="dialInInfo"
 				name="message"
 				class="form form__textarea"
 				rows="4"

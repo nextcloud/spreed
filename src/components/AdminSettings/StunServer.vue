@@ -13,10 +13,10 @@
 				:input-id="`stun_server_${index}`"
 				name="stun_server"
 				placeholder="stunserver:port"
-				:value="server"
+				:model-value="server"
 				:disabled="loading"
 				:aria-label="t('spreed', 'STUN server URL')"
-				@update:value="update" />
+				@update:modelValue="update" />
 		</div>
 
 		<AlertCircle v-show="!isValidServer"

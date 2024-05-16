@@ -21,19 +21,19 @@
 			track-by="value"
 			no-wrap
 			:disabled="loading || loadingDefaultGroupNotification"
-			@input="saveDefaultGroupNotification" />
+			@update:modelValue="saveDefaultGroupNotification" />
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
-		<NcCheckboxRadioSwitch :checked="isConversationsFilesChecked"
+		<NcCheckboxRadioSwitch :model-value="isConversationsFilesChecked"
 			:disabled="loading || loadingConversationsFiles"
-			@update:checked="saveConversationsFiles">
+			@update:modelValue="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
 		</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch :checked="isConversationsFilesPublicSharesChecked"
+		<NcCheckboxRadioSwitch :model-value="isConversationsFilesPublicSharesChecked"
 			:disabled="loading || loadingConversationsFiles || !isConversationsFilesChecked"
-			@update:checked="saveConversationsFilesPublicShares">
+			@update:modelValue="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
 	</section>

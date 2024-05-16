@@ -9,7 +9,7 @@
 		<div class="set-contacts__form">
 			<NcTextField ref="setContacts"
 				v-observe-visibility="visibilityChanged"
-				:value.sync="searchText"
+				v-model="searchText"
 				type="text"
 				class="set-contacts__form-input"
 				:label="textFieldLabel"

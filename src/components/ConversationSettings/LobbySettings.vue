@@ -10,10 +10,10 @@
 				{{ t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.') }}
 			</NcNoteCard>
 			<div>
-				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+				<NcCheckboxRadioSwitch :model-value="hasLobbyEnabled"
 					type="switch"
 					:disabled="isLobbyStateLoading"
-					@update:checked="toggleLobby">
+					@update:modelValue="toggleLobby">
 					{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 				</NcCheckboxRadioSwitch>
 			</div>
@@ -27,7 +27,7 @@
 				</div>
 				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
 					aria-describedby="moderation_settings_lobby_timer_hint"
-					:value="lobbyTimer"
+					:model-value="lobbyTimer"
 					:default-value="defaultLobbyTimer"
 					:placeholder="t('spreed', 'Start time (optional)')"
 					:disabled="lobbyTimerFieldDisabled"
