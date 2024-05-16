@@ -841,8 +841,6 @@ OC.L10N.register(
     "{actor} added {user0} and {user1}" : "{actor} a adăugat pe {user0} și pe {user1}",
     "You: {lastMessage}" : "Tu: {lastMessage}",
     "Deck card has been posted to {conversation}" : "Cardul Deck a fost postat la conversația {conversation}",
-    "Post to conversation" : "Postare în conversație",
-    "Share to conversation" : "Partajare la conversație",
     "Error while sharing file" : "Eroare la partajarea fișierului",
     "Error while clearing conversation history" : "Eroare la ștergerea istoricului conversației",
     "Conversation picture set" : "Imaginea conversației a fost configurată",
@@ -897,6 +895,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "PIN: {attendeePin}",
     "Start a conversation" : "Porniți o conversație",
     "Mention room" : "Menționează camera",
+    "Post to conversation" : "Postare în conversație",
+    "Share to conversation" : "Partajare la conversație",
     "Delete Conversation" : "Șterge conversația"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

@@ -1299,9 +1299,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Вие: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk беше актуализиран, моля, презаредете страницата",
-    "Post to conversation" : "Публикуване в разговорa",
     "The recording failed. Please contact your administrator." : "Записът е неуспешен. Моля, свържете се с вашия администратор.",
-    "Share to conversation" : "Споделяне в разговора",
     "Error while sharing file" : "Грешка при споделяне на файл",
     "Error while clearing conversation history" : "Грешка при изчистване на историята на разговорите",
     "Error occurred while allowing guests" : "Възникна грешка при разрешаването на гостите",
@@ -1418,6 +1416,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Вашият ПИН: {attendeePin}",
     "Start a conversation" : "Започване на разговор",
     "Mention room" : "Споменаване на стая",
+    "Post to conversation" : "Публикуване в разговорa",
+    "Share to conversation" : "Споделяне в разговора",
     "Specify commands the users can use in chats" : "Посочване на командите, които потребителите могат да използват в чатовете",
     "Remove circle and members" : "Премахване на кръга и на членовете"
 },

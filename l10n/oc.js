@@ -1068,8 +1068,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Vos : {lastMessage}",
     "{actor}: {lastMessage}" : "{actor} : {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk foguèt mes a jorn, mercés de tornar cargar la pagina",
-    "Post to conversation" : "Publicar a la conversacion",
-    "Share to conversation" : "Partejar dins una conversacion",
     "Error while sharing file" : "Error pendent lo partiment del fichièr",
     "Error while clearing conversation history" : "Error pendent escafament de l’istoric de la conversacion",
     "Error occurred while allowing guests" : "Error en autorizant los convidats",
@@ -1151,6 +1149,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Vòstre PIN : {attendeePin}",
     "Start a conversation" : "Començar una conversacion",
     "Mention room" : "Mencionar la sala",
+    "Post to conversation" : "Publicar a la conversacion",
+    "Share to conversation" : "Partejar dins una conversacion",
     "Specify commands the users can use in chats" : "Indicar las comandas que los utilizaires pòdon utilizar als chats",
     "Delete Conversation" : "Suprimir la conversacion"
 },

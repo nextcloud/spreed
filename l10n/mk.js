@@ -955,8 +955,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Ти: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Разговорот е ажуриран, повторно вчитајте ја страната",
-    "Post to conversation" : "Објава во разговор",
-    "Share to conversation" : "Споделено во разговор",
     "Error while sharing file" : "Грешка при споделување на датотека",
     "Error while clearing conversation history" : "Грешка при чистење на историјата во разговорот",
     "Error occurred while allowing guests" : "Настана грешка при обидот за овозможување на гостите",
@@ -1035,6 +1033,8 @@ OC.L10N.register(
     "Meeting ID: {meetingId}" : "Состанок ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Вашиот ПИН: {attendeePin}",
     "Start a conversation" : "Започни разговор",
-    "Mention room" : "Спомни соба"
+    "Mention room" : "Спомни соба",
+    "Post to conversation" : "Објава во разговор",
+    "Share to conversation" : "Споделено во разговор"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");
