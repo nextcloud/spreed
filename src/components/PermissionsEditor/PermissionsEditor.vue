@@ -6,7 +6,7 @@
 <template>
 	<NcModal size="small"
 		:container="container"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="wrapper">
 			<template v-if="!loading">
 				<!-- eslint-disable-next-line vue/no-v-html -->
@@ -116,7 +116,7 @@ export default {
 			default: false,
 		},
 	},
-	emits: ['submit'],
+	emits: ['close', 'submit'],
 
 	data() {
 		return {

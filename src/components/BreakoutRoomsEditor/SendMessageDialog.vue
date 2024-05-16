@@ -6,7 +6,7 @@
 <template>
 	<NcModal ref="modal"
 		:container="container"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="send-message-dialog">
 			<h2 class="send-message-dialog__title">
 				{{ dialogTitle }}
