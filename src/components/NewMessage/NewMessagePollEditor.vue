@@ -7,7 +7,7 @@
 	<NcModal size="small"
 		:close-on-click-outside="!isFilled"
 		:container="container"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="poll-editor">
 			<h2>{{ t('spreed', 'Create new poll') }}</h2>
 
@@ -15,7 +15,7 @@
 			<p class="poll-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<NcTextField v-model="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField v-model="pollQuestion" :label="t('spreed', 'Ask a question')" />
 
 			<!-- Poll options -->
 			<p class="poll-editor__caption">
