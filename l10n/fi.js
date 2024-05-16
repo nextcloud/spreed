@@ -1179,9 +1179,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "Sinä: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk päivitettiin, lataa sivu uudelleen",
-    "Post to conversation" : "Lähetä keskusteluun",
     "The recording failed. Please contact your administrator." : "Tallennus epäonnistui. Ole yhteydessä ylläpitoon.",
-    "Share to conversation" : "Jaa keskusteluun",
     "Error while sharing file" : "Virhe tiedostoa jakaessa",
     "Error while clearing conversation history" : "Virhe keskusteluhistoriaa siivotessa",
     "Error occurred while allowing guests" : "Virhe vieraita salliessa",
@@ -1261,6 +1259,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "PIN-koodisi: {attendeePin}",
     "Start a conversation" : "Aloita keskustelu",
     "Mention room" : "Mainitse huone",
+    "Post to conversation" : "Lähetä keskusteluun",
+    "Share to conversation" : "Jaa keskusteluun",
     "Delete Conversation" : "Poista keskustelu",
     "Remove circle and members" : "Poista piiri ja jäsenet"
 },

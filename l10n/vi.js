@@ -673,7 +673,6 @@ OC.L10N.register(
     "Show all files" : "Hiện tất cả tệp",
     "You: {lastMessage}" : "Bạn: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "vWorkspace Talk đã được cập nhật, vui lòng tải lại trang",
-    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Error while sharing file" : "Lỗi khi chia sẻ tệp",
     "Error occurred while allowing guests" : "Đã xảy ra lỗi khi cho phép khách",
     "Error occurred while disallowing guests" : "Đã xảy ra lỗi khi không cho phép khách",
@@ -747,6 +746,7 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "Mã PIN của bạn: {attendeePin}",
     "Start a conversation" : "Bắt đầu một cuộc Đàm thoại",
     "Mention room" : "Nhắc đến phòng",
+    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Specify commands the users can use in chats" : "Chỉ định các lệnh mà người dùng có thể sử dụng trong các cuộc trò chuyện"
 },
 "nplurals=1; plural=0;");

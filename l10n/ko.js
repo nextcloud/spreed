@@ -1536,9 +1536,7 @@ OC.L10N.register(
     "You: {lastMessage}" : "당신: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud 토크가 업데이트 되었습니다. 페이지를 새로고침 하십시오.",
-    "Post to conversation" : "대화에 게시",
     "The recording failed. Please contact your administrator." : "녹음/녹화가 실패했습니다. 관리자에게 연락해 주세요.",
-    "Share to conversation" : "대화에 공유",
     "Error while sharing file" : "파일 공유하는 도중 오류",
     "Error while clearing conversation history" : "대화 기록을 지우는 동안 오류가 발생했습니다.",
     "Error occurred while allowing guests" : "손님을 허용하는 동안 오류가 발생했습니다.",
@@ -1656,6 +1654,8 @@ OC.L10N.register(
     "Your PIN: {attendeePin}" : "당신의 PIN: {attendeePin}",
     "Start a conversation" : "대화 시작",
     "Mention room" : "대화방 언급",
+    "Post to conversation" : "대화에 게시",
+    "Share to conversation" : "대화에 공유",
     "Specify commands the users can use in chats" : "사용자가 채팅에서 사용할 수 있는 명령 지정",
     "Delete Conversation" : "대화 삭제",
     "Remove circle and members" : "서클과 구성원 제거"
