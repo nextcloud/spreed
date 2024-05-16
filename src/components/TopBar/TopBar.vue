@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall ? true : undefined">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
