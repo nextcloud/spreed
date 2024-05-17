@@ -22,7 +22,7 @@
 					:label="t('spreed', 'Name of the new file')"
 					:placeholder="newFileTitle"
 					:model-value="newFileTitle"
-					@update:modelValue="updateNewFileTitle" />
+					@update:model-value="updateNewFileTitle" />
 
 				<ul v-if="templates.length > 1" class="templates-picker__list">
 					<NewMessageTemplatePreview v-for="template in templates"

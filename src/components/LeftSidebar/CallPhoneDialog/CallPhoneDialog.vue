@@ -15,19 +15,19 @@
 
 			<div class="call-phone__form">
 				<NcTextField ref="textField"
+					v-model="searchText"
 					class="call-phone__form-input"
 					:label="t('spreed', 'Search participants or phone numbers')"
 					label-visible
-					v-model="searchText"
 					@keydown.enter="createConversation(participantPhoneItem)" />
-				<DialpadPanel container=".call-phone__form"
-					:value.sync="searchText"
+				<DialpadPanel v-model:value="searchText"
+					container=".call-phone__form"
 					@submit="createConversation(participantPhoneItem)" />
 			</div>
 
-			<SelectPhoneNumber :name="t('spreed', 'Call a phone number')"
+			<SelectPhoneNumber v-model:participant-phone-item="participantPhoneItem"
+				:name="t('spreed', 'Call a phone number')"
 				:value="searchText"
-				:participant-phone-item.sync="participantPhoneItem"
 				@select="createConversation" />
 		</template>
 

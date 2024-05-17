@@ -242,7 +242,7 @@ export default {
 		},
 	},
 
-	emits: ['select-video', 'click-local-video'],
+	emits: ['selectVideo', 'clickLocalVideo'],
 
 	setup() {
 		return {
@@ -532,7 +532,7 @@ export default {
 
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceMakeGrid.clear?.()
 		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
@@ -814,11 +814,11 @@ export default {
 
 		handleClickVideo(event, peerId) {
 			console.debug('selected-video peer id', peerId)
-			this.$emit('select-video', peerId)
+			this.$emit('selectVideo', peerId)
 		},
 
 		handleClickLocalVideo() {
-			this.$emit('click-local-video')
+			this.$emit('clickLocalVideo')
 		},
 
 		isSelected(callParticipantModel) {

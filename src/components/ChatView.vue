@@ -24,10 +24,10 @@
 				</div>
 			</div>
 		</TransitionWrapper>
-		<MessagesList role="region"
+		<MessagesList v-model:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
+			role="region"
 			:aria-label="t('spreed', 'Conversation messages')"
 			:token="token"
-			:is-chat-scrolled-to-bottom.sync="isChatScrolledToBottom"
 			:is-visible="isVisible" />
 
 		<div class="scroll-to-bottom">

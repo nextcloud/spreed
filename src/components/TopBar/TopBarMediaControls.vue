@@ -69,14 +69,14 @@
 
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
+			v-model:open="screenSharingMenuOpen"
 			v-tooltip="screenSharingButtonTooltip"
 			type="error"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
-			:container="container"
-			:open.sync="screenSharingMenuOpen">
+			:container="container">
 			<template #icon>
 				<MonitorOff :size="20" />
 			</template>
@@ -403,7 +403,7 @@ export default {
 		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model, this)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.speakingWhileMutedWarner.destroy()
 	},
 

@@ -10,8 +10,8 @@
 			<div class="conversations-search"
 				:class="{'conversations-search--expanded': isFocused}">
 				<SearchBox ref="searchBox"
-					:value.sync="searchText"
-					:is-focused.sync="isFocused"
+					v-model:value="searchText"
+					v-model:is-focused="isFocused"
 					:list="list"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
@@ -637,7 +637,7 @@ export default {
 		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 		this.debounceFetchConversations.clear?.()
 		this.debounceHandleScroll.clear?.()

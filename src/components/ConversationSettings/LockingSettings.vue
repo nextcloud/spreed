@@ -18,7 +18,7 @@
 				type="switch"
 				aria-describedby="moderation_settings_lock_conversation_hint"
 				:disabled="isReadOnlyStateLoading"
-				@update:modelValue="toggleReadOnly">
+				@update:model-value="toggleReadOnly">
 				{{ t('spreed', 'Lock the conversation to prevent anyone to post messages or start calls') }}
 			</NcCheckboxRadioSwitch>
 		</div>

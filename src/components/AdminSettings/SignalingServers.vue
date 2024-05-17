@@ -23,8 +23,8 @@
 			group>
 			<SignalingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:server.sync="servers[index].server"
-				:verify.sync="servers[index].verify"
+				v-model:server="servers[index].server"
+				v-model:verify="servers[index].verify"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
@@ -49,7 +49,7 @@
 			</p>
 			<NcCheckboxRadioSwitch v-model="hideWarning"
 				:disabled="loading"
-				@update:modelValue="updateHideWarning">
+				@update:model-value="updateHideWarning">
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
@@ -61,7 +61,7 @@
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:modelValue="updateSecret" />
+			@update:model-value="updateSecret" />
 	</section>
 </template>
 
@@ -118,7 +118,7 @@ export default {
 		this.hideWarning = state.hideWarning
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 

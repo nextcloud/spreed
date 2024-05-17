@@ -25,7 +25,7 @@
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="formatedTypes"
-						@update:modelValue="clickAddPart">
+						@update:model-value="clickAddPart">
 						<template #option="option">
 							<img class="icon-multiselect-service"
 								:src="option.iconUrl"
@@ -38,7 +38,7 @@
 					class="enable-switch-line">
 					<NcCheckboxRadioSwitch :model-value="enabled"
 						type="switch"
-						@update:modelValue="onEnabled">
+						@update:model-value="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>
@@ -535,7 +535,7 @@ export default {
 	beforeMount() {
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 	},
 
 	methods: {

@@ -13,8 +13,8 @@
 			:use-extended-markdown="useMarkdown" />
 		<NcRichContenteditable v-else
 			ref="richContenteditable"
-			dir="auto"
 			v-model="text"
+			dir="auto"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
 			:multiline="multiline"
@@ -154,7 +154,7 @@ export default {
 		},
 	},
 
-	emits: ['update:editing', 'submit-text'],
+	emits: ['update:editing', 'submitText'],
 
 	data() {
 		return {
@@ -225,7 +225,7 @@ export default {
 			this.text = parseSpecialSymbols(this.text)
 
 			// Submit text
-			this.$emit('submit-text', this.text)
+			this.$emit('submitText', this.text)
 		},
 
 		handleCancelEditing() {

@@ -13,7 +13,7 @@
 		<NcCheckboxRadioSwitch :model-value="isFederationEnabled"
 			:disabled="loading"
 			type="switch"
-			@update:modelValue="saveFederationEnabled">
+			@update:model-value="saveFederationEnabled">
 			{{ t('spreed', 'Enable Federation in Talk app') }}
 		</NcCheckboxRadioSwitch>
 
@@ -23,21 +23,21 @@
 			<NcCheckboxRadioSwitch :model-value="isFederationIncomingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:modelValue="saveFederationIncomingEnabled">
+				@update:model-value="saveFederationIncomingEnabled">
 				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch :model-value="isFederationOutgoingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:modelValue="saveFederationOutgoingEnabled">
+				@update:model-value="saveFederationOutgoingEnabled">
 				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch :model-value="isFederationOnlyTrustedServersEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
+				@update:model-value="saveFederationOnlyTrustedServersEnabled">
 				{{ t('spreed', 'Only allow to federate with trusted servers') }}
 			</NcCheckboxRadioSwitch>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -136,7 +136,7 @@ export default {
 		this.debounceSearchGroup('')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceSearchGroup.clear?.()
 	},
 

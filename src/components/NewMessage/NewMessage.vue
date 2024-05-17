@@ -74,8 +74,8 @@
 					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
 				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
-					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					v-model="text"
+					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
@@ -86,7 +86,7 @@
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
-					@update:modelValue="handleTyping"
+					@update:model-value="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
 			</div>
@@ -545,7 +545,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('focus-chat-input', this.focusInput)
 		EventBus.off('upload-start', this.handleUploadSideEffects)
 		EventBus.off('upload-discard', this.handleUploadSideEffects)

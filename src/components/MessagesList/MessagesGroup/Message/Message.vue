@@ -38,12 +38,12 @@
 		<div class="message-body__scroll">
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
+				v-model:is-action-menu-open="isActionMenuOpen"
+				v-model:is-emoji-picker-open="isEmojiPickerOpen"
+				v-model:is-reactions-menu-open="isReactionsMenuOpen"
+				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
 				:is-translation-available="isTranslationAvailable"
-				:is-action-menu-open.sync="isActionMenuOpen"
-				:is-emoji-picker-open.sync="isEmojiPickerOpen"
-				:is-reactions-menu-open.sync="isReactionsMenuOpen"
-				:is-forwarder-open.sync="isForwarderOpen"
 				:can-react="canReact"
 				v-bind="{...$props, ...readInfoProps}"
 				@show-translate-dialog="isTranslateDialogOpen = true"
@@ -292,7 +292,7 @@ export default {
 		},
 	},
 
-	emits: ['toggle-combined-system-message'],
+	emits: ['toggleCombinedSystemMessage'],
 
 	setup() {
 		return {
@@ -455,7 +455,7 @@ export default {
 		EventBus.on('highlight-message', this.highlightMessage)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('highlight-message', this.highlightMessage)
 	},
 
@@ -534,7 +534,7 @@ export default {
 		},
 
 		toggleCombinedSystemMessage() {
-			this.$emit('toggle-combined-system-message')
+			this.$emit('toggleCombinedSystemMessage')
 		},
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen

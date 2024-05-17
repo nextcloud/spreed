@@ -12,11 +12,11 @@
 			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'High-performance backend URL')"
-			@update:modelValue="updateServer" />
+			@update:model-value="updateServer" />
 
 		<NcCheckboxRadioSwitch :model-value="verify"
 			class="signaling-server__checkbox"
-			@update:modelValue="updateVerify">
+			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
@@ -88,7 +88,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:server', 'update:verify'],
+	emits: ['removeServer', 'update:server', 'update:verify'],
 
 	data() {
 		return {
@@ -132,7 +132,7 @@ export default {
 
 	methods: {
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 		updateServer(value) {
 			this.$emit('update:server', value)
