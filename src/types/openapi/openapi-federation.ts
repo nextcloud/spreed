@@ -132,6 +132,7 @@ export type components = {
       reactions: {
         [key: string]: number;
       };
+      reactionsSelf?: string[];
       referenceId: string;
       /** Format: int64 */
       timestamp: number;
