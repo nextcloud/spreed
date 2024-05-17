@@ -30,6 +30,7 @@
 				autoHide: false,
 				html: true
 			}"
+			:aria-label="startCallLabel"
 			:disabled="startCallButtonDisabled || loading"
 			:type="startCallButtonType"
 			@click="handleClick">
@@ -38,31 +39,40 @@
 				<VideoOutlineIcon v-else-if="silentCall" :size="20" />
 				<VideoIcon v-else :size="20" />
 			</template>
-			{{ startCallLabel }}
+			<template v-if="!isMobile" #default>
+				{{ startCallLabel }}
+			</template>
 		</NcButton>
 		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 			id="call_button"
+			:aria-label="endCallLabel"
 			type="error"
 			:disabled="loading"
 			@click="leaveCall(true)">
 			<template #icon>
 				<PhoneHangup :size="20" />
 			</template>
-			{{ t('spreed', 'End call') }}
+			<template v-if="!isMobile" #default>
+				{{ endCallLabel }}
+			</template>
 		</NcButton>
 		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
+			:aria-label="leaveCallLabel"
 			:type="isScreensharing ? 'tertiary' : 'error'"
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
 				<VideoOff :size="20" />
 			</template>
-			{{ leaveCallLabel }}
+			<template v-if="!isMobile" #default>
+				{{ leaveCallLabel }}
+			</template>
 		</NcButton>
 		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 			:disabled="loading"
-			:menu-name="leaveCallCombinedLabel"
+			:aria-label="leaveCallCombinedLabel"
+			:menu-name="!isMobile ? leaveCallCombinedLabel : undefined"
 			force-name
 			:container="container"
 			:type="isScreensharing ? 'tertiary' : 'error'">
@@ -110,6 +120,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -190,6 +201,7 @@ export default {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			talkHashStore: useTalkHashStore(),
 			settingsStore: useSettingsStore(),
+			isMobile: useIsMobile(),
 		}
 	},
 
@@ -267,6 +279,10 @@ export default {
 			}
 
 			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
+		},
+
+		endCallLabel() {
+			return t('spreed', 'End call')
 		},
 
 		startCallToolTip() {
