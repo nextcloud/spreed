@@ -998,6 +998,7 @@ OC.L10N.register(
     "_%n day_::_%n days_" : ["%n gün","%n gün"],
     "_%n week_::_%n weeks_" : ["%n hafta","%n hafta"],
     "Guest access" : "Konuk erişimi",
+    "Breakout rooms are not allowed in public conversations." : "Herkese açık görüşmelerde çalışma odaları kullanılamaz",
     "Allow guests to join this conversation via link" : "Konuklar bu görüşmeye bağlantı ile katılabilsin",
     "Password protection" : "Parola koruması",
     "Enter new password" : "Yeni parolayı yazın",
