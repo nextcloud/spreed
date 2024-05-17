@@ -34,6 +34,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t, n } from '@nextcloud/l10n'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
@@ -105,6 +106,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		async changeExpiration(expiration) {
 			this.overwriteExpiration = expiration
 

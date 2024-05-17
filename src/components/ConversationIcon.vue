@@ -58,6 +58,8 @@ import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { AVATAR, CONVERSATION } from '../constants.js'
@@ -231,6 +233,10 @@ export default {
 
 			return getConversationAvatarOcsUrl(this.item.token, isDarkTheme, this.item.avatarVersion)
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

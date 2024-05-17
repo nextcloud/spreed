@@ -37,6 +37,8 @@ import Account from 'vue-material-design-icons/Account.vue'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { PARTICIPANT } from '../../constants.js'
@@ -82,6 +84,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		notificationLevelIcon(value) {
 			switch (value) {
 			case PARTICIPANT.NOTIFY.ALWAYS:

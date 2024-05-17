@@ -55,6 +55,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -184,6 +185,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		updateNewFileTitle(value) {
 			this.newFileTitle = value
 		},

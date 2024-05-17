@@ -122,6 +122,7 @@ import debounce from 'debounce'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
@@ -441,6 +442,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Updates data properties that depend on the CallParticipantModels.
 		 *

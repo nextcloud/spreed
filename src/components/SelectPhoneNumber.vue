@@ -28,6 +28,8 @@ import { parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonen
 
 import Phone from 'vue-material-design-icons/Phone.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
@@ -105,6 +107,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		selectPhoneNumber() {
 			this.$emit('select', this.participantPhoneItem)
 		}

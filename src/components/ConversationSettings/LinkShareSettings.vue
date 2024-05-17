@@ -84,6 +84,7 @@ import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline
 import Email from 'vue-material-design-icons/Email.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -146,6 +147,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async setConversationPassword(newPassword) {
 			this.isSaving = true
 			try {

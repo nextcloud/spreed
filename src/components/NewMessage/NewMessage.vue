@@ -182,6 +182,7 @@ import SendIcon from 'vue-material-design-icons/Send.vue'
 
 import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 
@@ -555,6 +556,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleTyping() {
 			// Enable signal sending, only if indicator for this input is on
 			if (!this.showTypingStatus) {

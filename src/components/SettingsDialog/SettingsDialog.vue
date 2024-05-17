@@ -166,6 +166,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
@@ -275,6 +276,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async selectAttachmentFolder(nodes) {
 			const path = nodes[0]?.path
 			if (!path) {

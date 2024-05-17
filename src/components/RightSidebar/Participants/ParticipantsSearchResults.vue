@@ -80,6 +80,7 @@ import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 import AccountSearch from 'vue-material-design-icons/AccountSearch.vue'
 
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -229,6 +230,7 @@ export default {
 		},
 	},
 	methods: {
+		t,
 		handleClickParticipant(participant) {
 			this.$emit('click', participant)
 		},

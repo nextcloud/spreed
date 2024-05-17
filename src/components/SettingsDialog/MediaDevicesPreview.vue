@@ -73,6 +73,8 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
@@ -181,6 +183,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		handleAudioInputIdChange(audioInputId) {
 			this.audioInputId = audioInputId
 			this.updatePreferences('audioinput')
@@ -190,7 +194,6 @@ export default {
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
 		},
-
 	},
 }
 </script>

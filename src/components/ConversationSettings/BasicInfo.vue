@@ -47,6 +47,7 @@
 import { Fragment } from 'vue-frag'
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from '../UIShared/EditableTextField.vue'
@@ -113,6 +114,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async handleUpdateName(name) {
 			this.isNameLoading = true
 			try {

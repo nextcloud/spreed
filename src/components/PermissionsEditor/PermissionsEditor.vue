@@ -61,6 +61,7 @@
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -200,6 +201,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Takes the permissions from the store and writes them in the data of
 		 * this component.

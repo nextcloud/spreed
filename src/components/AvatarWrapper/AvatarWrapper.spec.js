@@ -6,6 +6,8 @@ import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
+import { t } from '@nextcloud/l10n'
+
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import AvatarWrapper from './AvatarWrapper.vue'

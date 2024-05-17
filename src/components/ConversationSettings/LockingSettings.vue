@@ -27,6 +27,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
@@ -69,6 +70,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async toggleReadOnly() {
 			const newReadOnly = this.isReadOnly ? CONVERSATION.STATE.READ_WRITE : CONVERSATION.STATE.READ_ONLY
 			this.isReadOnlyStateLoading = true

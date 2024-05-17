@@ -5,6 +5,7 @@
 
 import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'

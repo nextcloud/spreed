@@ -120,6 +120,7 @@ import Star from 'vue-material-design-icons/Star.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -232,6 +233,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleCopyLink() {
 			copyConversationLinkToClipboard(this.item.token)
 		},

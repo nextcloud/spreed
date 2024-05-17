@@ -24,6 +24,8 @@
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
+import { t } from '@nextcloud/l10n'
+
 import VideoBottomBar from './VideoBottomBar.vue'
 
 import { useGuestNameStore } from '../../../stores/guestName.js'
@@ -140,6 +142,7 @@ export default {
 	},
 
 	methods: {
+		t,
 
 		_setScreen(screen) {
 			if (!screen) {

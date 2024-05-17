@@ -84,6 +84,7 @@ import debounce from 'debounce'
 
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -141,6 +142,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		saveFederationEnabled(value) {
 			this.loading = true
 

@@ -80,6 +80,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
@@ -142,6 +143,7 @@ export default {
 	},
 
 	methods: {
+		t,
 
 		hideConversationSettings() {
 			emit('hide-conversation-settings')

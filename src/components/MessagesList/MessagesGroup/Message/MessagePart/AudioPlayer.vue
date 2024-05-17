@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
 
@@ -71,6 +72,9 @@ export default {
 		},
 	},
 
+	methods: {
+		t,
+	},
 }
 </script>
 

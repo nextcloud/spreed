@@ -23,6 +23,8 @@
 <script>
 import VolumeHighIcon from 'vue-material-design-icons/VolumeHigh.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
@@ -60,6 +62,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		playTestSound() {
 			if (this.isPlayingTestSound) {
 				this.$store.dispatch('pauseWaitAudio')

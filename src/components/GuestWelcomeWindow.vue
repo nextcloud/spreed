@@ -42,6 +42,8 @@
 <script>
 import Check from 'vue-material-design-icons/CheckBold.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
@@ -102,6 +104,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleChooseUserName() {
 			this.guestNameStore.submitGuestUsername(this.token, this.guestUserName)
 		},

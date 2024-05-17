@@ -116,6 +116,7 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -238,6 +239,7 @@ export default {
 	expose: ['showModalForItem', 'showModal'],
 
 	methods: {
+		t,
 		showModal() {
 			this.modal = true
 		},

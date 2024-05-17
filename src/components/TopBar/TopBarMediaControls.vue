@@ -118,6 +118,7 @@ import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Ale
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -407,6 +408,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * This method executes on spacebar keydown and keyup
 		 */

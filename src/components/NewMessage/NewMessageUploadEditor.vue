@@ -77,6 +77,8 @@
 <script>
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
@@ -180,6 +182,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async getContainerId() {
 			await this.$nextTick()
 			// Postpone render of NewMessage until modal container is mounted

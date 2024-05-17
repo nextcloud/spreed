@@ -61,6 +61,8 @@
 <script>
 import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
@@ -172,6 +174,7 @@ export default {
 	},
 
 	methods: {
+		t,
 
 		handleDragOver(event) {
 			if (event.dataTransfer.types.includes('Files') && !this.isDragAndDropBlocked) {

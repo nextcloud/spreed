@@ -14,6 +14,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import PermissionEditor from '../../PermissionsEditor/PermissionsEditor.vue'
 
@@ -83,6 +84,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Binary sum all the permissions and make the request to change them.
 		 *

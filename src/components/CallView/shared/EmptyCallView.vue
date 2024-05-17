@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
@@ -170,6 +172,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleCopyLink() {
 			copyConversationLinkToClipboard(this.token)
 		},

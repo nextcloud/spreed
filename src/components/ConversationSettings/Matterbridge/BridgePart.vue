@@ -75,6 +75,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -150,6 +152,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		classesOf(name) {
 			const classes = {
 				icon: true,

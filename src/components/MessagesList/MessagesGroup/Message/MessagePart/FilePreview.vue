@@ -61,6 +61,7 @@
 import Close from 'vue-material-design-icons/Close.vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
+import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
@@ -572,6 +573,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleClick(event) {
 			if (this.isUploadEditor) {
 				this.$emit('remove-file', this.id)

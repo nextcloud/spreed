@@ -39,6 +39,8 @@
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -91,6 +93,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		removeServer() {
 			this.$emit('remove-server', this.index)
 		},

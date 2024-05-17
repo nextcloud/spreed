@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
@@ -185,6 +187,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		// Inner method to update parent object
 		updateNewConversation(data) {
 			this.$emit('update:newConversation', Object.assign({}, this.newConversation, data))

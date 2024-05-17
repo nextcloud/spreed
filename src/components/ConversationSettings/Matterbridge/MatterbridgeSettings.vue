@@ -88,6 +88,7 @@ import Message from 'vue-material-design-icons/Message.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -538,6 +539,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		relaunchStateLoop(token) {
 			// start loop to periodically get bridge state
 			clearInterval(this.stateLoop)

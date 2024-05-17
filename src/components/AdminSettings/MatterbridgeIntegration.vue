@@ -46,6 +46,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -110,6 +111,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		saveMatterbridgeEnabled() {
 			this.matterbridgeEnabled = !this.matterbridgeEnabled
 			OCP.AppConfig.setValue('spreed', 'enable_matterbridge', this.matterbridgeEnabled ? '1' : '0', {

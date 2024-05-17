@@ -79,6 +79,8 @@ import SHA1 from 'crypto-js/sha1.js'
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
@@ -544,6 +546,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		_setStream(stream) {
 
 			if (!stream) {

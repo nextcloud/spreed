@@ -8,6 +8,7 @@ import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import {
 	ATTENDEE,

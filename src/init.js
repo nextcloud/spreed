@@ -7,6 +7,7 @@
 // entry points
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'

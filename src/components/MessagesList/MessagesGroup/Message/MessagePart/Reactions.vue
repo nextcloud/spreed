@@ -72,6 +72,7 @@ import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.v
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
@@ -183,6 +184,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		fetchReactions() {
 			if (!this.hasReactionsLoaded || this.hasOutdatedDetails) {
 				this.reactionsStore.fetchReactions(this.token, this.id)

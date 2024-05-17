@@ -8,6 +8,7 @@ import {
 	TOAST_PERMANENT_TIMEOUT,
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 import { PARTICIPANT } from '../../constants.js'

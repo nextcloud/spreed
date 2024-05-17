@@ -4,6 +4,7 @@
  */
 import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
 
 /**

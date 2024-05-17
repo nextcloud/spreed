@@ -24,6 +24,8 @@
 <script>
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 export default {
@@ -95,6 +97,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		updateValue(value) {
 			this.$emit('update:value', value)
 			this.$emit('input', value)

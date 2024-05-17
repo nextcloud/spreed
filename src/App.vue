@@ -25,6 +25,7 @@ import { provide } from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
@@ -501,6 +502,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Intercept clicking actions on notifications and open the conversation without a page reload instead
 		 *

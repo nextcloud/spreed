@@ -6,6 +6,7 @@
 import { defineStore } from 'pinia'
 
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 

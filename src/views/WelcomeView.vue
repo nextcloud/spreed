@@ -15,7 +15,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { translate as t } from '@nextcloud/l10n'
+import { t } from '@nextcloud/l10n'
 
 import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -84,6 +84,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async createAndJoinConversationForCallUser() {
 			// Try to find an existing conversation
 			const conversation = this.$store.getters.getConversationForUser(this.callUser)

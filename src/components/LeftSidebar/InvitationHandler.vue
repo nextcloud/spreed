@@ -70,6 +70,8 @@ import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -133,6 +135,8 @@ export default {
 	expose: ['showModal'],
 
 	methods: {
+		t,
+
 		async showModal() {
 			this.modal = true
 

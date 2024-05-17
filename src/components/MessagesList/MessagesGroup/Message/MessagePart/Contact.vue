@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 export default {
 	name: 'Contact',
 
@@ -70,6 +72,10 @@ export default {
 		contactAriaLabel() {
 			return t('spreed', 'Contact')
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

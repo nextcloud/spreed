@@ -51,6 +51,7 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -300,6 +301,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		_handleForcedMute() {
 			// The default toast selector is "body-user", but as this toast can
 			// be shown to guests too, a generic selector valid both for logged-in

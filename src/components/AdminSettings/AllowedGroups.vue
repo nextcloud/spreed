@@ -95,6 +95,7 @@ import debounce from 'debounce'
 
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -167,6 +168,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async searchGroup(query) {
 			this.loadingGroups = true
 			try {

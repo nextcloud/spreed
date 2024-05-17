@@ -31,6 +31,7 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -155,6 +156,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async joinConversation() {
 			checkBrowser()
 

@@ -79,6 +79,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -154,6 +155,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		removeServer(index) {
 			this.servers.splice(index, 1)
 			this.debounceUpdateServers()

@@ -50,6 +50,8 @@
 <script>
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -145,6 +147,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		closeModal() {
 			this.$emit('close')
 		},

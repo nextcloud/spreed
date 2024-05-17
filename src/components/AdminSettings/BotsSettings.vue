@@ -82,6 +82,7 @@ import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
 
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -142,6 +143,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		getStateIcon(state) {
 			switch (state) {
 			case BOT.STATE.NO_SETUP:

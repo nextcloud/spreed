@@ -126,6 +126,7 @@ import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
@@ -349,6 +350,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		notifyUnreadMessages(message) {
 			if (this.unreadNotificationHandle) {
 				this.unreadNotificationHandle.hideToast()

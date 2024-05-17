@@ -95,6 +95,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -247,6 +248,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		forceMute() {
 			this.model.forceMute()
 		},

@@ -44,6 +44,8 @@
 <script>
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { ATTENDEE, AVATAR } from '../../constants.js'
@@ -187,6 +189,10 @@ export default {
 		avatarUrl() {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

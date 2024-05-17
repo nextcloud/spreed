@@ -31,6 +31,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
@@ -68,6 +69,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async toggleSetting(setting) {
 			let state = WEBINAR.SIP.DISABLED
 			if (setting === 'enable') {

@@ -93,6 +93,8 @@
 import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
+import { t, n } from '@nextcloud/l10n'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -263,6 +265,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		getPollData() {
 			if (!this.poll) {
 				this.$store.dispatch('getPollData', {

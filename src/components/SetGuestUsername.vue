@@ -35,6 +35,8 @@ import escapeHtml from 'escape-html'
 
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -111,6 +113,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleChooseUserName() {
 			this.guestNameStore.submitGuestUsername(this.token, this.guestUserName)
 			this.isEditingUsername = false

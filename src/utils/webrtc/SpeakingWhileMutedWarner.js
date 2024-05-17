@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { t } from '@nextcloud/l10n'
+
 /**
 	* Helper to warn the user if she is talking while muted.
 	*

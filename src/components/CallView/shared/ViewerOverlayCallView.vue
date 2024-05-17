@@ -115,6 +115,8 @@ import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import EmptyCallView from './EmptyCallView.vue'
@@ -229,6 +231,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		maximize() {
 			if (OCA.Viewer) {
 				OCA.Viewer.close()

@@ -29,6 +29,8 @@
 <script>
 import Close from 'vue-material-design-icons/Close.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
@@ -67,6 +69,10 @@ export default {
 		removeLabel() {
 			return t('spreed', 'Remove participant {name}', { name: this.displayName })
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>
