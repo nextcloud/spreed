@@ -103,6 +103,7 @@ namespace OCA\Talk;
  *     isReplyable: bool,
  *     markdown: bool,
  *     reactions: array<string, integer>|\stdClass,
+ *     reactionsSelf?: string[],
  *     referenceId: string,
  *     timestamp: int,
  *     token: string,

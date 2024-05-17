@@ -447,6 +447,12 @@
                                     "format": "int64"
                                 }
                             },
+                            "reactionsSelf": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
                             "referenceId": {
                                 "type": "string"
                             },
