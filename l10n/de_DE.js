@@ -183,6 +183,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "Die Administration hat {user} von der Moderation abberufen",
     "{actor} shared a file which is no longer available" : "{actor} hat eine Datei geteilt, die nicht mehr vorhanden ist",
     "You shared a file which is no longer available" : "Sie haben eine Datei geteilt, die nicht mehr vorhanden ist",
+    "File shares are currently not supported in federated conversations" : "Dateifreigaben werden bislang in federierten Unterhaltungen noch nicht unterstützt",
     "The shared location is malformed" : "Der freigegebene Standort ist fehlerhaft",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} hat Matterbridge so eingerichtet, dass diese Unterhaltung mit anderen Chats synchronisiert wird",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Sie haben Matterbridge so eingerichtet, dass diese Unterhaltung mit anderen Chats synchronisiert wird",
