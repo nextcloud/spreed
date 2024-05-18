@@ -181,6 +181,7 @@
     "An administrator demoted {user} from moderator" : "管理員將 {user} 從主持人降級",
     "{actor} shared a file which is no longer available" : "{actor} 共享了一個不再可用的檔案",
     "You shared a file which is no longer available" : "您共享了一個不再可用的檔案",
+    "File shares are currently not supported in federated conversations" : "在聯合對話中目前不支援檔案共享",
     "The shared location is malformed" : "分享位置格式錯誤",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} 設置了 Matterbridge 以將此對話與其他聊天同步",
     "You set up Matterbridge to synchronize this conversation with other chats" : "您設置了 Matterbridge 以將此對話與其他聊天同步",

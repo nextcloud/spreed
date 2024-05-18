@@ -64,6 +64,8 @@ OC.L10N.register(
     "- Webhooks are now available to implement bots. See the documentation for more information https://nextcloud-talk.readthedocs.io/en/latest/bot-list/" : "- 支持使用 Webhook 接入机器人。详情请参考文档 https://nextcloud-talk.readthedocs.io/en/latest/bot-list/",
     "- Set a reminder on a chat message to be notified later again" : "- 为聊天消息设置稍后提醒",
     "- Use the **Note to self** conversation to take notes and share information between your devices" : "- 使用 **我的笔记** 会话在设备间分享信息和笔记",
+    "- Captions allow to send a message with a file at the same time" : "- 字幕允许同时发送消息和文件",
+    "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- 现在在共享屏幕时可以看到演讲者的视频，并且通话反应以动画形式显示",
     "Talk updates ✅" : "通话应用更新 ✅",
     "Reaction deleted by author" : "回应被作者删除",
     "{actor} created the conversation" : "{actor}创建了对话",
