@@ -183,6 +183,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "管理員將 {user} 從主持人降級",
     "{actor} shared a file which is no longer available" : "{actor} 分享了一個不再可用的檔案",
     "You shared a file which is no longer available" : "您分享了一個不再可用的檔案",
+    "File shares are currently not supported in federated conversations" : "在聯盟式對話中目前不支援分享檔案",
     "The shared location is malformed" : "分享位置格式錯誤",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} 設定了 Matterbridge 以將此對話與其他聊天同步",
     "You set up Matterbridge to synchronize this conversation with other chats" : "您設定了 Matterbridge 以將此對話與其他聊天同步",
