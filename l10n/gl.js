@@ -603,7 +603,7 @@ OC.L10N.register(
     "South Sudan" : "Sudán do Sur",
     "Sao Tome and Principe" : "San Tomé e Príncipe",
     "El Salvador" : "O Salvador",
-    "Sint Maarten (Dutch part)" : "San Martín (parte holandesa)",
+    "Sint Maarten (Dutch part)" : "San Martín (parte neerlandesa)",
     "Syrian Arab Republic" : "República Árabe de Siria",
     "Eswatini" : "Eswatini",
     "Turks and Caicos Islands" : "Illas Turcas e Caicos",
