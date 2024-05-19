@@ -183,6 +183,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "Bir yönetici, {user} kullanıcısını sorumluluktan çıkardı",
     "{actor} shared a file which is no longer available" : "{actor} artık kullanılamayan bir dosya paylaştı",
     "You shared a file which is no longer available" : "Artık kullanılamayan bir dosya paylaştınız",
+    "File shares are currently not supported in federated conversations" : "Şu anda birleşik görüşmelerde dosya paylaşımı desteklenmiyor",
     "The shared location is malformed" : "Paylaşılmış konum biçimi hatalı",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} bu görüşmeyi diğer sohbetler ile eşitlemek için Matterbridge kurulumu yaptı",
     "You set up Matterbridge to synchronize this conversation with other chats" : "Bu görüşmeyi diğer sohbetler ile eşitlemek için Matterbridge kurulumu yaptınız",

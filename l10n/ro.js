@@ -482,6 +482,7 @@ OC.L10N.register(
     "Blocked" : "Blocat",
     "Active" : "Activ",
     "Downloading …" : "Se descarcă ...",
+    "Failed" : "Eșuat",
     "OK" : "OK",
     "Assignment method" : "Metoda de atribuire",
     "Automatically assign participants" : "Atribuie automat participanții",
