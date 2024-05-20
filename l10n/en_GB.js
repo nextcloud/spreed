@@ -183,6 +183,7 @@ OC.L10N.register(
     "An administrator demoted {user} from moderator" : "An administrator demoted {user} from moderator",
     "{actor} shared a file which is no longer available" : "{actor} shared a file which is no longer available",
     "You shared a file which is no longer available" : "You shared a file which is no longer available",
+    "File shares are currently not supported in federated conversations" : "File shares are currently not supported in federated conversations",
     "The shared location is malformed" : "The shared location is malformed",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "{actor} set up Matterbridge to synchronize this conversation with other chats",
     "You set up Matterbridge to synchronize this conversation with other chats" : "You set up Matterbridge to synchronize this conversation with other chats",
