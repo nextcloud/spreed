@@ -155,7 +155,7 @@ describe('VideoBottomBar.vue', () => {
 				await wrapper.setProps(cloneDeep(componentProps))
 
 				const indicators = wrapper.findAllComponents(NcButton)
-				indicators.wrappers.forEach(indicator => {
+				indicators.forEach(indicator => {
 					expect(indicator.isVisible()).toBeFalsy()
 				})
 			})
@@ -223,7 +223,7 @@ describe('VideoBottomBar.vue', () => {
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
-					indicators.wrappers.forEach(indicator => {
+					indicators.forEach(indicator => {
 						expect(indicator.isVisible()).toBeTruthy()
 					})
 				})
@@ -245,7 +245,7 @@ describe('VideoBottomBar.vue', () => {
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
-					indicators.wrappers.forEach(indicator => {
+					indicators.forEach(indicator => {
 						expect(indicator.isVisible()).toBeFalsy()
 					})
 				})

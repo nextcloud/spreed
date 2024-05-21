@@ -706,7 +706,7 @@ describe('Participant.vue', () => {
 					return actionText.props('name').includes('PIN')
 				})
 
-				expect(actionTexts.exists()).toBe(true)
+				expect(actionTexts.length).toBeTruthy()
 				expect(actionTexts.at(0).text()).toBe('123 456 78')
 			}
 
@@ -731,7 +731,7 @@ describe('Participant.vue', () => {
 					return actionText.props('title').includes('PIN')
 				})
 
-				expect(actionTexts.exists()).toBe(false)
+				expect(actionTexts.length).toBeFalsy()
 			})
 
 			test('does not show PIN field when not set', () => {
@@ -743,7 +743,7 @@ describe('Participant.vue', () => {
 					return actionText.props('title').includes('PIN')
 				})
 
-				expect(actionTexts.exists()).toBe(false)
+				expect(actionTexts.length).toBeFalsy()
 			})
 		})
 	})
@@ -758,7 +758,7 @@ describe('Participant.vue', () => {
 			const wrapper = mountParticipant(participant)
 
 			// no actions
-			expect(wrapper.findAllComponents(NcActionButton).exists()).toBe(false)
+			expect(wrapper.findAllComponents(NcActionButton).length).toBeFalsy()
 		})
 
 		test('triggers event when clicking', async () => {
