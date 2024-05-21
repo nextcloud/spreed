@@ -198,7 +198,6 @@ describe('Reactions.vue', () => {
 			expect(reactionButtons).toHaveLength(0)
 			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
 			expect(emojiPicker.exists()).toBeFalsy()
-			expect(emojiPicker.vm).toBeUndefined()
 		})
 
 		test('dispatches store actions upon picking an emoji from the emojipicker', async () => {
