@@ -6,7 +6,6 @@ import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
