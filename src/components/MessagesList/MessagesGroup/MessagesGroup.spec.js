@@ -101,7 +101,7 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('actorid')).toBe('actor-1')
 		expect(message.attributes('previousmessageid')).toBe('90')
 		expect(message.attributes('nextmessageid')).toBe('110')
-		expect(message.attributes('istemporary')).not.toBeDefined()
+		expect(message.attributes('istemporary')).toBe('false')
 
 		message = messagesEl.at(1)
 		expect(message.attributes('id')).toBe('110')
@@ -109,7 +109,7 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('actorid')).toBe('actor-1')
 		expect(message.attributes('previousmessageid')).toBe('100')
 		expect(message.attributes('nextmessageid')).toBe('120')
-		expect(message.attributes('istemporary')).not.toBeDefined()
+		expect(message.attributes('istemporary')).toBe('false')
 
 		message = messagesEl.at(2)
 		expect(message.attributes('id')).toBe('120')

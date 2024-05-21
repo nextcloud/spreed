@@ -327,7 +327,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
-					expect(audioIndicator.attributes('disabled')).toBeFalsy()
+					expect(audioIndicator.attributes('disabled')).toBe('false')
 				})
 
 				test('button is disabled when audio is unavailable', () => {

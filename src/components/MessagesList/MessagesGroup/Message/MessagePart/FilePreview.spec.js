@@ -543,7 +543,7 @@ describe('FilePreview.vue', () => {
 
 			expect(wrapper.element.tagName).toBe('DIV')
 			await wrapper.findComponent(NcButton).trigger('click')
-			expect(wrapper.emitted()['remove-file']).toStrictEqual([['123']])
+			expect(wrapper.emitted().removeFile).toStrictEqual([['123']])
 		})
 	})
 })
