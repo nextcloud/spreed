@@ -5,7 +5,6 @@
 import { shallowMount, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
-import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
 // import { showSuccess, showError } from '@nextcloud/dialogs'
@@ -34,6 +33,11 @@ jest.mock('../../../services/participantsService', () => ({
 
 // TODO fix after RouterLinkStub can support slots https://github.com/vuejs/vue-test-utils/issues/1803
 const RouterLinkStub = true
+
+const NcListItemStub = {
+	name: 'NcListItem',
+	template: '<li><slot name="actions"></slot><slot name="extra"></slot></li>',
+}
 
 describe('Conversation.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -125,7 +129,7 @@ describe('Conversation.vue', () => {
 			})
 
 			const el = wrapper.findComponent({ name: 'NcListItem' })
-			expect(el.vm.$slots.subname[0].text.trim()).toBe(expectedText)
+			expect(el.vm.$slots.subname()[0].children.trim()).toBe(expectedText)
 		}
 
 		test('display joining conversation message when not joined yet', () => {
@@ -327,6 +331,7 @@ describe('Conversation.vue', () => {
 					},
 					stubs: {
 						NcActionButton,
+						NcListItem: NcListItemStub,
 					},
 				},
 				props: {
@@ -401,6 +406,7 @@ describe('Conversation.vue', () => {
 							NcActionButton,
 							NcDialog,
 							NcButton,
+							NcListItem: NcListItemStub,
 						},
 					},
 					props: {
@@ -450,6 +456,7 @@ describe('Conversation.vue', () => {
 							NcActionButton,
 							NcDialog,
 							NcButton,
+							NcListItem: NcListItemStub,
 						},
 					},
 					props: {
@@ -496,6 +503,7 @@ describe('Conversation.vue', () => {
 					plugins: [store],
 					stubs: {
 						NcActionButton,
+						NcListItem: NcListItemStub,
 					},
 				},
 				props: {
@@ -532,6 +540,7 @@ describe('Conversation.vue', () => {
 					plugins: [store],
 					stubs: {
 						NcActionButton,
+						NcListItem: NcListItemStub,
 					},
 				},
 				props: {
@@ -565,6 +574,7 @@ describe('Conversation.vue', () => {
 					plugins: [store],
 					stubs: {
 						NcActionButton,
+						NcListItem: NcListItemStub,
 					},
 				},
 				props: {
@@ -615,6 +625,7 @@ describe('Conversation.vue', () => {
 					plugins: [store],
 					stubs: {
 						NcActionButton,
+						NcListItem: NcListItemStub,
 					},
 				},
 				props: {
