@@ -5,6 +5,7 @@
 
 <template>
 	<TransitionGroup v-if="group"
+		tag="span"
 		class="transition-group"
 		:name="name">
 		<slot />
