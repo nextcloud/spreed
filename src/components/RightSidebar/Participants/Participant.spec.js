@@ -96,6 +96,7 @@ describe('Participant.vue', () => {
 				plugins: [store],
 				stubs: {
 					NcActionButton,
+					NcActionText,
 				},
 			},
 			props: {
@@ -210,21 +211,21 @@ describe('Participant.vue', () => {
 		test('renders guest suffix for guests', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(guest\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(guest\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (guest)')
 		})
 
 		test('renders moderator suffix for moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.MODERATOR
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(moderator\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator)')
 		})
 
 		test('renders guest moderator suffix for guest moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)\s+\(guest\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(moderator\)\s*\(guest\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator) (guest)')
 		})
 
@@ -232,7 +233,7 @@ describe('Participant.vue', () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			participant.actorId = ATTENDEE.BRIDGE_BOT_ID
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(bot\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(bot\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (bot)')
 		})
 	})
@@ -707,7 +708,7 @@ describe('Participant.vue', () => {
 				})
 
 				expect(actionTexts.length).toBeTruthy()
-				expect(actionTexts.at(0).text()).toBe('123 456 78')
+				expect(actionTexts.at(0).find('.action-text__longtext').text()).toBe('123 456 78')
 			}
 
 			test('allows moderators to see dial-in PIN when available', () => {
