@@ -21,6 +21,7 @@ import router from '../../../__mocks__/router.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
+import { findNcActionButton } from '../../../test-helpers.js'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
@@ -314,21 +315,6 @@ describe('Conversation.vue', () => {
 		})
 
 		/**
-		 * @param {object} wrapper Parent element to search the text in
-		 * @param {string} text Text to find within the wrapper
-		 */
-		function findNcActionButton(wrapper, text) {
-			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			const items = actionButtons.filter(actionButton => {
-				return actionButton.text() === text
-			})
-			if (!items.exists()) {
-				return items
-			}
-			return items.at(0)
-		}
-
-		/**
 		 * @param {string} actionName The name of the action to shallow
 		 */
 		function shallowMountAndGetAction(actionName) {
@@ -434,7 +420,6 @@ describe('Conversation.vue', () => {
 				const dialog = wrapper.findComponent({ name: 'NcDialog' })
 				expect(dialog.exists).toBeTruthy()
 				const buttons = dialog.findAllComponents({ name: 'NcButton' })
-				expect(buttons.exists()).toBeTruthy()
 				expect(buttons).toHaveLength(2)
 
 				// Act 2 : click on the confirm button
@@ -484,7 +469,6 @@ describe('Conversation.vue', () => {
 				const dialog = wrapper.findComponent({ name: 'NcDialog' })
 				expect(dialog.exists).toBeTruthy()
 				const buttons = dialog.findAllComponents({ name: 'NcButton' })
-				expect(buttons.exists()).toBeTruthy()
 				expect(buttons).toHaveLength(2)
 
 				// Act 2 : click on the confirm button
@@ -643,7 +627,7 @@ describe('Conversation.vue', () => {
 			expect(el.exists()).toBe(true)
 
 			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			expect(actionButtons.exists()).toBe(true)
+			expect(actionButtons.length).toBeTruthy()
 
 			// Join conversation and Copy link actions are intended
 			expect(findNcActionButton(el, 'Join conversation').exists()).toBe(true)

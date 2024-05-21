@@ -146,11 +146,11 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAll('.messages-group')
+			const groups = wrapper.findAllComponents('.messages-group')
 
-			expect(groups.exists()).toBeTruthy()
+			expect(groups.length).toBeTruthy()
 
-			groups.wrappers.forEach((group, index) => {
+			groups.forEach((group, index) => {
 				expect(group.props('messages')).toStrictEqual(messagesGroups[index])
 			})
 
@@ -173,11 +173,11 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAll('.messages-group')
+			const groups = wrapper.findAllComponents('.messages-group')
 
-			expect(groups.exists()).toBeTruthy()
+			expect(groups.length).toBeTruthy()
 
-			groups.wrappers.forEach((group, index) => {
+			groups.forEach((group, index) => {
 				expect(group.props('messages')).toStrictEqual([messages[index]])
 			})
 
@@ -421,9 +421,9 @@ describe('MessagesList.vue', () => {
 			})
 
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(false)
+			expect(groups.length).toBeFalsy()
 
-			const placeholder = wrapper.findAllComponents({ name: 'LoadingPlaceholder' })
+			const placeholder = wrapper.findComponent({ name: 'LoadingPlaceholder' })
 			expect(placeholder.exists()).toBe(true)
 		})
 
@@ -440,9 +440,9 @@ describe('MessagesList.vue', () => {
 			})
 
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(false)
+			expect(groups.length).toBeFalsy()
 
-			const placeholder = wrapper.findAllComponents({ name: 'NcEmptyContent' })
+			const placeholder = wrapper.findComponent({ name: 'NcEmptyContent' })
 			expect(placeholder.exists()).toBe(true)
 		})
 
@@ -452,7 +452,6 @@ describe('MessagesList.vue', () => {
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
 
 			// Assert: groups are rendered
-			expect(groups.exists()).toBe(true)
 			expect(groups.at(0).props()).toMatchObject({
 				token: TOKEN,
 				messages: messagesGroup1,
@@ -497,7 +496,6 @@ describe('MessagesList.vue', () => {
 
 			// Assert: both groups are updated
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(true)
 			expect(groups.length).toBe(2)
 			expect(groups.at(0).props()).toMatchObject({
 				token: TOKEN,
@@ -530,7 +528,6 @@ describe('MessagesList.vue', () => {
 
 			// Assert: old group nextMessageId is updated, new group is added
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(true)
 			expect(groups.length).toBe(2)
 			expect(groups.at(0).props()).toMatchObject({
 				token: TOKEN,
@@ -563,7 +560,6 @@ describe('MessagesList.vue', () => {
 
 			// Assert: old group nextMessageId is updated, new group is added
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(true)
 			expect(groups.length).toBe(2)
 
 			expect(groups.at(1).props()).toMatchObject({
@@ -598,7 +594,7 @@ describe('MessagesList.vue', () => {
 
 			// Assert: old messages are removed, system message is added
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(false)
+			expect(groups.length).toBeFalsy()
 			const groupsSystem = wrapper.findAllComponents({ name: 'MessagesSystemGroup' })
 			expect(groupsSystem.length).toBe(1)
 			expect(groupsSystem.at(0).props()).toMatchObject({
