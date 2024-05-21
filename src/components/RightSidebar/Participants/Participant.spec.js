@@ -765,25 +765,20 @@ describe('Participant.vue', () => {
 		})
 
 		test('triggers event when clicking', async () => {
-			const eventHandler = jest.fn()
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('click-participant', eventHandler)
-
 			await wrapper.find('li').trigger('click')
 
-			expect(eventHandler).toHaveBeenCalledWith(participant)
+			expect(wrapper.emitted().clickParticipant).toStrictEqual([[participant]])
 		})
 
 		test('does not trigger click event when not a search result', async () => {
-			const eventHandler = jest.fn()
 			delete participant.label
 			delete participant.source
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('click-participant', eventHandler)
 
 			await wrapper.find('li').trigger('click')
 
-			expect(eventHandler).not.toHaveBeenCalledWith(participant)
+			expect(wrapper.emitted().clickParticipant).not.toBeDefined()
 		})
 	})
 
