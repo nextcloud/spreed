@@ -722,6 +722,7 @@ OC.L10N.register(
     "The following bots can be enabled in this conversation. Reach out to your administration to get more bots installed on this server." : "I seguenti bot possono essere abilitati in questa conversazione. Contatta il tuo amministratore per installare altri bot su questo server.",
     "No bots are installed on this server. Reach out to your administration to get bots installed on this server." : "Nessun bot è installato su questo server. Contatta il tuo amministratore per installare bot su questo server.",
     "Disable" : "Disabilita",
+    "Enable" : "Abilita",
     "The file must be a PNG or JPG" : "Il file deve essere una PNG o JPG",
     "Choose" : "Scegli",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Modifica i permessi predefiniti per i partecipanti di questa conversazione. Queste impostazioni non hanno effetto sui moderatori.",

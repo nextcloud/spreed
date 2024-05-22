@@ -718,6 +718,7 @@
     "Enter a description for this conversation" : "Voer een beschrijving in voor dit gesprek",
     "Error while updating conversation description" : "Fout tijdens bijwerken gespreksbeschrijving",
     "Disable" : "Uitschakelen",
+    "Enable" : "Inschakelen",
     "Choose" : "Kies",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Pas de standaardmachtigingen voor deelnemers in dit gesprek aan. Deze instellingen gelden niet voor moderatoren.",
     "All permissions" : "Alle machtigingen",
