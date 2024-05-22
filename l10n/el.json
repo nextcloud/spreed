@@ -625,6 +625,7 @@
     "Enter a description for this conversation" : "Πληκτρολογήστε μια περιγραφή για αυτήν τη συνομιλία",
     "Error while updating conversation description" : "Σφάλμα κατά την ενημέρωση της περιγραφής συνομιλίας",
     "Disable" : "Απενεργοποίηση",
+    "Enable" : "Ενεργοποίηση",
     "Choose" : "Επιλογή",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "Οι συμμετέχοντες έχουν δικαιώματα για έναρξη κλήσης, συμμετοχή σε κλήση, ενεργοποίηση ήχου και βίντεο και κοινή χρήση οθόνης.",
     "Restricted" : "Περιορισμένο",
