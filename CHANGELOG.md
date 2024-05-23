@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.8 – 2024-05-23
+### Fixed
+- fix(polls): Remove actor info from system message
+  [#12343](https://github.com/nextcloud/spreed/pull/12343)
+- fix(recording): Stop broken recording backend
+  [#12402](https://github.com/nextcloud/spreed/pull/12402)
+
+## 17.1.9 – 2024-05-23
+### Fixed
+- fix(polls): Remove actor info from system message
+  [#12342](https://github.com/nextcloud/spreed/pull/12342)
+- fix(recording): Stop broken recording backend
+  [#12401](https://github.com/nextcloud/spreed/pull/12401)
+
 ## 18.0.7 – 2024-04-12
 ### Changed
 - Update translations
