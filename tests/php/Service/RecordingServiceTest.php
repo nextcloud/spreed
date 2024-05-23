@@ -46,6 +46,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
@@ -68,6 +69,8 @@ class RecordingServiceTest extends TestCase {
 	private $config;
 	/** @var IConfig|MockObject */
 	private $serverConfig;
+	/** @var IAppConfig|MockObject */
+	private $appConfig;
 	/** @var IManager|MockObject */
 	private $notificationManager;
 	/** @var Manager|MockObject */
@@ -99,6 +102,7 @@ class RecordingServiceTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->config = $this->createMock(Config::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->shareManager = $this->createMock(ShareManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
@@ -115,6 +119,7 @@ class RecordingServiceTest extends TestCase {
 			$this->timeFactory,
 			$this->config,
 			$this->serverConfig,
+			$this->appConfig,
 			$this->roomService,
 			$this->shareManager,
 			$this->chatManager,

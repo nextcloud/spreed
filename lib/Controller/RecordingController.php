@@ -375,7 +375,7 @@ class RecordingController extends AEnvironmentAwareController {
 	/**
 	 * Store the recording
 	 *
-	 * @param string $owner User that will own the recording file
+	 * @param ?string $owner User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error".
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{type: string, error: array{code: string, message: string}}, array{}>
 	 *
 	 * 200: Recording stored successfully
@@ -386,7 +386,7 @@ class RecordingController extends AEnvironmentAwareController {
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[OpenAPI(scope: 'backend-recording')]
 	#[RequireRoom]
-	public function store(string $owner): DataResponse {
+	public function store(?string $owner): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {
 			$response = new DataResponse([
@@ -398,6 +398,16 @@ class RecordingController extends AEnvironmentAwareController {
 			], Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkRecordingSecret']);
 			return $response;
+		}
+
+		if ($owner === null) {
+			$this->logger->error('Recording backend failed to provide the owner when uploading a recording [ conversation: "' . $this->room->getToken() . '" ]. Most likely the post_max_size or upload_max_filesize were exceeded.');
+			try {
+				$this->recordingService->notifyAboutFailedStore($this->room);
+			} catch (InvalidArgumentException) {
+				// Ignoring, we logged an error already
+			}
+			return new DataResponse(['error' => 'size'], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
