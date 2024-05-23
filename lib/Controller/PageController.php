@@ -298,6 +298,7 @@ class PageController extends Controller {
 	#[NoCSRFRequired]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[BruteForceProtection(action: 'talkRecordingStatus')]
 	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -306,6 +307,13 @@ class PageController extends Controller {
 			$this->logger->debug('Recording "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 
+			return $response;
+		}
+
+		if ($room->getCallRecording() !== Room::RECORDING_VIDEO_STARTING && $room->getCallRecording() !== Room::RECORDING_AUDIO_STARTING) {
+			$response = new NotFoundResponse();
+			$this->logger->debug('Recording "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
+			$response->throttle(['token' => $token, 'action' => 'talkRecordingStatus']);
 			return $response;
 		}
 
