@@ -5,6 +5,51 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.1 – 2024-05-23
+### Changed
+- fix(editing): restore default behaviour of keyboard hotkeys Ctrl+Up
+  [#12254](https://github.com/nextcloud/spreed/pull/12254)
+- fix: replace emoji-mart-vue-fast lib usage with nextcloud/vue function
+  [#12306](https://github.com/nextcloud/spreed/pull/12306)
+- feat(capabilities): Expose which capabilities should be considered local vs federated
+  [#12316](https://github.com/nextcloud/spreed/pull/12316)
+
+### Fixed
+- fix(call): open chat sidebar in call by click on toast
+  [#12196](https://github.com/nextcloud/spreed/pull/12196)
+- fix(LeftSidebar): small glitch on sidebar scroll
+  [#12286](https://github.com/nextcloud/spreed/pull/12286)
+- fix(MessagesList): clean up expired, removed messages from the chat
+  [#12287](https://github.com/nextcloud/spreed/pull/12287)
+- fix(chat): focus submit on upload attachments without caption
+  [#12296](https://github.com/nextcloud/spreed/pull/12296)
+- fix(dashboard): Fix dashboard when the last message of a chat expired
+  [#12309](https://github.com/nextcloud/spreed/pull/12309)
+- fix(notifications): Preparse call notifications for improved performance
+  [#12320](https://github.com/nextcloud/spreed/pull/12320)
+- fix(polls): Remove actor info from system message
+  [#12344](https://github.com/nextcloud/spreed/pull/12344)
+- fix(federation): Don't send notifications for most system messages in federation
+  [#12371](https://github.com/nextcloud/spreed/pull/12371)
+- fix(recording): Stop broken recording backend
+  [#12403](https://github.com/nextcloud/spreed/pull/12403)
+- fix(recording): Handle the problem gracefully when the recording can not be uploaded
+  [#12404](https://github.com/nextcloud/spreed/pull/12404)
+
+## 18.0.8 – 2024-05-23
+### Fixed
+- fix(polls): Remove actor info from system message
+  [#12343](https://github.com/nextcloud/spreed/pull/12343)
+- fix(recording): Stop broken recording backend
+  [#12402](https://github.com/nextcloud/spreed/pull/12402)
+
+## 17.1.9 – 2024-05-23
+### Fixed
+- fix(polls): Remove actor info from system message
+  [#12342](https://github.com/nextcloud/spreed/pull/12342)
+- fix(recording): Stop broken recording backend
+  [#12401](https://github.com/nextcloud/spreed/pull/12401)
+
 ## 19.0.0 – 2024-04-24
 ### Added
 - Messages can now be edited by logged-in authors and moderators for one day
