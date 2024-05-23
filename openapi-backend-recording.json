@@ -525,10 +525,10 @@
                     {
                         "name": "owner",
                         "in": "query",
-                        "description": "User that will own the recording file",
-                        "required": true,
+                        "description": "User that will own the recording file. `null` is actually not allowed and will always result in a \"400 Bad Request\". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of \"500 Internal Server Error\".",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "nullable": true
                         }
                     },
                     {
