@@ -232,7 +232,7 @@ OC.L10N.register(
     "Audio" : "Audio",
     "Other" : "Cits",
     "Search in conversation: {conversation}" : "Meklēt sarunā: {conversation}",
-    "Error while sharing file" : "Radās kļūda koplietojot failu",
+    "Error while sharing file" : "Kļūda datnes kopīgošanā",
     "Default" : "Noklusējuma",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Tas aizņem vairāk laika, nekā paredzēts. Vai multivides atļaujas jau ir piešķirtas (vai noraidītas)? Ja atbilde ir “jā”, restartējiet pārlūkprogrammu, jo ir audio un video kļūme",
     "Access to microphone & camera is only possible with HTTPS" : "Piekļuve mikrofonam un kamerai ir iespējama izmantojot tikai HTTPS",
