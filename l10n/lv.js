@@ -65,7 +65,7 @@ OC.L10N.register(
     "File is too big" : "Datne ir par lielu",
     "Invalid file provided" : "Norādīta nederīga datne",
     "Invalid image" : "Nederīgs attēls",
-    "Unknown filetype" : "Nezināms datnes tips",
+    "Unknown filetype" : "Nezināms datnes veids",
     "Say hi to your friends and colleagues!" : "Sasveicinies ar saviem draugiem un kolēģiem!",
     "%s invited you to a conversation." : "%s uzaicināja jūs uz sarunu.",
     "You were invited to a conversation." : "Jūs uzaicinājāt uz sarunu.",
