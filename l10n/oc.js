@@ -1063,6 +1063,7 @@ OC.L10N.register(
     "Show all polls" : "Mostrar totes los sondatges",
     "Show all voice messages" : "Veire totes los messatges àudio",
     "Show all locations" : "Veire totes los emplaçaments",
+    "Show all call recordings" : "Mostrar los enregistraments de sonadas",
     "Show all audio" : "Veire totes los àudios",
     "Show all other" : "Veire tota la rèsta",
     "You: {lastMessage}" : "Vos : {lastMessage}",
