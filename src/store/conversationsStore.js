@@ -43,6 +43,8 @@ import {
 	setCallPermissions,
 	setMessageExpiration,
 	setConversationPassword,
+	createPublicConversation,
+	createPrivateConversation,
 } from '../services/conversationsService.js'
 import {
 	clearConversationHistory,
@@ -915,6 +917,29 @@ const actions = {
 			return response.data.ocs.data
 		} catch (error) {
 			console.error('Error creating new one to one conversation: ', error)
+		}
+	},
+
+	/**
+	 * Creates a new private or public conversation, adds it to the store
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} payload action payload;
+	 * @param {string} payload.conversationName displayed name for a new conversation
+	 * @param {number} payload.isPublic whether a conversation is public or private
+	 * @return {string} token of new conversation
+	 */
+	async createGroupConversation(context, { conversationName, isPublic }) {
+		try {
+			const response = isPublic
+				? await createPublicConversation(conversationName)
+				: await createPrivateConversation(conversationName)
+			const conversation = response.data.ocs.data
+			context.dispatch('addConversation', conversation)
+			return conversation.token
+		} catch (error) {
+			console.error('Error creating new group conversation: ', error)
+			return ''
 		}
 	},
 

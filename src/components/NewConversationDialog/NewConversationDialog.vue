@@ -126,12 +126,8 @@ import NewConversationSetupPage from './NewConversationSetupPage.vue'
 import LoadingComponent from '../LoadingComponent.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { CONVERSATION, PRIVACY } from '../../constants.js'
-import {
-	createPublicConversation,
-	createPrivateConversation,
-	setConversationPassword,
-} from '../../services/conversationsService.js'
+import { CONVERSATION } from '../../constants.js'
+import { setConversationPassword } from '../../services/conversationsService.js'
 import { addParticipant } from '../../services/participantsService.js'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
@@ -288,16 +284,25 @@ export default {
 		async handleCreateConversation() {
 			this.page = 2
 
-			// TODO: move all operations to a single store action
-			// and commit + addConversation only once at the very end
 			try {
-				if (this.isPublic) {
-					await this.createConversation(PRIVACY.PUBLIC)
-					if (this.password && this.newConversation.hasPassword) {
-						await setConversationPassword(this.newConversation.token, this.password)
-					}
-				} else {
-					await this.createConversation(PRIVACY.PRIVATE)
+				this.newConversation.token = await this.$store.dispatch('createGroupConversation', {
+					conversationName: this.conversationName,
+					isPublic: this.isPublic,
+				})
+
+				if (this.isPublic && this.password && this.newConversation.hasPassword) {
+					await setConversationPassword(this.newConversation.token, this.password)
+				}
+
+				if (this.isAvatarEdited) {
+					await this.$refs.setupPage.$refs.conversationAvatar.saveAvatar()
+				}
+
+				if (this.newConversation.description) {
+					await this.$store.dispatch('setConversationDescription', {
+						token: this.newConversation.token,
+						description: this.newConversation.description,
+					})
 				}
 			} catch (exception) {
 				console.error(exception)
@@ -345,48 +350,10 @@ export default {
 				this.closeModal()
 			}
 		},
-		/**
-		 * Creates a new private or public conversation, adds it to the store and sets
-		 * the local token value to the newly created conversation's token
-		 *
-		 * @param {number} flag choose to send a request with private or public flag
-		 */
-		async createConversation(flag) {
-			try {
-				let response
-				if (flag === PRIVACY.PRIVATE) {
-					response = await createPrivateConversation(this.conversationName)
-				} else if (flag === PRIVACY.PUBLIC) {
-					response = await createPublicConversation(this.conversationName)
-				}
-				const conversation = response.data.ocs.data
-				this.$store.dispatch('addConversation', conversation)
-				this.newConversation.token = conversation.token
-				if (this.isAvatarEdited) {
-					this.$refs.setupPage.$refs.conversationAvatar.saveAvatar()
-				}
-				if (this.newConversation.description) {
-					this.handleUpdateDescription()
-				}
-			} catch (error) {
-				console.error('Error creating new conversation: ', error)
-			}
-		},
+
 		pushNewRoute() {
 			this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-		},
-
-		async handleUpdateDescription() {
-			try {
-				await this.$store.dispatch('setConversationDescription', {
-					token: this.newConversation.token,
-					description: this.newConversation.description,
-				})
-			} catch (error) {
-				console.error('Error while setting conversation description', error)
-				showError(t('spreed', 'Error while updating conversation description'))
-			}
 		},
 
 		/** Handles the press of the enter key */
