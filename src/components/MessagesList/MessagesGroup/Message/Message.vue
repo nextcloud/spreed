@@ -4,9 +4,9 @@
 -->
 
 <template>
-	<li :id="`message_${id}`"
+	<li :id="`message_${message.id}`"
 		ref="message"
-		:data-message-id="id"
+		:data-message-id="message.id"
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
@@ -23,12 +23,13 @@
 			<MessageBody :rich-parameters="richParameters"
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
-				v-bind="{...$props, ...readInfoProps}" />
+				:message="message"
+				v-bind="readInfoProps" />
 
 			<!-- reactions buttons and popover with details -->
-			<Reactions v-if="Object.keys(reactions).length"
-				:id="id"
-				:token="token"
+			<Reactions v-if="Object.keys(message.reactions).length"
+				:id="message.id"
+				:token="message.token"
 				:can-react="canReact"
 				:show-controls="isHovered || isFollowUpEmojiPickerOpen"
 				@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
@@ -45,7 +46,9 @@
 				:is-reactions-menu-open.sync="isReactionsMenuOpen"
 				:is-forwarder-open.sync="isForwarderOpen"
 				:can-react="canReact"
-				v-bind="{...$props, ...readInfoProps}"
+				:message="message"
+				:previous-message-id="previousMessageId"
+				v-bind="readInfoProps"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
 				@edit="handleEdit"
@@ -65,12 +68,12 @@
 		</div>
 
 		<MessageForwarder v-if="isForwarderOpen"
-			:id="id"
-			:token="token"
+			:id="message.id"
+			:token="message.token"
 			@close="isForwarderOpen = false" />
 
 		<MessageTranslateDialog v-if="isTranslationAvailable && isTranslateDialogOpen"
-			:message="message"
+			:message="message.message"
 			:rich-parameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
 
@@ -128,78 +131,9 @@ export default {
 		UnfoldMore,
 	},
 
-	inheritAttrs: false,
-
 	props: {
-		/**
-		 * The actor type of the sender of the message.
-		 */
-		actorType: {
-			type: String,
-			required: true,
-		},
-		/**
-		 * The actor id of the sender of the message.
-		 */
-		actorId: {
-			type: String,
-			required: true,
-		},
-		/**
-		 * The message or quote text.
-		 */
 		message: {
-			type: String,
-			required: true,
-		},
-		/**
-		 * The parameters of the rich object message
-		 */
-		messageParameters: {
-			type: [Array, Object],
-			required: true,
-		},
-		/**
-		 * The message timestamp.
-		 */
-		timestamp: {
-			type: Number,
-			default: 0,
-		},
-		/**
-		 * The message id.
-		 */
-		id: {
-			type: [String, Number],
-			required: true,
-		},
-		/**
-		 * Specifies if the message is temporary in order to display the spinner instead
-		 * of the message time.
-		 */
-		isTemporary: {
-			type: Boolean,
-			default: false,
-		},
-		/**
-		 * Specifies if the message can be replied to.
-		 */
-		isReplyable: {
-			type: Boolean,
-			required: true,
-		},
-		/**
-		 * The conversation token.
-		 */
-		token: {
-			type: String,
-			required: true,
-		},
-		/**
-		 * The type of system message
-		 */
-		systemMessage: {
-			type: String,
+			type: Object,
 			required: true,
 		},
 		/**
@@ -227,64 +161,12 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
-		/**
-		 * The type of the message.
-		 */
-		messageType: {
-			type: String,
-			required: true,
-		},
-		/**
-		 * The parent message.
-		 */
-		parent: {
-			type: Object,
-			default: undefined,
-		},
-		/**
-		 * Is message allowed to render in markdown
-		 */
-		markdown: {
-			type: Boolean,
-			default: true,
-		},
-		sendingFailure: {
-			type: String,
-			default: '',
-		},
-
 		previousMessageId: {
 			type: [String, Number],
 			default: 0,
 		},
-
 		nextMessageId: {
 			type: [String, Number],
-			default: 0,
-		},
-
-		reactions: {
-			type: [Array, Object],
-			default: () => { return {} },
-		},
-
-		reactionsSelf: {
-			type: Array,
-			default: () => { return [] },
-		},
-
-		referenceId: {
-			type: String,
-			default: '',
-		},
-
-		lastEditActorDisplayName: {
-			type: String,
-			default: '',
-		},
-
-		lastEditTimestamp: {
-			type: Number,
 			default: 0,
 		},
 	},
@@ -317,38 +199,42 @@ export default {
 	},
 
 	computed: {
+		isTemporary() {
+			return this.message.timestamp === 0
+		},
+
 		isLastMessage() {
 			// never displayed for the very last message
-			return !this.nextMessageId || this.id === this.conversation?.lastMessage?.id
+			return !this.nextMessageId || this.message.id === this.conversation?.lastMessage?.id
 		},
 
 		visualLastLastReadMessageId() {
-			return this.$store.getters.getVisualLastReadMessageId(this.token)
+			return this.$store.getters.getVisualLastReadMessageId(this.message.token)
 		},
 
 		isLastReadMessage() {
 			if (this.isLastMessage) {
 				return false
 			}
-			return (!this.isCollapsedSystemMessage && this.id === this.visualLastLastReadMessageId)
-				|| (this.isCollapsedSystemMessage && this.id === this.visualLastLastReadMessageId && this.id !== this.lastCollapsedMessageId)
+			return (!this.isCollapsedSystemMessage && this.message.id === this.visualLastLastReadMessageId)
+				|| (this.isCollapsedSystemMessage && this.message.id === this.visualLastLastReadMessageId && this.message.id !== this.lastCollapsedMessageId)
 				|| (this.isCombinedSystemMessage && this.lastCollapsedMessageId === this.visualLastLastReadMessageId)
 		},
 
 		isSystemMessage() {
-			return this.systemMessage !== ''
+			return this.message.systemMessage !== ''
 		},
 
 		isDeletedMessage() {
-			return this.messageType === 'comment_deleted'
+			return this.message.messageType === 'comment_deleted'
 		},
 
 		conversation() {
-			return this.$store.getters.conversation(this.token)
+			return this.$store.getters.conversation(this.message.token)
 		},
 
 		showCommonReadIcon() {
-			return this.conversation.lastCommonReadMessage >= this.id
+			return this.conversation.lastCommonReadMessage >= this.message.id
 				&& this.showSentIcon && !this.isDeletedMessage
 		},
 
@@ -356,51 +242,51 @@ export default {
 			return !this.isSystemMessage
 				&& !this.isTemporary
 				&& !this.isDeleting
-				&& this.actorType === this.$store.getters.getActorType()
-				&& this.actorId === this.$store.getters.getActorId()
+				&& this.message.actorType === this.$store.getters.getActorType()
+				&& this.message.actorId === this.$store.getters.getActorId()
 				&& !this.isDeletedMessage
 		},
 
 		richParameters() {
 			const richParameters = {}
-			Object.keys(this.messageParameters).forEach(function(p) {
-				const type = this.messageParameters[p].type
-				const mimetype = this.messageParameters[p].mimetype
+			Object.keys(this.message.messageParameters).forEach(function(p) {
+				const type = this.message.messageParameters[p].type
+				const mimetype = this.message.messageParameters[p].mimetype
 				const itemType = getItemTypeFromMessage({
-					messageParameters: this.messageParameters,
-					messageType: this.messageType
+					messageParameters: this.message.messageParameters,
+					messageType: this.message.messageType
 				})
 				if (type === 'user' || type === 'call' || type === 'guest' || type === 'user-group' || type === 'group') {
 					richParameters[p] = {
 						component: Mention,
 						props: {
-							...this.messageParameters[p],
-							token: this.token,
+							...this.message.messageParameters[p],
+							token: this.message.token,
 						},
 					}
 				} else if (type === 'file' && mimetype !== 'text/vcard') {
 					richParameters[p] = {
 						component: FilePreview,
 						props: Object.assign({
-							token: this.token,
+							token: this.message.token,
 							itemType,
-							referenceId: this.referenceId,
-						}, this.messageParameters[p]),
+							referenceId: this.message.referenceId,
+						}, this.message.messageParameters[p]),
 					}
 				} else if (type === 'deck-card') {
 					richParameters[p] = {
 						component: DeckCard,
-						props: this.messageParameters[p],
+						props: this.message.messageParameters[p],
 					}
 				} else if (type === 'geo-location') {
 					richParameters[p] = {
 						component: Location,
-						props: this.messageParameters[p],
+						props: this.message.messageParameters[p],
 					}
-				} else if (type === 'talk-poll' && this.systemMessage !== 'poll_closed') {
-					const props = Object.assign({}, this.messageParameters[p])
+				} else if (type === 'talk-poll' && this.message.systemMessage !== 'poll_closed') {
+					const props = Object.assign({}, this.message.messageParameters[p])
 					// Add the token to the component props
-					props.token = this.token
+					props.token = this.message.token
 					richParameters[p] = {
 						component: Poll,
 						props,
@@ -408,12 +294,12 @@ export default {
 				} else if (mimetype === 'text/vcard') {
 					richParameters[p] = {
 						component: Contact,
-						props: this.messageParameters[p],
+						props: this.message.messageParameters[p],
 					}
 				} else {
 					richParameters[p] = {
 						component: DefaultParameter,
-						props: this.messageParameters[p],
+						props: this.message.messageParameters[p],
 					}
 				}
 			}.bind(this))
@@ -443,8 +329,8 @@ export default {
 		canReact() {
 			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
-				&& this.messageType !== 'command'
-				&& this.messageType !== 'comment_deleted'
+				&& this.message.messageType !== 'command'
+				&& this.message.messageType !== 'comment_deleted'
 		},
 	},
 
@@ -464,7 +350,7 @@ export default {
 		},
 
 		highlightMessage(messageId) {
-			if (this.id === messageId) {
+			if (this.message.id === messageId) {
 				this.isHighlighted = true
 			}
 		},
@@ -483,18 +369,18 @@ export default {
 
 		handleReply() {
 			this.chatExtrasStore.setParentIdToReply({
-				token: this.token,
-				id: this.id,
+				token: this.message.token,
+				id: this.message.id,
 			})
 			EventBus.emit('focus-chat-input')
 		},
 
 		handleEdit() {
 			this.chatExtrasStore.initiateEditingMessage({
-				token: this.token,
-				id: this.id,
-				message: this.message,
-				messageParameters: this.messageParameters,
+				token: this.message.token,
+				id: this.message.id,
+				message: this.message.message,
+				messageParameters: this.message.messageParameters,
 			})
 		},
 
@@ -502,8 +388,8 @@ export default {
 			this.isDeleting = true
 			try {
 				const statusCode = await this.$store.dispatch('deleteMessage', {
-					token: this.token,
-					id: this.id,
+					token: this.message.token,
+					id: this.message.id,
 					placeholder: t('spreed', 'Deleting message'),
 				})
 

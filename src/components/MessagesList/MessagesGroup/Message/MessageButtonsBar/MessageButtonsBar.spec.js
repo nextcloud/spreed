@@ -13,7 +13,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
+import { CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
@@ -57,36 +57,30 @@ describe('MessageButtonsBar.vue', () => {
 		testStoreConfig.modules.actorStore.getters.isActorGuest = isActorGuestMock
 
 		messageProps = {
-			message: 'test message',
-			actorType: ATTENDEE.ACTOR_TYPE.USERS,
-			actorId: 'user-id-1',
-			actorDisplayName: 'user-display-name-1',
-			messageParameters: {},
-			id: 123,
-			isTemporary: false,
-			isFirstMessage: true,
-			isReplyable: true,
-			isTranslationAvailable: false,
-			canReact: true,
-			isReactionsMenuOpen: false,
+			previousMessageId: 100,
+			message: {
+				message: 'test message',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				actorId: 'user-id-1',
+				actorDisplayName: 'user-display-name-1',
+				messageParameters: {},
+				id: 123,
+				isReplyable: true,
+				timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
+				token: TOKEN,
+				systemMessage: '',
+				messageType: 'comment',
+			},
 			isActionMenuOpen: false,
 			isEmojiPickerOpen: false,
-			isLastRead: false,
+			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
-			timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
-			token: TOKEN,
-			systemMessage: '',
-			messageType: 'comment',
-			previousMessageId: 100,
-			participant: {
-				actorId: 'user-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				participantType: PARTICIPANT.TYPE.USER,
-			},
+			canReact: true,
 			showCommonReadIcon: true,
 			showSentIcon: true,
 			commonReadIconTooltip: '',
 			sentIconTooltip: '',
+			isTranslationAvailable: false,
 		}
 	})
 
@@ -135,7 +129,7 @@ describe('MessageButtonsBar.vue', () => {
 			})
 
 			test('hides reply button when not replyable', async () => {
-				messageProps.isReplyable = false
+				messageProps.message.isReplyable = false
 				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
@@ -161,7 +155,7 @@ describe('MessageButtonsBar.vue', () => {
 				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
 				store = new Store(testStoreConfig)
 
-				messageProps.actorId = 'another-user'
+				messageProps.message.actorId = 'another-user'
 
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -227,19 +221,19 @@ describe('MessageButtonsBar.vue', () => {
 			})
 
 			test('hides private reply action for one to one conversation type', async () => {
-				messageProps.actorId = 'another-user'
+				messageProps.message.actorId = 'another-user'
 				conversationProps.type = CONVERSATION.TYPE.ONE_TO_ONE
 				testPrivateReplyActionVisible(false)
 			})
 
 			test('hides private reply action for guest messages', async () => {
-				messageProps.actorId = 'guest-user'
-				messageProps.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
+				messageProps.message.actorId = 'guest-user'
+				messageProps.message.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 				testPrivateReplyActionVisible(false)
 			})
 
 			test('hides private reply action when current user is a guest', async () => {
-				messageProps.actorId = 'another-user'
+				messageProps.message.actorId = 'another-user'
 				getActorTypeMock.mockClear().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
 				isActorUserMock.mockClear().mockReturnValue(() => false)
 				isActorGuestMock.mockClear().mockReturnValue(() => true)
@@ -315,12 +309,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			// appears even with more restrictive conditions
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
-			messageProps.actorId = 'another-user'
-			messageProps.participant = {
-				actorId: 'guest-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-				participantType: PARTICIPANT.TYPE.GUEST,
-			}
+			messageProps.message.actorId = 'another-user'
 
 			const wrapper = shallowMount(MessageButtonsBar, {
 				localVue,
@@ -353,12 +342,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			// appears even with more restrictive conditions
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
-			messageProps.actorId = 'another-user'
-			messageProps.participant = {
-				actorId: 'guest-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-				participantType: PARTICIPANT.TYPE.GUEST,
-			}
+			messageProps.message.actorId = 'another-user'
 
 			const wrapper = shallowMount(MessageButtonsBar, {
 				localVue,

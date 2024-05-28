@@ -24,9 +24,9 @@
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" />
 			<Poll v-if="showResultsButton"
-				:token="token"
+				:token="message.token"
 				show-as-button
-				v-bind="messageParameters.poll" />
+				v-bind="message.messageParameters.poll" />
 		</div>
 
 		<!-- Normal message body content -->
@@ -36,7 +36,7 @@
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
-			<Quote v-if="parent" v-bind="parent" />
+			<Quote v-if="message.parent" v-bind="message.parent" />
 
 			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"
@@ -44,8 +44,8 @@
 				:class="{'single-emoji': isSingleEmoji}"
 				autolink
 				dir="auto"
-				:interactive="markdown && isEditable"
-				:use-extended-markdown="markdown"
+				:interactive="message.markdown && isEditable"
+				:use-extended-markdown="message.markdown"
 				:reference-limit="1"
 				@interact:todo="handleInteraction" />
 
@@ -69,7 +69,7 @@
 			<span v-if="!hideDate" class="date" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
-			<div v-if="sendingFailure"
+			<div v-if="message.sendingFailure"
 				:title="sendingErrorIconTooltip"
 				class="message-status sending-failed"
 				:class="{'retry-option': sendingErrorCanRetry}"
@@ -156,72 +156,22 @@ export default {
 		ReloadIcon,
 	},
 
-	inheritAttrs: false,
-
 	props: {
-		id: {
-			type: [String, Number],
-			required: true,
-		},
-		token: {
-			type: String,
-			required: true,
-		},
-		actorId: {
-			type: String,
-			required: true,
-		},
-		actorType: {
-			type: String,
-			required: true,
-		},
-		parent: {
-			type: Object,
-			default: undefined,
-		},
-		markdown: {
-			type: Boolean,
-			default: true,
-		},
 		message: {
-			type: String,
-			required: true,
-		},
-		messageType: {
-			type: String,
-			required: true,
-		},
-		systemMessage: {
-			type: String,
-			required: true,
-		},
-		messageParameters: {
-			type: [Array, Object],
+			type: Object,
 			required: true,
 		},
 		richParameters: {
 			type: Object,
 			required: true,
 		},
-		timestamp: {
-			type: Number,
-			default: 0,
-		},
 		isDeleting: {
-			type: Boolean,
-			default: false,
-		},
-		isTemporary: {
 			type: Boolean,
 			default: false,
 		},
 		hasCall: {
 			type: Boolean,
 			default: false,
-		},
-		sendingFailure: {
-			type: String,
-			default: '',
 		},
 
 		/**
@@ -246,11 +196,11 @@ export default {
 	},
 
 	setup(props) {
-		const { token, id } = toRefs(props)
+		const { message } = toRefs(props)
 		const {
 			isEditable,
 			isFileShare,
-		} = useMessageInfo(token, id)
+		} = useMessageInfo(message.value.token, message.value.id)
 		return {
 			isInCall: useIsInCall(),
 			isEditable,
@@ -269,50 +219,54 @@ export default {
 
 	computed: {
 		renderedMessage() {
-			if (this.isFileShare && this.message !== '{file}') {
+			if (this.isFileShare && this.message.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
-				return '{file}' + '\n\n' + this.message
+				return '{file}' + '\n\n' + this.message.message
 			} else {
-				return this.message
+				return this.message.message
 			}
 		},
 
 		isSystemMessage() {
-			return this.systemMessage !== ''
+			return this.message.systemMessage !== ''
 		},
 
 		isDeletedMessage() {
-			return this.messageType === 'comment_deleted'
+			return this.message.messageType === 'comment_deleted'
 		},
 
 		isNewPollMessage() {
-			if (this.messageParameters?.object?.type !== 'talk-poll') {
+			if (this.message.messageParameters?.object?.type !== 'talk-poll') {
 				return false
 			}
 
-			return this.isInCall && !!this.$store.getters.getNewPolls[this.messageParameters.object.id]
+			return this.isInCall && !!this.$store.getters.getNewPolls[this.message.messageParameters.object.id]
+		},
+
+		isTemporary() {
+			return this.message.timestamp === 0
 		},
 
 		hideDate() {
-			return this.isTemporary || this.isDeleting || !!this.sendingFailure
+			return this.isTemporary || this.isDeleting || !!this.message.sendingFailure
 		},
 
 		messageTime() {
 			if (this.hideDate) {
 				return null
 			}
-			return moment(this.timestamp * 1000).format('LT')
+			return moment(this.message.timestamp * 1000).format('LT')
 		},
 
 		messageDate() {
 			if (this.hideDate) {
 				return null
 			}
-			return moment(this.timestamp * 1000).format('LL')
+			return moment(this.message.timestamp * 1000).format('LL')
 		},
 
 		isLastCallStartedMessage() {
-			return this.systemMessage === 'call_started' && this.id === this.$store.getters.getLastCallStartedMessageId(this.token)
+			return this.message.systemMessage === 'call_started' && this.message.id === this.$store.getters.getLastCallStartedMessageId(this.message.token)
 		},
 
 		showJoinCallButton() {
@@ -320,7 +274,7 @@ export default {
 		},
 
 		showResultsButton() {
-			return this.systemMessage === 'poll_closed'
+			return this.message.systemMessage === 'poll_closed'
 		},
 
 		isSingleEmoji() {
@@ -342,24 +296,24 @@ export default {
 		},
 
 		sendingErrorCanRetry() {
-			return ['timeout', 'other', 'failed-upload'].includes(this.sendingFailure)
+			return ['timeout', 'other', 'failed-upload'].includes(this.message.sendingFailure)
 		},
 
 		sendingErrorIconTooltip() {
 			if (this.sendingErrorCanRetry) {
 				return t('spreed', 'Failed to send the message. Click to try again')
 			}
-			if (this.sendingFailure === 'quota') {
+			if (this.message.sendingFailure === 'quota') {
 				return t('spreed', 'Not enough free space to upload file')
 			}
-			if (this.sendingFailure === 'failed-share') {
+			if (this.message.sendingFailure === 'failed-share') {
 				return t('spreed', 'You are not allowed to share files')
 			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
 
 		containsCodeBlocks() {
-			return this.message.includes('```')
+			return this.message.message.includes('```')
 		},
 	},
 
@@ -408,14 +362,14 @@ export default {
 
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
-				if (this.sendingFailure === 'failed-upload') {
+				if (this.message.sendingFailure === 'failed-upload') {
 					this.$store.dispatch('retryUploadFiles', {
-						token: this.token,
-						uploadId: this.$store.getters.message(this.token, this.id)?.uploadId,
-						caption: this.renderedMessage !== this.message ? this.message : undefined,
+						token: this.message.token,
+						uploadId: this.$store.getters.message(this.message.token, this.message.id)?.uploadId,
+						caption: this.renderedMessage !== this.message.message ? this.message.message : undefined,
 					})
 				} else {
-					EventBus.emit('retry-message', this.id)
+					EventBus.emit('retry-message', this.message.id)
 					EventBus.emit('focus-chat-input')
 				}
 			}
@@ -432,7 +386,7 @@ export default {
 				return
 			}
 			let checkBoxIndex = 0
-			const lines = this.message.split('\n')
+			const lines = this.message.message.split('\n')
 			for (let i = 0; i < lines.length; i++) {
 				if (lines[i].trim().match(/^- {1,4}\[\s\]/) || lines[i].trim().match(/^- {1,4}\[x\]/)) {
 					if (checkBoxIndex === index) {
@@ -450,11 +404,11 @@ export default {
 			// Update the message using editing API
 			let newMessageText = parseSpecialSymbols(lines.join('\n').trim())
 			// also parse mentions
-			newMessageText = parseMentions(newMessageText, this.messageParameters)
+			newMessageText = parseMentions(newMessageText, this.message.messageParameters)
 			try {
 				await this.$store.dispatch('editMessage', {
-					token: this.token,
-					messageId: this.id,
+					token: this.message.token,
+					messageId: this.message.id,
 					updatedMessage: newMessageText,
 				})
 			} catch (error) {

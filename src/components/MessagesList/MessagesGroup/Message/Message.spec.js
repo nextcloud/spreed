@@ -82,19 +82,20 @@ describe('Message.vue', () => {
 		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
 
 		messageProps = {
-			message: 'test message',
-			actorType: ATTENDEE.ACTOR_TYPE.USERS,
-			actorId: 'user-id-1',
-			actorDisplayName: 'user-display-name-1',
-			messageParameters: {},
-			id: 123,
-			isTemporary: false,
-			isFirstMessage: true,
-			isReplyable: true,
-			timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
-			token: TOKEN,
-			systemMessage: '',
-			messageType: 'comment',
+			message: {
+				message: 'test message',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				actorId: 'user-id-1',
+				actorDisplayName: 'user-display-name-1',
+				messageParameters: {},
+				id: 123,
+				isReplyable: true,
+				timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
+				token: TOKEN,
+				systemMessage: '',
+				messageType: 'comment',
+				reactions: [],
+			}
 		}
 	})
 
@@ -124,7 +125,7 @@ describe('Message.vue', () => {
 
 		test('renders emoji as single plain text', async () => {
 			messageProps.isSingleEmoji = true
-			messageProps.message = '🌧️'
+			messageProps.message.message = '🌧️'
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
@@ -157,9 +158,9 @@ describe('Message.vue', () => {
 			})
 
 			test('shows join call button on last message when a call is in progress', () => {
-				messageProps.id = 2
-				messageProps.systemMessage = 'call_started'
-				messageProps.message = 'message two'
+				messageProps.message.id = 2
+				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.message = 'message two'
 				conversationProps.hasCall = true
 
 				const wrapper = shallowMount(Message, {
@@ -180,9 +181,9 @@ describe('Message.vue', () => {
 			})
 
 			test('does not show join call button on non-last message when a call is in progress', () => {
-				messageProps.id = 1
-				messageProps.systemMessage = 'call_started'
-				messageProps.message = 'message one'
+				messageProps.message.id = 1
+				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.message = 'message one'
 				conversationProps.hasCall = true
 
 				const wrapper = shallowMount(Message, {
@@ -200,9 +201,9 @@ describe('Message.vue', () => {
 			})
 
 			test('does not show join call button when no call is in progress', () => {
-				messageProps.id = 2
-				messageProps.systemMessage = 'call_started'
-				messageProps.message = 'message two'
+				messageProps.message.id = 2
+				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.message = 'message two'
 				conversationProps.hasCall = false
 
 				const wrapper = shallowMount(Message, {
@@ -220,9 +221,9 @@ describe('Message.vue', () => {
 			})
 
 			test('does not show join call button when self is in call', () => {
-				messageProps.id = 2
-				messageProps.systemMessage = 'call_started'
-				messageProps.message = 'message two'
+				messageProps.message.id = 2
+				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.message = 'message two'
 				conversationProps.hasCall = true
 
 				jest.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
@@ -243,8 +244,8 @@ describe('Message.vue', () => {
 		})
 
 		test('renders deleted system message', () => {
-			messageProps.systemMessage = 'comment_deleted'
-			messageProps.message = 'message deleted'
+			messageProps.message.systemMessage = 'comment_deleted'
+			messageProps.message.message = 'message deleted'
 			conversationProps.hasCall = true
 
 			const wrapper = shallowMount(Message, {
@@ -288,7 +289,7 @@ describe('Message.vue', () => {
 				token: TOKEN,
 				reactions: '',
 			}
-			messageProps.parent = parentMessage
+			messageProps.message.parent = parentMessage
 
 			const messageGetterMock = jest.fn().mockReturnValue(parentMessage)
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => messageGetterMock)
@@ -316,9 +317,9 @@ describe('Message.vue', () => {
 			 * @param {object} expectedRichParameters The expected Vue objects for the parameters
 			 */
 			function renderRichObject(message, messageParameters, expectedRichParameters) {
-				messageProps.message = message
-				messageProps.messageParameters = messageParameters
-				store.dispatch('processMessage', { token: TOKEN, message: messageProps })
+				messageProps.message.message = message
+				messageProps.message.messageParameters = messageParameters
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
@@ -570,7 +571,7 @@ describe('Message.vue', () => {
 		})
 
 		test('does not render actions for system messages are available', async () => {
-			messageProps.systemMessage = 'this is a system message'
+			messageProps.message.systemMessage = 'this is a system message'
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -587,7 +588,7 @@ describe('Message.vue', () => {
 		})
 
 		test('does not render actions for temporary messages', async () => {
-			messageProps.isTemporary = true
+			messageProps.message.timestamp = 0
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -604,7 +605,7 @@ describe('Message.vue', () => {
 		})
 
 		test('does not render actions for deleted messages', async () => {
-			messageProps.messageType = 'comment_deleted'
+			messageProps.message.messageType = 'comment_deleted'
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -621,7 +622,7 @@ describe('Message.vue', () => {
 		})
 
 		test('Buttons bar is rendered on mouse over', async () => {
-			messageProps.sendingFailure = 'timeout'
+			messageProps.message.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
@@ -702,7 +703,7 @@ describe('Message.vue', () => {
 		})
 
 		test('lets user retry sending a timed out message', async () => {
-			messageProps.sendingFailure = 'timeout'
+			messageProps.message.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
@@ -733,7 +734,7 @@ describe('Message.vue', () => {
 		})
 
 		test('displays the message already with a spinner while sending it', () => {
-			messageProps.isTemporary = true
+			messageProps.message.timestamp = 0
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
@@ -783,8 +784,8 @@ describe('Message.vue', () => {
 
 		test('does not displays check icon for other people\'s messages', () => {
 			conversationProps.lastCommonReadMessage = 123
-			messageProps.actorId = 'user-id-2'
-			messageProps.actorType = ATTENDEE.ACTOR_TYPE.USERS
+			messageProps.message.actorId = 'user-id-2'
+			messageProps.message.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,

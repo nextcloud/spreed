@@ -10,13 +10,12 @@
 			class="messages-group__system">
 			<ul v-if="messagesCollapsed.messages?.length > 1"
 				class="messages messages--header">
-				<Message :token="token"
-					is-combined-system-message
+				<Message is-combined-system-message
 					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
 					:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
 					:last-collapsed-message-id="messagesCollapsed.lastId"
-					v-bind="createCombinedSystemMessage(messagesCollapsed)"
+					:message="createCombinedSystemMessage(messagesCollapsed)"
 					@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
 			</ul>
 			<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
@@ -24,12 +23,11 @@
 				:class="{'messages--collapsed': messagesCollapsed.messages?.length > 1}">
 				<Message v-for="message in messagesCollapsed.messages"
 					:key="message.id"
-					:token="token"
+					:message="message"
 					:is-collapsed-system-message="messagesCollapsed.messages?.length > 1"
 					:last-collapsed-message-id="messagesCollapsed.lastId"
 					:next-message-id="getNextMessageId(message)"
-					:previous-message-id="getPrevMessageId(message)"
-					v-bind="message" />
+					:previous-message-id="getPrevMessageId(message)" />
 			</ul>
 		</div>
 	</li>

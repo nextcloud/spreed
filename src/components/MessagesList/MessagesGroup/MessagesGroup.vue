@@ -22,13 +22,9 @@
 			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
-				:token="token"
-				:is-temporary="message.timestamp === 0"
+				:message="message"
 				:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-				:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
-				:actor-type="actorType"
-				:actor-id="actorId"
-				v-bind="message" />
+				:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId" />
 		</ul>
 	</li>
 </template>

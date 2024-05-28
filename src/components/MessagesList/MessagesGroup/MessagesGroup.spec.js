@@ -95,29 +95,33 @@ describe('MessagesGroup.vue', () => {
 		expect(authorEl.text()).toBe('actor one')
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		let message = messagesEl.at(0)
-		expect(message.attributes('id')).toBe('100')
-		expect(message.attributes('message')).toBe('first')
-		expect(message.attributes('actorid')).toBe('actor-1')
-		expect(message.attributes('previousmessageid')).toBe('90')
-		expect(message.attributes('nextmessageid')).toBe('110')
-		expect(message.attributes('istemporary')).not.toBeDefined()
-
-		message = messagesEl.at(1)
-		expect(message.attributes('id')).toBe('110')
-		expect(message.attributes('message')).toBe('second')
-		expect(message.attributes('actorid')).toBe('actor-1')
-		expect(message.attributes('previousmessageid')).toBe('100')
-		expect(message.attributes('nextmessageid')).toBe('120')
-		expect(message.attributes('istemporary')).not.toBeDefined()
-
-		message = messagesEl.at(2)
-		expect(message.attributes('id')).toBe('120')
-		expect(message.attributes('message')).toBe('third')
-		expect(message.attributes('actorid')).toBe('actor-1')
-		expect(message.attributes('previousmessageid')).toBe('110')
-		expect(message.attributes('nextmessageid')).toBe('200')
-		expect(message.attributes('istemporary')).toBe('true')
+		expect(messagesEl.at(0).props()).toMatchObject({
+			message: {
+				id: 100,
+				message: 'first',
+				actorId: 'actor-1',
+			},
+			previousMessageId: 90,
+			nextMessageId: 110,
+		})
+		expect(messagesEl.at(1).props()).toMatchObject({
+			message: {
+				id: 110,
+				message: 'second',
+				actorId: 'actor-1',
+			},
+			previousMessageId: 100,
+			nextMessageId: 120,
+		})
+		expect(messagesEl.at(2).props()).toMatchObject({
+			message: {
+				id: 120,
+				message: 'third',
+				actorId: 'actor-1',
+			},
+			previousMessageId: 110,
+			nextMessageId: 200,
+		})
 	})
 
 	test('renders grouped system messages', () => {
@@ -163,26 +167,26 @@ describe('MessagesGroup.vue', () => {
 		expect(avatarEl.exists()).toBe(false)
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-
-		let message = messagesEl.at(0)
-		expect(message.props('id')).toBe(MESSAGES[0].id)
-		expect(message.props('message')).toBe(MESSAGES[0].message)
-		expect(message.props('actorid')).toBe(MESSAGES[0].actorid)
-		expect(message.props('actordisplayname')).toBe(MESSAGES[0].actordisplayname)
-		expect(message.props('previousmessageid')).toBe(MESSAGES[0].previousmessageid)
-		expect(message.props('nextmessageid')).toBe(MESSAGES[0].nextmessageid)
-		expect(message.props('isfirstmessage')).toBe(MESSAGES[0].isfirstmessage)
-		expect(message.props('showauthor')).not.toBeDefined()
-
-		message = messagesEl.at(1)
-		expect(message.props('id')).toBe(MESSAGES[1].id)
-		expect(message.props('message')).toBe(MESSAGES[1].message)
-		expect(message.props('actorid')).toBe(MESSAGES[1].actorid)
-		expect(message.props('actordisplayname')).toBe(MESSAGES[1].actordisplayname)
-		expect(message.props('previousmessageid')).toBe(MESSAGES[1].previousmessageid)
-		expect(message.props('nextmessageid')).toBe(MESSAGES[1].nextmessageid)
-		expect(message.props('isfirstmessage')).not.toBeDefined()
-		expect(message.props('showauthor')).not.toBeDefined()
+		expect(messagesEl.at(0).props()).toMatchObject({
+			message: {
+				id: MESSAGES[0].id,
+				message: MESSAGES[0].message,
+				actorId: MESSAGES[0].actorId,
+				actorDisplayName: MESSAGES[0].actorDisplayName,
+			},
+			previousMessageId: 90,
+			nextMessageId: 110,
+		})
+		expect(messagesEl.at(1).props()).toMatchObject({
+			message: {
+				id: MESSAGES[1].id,
+				message: MESSAGES[1].message,
+				actorId: MESSAGES[1].actorId,
+				actorDisplayName: MESSAGES[1].actorDisplayName,
+			},
+			previousMessageId: 100,
+			nextMessageId: 200,
+		})
 	})
 
 	test('renders guest display name', () => {
@@ -238,13 +242,18 @@ describe('MessagesGroup.vue', () => {
 		expect(authorEl.text()).toBe('guest-one-display-name')
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		let message = messagesEl.at(0)
-		expect(message.attributes('id')).toBe('100')
-		expect(message.attributes('actorid')).toBe('actor-1')
-
-		message = messagesEl.at(1)
-		expect(message.attributes('id')).toBe('110')
-		expect(message.attributes('actorid')).toBe('actor-1')
+		expect(messagesEl.at(0).props()).toMatchObject({
+			message: {
+				id: 100,
+				actorId: 'actor-1',
+			},
+		})
+		expect(messagesEl.at(1).props()).toMatchObject({
+			message: {
+				id: 110,
+				actorId: 'actor-1',
+			},
+		})
 	})
 
 	test('renders deleted guest display name', () => {
@@ -293,12 +302,17 @@ describe('MessagesGroup.vue', () => {
 		expect(authorEl.text()).toBe('Deleted user')
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		let message = messagesEl.at(0)
-		expect(message.attributes('id')).toBe('100')
-		expect(message.attributes('actorid')).toBe('actor-1')
-
-		message = messagesEl.at(1)
-		expect(message.attributes('id')).toBe('110')
-		expect(message.attributes('actorid')).toBe('actor-1')
+		expect(messagesEl.at(0).props()).toMatchObject({
+			message: {
+				id: 100,
+				actorId: 'actor-1',
+			},
+		})
+		expect(messagesEl.at(1).props()).toMatchObject({
+			message: {
+				id: 110,
+				actorId: 'actor-1',
+			},
+		})
 	})
 })
