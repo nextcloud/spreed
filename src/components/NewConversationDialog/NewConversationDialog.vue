@@ -306,51 +306,42 @@ export default {
 					isPublic: this.isPublic,
 				})
 
+				// Gather all secondary requests to run in parallel
+				const promises = []
+
 				if (this.isPublic && this.password && this.newConversation.hasPassword) {
-					await setConversationPassword(this.newConversation.token, this.password)
+					promises.push(setConversationPassword(this.newConversation.token, this.password))
 				}
 
 				if (this.isAvatarEdited) {
-					await this.$refs.setupPage.$refs.conversationAvatar.saveAvatar()
+					promises.push(this.$refs.setupPage.$refs.conversationAvatar.saveAvatar)
 				}
 
 				if (this.newConversation.description) {
-					await this.$store.dispatch('setConversationDescription', {
+					promises.push(this.$store.dispatch('setConversationDescription', {
 						token: this.newConversation.token,
 						description: this.newConversation.description,
-					})
+					}))
 				}
+
+				if (this.listable !== CONVERSATION.LISTABLE.NONE) {
+					promises.push(this.$store.dispatch('setListable', {
+						token: this.newConversation.token,
+						listable: this.listable,
+					}))
+				}
+
+				for (const participant of this.selectedParticipants) {
+					promises.push(addParticipant(this.newConversation.token, participant.id, participant.source))
+				}
+
+				await Promise.all(promises)
 			} catch (exception) {
-				console.error(exception)
+				console.error('Error creating new conversation: ', exception)
 				this.isLoading = false
 				this.error = true
 				// Stop the execution of the method on exceptions.
 				return
-			}
-
-			try {
-				await this.$store.dispatch('setListable', {
-					token: this.newConversation.token,
-					listable: this.listable,
-				})
-			} catch (exception) {
-				console.error(exception)
-				this.isLoading = false
-				this.error = true
-				// Stop the execution of the method on exceptions.
-				return
-			}
-
-			for (const participant of this.selectedParticipants) {
-				try {
-					await addParticipant(this.newConversation.token, participant.id, participant.source)
-				} catch (exception) {
-					console.error(exception)
-					this.isLoading = false
-					this.error = true
-					// Stop the execution of the method on exceptions.
-					return
-				}
 			}
 
 			this.success = true
