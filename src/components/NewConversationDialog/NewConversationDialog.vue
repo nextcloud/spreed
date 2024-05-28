@@ -349,18 +349,17 @@ export default {
 
 			if (!this.isInCall) {
 				// Push the newly created conversation's route.
-				this.pushNewRoute()
+				this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
+					.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+
+				// Get complete participant list in advance
+				this.$store.dispatch('fetchParticipants', { token: this.newConversation.token })
 			}
 
 			// Close the modal right away if the conversation is public.
 			if (!this.isPublic) {
 				this.closeModal()
 			}
-		},
-
-		pushNewRoute() {
-			this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
-				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		/** Handles the press of the enter key */
