@@ -78,14 +78,14 @@ class ShareAPIController {
 	 * @param IShare $share
 	 * @param string $shareWith
 	 * @param int $permissions
-	 * @param string $expireDate
+	 * @param ?string $expireDate
 	 * @throws OCSNotFoundException
 	 */
-	public function createShare(IShare $share, string $shareWith, int $permissions, string $expireDate): void {
+	public function createShare(IShare $share, string $shareWith, int $permissions, ?string $expireDate = null): void {
 		$share->setSharedWith($shareWith);
 		$share->setPermissions($permissions);
 
-		if ($expireDate !== '') {
+		if ($expireDate !== null && $expireDate !== '') {
 			try {
 				$expireDateTime = $this->parseDate($expireDate);
 				$share->setExpirationDate($expireDateTime);
