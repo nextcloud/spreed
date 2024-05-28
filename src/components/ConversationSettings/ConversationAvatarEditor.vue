@@ -310,60 +310,50 @@ export default {
 			this.emojiAvatar = emoji
 		},
 
-		saveAvatar() {
+		async saveAvatar() {
 			this.loading = true
 
-			if (this.emojiAvatar) {
-				this.saveEmojiAvatar()
-			} else {
-				this.savePictureAvatar()
-			}
-		},
-
-		async saveEmojiAvatar() {
 			try {
-				await this.$store.dispatch('setConversationEmojiAvatarAction', {
-					token: this.conversation.token,
-					emoji: this.emojiAvatar,
-					color: this.backgroundColor ? this.backgroundColor.slice(1) : null,
-				})
-				this.emojiAvatar = ''
-				this.backgroundColor = ''
+				if (this.emojiAvatar) {
+					await this.saveEmojiAvatar()
+				} else {
+					await this.savePictureAvatar()
+				}
 			} catch (error) {
-				showError(t('spreed', 'Could not set the conversation picture: {error}',
-					{ error: error.message },
-				))
+				showError(t('spreed', 'Could not set the conversation picture: {error}', { error: error.message }))
+				this.cancel()
 			} finally {
 				this.loading = false
 			}
 		},
 
-		savePictureAvatar() {
+		async saveEmojiAvatar() {
+			await this.$store.dispatch('setConversationEmojiAvatarAction', {
+				token: this.conversation.token,
+				emoji: this.emojiAvatar,
+				color: this.backgroundColor ? this.backgroundColor.slice(1) : null,
+			})
+			this.emojiAvatar = ''
+			this.backgroundColor = ''
+		},
+
+		async savePictureAvatar() {
 			this.showCropper = false
 			const canvasData = this.$refs.cropper.getCroppedCanvas()
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
-			this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas().toBlob(async (blob) => {
-				if (blob === null) {
-					showError(t('spreed', 'Error cropping conversation picture'))
-					this.cancel()
-					return
-				}
 
-				const formData = new FormData()
-				formData.append('file', blob)
+			const blob = await new Promise((resolve, reject) => {
+				this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas()
+					.toBlob(blob => blob === null
+						? reject(new Error(t('spreed', 'Error cropping conversation picture')))
+						: resolve(blob))
+			})
+			const formData = new FormData()
+			formData.append('file', blob)
 
-				try {
-					await this.$store.dispatch('setConversationAvatarAction', {
-						token: this.conversation.token,
-						file: formData,
-					})
-				} catch (error) {
-					showError(t('spreed', 'Could not set the conversation picture: {error}',
-						{ error: error.message },
-					))
-				} finally {
-					this.loading = false
-				}
+			await this.$store.dispatch('setConversationAvatarAction', {
+				token: this.conversation.token,
+				file: formData,
 			})
 		},
 
