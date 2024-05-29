@@ -24,7 +24,7 @@
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
-				v-bind="readInfoProps" />
+				:read-info="readInfo" />
 
 			<!-- reactions buttons and popover with details -->
 			<Reactions v-if="Object.keys(message.reactions).length"
@@ -48,7 +48,7 @@
 				:can-react="canReact"
 				:message="message"
 				:previous-message-id="previousMessageId"
-				v-bind="readInfoProps"
+				:read-info="readInfo"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
 				@edit="handleEdit"
@@ -317,7 +317,7 @@ export default {
 				&& this.isCombinedSystemMessage && (this.isHovered || !this.isCombinedSystemMessageCollapsed)
 		},
 
-		readInfoProps() {
+		readInfo() {
 			return {
 				showCommonReadIcon: this.showCommonReadIcon,
 				commonReadIconTooltip: t('spreed', 'Message read by everyone who shares their reading status'),

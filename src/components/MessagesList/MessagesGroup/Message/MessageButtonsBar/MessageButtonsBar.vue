@@ -35,14 +35,14 @@
 					<!-- Message timestamp -->
 					<NcActionText>
 						<template #icon>
-							<span v-if="showCommonReadIcon"
-								:title="commonReadIconTooltip"
-								:aria-label="commonReadIconTooltip">
+							<span v-if="readInfo.showCommonReadIcon"
+								:title="readInfo.commonReadIconTooltip"
+								:aria-label="readInfo.commonReadIconTooltip">
 								<CheckAll :size="16" />
 							</span>
-							<span v-else-if="showSentIcon"
-								:title="sentIconTooltip"
-								:aria-label="sentIconTooltip">
+							<span v-else-if="readInfo.showSentIcon"
+								:title="readInfo.sentIconTooltip"
+								:aria-label="readInfo.sentIconTooltip">
 								<Check :size="16" />
 							</span>
 							<ClockOutline v-else :size="16" />
@@ -135,7 +135,7 @@
 						:key="action.label"
 						:icon="action.icon"
 						close-after-click
-						@click="action.callback(messageApiData)">
+						@click="handleMessageAction(action)">
 						{{ action.label }}
 					</NcActionButton>
 					<NcActionButton v-if="isTranslationAvailable && !isFileShareWithoutCaption"
@@ -371,23 +371,9 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-		/**
-		 * Message read information
-		 */
-		showCommonReadIcon: {
-			type: Boolean,
-			required: true,
-		},
-		showSentIcon: {
-			type: Boolean,
-			required: true,
-		},
-		commonReadIconTooltip: {
-			type: String,
-			required: true,
-		},
-		sentIconTooltip: {
-			type: String,
+
+		readInfo: {
+			type: Object,
 			required: true,
 		},
 
@@ -559,14 +545,6 @@ export default {
 			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(this.currentReminder.timestamp * 1000).format('ddd LT') })
 		},
 
-		messageApiData() {
-			return {
-				message: this.$store.getters.message(this.message.token, this.message.id),
-				metadata: this.$store.getters.conversation(this.message.token),
-				apiVersion: 'v3',
-			}
-		},
-
 		lastEditActorLabel() {
 			return t('spreed', 'Edited by {actor}', {
 				actor: this.message.lastEditActorDisplayName,
@@ -634,6 +612,10 @@ export default {
 				})
 			}
 			this.closeReactionsMenu()
+		},
+
+		handleMessageAction(action) {
+			action.callback({ message: this.message, metadata: this.conversation, apiVersion: 'v3' })
 		},
 
 		handleDelete() {

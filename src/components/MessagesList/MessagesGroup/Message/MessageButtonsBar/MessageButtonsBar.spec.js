@@ -76,10 +76,12 @@ describe('MessageButtonsBar.vue', () => {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			canReact: true,
-			showCommonReadIcon: true,
-			showSentIcon: true,
-			commonReadIconTooltip: '',
-			sentIconTooltip: '',
+			readInfo: {
+				showCommonReadIcon: true,
+				showSentIcon: true,
+				commonReadIconTooltip: '',
+				sentIconTooltip: '',
+			},
 			isTranslationAvailable: false,
 		}
 	})
@@ -396,7 +398,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			expect(handler).toHaveBeenCalledWith({
 				apiVersion: 'v3',
-				message: messageProps,
+				message: messageProps.message,
 				metadata: conversationProps,
 			},)
 
@@ -406,7 +408,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			expect(handler2).toHaveBeenCalledWith({
 				apiVersion: 'v3',
-				message: messageProps,
+				message: messageProps.message,
 				metadata: conversationProps,
 			})
 		})

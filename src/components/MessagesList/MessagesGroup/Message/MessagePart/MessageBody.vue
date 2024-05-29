@@ -92,16 +92,16 @@
 				:title="loadingIconTooltip"
 				class="icon-loading-small message-status"
 				:aria-label="loadingIconTooltip" />
-			<div v-else-if="showCommonReadIcon"
-				:title="commonReadIconTooltip"
+			<div v-else-if="readInfo.showCommonReadIcon"
+				:title="readInfo.commonReadIconTooltip"
 				class="message-status"
-				:aria-label="commonReadIconTooltip">
+				:aria-label="readInfo.commonReadIconTooltip">
 				<CheckAllIcon :size="16" />
 			</div>
-			<div v-else-if="showSentIcon"
-				:title="sentIconTooltip"
+			<div v-else-if="readInfo.showSentIcon"
+				:title="readInfo.sentIconTooltip"
 				class="message-status"
-				:aria-label="sentIconTooltip">
+				:aria-label="readInfo.sentIconTooltip">
 				<CheckIcon :size="16" />
 			</div>
 		</div>
@@ -174,23 +174,8 @@ export default {
 			default: false,
 		},
 
-		/**
-		 * Message read information
-		 */
-		showCommonReadIcon: {
-			type: Boolean,
-			required: true,
-		},
-		commonReadIconTooltip: {
-			type: String,
-			required: true,
-		},
-		showSentIcon: {
-			type: Boolean,
-			required: true,
-		},
-		sentIconTooltip: {
-			type: String,
+		readInfo: {
+			type: Object,
 			required: true,
 		},
 	},
