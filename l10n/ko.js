@@ -252,7 +252,7 @@ OC.L10N.register(
     "Call in progress" : "통화 진행중",
     "You were mentioned" : "당신이 언급되었습니다.",
     "Write to conversation" : "대화에 기록하기",
-    "Writes event information into a conversation of your choice" : "선택한 대화에 이벤트 정보를 기록합니다.",
+    "Writes event information into a conversation of your choice" : "선택한 대화에 일정에 대한 정보를 기록합니다.",
     "%s invited you to a conversation." : "%s님이 당신을 대화에 초대했습니다.",
     "You were invited to a conversation." : "대화에 초대되었습니다.",
     "Conversation invitation" : "대화 초대",
