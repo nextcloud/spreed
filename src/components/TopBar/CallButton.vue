@@ -23,7 +23,7 @@
 				<VideoOutlineIcon v-else-if="silentCall" :size="20" />
 				<VideoIcon v-else :size="20" />
 			</template>
-			<template v-if="!isMobile" #default>
+			<template v-if="showButtonText" #default>
 				{{ startCallLabel }}
 			</template>
 		</NcButton>
@@ -36,7 +36,7 @@
 			<template #icon>
 				<PhoneHangup :size="20" />
 			</template>
-			<template v-if="!isMobile" #default>
+			<template v-if="showButtonText" #default>
 				{{ endCallLabel }}
 			</template>
 		</NcButton>
@@ -49,14 +49,14 @@
 			<template #icon>
 				<VideoOff :size="20" />
 			</template>
-			<template v-if="!isMobile" #default>
+			<template v-if="showButtonText" #default>
 				{{ leaveCallLabel }}
 			</template>
 		</NcButton>
 		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 			:disabled="loading"
 			:aria-label="leaveCallCombinedLabel"
-			:menu-name="!isMobile ? leaveCallCombinedLabel : undefined"
+			:menu-name="showButtonText ? leaveCallCombinedLabel : undefined"
 			force-name
 			:container="container"
 			:type="isScreensharing ? 'tertiary' : 'error'">
@@ -176,7 +176,15 @@ export default {
 		isScreensharing: {
 			type: Boolean,
 			default: false,
-		}
+		},
+
+		/**
+		 * Whether the to use text on button at mobile view
+		 */
+		shrinkOnMobile: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup() {
@@ -209,7 +217,9 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
-
+		showButtonText() {
+			return !this.isMobile || !this.shrinkOnMobile
+		},
 		showRecordingWarning() {
 			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,
 				CALL.RECORDING.VIDEO, CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
