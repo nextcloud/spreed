@@ -78,7 +78,7 @@
 			:model="localMediaModel"
 			@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
-		<CallButton :is-screensharing="!!localMediaModel.attributes.localScreen" />
+		<CallButton shrink-on-mobile :is-screensharing="!!localMediaModel.attributes.localScreen" />
 
 		<!-- sidebar toggle -->
 		<template v-if="showOpenSidebarButton">
