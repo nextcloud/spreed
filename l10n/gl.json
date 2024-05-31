@@ -1675,7 +1675,7 @@
     "Script" : "Script",
     "Response to" : "Resposta a",
     "Enabled for" : "Activado para",
-    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our {linkstart}documentation{linkend}." : "As ordes son unha nova función beta en Nextcloud Talk. Permiten executar scripts no seu servidor Nextcloud. Pódense definir coa nosa interface de liña de ordes. Pode atopar un exemplo de script de calculadora na nosa {linkstart}documentación{linkend}.",
+    "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our {linkstart}documentation{linkend}." : "As ordes son unha nova función beta en Nextcloud Talk. Permiten executar scripts no seu servidor Nextcloud. Pódense definir coa nosa interface da liña de ordes. Pode atopar un exemplo de script de calculadora na nosa {linkstart}documentación{linkend}.",
     "Moderators" : "Moderadores",
     "Setup summary" : "Resumo da configuración",
     "Also open to guest app users" : "Aberta tamén aos usuarios da aplicación convidados",
