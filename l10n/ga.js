@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Other activities" : "Gníomhaíochtaí eile",
     "Talk" : "Caint",
     "Guest" : "Aoi",
     "Message deleted by author" : "Scrios an t-údar an teachtaireacht",
@@ -12,6 +13,8 @@ OC.L10N.register(
     "Accept" : "Glac",
     "Decline" : "Meath",
     "error" : "earráid",
+    "Avatar image is not square" : "Níl an íomhá avatar cearnach",
+    "Invalid date, date format must be YYYY-MM-DD" : "Dáta neamhbhailí, caithfidh formáid an dáta a bheith BBBB-MM-DD",
     "Limit to groups" : "Teorainn do ghrúpaí",
     "Save changes" : "Sabháil na hathruithe",
     "Saving …" : "Shábháil …",
@@ -85,6 +88,7 @@ OC.L10N.register(
     "Copy code block" : "Cóip bloc cód",
     "Today" : "Inniu",
     "Yesterday" : "Inné",
+    "_%n day ago_::_%n days ago_" : ["%n lá ó shin","%n lá ó shin","%n lá ó shin","%n lá ó shin","%n lá ó shin"],
     "Close" : "Dún",
     "Group" : "Grúpa",
     "Blank" : "Bán",
@@ -108,6 +112,7 @@ OC.L10N.register(
     "Do not disturb" : "Ná cur as",
     "Away" : "Amach",
     "Default" : "Réamhshocrú",
+    "iOS app" : "aip iOS",
     "Command" : "Ordú",
     "Circles" : "Ciorcail"
 },
