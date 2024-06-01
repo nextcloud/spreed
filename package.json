@@ -51,7 +51,7 @@
     "mockconsole": "0.0.1",
     "nextcloud-vue-collections": "^0.11.1",
     "pinia": "^2.1.7",
-    "ua-parser-js": "^1.0.37",
+    "ua-parser-js": "^1.0.38",
     "util": "^0.12.5",
     "vue": "^2.7.16",
     "vue-cropperjs": "^4.2.0",
