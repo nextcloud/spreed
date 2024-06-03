@@ -884,6 +884,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Перед тим, як вийти з розмови, вам потрібно призначити нового модератора.",
     "Clear filter" : "Очистити фільтр",
     "Unread mentions" : "Непрочитані згадки",
+    "No matches found" : "Збігів не знайдено",
     "Open conversations" : "Відкрити розмови",
     "Users" : "Користувачі",
     "Groups" : "Групи",
