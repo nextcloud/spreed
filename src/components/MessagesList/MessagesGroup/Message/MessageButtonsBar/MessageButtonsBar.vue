@@ -16,7 +16,7 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-if="isReplyable && !isConversationReadOnly"
+			<NcButton v-if="message.isReplyable && !isConversationReadOnly"
 				type="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
@@ -35,14 +35,14 @@
 					<!-- Message timestamp -->
 					<NcActionText>
 						<template #icon>
-							<span v-if="showCommonReadIcon"
-								:title="commonReadIconTooltip"
-								:aria-label="commonReadIconTooltip">
+							<span v-if="readInfo.showCommonReadIcon"
+								:title="readInfo.commonReadIconTooltip"
+								:aria-label="readInfo.commonReadIconTooltip">
 								<CheckAll :size="16" />
 							</span>
-							<span v-else-if="showSentIcon"
-								:title="sentIconTooltip"
-								:aria-label="sentIconTooltip">
+							<span v-else-if="readInfo.showSentIcon"
+								:title="readInfo.sentIconTooltip"
+								:aria-label="readInfo.sentIconTooltip">
 								<Check :size="16" />
 							</span>
 							<ClockOutline v-else :size="16" />
@@ -50,7 +50,7 @@
 						{{ messageDateTime }}
 					</NcActionText>
 					<!-- Edited message timestamp -->
-					<NcActionText v-if="lastEditTimestamp"
+					<NcActionText v-if="message.lastEditTimestamp"
 						class="edit-timestamp"
 						:name="lastEditActorLabel">
 						<template #icon>
@@ -135,7 +135,7 @@
 						:key="action.label"
 						:icon="action.icon"
 						close-after-click
-						@click="action.callback(messageApiData)">
+						@click="handleMessageAction(action)">
 						{{ action.label }}
 					</NcActionButton>
 					<NcActionButton v-if="isTranslationAvailable && !isFileShareWithoutCaption"
@@ -339,81 +339,15 @@ export default {
 
 	inject: ['getMessagesListScroller'],
 
-	inheritAttrs: false,
-
 	props: {
-		token: {
-			type: String,
-			required: true,
-		},
-
 		previousMessageId: {
 			type: [String, Number],
 			required: true,
 		},
 
-		isReplyable: {
-			type: Boolean,
-			required: true,
-		},
-
-		actorId: {
-			type: String,
-			required: true,
-		},
-
-		actorType: {
-			type: String,
-			required: true,
-		},
-
-		/**
-		 * The parameters of the rich object message
-		 */
-		messageParameters: {
-			type: [Array, Object],
-			required: true,
-		},
-
-		/**
-		 * The message timestamp.
-		 */
-		timestamp: {
-			type: Number,
-			default: 0,
-		},
-
-		/**
-		 * The message id.
-		 */
-		id: {
-			type: [String, Number],
-			required: true,
-		},
-
-		/**
-		 * The message or quote text.
-		 */
 		message: {
-			type: String,
+			type: Object,
 			required: true,
-		},
-
-		/**
-		 * The type of the message.
-		 */
-		messageType: {
-			type: String,
-			required: true,
-		},
-
-		lastEditActorDisplayName: {
-			type: String,
-			default: '',
-		},
-		lastEditTimestamp: {
-			type: Number,
-			default: 0,
 		},
 
 		isActionMenuOpen: {
@@ -437,23 +371,9 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-		/**
-		 * Message read information
-		 */
-		showCommonReadIcon: {
-			type: Boolean,
-			required: true,
-		},
-		showSentIcon: {
-			type: Boolean,
-			required: true,
-		},
-		commonReadIconTooltip: {
-			type: String,
-			required: true,
-		},
-		sentIconTooltip: {
-			type: String,
+
+		readInfo: {
+			type: Object,
 			required: true,
 		},
 
@@ -466,7 +386,7 @@ export default {
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
 
 	setup(props) {
-		const { token, id } = toRefs(props)
+		const { message } = toRefs(props)
 		const reactionsStore = useReactionsStore()
 		const { messageActions } = useIntegrationsStore()
 		const {
@@ -477,7 +397,7 @@ export default {
 			isFileShareWithoutCaption,
 			isConversationReadOnly,
 			isConversationModifiable,
-		} = useMessageInfo(token, id)
+		} = useMessageInfo(message.value.token, message.value.id)
 
 		return {
 			messageActions,
@@ -504,7 +424,7 @@ export default {
 
 	computed: {
 		conversation() {
-			return this.$store.getters.conversation(this.token)
+			return this.$store.getters.conversation(this.message.token)
 		},
 
 		mainContainer() {
@@ -512,7 +432,7 @@ export default {
 		},
 
 		messageContainer() {
-			return `#message_${this.id}`
+			return `#message_${this.message.id}`
 		},
 
 		boundariesElement() {
@@ -520,18 +440,18 @@ export default {
 		},
 
 		isPrivateReplyable() {
-			return this.isReplyable
+			return this.message.isReplyable
 				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
 					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
 				&& !this.isCurrentUserOwnMessage
-				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
+				&& this.message.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.isActorUser()
 		},
 
 		linkToFile() {
 			if (this.isFileShare) {
-				const firstFileKey = (Object.keys(this.messageParameters).find(key => key.startsWith('file')))
-				return this.messageParameters?.[firstFileKey]?.link
+				const firstFileKey = (Object.keys(this.message.messageParameters).find(key => key.startsWith('file')))
+				return this.message.messageParameters?.[firstFileKey]?.link
 			} else {
 				return ''
 			}
@@ -542,12 +462,12 @@ export default {
 		},
 
 		isDeletedMessage() {
-			return this.messageType === 'comment_deleted'
+			return this.message.messageType === 'comment_deleted'
 		},
 
 		isPollMessage() {
-			return this.messageType === 'comment'
-				&& this.messageParameters?.object?.type === 'talk-poll'
+			return this.message.messageType === 'comment'
+				&& this.message.messageParameters?.object?.type === 'talk-poll'
 		},
 
 		isInNoteToSelf() {
@@ -562,11 +482,11 @@ export default {
 		},
 
 		messageDateTime() {
-			return moment(this.timestamp * 1000).format('lll')
+			return moment(this.message.timestamp * 1000).format('lll')
 		},
 
 		editedDateTime() {
-			return moment(this.lastEditTimestamp * 1000).format('lll')
+			return moment(this.message.lastEditTimestamp * 1000).format('lll')
 		},
 
 		reminderOptions() {
@@ -625,17 +545,9 @@ export default {
 			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(this.currentReminder.timestamp * 1000).format('ddd LT') })
 		},
 
-		messageApiData() {
-			return {
-				message: this.$store.getters.message(this.token, this.id),
-				metadata: this.$store.getters.conversation(this.token),
-				apiVersion: 'v3',
-			}
-		},
-
 		lastEditActorLabel() {
 			return t('spreed', 'Edited by {actor}', {
-				actor: this.lastEditActorDisplayName,
+				actor: this.message.lastEditActorDisplayName,
 			})
 		},
 	},
@@ -655,12 +567,12 @@ export default {
 
 		async handlePrivateReply() {
 			// open the 1:1 conversation
-			const conversation = await this.$store.dispatch('createOneToOneConversation', this.actorId)
+			const conversation = await this.$store.dispatch('createOneToOneConversation', this.message.actorId)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async handleCopyMessageText() {
-			const parsedText = parseMentions(this.message, this.messageParameters)
+			const parsedText = parseMentions(this.message.message, this.message.messageParameters)
 
 			try {
 				await navigator.clipboard.writeText(parsedText)
@@ -671,13 +583,13 @@ export default {
 		},
 
 		handleCopyMessageLink() {
-			copyConversationLinkToClipboard(this.token, this.id)
+			copyConversationLinkToClipboard(this.message.token, this.message.id)
 		},
 
 		async handleMarkAsUnread() {
 			// update in backend + visually
 			await this.$store.dispatch('updateLastReadMessage', {
-				token: this.token,
+				token: this.message.token,
 				id: this.previousMessageId,
 				updateVisually: true,
 			})
@@ -685,21 +597,25 @@ export default {
 
 		handleReactionClick(selectedEmoji) {
 			// Add reaction only if user hasn't reacted yet
-			if (!this.reactionsSelf?.includes(selectedEmoji)) {
+			if (!this.message.reactionsSelf?.includes(selectedEmoji)) {
 				this.reactionsStore.addReactionToMessage({
-					token: this.token,
-					messageId: this.id,
+					token: this.message.token,
+					messageId: this.message.id,
 					selectedEmoji,
 				})
 			} else {
 				console.debug('user has already reacted, removing reaction')
 				this.reactionsStore.removeReactionFromMessage({
-					token: this.token,
-					messageId: this.id,
+					token: this.message.token,
+					messageId: this.message.id,
 					selectedEmoji,
 				})
 			}
 			this.closeReactionsMenu()
+		},
+
+		handleMessageAction(action) {
+			action.callback({ message: this.message, metadata: this.conversation, apiVersion: 'v3' })
 		},
 
 		handleDelete() {
@@ -731,7 +647,7 @@ export default {
 		async forwardToNote() {
 			try {
 				await this.$store.dispatch('forwardMessage', {
-					messageToBeForwarded: this.$store.getters.message(this.token, this.id)
+					messageToBeForwarded: this.$store.getters.message(this.message.token, this.message.id)
 				})
 				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
@@ -771,7 +687,7 @@ export default {
 
 		async getReminder() {
 			try {
-				const response = await getMessageReminder(this.token, this.id)
+				const response = await getMessageReminder(this.message.token, this.message.id)
 				this.currentReminder = response.data.ocs.data
 			} catch (error) {
 				console.debug(error)
@@ -780,7 +696,7 @@ export default {
 
 		async removeReminder() {
 			try {
-				await removeMessageReminder(this.token, this.id)
+				await removeMessageReminder(this.message.token, this.message.id)
 				showSuccess(t('spreed', 'A reminder was successfully removed'))
 			} catch (error) {
 				console.error(error)
@@ -790,7 +706,7 @@ export default {
 
 		async setReminder(timestamp) {
 			try {
-				await setMessageReminder(this.token, this.id, timestamp / 1000)
+				await setMessageReminder(this.message.token, this.message.id, timestamp / 1000)
 				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
 					datetime: moment(timestamp).format('LLL'),
 				}))

@@ -4,7 +4,7 @@
  */
 import { computed } from 'vue'
 
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { ATTENDEE, CONVERSATION } from '../../constants.js'
 import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'
 import { useStore } from '../useStore.js'
@@ -20,7 +20,7 @@ jest.mock('../useStore.js')
 jest.mock('../useConversationInfo.js')
 
 describe('message actions', () => {
-	let messageProps
+	let message
 	let conversationProps
 	let mockConversationInfo
 	const TOKEN = 'XXTOKENXX'
@@ -28,37 +28,18 @@ describe('message actions', () => {
 	jest.useFakeTimers().setSystemTime(new Date('2024-05-01 17:00:00'))
 
 	beforeEach(() => {
-		messageProps = {
+		message = {
 			message: 'test message',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			actorId: 'user-id-1',
 			actorDisplayName: 'user-display-name-1',
 			messageParameters: {},
 			id: 123,
-			isTemporary: false,
-			isFirstMessage: true,
 			isReplyable: true,
-			isTranslationAvailable: false,
-			canReact: true,
-			isReactionsMenuOpen: false,
-			isActionMenuOpen: false,
-			isEmojiPickerOpen: false,
-			isLastRead: false,
-			isForwarderOpen: false,
 			timestamp: new Date('2024-05-01 16:15:00').getTime() / 1000,
 			token: TOKEN,
 			systemMessage: '',
 			messageType: 'comment',
-			previousMessageId: 100,
-			participant: {
-				actorId: 'user-id-1',
-				actorType: ATTENDEE.ACTOR_TYPE.USERS,
-				participantType: PARTICIPANT.TYPE.USER,
-			},
-			showCommonReadIcon: true,
-			showSentIcon: true,
-			commonReadIconTooltip: '',
-			sentIconTooltip: '',
 		}
 		conversationProps = {
 			token: TOKEN,
@@ -68,7 +49,7 @@ describe('message actions', () => {
 		}
 		useStore.mockReturnValue({
 			getters: {
-				message: () => messageProps,
+				message: () => message,
 				conversation: () => conversationProps,
 				getActorId: () => 'user-id-1',
 				getActorType: () => ATTENDEE.ACTOR_TYPE.USERS,
@@ -87,9 +68,9 @@ describe('message actions', () => {
 
 	test('message is not deleteable when it is older than 6 hours and unlimited capability is disabled', () => {
 		// Arrange
-		messageProps.timestamp = new Date('2024-05-01 7:20:00').getTime() / 1000
+		message.timestamp = new Date('2024-05-01 7:20:00').getTime() / 1000
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isDeleteable.value).toBe(false)
 	})
@@ -103,17 +84,17 @@ describe('message actions', () => {
 		}
 		useConversationInfo.mockReturnValue(mockConversationInfo)
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isDeleteable.value).toBe(false)
 	})
 
 	test('file message is deleteable', () => {
 		// Arrange
-		messageProps.message = '{file}'
-		messageProps.messageParameters.file = {}
+		message.message = '{file}'
+		message.messageParameters.file = {}
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isFileShare.value).toBe(true)
 		expect(result.isFileShareWithoutCaption.value).toBe(true)
@@ -122,10 +103,10 @@ describe('message actions', () => {
 
 	test('other people messages are not deleteable for non-moderators', () => {
 		// Arrange
-		messageProps.actorId = 'another-user'
+		message.actorId = 'another-user'
 		conversationProps.type = CONVERSATION.TYPE.GROUP
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
 		expect(result.isDeleteable.value).toBe(false)
@@ -133,11 +114,11 @@ describe('message actions', () => {
 
 	test('other people messages are deleteable for moderators', () => {
 		// Arrange
-		messageProps.actorId = 'another-user'
+		message.actorId = 'another-user'
 		conversationProps.type = CONVERSATION.TYPE.GROUP
 		useStore.mockReturnValue({
 			getters: {
-				message: () => messageProps,
+				message: () => message,
 				conversation: () => conversationProps,
 				getActorId: () => 'user-id-1',
 				getActorType: () => ATTENDEE.ACTOR_TYPE.MODERATOR,
@@ -145,7 +126,7 @@ describe('message actions', () => {
 			},
 		})
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
 		expect(result.isDeleteable.value).toBe(true)
@@ -153,11 +134,11 @@ describe('message actions', () => {
 
 	test('other people message is not deleteable in one to one conversations', () => {
 		// Arrange
-		messageProps.actorId = 'another-user'
+		message.actorId = 'another-user'
 		conversationProps.type = CONVERSATION.TYPE.ONE_TO_ONE
 		useStore.mockReturnValue({
 			getters: {
-				message: () => messageProps,
+				message: () => message,
 				conversation: () => conversationProps,
 				getActorId: () => 'user-id-1',
 				getActorType: () => ATTENDEE.ACTOR_TYPE.USER,
@@ -165,7 +146,7 @@ describe('message actions', () => {
 			},
 		})
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
 		expect(result.isDeleteable.value).toBe(false)
@@ -180,7 +161,7 @@ describe('message actions', () => {
 		// the message is not a object share (e.g. poll)
 
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(true)
 		expect(result.isEditable.value).toBe(true)
@@ -188,11 +169,11 @@ describe('message actions', () => {
 
 	test('moderator can edit other people messages', () => {
 		// Arrange
-		messageProps.actorId = 'another-user'
+		message.actorId = 'another-user'
 		conversationProps.type = CONVERSATION.TYPE.GROUP
 		useStore.mockReturnValue({
 			getters: {
-				message: () => messageProps,
+				message: () => message,
 				conversation: () => conversationProps,
 				getActorId: () => 'user-id-1',
 				getActorType: () => ATTENDEE.ACTOR_TYPE.MODERATOR,
@@ -200,7 +181,7 @@ describe('message actions', () => {
 			},
 		})
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
 		expect(result.isEditable.value).toBe(true)
@@ -208,11 +189,11 @@ describe('message actions', () => {
 
 	test('user can not edit other people messages', () => {
 		// Arrange
-		messageProps.actorId = 'another-user'
+		message.actorId = 'another-user'
 		conversationProps.type = CONVERSATION.TYPE.GROUP
 		useStore.mockReturnValue({
 			getters: {
-				message: () => messageProps,
+				message: () => message,
 				conversation: () => conversationProps,
 				getActorId: () => 'user-id-1',
 				getActorType: () => ATTENDEE.ACTOR_TYPE.USERS,
@@ -220,7 +201,7 @@ describe('message actions', () => {
 			},
 		})
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isCurrentUserOwnMessage.value).toBe(false)
 		expect(result.isEditable.value).toBe(false)
@@ -228,9 +209,9 @@ describe('message actions', () => {
 
 	test('system message is not editable', () => {
 		// Arrange
-		messageProps.systemMessage = 'system-message'
+		message.systemMessage = 'system-message'
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isEditable.value).toBe(false)
 	})
@@ -244,7 +225,7 @@ describe('message actions', () => {
 		}
 		useConversationInfo.mockReturnValue(mockConversationInfo)
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isEditable.value).toBe(false)
 	})
@@ -258,7 +239,7 @@ describe('message actions', () => {
 			},
 		})
 		// Act
-		const result = useMessageInfo(messageProps.token, messageProps.id)
+		const result = useMessageInfo(message.token, message.id)
 		// Assert
 		expect(result.isEditable.value).toBe(false)
 		expect(result.isDeleteable.value).toBe(false)
