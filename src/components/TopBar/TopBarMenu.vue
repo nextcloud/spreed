@@ -383,7 +383,7 @@ export default {
 
 	methods: {
 		forceMuteOthers() {
-			callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
+			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
 				callParticipantModel.forceMute()
 			})
 		},

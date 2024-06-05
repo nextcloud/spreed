@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { reactive } from 'vue'
 
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import EmitterMixin from '../../EmitterMixin.js'
@@ -27,7 +28,7 @@ export default function CallParticipantModel(options) {
 
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		peerId: null,
 		nextcloudSessionId: null,
 		peer: null,
@@ -60,7 +61,7 @@ export default function CallParticipantModel(options) {
 			state: false,
 			timestamp: null,
 		},
-	}
+	})
 
 	this.set('peerId', options.peerId)
 
@@ -121,8 +122,16 @@ CallParticipantModel.prototype = {
 		this._trigger('change:' + key, [value])
 	},
 
+	// Compare Object and Proxy(Object), whether they refer to the same object
+	_isSameProxy(obj1, obj2) {
+		if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+			return obj1 === obj2
+		}
+		return Reflect.getPrototypeOf(obj1) === Reflect.getPrototypeOf(obj2)
+	},
+
 	_handlePeerStreamAdded(peer) {
-		if (this.get('peer') === peer) {
+		if (this._isSameProxy(this.get('peer'), peer)) {
 			this.set('stream', this.get('peer').stream || null)
 			this.set('audioElement', attachMediaStream(this.get('stream'), null, { audio: true }))
 			this.get('audioElement').muted = !this.get('audioAvailable')
@@ -131,23 +140,27 @@ CallParticipantModel.prototype = {
 			if (this.get('peer').nick !== undefined) {
 				this.set('name', this.get('peer').nick)
 			}
-		} else if (this.get('screenPeer') === peer) {
+		} else if (this._isSameProxy(this.get('screenPeer'), peer)) {
 			this.set('screen', this.get('screenPeer').stream || null)
 			this.set('screenAudioElement', attachMediaStream(this.get('screen'), null, { audio: true }))
 		}
 	},
 
 	_handlePeerStreamRemoved(peer) {
-		if (this.get('peer') === peer) {
-			this.get('audioElement').srcObject = null
-			this.set('audioElement', null)
+		if (this._isSameProxy(this.get('peer'), peer)) {
+			if (this.get('audioElement') !== null) {
+				this.get('audioElement').srcObject = null
+				this.set('audioElement', null)
+			}
 			this.set('stream', null)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
-		} else if (this.get('screenPeer') === peer) {
-			this.get('screenAudioElement').srcObject = null
-			this.set('screenAudioElement', null)
+		} else if (this._isSameProxy(this.get('screenPeer'), peer)) {
+			if (this.get('screenAudioElement') !== null) {
+				this.get('screenAudioElement').srcObject = null
+				this.set('screenAudioElement', null)
+			}
 			this.set('screen', null)
 		}
 	},
