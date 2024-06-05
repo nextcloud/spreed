@@ -623,20 +623,20 @@ export default {
 	&:focus,
 	&:focus-visible {
 		background-color: var(--color-background-hover);
-		outline: none;
 
 		.remove-file {
 			visibility: visible;
 		}
 
 		.file-preview__image.media {
-			outline: 2px solid var(--color-primary-element);
+			outline: 10px solid var(--color-primary-element);
 		}
 	}
 
 	&__image {
 		object-fit: cover;
-		transition: outline 0.1s ease-in-out;
+		//outline-color: transparent;
+		transition: outline 2s ease-in-out;
 	}
 
 	&__progress {
