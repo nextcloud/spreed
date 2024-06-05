@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import EmitterMixin from '../EmitterMixin.js'
 import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
 
@@ -39,7 +39,7 @@ EmitterMixin.apply(CallParticipantModelStub.prototype)
 function CallParticipantCollectionStub() {
 	this._superEmitterMixin()
 
-	this.callParticipantModels = ref([])
+	this.callParticipantModels = reactive([])
 }
 EmitterMixin.apply(CallParticipantCollectionStub.prototype)
 
@@ -67,7 +67,7 @@ describe('CallParticipantsAudioPlayer', () => {
 	 * @param {object} callParticipantModel the CallParticipantModel to add.
 	 */
 	function addCallParticipantModel(callParticipantModel) {
-		callParticipantCollection.callParticipantModels.value.push(callParticipantModel)
+		callParticipantCollection.callParticipantModels.push(callParticipantModel)
 
 		callParticipantCollection._trigger('add', [callParticipantModel])
 	}
@@ -80,8 +80,8 @@ describe('CallParticipantsAudioPlayer', () => {
 	 * @param {object} callParticipantModel the CallParticipantModel to remove.
 	 */
 	function removeCallParticipantModel(callParticipantModel) {
-		const index = callParticipantCollection.callParticipantModels.value.indexOf(callParticipantModel)
-		callParticipantCollection.callParticipantModels.value.splice(index, 1)
+		const index = callParticipantCollection.callParticipantModels.indexOf(callParticipantModel)
+		callParticipantCollection.callParticipantModels.splice(index, 1)
 
 		callParticipantCollection._trigger('remove', [callParticipantModel])
 	}

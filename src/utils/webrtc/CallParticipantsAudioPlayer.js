@@ -51,7 +51,7 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 	this._callParticipantCollection.on('add', this._handleCallParticipantAddedBound)
 	this._callParticipantCollection.on('remove', this._handleCallParticipantRemovedBound)
 
-	this._callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
+	this._callParticipantCollection.callParticipantModels.forEach((callParticipantModel) => {
 		this._handleCallParticipantAddedBound(this._callParticipantCollection, callParticipantModel)
 	})
 }
@@ -62,7 +62,7 @@ CallParticipantsAudioPlayer.prototype = {
 		this._callParticipantCollection.off('add', this._handleCallParticipantAddedBound)
 		this._callParticipantCollection.off('remove', this._handleCallParticipantRemovedBound)
 
-		this._callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
+		this._callParticipantCollection.callParticipantModels.forEach((callParticipantModel) => {
 			this._handleCallParticipantRemovedBound(this._callParticipantCollection, callParticipantModel)
 		})
 
