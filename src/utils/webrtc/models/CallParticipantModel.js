@@ -148,15 +148,19 @@ CallParticipantModel.prototype = {
 
 	_handlePeerStreamRemoved(peer) {
 		if (this._isSameProxy(this.get('peer'), peer)) {
-			this.get('audioElement').srcObject = null
-			this.set('audioElement', null)
+			if (this.get('audioElement') !== null) {
+				this.get('audioElement').srcObject = null
+				this.set('audioElement', null)
+			}
 			this.set('stream', null)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 		} else if (this._isSameProxy(this.get('screenPeer'), peer)) {
-			this.get('screenAudioElement').srcObject = null
-			this.set('screenAudioElement', null)
+			if (this.get('screenAudioElement') !== null) {
+				this.get('screenAudioElement').srcObject = null
+				this.set('screenAudioElement', null)
+			}
 			this.set('screen', null)
 		}
 	},
