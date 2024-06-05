@@ -1389,6 +1389,7 @@ OC.L10N.register(
     "Joined via phone" : "電話で参加",
     "Raised their hand" : "手を上げる",
     "Remove group and members" : "メンバーとグループを削除",
+    "Remove team and members" : "チーム・グループとメンバーを削除",
     "Remove participant" : "参加者を削除",
     "Invitation was sent to {actorId}" : "招待が {actorId} に送信されました",
     "Could not send invitation to {actorId}" : "{actorId} に招待状を送信できませんでした",
