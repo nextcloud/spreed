@@ -65,7 +65,7 @@ export default class SpeakingStatusHandler {
 		this.#callParticipantCollection.off('add', this.#handleAddParticipantBound)
 		this.#callParticipantCollection.off('remove', this.#handleRemoveParticipantBound)
 
-		this.#callParticipantCollection.callParticipantModels.value.forEach((callParticipantModel) => {
+		this.#callParticipantCollection.callParticipantModels.forEach((callParticipantModel) => {
 			callParticipantModel.off('change:speaking', this.#handleSpeakingBound)
 			callParticipantModel.off('change:stoppedSpeaking', this.#handleSpeakingBound)
 		})
