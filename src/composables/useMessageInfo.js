@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, unref, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import moment from '@nextcloud/moment'
@@ -17,21 +17,15 @@ const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messa
 /**
  * Check whether the user can edit the message or not
  *
- * @param {import('vue').Ref} tokenRef conversation token
- * @param {import('vue').Ref} messageIdRef message id to edit
- * @return {import('vue').ComputedRef<boolean>}
+ * @param {import('vue').Ref} message message object
+ * @return {Record<string, import('vue').ComputedRef<boolean>>}
  */
-export function useMessageInfo(tokenRef = ref(null), messageIdRef = ref(null)) {
-	const token = unref(tokenRef)
-	const messageId = unref(messageIdRef)
+export function useMessageInfo(message = ref({})) {
+	// Get the conversation
 	const store = useStore()
-
-	// Get the conversation and message
-	const conversation = computed(() => store.getters.conversation(token))
-	const message = computed(() => store.getters.message(token, messageId))
-
+	const conversation = computed(() => store.getters.conversation(message.value.token))
 	// If the conversation or message is not available, return false
-	if (!conversation.value || !message.value) {
+	if (!conversation.value || !message.value.id) {
 		return {
 			isEditable: computed(() => false),
 			isDeleteable: computed(() => false),

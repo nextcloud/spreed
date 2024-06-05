@@ -185,7 +185,7 @@ export default {
 		const {
 			isEditable,
 			isFileShare,
-		} = useMessageInfo(message.value.token, message.value.id)
+		} = useMessageInfo(message)
 		return {
 			isInCall: useIsInCall(),
 			isEditable,

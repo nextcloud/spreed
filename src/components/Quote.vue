@@ -102,12 +102,12 @@ export default {
 	},
 
 	setup(props) {
-		const { token, id } = toRefs(props)
+		const { message } = toRefs(props)
 		const chatExtrasStore = useChatExtrasStore()
 		const {
 			isFileShare,
 			isFileShareWithoutCaption,
-		} = useMessageInfo(token, id)
+		} = useMessageInfo(message)
 
 		return {
 			AVATAR,

@@ -397,7 +397,7 @@ export default {
 			isFileShareWithoutCaption,
 			isConversationReadOnly,
 			isConversationModifiable,
-		} = useMessageInfo(message.value.token, message.value.id)
+		} = useMessageInfo(message)
 
 		return {
 			messageActions,

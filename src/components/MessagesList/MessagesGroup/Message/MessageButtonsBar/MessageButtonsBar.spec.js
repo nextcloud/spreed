@@ -5,6 +5,7 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { computed } from 'vue'
 import Vuex, { Store } from 'vuex'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -215,7 +216,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides private reply action for own messages', async () => {
 				useMessageInfoSpy.mockReturnValue({
-					isCurrentUserOwnMessage: () => true,
+					isCurrentUserOwnMessage: computed(() => true),
 			   })
 				// using default message props which have the
 				// actor id set to the current user
@@ -250,7 +251,7 @@ describe('MessageButtonsBar.vue', () => {
 				jest.spyOn(global.Date, 'now')
 					.mockImplementation(() => mockDate)
 				useMessageInfoSpy.mockReturnValue({
-					isDeleteable: () => true,
+					isDeleteable: computed(() => true),
 				})
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -289,12 +290,15 @@ describe('MessageButtonsBar.vue', () => {
 			}
 
 			test('hides delete action when it cannot be deleted', async () => {
+				useMessageInfoSpy.mockReturnValue({
+					isDeleteable: computed(() => false),
+				})
 				testDeleteMessageVisible(false)
 			})
 
 			test('show delete action when it can be deleted', () => {
 				useMessageInfoSpy.mockReturnValue({
-					isDeleteable: () => true,
+					isDeleteable: computed(() => true),
 				})
 				testDeleteMessageVisible(true)
 			})
