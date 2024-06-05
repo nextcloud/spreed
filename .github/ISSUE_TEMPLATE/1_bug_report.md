@@ -29,7 +29,7 @@ Tell us what happens instead
 
 **Talk app version:** (see apps administration page: `/index.php/settings/apps`)
 
-**Custom Signaling server configured:** yes/no and version (see  Talk administration settings: `/index.php/index.php/settings/admin/talk#signaling_server`)
+**Custom Signaling server configured:** yes/no and version (see  Talk administration settings: `/index.php/settings/admin/talk#signaling_server`)
 
 **Custom TURN server configured:** yes/no (see Talk administration settings: `/index.php/settings/admin/talk#turn_server`)
 
