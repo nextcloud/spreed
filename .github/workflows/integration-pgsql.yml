@@ -53,7 +53,7 @@ jobs:
         php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['master']
-        circles-versions: ['master']
+        circles-versions: ['fix/noid/get-access-list']
         call-summary-bot-versions: ['main']
         notifications-versions: ['master']
 
