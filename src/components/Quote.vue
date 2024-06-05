@@ -14,14 +14,14 @@ components.
 		:class="{'quote-own-message': isOwnMessageQuoted}"
 		@click.prevent="handleQuoteClick">
 		<div class="quote__main">
-			<div v-if="id"
+			<div v-if="message.id"
 				class="quote__main__author"
 				role="heading"
 				aria-level="4">
-				<AvatarWrapper :id="actorId"
-					:token="token"
+				<AvatarWrapper :id="message.actorId"
+					:token="message.token"
 					:name="getDisplayName"
-					:source="actorType"
+					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				{{ getDisplayName }}
@@ -30,11 +30,11 @@ components.
 					{{ t('spreed', '(editing)') }}
 				</div>
 			</div>
-			<!-- file preview-->
+			<!-- File preview -->
 			<NcRichText v-if="isFileShare"
 				text="{file}"
 				:arguments="richParameters" />
-			<!-- text -->
+			<!-- Message text -->
 			<blockquote v-if="!isFileShareWithoutCaption"
 				class="quote__main__text">
 				<p dir="auto">{{ shortenedQuoteMessage }}</p>
@@ -73,69 +73,28 @@ import { useChatExtrasStore } from '../stores/chatExtras.js'
 
 export default {
 	name: 'Quote',
+
 	components: {
 		AvatarWrapper,
 		NcButton,
-		Close,
 		NcRichText,
+		// Icons
+		Close,
 		PencilIcon,
 	},
+
 	props: {
-		actorId: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * The sender of the message to be replied to.
-		 */
-		actorType: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * The display name of the sender of the message.
-		 */
-		actorDisplayName: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * The text of the message to be replied to.
-		 */
+		// The quoted message object
 		message: {
-			type: String,
-			default: '',
+			type: Object,
+			required: true,
 		},
-		/**
-		 * The text of the message to be replied to.
-		 */
-		messageParameters: {
-			type: [Array, Object],
-			default: () => { return {} },
-		},
-		/**
-		 * The message id of the message to be replied to.
-		 */
-		id: {
-			type: Number,
-			default: 0,
-		},
-		/**
-		 * The conversation token of the message to be replied to.
-		 */
-		token: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * If the quote component is used in the `NewMessage` component we display
-		 * the remove button.
-		 */
+		// Whether to show remove / cancel action
 		canCancel: {
 			type: Boolean,
 			default: false,
 		},
-
+		// Whether to show edit actions
 		editMessage: {
 			type: Boolean,
 			default: false,
@@ -165,9 +124,9 @@ export default {
 		 * @return {string}
 		 */
 		getDisplayName() {
-			const displayName = this.actorDisplayName.trim()
+			const displayName = this.message.actorDisplayName.trim()
 
-			if (displayName === '' && this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if (displayName === '' && this.message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return t('spreed', 'Guest')
 			}
 
@@ -179,27 +138,27 @@ export default {
 		},
 
 		isOwnMessageQuoted() {
-			return this.actorId === this.$store.getters.getActorId()
-				&& this.actorType === this.$store.getters.getActorType()
+			return this.message.actorId === this.$store.getters.getActorId()
+				&& this.message.actorType === this.$store.getters.getActorType()
 		},
 
 		richParameters() {
 			const richParameters = {}
-			Object.keys(this.messageParameters).forEach(function(p) {
-				const type = this.messageParameters[p].type
+			Object.keys(this.message.messageParameters).forEach(function(p) {
+				const type = this.message.messageParameters[p].type
 				if (type === 'file') {
 					richParameters[p] = {
 						component: FilePreview,
 						props: Object.assign({
-							token: this.token,
+							token: this.message.token,
 							smallPreview: true,
-							rowLayout: !this.messageParameters[p].mimetype.startsWith('image/'),
-						}, this.messageParameters[p]),
+							rowLayout: !this.message.messageParameters[p].mimetype.startsWith('image/'),
+						}, this.message.messageParameters[p]),
 					}
 				} else {
 					richParameters[p] = {
 						component: DefaultParameter,
-						props: this.messageParameters[p],
+						props: this.message.messageParameters[p],
 					}
 				}
 			}.bind(this))
@@ -214,16 +173,16 @@ export default {
 		 * @return {string} A simple message to show below the conversation name
 		 */
 		simpleQuotedMessage() {
-			if (!this.id) {
+			if (!this.message.id) {
 				return t('spreed', 'The message has expired or has been deleted')
 			}
 
-			if (!Object.keys(this.messageParameters).length) {
-				return this.message
+			if (!Object.keys(this.message.messageParameters).length) {
+				return this.message.message
 			}
 
-			const params = this.messageParameters
-			let subtitle = this.message
+			const params = this.message.messageParameters
+			let subtitle = this.message.message
 
 			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 			Object.keys(params).forEach((parameterKey) => {
@@ -232,9 +191,12 @@ export default {
 
 			return subtitle
 		},
-		// Shorten the message to 250 characters and append three dots to the end of the
-		// string. This is needed because on very wide screens, if the 250 characters
-		// fit, the css rules won't ellipsize the text-overflow.
+
+		/**
+		 * Shorten the message to 250 characters and append three dots to the end of the
+		 * string. This is needed because on very wide screens, if the 250 characters
+		 * fit, the css rules won't ellipsize the text-overflow.
+		 */
 		shortenedQuoteMessage() {
 			if (this.simpleQuotedMessage.length >= 250) {
 				return this.simpleQuotedMessage.substring(0, 250) + '…'
@@ -247,24 +209,25 @@ export default {
 			return t('spreed', 'Cancel quote')
 		},
 	},
+
 	methods: {
 		handleAbort() {
 			if (this.editMessage) {
-				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.chatExtrasStore.removeMessageIdToEdit(this.message.token)
 			} else {
-				this.chatExtrasStore.removeParentIdToReply(this.token)
+				this.chatExtrasStore.removeParentIdToReply(this.message.token)
 			}
 			EventBus.emit('focus-chat-input')
 		},
 
 		handleQuoteClick() {
-			const parentHash = '#message_' + this.id
+			const parentHash = '#message_' + this.message.id
 			if (this.$route.hash !== parentHash) {
 				// Change route to trigger message fetch, if not fetched yet
 				this.$router.replace(parentHash)
 			} else {
 				// Already on this message route, just trigger highlight
-				EventBus.emit('focus-message', this.id)
+				EventBus.emit('focus-message', this.message.id)
 			}
 		},
 	},
@@ -272,7 +235,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 @import '../assets/variables';
 
 .quote {
@@ -305,16 +267,19 @@ export default {
 		display: flex;
 		flex-direction: column;
 		flex: 1 1 auto;
+
 		&__author {
 			display: flex;
 			align-items: center;
 			gap: 4px;
 			color: var(--color-text-maxcontrast);
 		}
+
 		&__text {
 			color: var(--color-text-maxcontrast);
 			white-space: pre-wrap;
 			word-break: break-word;
+
 			& p {
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -325,6 +290,7 @@ export default {
 				text-align: start;
 			}
 		}
+
 		&__edit-hint {
 			display: flex;
 			align-items: center;

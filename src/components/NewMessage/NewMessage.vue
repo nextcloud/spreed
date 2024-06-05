@@ -65,7 +65,7 @@
 					</NcButton>
 				</div>
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
-					<Quote v-bind="messageToEdit ?? parentMessage"
+					<Quote :message="messageToEdit ?? parentMessage"
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
 				</div>

@@ -36,7 +36,7 @@
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
-			<Quote v-if="message.parent" v-bind="message.parent" />
+			<Quote v-if="message.parent" :message="message.parent" />
 
 			<!-- Message content / text -->
 			<NcRichText :text="renderedMessage"

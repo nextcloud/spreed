@@ -306,8 +306,8 @@ describe('Message.vue', () => {
 			})
 
 			const quote = wrapper.findComponent(Quote)
-			expect(quote.exists()).toBe(true)
-			expect(quote.attributes('message')).toBe('quoted text')
+			expect(quote.exists()).toBeTruthy()
+			expect(quote.props('message')).toStrictEqual(parentMessage)
 		})
 
 		describe('rich objects', () => {
