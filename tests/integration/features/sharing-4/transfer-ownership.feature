@@ -29,7 +29,7 @@ Feature: transfer-ownership
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | REGEXP /\/transferred from participant1-displayname on .*\/welcome.txt/ |
+      | path                   | REGEXP /\/Transferred from participant1-displayname on .*\/welcome.txt/ |
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
@@ -124,7 +124,7 @@ Feature: transfer-ownership
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | REGEXP /\/transferred from participant1-displayname on .*\/welcome.txt/ |
+      | path                   | REGEXP /\/Transferred from participant1-displayname on .*\/welcome.txt/ |
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
