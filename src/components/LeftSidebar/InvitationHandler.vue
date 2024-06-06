@@ -14,7 +14,7 @@
 			<p class="inbox__disclaimer">
 				{{ t('spreed', 'Join conversations from remote Nextcloud servers') }}
 			</p>
-			<ul class="inbox__list">
+			<ul v-if="invitationsLoadedCount" class="inbox__list">
 				<li v-for="(item, id) in invitations"
 					:key="`invitation_${id}`"
 					class="inbox__item">
@@ -51,6 +51,16 @@
 					</NcButton>
 				</li>
 			</ul>
+			<NcEmptyContent v-else class="inbox__placeholder">
+				<template #icon>
+					<NcLoadingIcon v-if="isLoading" />
+					<WebIcon v-else />
+				</template>
+
+				<template #description>
+					<p>{{ isLoading ? t('spreed', 'Loading …') : t('spreed', 'No pending invitations') }}</p>
+				</template>
+			</NcEmptyContent>
 		</div>
 	</NcModal>
 </template>
@@ -58,8 +68,10 @@
 <script>
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
+import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
@@ -74,6 +86,7 @@ export default {
 	name: 'InvitationHandler',
 
 	components: {
+		NcEmptyContent,
 		NcRichText,
 		ConversationIcon,
 		NcButton,
@@ -82,6 +95,7 @@ export default {
 		// Icons
 		CancelIcon,
 		CheckIcon,
+		WebIcon,
 	},
 
 	setup() {
@@ -93,6 +107,7 @@ export default {
 	data() {
 		return {
 			modal: false,
+			isLoading: true,
 		}
 	},
 
@@ -109,13 +124,21 @@ export default {
 			}
 			return invitations
 		},
+
+		invitationsLoadedCount() {
+			return Object.keys(this.invitations).length
+		}
 	},
 
 	expose: ['showModal'],
 
 	methods: {
-		showModal() {
+		async showModal() {
 			this.modal = true
+
+			this.isLoading = true
+			await this.federationStore.getShares()
+			this.isLoading = false
 		},
 
 		closeModal() {
@@ -136,7 +159,7 @@ export default {
 		},
 
 		checkIfNoMoreInvitations() {
-			if (Object.keys(this.invitations).length === 0) {
+			if (this.invitationsLoadedCount === 0) {
 				this.closeModal()
 			}
 		},
@@ -170,6 +193,11 @@ export default {
 	&__disclaimer {
 		margin-bottom: 12px;
 		color: var(--color-text-maxcontrast)
+	}
+
+	& > &__placeholder {
+		margin: 20px 0;
+		padding: 0;
 	}
 
 	&__list {

@@ -121,6 +121,24 @@ describe('federationStore', () => {
 		expect(getShares).toHaveBeenCalled()
 		expect(federationStore.pendingShares).toMatchObject({ [invites[0].id]: invites[0] })
 		expect(federationStore.acceptedShares).toMatchObject({ [invites[1].id]: invites[1] })
+		expect(federationStore.pendingSharesCount).toBe(1)
+	})
+
+	it('processes a response from server and remove outdated invites', async () => {
+		// Arrange
+		const response = generateOCSResponse({ payload: invites })
+		getShares.mockResolvedValueOnce(response)
+		await federationStore.getShares()
+
+		// Act: load empty response from server
+		const responseEmpty = generateOCSResponse({ payload: [] })
+		getShares.mockResolvedValueOnce(responseEmpty)
+		await federationStore.getShares()
+
+		// Assert
+		expect(federationStore.pendingShares).toStrictEqual({})
+		expect(federationStore.acceptedShares).toStrictEqual({})
+		expect(federationStore.pendingSharesCount).toBe(0)
 	})
 
 	it('handles error in server request for getShares', async () => {
@@ -135,6 +153,7 @@ describe('federationStore', () => {
 		// Assert: store hasn't changed
 		expect(federationStore.pendingShares).toStrictEqual({})
 		expect(federationStore.acceptedShares).toStrictEqual({})
+		expect(federationStore.pendingSharesCount).toBe(0)
 	})
 
 	it('updates invites in the store after receiving a notification', async () => {
@@ -152,6 +171,7 @@ describe('federationStore', () => {
 			[notifications[1].objectId]: { id: notifications[1].objectId },
 		})
 		expect(federationStore.acceptedShares).toMatchObject({ [invites[1].id]: invites[1] })
+		expect(federationStore.pendingSharesCount).toBe(2)
 	})
 
 	it('accepts invitation and modify store', async () => {
@@ -178,6 +198,7 @@ describe('federationStore', () => {
 			[invites[0].id]: { ...invites[0], state: 1 },
 			[invites[1].id]: invites[1],
 		})
+		expect(federationStore.pendingSharesCount).toBe(0)
 	})
 
 	it('skip already accepted invitations', async () => {
@@ -228,6 +249,7 @@ describe('federationStore', () => {
 		expect(rejectShare).toHaveBeenCalledWith(invites[0].id)
 		expect(federationStore.pendingShares).toStrictEqual({})
 		expect(federationStore.acceptedShares).toMatchObject({ [invites[1].id]: invites[1] })
+		expect(federationStore.pendingSharesCount).toBe(1)
 	})
 
 	it('skip already rejected invitations', async () => {

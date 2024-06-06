@@ -16,11 +16,13 @@ import type { Conversation, FederationInvite, NotificationInvite } from '../type
 type State = {
 	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>,
 	acceptedShares: Record<string, FederationInvite>,
+	pendingSharesCount: number,
 }
 export const useFederationStore = defineStore('federation', {
 	state: (): State => ({
 		pendingShares: {},
 		acceptedShares: {},
+		pendingSharesCount: 0,
 	}),
 
 	actions: {
@@ -30,13 +32,18 @@ export const useFederationStore = defineStore('federation', {
 		async getShares() {
 			try {
 				const response = await getShares()
+				const acceptedShares: State['acceptedShares'] = {}
+				const pendingShares: State['pendingShares'] = {}
 				response.data.ocs.data.forEach(item => {
 					if (item.state === FEDERATION.STATE.ACCEPTED) {
-						Vue.set(this.acceptedShares, item.id, item)
+						acceptedShares[item.id] = item
 					} else {
-						Vue.set(this.pendingShares, item.id, item)
+						pendingShares[item.id] = item
 					}
 				})
+				Vue.set(this, 'acceptedShares', acceptedShares)
+				Vue.set(this, 'pendingShares', pendingShares)
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 			} catch (error) {
 				console.error(error)
 			}
@@ -67,6 +74,7 @@ export const useFederationStore = defineStore('federation', {
 				inviterDisplayName: name,
 			}
 			Vue.set(this.pendingShares, invitation.id, invitation)
+			this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 		},
 
 		/**
@@ -101,10 +109,16 @@ export const useFederationStore = defineStore('federation', {
 				Vue.set(this.pendingShares[id], 'loading', 'accept')
 				const response = await acceptShare(id)
 				this.markInvitationAccepted(id, response.data.ocs.data)
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 				return response.data.ocs.data
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while accepting an invitation'))
+				// Dismiss the loading state, refresh the list
+				await this.getShares()
+				if (this.pendingShares[id]) {
+					Vue.delete(this.pendingShares[id], 'loading')
+				}
 			}
 		},
 
@@ -120,11 +134,26 @@ export const useFederationStore = defineStore('federation', {
 			try {
 				Vue.set(this.pendingShares[id], 'loading', 'reject')
 				await rejectShare(id)
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 				Vue.delete(this.pendingShares, id)
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while rejecting an invitation'))
+				// Dismiss the loading state, refresh the list
+				await this.getShares()
+				if (this.pendingShares[id]) {
+					Vue.delete(this.pendingShares[id], 'loading')
+				}
 			}
+		},
+
+		/**
+		 * Update pending shares count.
+		 *
+		 * @param value amount of pending shares
+		 */
+		updatePendingSharesCount(value?: string|number) {
+			Vue.set(this, 'pendingSharesCount', value ? +value : 0)
 		},
 	},
 })
