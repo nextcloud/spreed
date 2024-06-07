@@ -1120,6 +1120,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "Fra {user} ved {remoteServer}",
     "Decline invitation" : "Avslå invitasjon",
     "Accept invitation" : "Aksepter invitasjon",
+    "Loading …" : "Laster ...",
+    "No pending invitations" : "Ingen ventende invitasjoner",
     "Conversation list" : "Samtaleliste",
     "Filter unread mentions" : "Filtrer uleste nevner",
     "Filter unread messages" : "Filtrer uleste meldinger",

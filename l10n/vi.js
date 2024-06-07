@@ -490,6 +490,7 @@ OC.L10N.register(
     "Remove from favorites" : "Xóa khỏi ưa thích",
     "Add to favorites" : "Thêm vào ưa thích",
     "You need to promote a new moderator before you can leave the conversation." : "Bạn cần chọn người kiểm duyệt mới trước khi có thể rời khỏi cuộc trò chuyện.",
+    "Loading …" : "Đang tải …",
     "Conversation list" : "Danh sách cuộc trò chuyện",
     "Clear filter" : "Xóa bộ lọc",
     "Open conversations" : "Mở cuộc trò chuyện",

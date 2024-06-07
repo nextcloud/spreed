@@ -1080,6 +1080,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Вам нужно назначить нового модератора перед тем, как покинуть обсуждение.",
     "Decline invitation" : "Отклонить приглашение",
     "Accept invitation" : "Принять приглашение",
+    "Loading …" : "Загрузка…",
     "Conversation list" : "Список обсуждений",
     "Filter unread mentions" : "Фильтр непрочитанных упоминаний",
     "Filter unread messages" : "Фильтр непрочитанных сообщений",

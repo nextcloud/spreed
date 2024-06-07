@@ -772,6 +772,7 @@ OC.L10N.register(
     "Mark as unread" : "Marcar coma pas legit",
     "Remove from favorites" : "Tirar dels favorits",
     "Add to favorites" : "Apondre als favorits",
+    "Loading …" : "Cargament…",
     "Conversation list" : "Lista de conversacion",
     "Clear filters" : "Escafar los filtres",
     "Create a new conversation" : "Crear una conversacion novèla",

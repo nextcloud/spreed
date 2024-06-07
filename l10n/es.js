@@ -1131,6 +1131,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "De {usuario} en {remoteServer}",
     "Decline invitation" : "Declinar invitación",
     "Accept invitation" : "Aceptar invitación",
+    "Loading …" : "Cargando …",
+    "No pending invitations" : "Sin invitaciones pendientes",
     "Conversation list" : "Lista de conversaciones",
     "Filter unread mentions" : "Filtrar menciones no leídas",
     "Filter unread messages" : "Filtrar mensajes no leídos",

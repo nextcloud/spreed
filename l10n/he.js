@@ -470,6 +470,7 @@ OC.L10N.register(
     "Mark as unread" : "סימון כלא נקרא",
     "Remove from favorites" : "הסרה מהמועדפים",
     "Add to favorites" : "הוספה למועדפים",
+    "Loading …" : "בטעינה…",
     "Clear filter" : "מחיקת מסנן",
     "No matches found" : "לא נמצאו התאמות",
     "Users" : "משתמשים",

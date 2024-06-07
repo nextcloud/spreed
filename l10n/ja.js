@@ -1110,6 +1110,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "{remoteServer} からの {user} ",
     "Decline invitation" : "招待を拒否",
     "Accept invitation" : "招待を承諾",
+    "Loading …" : "読み込み中…",
+    "No pending invitations" : "保留中の招待はありません",
     "Conversation list" : "会話リスト",
     "Filter unread mentions" : "未読のメンションをフィルター",
     "Filter unread messages" : "未読メッセージをフィルター",

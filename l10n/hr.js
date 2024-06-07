@@ -785,6 +785,7 @@ OC.L10N.register(
     "Remove from favorites" : "Ukloni iz favorita",
     "Add to favorites" : "Dodaj u favorite",
     "You need to promote a new moderator before you can leave the conversation." : "Morate odabrati novog moderatora prije nego što napustite razgovor.",
+    "Loading …" : "Učitavanje…",
     "Conversation list" : "Popis razgovora",
     "Clear filter" : "Ukloni filtar",
     "Unread mentions" : "Nepročitana spominjanja",
