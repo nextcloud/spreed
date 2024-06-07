@@ -849,6 +849,7 @@ OC.L10N.register(
     "Remove from favorites" : "Rimuovi dai preferiti",
     "Add to favorites" : "Aggiungi ai preferiti",
     "You need to promote a new moderator before you can leave the conversation." : "Devi promuovere un nuovo moderatore prima di poter abbandonare la conversazione. ",
+    "Loading …" : "Caricamento…",
     "Conversation list" : "Elenco delle conversazioni",
     "Clear filter" : "Pulisci il filtro",
     "Unread mentions" : "Menzioni non lette",

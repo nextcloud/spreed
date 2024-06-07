@@ -1129,6 +1129,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "Od {user} na {remoteServer}",
     "Decline invitation" : "Odmietnuť pozvánku",
     "Accept invitation" : "Prijať pozvánku",
+    "Loading …" : "Načítavam …",
+    "No pending invitations" : "Žiadne čakajúce pozvánky",
     "Conversation list" : "Zoznam konverzácií",
     "Filter unread mentions" : "Filtrovať neprečítané zmienky",
     "Filter unread messages" : "Filtrovať neprečítané správy",

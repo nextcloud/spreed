@@ -301,6 +301,7 @@ OC.L10N.register(
     "Notifications" : "Sciigoj",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
+    "Loading …" : "Ŝargado...",
     "Users" : "Uzantoj",
     "Groups" : "Grupoj",
     "Loading" : "Ŝargado",

@@ -1131,6 +1131,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "Од {user} на {remoteServer}",
     "Decline invitation" : "Одбиј позивницу",
     "Accept invitation" : "Прихвати позивницу",
+    "Loading …" : "Учитавање…",
+    "No pending invitations" : "Нема позивница на чекању",
     "Conversation list" : "Листа разговора",
     "Filter unread mentions" : "Филтрирај непрочитана помињања",
     "Filter unread messages" : "Филтрирај непрочитане поруке",

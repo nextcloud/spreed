@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Remove from favorites" : "Eltávolítás a kedvencekből",
     "Add to favorites" : "Hozzáadás a kedvencekhez ",
     "You need to promote a new moderator before you can leave the conversation." : "Új moderátort kell kineveznie, mielőtt elhagyhatja a beszélgetést.",
+    "Loading …" : "Betöltés…",
     "Conversation list" : "Beszélgetések listája",
     "Filter unread mentions" : "Olvasatlan említések szűrése",
     "Filter unread messages" : "Olvasatlan üzenetek szűrése",

@@ -1033,6 +1033,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Pred odhodom iz pogovora je treba nekoga določiti za moderatorja.",
     "Decline invitation" : "Zavrni povabilo",
     "Accept invitation" : "Sprejmi povabilo",
+    "Loading …" : "Poteka nalaganje …",
     "Conversation list" : "Seznam pogovorov",
     "Filter unread mentions" : "Filtriraj neprebrane omembe",
     "Filter unread messages" : "Filtriraj neprebrana sporočila",

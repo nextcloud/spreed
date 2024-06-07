@@ -1131,6 +1131,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "من {user} على الخادوم {remoteServer}",
     "Decline invitation" : "رفض الدعوة",
     "Accept invitation" : "قبول الدعوة",
+    "Loading …" : "التحميل جارٍ …",
+    "No pending invitations" : "لا توجد دعوات معلقة",
     "Conversation list" : "قائمة المحادثة ",
     "Filter unread mentions" : "تصفية الإشارات غير المقروءة",
     "Filter unread messages" : "تصفية الرسائل الغير مقروءة",
