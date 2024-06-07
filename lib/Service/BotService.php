@@ -38,6 +38,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
+use OCP\ICertificateManager;
 use OCP\IConfig;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -49,18 +50,19 @@ use Psr\Log\LoggerInterface;
 
 class BotService {
 	public function __construct(
-		protected BotServerMapper       $botServerMapper,
+		protected BotServerMapper $botServerMapper,
 		protected BotConversationMapper $botConversationMapper,
-		protected IClientService        $clientService,
-		protected IConfig               $serverConfig,
-		protected IUserSession          $userSession,
-		protected TalkSession           $talkSession,
-		protected ISession              $session,
-		protected ISecureRandom         $secureRandom,
-		protected IURLGenerator         $urlGenerator,
-		protected IFactory              $l10nFactory,
-		protected ITimeFactory          $timeFactory,
-		protected LoggerInterface       $logger,
+		protected IClientService $clientService,
+		protected IConfig $serverConfig,
+		protected IUserSession $userSession,
+		protected TalkSession $talkSession,
+		protected ISession $session,
+		protected ISecureRandom $secureRandom,
+		protected IURLGenerator $urlGenerator,
+		protected IFactory $l10nFactory,
+		protected ITimeFactory $timeFactory,
+		protected LoggerInterface $logger,
+		protected ICertificateManager $certificateManager,
 	) {
 	}
 
@@ -170,7 +172,7 @@ class BotService {
 			];
 
 			$data = [
-				'verify' => true,
+				'verify' => $this->certificateManager->getAbsoluteBundlePath(),
 				'nextcloud' => [
 					'allow_local_address' => true,
 				],
