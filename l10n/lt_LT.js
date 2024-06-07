@@ -565,6 +565,7 @@ OC.L10N.register(
     "Remove from favorites" : "Šalinti iš mėgstamų",
     "Add to favorites" : "Pridėti į mėgstamus",
     "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių.",
+    "Loading …" : "Įkeliama…",
     "Clear filter" : "Išvalyti filtrą",
     "No matches found" : "Nerasta jokių atitikmenų",
     "Open conversations" : "Atverti pokalbius",

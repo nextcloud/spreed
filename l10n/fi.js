@@ -812,6 +812,7 @@ OC.L10N.register(
     "Mark as unread" : "Merkitse lukemattomaksi",
     "Remove from favorites" : "Poista suosikeista",
     "Add to favorites" : "Lisää suosikkeihin",
+    "Loading …" : "Ladataan…",
     "Conversation list" : "Keskustelulista",
     "Filter unread mentions" : "Suodata lukemattomat maininnat",
     "Filter unread messages" : "Suodata lukemattomat viestit",

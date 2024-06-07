@@ -998,6 +998,7 @@ OC.L10N.register(
     "Add to favorites" : "Gehitu gogokoetara",
     "You need to promote a new moderator before you can leave the conversation." : "Moderatzaile berri bat izendatu behar duzu elkarrizketa utzi ahal izateko.",
     "Pending invitations" : "Bidaltzeko gonbidapenak",
+    "Loading …" : "Kargatzen ...",
     "Conversation list" : "Elkarrizketa zerrenda",
     "Filter unread mentions" : "Iragazi irakurri gabeko aipamenak",
     "Filter unread messages" : "Iragazi irakurri gabeko mezuak",

@@ -1090,6 +1090,7 @@ OC.L10N.register(
     "Remove from favorites" : "Odebrat z oblíbených",
     "Add to favorites" : "Přidat do oblíbených",
     "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
+    "Loading …" : "Načítání…",
     "Conversation list" : "Seznam konverzace",
     "Filter unread mentions" : "Filtrovat nepřečtená zmínění",
     "Filter unread messages" : "Filtrovat nepřečtené zprávy",

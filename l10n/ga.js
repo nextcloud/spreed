@@ -287,6 +287,7 @@ OC.L10N.register(
     "Mark as unread" : "Marcáil mar neamhléite",
     "Remove from favorites" : "Bain ó cheanáin",
     "Add to favorites" : "Cuir le ceanáin",
+    "Loading …" : "Á lódáil…",
     "Clear filter" : "Glan an scagaire",
     "Users" : "Úsáideoirí",
     "Groups" : "Grúpaí",
