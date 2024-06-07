@@ -737,6 +737,7 @@ OC.L10N.register(
     "Remove from favorites" : "Αφαίρεση από τα αγαπημένα",
     "Add to favorites" : "Προσθήκη στα αγαπημένα ",
     "You need to promote a new moderator before you can leave the conversation." : "Πρέπει να προάγεται νέο συντονιστή πρίν αποχωρήσετε από την συνομιλία.",
+    "Loading …" : "Φόρτωση…",
     "Conversation list" : "Λίστα συνομιλιών",
     "Clear filter" : "Εκκαθάριση φίλτρου",
     "No matches found" : "Δεν βρέθηκαν αντιστοιχίες",

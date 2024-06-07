@@ -768,6 +768,7 @@ OC.L10N.register(
     "Remove from favorites" : "Boga dae preferidos",
     "Add to favorites" : "Agiunghe a preferidos",
     "You need to promote a new moderator before you can leave the conversation." : "Depes promòvere un'àtera persona chi moderet antis de lassare sa resonada.",
+    "Loading …" : "Carrigamentu …",
     "Conversation list" : "Lista de is resonadas",
     "Clear filter" : "Lìmpia filtru",
     "No matches found" : "Peruna currispondèntzia agatada",

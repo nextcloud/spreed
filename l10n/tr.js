@@ -1131,6 +1131,8 @@ OC.L10N.register(
     "From {user} at {remoteServer}" : "{remoteServer} sunucusundaki {user} kullanıcısından",
     "Decline invitation" : "Daveti reddet",
     "Accept invitation" : "Daveti kabul et",
+    "Loading …" : "Yükleniyor…",
+    "No pending invitations" : "Bekleyen bir davet yok",
     "Conversation list" : "Görüşme listesi",
     "Filter unread mentions" : "Okunmamış anmaları süz",
     "Filter unread messages" : "Okunmamış iletileri süz",
