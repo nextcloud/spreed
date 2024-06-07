@@ -542,13 +542,7 @@ describe('conversationsStore', () => {
 			// add conversation that should be removed
 			store.dispatch('addConversation', testConversation)
 
-			const response = {
-				data: {
-					ocs: {
-						data: testConversations,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: testConversations })
 
 			fetchConversations.mockResolvedValue(response)
 
@@ -590,13 +584,7 @@ describe('conversationsStore', () => {
 			}
 			const modifiedSince = 1675209600 // 2023-02-01T00:00:00.000Z
 
-			const response = {
-				data: {
-					ocs: {
-						data: [newConversation1, newConversation2],
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: [newConversation1, newConversation2] })
 
 			fetchConversations.mockResolvedValue(response)
 
