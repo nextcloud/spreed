@@ -1132,7 +1132,7 @@ OC.L10N.register(
     "Decline invitation" : "婉拒邀請",
     "Accept invitation" : "接受邀請",
     "Loading …" : "加載中 …",
-    "No pending invitations" : "沒有擱置的邀請",
+    "No pending invitations" : "沒有待處理的邀請",
     "Conversation list" : "對話清單",
     "Filter unread mentions" : "過濾未讀提及",
     "Filter unread messages" : "過濾未讀訊息",
