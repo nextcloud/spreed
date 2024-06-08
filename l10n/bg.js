@@ -961,6 +961,7 @@ OC.L10N.register(
     "Remove from favorites" : "Премахни от любимите",
     "Add to favorites" : "Добави към любимите",
     "You need to promote a new moderator before you can leave the conversation." : "Трябва да повишите нов модератор, преди да можете да напуснете разговора.",
+    "Loading …" : "Зареждане …",
     "Conversation list" : "Списък с разговори",
     "Clear filter" : "Изчстиване на филтър",
     "Unread mentions" : "Непрочетени споменавания",
