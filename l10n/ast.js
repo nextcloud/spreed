@@ -665,6 +665,8 @@ OC.L10N.register(
     "Pending invitations" : "Invitaciones pendientes",
     "Decline invitation" : "Refugar la invitación",
     "Accept invitation" : "Aceptar la invitación",
+    "Loading …" : "Cargando…",
+    "No pending invitations" : "Nun hai nenguna invitación pendiente",
     "Conversation list" : "Llista de conversaciones",
     "New personal note" : "Nota personal nueva",
     "Unread mentions" : "Menciones ensin lleer",
