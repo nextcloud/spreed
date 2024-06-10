@@ -273,12 +273,11 @@ export default {
 	emits: ['remove-file'],
 
 	setup() {
-		const { openViewer, generateViewerObject } = useViewer()
+		const { openViewer } = useViewer('talk')
 		const sharedItemsStore = useSharedItemsStore()
 
 		return {
 			openViewer,
-			generateViewerObject,
 			sharedItemsStore,
 		}
 	},
@@ -602,11 +601,9 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
-			const fileInfo = this.generateViewerObject(this)
-
 			if (this.itemType === SHARED_ITEM.TYPES.MEDIA) {
 				const getRevertedList = (items) => Object.values(items).reverse()
-					.map(item => this.generateViewerObject(item.messageParameters.file))
+					.map(item => item.messageParameters.file)
 
 				// Get available media files from store and put them to the list to navigate through slides
 				const mediaFiles = this.sharedItemsStore.sharedItems(this.token).media
@@ -616,9 +613,9 @@ export default {
 					return getRevertedList(messages)
 				}
 
-				this.openViewer(this.internalAbsolutePath, list, fileInfo, loadMore)
+				this.openViewer(this.internalAbsolutePath, list, this, loadMore)
 			} else {
-				this.openViewer(this.internalAbsolutePath, [fileInfo], fileInfo)
+				this.openViewer(this.internalAbsolutePath, [this], this)
 
 			}
 		},
