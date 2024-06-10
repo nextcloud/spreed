@@ -571,14 +571,17 @@ const actions = {
 			const reactionsStore = useReactionsStore()
 			if (message.systemMessage === 'message_deleted') {
 				reactionsStore.resetReactions(token, message.parent.id)
-				// Check existing messages for having a deleted message as parent, and update them
+			} else {
+				reactionsStore.processReaction(token, message)
+			}
+
+			if (message.systemMessage === 'message_edited' || message.systemMessage === 'message_deleted') {
+				// Check existing messages for having a deleted / edited message as parent, and update them
 				context.getters.messagesList(token)
 					.filter(storedMessage => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
 					.forEach(storedMessage => {
 						context.commit('addMessage', { token, message: Object.assign({}, storedMessage, { parent: message.parent }) })
 					})
-			} else {
-				reactionsStore.processReaction(token, message)
 			}
 
 			// Quit processing
