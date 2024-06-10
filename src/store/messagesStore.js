@@ -1121,6 +1121,12 @@ const actions = {
 	async lookForNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
 		context.dispatch('cancelLookForNewMessages', { requestId })
 
+		if (!lastKnownMessageId) {
+			// if param is null | undefined, it won't be included in the request query
+			console.warn('Trying to load messages without the required parameter')
+			return
+		}
+
 		// Get a new cancelable request function and cancel function pair
 		const { request, cancel } = CancelableRequest(lookForNewMessages)
 
