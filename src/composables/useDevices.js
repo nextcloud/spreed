@@ -155,10 +155,11 @@ export function useDevices(video, initializeOnMounted) {
 
 	/**
 	 * Update preference counters for devices (audio and video)
+	 * @param {string} kind the kind of the input stream to update ('audioinput' or 'videoinput')
 	 * @public
 	 */
-	function updatePreferences() {
-		mediaDevicesManager.updatePreferences()
+	function updatePreferences(kind) {
+		mediaDevicesManager.updatePreferences(kind)
 	}
 
 	/**

@@ -6,7 +6,7 @@ import {
 	getFirstAvailableMediaDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
-	updateMediaDevicesPreferences,
+	promoteMediaDevice,
 } from '../mediaDevicePreferences.ts'
 
 describe('mediaDevicePreferences', () => {
@@ -122,73 +122,71 @@ describe('mediaDevicePreferences', () => {
 		})
 	})
 
-	describe('updateMediaDevicesPreferences', () => {
+	describe('promoteMediaDevice', () => {
 		it('returns null if preference lists were not updated (no id or default id provided)', () => {
 			const ids = [null, undefined, 'default']
 
 			const getOutput = (id) => {
-				const attributes = { devices: allDevices, audioInputId: id, videoInputId: id }
-				return updateMediaDevicesPreferences(attributes, audioInputPreferenceList, videoInputPreferenceList)
+				return promoteMediaDevice({
+					kind: 'audioinput',
+					devices: allDevices,
+					inputList: audioInputPreferenceList,
+					inputId: id
+				})
 			}
 
 			// Assert
 			ids.forEach(id => {
-				expect(getOutput(id)).toMatchObject({ newAudioInputList: null, newVideoInputList: null })
+				expect(getOutput(id)).toEqual(null)
 			})
 		})
 
 		it('returns updated preference lists (device A id provided)', () => {
-			const attributes = { devices: allDevices, audioInputId: audioInputDeviceA.deviceId, videoInputId: videoInputDeviceA.deviceId }
-			const output = updateMediaDevicesPreferences(attributes, audioInputPreferenceList, videoInputPreferenceList)
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
+				devices: allDevices,
+				inputList: audioInputPreferenceList,
+				inputId: audioInputDeviceA.deviceId
+			})
 
 			// Assert: should put device A on top of default device
-			expect(output).toMatchObject({
-				newAudioInputList: [audioInputDeviceA, audioInputDeviceDefault, audioInputDeviceB],
-				newVideoInputList: [videoInputDeviceA, videoInputDeviceDefault, videoInputDeviceB],
-			})
+			expect(output).toEqual([audioInputDeviceA, audioInputDeviceDefault, audioInputDeviceB])
 		})
 
 		it('returns null if preference lists were not updated (device A id provided but not available)', () => {
-			const attributes = {
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
 				devices: allDevices.filter(device => !['da1234567890', 'da4567890123'].includes(device.deviceId)),
-				audioInputId: audioInputDeviceA.deviceId,
-				videoInputId: videoInputDeviceA.deviceId,
-			}
-			const output = updateMediaDevicesPreferences(attributes, audioInputPreferenceList, videoInputPreferenceList)
+				inputList: audioInputPreferenceList,
+				inputId: audioInputDeviceA.deviceId
+			})
 
 			// Assert
-			expect(output).toMatchObject({ newAudioInputList: null, newVideoInputList: null })
+			expect(output).toEqual(null)
 		})
 
 		it('returns null if preference lists were not updated (all devices are not available)', () => {
-			const attributes = {
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
 				devices: allDevices.filter(device => !['audioinput', 'videoinput'].includes(device.kind)),
-				audioInputId: audioInputDeviceA.deviceId,
-				videoInputId: videoInputDeviceA.deviceId,
-			}
-			const output = updateMediaDevicesPreferences(attributes, audioInputPreferenceList, videoInputPreferenceList)
+				inputList: audioInputPreferenceList,
+				inputId: audioInputDeviceA.deviceId
+			})
 
 			// Assert
-			expect(output).toMatchObject({ newAudioInputList: null, newVideoInputList: null })
+			expect(output).toEqual(null)
 		})
 
 		it('returns updated preference lists (device B id provided, but not registered, default device and device A not available)', () => {
-			const attributes = {
+			const output = promoteMediaDevice({
+				kind: 'audioinput',
 				devices: allDevices.filter(device => !['default', 'da1234567890', 'da4567890123'].includes(device.deviceId)),
-				audioInputId: audioInputDeviceB.deviceId,
-				videoInputId: videoInputDeviceB.deviceId,
-			}
-			const output = updateMediaDevicesPreferences(
-				attributes,
-				[audioInputDeviceDefault, audioInputDeviceA],
-				[videoInputDeviceDefault, videoInputDeviceA],
-			)
+				inputList: [audioInputDeviceDefault, audioInputDeviceA],
+				inputId: audioInputDeviceB.deviceId
+			})
 
 			// Assert: should put device C on top of device B, but not the device A
-			expect(output).toMatchObject({
-				newAudioInputList: [audioInputDeviceDefault, audioInputDeviceA, audioInputDeviceB],
-				newVideoInputList: [videoInputDeviceDefault, videoInputDeviceA, videoInputDeviceB],
-			})
+			expect(output).toEqual([audioInputDeviceDefault, audioInputDeviceA, audioInputDeviceB])
 		})
 	})
 })
