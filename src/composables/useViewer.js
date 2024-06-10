@@ -91,9 +91,10 @@ const isViewerOpen = ref(false)
 /**
  * Composable with OCA.Viewer helpers
  *
+ * @param {'files'|'talk'} fileAPI whether to treat file object as it comes from Files or Talk
  * @return {{ openViewer: OpenViewer, isViewerOpen: import('vue').Ref<boolean> }}
  */
-export function useViewer() {
+export function useViewer(fileAPI) {
 	const store = useStore()
 	const isInCall = useIsInCall()
 	const isFullscreen = computed(() => store.getters.isFullscreen())
@@ -104,15 +105,28 @@ export function useViewer() {
 		}
 	})
 
-	const generateViewerObject = (file) => ({
-		fileid: file.fileid ?? parseInt(file.id, 10),
-		filename: file.filename ?? generateAbsolutePath(file.path),
-		basename: file.basename ?? file.name,
-		mime: file.mime ?? file.mimetype,
-		hasPreview: file.hasPreview ?? (file.previewAvailable === 'yes' || file['preview-available'] === 'yes'),
-		etag: file.etag,
-		permissions: generatePermissions(file.permissions), // Viewer expects a String instead of Bitmask
-	})
+	/**
+	 * Map object to be used by Viewer
+	 * @param {object} file file object (from Files API or Talk API)
+	 */
+	function generateViewerObject(file) {
+		switch (fileAPI) {
+		case 'files': return {
+			...file,
+			permissions: generatePermissions(file.permissions), // Viewer expects a String instead of Bitmask
+		}
+		case 'talk':
+		default: return {
+			fileid: parseInt(file.id, 10),
+			filename: generateAbsolutePath(file.path),
+			basename: file.name,
+			mime: file.mimetype,
+			hasPreview: (file.previewAvailable === 'yes' || file['preview-available'] === 'yes'),
+			etag: file.etag,
+			permissions: generatePermissions(file.permissions), // Viewer expects a String instead of Bitmask
+		}
+		}
+	}
 
 	/**
 	 * @type {OpenViewer}

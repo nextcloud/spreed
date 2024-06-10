@@ -97,7 +97,7 @@ export default {
 	emits: ['dismiss'],
 
 	setup() {
-		const { openViewer } = useViewer()
+		const { openViewer } = useViewer('files')
 		return { openViewer }
 	},
 
