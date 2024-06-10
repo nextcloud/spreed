@@ -58,7 +58,11 @@
 
 				<div class="new-text-file__buttons">
 					<NcButton type="primary"
+						:disabled="loading"
 						@click="handleCreateNewFile">
+						<template v-if="loading" #icon>
+							<NcLoadingIcon />
+						</template>
 						{{ t('spreed', 'Create file') }}
 					</NcButton>
 				</div>
@@ -71,6 +75,7 @@
 import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -84,9 +89,10 @@ export default {
 
 	components: {
 		NcButton,
-		NewMessageTemplatePreview,
+		NcLoadingIcon,
 		NcModal,
 		NcTextField,
+		NewMessageTemplatePreview,
 	},
 
 	props: {
@@ -118,6 +124,7 @@ export default {
 			newFileTitle: t('spreed', 'New file'),
 			newFileError: '',
 			checked: -1,
+			loading: false,
 		}
 	},
 
@@ -201,6 +208,7 @@ export default {
 
 		// Create text file and share it to a conversation
 		async handleCreateNewFile() {
+			this.loading = true
 			this.newFileError = ''
 			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.newFileTitle.replace('/', '')
 
@@ -226,10 +234,12 @@ export default {
 				} else {
 					showError(t('spreed', 'Error while creating file'))
 				}
+				this.loading = false
 				return
 			}
 
 			await shareFile(filePath, this.token, '', '')
+			this.loading = false
 
 			this.openViewer(filePath, [fileData], fileData)
 
