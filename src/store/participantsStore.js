@@ -230,29 +230,16 @@ const getters = {
 		}
 
 		if (participantIdentifier.attendeeId) {
-			if (state.attendees[token][participantIdentifier.attendeeId]) {
-				return state.attendees[token][participantIdentifier.attendeeId]
-			}
-			return null
+			return state.attendees[token][participantIdentifier.attendeeId] ?? null
 		}
 
-		let foundAttendee = null
-		Object.keys(state.attendees[token]).forEach((attendeeId) => {
-			if (participantIdentifier.actorType && participantIdentifier.actorId
-				&& state.attendees[token][attendeeId].actorType === participantIdentifier.actorType
-				&& state.attendees[token][attendeeId].actorId === participantIdentifier.actorId) {
-				foundAttendee = attendeeId
-			}
-			if (participantIdentifier.sessionId && state.attendees[token][attendeeId].sessionIds.includes(participantIdentifier.sessionId)) {
-				foundAttendee = attendeeId
-			}
-		})
-
-		if (!foundAttendee) {
-			return null
-		}
-
-		return state.attendees[token][foundAttendee]
+		// Fallback, sometimes actorId and actorType are set before the attendeeId
+		return Object.entries(state.attendees[token]).find(([attendeeId, attendee]) => {
+			return (participantIdentifier.actorType && participantIdentifier.actorId
+					&& attendee.actorType === participantIdentifier.actorType
+					&& attendee.actorId === participantIdentifier.actorId)
+				|| (participantIdentifier.sessionId && attendee.sessionIds.includes(participantIdentifier.sessionId))
+		})?.[1] ?? null
 	},
 	getPeer: (state) => (token, sessionId, userId) => {
 		if (state.peers[token]) {

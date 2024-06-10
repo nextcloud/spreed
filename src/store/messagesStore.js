@@ -89,6 +89,17 @@ function hasMentionToSelf(context, message) {
 	return false
 }
 
+/**
+ * Returns whether the given message is presented in DOM and visible (none of the ancestors has `display: none`)
+ *
+ * @param {string} messageId store context
+ * @return {boolean} whether the message is visible in the UI
+ */
+function isMessageVisible(messageId) {
+	const element = document.getElementById(`message_${messageId}`)
+	return element !== null && element.offsetParent !== null
+}
+
 const state = {
 	/**
 	 * Map of conversation token to message list
@@ -243,6 +254,7 @@ const getters = {
 
 		return getters.messagesList(token).findLast(message => {
 			return message.id < readMessageId
+				&& isMessageVisible(message.id)
 				&& !String(message.id).startsWith('temp-')
 				&& message.systemMessage !== 'reaction'
 				&& message.systemMessage !== 'reaction_deleted'
@@ -1410,6 +1422,10 @@ const actions = {
 	async easeMessageList(context, { token }) {
 		context.commit('easeMessageList', { token })
 	},
+
+	loadedMessagesOfConversation(context, { token }) {
+		context.commit('loadedMessagesOfConversation', { token })
+	}
 }
 
 export default { state, mutations, getters, actions }
