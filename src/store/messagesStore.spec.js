@@ -21,6 +21,7 @@ import {
 } from '../services/conversationsService.js'
 import {
 	deleteMessage,
+	editMessage,
 	updateLastReadMessage,
 	fetchMessages,
 	getMessageContext,
@@ -36,6 +37,7 @@ import CancelableRequest from '../utils/cancelableRequest.js'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),
+	editMessage: jest.fn(),
 	updateLastReadMessage: jest.fn(),
 	fetchMessages: jest.fn(),
 	getMessageContext: jest.fn(),
@@ -267,6 +269,42 @@ describe('messagesStore', () => {
 			}])
 		})
 
+		test('deletes from server and replaces deleted message as parent with response', async () => {
+			const childMessage = {
+				id: 11,
+				token: TOKEN,
+				message: 'reply to hello',
+				parent: cloneDeep(message)
+			}
+			store.dispatch('processMessage', { token: TOKEN, message: childMessage })
+
+			const deletedParent = {
+				id: 10,
+				token: TOKEN,
+				message: 'parent message deleted',
+				messageType: 'comment_deleted',
+			}
+			const payload = {
+				id: 12,
+				token: TOKEN,
+				message: '(deleted)',
+				systemMessage: 'message_deleted',
+				parent: cloneDeep(deletedParent),
+			}
+			const response = generateOCSResponse({ payload })
+			deleteMessage.mockResolvedValueOnce(response)
+
+			await store.dispatch('deleteMessage', { token: message.token, id: message.id, placeholder: 'placeholder-text' })
+
+			expect(deleteMessage).toHaveBeenCalledWith({ token: message.token, id: message.id })
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([deletedParent, {
+				id: 11,
+				token: TOKEN,
+				message: 'reply to hello',
+				parent: deletedParent,
+			}])
+		})
+
 		test('deletes from server but doesn\'t replace if deleted message is not in the store', async () => {
 			const payload = {
 				id: 11,
@@ -315,6 +353,100 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: 'placeholder-message',
 				messageType: 'comment_deleted',
+			}])
+		})
+	})
+
+	describe('edit message', () => {
+		let message
+		let conversationMock
+		let updateConversationLastMessageMock
+
+		beforeEach(() => {
+			const conversation = {
+				token: TOKEN,
+				lastMessage: {
+					id: 10,
+				},
+			}
+
+			testStoreConfig = cloneDeep(messagesStore)
+			conversationMock = jest.fn().mockReturnValue(conversation)
+			updateConversationLastMessageMock = jest.fn()
+			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageMock
+			store = new Vuex.Store(testStoreConfig)
+
+			message = {
+				id: 10,
+				token: TOKEN,
+				message: 'hello',
+			}
+
+			store.dispatch('processMessage', { token: TOKEN, message: cloneDeep(message) })
+		})
+
+		test('edits at server and replaces edited message with response', async () => {
+			const payload = {
+				id: 11,
+				token: TOKEN,
+				message: 'You edited a message',
+				systemMessage: 'message_edited',
+				parent: {
+					id: 10,
+					token: TOKEN,
+					message: 'hello edited',
+					messageType: 'comment',
+				},
+			}
+			const response = generateOCSResponse({ payload })
+			editMessage.mockResolvedValueOnce(response)
+
+			await store.dispatch('editMessage', { token: message.token, messageId: message.id, updatedMessage: 'hello edited' })
+
+			expect(editMessage).toHaveBeenCalledWith({ token: message.token, messageId: message.id, updatedMessage: 'hello edited' })
+
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
+				id: 10,
+				token: TOKEN,
+				message: 'hello edited',
+				messageType: 'comment',
+			}])
+		})
+
+		test('edits at server and replaces edited message as parent with response', async () => {
+			const childMessage = {
+				id: 11,
+				token: TOKEN,
+				message: 'reply to hello',
+				parent: cloneDeep(message)
+			}
+			store.dispatch('processMessage', { token: TOKEN, message: childMessage })
+			const editedParent = {
+				id: 10,
+				token: TOKEN,
+				message: 'hello edited',
+				messageType: 'comment',
+			}
+			const payload = {
+				id: 12,
+				token: TOKEN,
+				message: 'You edited a message',
+				systemMessage: 'message_edited',
+				parent: cloneDeep(editedParent),
+			}
+			const response = generateOCSResponse({ payload })
+			editMessage.mockResolvedValueOnce(response)
+
+			await store.dispatch('editMessage', { token: message.token, messageId: message.id, updatedMessage: 'hello edited' })
+
+			expect(editMessage).toHaveBeenCalledWith({ token: message.token, messageId: message.id, updatedMessage: 'hello edited' })
+
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([editedParent, {
+				id: 11,
+				token: TOKEN,
+				message: 'reply to hello',
+				parent: editedParent,
 			}])
 		})
 	})
