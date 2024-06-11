@@ -1265,6 +1265,10 @@ describe('messagesStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 		})
 
+		afterEach(() => {
+			jest.clearAllMocks()
+		})
+
 		test('looks for new messages', async () => {
 			const messages = [{
 				id: 1,
@@ -1352,6 +1356,25 @@ describe('messagesStore', () => {
 				.not.toHaveBeenCalled()
 
 			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(null)
+		})
+
+		test('does not look for new messages if lastKnownMessageId is falsy', async () => {
+			// Arrange: prepare cancelable request from previous call of the function
+			const cancelFunctionMock = jest.fn()
+			cancelFunctionMocks.push(cancelFunctionMock)
+			store.commit('setCancelLookForNewMessages', { cancelFunction: cancelFunctionMock, requestId: 'request1' })
+			console.warn = jest.fn()
+
+			// Act
+			store.dispatch('lookForNewMessages', {
+				token: TOKEN,
+				requestId: 'request1',
+				lastKnownMessageId: null,
+			})
+
+			// Assert
+			expect(cancelFunctionMocks[0]).toHaveBeenCalledWith('canceled')
+			expect(lookForNewMessages).not.toHaveBeenCalled()
 		})
 
 		test('cancels look for new messages', async () => {
