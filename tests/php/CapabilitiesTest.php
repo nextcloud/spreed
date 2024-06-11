@@ -234,7 +234,6 @@ class CapabilitiesTest extends TestCase {
 					Capabilities::FEATURES, [
 						'message-expiration',
 						'reactions',
-						'chat-reference-id',
 					]
 				),
 				'features-local' => Capabilities::LOCAL_FEATURES,

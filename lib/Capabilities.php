@@ -99,6 +99,7 @@ class Capabilities implements IPublicCapability {
 		'chat-read-last',
 		'federation-v1',
 		'ban-v1',
+		'chat-reference-id',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -218,7 +219,6 @@ class Capabilities implements IPublicCapability {
 			'version' => $this->appManager->getAppVersion('spreed'),
 		];
 
-
 		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
 			$capabilities['features'][] = 'message-expiration';
 		}
@@ -245,10 +245,6 @@ class Capabilities implements IPublicCapability {
 		$pubKey = $this->talkConfig->getSignalingTokenPublicKey();
 		if ($pubKey) {
 			$capabilities['config']['signaling']['hello-v2-token-key'] = $pubKey;
-		}
-
-		if ($this->serverConfig->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
-			$capabilities['features'][] = 'chat-reference-id';
 		}
 
 		/** @var ?string[] $predefinedBackgrounds */
