@@ -384,7 +384,6 @@ Feature: delete
       | poll      | 0 |
       | voice     | 0 |
       | recording | 0 |
-    And user "participant1" sees the following system messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | systemMessage |
-      | public room | users     | participant1 | participant1-displayname | file_shared          |
-      | public room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | *You shared a file which is no longer available* | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
