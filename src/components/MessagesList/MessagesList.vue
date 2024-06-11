@@ -254,7 +254,7 @@ export default {
 				if (oldValue) {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
-				this.handleStartGettingMessagesPreconditions()
+				this.handleStartGettingMessagesPreconditions(this.token)
 
 				// Remove expired messages when joining a room
 				this.removeExpiredMessagesFromStore()
@@ -627,26 +627,30 @@ export default {
 			this.debounceUpdateReadMarkerPosition()
 		},
 
-		async handleStartGettingMessagesPreconditions() {
-			if (this.token && this.isParticipant && !this.isInLobby) {
+		async handleStartGettingMessagesPreconditions(token) {
+			if (token && this.isParticipant && !this.isInLobby) {
 				// prevent sticky mode before we have loaded anything
 				this.isInitialisingMessages = true
 				const focusMessageId = this.getMessageIdFromHash()
 
-				this.$store.dispatch('setVisualLastReadMessageId', {
-					token: this.token,
-					id: this.conversation.lastReadMessage,
-				})
+				this.$store.dispatch('setVisualLastReadMessageId', { token, id: this.conversation.lastReadMessage })
 
-				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
+				if (this.$store.getters.getFirstKnownMessageId(token) === null) {
 					// Start from message hash or unread marker
 					const startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
 					// First time load, initialize important properties
-					this.$store.dispatch('setFirstKnownMessageId', { token: this.token, id: startingMessageId })
-					this.$store.dispatch('setLastKnownMessageId', { token: this.token, id: startingMessageId })
+					this.$store.dispatch('setFirstKnownMessageId', { token, id: startingMessageId })
+					this.$store.dispatch('setLastKnownMessageId', { token, id: startingMessageId })
 
 					// Get chat messages before last read message and after it
-					await this.getMessageContext(startingMessageId)
+					try {
+						await this.getMessageContext(token, startingMessageId)
+					} catch (exception) {
+						// Request was cancelled, stop getting preconditions and restore initial state
+						this.$store.dispatch('setFirstKnownMessageId', { token, id: null })
+						this.$store.dispatch('setLastKnownMessageId', { token, id: null })
+						return
+					}
 				}
 
 				this.$nextTick(() => {
@@ -658,7 +662,7 @@ export default {
 				this.isInitialisingMessages = false
 
 				// get new messages
-				await this.lookForNewMessages()
+				await this.lookForNewMessages(token)
 
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
@@ -668,29 +672,33 @@ export default {
 		/**
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
+		 * @param token token of conversation where a method was called
 		 */
-		async lookForNewMessages() {
+		async lookForNewMessages(token) {
 			// Once the history is received, starts looking for new messages.
 			if (this._isBeingDestroyed || this._isDestroyed) {
 				console.debug('Prevent getting new messages on a destroyed MessagesList')
 				return
 			}
 
-			await this.getNewMessages()
+			await this.getNewMessages(token)
 		},
 
-		async getMessageContext(messageId) {
+		async getMessageContext(token, messageId) {
 			// Make the request
 			this.loadingOldMessages = true
 			try {
 				await this.$store.dispatch('getMessageContext', {
-					token: this.token,
+					token,
 					messageId,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
+				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
+					this.loadingOldMessages = false
+					throw exception
 				}
 
 				if (exception?.response?.status === 304 && exception?.response?.data === '') {
@@ -742,8 +750,9 @@ export default {
 		/**
 		 * Creates a long polling request for a new message.
 		 *
+		 * @param token token of conversation where a method was called
 		 */
-		async getNewMessages() {
+		async getNewMessages(token) {
 			if (this.destroying) {
 				return
 			}
@@ -752,8 +761,8 @@ export default {
 				// TODO: move polling logic to the store and also cancel timers on cancel
 				this.pollingErrorTimeout = 1
 				await this.$store.dispatch('lookForNewMessages', {
-					token: this.token,
-					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
+					token,
+					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(token),
 					requestId: this.chatIdentifier,
 				})
 			} catch (exception) {
@@ -767,7 +776,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages()
+						this.getNewMessages(token)
 					}, 500)
 					return
 				}
@@ -780,13 +789,13 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages()
+					this.getNewMessages(token)
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
 
 			setTimeout(() => {
-				this.getNewMessages()
+				this.getNewMessages(token)
 			}, 500)
 		},
 
@@ -1140,7 +1149,7 @@ export default {
 
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages()
+			this.getNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {
