@@ -1088,6 +1088,7 @@ OC.L10N.register(
     "Remove from favorites" : "Suprimeix dels preferits",
     "Add to favorites" : "Afegeix a preferits",
     "You need to promote a new moderator before you can leave the conversation." : "Heu de designar un nou moderador abans de deixar la conversa.",
+    "Loading …" : "S'està carregant…",
     "Conversation list" : "Llista de converses",
     "Filter unread mentions" : "Filtra les mencions no llegides",
     "Filter unread messages" : "Filtra els missatges no llegits",
