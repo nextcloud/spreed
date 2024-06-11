@@ -43,6 +43,7 @@ use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
+use OCP\UserStatus\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -75,6 +76,8 @@ class ParticipantServiceTest extends TestCase {
 	protected $time;
 	/** @var ICacheFactory|MockObject */
 	protected $cacheFactory;
+	/** @var IManager|MockObject */
+	protected $userStatusManager;
 	private ?ParticipantService $service = null;
 
 
@@ -95,6 +98,7 @@ class ParticipantServiceTest extends TestCase {
 		$this->federationBackendNotifier = $this->createMock(BackendNotifier::class);
 		$this->time = $this->createMock(ITimeFactory::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->userStatusManager = $this->createMock(IManager::class);
 		$this->service = new ParticipantService(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -110,7 +114,8 @@ class ParticipantServiceTest extends TestCase {
 			$this->membershipService,
 			$this->federationBackendNotifier,
 			$this->time,
-			$this->cacheFactory
+			$this->cacheFactory,
+			$this->userStatusManager,
 		);
 	}
 
