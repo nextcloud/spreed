@@ -638,6 +638,7 @@ const actions = {
 			actorDisplayName: context.getters.getDisplayName(),
 			timestamp: 0,
 			systemMessage: '',
+			markdown: supportMarkdown,
 			messageType: isVoiceMessage ? 'voice-message' : '',
 			message: text,
 			messageParameters,
