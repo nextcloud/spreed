@@ -19,7 +19,6 @@
  *
  */
 
-import attachMediaStream from '../../../utils/attachmediastream.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
 export const ConnectionState = {
@@ -59,9 +58,6 @@ export default function CallParticipantModel(options) {
 		initialConnection: true,
 		connectedAtLeastOnce: false,
 		stream: null,
-		// The audio element is part of the model to ensure that it can be
-		// played if needed even if there is no view for it.
-		audioElement: null,
 		audioAvailable: undefined,
 		speaking: undefined,
 		// "videoBlocked" is "true" only if the video is blocked and it would
@@ -69,9 +65,6 @@ export default function CallParticipantModel(options) {
 		videoBlocked: undefined,
 		videoAvailable: undefined,
 		screen: null,
-		// The audio element is part of the model to ensure that it can be
-		// played if needed even if there is no view for it.
-		screenAudioElement: null,
 		raisedHand: {
 			state: false,
 			timestamp: null,
@@ -140,8 +133,6 @@ CallParticipantModel.prototype = {
 	_handlePeerStreamAdded(peer) {
 		if (this.get('peer') === peer) {
 			this.set('stream', this.get('peer').stream || null)
-			this.set('audioElement', attachMediaStream(this.get('stream'), null, { audio: true }))
-			this.get('audioElement').muted = !this.get('audioAvailable')
 
 			// "peer.nick" is set only for users and when the MCU is not used.
 			if (this.get('peer').nick !== undefined) {
@@ -149,21 +140,16 @@ CallParticipantModel.prototype = {
 			}
 		} else if (this.get('screenPeer') === peer) {
 			this.set('screen', this.get('screenPeer').stream || null)
-			this.set('screenAudioElement', attachMediaStream(this.get('screen'), null, { audio: true }))
 		}
 	},
 
 	_handlePeerStreamRemoved(peer) {
 		if (this.get('peer') === peer) {
-			this.get('audioElement').srcObject = null
-			this.set('audioElement', null)
 			this.set('stream', null)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
 		} else if (this.get('screenPeer') === peer) {
-			this.get('screenAudioElement').srcObject = null
-			this.set('screenAudioElement', null)
 			this.set('screen', null)
 		}
 	},
@@ -185,9 +171,6 @@ CallParticipantModel.prototype = {
 		if (data.name === 'video') {
 			this.set('videoAvailable', false)
 		} else {
-			if (this.get('audioElement')) {
-				this.get('audioElement').muted = true
-			}
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 		}
@@ -216,9 +199,6 @@ CallParticipantModel.prototype = {
 		if (data.name === 'video') {
 			this.set('videoAvailable', true)
 		} else {
-			if (this.get('audioElement')) {
-				this.get('audioElement').muted = false
-			}
 			this.set('audioAvailable', true)
 		}
 	},
