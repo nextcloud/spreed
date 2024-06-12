@@ -21,6 +21,7 @@ import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
+import { isSafari } from '../browserCheck.js'
 import CancelableRequest from '../cancelableRequest.js'
 import Signaling from '../signaling.js'
 import SignalingTypingHandler from '../SignalingTypingHandler.js'
@@ -215,7 +216,8 @@ async function signalingJoinCall(token, flags, silent, recordingConsent) {
 			callAnalyzer = new CallAnalyzer(localMediaModel, null, callParticipantCollection)
 		}
 
-		callParticipantsAudioPlayer = new CallParticipantsAudioPlayer(callParticipantCollection)
+		const mixAudio = isSafari
+		callParticipantsAudioPlayer = new CallParticipantsAudioPlayer(callParticipantCollection, mixAudio)
 
 		const _signaling = signaling
 

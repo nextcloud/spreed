@@ -14,18 +14,31 @@ import attachMediaStream from '../attachmediastream.js'
  * "audioAvailable"; screen share audio, on the other hand, is always treated as
  * unmuted.
  *
- * The audio or screen audio of each participant is played on its own audio
- * element.
+ * By default, the audio or screen audio of each participant is played on its
+ * own audio element. Alternatively, the audio of all participants can be mixed
+ * and played by a single element created when the player is created by setting
+ * "mixAudio = true" in the constructor.
  *
  * Once the player is no longer needed "destroy()" must be called to stop
  * tracking the participants and playing audio.
  *
  * @param {object} callParticipantCollection the CallParticipantCollection.
+ * @param {boolean} mixAudio true to mix and play all audio in a single audio
+ *        element, false to play each audio on its own audio element.
  */
-export default function CallParticipantsAudioPlayer(callParticipantCollection) {
+export default function CallParticipantsAudioPlayer(callParticipantCollection, mixAudio = false) {
 	this._callParticipantCollection = callParticipantCollection
 
-	this._audioElements = new Map()
+	this._mixAudio = mixAudio
+
+	if (this._mixAudio) {
+		this._audioContext = new (window.AudioContext || window.webkitAudioContext)()
+		this._audioDestination = this._audioContext.createMediaStreamDestination()
+		this._audioElement = attachMediaStream(this._audioDestination.stream, null, { audio: true })
+		this._audioNodes = new Map()
+	} else {
+		this._audioElements = new Map()
+	}
 
 	this._handleCallParticipantAddedBound = this._handleCallParticipantAdded.bind(this)
 	this._handleCallParticipantRemovedBound = this._handleCallParticipantRemoved.bind(this)
@@ -50,6 +63,11 @@ CallParticipantsAudioPlayer.prototype = {
 		this._callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
 			this._handleCallParticipantRemovedBound(this._callParticipantCollection, callParticipantModel)
 		})
+
+		if (this._mixAudio) {
+			this._audioElement.srcObject = null
+			this._audioContext.close()
+		}
 	},
 
 	_handleCallParticipantAdded(callParticipantCollection, callParticipantModel) {
@@ -73,12 +91,42 @@ CallParticipantsAudioPlayer.prototype = {
 	_handleStreamChanged(callParticipantModel, stream) {
 		const id = callParticipantModel.get('peerId') + '-stream'
 		const mute = !callParticipantModel.get('audioAvailable')
-		this._setAudioElement(id, stream, mute)
+		if (this._mixAudio) {
+			this._setAudioNode(id, stream, mute)
+		} else {
+			this._setAudioElement(id, stream, mute)
+		}
 	},
 
 	_handleScreenChanged(callParticipantModel, screen) {
 		const id = callParticipantModel.get('peerId') + '-screen'
-		this._setAudioElement(id, screen)
+		if (this._mixAudio) {
+			this._setAudioNode(id, screen)
+		} else {
+			this._setAudioElement(id, screen)
+		}
+	},
+
+	_setAudioNode(id, stream, mute = false) {
+		const audioNode = this._audioNodes.get(id)
+		if (audioNode) {
+			if (audioNode.connected) {
+				audioNode.audioSource.disconnect(this._audioDestination)
+			}
+
+			this._audioNodes.delete(id)
+		}
+
+		if (!stream) {
+			return
+		}
+
+		const audioSource = this._audioContext.createMediaStreamSource(stream)
+		if (!mute) {
+			audioSource.connect(this._audioDestination)
+		}
+
+		this._audioNodes.set(id, { audioSource, connected: !mute })
 	},
 
 	_setAudioElement(id, stream, mute = false) {
@@ -102,6 +150,23 @@ CallParticipantsAudioPlayer.prototype = {
 	},
 
 	_handleAudioAvailableChanged(callParticipantModel, audioAvailable) {
+		if (this._mixAudio) {
+			const audioNode = this._audioNodes.get(callParticipantModel.get('peerId') + '-stream')
+			if (!audioNode) {
+				return
+			}
+
+			if (audioAvailable && !audioNode.connected) {
+				audioNode.audioSource.connect(this._audioDestination)
+				audioNode.connected = true
+			} else if (!audioAvailable && audioNode.connected) {
+				audioNode.audioSource.disconnect(this._audioDestination)
+				audioNode.connected = false
+			}
+
+			return
+		}
+
 		const audioElement = this._audioElements.get(callParticipantModel.get('peerId') + '-stream')
 		if (!audioElement) {
 			return
