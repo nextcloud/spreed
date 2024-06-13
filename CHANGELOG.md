@@ -5,6 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.2 – 2024-06-13
+### Fixed
+- fix(call): Fix audio issue in Safari when a user unmutes after a longer time while the tab is inactive
+  [#12511](https://github.com/nextcloud/spreed/pull/12511)
+- fix(bots): Fix bots with self-signed certificates
+  [#12471](https://github.com/nextcloud/spreed/pull/12471)
+- fix(chat): Improve scrolling behaviour when reopening a conversation
+  [#12199](https://github.com/nextcloud/spreed/pull/12199)
+- fix(chat): Better handling of captioned messages in federated conversations
+  [#12375](https://github.com/nextcloud/spreed/pull/12375)
+- fix(attachments): Fix creating new files from templates
+  [#12488](https://github.com/nextcloud/spreed/pull/12488)
+- fix(call): Directly sync the preferences with the device selection
+  [#12493](https://github.com/nextcloud/spreed/pull/12493)
+- fix(call): Give feedback when trying to "Ring" a participant that has DND enabled
+  [#12377](https://github.com/nextcloud/spreed/pull/12377)
+- fix(breakoutrooms): Don't allow to enable guests in breakout rooms until it's supported
+  [#12457](https://github.com/nextcloud/spreed/pull/12457)
+- fix(UI): Improve button in mobile UI to use less space
+  [#12473](https://github.com/nextcloud/spreed/pull/12473)
+
 ## 19.0.1 – 2024-05-23
 ### Changed
 - fix(editing): restore default behaviour of keyboard hotkeys Ctrl+Up
