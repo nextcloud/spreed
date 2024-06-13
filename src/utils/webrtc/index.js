@@ -23,6 +23,7 @@ import Axios from '@nextcloud/axios'
 import { getCapabilities } from '@nextcloud/capabilities'
 
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
+import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
 import MediaDevicesManager from './MediaDevicesManager.js'
 import CallParticipantCollection from './models/CallParticipantCollection.js'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel.js'
@@ -36,6 +37,7 @@ import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
+import { isSafari } from '../browserCheck.js'
 import CancelableRequest from '../cancelableRequest.js'
 import Signaling from '../signaling.js'
 import SignalingTypingHandler from '../SignalingTypingHandler.js'
@@ -46,6 +48,7 @@ const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
 const mediaDevicesManager = new MediaDevicesManager()
 let callAnalyzer = null
+let callParticipantsAudioPlayer = null
 let sentVideoQualityThrottler = null
 let speakingStatusHandler = null
 
@@ -229,6 +232,9 @@ async function signalingJoinCall(token, flags, silent, recordingConsent) {
 			callAnalyzer = new CallAnalyzer(localMediaModel, null, callParticipantCollection)
 		}
 
+		const mixAudio = isSafari
+		callParticipantsAudioPlayer = new CallParticipantsAudioPlayer(callParticipantCollection, mixAudio)
+
 		const _signaling = signaling
 
 		return new Promise((resolve, reject) => {
@@ -382,6 +388,8 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
 
 	setupWebRtc()
 
+	callParticipantsAudioPlayer = new CallParticipantsAudioPlayer(callParticipantCollection)
+
 	const _signaling = signaling
 
 	return new Promise((resolve, reject) => {
@@ -432,6 +440,9 @@ async function signalingLeaveCall(token, all = false) {
 
 	callAnalyzer.destroy()
 	callAnalyzer = null
+
+	callParticipantsAudioPlayer.destroy()
+	callParticipantsAudioPlayer = null
 
 	if (tokensInSignaling[token]) {
 		await signaling.leaveCall(token, false, all)
