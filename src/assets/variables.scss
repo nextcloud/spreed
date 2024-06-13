@@ -11,6 +11,7 @@
 $messages-text-max-width: calc(70 * var(--default-font-size));
 $message-utils-width: calc(52px + 4 * var(--default-grid-baseline) + 120px);
 $messages-list-max-width: calc($messages-text-max-width + $message-utils-width + 3 * var(--default-grid-baseline));
+$message-input-max-width: calc($messages-list-max-width - 100px);
 
 // background color of call container
 $color-call-background: rgba(34, 34, 34, 0.8);
