@@ -206,14 +206,16 @@ export default {
 
 	setup() {
 		useGetParticipants()
+		return {
+			localCallParticipantModel,
+			localMediaModel,
+		}
 	},
 
 	data: () => {
 		return {
 			unreadNotificationHandle: null,
 			showBreakoutRoomsEditor: false,
-			localCallParticipantModel,
-			localMediaModel,
 		}
 	},
 

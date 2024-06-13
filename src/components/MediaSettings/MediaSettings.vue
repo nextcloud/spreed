@@ -316,12 +316,12 @@ export default {
 			initializeDevices,
 			stopDevices,
 			virtualBackground,
+			model: localMediaModel,
 		}
 	},
 
 	data() {
 		return {
-			model: localMediaModel,
 			modal: false,
 			tabContent: 'none',
 			audioOn: undefined,

@@ -19,6 +19,8 @@
  *
  */
 
+import { reactive } from 'vue'
+
 import { VIRTUAL_BACKGROUND } from '../../../constants.js'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 import store from '../../../store/index.js'
@@ -31,7 +33,7 @@ export default function LocalMediaModel() {
 
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		localStreamRequestVideoError: null,
 		localStream: null,
 		audioAvailable: false,
@@ -50,7 +52,7 @@ export default function LocalMediaModel() {
 		localScreen: null,
 		token: '',
 		raisedHand: false,
-	}
+	})
 
 	this._handleLocalStreamRequestedBound = this._handleLocalStreamRequested.bind(this)
 	this._handleLocalStreamBound = this._handleLocalStream.bind(this)

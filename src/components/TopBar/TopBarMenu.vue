@@ -391,7 +391,7 @@ export default {
 
 	methods: {
 		forceMuteOthers() {
-			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
+			callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
 				callParticipantModel.forceMute()
 			})
 		},
