@@ -108,12 +108,12 @@
 					:devices="devices"
 					:device-id="audioInputId"
 					@refresh="updateDevices"
-					@update:deviceId="audioInputId = $event" />
+					@update:deviceId="handleAudioInputIdChange" />
 				<MediaDevicesSelector kind="videoinput"
 					:devices="devices"
 					:device-id="videoInputId"
 					@refresh="updateDevices"
-					@update:deviceId="videoInputId = $event" />
+					@update:deviceId="handleVideoInputIdChange" />
 				<MediaDevicesSpeakerTest />
 			</div>
 
@@ -328,7 +328,6 @@ export default {
 			videoOn: undefined,
 			silentCall: false,
 			updatedBackground: undefined,
-			deviceIdChanged: false,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
 			isRecordingFromStart: false,
@@ -438,7 +437,7 @@ export default {
 		},
 
 		showUpdateChangesButton() {
-			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
+			return this.updatedBackground || this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
 		},
 	},
@@ -468,14 +467,12 @@ export default {
 		},
 
 		audioInputId(audioInputId) {
-			this.deviceIdChanged = true
 			if (this.showDeviceSelection && audioInputId && !this.audioOn) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
-			this.deviceIdChanged = true
 			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
@@ -490,9 +487,10 @@ export default {
 		subscribe('talk:media-settings:show', this.showModal)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 
-		const devicesPreferred = BrowserStorage.getItem('devicesPreferred')
-		if (!devicesPreferred) {
-			this.tabContent = 'devices'
+		// FIXME: this is a workaround to remove the old key from the browser storage
+		// To be removed in the future
+		if (BrowserStorage.getItem('devicesPreferred')) {
+			BrowserStorage.removeItem('devicesPreferred')
 		}
 	},
 
@@ -507,16 +505,22 @@ export default {
 			if (page === 'video-verification') {
 				this.isPublicShareAuthSidebar = true
 			}
+
+			if (!BrowserStorage.getItem('audioInputDevicePreferred') || !BrowserStorage.getItem('videoInputDevicePreferred')) {
+				this.tabContent = 'devices'
+			}
 		},
 
 		closeModal() {
 			this.modal = false
 			this.updatedBackground = undefined
-			this.deviceIdChanged = false
 			this.audioDeviceStateChanged = false
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
 			this.isRecordingFromStart = false
+			// Update devices preferences
+			this.updatePreferences('audioinput')
+			this.updatePreferences('videoinput')
 		},
 
 		toggleAudio() {
@@ -561,7 +565,6 @@ export default {
 				emit('local-video-control-button:toggle-video')
 			}
 
-			this.updatePreferences()
 			this.closeModal()
 		},
 
@@ -672,7 +675,17 @@ export default {
 
 		setRecordingConsentGiven(value) {
 			this.$emit('update:recording-consent-given', value)
-		}
+		},
+
+		handleAudioInputIdChange(audioInputId) {
+			this.audioInputId = audioInputId
+			this.updatePreferences('audioinput')
+		},
+
+		handleVideoInputIdChange(videoInputId) {
+			this.videoInputId = videoInputId
+			this.updatePreferences('videoinput')
+		},
 	},
 }
 </script>
@@ -680,6 +693,7 @@ export default {
 <style lang="scss" scoped>
 .media-settings {
 	padding: calc(var(--default-grid-baseline) * 5);
+	padding-bottom: 0;
 
 	&__title {
 		text-align: center;
@@ -729,9 +743,14 @@ export default {
 
 	&__call-buttons {
 		display: flex;
+		z-index: 1;
 		align-items: center;
 		justify-content: center;
 		gap: var(--default-grid-baseline);
+		position: sticky;
+		bottom: 0;
+		background-color: var(--color-main-background);
+		padding: 10px 0 20px;
 	}
 }
 

@@ -24,7 +24,7 @@ import {
 	getFirstAvailableMediaDevice,
 	listMediaDevices,
 	populateMediaDevicesPreferences,
-	updateMediaDevicesPreferences,
+	promoteMediaDevice,
 } from '../../services/mediaDevicePreferences.ts'
 import EmitterMixin from '../EmitterMixin.js'
 
@@ -215,12 +215,17 @@ MediaDevicesManager.prototype = {
 			// according to the spec, a single device of each kind (if at least
 			// one device of that kind is available) with an empty deviceId is
 			// returned, which will not be registered in the preference list.
+			let deviceIdChanged = false
 			if (this.attributes.audioInputId === undefined || this.attributes.audioInputId === previousFirstAvailableAudioInputId) {
 				this.attributes.audioInputId = getFirstAvailableMediaDevice(devices, this._preferenceAudioInputList) || devices.find(device => device.kind === 'audioinput')?.deviceId
-				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
+				deviceIdChanged = true
 			}
 			if (this.attributes.videoInputId === undefined || this.attributes.videoInputId === previousFirstAvailableVideoInputId) {
 				this.attributes.videoInputId = getFirstAvailableMediaDevice(devices, this._preferenceVideoInputList) || devices.find(device => device.kind === 'videoinput')?.deviceId
+				deviceIdChanged = true
+			}
+
+			if (deviceIdChanged) {
 				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceVideoInputList))
 			}
 
@@ -258,25 +263,37 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	updatePreferences() {
-		const { newAudioInputList, newVideoInputList } = updateMediaDevicesPreferences(
-			this.attributes,
-			this._preferenceAudioInputList,
-			this._preferenceVideoInputList,
-		)
+	updatePreferences(kind) {
+		if (kind === 'audioinput') {
+			const newAudioInputList = promoteMediaDevice({
+				kind,
+				devices: this.attributes.devices,
+				inputList: this._preferenceAudioInputList,
+				inputId: this.attributes.audioInputId
+			})
 
-		if (newAudioInputList) {
-			this._preferenceAudioInputList = newAudioInputList
-			BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
-		}
-		if (newVideoInputList) {
-			this._preferenceVideoInputList = newVideoInputList
-			BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
-		}
+			if (newAudioInputList) {
+				this._preferenceAudioInputList = newAudioInputList
+				BrowserStorage.setItem('audioInputPreferences', JSON.stringify(newAudioInputList))
+			}
+			if (!BrowserStorage.getItem('audioInputDevicePreferred')) {
+				BrowserStorage.setItem('audioInputDevicePreferred', true)
+			}
+		} else if (kind === 'videoinput') {
+			const newVideoInputList = promoteMediaDevice({
+				kind,
+				devices: this.attributes.devices,
+				inputList: this._preferenceVideoInputList,
+				inputId: this.attributes.videoInputId
+			})
 
-		const devicesPreferred = BrowserStorage.getItem('devicesPreferred')
-		if (!devicesPreferred) {
-			BrowserStorage.setItem('devicesPreferred', true)
+			if (newVideoInputList) {
+				this._preferenceVideoInputList = newVideoInputList
+				BrowserStorage.setItem('videoInputPreferences', JSON.stringify(newVideoInputList))
+			}
+			if (!BrowserStorage.getItem('videoInputDevicePreferred')) {
+				BrowserStorage.setItem('videoInputDevicePreferred', true)
+			}
 		}
 
 	},
