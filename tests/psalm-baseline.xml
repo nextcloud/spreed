@@ -6,11 +6,6 @@
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
-    <UndefinedClass>
-      <code><![CDATA[SchemaWrapper]]></code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Chat/ChatManager.php">
     <UndefinedClass>
       <code><![CDATA[NullCache]]></code>

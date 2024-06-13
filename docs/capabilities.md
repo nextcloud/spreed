@@ -49,7 +49,7 @@
 * `config => conversations => can-create` (local) - Whether the user can create public and group conversations, if not only one-to-one conversations are allowed
 * `force-mute` - "forceMute" signaling messages can be sent to mute other participants.
 * `conversation-v2` - ~~The conversations API v2 is less load heavy and should be used by clients when available. Check the difference in the [Conversation API documentation](conversation.md).~~ Replaced by API v4 when `conversation-v4` is set.
-* `chat-reference-id` - an optional referenceId can be sent with a chat message to be able to identify it in parallel get requests to earlier fade out a temporary message
+* `chat-reference-id` - a referenceId can be sent with a chat message to be able to identify it in parallel get requests to earlier fade out a temporary message. This feature is always enabled since Nextcloud 29
 
 ## 10.1
 * `conversation-v3` - ~~Whether conversations API v3 is available~~ Replaced by API v4 when `conversation-v4` is set.
