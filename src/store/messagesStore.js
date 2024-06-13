@@ -34,6 +34,7 @@ import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
 const markAsReadWithoutLast = getCapabilities()?.spreed?.features?.includes('chat-read-last')
+const supportMarkdown = getCapabilities()?.spreed?.features?.includes('markdown-messages')
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -715,6 +716,7 @@ const actions = {
 			actorDisplayName: context.getters.getDisplayName(),
 			timestamp: 0,
 			systemMessage: '',
+			markdown: supportMarkdown,
 			messageType: isVoiceMessage ? 'voice-message' : '',
 			message: text,
 			messageParameters,
