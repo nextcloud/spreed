@@ -26,6 +26,8 @@ $messages-list-max-width: 800px;
 //message utils width
 $message-utils-width: 100px;
 
+$message-input-max-width: calc($messages-list-max-width - 100px);
+
 // background color of call container
 $color-call-background: rgba(34, 34, 34, 0.8);
 
