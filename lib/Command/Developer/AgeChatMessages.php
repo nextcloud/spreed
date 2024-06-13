@@ -21,9 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AgeChatMessages extends Base {
 	public function __construct(
-		private readonly IConfig $config,
-		private readonly IDBConnection $connection,
-		private readonly Manager $manager,
+		private IConfig $config,
+		private IDBConnection $connection,
+		private Manager $manager,
 	) {
 		parent::__construct();
 	}
