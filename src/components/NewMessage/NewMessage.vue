@@ -1032,7 +1032,7 @@ export default {
 	display: flex;
 	gap: 4px;
 	position: relative;
-	max-width: calc($messages-list-max-width - 100px);
+	max-width: $message-input-max-width;
 	margin: 0 auto;
 
 	&__emoji-picker {
