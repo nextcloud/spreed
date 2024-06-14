@@ -39,6 +39,7 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -131,6 +132,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		checkVirtualBackground() {
 			if (!VirtualBackground.isWasmSupported()) {
 				this.virtualBackgroundLoaded = false

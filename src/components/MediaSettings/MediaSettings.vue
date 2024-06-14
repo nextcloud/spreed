@@ -193,6 +193,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -485,6 +486,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		showModal(page) {
 			this.modal = true
 			if (page === 'video-verification') {

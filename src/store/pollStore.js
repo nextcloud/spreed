@@ -6,6 +6,7 @@ import debounce from 'debounce'
 import Vue from 'vue'
 
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import pollService from '../services/pollService.js'
 

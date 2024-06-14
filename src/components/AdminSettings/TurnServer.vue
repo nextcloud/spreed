@@ -84,6 +84,8 @@ import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Pulse from 'vue-material-design-icons/Pulse.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
@@ -205,6 +207,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		testServer() {
 			this.testing = true
 			this.testingError = false

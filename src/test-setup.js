@@ -7,8 +7,6 @@
 import 'regenerator-runtime/runtime'
 import Vue from 'vue'
 
-import { translate, translatePlural } from '@nextcloud/l10n'
-
 import { mockedCapabilities } from './__mocks__/capabilities.ts'
 
 jest.mock('extendable-media-recorder', () => ({
@@ -116,10 +114,5 @@ global.BroadcastChannel = jest.fn(() => ({
 window.URL.createObjectURL = jest.fn()
 window.URL.revokeObjectURL = jest.fn()
 
-global.t = translate
-global.n = translatePlural
-
-Vue.prototype.t = global.t
-Vue.prototype.n = global.n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA

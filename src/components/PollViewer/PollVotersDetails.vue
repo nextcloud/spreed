@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
@@ -81,6 +83,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		getDisplayName(item) {
 			if (item.actorDisplayName === '' && item.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return t('spreed', 'Guest')

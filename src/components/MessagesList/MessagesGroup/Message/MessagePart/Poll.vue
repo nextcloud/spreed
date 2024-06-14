@@ -32,6 +32,8 @@
 <script>
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { POLL } from '../../../../../constants.js'
@@ -85,6 +87,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		getPollData() {
 			if (!this.poll) {
 				this.$store.dispatch('getPollData', {

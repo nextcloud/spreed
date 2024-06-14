@@ -5,6 +5,8 @@
 
 import cloneDeep from 'lodash/cloneDeep.js'
 
+import { t, n } from '@nextcloud/l10n'
+
 import { useStore } from './useStore.js'
 
 /**

@@ -9,6 +9,7 @@ import {
 	showWarning,
 	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import {
 	generateOcsUrl,
 	generateUrl,

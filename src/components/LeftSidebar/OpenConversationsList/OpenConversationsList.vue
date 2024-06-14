@@ -16,6 +16,8 @@
 <script>
 import { provide, ref } from 'vue'
 
+import { t } from '@nextcloud/l10n'
+
 import RoomSelector from '../../RoomSelector.vue'
 
 export default {
@@ -50,6 +52,7 @@ export default {
 	expose: ['showModal'],
 
 	methods: {
+		t,
 		showModal() {
 			this.modal = true
 		},

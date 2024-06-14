@@ -72,6 +72,7 @@ import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -180,6 +181,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		hasMore(type, items) {
 			return Object.values(items).length > this.limit(type)
 		},

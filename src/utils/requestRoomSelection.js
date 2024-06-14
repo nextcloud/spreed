@@ -5,10 +5,6 @@
 
 import Vue, { defineAsyncComponent } from 'vue'
 
-import { t, n } from '@nextcloud/l10n'
-
-Vue.prototype.t = t
-Vue.prototype.n = n
 Vue.prototype.OC = window.OC
 Vue.prototype.OCA = window.OCA
 Vue.prototype.OCP = window.OCP

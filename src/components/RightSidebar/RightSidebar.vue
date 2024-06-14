@@ -92,6 +92,7 @@ import InformationOutline from 'vue-material-design-icons/InformationOutline.vue
 import Message from 'vue-material-design-icons/Message.vue'
 
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
@@ -358,6 +359,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'false')

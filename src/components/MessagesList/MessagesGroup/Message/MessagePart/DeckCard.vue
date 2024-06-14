@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 export default {
 	name: 'DeckCard',
 
@@ -69,6 +71,10 @@ export default {
 		deckCardAriaLabel() {
 			return t('spreed', 'Deck Card')
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

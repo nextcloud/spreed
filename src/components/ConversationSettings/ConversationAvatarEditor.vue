@@ -114,6 +114,7 @@ import { getRequestToken } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -240,6 +241,7 @@ export default {
 	expose: ['saveAvatar'],
 
 	methods: {
+		t,
 		activateLocalFilePicker() {
 			// Set to null so that selecting the same file will trigger the change event
 			this.$refs.input.value = null

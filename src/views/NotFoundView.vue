@@ -15,6 +15,8 @@
 <script>
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import EmptyView from '../components/EmptyView.vue'
 
 export default {
@@ -23,6 +25,10 @@ export default {
 	components: {
 		EmptyView,
 		IconMagnify,
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

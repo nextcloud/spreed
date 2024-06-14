@@ -61,6 +61,7 @@ import Message from 'vue-material-design-icons/Message.vue'
 
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t, n } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -330,6 +331,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		prepareMessagesGroups(messages) {
 			let prevGroupMap = null
 			const groupsByDate = {}

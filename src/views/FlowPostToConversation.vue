@@ -21,6 +21,7 @@
 
 <script>
 import axios from '@nextcloud/axios'
+import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
@@ -89,6 +90,7 @@ export default {
 		this.fetchRooms()
 	},
 	methods: {
+		t,
 		fetchRooms() {
 			axios.get(generateOcsUrl('/apps/spreed/api/v4/room')).then((response) => {
 				this.roomOptions = response.data.ocs.data.filter(function(room) {

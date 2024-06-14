@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import MenuPeople from './assets/missingMaterialDesignIcons/MenuPeople.vue'
@@ -48,6 +50,9 @@ export default {
 		},
 	},
 
+	methods: {
+		t,
+	},
 }
 </script>
 

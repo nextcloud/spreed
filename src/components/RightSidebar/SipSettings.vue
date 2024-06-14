@@ -18,6 +18,7 @@
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import { readableNumber } from '../../utils/readableNumber.ts'
 
@@ -42,6 +43,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		readableNumber,
 	}
 }

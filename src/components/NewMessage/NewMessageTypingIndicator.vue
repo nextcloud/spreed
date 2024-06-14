@@ -28,6 +28,8 @@
 <script>
 import escapeHtml from 'escape-html'
 
+import { t, n } from '@nextcloud/l10n'
+
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../constants.js'
@@ -112,6 +114,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		prepareNamesList() {
 			return this.visibleParticipants.reverse()
 				.map(participant => this.getParticipantName(participant))

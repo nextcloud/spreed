@@ -99,6 +99,7 @@ import VideoOutlineIcon from 'vue-material-design-icons/VideoOutline.vue'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -349,6 +350,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		isParticipantTypeModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(participantType)
 		},

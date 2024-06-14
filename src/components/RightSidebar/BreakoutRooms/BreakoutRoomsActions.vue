@@ -118,6 +118,8 @@ import Cog from 'vue-material-design-icons/Cog.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -247,6 +249,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		startBreakoutRooms() {
 			this.breakoutRoomsStore.startBreakoutRooms(this.mainToken)
 		},

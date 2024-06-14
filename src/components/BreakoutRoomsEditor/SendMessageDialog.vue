@@ -27,6 +27,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
@@ -97,6 +98,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleMessageSent() {
 			showSuccess(this.broadcast
 				? t('spreed', 'The message was sent to all breakout rooms')

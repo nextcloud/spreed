@@ -26,6 +26,8 @@
 <script>
 import { Fragment } from 'vue-frag'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
@@ -72,6 +74,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async requestPassword() {
 			checkBrowser()
 

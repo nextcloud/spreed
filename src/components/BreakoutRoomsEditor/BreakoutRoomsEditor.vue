@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
@@ -137,6 +139,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async handleCreateRooms() {
 			try {
 				await this.breakoutRoomsStore.configureBreakoutRooms({

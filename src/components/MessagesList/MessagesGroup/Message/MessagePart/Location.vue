@@ -43,6 +43,8 @@ import {
 	LTileLayer,
 } from 'vue2-leaflet'
 
+import { t } from '@nextcloud/l10n'
+
 export default {
 	name: 'Location',
 
@@ -110,6 +112,10 @@ export default {
 		linkAriaLabel() {
 			return t('spreed', 'Open this location in OpenStreetMap')
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

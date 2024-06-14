@@ -66,6 +66,8 @@ import Check from 'vue-material-design-icons/Check.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
@@ -202,6 +204,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleEditText() {
 			this.$emit('update:editing', true)
 			this.$nextTick(() => {

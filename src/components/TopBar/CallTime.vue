@@ -61,6 +61,8 @@
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
@@ -171,6 +173,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Calculates the stopwatch string given the callTime (ms)
 		 *

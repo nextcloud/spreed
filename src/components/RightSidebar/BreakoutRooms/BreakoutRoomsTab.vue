@@ -34,6 +34,8 @@
 <script>
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
@@ -145,6 +147,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		getParticipants() {
 			if (this.breakoutRoomsConfigured) {
 				this.breakoutRoomsStore.fetchBreakoutRoomsParticipants(this.mainToken)

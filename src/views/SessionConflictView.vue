@@ -16,6 +16,8 @@
 <script>
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import EmptyView from '../components/EmptyView.vue'
 
 export default {
@@ -31,6 +33,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		setPageTitle() {
 			window.document.title = t('spreed', 'Duplicate session') + ' - ' + window.document.title
 		},

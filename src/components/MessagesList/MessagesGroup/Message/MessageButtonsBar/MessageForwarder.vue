@@ -45,6 +45,7 @@ import { inject } from 'vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -107,6 +108,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async setSelectedConversationToken(conversation) {
 			this.selectedConversationToken = conversation.token
 			this.selectedConversationName = conversation.displayName

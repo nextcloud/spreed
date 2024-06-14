@@ -69,7 +69,7 @@
 import BackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
 import Dialpad from 'vue-material-design-icons/Dialpad.vue'
 
-import { getLocale } from '@nextcloud/l10n'
+import { t, getLocale } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
@@ -176,6 +176,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handlePad(value) {
 			if (this.dialing) {
 				this.$emit('dial:type', value)

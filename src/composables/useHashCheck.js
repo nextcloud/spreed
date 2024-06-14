@@ -6,6 +6,7 @@
 import { watch, computed } from 'vue'
 
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import { useTalkHashStore } from '../stores/talkHash.js'
 

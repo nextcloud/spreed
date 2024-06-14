@@ -37,6 +37,8 @@
 
 import Vue from 'vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { BOT } from '../../constants.js'
@@ -92,6 +94,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		isBotLocked(bot) {
 			return bot.state === BOT.STATE.NO_SETUP
 		},

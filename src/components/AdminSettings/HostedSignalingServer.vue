@@ -121,6 +121,7 @@
 <script>
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { t, n } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateOcsUrl } from '@nextcloud/router'
 
@@ -213,6 +214,8 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
 		async requestHPBTrial() {
 			this.requestError = ''
 			this.loading = true

@@ -43,6 +43,8 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 
 import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import VideoVue from './VideoVue.vue'
@@ -97,6 +99,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		updateSize() {
 			this.presenterOverlaySize = Math.min(Math.max(window.innerWidth * 0.1, 100), 242)
 		},

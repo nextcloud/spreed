@@ -26,6 +26,7 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
@@ -115,6 +116,7 @@ export default {
 	},
 
 	methods: {
+		t,
 
 		async joinConversation() {
 			const guestStoredName = localStorage.getItem('nick')

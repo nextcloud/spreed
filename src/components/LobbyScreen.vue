@@ -37,6 +37,7 @@
 <script>
 import RoomService from 'vue-material-design-icons/RoomService.vue'
 
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
@@ -106,6 +107,9 @@ export default {
 		},
 	},
 
+	methods: {
+		t,
+	},
 }
 </script>
 

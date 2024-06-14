@@ -141,6 +141,7 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -542,6 +543,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		gridDebugInformation() {
 			console.debug('Grid debug information')
 			console.debug({

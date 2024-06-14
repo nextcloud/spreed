@@ -32,6 +32,7 @@
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
@@ -96,6 +97,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		throttledSendReaction(reaction) {
 			if (this.throttleTimer) {
 				return

@@ -16,6 +16,7 @@
 import LockOpen from 'vue-material-design-icons/LockOpen.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -39,6 +40,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async disableLobby() {
 			this.isLobbyStateLoading = true
 			try {

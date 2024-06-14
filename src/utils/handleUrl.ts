@@ -4,6 +4,7 @@
  */
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import type { UrlOptions } from '@nextcloud/router'
 

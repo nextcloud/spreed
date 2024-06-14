@@ -10,7 +10,6 @@ import VueShortKey from 'vue-shortkey'
 import Vuex from 'vuex'
 
 import { getRequestToken } from '@nextcloud/auth'
-import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
@@ -37,8 +36,6 @@ __webpack_nonce__ = btoa(getRequestToken())
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-Vue.prototype.t = translate
-Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 

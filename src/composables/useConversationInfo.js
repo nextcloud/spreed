@@ -5,6 +5,8 @@
 
 import { computed, ref } from 'vue'
 
+import { t } from '@nextcloud/l10n'
+
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.js'
 
 /**

@@ -23,6 +23,7 @@
 
 <script>
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -138,6 +139,7 @@ export default {
 	expose: ['toggleAudio'],
 
 	methods: {
+		t,
 		toggleAudio() {
 			if (!this.model.attributes.audioAvailable) {
 				emit('talk:media-settings:show')

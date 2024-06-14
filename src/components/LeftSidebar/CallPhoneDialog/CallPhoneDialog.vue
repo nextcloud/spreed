@@ -46,6 +46,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -102,6 +103,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		showModal() {
 			this.modal = true
 		},

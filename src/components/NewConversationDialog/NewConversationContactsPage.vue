@@ -64,6 +64,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
@@ -177,6 +178,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleInput() {
 			this.noResults = false
 			this.contactsLoading = true

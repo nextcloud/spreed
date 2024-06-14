@@ -4,6 +4,8 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 
+import { t } from '@nextcloud/l10n'
+
 import { setGuestUserName } from '../../services/participantsService.js'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'

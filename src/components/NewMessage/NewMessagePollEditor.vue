@@ -74,6 +74,8 @@
 import Close from 'vue-material-design-icons/Close.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -123,6 +125,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		// Remove a previously added option
 		deleteOption(index) {
 			this.pollOptions.splice(index, 1)

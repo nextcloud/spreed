@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { translate, translatePlural } from '@nextcloud/l10n'
-
 declare global {
 	// @nextcloud/webpack-vue-config build globals
 	const appName: string
@@ -17,9 +15,6 @@ declare global {
 
 	let __webpack_nonce__: ReturnType<typeof btoa>
 	let __webpack_public_path__: string
-
-	const t: typeof translate
-	const n: typeof translatePlural
 }
 
 export {}

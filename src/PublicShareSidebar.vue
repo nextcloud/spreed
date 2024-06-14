@@ -38,6 +38,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -143,6 +144,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		preventUnload(event) {
 			if (!this.warnLeaving) {
 				return

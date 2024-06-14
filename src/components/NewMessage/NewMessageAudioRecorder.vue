@@ -59,6 +59,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -171,6 +172,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Initialize the media stream and start capturing the audio
 		 */

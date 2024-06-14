@@ -32,15 +32,6 @@ describe('MessagesList.vue', () => {
 
 		// scrollTo isn't implemented in JSDOM
 		Element.prototype.scrollTo = () => {}
-
-		// hack to catch date separators
-		const oldTee = global.t
-		global.t = jest.fn().mockImplementation(function(pkg, text, data) {
-			if (data && data.relativeDate) {
-				return data.relativeDate + ', ' + data.absoluteDate
-			}
-			return oldTee.apply(this, arguments)
-		})
 	})
 
 	afterEach(() => {

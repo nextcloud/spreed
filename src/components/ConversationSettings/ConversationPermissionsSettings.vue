@@ -82,6 +82,7 @@
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -151,6 +152,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Binary sum all the permissions and make the request to change them.
 		 *

@@ -30,6 +30,8 @@
 <script>
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
@@ -97,6 +99,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		toggleCollapsed() {
 			this.collapsed = !this.collapsed
 		},

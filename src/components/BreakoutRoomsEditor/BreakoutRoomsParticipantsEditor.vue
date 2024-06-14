@@ -95,6 +95,8 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -236,6 +238,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		/**
 		 * Initialise the assignments array.
 		 *
