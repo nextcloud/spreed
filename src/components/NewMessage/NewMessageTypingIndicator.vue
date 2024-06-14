@@ -147,13 +147,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables';
+
 .indicator {
 	width: 100%;
 	padding-right: 12px;
 	margin-bottom: 4px;
 
 	&__wrapper {
-		max-width: 800px;
+		max-width: $message-input-max-width;
 		display: flex;
 		align-items: center;
 		margin: auto;
