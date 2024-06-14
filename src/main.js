@@ -12,7 +12,6 @@ import Vuex from 'vuex'
 
 import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
-import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
 import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -43,8 +42,6 @@ if (!IS_DESKTOP) {
 	__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 }
 
-Vue.prototype.t = translate
-Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 

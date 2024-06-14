@@ -77,15 +77,6 @@ describe('Conversation.vue', () => {
 			canLeaveConversation: true,
 			canDeleteConversation: true,
 		}
-
-		// hack to catch last message rendering
-		const oldTee = global.t
-		global.t = jest.fn().mockImplementation(function(pkg, text, data) {
-			if (data && data.lastMessage) {
-				return (data.actor || 'You') + ': ' + data.lastMessage
-			}
-			return oldTee.apply(this, arguments)
-		})
 	})
 
 	afterEach(() => {
