@@ -4,14 +4,14 @@
  */
 
 import axios from '@nextcloud/axios'
-import { getCapabilities } from '@nextcloud/capabilities'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import { getTalkConfig, hasTalkFeature } from './CapabilitiesManager.ts'
 import { ATTENDEE, CONVERSATION, SHARE } from '../constants.js'
 
-const canInviteToFederation = getCapabilities()?.spreed?.features?.includes('federation-v1')
-	&& getCapabilities()?.spreed?.config?.federation?.enabled
-	&& getCapabilities()?.spreed?.config?.federation?.['outgoing-enabled']
+const canInviteToFederation = hasTalkFeature('local', 'federation-v1')
+	&& getTalkConfig('local', 'federation', 'enabled')
+	&& getTalkConfig('local', 'federation', 'outgoing-enabled')
 
 /**
  * Fetches the conversations from the server.

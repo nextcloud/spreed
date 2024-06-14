@@ -5,14 +5,12 @@
 
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 import { SESSION } from '../constants.js'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
 
-const supportSessionState = getCapabilities()?.spreed?.features?.includes('session-state')
 const INACTIVE_TIME_MS = 3 * 60 * 1000
 /**
  * Check whether the current session is active or not:
@@ -23,13 +21,16 @@ const INACTIVE_TIME_MS = 3 * 60 * 1000
  * @return {boolean|undefined}
  */
 export function useActiveSession() {
+	const store = useStore()
+	const token = computed(() => store.getters.getToken())
+	// FIXME has no API support on federated conversations
+	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
+
 	if (!supportSessionState) {
-		return supportSessionState
+		return false
 	}
 
-	const store = useStore()
 	const isInCall = useIsInCall()
-	const token = computed(() => store.getters.getToken())
 	const windowIsVisible = computed(() => store.getters.windowIsVisible())
 
 	const inactiveTimer = ref(null)
@@ -127,5 +128,5 @@ export function useActiveSession() {
 		}, INACTIVE_TIME_MS)
 	}
 
-	return supportSessionState
+	return true
 }

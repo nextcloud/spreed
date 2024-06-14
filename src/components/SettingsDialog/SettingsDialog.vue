@@ -163,7 +163,6 @@
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -178,9 +177,10 @@ import MediaDevicesPreview from './MediaDevicesPreview.vue'
 
 import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
-const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
+const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 
 export default {
 	name: 'SettingsDialog',

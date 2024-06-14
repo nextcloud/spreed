@@ -9,6 +9,8 @@ import Vue from 'vue'
 
 import { translate, translatePlural } from '@nextcloud/l10n'
 
+import { mockedCapabilities } from './__mocks__/capabilities.ts'
+
 jest.mock('extendable-media-recorder', () => ({
 	MediaRecorder: jest.fn(),
 	register: jest.fn(),
@@ -26,6 +28,10 @@ jest.mock('@nextcloud/initial-state', () => ({
 
 jest.mock('@nextcloud/upload', () => ({
 	getUploader: jest.fn(),
+}))
+
+jest.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: jest.fn(() => mockedCapabilities),
 }))
 
 window.IntersectionObserver = jest.fn(() => ({

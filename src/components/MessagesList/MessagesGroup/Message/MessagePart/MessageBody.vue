@@ -119,7 +119,6 @@ import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
 import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
 import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 

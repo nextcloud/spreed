@@ -120,7 +120,6 @@
 <script>
 import debounce from 'debounce'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
@@ -136,11 +135,10 @@ import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 import { SIMULCAST } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
-
-const supportedReactions = getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 
 export default {
 	name: 'CallView',
@@ -175,7 +173,6 @@ export default {
 
 	setup() {
 		return {
-			supportedReactions,
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
@@ -332,6 +329,10 @@ export default {
 
 		showEmptyCallView() {
 			return !this.callParticipantModels.length && !this.screenSharingActive
+		},
+
+		supportedReactions() {
+			return getTalkConfig(this.token, 'call', 'supported-reactions')
 		},
 	},
 

@@ -180,7 +180,6 @@ import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import SendIcon from 'vue-material-design-icons/Send.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showWarning } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import moment from '@nextcloud/moment'
@@ -204,6 +203,7 @@ import Quote from '../Quote.vue'
 import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -215,10 +215,6 @@ import { isDarkTheme } from '../../utils/isDarkTheme.js'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
-const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
-const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
-const attachmentsAllowed = getCapabilities()?.spreed?.config?.attachments?.allowed
-const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
 
 export default {
 	name: 'NewMessage',
@@ -295,7 +291,9 @@ export default {
 
 	expose: ['focusInput'],
 
-	setup() {
+	setup(props) {
+		const supportTypingStatus = getTalkConfig(props.token, 'chat', 'typing-privacy') !== undefined
+
 		return {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -382,11 +380,12 @@ export default {
 
 		canShareFiles() {
 			return !this.currentUserIsGuest
-				&& (!supportFederationV1 || !this.conversation.remoteServer)
+				&& (!hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
 		},
 
 		canUploadFiles() {
-			return attachmentsAllowed && this.canShareFiles
+			// TODO attachments should be allowed on both instances?
+			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
 				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
 		},
 
@@ -467,6 +466,10 @@ export default {
 			const mentionPattern = /(^|\s)@/
 			return mentionPattern.test(this.chatEditInput)
 		},
+
+		canEditMessage() {
+			return hasTalkFeature(this.token, 'edit-messages')
+		}
 	},
 
 	watch: {
@@ -960,7 +963,7 @@ export default {
 		},
 
 		handleEditLastMessage(event) {
-			if (!canEditMessage || this.text || this.upload || this.broadcast || this.isRecordingAudio) {
+			if (!this.canEditMessage || this.text || this.upload || this.broadcast || this.isRecordingAudio) {
 				return
 			}
 

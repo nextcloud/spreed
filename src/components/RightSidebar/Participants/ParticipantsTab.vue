@@ -55,7 +55,6 @@
 import debounce from 'debounce'
 import { ref, toRefs } from 'vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
@@ -74,15 +73,11 @@ import { useGetParticipants } from '../../../composables/useGetParticipants.js'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
 import { ATTENDEE } from '../../../constants.js'
+import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
-
-const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
-		&& getCapabilities()?.spreed?.config.call['sip-enabled']
-		&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
-		&& getCapabilities()?.spreed?.config.call['can-enable-sip']
 
 export default {
 	name: 'ParticipantsTab',
@@ -184,6 +179,10 @@ export default {
 			return this.$store.getters.getUserId()
 		},
 		canAddPhones() {
+			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
+					&& getTalkConfig(this.token, 'call', 'sip-enabled')
+					&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
+					&& getTalkConfig(this.token, 'call', 'can-enable-sip')
 			return canModerateSipDialOut && this.conversation.canEnableSIP
 		},
 		isSearching() {

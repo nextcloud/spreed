@@ -15,6 +15,7 @@ import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.js'
+import { setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.js'
 import {
 	promoteToModerator,
@@ -851,6 +852,11 @@ const actions = {
 				participantIdentifier: context.getters.getParticipantIdentifier(),
 				sessionId: response.data.ocs.data.sessionId,
 			})
+
+			if (response.data.ocs.data.remoteServer) {
+				// fetch and store remote capabilities for federated conversation
+				await setRemoteCapabilities(response)
+			}
 
 			SessionStorage.setItem('joined_conversation', token)
 			EventBus.emit('joined-conversation', { token })

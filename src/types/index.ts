@@ -7,6 +7,16 @@ import type { components, operations } from './openapi/openapi-full.ts'
 // General
 type ApiOptions<T> = { params: T }
 type ApiResponse<T> = Promise<{ data: T }>
+type ApiResponseHeaders<T extends { headers: object }> = {
+	[K in keyof T['headers'] as Lowercase<string & K>]: T['headers'][K];
+}
+
+// Capabilities
+export type Capabilities = {
+	[key: string]: Record<string, unknown>,
+	spreed: components['schemas']['Capabilities'],
+}
+export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilities']['responses'][200]['content']['application/json']>
 
 // Notifications
 type NotificationAction = {
@@ -39,6 +49,11 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 
 // Conversations
 export type Conversation = components['schemas']['Room']
+
+export type JoinRoomFullResponse = {
+	headers: ApiResponseHeaders<operations['room-join-room']['responses']['200']>,
+	data: operations['room-join-room']['responses']['200']['content']['application/json']
+}
 
 // Participants
 export type Participant = components['schemas']['Participant']

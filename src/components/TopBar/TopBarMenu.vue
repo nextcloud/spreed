@@ -160,7 +160,6 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import PromotedView from 'vue-material-design-icons/ViewGallery.vue'
 import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
@@ -174,6 +173,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
@@ -345,8 +345,7 @@ export default {
 		},
 
 		canModerateRecording() {
-			const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
-			return this.canFullModerate && recordingEnabled
+			return this.canFullModerate && (getTalkConfig(this.token, 'call', 'recording') || false)
 		},
 
 		canConfigureBreakoutRooms() {
@@ -354,8 +353,7 @@ export default {
 				return false
 			}
 
-			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms']
-			return !!breakoutRoomsEnabled
+			return !!getTalkConfig(this.token, 'call', 'breakout-rooms')
 		},
 
 		isStartingRecording() {

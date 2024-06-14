@@ -307,7 +307,6 @@ import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -338,6 +337,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { ATTENDEE, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import {
 	createPrivateConversation,
 	fetchNoteToSelfConversation,
@@ -353,11 +353,11 @@ import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = loadState('spreed', 'federation_enabled')
-const canModerateSipDialOut = getCapabilities()?.spreed?.features?.includes('sip-support-dialout')
-	&& getCapabilities()?.spreed?.config.call['sip-enabled']
-	&& getCapabilities()?.spreed?.config.call['sip-dialout-enabled']
-	&& getCapabilities()?.spreed?.config.call['can-enable-sip']
-const canNoteToSelf = getCapabilities()?.spreed?.features?.includes('note-to-self')
+const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
+	&& getTalkConfig('local', 'call', 'sip-enabled')
+	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
+	&& getTalkConfig('local', 'call', 'can-enable-sip')
+const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 
 export default {
 	name: 'LeftSidebar',

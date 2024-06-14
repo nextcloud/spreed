@@ -12,11 +12,14 @@ jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),
 }))
 
+// Test requests when federations invite are enabled
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
 		spreed: {
 			features: ['federation-v1'],
+			'features-local': [],
 			config: { federation: { enabled: true, 'outgoing-enabled': true } },
+			'config-local': { federation: [] },
 		},
 	}))
 }))

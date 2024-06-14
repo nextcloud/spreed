@@ -46,15 +46,15 @@
 <script>
 import { Fragment } from 'vue-frag'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from '../UIShared/EditableTextField.vue'
 
 import { CONVERSATION } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
-const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 export default {
 	name: 'BasicInfo',

@@ -60,6 +60,8 @@ jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
 		spreed: {
 			features: ['chat-read-last'],
+			'features-local': [],
+			'config-local': { chat: [] },
 		},
 	}))
 }))

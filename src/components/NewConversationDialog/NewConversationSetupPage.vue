@@ -60,8 +60,6 @@
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
@@ -71,8 +69,9 @@ import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatar
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'
 
 import { CONVERSATION } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
-const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 export default {
 

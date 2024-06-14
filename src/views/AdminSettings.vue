@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Federation from '../components/AdminSettings/Federation.vue'
@@ -36,7 +34,9 @@ import StunServers from '../components/AdminSettings/StunServers.vue'
 import TurnServers from '../components/AdminSettings/TurnServers.vue'
 import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
 
-const supportFederation = getCapabilities()?.spreed?.features?.includes('federation-v1')
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+
+const supportFederation = hasTalkFeature('local', 'federation-v1')
 
 export default {
 	name: 'AdminSettings',

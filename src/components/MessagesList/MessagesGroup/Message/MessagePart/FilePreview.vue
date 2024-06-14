@@ -61,7 +61,6 @@
 import Close from 'vue-material-design-icons/Close.vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
@@ -74,6 +73,7 @@ import AudioPlayer from './AudioPlayer.vue'
 
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.js'
+import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.js'
 
 const PREVIEW_TYPE = {
@@ -398,6 +398,10 @@ export default {
 			}
 		},
 
+		maxGifSize() {
+			return getTalkConfig(this.token, 'previews', 'max-gif-size') || 3145728
+		},
+
 		previewType() {
 			if (this.hasTemporaryImageUrl) {
 				return PREVIEW_TYPE.TEMPORARY
@@ -406,8 +410,7 @@ export default {
 			if (this.previewAvailable !== 'yes') {
 				return PREVIEW_TYPE.MIME_ICON
 			}
-			const maxGifSize = getCapabilities()?.spreed?.config?.previews?.['max-gif-size'] || 3145728
-			if (this.mimetype === 'image/gif' && parseInt(this.size, 10) <= maxGifSize) {
+			if (this.mimetype === 'image/gif' && parseInt(this.size, 10) <= this.maxGifSize) {
 				return PREVIEW_TYPE.DIRECT
 			}
 

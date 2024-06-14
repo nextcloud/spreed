@@ -28,14 +28,12 @@
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { CALL, CONVERSATION } from '../../constants.js'
-
-const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent']
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 
 export default {
 	name: 'RecordingConsentSettings',
@@ -69,7 +67,7 @@ export default {
 		},
 
 		isGlobalConsent() {
-			return recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
+			return getTalkConfig(this.token, 'call', 'recording-consent') === CALL.RECORDING_CONSENT.REQUIRED
 		},
 
 		isBreakoutRoomStarted() {

@@ -77,8 +77,6 @@
 <script>
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
@@ -87,7 +85,7 @@ import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/Audio
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
-const supportMediaCaption = getCapabilities()?.spreed?.features?.includes('media-caption')
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 export default {
 	name: 'NewMessageUploadEditor',
@@ -102,12 +100,6 @@ export default {
 		TransitionWrapper,
 	},
 
-	setup() {
-		return {
-			supportMediaCaption,
-		}
-	},
-
 	data() {
 		return {
 			modalContainerId: null,
@@ -118,6 +110,10 @@ export default {
 	computed: {
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		supportMediaCaption() {
+			return hasTalkFeature(this.token, 'media-caption')
 		},
 
 		currentUploadId() {

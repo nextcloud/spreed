@@ -9,7 +9,6 @@ import Vuex from 'vuex'
 
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 
@@ -18,10 +17,6 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import FilePreview from './FilePreview.vue'
 
 import storeConfig from '../../../../../store/storeConfig.js'
-
-jest.mock('@nextcloud/capabilities', () => ({
-	getCapabilities: jest.fn(),
-}))
 
 describe('FilePreview.vue', () => {
 	let store
@@ -252,18 +247,6 @@ describe('FilePreview.vue', () => {
 				propsData.mimetype = 'image/gif'
 				propsData.name = 'test %20.gif'
 				propsData.path = 'path/to/test %20.gif'
-
-				getCapabilities.mockImplementation(() => {
-					return {
-						spreed: {
-							config: {
-								previews: {
-									'max-gif-size': 1024,
-								},
-							},
-						},
-					}
-				})
 			})
 			test('directly renders small GIF files', async () => {
 				propsData.size = '128'
@@ -317,8 +300,8 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('renders static preview for big GIF files', async () => {
-				// bigger than max from capability
-				propsData.size = '2048'
+				// 4 MB, bigger than max from capability (3 MB)
+				propsData.size = '4194304'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,

@@ -6,7 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import type { acceptShareResponse, getSharesResponse, rejectShareResponse } from '../types'
+import type { acceptShareResponse, getSharesResponse, rejectShareResponse, getCapabilitiesResponse } from '../types'
 
 /**
  * Fetches list of shares for a current user
@@ -37,8 +37,19 @@ const rejectShare = async function(id: number, options?: object): rejectShareRes
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }, options), options)
 }
 
+/**
+ * Fetches capabilities of remote server by local conversation token
+ *
+ * @param token local conversation token;
+ * @param [options] options;
+ */
+const getRemoteCapabilities = async function(token: string, options?: object): getCapabilitiesResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}/capabilities', { token }, options), options)
+}
+
 export {
 	getShares,
 	acceptShare,
 	rejectShare,
+	getRemoteCapabilities,
 }
