@@ -464,7 +464,7 @@ Feature: callapi/recording
     When run "OC\SpeechToText\TranscriptionJob" background jobs
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
-      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.txt. |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.md. |
       | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg.  |
     When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
@@ -475,7 +475,7 @@ Feature: callapi/recording
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
-      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.txt. |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.md. |
     When user "participant1" shares file from the first notification to room "room1" with 200 (v1)
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |

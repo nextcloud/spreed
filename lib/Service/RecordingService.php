@@ -166,7 +166,7 @@ class RecordingService {
 			throw new InvalidArgumentException('owner_participant');
 		}
 
-		$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.txt';
+		$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
 
 		try {
 			$fileNode = $recordingFolder->newFile($transcriptFileName, $transcript);
