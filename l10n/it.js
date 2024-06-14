@@ -916,6 +916,7 @@ OC.L10N.register(
     "Deck Card" : "Scheda di Deck",
     "Remove {fileName}" : "Rimuovi {fileName}",
     "Open this location in OpenStreetMap" : "Apri questa posizione in OpenStreetMap",
+    "Copy code block" : "Copia blocco di codice",
     "Sending message" : "Invio del messaggio",
     "Failed to send the message. Click to try again" : "Invio del messaggio non riuscito. Fare clic per riprovare",
     "Not enough free space to upload file" : "Spazio libero insufficiente per caricare il file",
