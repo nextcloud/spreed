@@ -145,6 +145,31 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user shares :path with team :sharee
+	 *
+	 * @param string $user
+	 * @param string $path
+	 * @param string $sharee
+	 * @param TableNode|null $body
+	 */
+	public function userSharesWithTeam(string $user, string $path, string $sharee, TableNode $body = null) {
+		$this->userSharesWith($user, $path, 7 /*IShare::TYPE_CIRCLE*/, $sharee, $body);
+	}
+
+	/**
+	 * @When user :user shares :path with team :sharee with OCS :statusCode
+	 *
+	 * @param string $user
+	 * @param string $path
+	 * @param string $sharee
+	 * @param int $statusCode
+	 */
+	public function userSharesWithTeamWithOcs(string $user, string $path, string $sharee, int $statusCode) {
+		$this->userSharesWithTeam($user, $path, FeatureContext::getTeamIdForLabel($sharee));
+		$this->theOCSStatusCodeShouldBe($statusCode);
+	}
+
+	/**
 	 * @When user :user shares :path with room :room
 	 *
 	 * @param string $user

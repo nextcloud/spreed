@@ -53,6 +53,7 @@ jobs:
         php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['master']
+        circles-versions: ['master']
         call-summary-bot-versions: ['main']
         notifications-versions: ['master']
 
@@ -95,6 +96,13 @@ jobs:
           repository: nextcloud/call_summary_bot
           path: apps/call_summary_bot
           ref: ${{ matrix.call-summary-bot-versions }}
+
+      - name: Checkout circles app
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          repository: nextcloud/circles
+          path: apps/circles
+          ref: ${{ matrix.circles-versions }}
 
       - name: Checkout guests app
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
@@ -143,6 +151,7 @@ jobs:
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
           ./occ app:enable --force call_summary_bot
+          ./occ app:enable --force circles
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
 
