@@ -1611,7 +1611,7 @@ OC.L10N.register(
     "- You can now react to chat message" : "- 이제 채팅 메시지에 반응할 수 있습니다.",
     "There are currently no commands available." : "현재 사용가능한 명령이 없습니다.",
     "The command does not exist" : "명령이 존재하지 않습니다.",
-    "An error occurred while running the command. Please ask an administrator to check the logs." : "명령을 실행하는 중 에러가 발생했습니다. 관리자에게 로그 확인을 요청하세요.",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "명령을 실행하는 중 오류가 발생했습니다. 관리자에게 로그 확인을 요청하세요.",
     "{actor} opened the conversation to registered and guest app users" : "{actor} 이/가 등록된 사용자와 손님 앱 사용자에게 대화를 열었습니다.",
     "You opened the conversation to registered and guest app users" : "등록된 사용자와  손님 앱 사용자에게 대화를 열었습니다.",
     "An administrator opened the conversation to registered and guest app users" : "관리자가 등록된 사용자와 손님 앱 사용자에게 대화를 열었습니다.",
