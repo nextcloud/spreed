@@ -926,6 +926,18 @@
                     },
                     "conversation": {
                         "type": "string"
+                    },
+                    "etag": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": "string"
+                    },
+                    "height": {
+                        "type": "string"
                     }
                 }
             },

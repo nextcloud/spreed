@@ -84,6 +84,10 @@ namespace OCA\Talk;
  *     visibility?: '0'|'1',
  *     assignable?: '0'|'1',
  *     conversation?: string,
+ *     etag?: string,
+ *     permissions?: string,
+ *     width?: string,
+ *     height?: string,
  * }
  *
  * @psalm-type TalkBaseMessage = array{
