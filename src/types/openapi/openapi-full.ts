@@ -834,6 +834,10 @@ export type components = {
       /** @enum {string} */
       assignable?: "0" | "1";
       conversation?: string;
+      etag?: string;
+      permissions?: string;
+      width?: string;
+      height?: string;
     };
     Room: {
       actorId: string;
