@@ -1682,6 +1682,7 @@ OC.L10N.register(
     "Location has been posted to {conversation}" : "Location has been posted to {conversation}",
     "In conversation" : "In conversation",
     "Search in conversation: {conversation}" : "Search in conversation: {conversation}",
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation was updated, please reload the page",
     "Error while sharing file" : "Error while sharing file",
     "Your requests are throttled at the moment due to brute force protection" : "Your requests are throttled at the moment due to brute force protection",
     "Error while clearing conversation history" : "Error while clearing conversation history",
