@@ -1682,6 +1682,7 @@ OC.L10N.register(
     "Location has been posted to {conversation}" : "تم نشر الموقع في {conversation}",
     "In conversation" : "في المحادثة ...",
     "Search in conversation: {conversation}" : "البحث في المحادثة: {conversation}",
+    "Nextcloud Talk Federation was updated, please reload the page" : "تمّ تحديث المحادثة الاتحادية لنكست كلاود. رجاءً، أعِد تحميل الصفحة",
     "Error while sharing file" : "خطأ اثناء مشاركة ملف",
     "Your requests are throttled at the moment due to brute force protection" : "يتم تقييد طلباتك في الوقت الحالي كإجراء تحسبي للحماية من هجمات القوة الغاشمة",
     "Error while clearing conversation history" : "خطأ أثناء مسح محفوظات المحادثة",
