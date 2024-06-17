@@ -304,6 +304,7 @@ class AddTest extends TestCase {
 			->with('spreed', 'turn_servers')
 			->willReturn(json_encode([
 				[
+					'schemes' => 'turn',
 					'server' => 'turn1.test.com',
 					'secret' => 'my-test-secret-1',
 					'protocols' => 'udp,tcp'
@@ -316,6 +317,7 @@ class AddTest extends TestCase {
 				$this->equalTo('turn_servers'),
 				$this->equalTo(json_encode([
 					[
+						'schemes' => 'turn',
 						'server' => 'turn1.test.com',
 						'secret' => 'my-test-secret-1',
 						'protocols' => 'udp,tcp'
@@ -376,4 +378,43 @@ class AddTest extends TestCase {
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
+	
+	public function testAddDuplicateServer(): void {
+		$this->input->method('getArgument')
+			->willReturnCallback(function ($arg) {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
+					return 'turn.test.com';
+				} elseif ($arg === 'protocols') {
+					return 'udp,tcp';
+				}
+				throw new \Exception();
+			});
+		$this->input->method('getOption')
+			->willReturnCallback(function ($arg) {
+				if ($arg === 'secret') {
+					return 'my-test-secret';
+				} elseif ($arg === 'generate-secret') {
+					return false;
+				}
+				throw new \Exception();
+			});
+		$this->config->method('getAppValue')
+			->with('spreed', 'turn_servers')
+			->willReturn(json_encode([[
+				'schemes' => 'turn,turns',
+				'server' => 'turn.test.com',
+				'secret' => 'my-test-secret',
+				'protocols' => 'udp,tcp'
+			]]));
+		$this->config->expects($this->never())
+			->method('setAppValue');
+		$this->output->expects($this->once())
+			->method('writeln')
+			->with($this->equalTo('<error>Server already exists with the same configuration.</error>'));
+	
+		$this->assertSame(1, self::invokePrivate($this->command, 'execute', [$this->input, $this->output]));
+	}
+
 }
