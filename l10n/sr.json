@@ -1680,6 +1680,7 @@
     "Location has been posted to {conversation}" : "Локација је објављена у {conversation}",
     "In conversation" : "У разговору",
     "Search in conversation: {conversation}" : "Претражи у разговору: {conversation}",
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation је ажуриран, молимо вас да поново учитате страницу",
     "Error while sharing file" : "Грешка приликом дељења фајла",
     "Your requests are throttled at the moment due to brute force protection" : "Тренутно су ваши захтеви пригушени услед заштите од грубе силе.",
     "Error while clearing conversation history" : "Грешка приликом брисања историје разговора",
