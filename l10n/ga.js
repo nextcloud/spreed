@@ -1682,6 +1682,7 @@ OC.L10N.register(
     "Location has been posted to {conversation}" : "Postáladh an suíomh chuig {conversation}",
     "In conversation" : "I gcomhrá",
     "Search in conversation: {conversation}" : "Cuardaigh i gcomhrá: {conversation}",
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nuashonraíodh Nextcloud Talk Federation, athlódáil an leathanach le do thoil",
     "Error while sharing file" : "Earráid agus an comhad á roinnt",
     "Your requests are throttled at the moment due to brute force protection" : "Tá d’iarratais sáite faoi láthair mar gheall ar chosaint fórsa brúidiúil",
     "Error while clearing conversation history" : "Earráid agus an stair chomhrá á glanadh",
