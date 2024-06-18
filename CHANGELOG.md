@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.3 – 2024-06-18
+### Fixed
+- fix(chat): visual alignment of typing indicator for wide screens
+  [#12521](https://github.com/nextcloud/spreed/pull/12521)
+- fix(call): remove sound interference in Safari after audio disconnecting
+  [#12534](https://github.com/nextcloud/spreed/pull/12534)
+
 ## 19.0.2 – 2024-06-13
 ### Fixed
 - fix(call): Fix audio issue in Safari when a user unmutes after a longer time while the tab is inactive
