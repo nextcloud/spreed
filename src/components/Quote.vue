@@ -3,11 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<docs>
-This component is intended to be used both in `NewMessage` and `Message`
-components.
-</docs>
-
 <template>
 	<a href="#"
 		class="quote"
