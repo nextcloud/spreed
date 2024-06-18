@@ -179,6 +179,8 @@ import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
+const AUTO_LOWER_HAND_THRESHOLD = 3000
+
 export default {
 	name: 'TopBarMenu',
 
@@ -252,6 +254,9 @@ export default {
 	data() {
 		return {
 			boundaryElement: document.querySelector('.main-view'),
+			lowerHandTimeout: null,
+			speakingTimestamp: null,
+			lowerHandDelay: AUTO_LOWER_HAND_THRESHOLD,
 		}
 	},
 
@@ -376,7 +381,39 @@ export default {
 
 		showCallLayoutSwitch() {
 			return !this.$store.getters.isEmptyCallView
-		}
+		},
+
+	},
+
+	watch: {
+
+		'model.attributes.speaking'(speaking) {
+			// user stops speaking in lowerHandTimeout
+			if (this.lowerHandTimeout !== null && !speaking) {
+				this.lowerHandDelay = Math.max(0, this.lowerHandDelay - (Date.now() - this.speakingTimestamp))
+				clearTimeout(this.lowerHandTimeout)
+				this.lowerHandTimeout = null
+
+				return
+			}
+
+			// user is not speaking OR timeout is already running OR hand is not raised
+			if (!speaking || this.lowerHandTimeout !== null || !this.isHandRaised) {
+				return
+			}
+
+			this.speakingTimestamp = Date.now()
+			this.lowerHandTimeout = setTimeout(() => {
+				this.lowerHandTimeout = null
+				this.speakingTimestamp = null
+				this.lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
+
+				if (this.isHandRaised) {
+					this.toggleHandRaised()
+				}
+			}, this.lowerHandDelay)
+		},
+
 	},
 
 	methods: {
