@@ -1682,6 +1682,7 @@ OC.L10N.register(
     "Location has been posted to {conversation}" : "位置已張貼至 {conversation}",
     "In conversation" : "在對話中",
     "Search in conversation: {conversation}" : "在對話中搜尋：{conversation}",
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud Talk Federation 已更新，請重新載入頁面",
     "Error while sharing file" : "分享檔案時發生錯誤",
     "Your requests are throttled at the moment due to brute force protection" : "因為暴力攻擊保護，您的請求目前已受限",
     "Error while clearing conversation history" : "清除對話歷史紀錄時發生錯誤",
