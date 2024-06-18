@@ -1197,7 +1197,7 @@ export default {
 							token: this.token,
 							id: focusedId,
 						})
-						await this.getMessageContext(focusedId)
+						await this.getMessageContext(this.token, focusedId)
 						this.focusMessage(focusedId, true)
 					}
 				}
