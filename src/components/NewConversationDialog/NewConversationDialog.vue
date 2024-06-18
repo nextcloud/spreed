@@ -314,7 +314,7 @@ export default {
 				}
 
 				if (this.isAvatarEdited) {
-					promises.push(this.$refs.setupPage.$refs.conversationAvatar.saveAvatar)
+					promises.push(this.$refs.setupPage.$refs.conversationAvatar.saveAvatar())
 				}
 
 				if (this.newConversation.description) {
