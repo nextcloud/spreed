@@ -20,12 +20,28 @@ export default createAppConfig({
 	maps: join(import.meta.dirname, 'src', 'maps.js'),
 	search: join(import.meta.dirname, 'src', 'search.js'),
 }, {
-	inlineCSS: true,
+	// Move CSS assets to js/css to other built files
+	// Rename from default "spreed-*" to "talk-*"
+	assetFileNames: (assetInfo) => {
+		const extType = assetInfo.name?.split('.').at(-1)
+		if (!extType) {
+			return undefined
+		}
+
+		if (/css/i.test(extType)) {
+			return 'js/css/[name].css'
+		}
+
+		// Use @nextcloud/vite-config default behavior
+		return undefined
+	},
 
 	config: {
 		assetsInclude: ['**/*.tflite', '**/*.wasm'],
 
 		build: {
+			cssCodeSplit: true,
+
 			rollupOptions: {
 				output: {
 					entryFileNames: 'js/talk-[name].mjs',
