@@ -151,8 +151,8 @@ export const useFederationStore = defineStore('federation', {
 			try {
 				Vue.set(this.pendingShares[id], 'loading', 'reject')
 				await rejectShare(id)
-				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 				Vue.delete(this.pendingShares, id)
+				this.updatePendingSharesCount(Object.keys(this.pendingShares).length)
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while rejecting an invitation'))
