@@ -2,11 +2,9 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, mount } from '@vue/test-utils'
-import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
+import { mount, flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -31,7 +29,6 @@ jest.mock('debounce', () => jest.fn().mockImplementation(fn => fn))
 
 describe('LeftSidebar.vue', () => {
 	let store
-	let localVue
 	let testStoreConfig
 	let loadStateSettings
 	let conversationsListMock
@@ -43,28 +40,24 @@ describe('LeftSidebar.vue', () => {
 
 	const mountComponent = () => {
 		return mount(LeftSidebar, {
-			localVue,
-			router,
-			store,
-			provide: {
-				'NcContent:setHasAppNavigation': () => {}
-			},
-			stubs: {
-				// to prevent user status fetching
-				NcAvatar: true,
-				// to prevent complex dialog logic
-				NcActions: true,
-				NcModal: true,
+			global: {
+				plugins: [router, store],
+				stubs: {
+					// to prevent user status fetching
+					NcAvatar: true,
+					// to prevent complex dialog logic
+					NcActions: true,
+					NcModal: true,
+				},
+				provide: {
+					'NcContent:setHasAppNavigation': () => {}
+				},
 			},
 		})
 	}
 
 	beforeEach(() => {
 		jest.useFakeTimers()
-
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-		localVue.use(VueRouter)
 		setActivePinia(createPinia())
 
 		loadStateSettings = {
@@ -103,7 +96,10 @@ describe('LeftSidebar.vue', () => {
 	describe('conversation list', () => {
 		let conversationsList
 
-		beforeEach(() => {
+		beforeEach(async () => {
+			router.push({ name: 'root' })
+			await router.isReady()
+
 			conversationsList = [{
 				id: 100,
 				token: 't100',
@@ -349,7 +345,6 @@ describe('LeftSidebar.vue', () => {
 				// Check all captions
 				const captionList = ['Conversations', 'Open conversations', 'Users', 'Groups', 'Teams']
 				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
-				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
 				captionList.forEach((caption, index) => {
 					expect(captionListItems.at(index).props('name')).toStrictEqual(caption)
@@ -359,7 +354,6 @@ describe('LeftSidebar.vue', () => {
 				const conversationList = [...conversationsList, ...listedResults]
 					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
 				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-				expect(conversationListItems.exists()).toBeTruthy()
 				expect(conversationListItems).toHaveLength(conversationList.length)
 				conversationList.forEach((conversation, index) => {
 					expect(conversationListItems.at(index).props('item')).toStrictEqual(conversation)
@@ -369,7 +363,6 @@ describe('LeftSidebar.vue', () => {
 				const resultsList = [...usersResults, ...groupsResults, ...circlesResults]
 					.filter(item => item.id !== 'current-user').map(item => item.label)
 				const resultsListItems = findNcListItems(wrapper, resultsList)
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 				resultsList.forEach((result, index) => {
 					expect(resultsListItems.at(index).props('name')).toStrictEqual(result)
@@ -390,7 +383,6 @@ describe('LeftSidebar.vue', () => {
 				// Check all captions
 				const captionList = ['Conversations', 'Open conversations', 'Users']
 				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
-				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
 				captionList.forEach((caption, index) => {
 					expect(captionListItems.at(index).props('name')).toStrictEqual(caption)
@@ -400,7 +392,6 @@ describe('LeftSidebar.vue', () => {
 				const conversationList = [...conversationsList, ...listedResults]
 					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
 				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-				expect(conversationListItems.exists()).toBeTruthy()
 				expect(conversationListItems).toHaveLength(conversationList.length)
 				conversationList.forEach((conversation, index) => {
 					expect(conversationListItems.at(index).props('item')).toStrictEqual(conversation)
@@ -410,7 +401,6 @@ describe('LeftSidebar.vue', () => {
 				const resultsList = [...usersResults]
 					.filter(item => item.id !== 'current-user').map(item => item.label)
 				const resultsListItems = findNcListItems(wrapper, resultsList)
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 				resultsList.forEach((result, index) => {
 					expect(resultsListItems.at(index).props('name')).toStrictEqual(result)
@@ -431,7 +421,6 @@ describe('LeftSidebar.vue', () => {
 				// Check all captions
 				const captionList = ['Conversations', 'Open conversations', 'Users', 'Groups']
 				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
-				expect(captionListItems.exists()).toBeTruthy()
 				expect(captionListItems).toHaveLength(captionList.length)
 				captionList.forEach((caption, index) => {
 					expect(captionListItems.at(index).props('name')).toStrictEqual(caption)
@@ -441,7 +430,6 @@ describe('LeftSidebar.vue', () => {
 				const conversationList = [...conversationsList, ...listedResults]
 					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
 				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-				expect(conversationListItems.exists()).toBeTruthy()
 				expect(conversationListItems).toHaveLength(conversationList.length)
 				conversationList.forEach((conversation, index) => {
 					expect(conversationListItems.at(index).props('item')).toStrictEqual(conversation)
@@ -451,7 +439,6 @@ describe('LeftSidebar.vue', () => {
 				const resultsList = [...usersResults, ...groupsResults]
 					.filter(item => item.id !== 'current-user').map(item => item.label)
 				const resultsListItems = findNcListItems(wrapper, resultsList)
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 				resultsList.forEach((result, index) => {
 					expect(resultsListItems.at(index).props('name')).toStrictEqual(result)
@@ -471,14 +458,12 @@ describe('LeftSidebar.vue', () => {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)
 
 				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-				expect(conversationListItems.exists()).toBeTruthy()
 				expect(conversationListItems).toHaveLength(2 + listedResults.length)
 				// only filters the existing conversations in the list
 				expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[0])
 				expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[1])
 
 				const captionsEls = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
-				expect(captionsEls.exists()).toBeTruthy()
 				if (listedResults.length > 0) {
 					expect(captionsEls.length).toBeGreaterThan(2)
 					expect(captionsEls.at(0).props('name')).toBe('Conversations')
@@ -598,10 +583,11 @@ describe('LeftSidebar.vue', () => {
 				const conversationList = [...conversationsList, ...listedResults]
 					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
 				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-				expect(conversationListItems.exists()).toBeTruthy()
 				expect(conversationListItems).toHaveLength(conversationList.length)
 
 				await conversationListItems.at(3).find('a').trigger('click')
+				await flushPromises()
+
 				expect(addConversationAction).toHaveBeenCalledWith(expect.anything(), conversationList[3])
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: conversationList[3].token })
@@ -616,10 +602,11 @@ describe('LeftSidebar.vue', () => {
 				const wrapper = await testSearch(SEARCH_TERM, [...usersResults], [])
 				const resultsList = usersResults.filter(item => item.id !== 'current-user')
 				const resultsListItems = findNcListItems(wrapper, resultsList.map(item => item.label))
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 
-				await resultsListItems.at(1).findAll('a').trigger('click')
+				await resultsListItems.at(1).find('a').trigger('click')
+				await flushPromises()
+
 				expect(createOneToOneConversationAction).toHaveBeenCalledWith(expect.anything(), resultsList[1].id)
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: 'new-conversation' })
@@ -629,17 +616,16 @@ describe('LeftSidebar.vue', () => {
 				const wrapper = await testSearch(SEARCH_TERM, [...groupsResults], [])
 
 				const resultsListItems = findNcListItems(wrapper, groupsResults.map(item => item.label))
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(groupsResults.length)
 
-				await resultsListItems.at(1).findAll('a').trigger('click')
+				await resultsListItems.at(1).find('a').trigger('click')
 				// Wait for the component to render
 				await wrapper.vm.$nextTick()
 				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
 				expect(ncModalComponent.exists()).toBeTruthy()
 
-				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
-				expect(input.props('value')).toBe(groupsResults[1].label)
+				const input = ncModalComponent.findComponent({ name: 'NcTextField' })
+				expect(input.props('modelValue')).toBe(groupsResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
@@ -651,17 +637,16 @@ describe('LeftSidebar.vue', () => {
 				const wrapper = await testSearch(SEARCH_TERM, [...circlesResults], [])
 
 				const resultsListItems = findNcListItems(wrapper, circlesResults.map(item => item.label))
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(circlesResults.length)
 
-				await resultsListItems.at(1).findAll('a').trigger('click')
+				await resultsListItems.at(1).find('a').trigger('click')
 
 				// Wait for the component to render
 				await wrapper.vm.$nextTick()
 				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
 				expect(ncModalComponent.exists()).toBeTruthy()
-				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
-				expect(input.props('value')).toBe(circlesResults[1].label)
+				const input = ncModalComponent.findComponent({ name: 'NcTextField' })
+				expect(input.props('modelValue')).toBe(circlesResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
@@ -681,10 +666,9 @@ describe('LeftSidebar.vue', () => {
 
 				const resultsList = usersResults.filter(item => item.id !== 'current-user')
 				const resultsListItems = findNcListItems(wrapper, resultsList.map(item => item.label))
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(resultsList.length)
 
-				await resultsListItems.at(0).findAll('a').trigger('click')
+				await resultsListItems.at(0).find('a').trigger('click')
 				// FIXME Real router and store should work at this place to execute following:
 				//  click => route-change => participantsStore.joinConversation() => joined-conversation
 				EventBus.emit('joined-conversation', { token: 'new-conversation' })
@@ -702,7 +686,6 @@ describe('LeftSidebar.vue', () => {
 				expect(input.element.value).toBe(SEARCH_TERM)
 
 				const resultsListItems = findNcListItems(wrapper, groupsResults.map(item => item.label))
-				expect(resultsListItems.exists()).toBeTruthy()
 				expect(resultsListItems).toHaveLength(groupsResults.length)
 
 				await resultsListItems.at(1).find('a').trigger('click')

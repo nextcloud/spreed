@@ -23,8 +23,8 @@
 			group>
 			<SignalingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:server.sync="servers[index].server"
-				:verify.sync="servers[index].verify"
+				v-model:server="servers[index].server"
+				v-model:verify="servers[index].verify"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
@@ -47,21 +47,21 @@
 			<p class="settings-hint additional-top-margin">
 				{{ t('spreed', 'Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}
 			</p>
-			<NcCheckboxRadioSwitch :checked.sync="hideWarning"
+			<NcCheckboxRadioSwitch v-model="hideWarning"
 				:disabled="loading"
-				@update:checked="updateHideWarning">
+				@update:model-value="updateHideWarning">
 				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
 
 		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
+			:model-value="secret"
 			name="signaling_secret"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:value="updateSecret" />
+			@update:model-value="updateSecret" />
 	</section>
 </template>
 
@@ -70,7 +70,8 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -118,7 +119,7 @@ export default {
 		this.hideWarning = state.hideWarning
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 
@@ -141,7 +142,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
 				success: () => {
-					showSuccess(t('spreed', 'Missing high-performance backend warning hidden'))
+					window.OCP.Toast.success(t('spreed', 'Missing high-performance backend warning hidden'))
 					this.loading = false
 					this.toggleSave()
 				},
@@ -163,7 +164,7 @@ export default {
 				secret: this.secret,
 			}), {
 				success: () => {
-					showSuccess(t('spreed', 'High-performance backend settings saved'))
+					window.OCP.Toast.success(t('spreed', 'High-performance backend settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

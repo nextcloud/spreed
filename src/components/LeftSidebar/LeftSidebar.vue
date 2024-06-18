@@ -10,8 +10,8 @@
 			<div class="conversations-search"
 				:class="{'conversations-search--expanded': isFocused}">
 				<SearchBox ref="searchBox"
-					:value.sync="searchText"
-					:is-focused.sync="isFocused"
+					v-model:value="searchText"
+					v-model:is-focused="isFocused"
 					:list="list"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
@@ -154,7 +154,7 @@
 							:conversations="filteredConversationsList"
 							:loading="!initialisedConversations"
 							class="scroller h-100"
-							@scroll.native="debounceHandleScroll" />
+							@scroll="debounceHandleScroll" />
 					</li>
 					<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 						class="unread-mention-button"
@@ -307,7 +307,8 @@ import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -633,7 +634,7 @@ export default {
 		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 		this.debounceFetchConversations.clear?.()
 		this.debounceHandleScroll.clear?.()
@@ -728,7 +729,7 @@ export default {
 					return
 				}
 				console.error('Error searching for possible conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -749,7 +750,7 @@ export default {
 					return
 				}
 				console.error('Error searching for open conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 

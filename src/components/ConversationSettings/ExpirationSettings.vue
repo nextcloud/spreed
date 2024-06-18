@@ -15,7 +15,7 @@
 		<template v-if="canModerate">
 			<NcSelect id="moderation_settings_message_expiration"
 				:input-label="t('spreed', 'Set message expiration')"
-				:value="selectedOption"
+				:model-value="selectedOption"
 				:options="expirationOptions"
 				label="label"
 				close-on-select
@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
 
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
@@ -118,14 +119,14 @@ export default {
 				})
 
 				if (expiration.id === 0) {
-					showSuccess(t('spreed', 'Message expiration disabled'))
+					window.OCP.Toast.success(t('spreed', 'Message expiration disabled'))
 				} else {
-					showSuccess(t('spreed', 'Message expiration set: {duration}', {
+					window.OCP.Toast.success(t('spreed', 'Message expiration set: {duration}', {
 						duration: expiration.label,
 					}))
 				}
 			} catch (error) {
-				showError(t('spreed', 'Error when trying to set message expiration'))
+				window.OCP.Toast.error(t('spreed', 'Error when trying to set message expiration'))
 				console.error(error)
 			}
 

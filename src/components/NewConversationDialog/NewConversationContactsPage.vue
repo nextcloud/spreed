@@ -8,8 +8,8 @@
 		<!-- Search -->
 		<div class="set-contacts__form">
 			<NcTextField ref="setContacts"
+				v-model="searchText"
 				v-observe-visibility="visibilityChanged"
-				:value.sync="searchText"
 				type="text"
 				class="set-contacts__form-input"
 				:label="textFieldLabel"
@@ -23,8 +23,8 @@
 				</template>
 			</NcTextField>
 			<DialpadPanel v-if="canModerateSipDialOut"
+				v-model:value="searchText"
 				container=".set-contacts__form"
-				:value.sync="searchText"
 				@submit="addParticipantPhone" />
 		</div>
 
@@ -42,9 +42,9 @@
 
 		<!-- Search results -->
 		<SelectPhoneNumber v-if="canModerateSipDialOut"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipantPhone" />
 		<ParticipantSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"
@@ -63,7 +63,8 @@ import { ref } from 'vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
@@ -170,7 +171,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 
 		this.cancelSearchPossibleConversations()
@@ -220,7 +221,7 @@ export default {
 					return
 				}
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			} finally {
 				this.contactsLoading = false
 			}

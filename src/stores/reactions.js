@@ -4,9 +4,9 @@
  */
 
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import {
@@ -60,16 +60,16 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 */
 		purgeReactionsStore(token) {
-			Vue.delete(this.reactions, token)
+			delete this.reactions[token]
 		},
 
 		checkForExistence(token, messageId) {
 			if (!this.reactions[token]) {
-				Vue.set(this.reactions, token, {})
+				this.reactions[token] = {}
 			}
 
 			if (!this.reactions[token][messageId]) {
-				Vue.set(this.reactions[token], messageId, {})
+				this.reactions[token][messageId] = {}
 			}
 		},
 
@@ -84,7 +84,7 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 */
 		addReaction({ token, messageId, reaction, actors }) {
-			Vue.set(this.reactions[token][messageId], reaction, actors)
+			this.reactions[token][messageId][reaction] = actors
 		},
 
 		/**
@@ -97,7 +97,7 @@ export const useReactionsStore = defineStore('reactions', {
 		 *
 		 */
 		removeReaction({ token, messageId, reaction }) {
-			Vue.delete(this.reactions[token][messageId], reaction)
+			delete this.reactions[token][messageId][reaction]
 		},
 
 		/**
@@ -120,7 +120,7 @@ export const useReactionsStore = defineStore('reactions', {
 				return
 			}
 			actors.push(actor)
-			Vue.set(this.reactions[token][messageId], reaction, actors)
+			this.reactions[token][messageId][reaction] = actors
 		},
 
 		/**
@@ -134,7 +134,7 @@ export const useReactionsStore = defineStore('reactions', {
 			if (!this.reactions[token]?.[messageId]) {
 				return
 			}
-			Vue.delete(this.reactions[token], messageId)
+			delete this.reactions[token][messageId]
 		},
 
 		/**
@@ -157,7 +157,7 @@ export const useReactionsStore = defineStore('reactions', {
 			const storedReactions = this.reactions[token][messageId]
 
 			if (Object.keys(storedReactions).length === 0) {
-				Vue.set(this.reactions[token], messageId, reactionsDetails)
+				this.reactions[token][messageId] = reactionsDetails
 				return
 			}
 
@@ -235,7 +235,7 @@ export const useReactionsStore = defineStore('reactions', {
 					messageId,
 					reaction: selectedEmoji,
 				})
-				showError(t('spreed', 'Failed to add reaction'))
+				window.OCP.Toast.error(t('spreed', 'Failed to add reaction'))
 			}
 		},
 
@@ -270,7 +270,7 @@ export const useReactionsStore = defineStore('reactions', {
 					reaction: selectedEmoji,
 				})
 				console.error(error)
-				showError(t('spreed', 'Failed to remove reaction'))
+				window.OCP.Toast.error(t('spreed', 'Failed to remove reaction'))
 			}
 		},
 

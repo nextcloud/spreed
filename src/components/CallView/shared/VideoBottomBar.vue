@@ -29,7 +29,6 @@
 				name="fade"
 				group>
 				<NcButton v-if="showAudioIndicator"
-					key="audioIndicator"
 					v-tooltip="audioButtonTooltip"
 					:aria-label="audioButtonTooltip"
 					class="audioIndicator"
@@ -43,7 +42,6 @@
 				</NcButton>
 
 				<NcButton v-if="showVideoIndicator"
-					key="videoIndicator"
 					v-tooltip="videoButtonTooltip"
 					:aria-label="videoButtonTooltip"
 					class="videoIndicator"
@@ -56,7 +54,6 @@
 				</NcButton>
 
 				<NcButton v-if="showScreenSharingIndicator"
-					key="screenSharingIndicator"
 					v-tooltip="t('spreed', 'Show screen')"
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
@@ -69,7 +66,6 @@
 				</NcButton>
 
 				<div v-if="connectionStateFailedNoRestart"
-					key="iceFailedIndicator"
 					class="status-indicator iceFailedIndicator">
 					<AlertCircle :size="20" fill-color="#ffffff" />
 				</div>

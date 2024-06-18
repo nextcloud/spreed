@@ -5,9 +5,9 @@
 
 <template>
 	<NcAppSettingsDialog id="conversation-settings-container"
+		v-model:open="showSettings"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
-		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
 		<NcAppSettingsSection id="basic-info"
@@ -24,8 +24,8 @@
 				<NcCheckboxRadioSwitch v-if="showMediaSettingsToggle"
 					type="switch"
 					:disabled="recordingConsentRequired"
-					:checked="showMediaSettings"
-					@update:checked="setShowMediaSettings">
+					:model-value="showMediaSettings"
+					@update:model-value="setShowMediaSettings">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
 				<p v-if="recordingConsentRequired">
@@ -241,7 +241,7 @@ export default {
 
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('show-conversation-settings', this.handleShowSettings)
 		unsubscribe('hide-conversation-settings', this.handleHideSettings)
 	},

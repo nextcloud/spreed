@@ -11,7 +11,7 @@
 		:class="containerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
-		@click="$emit('click-video')">
+		@click="$emit('clickVideo')">
 		<TransitionWrapper name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
@@ -27,7 +27,7 @@
 					:aria-label="t('spreed', 'Hide presenter video')"
 					:title="t('spreed', 'Hide presenter video')"
 					:size="32"
-					@click="$emit('click-presenter')" />
+					@click="$emit('clickPresenter')" />
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -39,7 +39,6 @@
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
 			<div v-if="showBackgroundAndAvatar"
-				:key="'backgroundAvatar'"
 				class="avatar-container">
 				<VideoBackground :display-name="participantName" :user="participantUserId" />
 				<AvatarWrapper :id="participantUserId"
@@ -54,7 +53,6 @@
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
 			<div v-if="showPlaceholderForPromoted"
-				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
 				<AccountCircle v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
 			</div>
@@ -183,7 +181,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video', 'click-presenter'],
+	emits: ['clickVideo', 'clickPresenter'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
@@ -535,13 +533,13 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.resizeObserver) {
 			this.resizeObserver.disconnect()
 		}
 	},
 
-	destroyed() {
+	unmounted() {
 		this.sharedData.remoteVideoBlocker.decreaseVisibleCounter()
 	},
 

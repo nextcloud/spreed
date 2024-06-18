@@ -7,13 +7,13 @@
 	<NcContent v-shortkey.once="disableKeyboardShortcuts ? null : ['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
-		@shortkey.native="handleAppSearch">
+		@shortkey="handleAppSearch">
 		<LeftSidebar v-if="getUserId && !isFullscreen" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
 		<RightSidebar :is-in-call="isInCall" />
-		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
 	</NcContent>
@@ -248,7 +248,7 @@ export default {
 		window.addEventListener('beforeunload', this.preventUnload)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceRefreshCurrentConversation.clear?.()
 		if (!getCurrentUser()) {
 			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)

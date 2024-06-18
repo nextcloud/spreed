@@ -2,11 +2,11 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { computed } from 'vue'
-import Vuex, { Store } from 'vuex'
+import { Store } from 'vuex'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -21,7 +21,6 @@ import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js
 
 describe('MessageButtonsBar.vue', () => {
 	const TOKEN = 'XXTOKENXX'
-	let localVue
 	let testStoreConfig
 	let store
 	let messageProps
@@ -32,8 +31,6 @@ describe('MessageButtonsBar.vue', () => {
 	let isActorGuestMock
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		conversationProps = {
@@ -113,14 +110,15 @@ describe('MessageButtonsBar.vue', () => {
 				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
-						NcButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+							NcButton,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const replyButton = findNcButton(wrapper, 'Reply')
@@ -136,14 +134,15 @@ describe('MessageButtonsBar.vue', () => {
 				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
-						NcButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+							NcButton,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const replyButton = findNcButton(wrapper, 'Reply')
@@ -161,18 +160,19 @@ describe('MessageButtonsBar.vue', () => {
 				messageProps.message.actorId = 'another-user'
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					mocks: {
-						$router: {
-							push: routerPushMock,
+					global: {
+						plugins: [store],
+						mocks: {
+							$router: {
+								push: routerPushMock,
+							},
 						},
+						stubs: {
+							NcActionButton,
+						},
+						provide: injected,
 					},
-					stubs: {
-						NcActionButton,
-					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
@@ -201,13 +201,14 @@ describe('MessageButtonsBar.vue', () => {
 				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
@@ -254,13 +255,14 @@ describe('MessageButtonsBar.vue', () => {
 					isDeleteable: computed(() => true),
 				})
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
@@ -276,13 +278,14 @@ describe('MessageButtonsBar.vue', () => {
 			 */
 			function testDeleteMessageVisible(visible) {
 				const wrapper = shallowMount(MessageButtonsBar, {
-					localVue,
-					store,
-					stubs: {
-						NcActionButton,
+					global: {
+						plugins: [store],
+						stubs: {
+							NcActionButton,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
@@ -318,14 +321,14 @@ describe('MessageButtonsBar.vue', () => {
 			messageProps.message.actorId = 'another-user'
 
 			const wrapper = shallowMount(MessageButtonsBar, {
-				localVue,
-				store,
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
+					provide: injected,
 				},
-
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const actionButton = findNcActionButton(wrapper, 'Mark as unread')
@@ -351,14 +354,14 @@ describe('MessageButtonsBar.vue', () => {
 			messageProps.message.actorId = 'another-user'
 
 			const wrapper = shallowMount(MessageButtonsBar, {
-				localVue,
-				store,
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
+					provide: injected,
 				},
-
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			Object.assign(navigator, {
@@ -387,13 +390,14 @@ describe('MessageButtonsBar.vue', () => {
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
 			store = new Store(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {
-				localVue,
-				store,
-				stubs: {
-					NcActionButton,
+				global: {
+					plugins: [store],
+					stubs: {
+						NcActionButton,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const actionButton = findNcActionButton(wrapper, 'first action')

@@ -12,10 +12,10 @@
 			{{ t('spreed', 'Recording consent cannot be changed once a call or breakout session has started.') }}
 		</div>
 		<NcCheckboxRadioSwitch v-if="canModerate && !isGlobalConsent"
+			v-model="recordingConsentSelected"
 			type="switch"
-			:checked.sync="recordingConsentSelected"
 			:disabled="disabled"
-			@update:checked="setRecordingConsent">
+			@update:model-value="setRecordingConsent">
 			{{ t('spreed', 'Require recording consent before joining call in this conversation') }}
 		</NcCheckboxRadioSwitch>
 		<p v-else-if="isGlobalConsent">
@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -99,9 +100,9 @@ export default {
 					token: this.token,
 					state: value ? CALL.RECORDING_CONSENT.REQUIRED : CALL.RECORDING_CONSENT.OFF,
 				})
-				showSuccess(t('spreed', 'Recording consent requirement was updated'))
+				window.OCP.Toast.success(t('spreed', 'Recording consent requirement was updated'))
 			} catch (error) {
-				showError(t('spreed', 'Error occurred while updating recording consent'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred while updating recording consent'))
 				console.error(error)
 			}
 			this.loading = false

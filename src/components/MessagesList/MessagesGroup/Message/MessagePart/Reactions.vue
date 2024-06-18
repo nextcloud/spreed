@@ -71,7 +71,8 @@
 import EmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -124,7 +125,7 @@ export default {
 		},
 	},
 
-	emits: ['emoji-picker-toggled'],
+	emits: ['emojiPickerToggled'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
@@ -198,7 +199,7 @@ export default {
 
 		async handleReactionClick(clickedEmoji) {
 			if (!this.canReact) {
-				showError(t('spreed', 'No permission to post reactions in this conversation'))
+				window.OCP.Toast.error(t('spreed', 'No permission to post reactions in this conversation'))
 				return
 			}
 
@@ -260,7 +261,7 @@ export default {
 		},
 
 		emitEmojiPickerStatus() {
-			this.$emit('emoji-picker-toggled')
+			this.$emit('emojiPickerToggled')
 		},
 
 		remainingReactionsLabel(reaction) {

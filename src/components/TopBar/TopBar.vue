@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall ? true : undefined">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -124,7 +124,8 @@ import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
 
@@ -340,7 +341,7 @@ export default {
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.notifyUnreadMessages(null)
 		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
@@ -358,7 +359,7 @@ export default {
 				this.unreadNotificationHandle = null
 			}
 			if (message) {
-				this.unreadNotificationHandle = showMessage(message, {
+				this.unreadNotificationHandle = window.OCP.Toast.message(message, {
 					onClick: () => {
 						this.openSidebar('chat')
 					},

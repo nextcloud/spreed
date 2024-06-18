@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -25,7 +25,6 @@ describe('Participant.vue', () => {
 	let conversation
 	let participant
 	let store
-	let localVue
 	let testStoreConfig
 	let tooltipMock
 
@@ -50,9 +49,6 @@ describe('Participant.vue', () => {
 	}
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		tooltipMock = jest.fn()
 
 		participant = {
@@ -96,14 +92,16 @@ describe('Participant.vue', () => {
 	 */
 	function mountParticipant(participant, showUserStatus = false) {
 		return shallowMount(Participant, {
-			localVue,
-			store,
-			propsData: {
+			global: {
+				plugins: [store],
+				stubs: {
+					NcActionButton,
+					NcActionText,
+				},
+			},
+			props: {
 				participant,
 				showUserStatus,
-			},
-			stubs: {
-				NcActionButton,
 			},
 			directives: {
 				tooltip: tooltipMock,
@@ -213,21 +211,21 @@ describe('Participant.vue', () => {
 		test('renders guest suffix for guests', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(guest\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(guest\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (guest)')
 		})
 
 		test('renders moderator suffix for moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.MODERATOR
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(moderator\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator)')
 		})
 
 		test('renders guest moderator suffix for guest moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)\s+\(guest\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(moderator\)\s*\(guest\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator) (guest)')
 		})
 
@@ -235,7 +233,7 @@ describe('Participant.vue', () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			participant.actorId = ATTENDEE.BRIDGE_BOT_ID
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(bot\)$/))
+			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s*\(bot\)$/))
 			expect(await getUserTooltip(wrapper)).toBe('Alice (bot)')
 		})
 	})
@@ -709,8 +707,8 @@ describe('Participant.vue', () => {
 					return actionText.props('name').includes('PIN')
 				})
 
-				expect(actionTexts.exists()).toBe(true)
-				expect(actionTexts.at(0).text()).toBe('123 456 78')
+				expect(actionTexts.length).toBeTruthy()
+				expect(actionTexts.at(0).find('.action-text__longtext').text()).toBe('123 456 78')
 			}
 
 			test('allows moderators to see dial-in PIN when available', () => {
@@ -734,7 +732,7 @@ describe('Participant.vue', () => {
 					return actionText.props('title').includes('PIN')
 				})
 
-				expect(actionTexts.exists()).toBe(false)
+				expect(actionTexts.length).toBeFalsy()
 			})
 
 			test('does not show PIN field when not set', () => {
@@ -746,7 +744,7 @@ describe('Participant.vue', () => {
 					return actionText.props('title').includes('PIN')
 				})
 
-				expect(actionTexts.exists()).toBe(false)
+				expect(actionTexts.length).toBeFalsy()
 			})
 		})
 	})
@@ -761,29 +759,24 @@ describe('Participant.vue', () => {
 			const wrapper = mountParticipant(participant)
 
 			// no actions
-			expect(wrapper.findAllComponents(NcActionButton).exists()).toBe(false)
+			expect(wrapper.findAllComponents(NcActionButton).length).toBeFalsy()
 		})
 
 		test('triggers event when clicking', async () => {
-			const eventHandler = jest.fn()
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('click-participant', eventHandler)
-
 			await wrapper.find('li').trigger('click')
 
-			expect(eventHandler).toHaveBeenCalledWith(participant)
+			expect(wrapper.emitted().clickParticipant).toStrictEqual([[participant]])
 		})
 
 		test('does not trigger click event when not a search result', async () => {
-			const eventHandler = jest.fn()
 			delete participant.label
 			delete participant.source
 			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('click-participant', eventHandler)
 
 			await wrapper.find('li').trigger('click')
 
-			expect(eventHandler).not.toHaveBeenCalledWith(participant)
+			expect(wrapper.emitted().clickParticipant).not.toBeDefined()
 		})
 	})
 

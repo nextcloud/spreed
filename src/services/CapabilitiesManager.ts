@@ -4,7 +4,8 @@
  */
 
 import { getCapabilities as _getCapabilities } from '@nextcloud/capabilities'
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import { getRemoteCapabilities } from './federationService.ts'
@@ -13,6 +14,8 @@ import type { Capabilities, JoinRoomFullResponse } from '../types'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapabilities = Record<string, Capabilities & Partial<{ hash: string }>>
+
+const TOAST_PERMANENT_TIMEOUT = -1
 
 const localCapabilities: Capabilities = _getCapabilities() as Capabilities
 const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
@@ -73,7 +76,7 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 
 	// As normal capabilities update, requires a reload to take effect
-	showError(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
+	window.OCP.Toast.error(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
 		timeout: TOAST_PERMANENT_TIMEOUT,
 	})
 }

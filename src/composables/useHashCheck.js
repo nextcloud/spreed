@@ -5,10 +5,13 @@
 
 import { watch, computed } from 'vue'
 
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import { useTalkHashStore } from '../stores/talkHash.js'
+
+const TOAST_PERMANENT_TIMEOUT = -1
 
 /**
  * Check whether the conflicting session detected or not, and navigate to another page
@@ -31,7 +34,7 @@ export function useHashCheck() {
 	const showReloadWarning = () => {
 		reloadWarningShown = true
 
-		showError(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
+		window.OCP.Toast.error(t('spreed', 'Nextcloud Talk was updated, please reload the page'), {
 			timeout: TOAST_PERMANENT_TIMEOUT,
 		})
 	}

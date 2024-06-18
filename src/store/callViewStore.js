@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Vue from 'vue'
-
 import {
 	CONVERSATION,
 } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
 
-const state = {
+const state = () => ({
 	forceCallView: false,
 	isViewerOverlay: false,
 	isGrid: false,
@@ -23,7 +21,7 @@ const state = {
 	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
-}
+})
 
 const getters = {
 	forceCallView: (state) => state.forceCallView,
@@ -93,16 +91,16 @@ const mutations = {
 			throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
 		}
 		if (raisedHand && raisedHand.state) {
-			Vue.set(state.participantRaisedHands, sessionId, raisedHand)
+			state.participantRaisedHands[sessionId] = raisedHand
 		} else {
-			Vue.delete(state.participantRaisedHands, sessionId)
+			delete state.participantRaisedHands[sessionId]
 		}
 	},
 	clearParticipantHandRaised(state) {
 		state.participantRaisedHands = {}
 	},
 	setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
-		Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
+		state.backgroundImageAverageColorCache[videoBackgroundId] = backgroundImageAverageColor
 	},
 	clearBackgroundImageAverageColorCache(state) {
 		state.backgroundImageAverageColorCache = {}

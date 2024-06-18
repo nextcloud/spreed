@@ -10,10 +10,10 @@
 				{{ t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.') }}
 			</NcNoteCard>
 			<div>
-				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+				<NcCheckboxRadioSwitch :model-value="hasLobbyEnabled"
 					type="switch"
 					:disabled="isLobbyStateLoading"
-					@update:checked="toggleLobby">
+					@update:model-value="toggleLobby">
 					{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 				</NcCheckboxRadioSwitch>
 			</div>
@@ -27,7 +27,7 @@
 				</div>
 				<NcDateTimePicker id="moderation_settings_lobby_timer_field"
 					aria-describedby="moderation_settings_lobby_timer_hint"
-					:value="lobbyTimer"
+					:model-value="lobbyTimer"
 					:default-value="defaultLobbyTimer"
 					:placeholder="t('spreed', 'Start time (optional)')"
 					:disabled="lobbyTimerFieldDisabled"
@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -165,17 +166,17 @@ export default {
 					enableLobby: newLobbyState,
 				})
 				if (newLobbyState) {
-					showSuccess(t('spreed', 'You restricted the conversation to moderators'))
+					window.OCP.Toast.success(t('spreed', 'You restricted the conversation to moderators'))
 				} else {
-					showSuccess(t('spreed', 'You opened the conversation to everyone'))
+					window.OCP.Toast.success(t('spreed', 'You opened the conversation to everyone'))
 				}
 			} catch (e) {
 				if (newLobbyState) {
 					console.error('Error occurred when restricting the conversation to moderator', e)
-					showError(t('spreed', 'Error occurred when restricting the conversation to moderator'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when restricting the conversation to moderator'))
 				} else {
 					console.error('Error occurred when opening the conversation to everyone', e)
-					showError(t('spreed', 'Error occurred when opening the conversation to everyone'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred when opening the conversation to everyone'))
 				}
 			}
 			this.isLobbyStateLoading = false
@@ -189,10 +190,10 @@ export default {
 					token: this.token,
 					timestamp: timestamp ? (timestamp / 1000) : 0,
 				})
-				showSuccess(t('spreed', 'Start time has been updated'))
+				window.OCP.Toast.success(t('spreed', 'Start time has been updated'))
 			} catch (e) {
 				console.error('Error occurred while updating start time', e)
-				showError(t('spreed', 'Error occurred while updating start time'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred while updating start time'))
 			}
 
 			this.isLobbyTimerLoading = false

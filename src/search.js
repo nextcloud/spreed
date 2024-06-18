@@ -10,7 +10,8 @@ import { generateFilePath, imagePath } from '@nextcloud/router'
 
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
-import '@nextcloud/dialogs/style.css'
+// eslint-disable-next-line
+// import '@nextcloud/dialogs/style.css'
 
 /**
  *

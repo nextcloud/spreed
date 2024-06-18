@@ -4,8 +4,8 @@
 -->
 
 <template>
-	<NcPopover class="call-time"
-		:shown.sync="showPopover"
+	<NcPopover v-model:shown="showPopover"
+		class="call-time"
 		:focus-trap="isShowRecordingControls"
 		:triggers="[]"
 		:container="container">
@@ -168,7 +168,7 @@ export default {
 		this.timer = setInterval(this.computeElapsedTime, 1000)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		clearInterval(this.timer)
 	},
 

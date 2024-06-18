@@ -19,7 +19,7 @@
 			group>
 			<StunServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:server.sync="servers[index]"
+				v-model:server="servers[index]"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
@@ -43,7 +43,8 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -78,7 +79,7 @@ export default {
 		this.debounceUpdateServers = debounce(this.updateServers, 1000)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 
@@ -121,7 +122,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
 				success: () => {
-					showSuccess(t('spreed', 'STUN settings saved'))
+					window.OCP.Toast.success(t('spreed', 'STUN settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

@@ -4,28 +4,24 @@
 -->
 
 <template>
-	<Fragment>
-		<!-- "submit-wrapper" is used to mimic the login button and thus get
-			automatic colouring of the confirm icon by the Theming app. -->
-		<div id="submit-wrapper" class="request-password-wrapper">
-			<NcButton id="request-password-button"
-				type="primary"
-				:wide="true"
-				:disabled="isRequestInProgress"
-				@click="requestPassword"
-				@keydown.enter="requestPassword">
-				{{ t('spreed', 'Request password') }}
-			</NcButton>
-		</div>
-		<p v-if="hasRequestFailed" class="warning error-message">
-			{{ t('spreed', 'Error requesting the password.') }}
-		</p>
-	</Fragment>
+	<!-- "submit-wrapper" is used to mimic the login button and thus get
+		automatic colouring of the confirm icon by the Theming app. -->
+	<div id="submit-wrapper" class="request-password-wrapper">
+		<NcButton id="request-password-button"
+			type="primary"
+			:wide="true"
+			:disabled="isRequestInProgress"
+			@click="requestPassword"
+			@keydown.enter="requestPassword">
+			{{ t('spreed', 'Request password') }}
+		</NcButton>
+	</div>
+	<p v-if="hasRequestFailed" class="warning error-message">
+		{{ t('spreed', 'Error requesting the password.') }}
+	</p>
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -39,7 +35,6 @@ export default {
 
 	components: {
 		NcButton,
-		Fragment,
 	},
 
 	props: {

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -16,13 +16,9 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
 	let participant
 	let store
-	let localVue
 	let testStoreConfig
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		participant = {
 			displayName: 'Alice',
 			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
@@ -63,9 +59,10 @@ describe('ParticipantPermissionsEditor.vue', () => {
 	 */
 	const mountParticipantPermissionsEditor = (participant) => {
 		return mount(ParticipantPermissionsEditor, {
-			localVue,
-			store,
-			propsData: {
+			global: {
+				plugins: [store],
+			},
+			props: {
 				participant,
 				token: 'fdslk033',
 			},
@@ -76,46 +73,46 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		test('Properly renders the call start checkbox', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
-			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(callStartCheckbox.props('modelValue')).toBe(true)
 		})
 
 		test('Properly renders the lobby Ignore checkbox', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const lobbyIgnoreCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'lobbyIgnore' })
-			expect(lobbyIgnoreCheckbox.vm.$options.propsData.checked).toBe(false)
+			expect(lobbyIgnoreCheckbox.props('modelValue')).toBe(false)
 		})
 
 		test('Properly renders the publish audio checkbox', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const publishAudioCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishAudio' })
-			expect(publishAudioCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(publishAudioCheckbox.props('modelValue')).toBe(true)
 		})
 
 		test('Properly renders the publish video checkbox', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const publishVideoCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishVideo' })
-			expect(publishVideoCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(publishVideoCheckbox.props('modelValue')).toBe(true)
 		})
 
 		test('Properly renders the publish screen checkbox', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
-			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(false)
+			expect(publishScreenCheckbox.props('modelValue')).toBe(false)
 		})
 
 		test('Properly renders the checkboxes with default permissions', async () => {
 			participant.permissions = PARTICIPANT.PERMISSIONS.DEFAULT
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
-			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(callStartCheckbox.props('modelValue')).toBe(true)
 			const lobbyIgnoreCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'lobbyIgnore' })
-			expect(lobbyIgnoreCheckbox.vm.$options.propsData.checked).toBe(false)
+			expect(lobbyIgnoreCheckbox.props('modelValue')).toBe(false)
 			const publishAudioCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishAudio' })
-			expect(publishAudioCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(publishAudioCheckbox.props('modelValue')).toBe(true)
 			const publishVideoCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishVideo' })
-			expect(publishVideoCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(publishVideoCheckbox.props('modelValue')).toBe(true)
 			const publishScreenCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'publishScreen' })
-			expect(publishScreenCheckbox.vm.$options.propsData.checked).toBe(true)
+			expect(publishScreenCheckbox.props('modelValue')).toBe(true)
 		})
 	})
 

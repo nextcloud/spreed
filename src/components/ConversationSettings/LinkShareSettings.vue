@@ -13,26 +13,26 @@
 			<p v-if="hasBreakoutRooms" class="app-settings-section__hint">
 				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
 			</p>
-			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
+			<NcCheckboxRadioSwitch :model-value="isSharedPublicly"
 				:disabled="hasBreakoutRooms || isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
-				@update:checked="toggleGuests">
+				@update:model-value="toggleGuests">
 				{{ t('spreed', 'Allow guests to join this conversation via link') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
-				:checked="isPasswordProtectionChecked"
+				:model-value="isPasswordProtectionChecked"
 				:disabled="isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_password_hint"
-				@update:checked="togglePassword">
+				@update:model-value="togglePassword">
 				{{ t('spreed', 'Password protection') }}
 			</NcCheckboxRadioSwitch>
 
 			<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
 				<NcPasswordField ref="passwordField"
-					:value.sync="password"
+					v-model="password"
 					autocomplete="new-password"
 					check-password-strength
 					:disabled="isSaving"
@@ -83,7 +83,8 @@ import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -156,16 +157,16 @@ export default {
 					newPassword,
 				})
 				if (newPassword !== '') {
-					showSuccess(t('spreed', 'Conversation password has been saved'))
+					window.OCP.Toast.success(t('spreed', 'Conversation password has been saved'))
 				} else {
-					showSuccess(t('spreed', 'Conversation password has been removed'))
+					window.OCP.Toast.success(t('spreed', 'Conversation password has been removed'))
 				}
 			} catch (error) {
 				console.error('Error saving conversation password', error)
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(error.response.data.ocs.data.message)
+					window.OCP.Toast.error(error.response.data.ocs.data.message)
 				} else {
-					showError(t('spreed', 'Error occurred while saving conversation password'))
+					window.OCP.Toast.error(t('spreed', 'Error occurred while saving conversation password'))
 				}
 			}
 			this.isSaving = false
@@ -218,9 +219,9 @@ export default {
 			this.isSendingInvitations = true
 			try {
 				await this.$store.dispatch('resendInvitations', { token: this.token })
-				showSuccess(t('spreed', 'Invitations sent'))
+				window.OCP.Toast.success(t('spreed', 'Invitations sent'))
 			} catch (e) {
-				showError(t('spreed', 'Error occurred when sending invitations'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when sending invitations'))
 			}
 			this.isSendingInvitations = false
 		},

@@ -20,8 +20,8 @@
 			group>
 			<RecordingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:server.sync="servers[index].server"
-				:verify.sync="servers[index].verify"
+				v-model:server="servers[index].server"
+				v-model:verify="servers[index].verify"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
@@ -41,29 +41,28 @@
 		</NcButton>
 
 		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
+			:model-value="secret"
 			name="recording_secret"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
 			label-visible
-			@update:value="updateSecret" />
+			@update:model-value="updateSecret" />
 
 		<template v-if="servers.length && recordingConsentCapability">
 			<h3>{{ t('spreed', 'Recording consent') }}</h3>
 
-			<template v-for="level in recordingConsentOptions">
-				<NcCheckboxRadioSwitch :key="level.value + '_radio'"
+			<template v-for="level in recordingConsentOptions" :key="level.value">
+				<NcCheckboxRadioSwitch v-model="recordingConsentSelected"
 					:value="level.value.toString()"
-					:checked.sync="recordingConsentSelected"
 					name="recording-consent"
 					type="radio"
 					:disabled="loading"
-					@update:checked="setRecordingConsent">
+					@update:model-value="setRecordingConsent">
 					{{ level.label }}
 				</NcCheckboxRadioSwitch>
 
-				<p :key="level.value + '_description'" class="consent-description">
+				<p class="consent-description">
 					{{ getRecordingConsentDescription(level.value) }}
 				</p>
 			</template>
@@ -76,7 +75,8 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { formatFileSize } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -150,7 +150,7 @@ export default {
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 
@@ -183,7 +183,7 @@ export default {
 				secret: this.secret,
 			}), {
 				success: () => {
-					showSuccess(t('spreed', 'Recording backend settings saved'))
+					window.OCP.Toast.success(t('spreed', 'Recording backend settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

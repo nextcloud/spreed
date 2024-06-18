@@ -140,8 +140,8 @@
 					</NcActionButton>
 					<NcActionButton v-if="isTranslationAvailable && !isFileShareWithoutCaption"
 						close-after-click
-						@click.stop="$emit('show-translate-dialog', true)"
-						@close="$emit('show-translate-dialog', false)">
+						@click.stop="$emit('showTranslateDialog', true)"
+						@close="$emit('showTranslateDialog', false)">
 						<template #icon>
 							<Translate :size="16" />
 						</template>
@@ -192,7 +192,7 @@
 
 					<NcActionInput type="datetime-local"
 						is-native-picker
-						:value="customReminderDateTime"
+						:model-value="customReminderDateTime"
 						:min="new Date()"
 						@change="setCustomReminderDateTime">
 						<template #icon>
@@ -273,7 +273,8 @@ import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
@@ -382,7 +383,7 @@ export default {
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'showTranslateDialog', 'reply', 'edit'],
 
 	setup(props) {
 		const { message } = toRefs(props)
@@ -577,9 +578,9 @@ export default {
 
 			try {
 				await navigator.clipboard.writeText(parsedText)
-				showSuccess(t('spreed', 'Message text copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Message text copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Message text could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Message text could not be copied'))
 			}
 		},
 
@@ -650,10 +651,10 @@ export default {
 				await this.$store.dispatch('forwardMessage', {
 					messageToBeForwarded: this.$store.getters.message(this.message.token, this.message.id)
 				})
-				showSuccess(t('spreed', 'Message forwarded to "Note to self"'))
+				window.OCP.Toast.success(t('spreed', 'Message forwarded to "Note to self"'))
 			} catch (error) {
 				console.error('Error while forwarding message to "Note to self"', error)
-				showError(t('spreed', 'Error while forwarding message to "Note to self"'))
+				window.OCP.Toast.error(t('spreed', 'Error while forwarding message to "Note to self"'))
 			}
 		},
 
@@ -698,22 +699,22 @@ export default {
 		async removeReminder() {
 			try {
 				await removeMessageReminder(this.message.token, this.message.id)
-				showSuccess(t('spreed', 'A reminder was successfully removed'))
+				window.OCP.Toast.success(t('spreed', 'A reminder was successfully removed'))
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Error occurred when removing a reminder'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when removing a reminder'))
 			}
 		},
 
 		async setReminder(timestamp) {
 			try {
 				await setMessageReminder(this.message.token, this.message.id, timestamp / 1000)
-				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
+				window.OCP.Toast.success(t('spreed', 'A reminder was successfully set at {datetime}', {
 					datetime: moment(timestamp).format('LLL'),
 				}))
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'Error occurred when creating a reminder'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when creating a reminder'))
 			}
 		},
 

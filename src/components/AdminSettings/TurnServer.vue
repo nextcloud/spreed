@@ -7,7 +7,7 @@
 	<li class="turn-server">
 		<NcSelect class="turn-server__select"
 			name="turn_schemes"
-			:value="schemesOptions.find(i => i.value === schemes)"
+			:model-value="schemesOptions.find(i => i.value === schemes)"
 			:disabled="loading"
 			:aria-label-combobox="t('spreed', 'TURN server schemes')"
 			:options="schemesOptions"
@@ -16,7 +16,7 @@
 			label="label"
 			track-by="value"
 			no-wrap
-			@input="updateSchemes" />
+			@update:model-value="updateSchemes" />
 
 		<NcTextField ref="turn_server"
 			v-tooltip.auto="turnServerError"
@@ -24,23 +24,23 @@
 			placeholder="turnserver:port"
 			class="turn-server__textfield"
 			:class="{ error: turnServerError }"
-			:value="server"
+			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'TURN server URL')"
-			@update:value="updateServer" />
+			@update:model-value="updateServer" />
 
 		<NcTextField ref="turn_secret"
 			name="turn_secret"
 			placeholder="secret"
 			class="turn-server__textfield"
-			:value="secret"
+			:model-value="secret"
 			:disabled="loading"
 			:label="t('spreed', 'TURN server secret')"
-			@update:value="updateSecret" />
+			@update:model-value="updateSecret" />
 
 		<NcSelect class="turn-server__select"
 			name="turn_protocols"
-			:value="protocolOptions.find(i => i.value === protocols)"
+			:model-value="protocolOptions.find(i => i.value === protocols)"
 			:disabled="loading"
 			:aria-label-combobox="t('spreed', 'TURN server protocols')"
 			:options="protocolOptions"
@@ -49,7 +49,7 @@
 			label="label"
 			track-by="value"
 			no-wrap
-			@input="updateProtocols" />
+			@update:model-value="updateProtocols" />
 
 		<NcButton v-show="!loading"
 			type="tertiary-no-background"
@@ -142,7 +142,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:schemes', 'update:server', 'update:secret', 'update:protocols'],
+	emits: ['removeServer', 'update:schemes', 'update:server', 'update:secret', 'update:protocols'],
 
 	data() {
 		return {
@@ -202,7 +202,7 @@ export default {
 		this.testingSuccess = false
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceTestServer.clear?.()
 	},
 
@@ -350,7 +350,7 @@ export default {
 		},
 
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 		updateSchemes(event) {
 			this.$emit('update:schemes', event.value)

@@ -25,7 +25,7 @@
 			:aria-label="t('spreed', 'Conversation actions')"
 			type="tertiary"
 			:container="container"
-			@shortkey.native="toggleFullscreen">
+			@shortkey="toggleFullscreen">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
 				<DotsHorizontal :size="20" />
@@ -126,7 +126,7 @@
 			<!-- Breakout rooms -->
 			<NcActionButton v-if="canConfigureBreakoutRooms"
 				close-after-click
-				@click="$emit('open-breakout-rooms-editor')">
+				@click="$emit('openBreakoutRoomsEditor')">
 				<template #icon>
 					<DotsCircle :size="20" />
 				</template>
@@ -160,7 +160,8 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import PromotedView from 'vue-material-design-icons/ViewGallery.vue'
 import GridView from 'vue-material-design-icons/ViewGrid.vue'
 
-import { showWarning } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -242,7 +243,7 @@ export default {
 		},
 	},
 
-	emits: ['open-breakout-rooms-editor'],
+	emits: ['openBreakoutRoomsEditor'],
 
 	setup() {
 		return {
@@ -431,7 +432,7 @@ export default {
 				return child.nodeName === 'DIV' && child.classList.contains('modal-mask')
 					&& window.getComputedStyle(child).display !== 'none'
 			}).length !== 0) {
-				showWarning(t('spreed', 'You need to close a dialog to toggle full screen'))
+				window.OCP.Toast.warning(t('spreed', 'You need to close a dialog to toggle full screen'))
 				return
 			}
 

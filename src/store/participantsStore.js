@@ -4,9 +4,9 @@
  */
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -55,7 +55,7 @@ function emitUserStatusUpdated(participant) {
 	}
 }
 
-const state = {
+const state = () => ({
 	attendees: {
 	},
 	peers: {
@@ -79,7 +79,7 @@ const state = {
 	 */
 	cancelFetchParticipants: null,
 	speakingInterval: null,
-}
+})
 
 const getters = {
 	isInCall: (state) => (token) => {
@@ -278,9 +278,9 @@ const mutations = {
 	 */
 	addParticipant(state, { token, participant }) {
 		if (!state.attendees[token]) {
-			Vue.set(state.attendees, token, {})
+			state.attendees[token] = {}
 		}
-		Vue.set(state.attendees[token], participant.attendeeId, participant)
+		state.attendees[token][participant.attendeeId] = participant
 	},
 
 	updateParticipant(state, { token, attendeeId, updatedData }) {
@@ -293,41 +293,41 @@ const mutations = {
 
 	deleteParticipant(state, { token, attendeeId }) {
 		if (state.attendees[token] && state.attendees[token][attendeeId]) {
-			Vue.delete(state.attendees[token], attendeeId)
+			delete state.attendees[token][attendeeId]
 		} else {
 			console.error('The conversation you are trying to purge doesn\'t exist')
 		}
 	},
 
 	setParticipantsInitialised(state, { token, initialised }) {
-		Vue.set(state.initialised, token, initialised)
+		state.initialised[token] = initialised
 	},
 
 	setInCall(state, { token, sessionId, flags }) {
 		if (flags === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
-				Vue.delete(state.inCall[token], sessionId)
+				delete state.inCall[token][sessionId]
 			}
 
 			if (state.connecting[token] && state.connecting[token][sessionId]) {
-				Vue.delete(state.connecting[token], sessionId)
+				delete state.connecting[token][sessionId]
 			}
 		} else {
 			if (!state.inCall[token]) {
-				Vue.set(state.inCall, token, {})
+				state.inCall[token] = {}
 			}
-			Vue.set(state.inCall[token], sessionId, flags)
+			state.inCall[token][sessionId] = flags
 
 			if (!state.connecting[token]) {
-				Vue.set(state.connecting, token, {})
+				state.connecting[token] = {}
 			}
-			Vue.set(state.connecting[token], sessionId, flags)
+			state.connecting[token][sessionId] = flags
 		}
 	},
 
 	finishedConnecting(state, { token, sessionId }) {
 		if (state.connecting[token] && state.connecting[token][sessionId]) {
-			Vue.delete(state.connecting[token], sessionId)
+			delete state.connecting[token][sessionId]
 		}
 	},
 
@@ -352,7 +352,7 @@ const mutations = {
 	 */
 	setTyping(state, { token, sessionId, typing, expirationTimeout }) {
 		if (!state.typing[token]) {
-			Vue.set(state.typing, token, {})
+			state.typing[token] = {}
 		}
 
 		if (state.typing[token][sessionId]) {
@@ -360,9 +360,9 @@ const mutations = {
 		}
 
 		if (typing) {
-			Vue.set(state.typing[token], sessionId, { expirationTimeout })
+			state.typing[token][sessionId] = { expirationTimeout }
 		} else {
-			Vue.delete(state.typing[token], sessionId)
+			delete state.typing[token][sessionId]
 		}
 	},
 
@@ -384,7 +384,7 @@ const mutations = {
 	setSpeaking(state, { attendeeId, speaking }) {
 		// create a dummy object for current call
 		if (!state.speaking[attendeeId]) {
-			Vue.set(state.speaking, attendeeId, { speaking, lastTimestamp: Date.now(), totalCountedTime: 0 })
+			(state.speaking[attendeeId] = { speaking, lastTimestamp: Date.now(), totalCountedTime: 0 })
 		}
 		state.speaking[attendeeId].speaking = speaking
 	},
@@ -396,7 +396,7 @@ const mutations = {
 	 * @param {number} interval - interval id.
 	 */
 	setSpeakingInterval(state, interval) {
-		Vue.set(state, 'speakingInterval', interval)
+		state.speakingInterval = interval
 	},
 
 	/**
@@ -436,11 +436,11 @@ const mutations = {
 	 * @param {object} state - current store state.
 	 */
 	purgeSpeakingStore(state) {
-		Vue.set(state, 'speaking', {})
+		state.speaking = {}
 
 		if (state.speakingInterval) {
 			clearInterval(state.speakingInterval)
-			Vue.set(state, 'speakingInterval', null)
+			state.speakingInterval = null
 		}
 	},
 
@@ -452,20 +452,20 @@ const mutations = {
 	 */
 	purgeParticipantsStore(state, token) {
 		if (state.attendees[token]) {
-			Vue.delete(state.attendees, token)
+			delete state.attendees[token]
 		}
 	},
 
 	addPeer(state, { token, peer }) {
 		if (!state.peers[token]) {
-			Vue.set(state.peers, token, [])
+			state.peers[token] = []
 		}
-		Vue.set(state.peers[token], peer.sessionId, peer)
+		state.peers[token][peer.sessionId] = peer
 	},
 
 	purgePeersStore(state, token) {
 		if (state.peers[token]) {
-			Vue.delete(state.peers, token)
+			delete state.peers[token]
 		}
 	},
 
@@ -475,20 +475,20 @@ const mutations = {
 
 	setPhoneState(state, { callid, value = {} }) {
 		if (!state.phones[callid]) {
-			Vue.set(state.phones, callid, { state: null, mute: 0 })
+			state.phones[callid] = { state: null, mute: 0 }
 		}
-		Vue.set(state.phones[callid], 'state', value)
+		state.phones[callid].state = value
 	},
 
 	setPhoneMute(state, { callid, value }) {
 		if (!state.phones[callid]) {
-			Vue.set(state.phones, callid, { state: null, mute: 0 })
+			state.phones[callid] = { state: null, mute: 0 }
 		}
-		Vue.set(state.phones[callid], 'mute', value)
+		state.phones[callid].mute = value
 	},
 
 	deletePhoneState(state, callid) {
-		Vue.delete(state.phones, callid)
+		delete state.phones[callid]
 	},
 }
 
@@ -648,7 +648,7 @@ const actions = {
 				context.dispatch('fetchConversation', { token })
 			} else if (!CancelableRequest.isCancel(exception)) {
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while fetching the participants'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
 			}
 			return null
 		}
@@ -878,7 +878,7 @@ const actions = {
 				}
 			} else {
 				console.error(error)
-				showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
+				window.OCP.Toast.error(t('spreed', 'Failed to join the conversation. Try to reload the page.'))
 			}
 		}
 	},

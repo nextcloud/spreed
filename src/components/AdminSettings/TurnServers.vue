@@ -18,10 +18,10 @@
 			group>
 			<TurnServer v-for="(server, index) in servers"
 				:key="`server${index}`"
-				:schemes.sync="servers[index].schemes"
-				:server.sync="servers[index].server"
-				:secret.sync="servers[index].secret"
-				:protocols.sync="servers[index].protocols"
+				v-model:schemes="servers[index].schemes"
+				v-model:server="servers[index].server"
+				v-model:secret="servers[index].secret"
+				v-model:protocols="servers[index].protocols"
 				:index="index"
 				:loading="loading"
 				@remove-server="removeServer"
@@ -48,7 +48,8 @@ import debounce from 'debounce'
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -89,7 +90,7 @@ export default {
 		this.servers = loadState('spreed', 'turn_servers')
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateServers.clear?.()
 	},
 
@@ -136,7 +137,7 @@ export default {
 			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'turn_servers', JSON.stringify(servers), {
 				success: () => {
-					showSuccess(t('spreed', 'TURN settings saved'))
+					window.OCP.Toast.success(t('spreed', 'TURN settings saved'))
 					this.loading = false
 					this.toggleSave()
 				},

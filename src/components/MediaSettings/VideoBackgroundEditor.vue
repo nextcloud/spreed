@@ -61,13 +61,13 @@
 			aria-hidden="true"
 			@change="handleFileInput">
 
-		<FilePickerVue v-if="showFilePicker"
+		<!-- <FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
 			:path="relativeBackgroundsFolderPath"
 			container=".background-editor"
 			:buttons="filePickerButtons"
 			:multiselect="false"
-			@close="showFilePicker = false" />
+			@close="showFilePicker = false" /> -->
 	</div>
 </template>
 
@@ -78,8 +78,9 @@ import CheckBold from 'vue-material-design-icons/CheckBold.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
-import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
@@ -107,7 +108,7 @@ export default {
 		Blur,
 		Cancel,
 		CheckBold,
-		FilePickerVue,
+		// FilePickerVue,
 		Folder,
 		Upload,
 	},
@@ -119,7 +120,7 @@ export default {
 		},
 	},
 
-	emits: ['update-background'],
+	emits: ['updateBackground'],
 
 	setup() {
 		return {
@@ -186,7 +187,7 @@ export default {
 	methods: {
 		t,
 		handleSelectBackground(path) {
-			this.$emit('update-background', path)
+			this.$emit('updateBackground', path)
 			this.selectedBackground = path
 		},
 
@@ -231,7 +232,7 @@ export default {
 
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Error while uploading the file'))
+				window.OCP.Toast.error(t('spreed', 'Error while uploading the file'))
 			}
 		},
 

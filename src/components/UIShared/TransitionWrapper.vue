@@ -5,16 +5,13 @@
 
 <template>
 	<TransitionGroup v-if="group"
+		tag="span"
 		class="transition-group"
-		:name="name"
-		v-bind="$attrs"
-		v-on="$listeners">
+		:name="name">
 		<slot />
 	</TransitionGroup>
 	<Transition v-else
-		:name="name"
-		v-bind="$attrs"
-		v-on="$listeners">
+		:name="name">
 		<slot />
 	</Transition>
 </template>
@@ -22,8 +19,6 @@
 <script>
 export default {
 	name: 'TransitionWrapper',
-
-	inheritAttrs: false,
 
 	props: {
 		name: {

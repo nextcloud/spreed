@@ -132,7 +132,7 @@ export default {
 		subscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
 	},
 
