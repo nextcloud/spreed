@@ -162,6 +162,10 @@ CallParticipantsAudioPlayer.prototype = {
 			} else if (!audioAvailable && audioNode.connected) {
 				audioNode.audioSource.disconnect(this._audioDestination)
 				audioNode.connected = false
+
+				// Force creating a new audio renderer to work around broken
+				// audio output in Safari after disconnecting a node.
+				this._audioElement.srcObject = this._audioDestination.stream
 			}
 
 			return
