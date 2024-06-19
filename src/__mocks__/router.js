@@ -25,6 +25,12 @@ export default new VueRouter({
 			props: true,
 		},
 		{
+			path: '/apps/spreed/forbidden',
+			name: 'forbidden',
+			component: Stub,
+			props: true,
+		},
+		{
 			path: '/apps/spreed/duplicate-session',
 			name: 'duplicatesession',
 			component: Stub,

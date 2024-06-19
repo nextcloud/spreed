@@ -890,6 +890,8 @@ const actions = {
 				} else {
 					await context.dispatch('confirmForceJoinConversation', { token })
 				}
+			} else if (error?.response?.status === 403 && error?.response?.data?.ocs?.data?.error === 'ban') {
+				EventBus.emit('forbidden-route', error.response.data.ocs.data)
 			} else {
 				console.error(error)
 				showError(t('spreed', 'Failed to join the conversation. Try to reload the page.'))

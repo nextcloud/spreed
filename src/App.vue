@@ -378,6 +378,10 @@ export default {
 			}
 		})
 
+		EventBus.on('forbidden-route', (params) => {
+			this.$router.push({ name: 'forbidden' })
+		})
+
 		/**
 		 * Listens to the conversationsReceived globalevent, emitted by the conversationsList
 		 * component each time a new batch of conversations is received and processed in
