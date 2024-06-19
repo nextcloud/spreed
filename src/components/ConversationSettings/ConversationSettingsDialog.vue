@@ -40,6 +40,7 @@
 				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
 				<ExpirationSettings :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<BanSettings v-if="supportBanV1 && canFullModerate" :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
@@ -100,6 +101,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDia
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
+import BanSettings from './BanSettings/BanSettings.vue'
 import BasicInfo from './BasicInfo.vue'
 import BotsSettings from './BotsSettings.vue'
 import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
@@ -123,6 +125,7 @@ export default {
 	name: 'ConversationSettingsDialog',
 
 	components: {
+		BanSettings,
 		BasicInfo,
 		BotsSettings,
 		BreakoutRoomsSettings,
@@ -178,6 +181,10 @@ export default {
 
 		showMediaSettingsToggle() {
 			return (!hasTalkFeature(this.token, 'federation-v1') || !this.conversation.remoteServer)
+		},
+
+		supportBanV1() {
+			return hasTalkFeature(this.token, 'ban-v1')
 		},
 
 		showMediaSettings() {
