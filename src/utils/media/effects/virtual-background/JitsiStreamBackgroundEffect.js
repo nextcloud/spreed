@@ -4,7 +4,6 @@
  */
 // @flow
 
-import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 import {
 	CLEAR_TIMEOUT,
 	TIMEOUT_TICK,
@@ -62,7 +61,9 @@ export default class JitsiStreamBackgroundEffect {
 
 		const segmentationPixelCount = this._options.width * this._options.height
 		this._segmentationPixelCount = segmentationPixelCount
-		this._model = new WebWorker()
+		this._model = new Worker(new URL('./JitsiStreamBackgroundEffect.worker.js', import.meta.url), {
+			type: 'module',
+		})
 		this._model.postMessage({
 			message: 'makeTFLite',
 			segmentationPixelCount,

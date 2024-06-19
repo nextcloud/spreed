@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import { join, relative } from 'node:path'
 
 import { createAppConfig } from '@nextcloud/vite-config'
 
@@ -55,6 +55,40 @@ export default createAppConfig({
 			commonjsOptions: {
 				include: [/node_modules/, /src[/\\]utils[/\\]media[/\\]effects[/\\]virtual-background[/\\]vendor/],
 				transformMixedEsModules: true,
+			},
+		},
+
+		worker: {
+			rollupOptions: {
+				output: {
+					// Move worker and its assets and chunks to assets and chunks of main entrypoints
+					// Note: JitsiStreamBackgroundEffect worker's assets (wasm/tflite) must keep original names
+					entryFileNames: 'js/assets/[name].mjs',
+					assetFileNames: 'js/assets/[name][extname]',
+					chunkFileNames: 'js/chunks/[name].mjs',
+				},
+			},
+		},
+
+		experimental: {
+			// TODO: find a way to reuse @nextcloud/vite-config or update upstream to support Workers
+			renderBuiltUrl(filename, { hostId, hostType }) {
+				// Workers doesn't have window object and cannot use window.OC.filePath
+				// Use relative import instead
+				if (hostId.endsWith('.worker.mjs')) {
+					return {
+						relative: true,
+					}
+				}
+
+				// Copy from @nextcloud/vite-config...
+				if (hostType === 'css') {
+					return relative('../css', `../${filename}`)
+				}
+
+				return {
+					runtime: `window.OC.filePath('spreed', '', '${filename}')`,
+				}
 			},
 		},
 

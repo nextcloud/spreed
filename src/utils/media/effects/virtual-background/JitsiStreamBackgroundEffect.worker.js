@@ -117,7 +117,3 @@ function runInference(frameId) {
 	}
 	self.postMessage({ message: 'inferenceRun', segmentationResult: segmentationMaskData, frameId })
 }
-
-// This is needed to make the linter happy, but even if nothing is actually
-// exported the worker is loaded as expected.
-export default null
