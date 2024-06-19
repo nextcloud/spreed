@@ -46,6 +46,8 @@ export default createAppConfig({
 				output: {
 					entryFileNames: 'js/talk-[name].mjs',
 					chunkFileNames: 'js/chunks/[name].mjs',
+					// TODO: this setting doesn't work
+					// experimentalMinChunkSize: 100 * 1024 ** 2,
 				},
 			},
 
