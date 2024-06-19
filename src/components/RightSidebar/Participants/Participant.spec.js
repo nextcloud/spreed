@@ -13,13 +13,15 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 
 import Participant from './Participant.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { ATTENDEE, PARTICIPANT } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
-import { findNcActionButton } from '../../../test-helpers.js'
+import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
 
 describe('Participant.vue', () => {
 	let conversation
@@ -104,6 +106,8 @@ describe('Participant.vue', () => {
 			},
 			stubs: {
 				NcActionButton,
+				NcButton,
+				NcDialog,
 			},
 			directives: {
 				tooltip: tooltipMock,
@@ -625,6 +629,12 @@ describe('Participant.vue', () => {
 				expect(actionButton.exists()).toBe(true)
 
 				await actionButton.find('button').trigger('click')
+
+				const dialog = wrapper.findComponent(NcDialog)
+				expect(dialog.exists()).toBeTruthy()
+
+				const button = findNcButton(dialog, 'Remove')
+				await button.find('button').trigger('click')
 
 				expect(removeAction).toHaveBeenCalledWith(expect.anything(), {
 					token: 'current-token',
