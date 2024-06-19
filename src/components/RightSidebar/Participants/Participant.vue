@@ -284,14 +284,15 @@
 					</template>
 					{{ t('spreed', 'Edit permissions') }}
 				</NcActionButton>
+				<NcActionSeparator />
 			</template>
 
 			<!-- Remove -->
-			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
 			<NcActionButton v-if="canBeModerated"
 				key="remove-participant"
+				class="critical"
 				close-after-click
-				@click="removeParticipant">
+				@click="isRemoveDialogOpen = true">
 				<template #icon>
 					<Delete :size="20" />
 				</template>
@@ -305,6 +306,22 @@
 			:participant="participant"
 			:token="token"
 			@close="hidePermissionsEditor" />
+
+		<!-- Confirmation required to remove participant -->
+		<NcDialog v-if="isRemoveDialogOpen"
+			:open.sync="isRemoveDialogOpen"
+			:name="removeParticipantLabel"
+			:container="container">
+			<p> {{ removeDialogMessage }} </p>
+			<template #actions>
+				<NcButton type="tertiary" @click="isRemoveDialogOpen = false">
+					{{ t('spreed', 'Dismiss') }}
+				</NcButton>
+				<NcButton type="error" @click="removeParticipant">
+					{{ t('spreed', 'Remove') }}
+				</NcButton>
+			</template>
+		</NcDialog>
 
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
@@ -346,6 +363,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
@@ -378,6 +396,7 @@ export default {
 		NcActionText,
 		NcActionSeparator,
 		NcButton,
+		NcDialog,
 		ParticipantPermissionsEditor,
 		// Icons
 		Account,
@@ -450,6 +469,7 @@ export default {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
 			permissionsEditor: false,
+			isRemoveDialogOpen: false,
 			disabled: false,
 		}
 	},
@@ -775,6 +795,21 @@ export default {
 			}
 		},
 
+		removeDialogMessage() {
+			switch (this.participant.actorType) {
+			case ATTENDEE.ACTOR_TYPE.GROUPS:
+				return t('spreed', 'Do you really want to remove group "{displayName}" and its members from this conversation?',
+					this.participant, undefined, { escape: false, sanitize: false })
+			case ATTENDEE.ACTOR_TYPE.CIRCLES:
+				return t('spreed', 'Do you really want to remove team "{displayName}" and its members from this conversation?',
+					this.participant, undefined, { escape: false, sanitize: false })
+			case ATTENDEE.ACTOR_TYPE.USERS:
+			default:
+				return t('spreed', 'Do you really want to remove {displayName} from this conversation?',
+					this.participant, undefined, { escape: false, sanitize: false })
+			}
+		},
+
 		showModeratorLabel() {
 			return this.isModerator
 				&& ![CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].includes(this.conversation.type)
@@ -943,6 +978,7 @@ export default {
 				token: this.token,
 				attendeeId: this.attendeeId,
 			})
+			this.isRemoveDialogOpen = false
 		},
 
 		grantAllPermissions() {
@@ -1199,6 +1235,10 @@ export default {
 	.participant-row__user-descriptor > span {
 		color: var(--color-text-maxcontrast);
 	}
+}
+
+.critical > :deep(.action-button) {
+	color: var(--color-error);
 }
 
 </style>
