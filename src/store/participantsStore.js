@@ -6,17 +6,18 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import Vue from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import { ATTENDEE, PARTICIPANT } from '../constants.js'
+import { banActor } from '../services/banService.ts'
 import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.js'
-import { setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
+import { hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.js'
 import {
 	promoteToModerator,
@@ -560,12 +561,25 @@ const actions = {
 		commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
-	async removeParticipant({ commit, getters }, { token, attendeeId }) {
+	async removeParticipant({ commit, getters }, { token, attendeeId, banParticipant, internalNote = '' }) {
 		const attendee = getters.getParticipant(token, attendeeId)
 		if (!attendee) {
 			return
 		}
 
+		if (hasTalkFeature(token, 'ban-v1') && banParticipant) {
+			try {
+				await banActor(token, {
+					actorId: attendee.actorId,
+					actorType: attendee.actorType,
+					internalNote,
+				})
+				showSuccess(t('spreed', 'Participant is banned successfully'))
+			} catch (error) {
+				showError(t('spreed', 'Error while banning the participant'))
+				console.error('Error while banning the participant: ', error)
+			}
+		}
 		await removeAttendeeFromConversation(token, attendeeId)
 		commit('deleteParticipant', { token, attendeeId })
 	},

@@ -14,7 +14,10 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Participant from './Participant.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
@@ -107,7 +110,10 @@ describe('Participant.vue', () => {
 			stubs: {
 				NcActionButton,
 				NcButton,
+				NcCheckboxRadioSwitch,
 				NcDialog,
+				NcInputField,
+				NcTextField,
 			},
 			directives: {
 				tooltip: tooltipMock,
@@ -639,6 +645,8 @@ describe('Participant.vue', () => {
 				expect(removeAction).toHaveBeenCalledWith(expect.anything(), {
 					token: 'current-token',
 					attendeeId: 'alice-attendee-id',
+					banParticipant: false,
+					internalNote: '',
 				})
 			}
 
@@ -649,6 +657,56 @@ describe('Participant.vue', () => {
 				const wrapper = mountParticipant(participant)
 				const actionButton = findNcActionButton(wrapper, 'Remove participant')
 				expect(actionButton.exists()).toBe(false)
+			}
+
+			/**
+			 * @param {string} buttonText Label of the remove action to find
+			 * @param {string} internalNote text of provided note
+			 */
+			async function testCanBan(buttonText = 'Remove participant', internalNote = 'test note') {
+				const wrapper = mountParticipant(participant)
+				const actionButton = findNcActionButton(wrapper, buttonText)
+				expect(actionButton.exists()).toBe(true)
+
+				await actionButton.find('button').trigger('click')
+
+				const dialog = wrapper.findComponent(NcDialog)
+				expect(dialog.exists()).toBeTruthy()
+
+				const checkbox = dialog.findComponent(NcCheckboxRadioSwitch)
+				await checkbox.find('input').trigger('change')
+
+				const input = dialog.findComponent(NcTextField)
+				expect(input.exists()).toBeTruthy()
+				input.find('input').setValue(internalNote)
+				await input.find('input').trigger('change')
+
+				const button = findNcButton(dialog, 'Remove')
+				await button.find('button').trigger('click')
+
+				expect(removeAction).toHaveBeenCalledWith(expect.anything(), {
+					token: 'current-token',
+					attendeeId: 'alice-attendee-id',
+					banParticipant: true,
+					internalNote
+				})
+			}
+
+			/**
+			 * @param {string} buttonText Label of the remove action to find
+			 */
+			async function testCannotBan(buttonText = 'Remove participant') {
+				const wrapper = mountParticipant(participant)
+				const actionButton = findNcActionButton(wrapper, buttonText)
+				expect(actionButton.exists()).toBe(true)
+
+				await actionButton.find('button').trigger('click')
+
+				const dialog = wrapper.findComponent(NcDialog)
+				expect(dialog.exists()).toBeTruthy()
+
+				const checkbox = dialog.findComponent(NcCheckboxRadioSwitch)
+				expect(checkbox.exists()).toBeFalsy()
 			}
 
 			test('allows a moderator to remove a moderator', async () => {
@@ -706,6 +764,30 @@ describe('Participant.vue', () => {
 			test('does not allow a non-moderator to remove', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				await testCannotRemove()
+			})
+
+			test('allows a moderator to ban a moderator', async () => {
+				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
+				participant.participantType = PARTICIPANT.TYPE.USER
+				await testCanBan()
+			})
+
+			test('allows a moderator to ban a guest', async () => {
+				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
+				participant.participantType = PARTICIPANT.TYPE.GUEST
+				await testCanBan()
+			})
+
+			test('does not allow a moderator to ban a moderator', async () => {
+				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
+				participant.participantType = PARTICIPANT.TYPE.MODERATOR
+				await testCannotBan()
+			})
+
+			test('does not allow a moderator to ban a group', async () => {
+				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
+				participant.actorType = ATTENDEE.ACTOR_TYPE.GROUPS
+				await testCannotBan('Remove group and members')
 			})
 		})
 		describe('dial-in PIN', () => {
