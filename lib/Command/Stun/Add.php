@@ -50,6 +50,14 @@ class Add extends Base {
 			$servers = [];
 		}
 
+		// check if the server is already in the list
+		foreach ($servers as $existingServer) {
+			if ($existingServer === "$host:$port") {
+				$output->writeln('<error>Server already exists.</error>');
+				return 1;
+			}
+		}
+
 		$servers[] = "$host:$port";
 
 		$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));

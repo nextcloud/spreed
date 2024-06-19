@@ -98,6 +98,19 @@ class Add extends Base {
 			$servers = [];
 		}
 
+		//Checking if the server is already added
+		foreach ($servers as $existingServer) {
+			if (
+				$existingServer['schemes'] === $schemes &&
+				$existingServer['server'] === $server &&
+				$existingServer['protocols'] === $protocols
+			) {
+				$output->writeln('<error>Server already exists with the same configuration.</error>');
+				return 1;
+			}
+		}
+
+
 		$servers[] = [
 			'schemes' => $schemes,
 			'server' => $server,
