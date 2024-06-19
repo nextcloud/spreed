@@ -70,6 +70,8 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import { CALL } from '../../constants.js'
 import { formattedTime } from '../../utils/formattedTime.ts'
 
+const ONE_HOUR_MS = 60 * 60 * 1000
+
 export default {
 	name: 'CallTime',
 
@@ -97,7 +99,6 @@ export default {
 			showPopover: false,
 			isCallDurationHintShown: false,
 			timer: null,
-			untilCallDurationHintShown: null,
 		}
 	},
 
@@ -154,11 +155,8 @@ export default {
 
 	watch: {
 		callTime(value) {
-			if (value && !this.untilCallDurationHintShown) {
-				this.untilCallDurationHintShown = (1000 * 60 * 60) - value + 1000
-				setTimeout(() => {
-					this.showCallDurationHint()
-				}, this.untilCallDurationHintShown)
+			if (value > ONE_HOUR_MS && value < (ONE_HOUR_MS + 10000) && !this.isCallDurationHintShown) {
+				this.showCallDurationHint()
 			}
 		},
 	},
