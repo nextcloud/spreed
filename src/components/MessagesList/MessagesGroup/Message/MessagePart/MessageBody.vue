@@ -233,12 +233,15 @@ export default {
 		},
 
 		hideDate() {
-			return this.isTemporary || this.isDeleting || !!this.message.sendingFailure
+			return this.isDeleting || !!this.message.sendingFailure
 		},
 
 		messageTime() {
 			if (this.hideDate) {
 				return null
+			}
+			if (this.isTemporary) {
+				return moment().format('LT')
 			}
 			return moment(this.message.timestamp * 1000).format('LT')
 		},
@@ -246,6 +249,9 @@ export default {
 		messageDate() {
 			if (this.hideDate) {
 				return null
+			}
+			if (this.isTemporary) {
+				return moment().format('LL')
 			}
 			return moment(this.message.timestamp * 1000).format('LL')
 		},
