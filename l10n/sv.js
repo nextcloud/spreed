@@ -873,6 +873,7 @@ OC.L10N.register(
     "guest" : "gäst",
     "Demote from moderator" : "Degradera från moderator",
     "Promote to moderator" : "Befordra till moderator",
+    "Remove" : "Ta bort",
     "Next week – {timeLocale}" : "Nästa vecka – {timeLocale}",
     "This weekend – {timeLocale}" : "Den här helgen – {timeLocale}",
     "Remove participant" : "Ta bort deltagare",

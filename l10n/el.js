@@ -840,6 +840,7 @@ OC.L10N.register(
     "Demote from moderator" : "Υποβάθμιση από συντονιστή",
     "Promote to moderator" : "Προαγωγή από συντονιστή",
     "Resend invitation" : "Επαναποστολή πρόσκλησης",
+    "Remove" : "Αφαίρεση",
     "Settings for participant \"{user}\"" : "Ρυθμίσεις για συμμετέχοντα \"{user}\"",
     "Add participant \"{user}\"" : "Προσθήκη συμμετέχοντος \"{user}\"",
     "Participant \"{user}\"" : "Συμμετέχων \"{user}\"",

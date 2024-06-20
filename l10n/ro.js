@@ -685,6 +685,7 @@ OC.L10N.register(
     "Send call notification" : "Trimite notificare de apel",
     "Grant all permissions" : "Acordă toate permisiunile",
     "Remove all permissions" : "Elimină toate permisiunile",
+    "Remove" : "Elimină",
     "Settings for participant \"{user}\"" : "Setări pentru  participant \"{user}\"",
     "Add participant \"{user}\"" : "Adaugă participant \"{user}\"",
     "Clear reminder – {timeLocale}" : "Șterge memento – {timeLocale}",

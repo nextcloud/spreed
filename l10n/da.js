@@ -463,6 +463,7 @@ OC.L10N.register(
     "guest" : "Gæst",
     "Demote from moderator" : "Degrader fra moderator",
     "Promote to moderator" : "Forfrem til moderator",
+    "Remove" : "Fjern",
     "Settings for participant \"{user}\"" : "Indstillinger for deltager \"{user}\"",
     "Remove participant" : "Fjern deltager",
     "Add users" : "Tilføj brugere",

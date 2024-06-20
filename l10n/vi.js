@@ -569,6 +569,7 @@ OC.L10N.register(
     "Demote from moderator" : "Hạ uy tín từ người kiểm duyệt",
     "Promote to moderator" : "Giới thiệu người kiểm duyệt",
     "Resend invitation" : "Gửi lại lời mời",
+    "Remove" : "Xoá",
     "Settings for participant \"{user}\"" : "Cài đặt cho người tham gia \"{user}\"",
     "Add participant \"{user}\"" : "Thêm người tham gia \"{user}\"",
     "Participant \"{user}\"" : "Người tham gia \"{user}\"",

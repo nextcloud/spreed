@@ -1412,6 +1412,7 @@
     "Reset custom permissions" : "Redefinir permissões personalizadas",
     "Grant all permissions" : "Conceder todas as permissões",
     "Remove all permissions" : "Remova todas as permissões",
+    "Remove" : "Remover",
     "Settings for participant \"{user}\"" : "Configurações para o participante \"{user}\"",
     "Add participant \"{user}\"" : "Adicionar participante \"{user}\"",
     "Participant \"{user}\"" : "Participante \"{user}\"",

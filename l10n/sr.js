@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Ресетуј произвољне дозволе",
     "Grant all permissions" : "Одобри све дозволе",
     "Remove all permissions" : "Уклони све дозволе",
+    "Remove" : "Уклони",
     "Settings for participant \"{user}\"" : "Подешавања за учесника „{user}”",
     "Add participant \"{user}\"" : "Додај учесника „{user}”",
     "Participant \"{user}\"" : "Учесник „{user}”",

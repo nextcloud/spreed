@@ -1024,6 +1024,7 @@ OC.L10N.register(
     "Copy phone number" : "Kopioi puhelinnumero",
     "Grant all permissions" : "Myönnä kaikki oikeudet",
     "Remove all permissions" : "Poista kaikki oikeudet",
+    "Remove" : "Poista",
     "Settings for participant \"{user}\"" : "Osallistujen \"{user}\" asetukset",
     "Add participant \"{user}\"" : "Lisää osallistuja \"{user}\"",
     "Participant \"{user}\"" : "Osallistuja \"{user}\"",

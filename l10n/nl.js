@@ -982,6 +982,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Herstel aangepaste machtigingen",
     "Grant all permissions" : "Geef alle machtigingen",
     "Remove all permissions" : "Verwijder alle machtigingen",
+    "Remove" : "Verwijderen",
     "Settings for participant \"{user}\"" : "Instellingen voor deelnemer \"{user}\"",
     "Add participant \"{user}\"" : "Toevoegen deelnemer \"{user}\"",
     "Participant \"{user}\"" : "Deelnemer \"{user}\"",

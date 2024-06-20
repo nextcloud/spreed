@@ -1208,6 +1208,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Berezarri baimen pertsonalizatuak",
     "Grant all permissions" : "Eman baimen guztiak",
     "Remove all permissions" : "Kendu baimen guztiak",
+    "Remove" : "Kendu",
     "Settings for participant \"{user}\"" : "\"{user}\" parte-hartzailearen ezarpenak",
     "Add participant \"{user}\"" : "Gehitu \"{user}\" parte-hartzailea",
     "Participant \"{user}\"" : "\"{user}\" parte-hartzailea",
