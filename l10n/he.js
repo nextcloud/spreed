@@ -521,6 +521,7 @@ OC.L10N.register(
     "guest" : "אורח",
     "Demote from moderator" : "הורדה מדרגת פיקוח",
     "Promote to moderator" : "קידום לדרגת פיקוח",
+    "Remove" : "הסרה",
     "Remove group and members" : "הסרת קבוצה וחברים",
     "Remove participant" : "הסרת משתתף",
     "Add groups" : "הוספת קבוצות",

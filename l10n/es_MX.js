@@ -434,6 +434,7 @@ OC.L10N.register(
     "guest" : "invitado",
     "Demote from moderator" : "Degradar de moderador",
     "Promote to moderator" : "Promover a moderador",
+    "Remove" : "Borrar",
     "Remove participant" : "Eliminar participante",
     "Searching …" : "Buscando  …",
     "No results" : "Sin resultados",

@@ -1347,6 +1347,7 @@ OC.L10N.register(
     "Reset custom permissions" : "사용자 정의 권한 재설정",
     "Grant all permissions" : "모든 권한 승인",
     "Remove all permissions" : "모든 권한 제거",
+    "Remove" : "삭제",
     "Settings for participant \"{user}\"" : "참가자 \"{user}\"에 대한 설정",
     "Add participant \"{user}\"" : "참가자 \"{user}\" 추가",
     "Participant \"{user}\"" : "참가자 \"{user}\"",

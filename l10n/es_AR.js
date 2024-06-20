@@ -95,6 +95,7 @@ OC.L10N.register(
     "New file" : "Nuevo archivo",
     "Settings" : "Ajustes",
     "Send" : "Enviar",
+    "Remove" : "Eliminar",
     "Searching …" : "Buscando ...",
     "No results" : "Sin resultados",
     "Add users or groups" : "Agregar usuarios o grupos",

@@ -1401,6 +1401,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Tilbakestill egendefinerte rettigheter",
     "Grant all permissions" : "Gi alle rettigheter",
     "Remove all permissions" : "Fjern alle rettigheter",
+    "Remove" : "Fjern",
     "Settings for participant \"{user}\"" : "Innstillinger for deltaker \"{user}\"",
     "Add participant \"{user}\"" : "Legg til deltaker \"{user}\"",
     "Participant \"{user}\"" : "Deltaker \"{user}\"",
