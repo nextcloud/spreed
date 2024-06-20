@@ -195,6 +195,7 @@ export default {
 
 	data() {
 		return {
+			isEditing: false,
 			showReloadButton: false,
 			codeBlocks: null,
 			currentCodeBlock: null,
@@ -267,7 +268,7 @@ export default {
 		},
 
 		showLoadingIcon() {
-			return (this.isTemporary && !this.isFileShare) || this.isDeleting
+			return this.isTemporary || this.isDeleting || this.isEditing
 		},
 
 		loadingIconTooltip() {
@@ -303,6 +304,7 @@ export default {
 	},
 
 	mounted() {
+		EventBus.on('editing-message-processing', this.setIsEditing)
 		if (!this.containsCodeBlocks) {
 			return
 		}
@@ -395,7 +397,13 @@ export default {
 				console.error(error)
 				showError(t('spreed', 'Could not update the message'))
 			}
-		}
+		},
+
+		setIsEditing({ messageId, value }) {
+			if (messageId === this.message.id) {
+				this.isEditing = value
+			}
+		},
 	},
 }
 </script>
