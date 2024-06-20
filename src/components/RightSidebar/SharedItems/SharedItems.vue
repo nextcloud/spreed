@@ -40,7 +40,7 @@
 				:row-layout="!isMedia"
 				:item-type="type"
 				is-shared-items
-				v-bind="item.messageParameters.file" />
+				:file="item.messageParameters.file" />
 		</template>
 	</div>
 </template>

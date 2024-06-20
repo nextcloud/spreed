@@ -46,7 +46,7 @@
 			tabindex="1"
 			type="primary"
 			:aria-label="removeAriaLabel"
-			@click="$emit('remove-file', id)">
+			@click="$emit('remove-file', file.id)">
 			<template #icon>
 				<Close />
 			</template>
@@ -103,94 +103,21 @@ export default {
 			type: String,
 			required: true,
 		},
+
 		/**
-		 * File id
+		 * File object
 		 */
-		id: {
-			type: String,
+		file: {
+			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Reference id from the message
 		 */
 		referenceId: {
 			type: String,
 			default: '',
-		},
-		/**
-		 * File name
-		 */
-		name: {
-			type: String,
-			required: true,
-		},
-		/**
-		 * File path relative to the user's home storage,
-		 * or link share root, includes the file name.
-		 */
-		path: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * File size in bytes
-		 */
-		size: {
-			type: String,
-			default: '-1',
-		},
-		/**
-		 * Download link
-		 */
-		link: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * Mime type
-		 */
-		mimetype: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * File ETag
-		 */
-		etag: {
-			type: String,
-			default: '',
-		},
-		/**
-		 * File ETag
-		 */
-		permissions: {
-			type: String,
-			default: '0',
-		},
-		/**
-		 * Whether a preview is available, string "yes" for yes
-		 * otherwise the string "no"
-		 */
-		// FIXME: use booleans here
-		previewAvailable: {
-			type: String,
-			default: 'no',
-		},
-
-		/**
-		 * If preview and metadata are available, return width
-		 */
-		width: {
-			type: String,
-			default: null,
-		},
-
-		/**
-		 * If preview and metadata are available, return height
-		 */
-		height: {
-			type: String,
-			default: null,
 		},
 
 		/**
@@ -200,26 +127,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		/**
-		 * Upload id from the file upload store.
-		 *
-		 * In case this component is used to display a file that is being uploaded
-		 * this parameter is used to access the file upload status in the store
-		 */
-		uploadId: {
-			type: Number,
-			default: null,
-		},
-		/**
-		 * File upload index from the file upload store.
-		 *
-		 * In case this component is used to display a file that is being uploaded
-		 * this parameter is used to access the file upload status in the store
-		 */
-		index: {
-			type: String,
-			default: '',
-		},
+
 		/**
 		 * Whether the container is the upload editor.
 		 * True if this component is used in the upload editor.
@@ -228,13 +136,6 @@ export default {
 		isUploadEditor: {
 			type: Boolean,
 			default: false,
-		},
-		/**
-		 * The link to the file for displaying it in the preview
-		 */
-		localUrl: {
-			type: String,
-			default: '',
 		},
 
 		rowLayout: {
@@ -281,9 +182,9 @@ export default {
 			// is not easily recognizable, when:
 			return (
 				// the file is not an image
-				!this.mimetype.startsWith('image/')
+				!this.file.mimetype.startsWith('image/')
 				// the image has no preview (ex: disabled on server)
-				|| (this.previewAvailable !== 'yes' && !this.localUrl)
+				|| (this.file['preview-available'] !== 'yes' && !this.file.localUrl)
 				// the preview failed loading
 				|| this.failed
 				// always show in upload editor
@@ -292,11 +193,11 @@ export default {
 		},
 
 		fileDetail() {
-			return this.name
+			return this.file.name
 		},
 
 		fallbackLocalUrl() {
-			if (!this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')) {
+			if (!this.file.mimetype.startsWith('image/') && !this.file.mimetype.startsWith('video/')) {
 				return undefined
 			}
 			return this.$store.getters.getLocalUrl(this.referenceId)
@@ -308,7 +209,7 @@ export default {
 				return null
 			}
 			return {
-				content: this.name,
+				content: this.file.name,
 				delay: { show: 500 },
 				placement: 'left',
 			}
@@ -329,24 +230,24 @@ export default {
 				return
 			} else if (this.isVoiceMessage && !this.isSharedItems) {
 				return {
-					name: this.name,
-					path: this.path,
-					link: this.link,
+					name: this.file.name,
+					path: this.file.path,
+					link: this.file.link,
 				}
 			}
 			return {
-				href: this.link,
+				href: this.file.link,
 				target: '_blank',
 				rel: 'noopener noreferrer',
 			}
 		},
 
 		defaultIconUrl() {
-			return OC.MimeType.getIconUrl(this.mimetype) || imagePath('core', 'filetypes/file')
+			return OC.MimeType.getIconUrl(this.file.mimetype) || imagePath('core', 'filetypes/file')
 		},
 
 		mediumPreview() {
-			return !this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')
+			return !this.file.mimetype.startsWith('image/') && !this.file.mimetype.startsWith('video/')
 		},
 
 		previewImageClass() {
@@ -361,7 +262,7 @@ export default {
 
 			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
 				classes += 'mimeicon'
-			} else if (this.previewAvailable === 'yes') {
+			} else if (this.file['preview-available'] === 'yes') {
 				classes += 'media'
 			}
 
@@ -370,7 +271,7 @@ export default {
 
 		imageContainerStyle() {
 			// Fallback for loading mimeicons (preview for audio files is not provided)
-			if (this.previewAvailable !== 'yes' || this.mimetype.startsWith('audio/')) {
+			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/')) {
 				return {
 					width: this.smallPreview ? '32px' : '128px',
 					height: this.smallPreview ? '32px' : '128px',
@@ -381,7 +282,7 @@ export default {
 			const heightConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 384)
 
 			// Fallback when no metadata available
-			if (!this.width || !this.height) {
+			if (!this.file.width || !this.file.height) {
 				return {
 					width: widthConstraint + 'px',
 					height: heightConstraint + 'px',
@@ -389,13 +290,13 @@ export default {
 			}
 
 			const sizeMultiplicator = Math.min(
-				(heightConstraint > parseInt(this.height, 10) ? 1 : (heightConstraint / parseInt(this.height, 10))),
-				(widthConstraint > parseInt(this.width, 10) ? 1 : (widthConstraint / parseInt(this.width, 10)))
+				(heightConstraint > parseInt(this.file.height, 10) ? 1 : (heightConstraint / parseInt(this.file.height, 10))),
+				(widthConstraint > parseInt(this.file.width, 10) ? 1 : (widthConstraint / parseInt(this.file.width, 10)))
 			)
 
 			return {
-				width: parseInt(this.width, 10) * sizeMultiplicator + 'px',
-				aspectRatio: this.width + '/' + this.height,
+				width: parseInt(this.file.width, 10) * sizeMultiplicator + 'px',
+				aspectRatio: this.file.width + '/' + this.file.height,
 			}
 		},
 
@@ -408,10 +309,10 @@ export default {
 				return PREVIEW_TYPE.TEMPORARY
 			}
 
-			if (this.previewAvailable !== 'yes') {
+			if (this.file['preview-available'] !== 'yes') {
 				return PREVIEW_TYPE.MIME_ICON
 			}
-			if (this.mimetype === 'image/gif' && parseInt(this.size, 10) <= this.maxGifSize) {
+			if (this.file.mimetype === 'image/gif' && parseInt(this.file.size, 10) <= this.maxGifSize) {
 				return PREVIEW_TYPE.DIRECT
 			}
 
@@ -422,20 +323,20 @@ export default {
 			const userId = this.$store.getters.getUserId()
 
 			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
-				return this.localUrl
+				return this.file.localUrl
 			}
 			if (this.fallbackLocalUrl) {
 				return this.fallbackLocalUrl
 			}
 			if (this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
-				return OC.MimeType.getIconUrl(this.mimetype)
+				return OC.MimeType.getIconUrl(this.file.mimetype)
 			}
 			// whether to embed/render the file directly
 			if (this.previewType === PREVIEW_TYPE.DIRECT) {
 				// return direct image
 				if (userId === null) {
 					// guest mode, use public link download URL
-					return this.link + '/download/' + encodePath(this.name)
+					return this.file.link + '/download/' + encodePath(this.file.name)
 				} else {
 					// use direct DAV URL
 					return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
@@ -451,14 +352,14 @@ export default {
 			if (userId === null) {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
-				const token = this.link.slice(this.link.lastIndexOf('/') + 1)
+				const token = this.file.link.slice(this.file.link.lastIndexOf('/') + 1)
 				return generateUrl('/apps/files_sharing/publicpreview/{token}?x=-1&y={height}&a=1', {
 					token,
 					height: previewSize,
 				})
 			} else {
 				return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
-					fileId: this.id,
+					fileId: this.file.id,
 					height: previewSize,
 				})
 			}
@@ -471,7 +372,7 @@ export default {
 
 			const availableHandlers = OCA.Viewer.availableHandlers
 			for (let i = 0; i < availableHandlers.length; i++) {
-				if (availableHandlers[i]?.mimes?.includes && availableHandlers[i].mimes.includes(this.mimetype)) {
+				if (availableHandlers[i]?.mimes?.includes && availableHandlers[i].mimes.includes(this.file.mimetype)) {
 					return true
 				}
 			}
@@ -490,23 +391,23 @@ export default {
 			}
 
 			// videos only display a preview, so always show a button if playable
-			return this.mimetype === 'image/gif' || this.mimetype.startsWith('video/')
+			return this.file.mimetype === 'image/gif' || this.file.mimetype.startsWith('video/')
 		},
 
 		internalAbsolutePath() {
-			return this.path.startsWith('/') ? this.path : '/' + this.path
+			return this.file.path.startsWith('/') ? this.file.path : '/' + this.file.path
 		},
 
 		isTemporaryUpload() {
-			return this.id.startsWith('temp') && this.index && this.uploadId
+			return this.file.id.startsWith('temp') && this.file.index && this.file.uploadId
 		},
 
 		uploadFile() {
-			return this.$store.getters.getUploadFile(this.uploadId, this.index)
+			return this.$store.getters.getUploadFile(this.file.uploadId, this.file.index)
 		},
 
 		upload() {
-			return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile.sharePath))
+			return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile?.sharePath))
 		},
 
 		uploadProgress() {
@@ -528,11 +429,11 @@ export default {
 
 		showUploadProgress() {
 			return this.isTemporaryUpload && !this.isUploadEditor
-				&& ['shared', 'sharing', 'successUpload', 'uploading'].includes(this.uploadFile?.status)
+				&& ['shared', 'sharing', 'successUpload', 'uploading', 'failedUpload'].includes(this.uploadFile?.status)
 		},
 
 		hasTemporaryImageUrl() {
-			return this.mimetype.startsWith('image/') && this.localUrl
+			return this.file.mimetype.startsWith('image/') && this.file.localUrl
 		},
 
 		wrapperTabIndex() {
@@ -540,7 +441,7 @@ export default {
 		},
 
 		removeAriaLabel() {
-			return t('spreed', 'Remove {fileName}', { fileName: this.name })
+			return t('spreed', 'Remove {fileName}', { fileName: this.file.name })
 		},
 	},
 
@@ -576,7 +477,7 @@ export default {
 		t,
 		handleClick(event) {
 			if (this.isUploadEditor) {
-				this.$emit('remove-file', this.id)
+				this.$emit('remove-file', this.file.id)
 				return
 			}
 
@@ -600,9 +501,9 @@ export default {
 					return getRevertedList(messages)
 				}
 
-				this.openViewer(this.internalAbsolutePath, list, this, loadMore)
+				this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
 			} else {
-				this.openViewer(this.internalAbsolutePath, [this], this)
+				this.openViewer(this.internalAbsolutePath, [this.file], this.file)
 
 			}
 		},

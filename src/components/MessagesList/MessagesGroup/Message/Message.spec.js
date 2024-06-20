@@ -395,7 +395,7 @@ describe('Message.vue', () => {
 						},
 						file: {
 							component: FilePreview,
-							props: params.file,
+							props: { file: params.file },
 						},
 					}
 				)
@@ -423,7 +423,7 @@ describe('Message.vue', () => {
 						},
 						file: {
 							component: FilePreview,
-							props: params.file,
+							props: { file: params.file },
 						},
 					}
 				)

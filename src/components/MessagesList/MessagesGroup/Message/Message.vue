@@ -268,11 +268,12 @@ export default {
 				} else if (type === 'file' && mimetype !== 'text/vcard') {
 					richParameters[p] = {
 						component: FilePreview,
-						props: Object.assign({
+						props: {
 							token: this.message.token,
 							itemType,
 							referenceId: this.message.referenceId,
-						}, this.message.messageParameters[p]),
+							file: this.message.messageParameters[p],
+						},
 					}
 				} else if (type === 'deck-card') {
 					richParameters[p] = {
