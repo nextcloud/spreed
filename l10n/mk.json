@@ -806,6 +806,7 @@
     "Send call notification" : "Испрати известување за повик",
     "Grant all permissions" : "Додели ги сите дозволи",
     "Remove all permissions" : "Острани ги сите дозволи",
+    "Remove" : "Отстрани ",
     "Settings for participant \"{user}\"" : "Параметри за учесникот \"{user}\"",
     "Add participant \"{user}\"" : "Додади учесник \"{user}\"",
     "Participant \"{user}\"" : "Учесник \"{user}\"",

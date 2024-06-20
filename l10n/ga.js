@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Athshocraigh ceadanna saincheaptha",
     "Grant all permissions" : "Deonaigh gach cead",
     "Remove all permissions" : "Bain gach cead",
+    "Remove" : "Bain",
     "Settings for participant \"{user}\"" : "Socruithe don rannpháirtí \"{user}\"",
     "Add participant \"{user}\"" : "Cuir rannpháirtí \"{user}\" leis",
     "Participant \"{user}\"" : "Rannpháirtí \"{user}\"",

@@ -1376,6 +1376,7 @@ OC.L10N.register(
     "Reset custom permissions" : "カスタム権限をリセット",
     "Grant all permissions" : "すべての権限を付与",
     "Remove all permissions" : "すべての権限を削除",
+    "Remove" : "削除",
     "Settings for participant \"{user}\"" : "参加者\"{user}\"の設定",
     "Add participant \"{user}\"" : "参加者 \"{user}\" を追加",
     "Participant \"{user}\"" : "参加者 \"{user}\"",

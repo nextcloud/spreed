@@ -986,6 +986,7 @@ OC.L10N.register(
     "Send call notification" : "Надіслати сповіщення про дзвінок",
     "Grant all permissions" : "Надати всі дозволи",
     "Remove all permissions" : "Вилучити всі дозволи",
+    "Remove" : "Вилучити",
     "Next week – {timeLocale}" : "Наступного тижня - {timeLocale}",
     "This weekend – {timeLocale}" : "На цих вихідних - {timeLocale}",
     "Remove group and members" : "Вилучити групи та учасників",

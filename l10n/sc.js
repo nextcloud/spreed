@@ -875,6 +875,7 @@ OC.L10N.register(
     "Promote to moderator" : "Autoriza a moderare",
     "Resend invitation" : "Torra a imbiare s'invitu",
     "Reset custom permissions" : "Riprìstina is permissos personalizados",
+    "Remove" : "Boga",
     "Settings for participant \"{user}\"" : "Cunfiguratzione pro partetzipante \"{user}\"",
     "Add participant \"{user}\"" : "Agiunghe partetzipante \"{user}\"",
     "Participant \"{user}\"" : "Partetzipante \"{user}\"",

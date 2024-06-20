@@ -900,6 +900,7 @@ OC.L10N.register(
     "Resend invitation" : "Ponovno pošalji pozivnicu",
     "Grant all permissions" : "Dodijeli sva dopuštenja",
     "Remove all permissions" : "Ukloni sva dopuštenja",
+    "Remove" : "Ukloni",
     "Settings for participant \"{user}\"" : "Postavke sudionika „{user}”",
     "Add participant \"{user}\"" : "Dodaj sudionika „{user}”",
     "Participant \"{user}\"" : "Sudionik „{user}”",

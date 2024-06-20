@@ -1281,6 +1281,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Egyéni engedélyek visszaállítása",
     "Grant all permissions" : "Összes jogosultság megadása ",
     "Remove all permissions" : "Összes jogosultság eltávolítása",
+    "Remove" : "Eltávolítás",
     "Settings for participant \"{user}\"" : "„{user}” résztvevő beállításai",
     "Add participant \"{user}\"" : "„{user}” résztvevő hozzáadása",
     "Participant \"{user}\"" : "„{user}” résztvevő",

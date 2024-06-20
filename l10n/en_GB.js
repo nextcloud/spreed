@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Reset custom permissions",
     "Grant all permissions" : "Grant all permissions",
     "Remove all permissions" : "Remove all permissions",
+    "Remove" : "Remove",
     "Settings for participant \"{user}\"" : "Settings for participant \"{user}\"",
     "Add participant \"{user}\"" : "Add participant \"{user}\"",
     "Participant \"{user}\"" : "Participant \"{user}\"",
