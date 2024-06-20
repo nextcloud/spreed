@@ -151,11 +151,12 @@ export default {
 				if (type === 'file') {
 					richParameters[p] = {
 						component: FilePreview,
-						props: Object.assign({
+						props: {
 							token: this.message.token,
 							smallPreview: true,
 							rowLayout: !this.message.messageParameters[p].mimetype.startsWith('image/'),
-						}, this.message.messageParameters[p]),
+							file: this.message.messageParameters[p],
+						},
 					}
 				} else {
 					richParameters[p] = {

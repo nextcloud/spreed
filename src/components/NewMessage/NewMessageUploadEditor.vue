@@ -31,7 +31,7 @@
 						<FilePreview :key="file[1].temporaryMessage.id"
 							:token="token"
 							is-upload-editor
-							v-bind="file[1].temporaryMessage.messageParameters.file"
+							:file="file[1].temporaryMessage.messageParameters.file"
 							@remove-file="handleRemoveFileFromSelection" />
 					</template>
 					<div :key="'addMore'"

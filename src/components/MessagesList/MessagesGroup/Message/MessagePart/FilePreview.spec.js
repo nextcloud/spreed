@@ -51,14 +51,16 @@ describe('FilePreview.vue', () => {
 
 		propsData = {
 			token: 'TOKEN',
-			id: '123',
-			name: 'test.jpg',
-			path: 'path/to/test.jpg',
-			size: '128',
-			etag: '1872ade88f3013edeb33decd74a4f947',
-			permissions: '15',
-			mimetype: 'image/jpeg',
-			previewAvailable: 'yes',
+			file: {
+				id: '123',
+				name: 'test.jpg',
+				path: 'path/to/test.jpg',
+				size: '128',
+				etag: '1872ade88f3013edeb33decd74a4f947',
+				permissions: '15',
+				mimetype: 'image/jpeg',
+				'preview-available': 'yes',
+			},
 		}
 	})
 
@@ -96,7 +98,7 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders file preview for guests', async () => {
-			propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
+			propsData.file.link = 'https://localhost/nc-webroot/s/xtokenx'
 			getUserIdMock.mockClear().mockReturnValue(null)
 
 			const wrapper = shallowMount(FilePreview, {
@@ -172,10 +174,10 @@ describe('FilePreview.vue', () => {
 					}],
 				}))
 
-				propsData.id = 'temp-123'
-				propsData.index = 'index-1'
-				propsData.uploadId = 1000
-				propsData.localUrl = 'blob:XYZ'
+				propsData.file.id = 'temp-123'
+				propsData.file.index = 'index-1'
+				propsData.file.uploadId = 1000
+				propsData.file.localUrl = 'blob:XYZ'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -224,7 +226,7 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders generic mime type icon for unknown mime types', async () => {
-			propsData.previewAvailable = 'no'
+			propsData.file['preview-available'] = 'no'
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 
 			const wrapper = shallowMount(FilePreview, {
@@ -244,12 +246,12 @@ describe('FilePreview.vue', () => {
 
 		describe('gif rendering', () => {
 			beforeEach(() => {
-				propsData.mimetype = 'image/gif'
-				propsData.name = 'test %20.gif'
-				propsData.path = 'path/to/test %20.gif'
+				propsData.file.mimetype = 'image/gif'
+				propsData.file.name = 'test %20.gif'
+				propsData.file.path = 'path/to/test %20.gif'
 			})
 			test('directly renders small GIF files', async () => {
-				propsData.size = '128'
+				propsData.file.size = '128'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -265,8 +267,8 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('directly renders small GIF files (absolute path)', async () => {
-				propsData.size = '128'
-				propsData.path = '/path/to/test %20.gif'
+				propsData.file.size = '128'
+				propsData.file.path = '/path/to/test %20.gif'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -282,8 +284,8 @@ describe('FilePreview.vue', () => {
 			})
 
 			test('directly renders small GIF files for guests', async () => {
-				propsData.size = '128'
-				propsData.link = 'https://localhost/nc-webroot/s/xtokenx'
+				propsData.file.size = '128'
+				propsData.file.link = 'https://localhost/nc-webroot/s/xtokenx'
 				getUserIdMock.mockClear().mockReturnValue(null)
 
 				const wrapper = shallowMount(FilePreview, {
@@ -296,12 +298,12 @@ describe('FilePreview.vue', () => {
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
-					.toBe(propsData.link + '/download/test%20%2520.gif')
+					.toBe(propsData.file.link + '/download/test%20%2520.gif')
 			})
 
 			test('renders static preview for big GIF files', async () => {
 				// 4 MB, bigger than max from capability (3 MB)
-				propsData.size = '4194304'
+				propsData.file.size = '4194304'
 
 				const wrapper = shallowMount(FilePreview, {
 					localVue,
@@ -425,9 +427,9 @@ describe('FilePreview.vue', () => {
 
 			describe('play icon for video', () => {
 				beforeEach(() => {
-					propsData.mimetype = 'video/mp4'
-					propsData.name = 'test.mp4'
-					propsData.path = 'path/to/test.mp4'
+					propsData.file.mimetype = 'video/mp4'
+					propsData.file.name = 'test.mp4'
+					propsData.file.path = 'path/to/test.mp4'
 
 					// viewer needs to be available
 					OCA.Viewer = {
@@ -460,19 +462,19 @@ describe('FilePreview.vue', () => {
 
 				test('does not render play icon for direct renders', async () => {
 					// gif is directly rendered
-					propsData.mimetype = 'image/gif'
-					propsData.name = 'test.gif'
-					propsData.path = 'path/to/test.gif'
+					propsData.file.mimetype = 'image/gif'
+					propsData.file.name = 'test.gif'
+					propsData.file.path = 'path/to/test.gif'
 
 					await testPlayButtonVisible(false)
 				})
 
 				test('render play icon gif previews with big size', async () => {
 					// gif is directly rendered
-					propsData.mimetype = 'image/gif'
-					propsData.name = 'test.gif'
-					propsData.path = 'path/to/test.gif'
-					propsData.size = '10000000' // bigger than default max
+					propsData.file.mimetype = 'image/gif'
+					propsData.file.name = 'test.gif'
+					propsData.file.path = 'path/to/test.gif'
+					propsData.file.size = '10000000' // bigger than default max
 
 					await testPlayButtonVisible(true)
 				})
@@ -502,9 +504,9 @@ describe('FilePreview.vue', () => {
 
 				test('does not render play icon for non-videos', async () => {
 					// viewer supported, but not a video
-					propsData.mimetype = 'image/png'
-					propsData.name = 'test.png'
-					propsData.path = 'path/to/test.png'
+					propsData.file.mimetype = 'image/png'
+					propsData.file.name = 'test.png'
+					propsData.file.path = 'path/to/test.png'
 					await testPlayButtonVisible(false)
 				})
 			})
