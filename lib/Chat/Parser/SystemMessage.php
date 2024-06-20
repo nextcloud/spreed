@@ -757,23 +757,23 @@ class SystemMessage implements IEventListener {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
 				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
 				if ($userFolder instanceof Node) {
-					$userNodes = $userFolder->getById($share->getNodeId());
-
-					if (empty($userNodes)) {
+					$node = $userFolder->getFirstNodeById($share->getNodeId());
+					if (!$node instanceof Node) {
 						// FIXME This should be much more sensible, e.g.
 						// 1. Only be executed on "Waiting for new messages"
 						// 2. Once per request
 						\OC_Util::tearDownFS();
 						\OC_Util::setupFS($participant->getAttendee()->getActorId());
 						$userNodes = $userFolder->getById($share->getNodeId());
+
+						if (empty($userNodes)) {
+							throw new NotFoundException('File was not found');
+						}
+
+						/** @var Node $node */
+						$node = reset($userNodes);
 					}
 
-					if (empty($userNodes)) {
-						throw new NotFoundException('File was not found');
-					}
-
-					/** @var Node $node */
-					$node = reset($userNodes);
 					$fullPath = $node->getPath();
 					$pathSegments = explode('/', $fullPath, 4);
 					$name = $node->getName();
