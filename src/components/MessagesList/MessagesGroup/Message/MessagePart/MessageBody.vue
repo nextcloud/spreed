@@ -66,7 +66,7 @@
 
 		<!-- Additional message info-->
 		<div v-if="!isDeletedMessage" class="message-main__info">
-			<span v-if="!hideDate" class="date" :title="messageDate">{{ messageTime }}</span>
+			<span :class="['date', { 'date--hidden': hideDate }]" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
 			<div v-if="message.sendingFailure"
@@ -237,17 +237,11 @@ export default {
 		},
 
 		messageTime() {
-			if (this.hideDate) {
-				return null
-			}
-			return moment(this.message.timestamp * 1000).format('LT')
+			return moment(this.isTemporary ? undefined : this.message.timestamp * 1000).format('LT')
 		},
 
 		messageDate() {
-			if (this.hideDate) {
-				return null
-			}
-			return moment(this.message.timestamp * 1000).format('LL')
+			return moment(this.isTemporary ? undefined : this.message.timestamp * 1000).format('LL')
 		},
 
 		isLastCallStartedMessage() {
@@ -481,8 +475,15 @@ export default {
 		flex: 1 0 auto;
 		padding: 0 calc(2 * var(--default-grid-baseline));
 
-		.date:last-child {
-			margin-right: var(--default-clickable-area);
+		.date {
+			&--hidden {
+				pointer-events: none;
+				opacity: 0;
+			}
+
+			&:last-child {
+				margin-right: var(--default-clickable-area);
+			}
 		}
 	}
 }
