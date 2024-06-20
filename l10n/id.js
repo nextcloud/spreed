@@ -328,6 +328,7 @@ OC.L10N.register(
     "Send" : "Kirim",
     "Join" : "Gabung",
     "guest" : "pengunjung",
+    "Remove" : "Hapus",
     "Integrations" : "Integrasi",
     "No results" : "Tidak ada hasil",
     "Add users or groups" : "Add users or groups",

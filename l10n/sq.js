@@ -236,6 +236,7 @@ OC.L10N.register(
     "Create poll" : "Krijo sondazh",
     "Send" : "Dërgo",
     "guest" : "vizitor",
+    "Remove" : "Hiqe",
     "No results" : "Asnjë rezultat",
     "Add users or groups" : "Add users or groups",
     "Details" : "Detajet",

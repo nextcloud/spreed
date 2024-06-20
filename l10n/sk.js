@@ -1412,6 +1412,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Obnoviť vlastné oprávnenia",
     "Grant all permissions" : "Udeliť všetky oprávnenia",
     "Remove all permissions" : "Odstrániť všetky oprávnenia",
+    "Remove" : "Odobrať",
     "Settings for participant \"{user}\"" : "Nastavenia účastníka \"{user}\"",
     "Add participant \"{user}\"" : "Pridať účastníka \"{user}\"",
     "Participant \"{user}\"" : "Účastník \"{user}\"",

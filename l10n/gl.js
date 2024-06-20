@@ -1344,6 +1344,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Restabelecer os permisos personalizados",
     "Grant all permissions" : "Conceder todos os permisos",
     "Remove all permissions" : "Retirar todos os permisos",
+    "Remove" : "Retirar",
     "Settings for participant \"{user}\"" : "Axustes para o participante «{user}»",
     "Add participant \"{user}\"" : "Engadir o participante «{user}»",
     "Participant \"{user}\"" : "Participante «{user}»",

@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Özel izinleri sıfırla",
     "Grant all permissions" : "Tüm izinleri ver",
     "Remove all permissions" : "Tüm izinleri kaldır",
+    "Remove" : "Kaldır",
     "Settings for participant \"{user}\"" : "\"{user}\" kullanıcısının ayarları",
     "Add participant \"{user}\"" : "\"{user}\" katılımcısını ekle",
     "Participant \"{user}\"" : "\"{user}\" katılımcısı",

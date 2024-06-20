@@ -1354,6 +1354,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Сброс пользовательских разрешений",
     "Grant all permissions" : "Предоставить все разрешения",
     "Remove all permissions" : "Удалить все разрешения",
+    "Remove" : "Удалить",
     "Settings for participant \"{user}\"" : "Параметры участника «{user}»",
     "Add participant \"{user}\"" : "Добавить участника «{user}»",
     "Participant \"{user}\"" : "Участник «{user}»",

@@ -918,6 +918,7 @@ OC.L10N.register(
     "Resend invitation" : "Renviar invitacion",
     "Reset custom permissions" : "Reïnicializar las permissions personalizadas",
     "Remove all permissions" : "Suprimir totas las permissions",
+    "Remove" : "Suprimir",
     "Settings for participant \"{user}\"" : "Paramètres pel participant « {user} »",
     "Add participant \"{user}\"" : "Apondre participant « {user} »",
     "Participant \"{user}\"" : "Participant « {user} »",

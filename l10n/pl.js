@@ -1343,6 +1343,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Zresetuj uprawnienia niestandardowe",
     "Grant all permissions" : "Przyznaj wszystkie uprawnienia",
     "Remove all permissions" : "Usuń wszystkie uprawnienia",
+    "Remove" : "Usuń",
     "Settings for participant \"{user}\"" : "Ustawienia dla uczestnika \"{user}\"",
     "Add participant \"{user}\"" : "Dodaj uczestnika \"{user}\"",
     "Participant \"{user}\"" : "Uczestnik \"{user}\"",

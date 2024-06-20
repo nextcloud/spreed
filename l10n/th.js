@@ -82,6 +82,7 @@ OC.L10N.register(
     "Send" : "ส่ง",
     "bot" : "บอต",
     "guest" : "ผู้เยี่ยมชม",
+    "Remove" : "ลบออก",
     "Searching …" : "กำลังค้นหา …",
     "No results" : "ไม่มีผลลัพธ์",
     "Add users or groups" : "เพิ่มผู้ใช้หรือกลุ่ม",

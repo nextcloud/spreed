@@ -117,6 +117,7 @@ OC.L10N.register(
     "moderator" : "moderador",
     "Demote from moderator" : "Degradar de moderador",
     "Promote to moderator" : "Promover a moderador",
+    "Remove" : "Remover",
     "Remove participant" : "Eliminar participante",
     "No results" : "No hay resultados",
     "Add users or groups" : "Agregar usuarios o grupos",

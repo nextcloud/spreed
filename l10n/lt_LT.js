@@ -666,6 +666,7 @@ OC.L10N.register(
     "Demote from moderator" : "Pažeminti iš moderatorių",
     "Promote to moderator" : "Paaukštinti į moderatorius",
     "Resend invitation" : "Siųsti pakvietimą iš naujo",
+    "Remove" : "Šalinti",
     "Next week – {timeLocale}" : "Kitą savaitę – {timeLocale}",
     "This weekend – {timeLocale}" : "Šį savaitgalį – {timeLocale}",
     "Raised their hand" : "Pakėlė ranką",

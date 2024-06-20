@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Reset custom permissions" : "重設自訂權限",
     "Grant all permissions" : "授予所有權限",
     "Remove all permissions" : "移除所有權限",
+    "Remove" : "移除",
     "Settings for participant \"{user}\"" : "參與者「{user}」的設定",
     "Add participant \"{user}\"" : "新增參與者「{user}」",
     "Participant \"{user}\"" : "參與者「{user}」",
