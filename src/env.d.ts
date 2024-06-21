@@ -12,9 +12,6 @@ declare global {
 	 * Build constant to divide build for web app and desktop client
 	 */
 	const IS_DESKTOP: false
-
-	let __webpack_nonce__: ReturnType<typeof btoa>
-	let __webpack_public_path__: string
 }
 
 export {}

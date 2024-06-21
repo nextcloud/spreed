@@ -71,6 +71,9 @@ class TemplateLoader implements IEventListener {
 		Util::addStyle(Application::APP_ID, 'icons');
 		Util::addStyle(Application::APP_ID, 'publicshareauth');
 		Util::addScript(Application::APP_ID, 'talk-public-share-auth-sidebar');
+		Util::addStyle(Application::APP_ID, '../js/css/talk-public-share-auth-sidebar');
+		Util::addScript(Application::APP_ID, 'talk-public-share-auth');
+		Util::addStyle(Application::APP_ID, '../js/css/talk-public-share-auth');
 
 		$this->publishInitialStateForGuest();
 	}

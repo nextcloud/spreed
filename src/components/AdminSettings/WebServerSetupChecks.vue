@@ -151,28 +151,7 @@ export default {
 				simd: VirtualBackground.isWasmSimd(),
 			}
 
-			/* eslint-disable no-undef, camelcase */
-
-			// When the worker is loaded from Talk its URL starts with
-			// "apps/spreed/js". However, when it is loaded from the
-			// administration settings its URL starts with "apps/talk/js"
-			// instead, so it fails to load.
-			//
-			// "publicPath" option in "worker-loader" configuration does not
-			// work with Webpack 5. As a workaround the public path needs to be
-			// overriden at runtime before loading the worker and restored
-			// afterwards.
-			// https://github.com/webpack-contrib/worker-loader/issues/281
-			const __webpack_public_path__saved = __webpack_public_path__
-
-			__webpack_public_path__ = generateFilePath('spreed', 'js', '')
-
 			const jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
-
-			__webpack_public_path__ = __webpack_public_path__saved
-
-			/* eslint-enable no-undef, camelcase */
-
 			jitsiStreamBackgroundEffect.load().then(() => {
 				this.virtualBackgroundLoaded = true
 			}).catch(() => {
