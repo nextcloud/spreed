@@ -600,8 +600,10 @@ export default {
 			if (this.isCurrentTabLeader) {
 				switch (event.data.message) {
 				case 'force-fetch-all-conversations':
-					this.roomListModifiedBefore = 0
-					this.forceFullRoomListRefreshAfterXLoops = 10
+					if (event.data.options?.all) {
+						this.roomListModifiedBefore = 0
+						this.forceFullRoomListRefreshAfterXLoops = 10
+					}
 					this.debounceFetchConversations()
 					break
 				}
@@ -839,23 +841,22 @@ export default {
 		 * @param {boolean} [options.all] Whether all conversations should be fetched
 		 */
 		async handleShouldRefreshConversations(options) {
-			if (options?.all === true) {
-				if (this.isCurrentTabLeader) {
-					this.roomListModifiedBefore = 0
-					this.forceFullRoomListRefreshAfterXLoops = 10
-				} else {
-					// Force leader tab to do a full fetch
-					talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
-					return
-				}
-			} else if (options?.token && options?.properties) {
+			if (options?.token && options?.properties) {
 				await this.$store.dispatch('setConversationProperties', {
 					token: options.token,
 					properties: options.properties,
 				})
 			}
 
-			this.debounceFetchConversations()
+			if (this.isCurrentTabLeader) {
+				if (options?.all === true) {
+					this.roomListModifiedBefore = 0
+					this.forceFullRoomListRefreshAfterXLoops = 10
+				}
+				this.debounceFetchConversations()
+			} else {
+				talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations', options })
+			}
 		},
 
 		async fetchConversations() {
