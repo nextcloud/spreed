@@ -614,6 +614,7 @@ export default {
 						conversations: event.data.conversations,
 						withRemoving: event.data.withRemoving,
 					})
+					this.federationStore.updatePendingSharesCount(event.data.invites)
 					break
 				case 'update-nextcloud-talk-hash':
 					this.talkHashStore.setNextcloudTalkHash(event.data.hash)
