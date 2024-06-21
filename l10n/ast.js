@@ -808,6 +808,7 @@ OC.L10N.register(
     "Copy phone number" : "Copiar el númberu de teléfonu",
     "Grant all permissions" : "Conceder tolos permisos",
     "Remove all permissions" : "Quitar tolos permisos",
+    "Remove" : "Quitar",
     "Next week – {timeLocale}" : "La próxima selmana – {timeLocale}",
     "This weekend – {timeLocale}" : "Esta fin de selmana – {timeLocale}",
     "Ringing …" : "Sonando…",

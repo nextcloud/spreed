@@ -1137,6 +1137,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Възстановяване на персонализираните права",
     "Grant all permissions" : "Даване на всички права",
     "Remove all permissions" : "Премахване на всички права",
+    "Remove" : "Премахване",
     "Settings for participant \"{user}\"" : "Настройки за участник „{user}“",
     "Add participant \"{user}\"" : "Добавяне на участник „{user}“",
     "Participant \"{user}\"" : "Участник „{user}“",
