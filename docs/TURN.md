@@ -96,7 +96,7 @@ This test only verifies that your TURN server is accessible from the outside, bu
 
 For _eturnal_:
 
-The easiest way is to refer to eturnal's Quick-Start guide, e.g. [in a shell](https://github.com/processone/eturnal/blob/master/QUICK-TEST.md) or with [Docker](https://github.com/processone/eturnal/blob/master/docker-k8s/QUICK-TEST.md).
+The easiest way is to refer to eturnal's Quick-Start guide, e.g. [in a shell](https://github.com/processone/eturnal/blob/master/doc/QUICK-TEST.md) or with [Docker](https://github.com/processone/eturnal/blob/master/doc/CONTAINER-QUICK-TEST.md).
 
 ##### Test the TURN server connection from within Talk
 
