@@ -27,7 +27,7 @@ use OCP\AppFramework\Db\Entity;
  * @method string getReason()
  */
 class Ban extends Entity implements \JsonSerializable {
-	protected $actorId = '';
+	protected string $actorId = '';
 	protected string $actorType = '';
 	protected int $roomId = 0;
 	protected string $bannedByActorId = '';
