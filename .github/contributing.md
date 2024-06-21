@@ -2,14 +2,14 @@
 
 ### Short version
 
- * The [**issue template can be found here**](https://raw.github.com/nextcloud/spreed/main/.github/issue_template.md) but be aware of the different repositories! See list below. Please always use the issue template when reporting issues.
+ * Here you can find the [**bug report template**](https://raw.github.com/nextcloud/spreed/main/.github/ISSUE_TEMPLATE/1_bug_report.md) and [**feature request template**](https://raw.github.com/nextcloud/spreed/main/.github/ISSUE_TEMPLATE/2_feature_request.md), but be aware of the different repositories! See list below. Please always use the issue template when reporting issues.
 
 ### Guidelines
 * Please search the existing issues first, it's likely that your issue was already reported or even fixed.
   - Go to one of the repositories, click "issues" and type any word in the top search/command bar.
   - You can also filter by appending e. g. "state:open" to the search string.
   - More info on [search syntax within github](https://help.github.com/articles/searching-issues)
-* Report the issue using our [template](https://raw.github.com/nextcloud/spreed/main/.github/issue_template.md), it includes all the informations we need to track down the issue.
+* Report the issue using our template for [bugs](https://raw.github.com/nextcloud/spreed/main/.github/ISSUE_TEMPLATE/1_bug_report.md) and [features](https://raw.github.com/nextcloud/spreed/main/.github/ISSUE_TEMPLATE/2_feature_request.md), it includes all the informations we need to track down the issue.
 
 If your issue appears to be a bug, and hasn't been reported, open a new issue.
 
