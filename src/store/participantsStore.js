@@ -966,7 +966,7 @@ const actions = {
 		await removeCurrentUserFromConversation(token)
 		// If successful, deletes the conversation from the store
 		await context.dispatch('deleteConversation', token)
-		talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
+		talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations', options: { all: true } })
 	},
 
 	/**

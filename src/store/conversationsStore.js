@@ -457,7 +457,7 @@ const actions = {
 			await deleteConversation(token)
 			// upon success, also delete from store
 			await context.dispatch('deleteConversation', token)
-			talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
+			talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations', options: { all: true } })
 		} catch (error) {
 			console.error('Error while deleting the conversation: ', error)
 		}
