@@ -21,7 +21,6 @@ export default createAppConfig({
 	search: join(import.meta.dirname, 'src', 'search.js'),
 }, {
 	// Move CSS assets to js/css to other built files
-	// Rename from default "spreed-*" to "talk-*"
 	assetFileNames: (assetInfo) => {
 		const extType = assetInfo.name?.split('.').at(-1)
 		if (!extType) {
@@ -35,6 +34,9 @@ export default createAppConfig({
 		// Use @nextcloud/vite-config default behavior
 		return undefined
 	},
+
+	// Rename from default "spreed-*" to "talk-*"
+	assetsPrefix: 'talk-',
 
 	config: {
 		assetsInclude: ['**/*.tflite', '**/*.wasm'],
@@ -51,11 +53,14 @@ export default createAppConfig({
 				},
 			},
 
-			// Support vendors mediapipe modules.
-			// Usually we need to transform Commonjs only from CJS dependencies in node_modules
-			// But Talk also has CJS dependencies in src/utils/media/effects/virtual-background/vendor/ which are not compatible with ESM
 			commonjsOptions: {
-				include: [/node_modules/, /src[/\\]utils[/\\]media[/\\]effects[/\\]virtual-background[/\\]vendor/],
+				include: [
+					/node_modules/,
+					// Support vendors mediapipe modules.
+					// Usually we need to transform Commonjs only from CJS dependencies in node_modules
+					// But Talk also has CJS dependencies in src/utils/media/effects/virtual-background/vendor/ which are not compatible with ESM
+					/src[/\\]utils[/\\]media[/\\]effects[/\\]virtual-background[/\\]vendor/,
+				],
 				transformMixedEsModules: true,
 			},
 		},
