@@ -1339,6 +1339,7 @@ OC.L10N.register(
     "Reset custom permissions" : "Restableix els permisos personalitzats",
     "Grant all permissions" : "Concediu tots els permisos",
     "Remove all permissions" : "Suprimir tots els permisos",
+    "Remove" : "Suprimir",
     "Settings for participant \"{user}\"" : "Paràmetres per al participant \"{user}\"",
     "Add participant \"{user}\"" : "Afegeix el participant \"{user}\"",
     "Participant \"{user}\"" : "Participant \"{user}\"",
