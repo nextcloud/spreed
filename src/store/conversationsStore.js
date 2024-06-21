@@ -898,6 +898,7 @@ const actions = {
 			talkBroadcastChannel.postMessage({
 				message: 'update-conversations',
 				conversations: response.data.ocs.data,
+				invites: response.headers['x-nextcloud-talk-federation-invites'],
 				withRemoving: modifiedSince === 0,
 			})
 			return response
