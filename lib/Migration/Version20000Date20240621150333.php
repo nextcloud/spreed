@@ -53,13 +53,13 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 				'notnull' => true,
 			]);
 			$table->addColumn('banned_at', Types::DATETIME, [
-				'notnull' => false,
+				'notnull' => true,
 			]);
 			$table->addColumn('reason', Types::TEXT, [
 				'notnull' => false,
 			]);
 
-			// $table->setPrimaryKey(['id']);
+			$table->setPrimaryKey(['id']);
 			// $table->addUniqueIndex(['user_id', 'room_id'], 'talk_ban_user_room'); //A user should not be banned from the same room more than once
 			// $table->addIndex(['banned_at'], 'talk_ban_banned_at');
 			return $schema;
