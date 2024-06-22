@@ -336,3 +336,24 @@ Feature: chat/bots
     When user "participant1" sends message "Message 2" to room "room" with 201
     Then user "participant1" edits message "Message 2" in room "room" to "Message 2 - Edit 2" with 202
     And user "participant1" deletes message "Message 2 - Edit 2" from room "room" with 202
+
+  Scenario: Uninstalling the bot with invalid parameters
+    Given invoking occ with "talk:bot:list"
+    Then the command was successful
+    And the command output is empty
+
+    # Test uninstall with no parameters
+    When invoking occ with "talk:bot:uninstall"
+    Then the command failed with exit code 1
+    And the command output contains the text "URL is required when no ID is given"
+
+    # Test uninstall with invalid ID
+    When invoking occ with "talk:bot:uninstall 2147483647"
+    Then the command failed with exit code 1
+    And the command output contains the text "Bot not found"
+
+    # Test uninstall with invalid URL
+    When invoking occ with "talk:bot:uninstall --url=https://example.tld"
+    Then the command failed with exit code 1
+    And the command output contains the text "Bot not found"
+

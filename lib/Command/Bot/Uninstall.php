@@ -50,6 +50,10 @@ class Uninstall extends Base {
 		try {
 			if ($botId === 0) {
 				$url = $input->getOption('url');
+				if ($url === null) {
+					$output->writeln('<error>URL is required when no ID is given</error>');
+					return 1;
+				}
 				$bot = $this->botServerMapper->findByUrl($url);
 			} else {
 				$bot = $this->botServerMapper->findById($botId);
