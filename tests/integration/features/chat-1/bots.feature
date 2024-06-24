@@ -320,3 +320,23 @@ Feature: chat/bots
       | reaction  | 👍 |
     Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
       | actorType | actorId           | actorDisplayName | reaction |
+
+  Scenario: Uninstalling the bot with invalid parameters
+    Given invoking occ with "talk:bot:list"
+    Then the command was successful
+    And the command output is empty
+
+    # Test uninstall with no parameters
+    When invoking occ with "talk:bot:uninstall"
+    Then the command failed with exit code 1
+    And the command output contains the text "URL is required when no ID is given"
+
+    # Test uninstall with invalid ID
+    When invoking occ with "talk:bot:uninstall 2147483647"
+    Then the command failed with exit code 1
+    And the command output contains the text "Bot not found"
+
+    # Test uninstall with invalid URL
+    When invoking occ with "talk:bot:uninstall --url=https://example.tld"
+    Then the command failed with exit code 1
+    And the command output contains the text "Bot not found"
