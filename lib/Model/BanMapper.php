@@ -50,6 +50,15 @@ class BanMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
+	public function findByBanId(int $banId): Ban {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($banId, IQueryBuilder::PARAM_INT)));
+
+		return $this->findEntity($query);
+	}
+
 	public function deleteBanForActorAndRoom(string $actorId, string $actorType, int $roomId): void {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())

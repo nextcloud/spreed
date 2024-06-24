@@ -55,7 +55,7 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 			$table->addColumn('banned_at', Types::DATETIME, [
 				'notnull' => false,
 			]);
-			$table->addColumn('reason', Types::TEXT, [
+			$table->addColumn('internalNote', Types::TEXT, [
 				'notnull' => false,
 			]);
 

@@ -17,32 +17,32 @@ use OCP\AppFramework\Db\Entity;
  * @method string getActorType()
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
- * @method void setBannedByActorId(string $bannedByActorId)
- * @method string getBannedByActorId()
- * @method void setBannedByActorType(string $bannedByActorType)
- * @method string getBannedByActorType()
- * @method void setBannedAt(\DateTime $bannedAt)
- * @method \DateTime getBannedAt()
- * @method void setReason(string $reason)
- * @method string getReason()
+ * @method void setBannedId(string $bannedId)
+ * @method string getBannedId()
+ * @method void setBannedType(string $bannedType)
+ * @method string getBannedType()
+ * @method void setBannedTime(\DateTime $bannedTime)
+ * @method \DateTime getBannedTime()
+ * @method void setInternalNote(string $internalNote)
+ * @method string getInternalNote()
  */
 class Ban extends Entity implements \JsonSerializable {
 	protected string $actorId = '';
 	protected string $actorType = '';
 	protected int $roomId = 0;
-	protected string $bannedByActorId = '';
-	protected string $bannedByActorType = '';
-	protected ?\DateTime $bannedAt = null;
-	protected ?string $reason = null;
+	protected string $bannedId = '';
+	protected string $bannedType = '';
+	protected ?\DateTime $bannedTime = null;
+	protected ?string $internalNote = null;
 
 	public function __construct() {
 		$this->addType('actorId', 'string');
 		$this->addType('actorType', 'string');
 		$this->addType('roomId', 'int');
-		$this->addType('bannedByActorId', 'string');
-		$this->addType('bannedByActorType', 'string');
-		$this->addType('bannedAt', 'datetime');
-		$this->addType('reason', 'string');
+		$this->addType('bannedId', 'string');
+		$this->addType('bannedType', 'string');
+		$this->addType('bannedTime', 'datetime');
+		$this->addType('internalNote', 'string');
 	}
 
 	public function jsonSerialize(): array {
@@ -50,10 +50,10 @@ class Ban extends Entity implements \JsonSerializable {
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'roomId' => $this->getRoomId(),
-			'bannedByActorId' => $this->getBannedByActorId(),
-			'bannedByActorType' => $this->getBannedByActorType(),
-			'bannedAt' => $this->getBannedAt() ? $this->getBannedAt()->getTimestamp() : null,
-			'reason' => $this->getReason(),
+			'bannedId' => $this->getBannedId(),
+			'bannedType' => $this->getBannedType(),
+			'bannedTime' => $this->getBannedTime() ? $this->getBannedTime()->getTimestamp() : null,
+			'internalNote' => $this->getInternalNote(),
 		];
 	}
 }
