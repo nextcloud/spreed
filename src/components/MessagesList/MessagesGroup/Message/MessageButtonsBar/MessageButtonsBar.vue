@@ -32,7 +32,7 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-if="isReplyable && !isConversationReadOnly"
+			<NcButton v-if="canReply"
 				type="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
@@ -685,6 +685,10 @@ export default {
 				actor: this.lastEditActorDisplayName,
 			})
 		},
+
+		canReply() {
+			return this.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+		}
 	},
 
 	watch: {
