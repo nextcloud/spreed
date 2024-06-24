@@ -102,7 +102,7 @@ class SharingContext implements Context {
 	 * @param string $sharee
 	 * @param TableNode|null $body
 	 */
-	public function userSharesWithUser(string $user, string $path, string $sharee, TableNode $body = null) {
+	public function userSharesWithUser(string $user, string $path, string $sharee, ?TableNode $body = null) {
 		$this->userSharesWith($user, $path, 0 /*IShare::TYPE_USER*/, $sharee, $body);
 	}
 
@@ -127,7 +127,7 @@ class SharingContext implements Context {
 	 * @param string $sharee
 	 * @param TableNode|null $body
 	 */
-	public function userSharesWithGroup(string $user, string $path, string $sharee, TableNode $body = null) {
+	public function userSharesWithGroup(string $user, string $path, string $sharee, ?TableNode $body = null) {
 		$this->userSharesWith($user, $path, 1 /*IShare::TYPE_GROUP*/, $sharee, $body);
 	}
 
@@ -152,7 +152,7 @@ class SharingContext implements Context {
 	 * @param string $sharee
 	 * @param TableNode|null $body
 	 */
-	public function userSharesWithTeam(string $user, string $path, string $sharee, TableNode $body = null) {
+	public function userSharesWithTeam(string $user, string $path, string $sharee, ?TableNode $body = null) {
 		$this->userSharesWith($user, $path, 7 /*IShare::TYPE_CIRCLE*/, $sharee, $body);
 	}
 
@@ -177,7 +177,7 @@ class SharingContext implements Context {
 	 * @param string $room
 	 * @param TableNode|null $body
 	 */
-	public function userSharesWithRoom(string $user, string $path, string $room, TableNode $body = null) {
+	public function userSharesWithRoom(string $user, string $path, string $room, ?TableNode $body = null) {
 		$this->userSharesWith($user, $path, 10 /*IShare::TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($room), $body);
 	}
 
@@ -201,7 +201,7 @@ class SharingContext implements Context {
 	 * @param string $path
 	 * @param TableNode|null $body
 	 */
-	public function userSharesByLink(string $user, string $path, TableNode $body = null) {
+	public function userSharesByLink(string $user, string $path, ?TableNode $body = null) {
 		$this->userSharesWith($user, $path, 3 /*IShare::TYPE_LINK*/, '', $body);
 	}
 
@@ -213,7 +213,7 @@ class SharingContext implements Context {
 	 * @param int $statusCode
 	 * @param TableNode|null $body
 	 */
-	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode, TableNode $body = null) {
+	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode, ?TableNode $body = null) {
 		$this->userSharesByLink($user, $path, $body);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
@@ -477,7 +477,7 @@ class SharingContext implements Context {
 	public function userGetsRecentFiles(string $user) {
 		// Recents endpoint is not an OCS endpoint, so a request token must be
 		// provided.
-		list($requestToken, $cookieJar) = $this->loggingInUsingWebAs($user);
+		[$requestToken, $cookieJar] = $this->loggingInUsingWebAs($user);
 
 		$url = '/index.php/apps/files/api/v1/recent';
 
@@ -658,7 +658,7 @@ class SharingContext implements Context {
 	 * @param string $isEmpty
 	 * @param TableNode|null $shareesList
 	 */
-	public function shareesReturnedAreIsEmpty(string $shareeType, string $isEmpty, TableNode $shareesList = null) {
+	public function shareesReturnedAreIsEmpty(string $shareeType, string $isEmpty, ?TableNode $shareesList = null) {
 		if ($isEmpty !== 'is empty') {
 			$sharees = [];
 			foreach ($shareesList->getRows() as $row) {
@@ -687,7 +687,7 @@ class SharingContext implements Context {
 	 * @param string $user
 	 * @param TableNode|null $table
 	 */
-	public function theListOfReturnedFilesForIs(string $user, TableNode $table = null) {
+	public function theListOfReturnedFilesForIs(string $user, ?TableNode $table = null) {
 		$xmlResponse = $this->getXmlResponse();
 		$xmlResponse->registerXPathNamespace('d', 'DAV:');
 
@@ -711,7 +711,7 @@ class SharingContext implements Context {
 	 *
 	 * @param TableNode|null $table
 	 */
-	public function theResponseContainsAShareTypesDavPropertyWith(TableNode $table = null) {
+	public function theResponseContainsAShareTypesDavPropertyWith(?TableNode $table = null) {
 		$xmlResponse = $this->getXmlResponse();
 		$xmlResponse->registerXPathNamespace('oc', 'http://owncloud.org/ns');
 
@@ -736,7 +736,7 @@ class SharingContext implements Context {
 	 * @param string $path
 	 * @param TableNode|null $table
 	 */
-	public function theResponseContainsAShareTypesFilesPropertyForWith(string $path, TableNode $table = null) {
+	public function theResponseContainsAShareTypesFilesPropertyForWith(string $path, ?TableNode $table = null) {
 		$response = json_decode($this->response->getBody());
 
 		$fileForPath = array_filter($response->files, function ($file) use ($path) {
@@ -774,7 +774,7 @@ class SharingContext implements Context {
 	 * @param string $shareWith
 	 * @param TableNode|null $body
 	 */
-	private function userSharesWith(string $user, string $path, string $shareType, string $shareWith, TableNode $body = null) {
+	private function userSharesWith(string $user, string $path, string $shareType, string $shareWith, ?TableNode $body = null) {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares';
@@ -818,7 +818,7 @@ class SharingContext implements Context {
 	 * @param string $url
 	 * @param TableNode $body
 	 */
-	private function sendingTo(string $verb, string $url, TableNode $body = null) {
+	private function sendingTo(string $verb, string $url, ?TableNode $body = null) {
 		$fullUrl = $this->baseUrl . "ocs/v1.php" . $url;
 		$client = new Client();
 		$options = [];
@@ -851,7 +851,7 @@ class SharingContext implements Context {
 	 * @param array $headers
 	 * @param string $body
 	 */
-	private function sendingToDav(string $verb, string $url, array $headers = null, string $body = null) {
+	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null) {
 		$fullUrl = $this->baseUrl . "remote.php/dav/files" . $url;
 		$client = new Client();
 		$options = [];

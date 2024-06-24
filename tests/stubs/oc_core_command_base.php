@@ -18,7 +18,7 @@ namespace OC\Core\Command {
 
 		protected string $defaultOutputFormat = self::OUTPUT_FORMAT_PLAIN;
 
-		public function __construct(string $name = null) {
+		public function __construct(?string $name = null) {
 		}
 
 		protected function configure() {

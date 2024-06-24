@@ -291,7 +291,7 @@ trait RecordingTrait {
 	/**
 	 * @Then /^(recording|signaling) server received the following requests$/
 	 */
-	public function fakeServerReceivedTheFollowingRequests(string $server, TableNode $formData = null) {
+	public function fakeServerReceivedTheFollowingRequests(string $server, ?TableNode $formData = null) {
 		if ($server === 'recording') {
 			$requests = $this->getRecordingServerReceivedRequests();
 		} else {

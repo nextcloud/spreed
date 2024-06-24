@@ -133,7 +133,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$userToSessionId[$user];
 	}
 
-	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
+	public function getAttendeeId(string $type, string $id, string $room, ?string $user = null) {
 		if (!isset(self::$userToAttendeeId[$room][$type][$id])) {
 			if ($user !== null) {
 				$this->userLoadsAttendeeIdsInRoom($user, $room, 'v4');
@@ -253,7 +253,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCanFindListedRooms(string $user, string $apiVersion, TableNode $formData = null): void {
+	public function userCanFindListedRooms(string $user, string $apiVersion, ?TableNode $formData = null): void {
 		$this->userCanFindListedRoomsWithTerm($user, '', $apiVersion, $formData);
 	}
 
@@ -265,7 +265,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCanFindListedRoomsWithTerm(string $user, string $term, string $apiVersion, TableNode $formData = null): void {
+	public function userCanFindListedRoomsWithTerm(string $user, string $term, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$suffix = '';
 		if ($term !== '') {
@@ -292,7 +292,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $shouldFilter, string $modifiedSince, string $apiVersion, TableNode $formData = null): void {
+	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $shouldFilter, string $modifiedSince, string $apiVersion, ?TableNode $formData = null): void {
 		$parameters = '';
 		if ($modifiedSince !== '') {
 			if (!isset(self::$modifiedSince[$user])) {
@@ -336,7 +336,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $status
 	 * @param TableNode|null $formData
 	 */
-	public function userListsBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+	public function userListsBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		$token = self::$identifierToToken[$identifier];
 
 		$this->setCurrentUser($user);
@@ -526,7 +526,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userHasInvites(string $user, string $apiVersion, TableNode $formData = null): void {
+	public function userHasInvites(string $user, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/federation/invitation');
 		$this->assertStatusCode($this->response, 200);
@@ -556,7 +556,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, int $status, string $apiVersion, TableNode $formData = null): void {
+	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		$inviteId = self::$remoteToInviteId[$server . '::' . $roomName];
 
 		$verb = $acceptsDeclines === 'accepts' ? 'POST' : 'DELETE';
@@ -644,7 +644,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRoom(string $user, string $isOrNotParticipant, string $identifier, string $apiVersion, TableNode $formData = null): void {
+	public function userIsParticipantOfRoom(string $user, string $isOrNotParticipant, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
 		if (strpos($user, 'guest') === 0) {
 			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier, $apiVersion, $formData);
 
@@ -691,7 +691,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode $formData
 	 */
-	public function userSeesAttendeesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+	public function userSeesAttendeesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
 		$this->assertStatusCode($this->response, $statusCode);
@@ -713,7 +713,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode $formData
 	 */
-	public function userSeesAttendeesInBreakoutRoomsForRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+	public function userSeesAttendeesInBreakoutRoomsForRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/breakout-rooms/participants');
 		$this->assertStatusCode($this->response, $statusCode);
@@ -843,7 +843,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $identifier
 	 * @param string $apiVersion
 	 */
-	public function userLoadsAttendeeIdsInRoom(string $user, string $identifier, string $apiVersion, TableNode $formData = null): void {
+	public function userLoadsAttendeeIdsInRoom(string $user, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
 		$this->assertStatusCode($this->response, 200);
@@ -932,7 +932,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	private function guestIsParticipantOfRoom(string $guest, string $isOrNotParticipant, string $identifier, string $apiVersion, TableNode $formData = null): void {
+	private function guestIsParticipantOfRoom(string $guest, string $isOrNotParticipant, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($guest);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 
@@ -972,7 +972,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCreatesRoom(string $user, string $identifier, string $apiVersion, TableNode $formData = null): void {
+	public function userCreatesRoom(string $user, string $identifier, string $apiVersion, ?TableNode $formData = null): void {
 		$this->userCreatesRoomWith($user, $identifier, 201, $apiVersion, $formData);
 	}
 
@@ -1013,7 +1013,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
 
 		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'room') {
@@ -1047,7 +1047,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userTriesToCreateRoom(string $user, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userTriesToCreateRoom(string $user, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $formData);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -1114,7 +1114,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param array $headers
 	 * @param string $body
 	 */
-	private function sendingToDav(string $verb, string $url, array $headers = null, string $body = null) {
+	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null) {
 		$fullUrl = $this->baseUrl . 'remote.php/dav/files' . $url;
 		$client = new Client();
 		$options = [];
@@ -1199,7 +1199,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userJoinsRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+	public function userJoinsRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->userJoinsRoomWithNamedSession($user, $identifier, $statusCode, $apiVersion, '', $formData);
 	}
 
@@ -1212,7 +1212,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, TableNode $formData = null): void {
+	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
@@ -1251,7 +1251,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userResendsInvite(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+	public function userResendsInvite(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 
 		/** @var ?array $body */
@@ -1303,7 +1303,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param null|TableNode $formData
 	 */
-	public function userViewsCallURL(string $user, string $identifier, int $statusCode, TableNode $formData = null): void {
+	public function userViewsCallURL(string $user, string $identifier, int $statusCode, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendFrontpageRequest(
 			'GET', '/call/' . (self::$identifierToToken[$identifier] ?? $identifier)
@@ -1327,7 +1327,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param null|TableNode $formData
 	 */
-	public function userViewsURLWithQuery(string $user, string $page, int $statusCode, TableNode $formData = null): void {
+	public function userViewsURLWithQuery(string $user, string $page, int $statusCode, ?TableNode $formData = null): void {
 		$parameters = [];
 		if ($formData instanceof TableNode) {
 			foreach ($formData->getRowsHash() as $key => $value) {
@@ -1477,7 +1477,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userGetsRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v4', TableNode $formData = null): void {
+	public function userGetsRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v4', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -1824,7 +1824,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userJoinsCall(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+	public function userJoinsCall(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier],
@@ -1893,7 +1893,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userDialsOut(string $user, string $phoneNumber, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+	public function userDialsOut(string $user, string $phoneNumber, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/dialout/'
 			. self::$userToAttendeeId[$identifier]['phones'][self::$phoneNumberToActorId[$phoneNumber]]
@@ -2128,7 +2128,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function createPoll(string $user, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function createPoll(string $user, string $identifier, string $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$data = $formData->getRowsHash();
 		$data['options'] = json_decode($data['options'], true);
 		if ($data['resultMode'] === 'public') {
@@ -2169,7 +2169,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userSeesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userSeesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
@@ -2192,7 +2192,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userClosesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userClosesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2217,7 +2217,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userVotesPollInRoom(string $user, string $options, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userVotesPollInRoom(string $user, string $options, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$data = [
 			'optionIds' => json_decode($options, true),
 		];
@@ -2310,7 +2310,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userGetsDashboardWidgets($user, $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userGetsDashboardWidgets($user, $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widgets');
 		$this->assertStatusCode($this->response, 200);
@@ -2347,7 +2347,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userGetsDashboardWidgetItems($user, $widgetId, $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userGetsDashboardWidgetItems($user, $widgetId, $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widget-items?widgets[]=' . $widgetId);
 		$this->assertStatusCode($this->response, 200);
@@ -2515,7 +2515,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Then /^next message request has the following parameters set$/
 	 */
-	public function setChatParametersForNextRequest(TableNode $formData = null): void {
+	public function setChatParametersForNextRequest(?TableNode $formData = null): void {
 		$parameters = [];
 		foreach ($formData->getRowsHash() as $key => $value) {
 			if (in_array($key, ['lastCommonReadId', 'lastKnownMessageId'], true)) {
@@ -2530,7 +2530,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function userSeesTheFollowingMessagesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesTheFollowingMessagesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null) {
 		$query = ['lookIntoFuture' => 0];
 		if (self::$nextChatRequestParameters !== null) {
 			$query = array_merge($query, self::$nextChatRequestParameters);
@@ -2557,7 +2557,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSearchesInRoom(string $user, string $searchProvider, string $search, string $identifier, $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userSearchesInRoom(string $user, string $searchProvider, string $search, string $identifier, $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$searchProvider = $searchProvider === 'in other rooms' ? 'talk-message' : 'talk-message-current';
 
 		$searchUrl = '/search/providers/' . $searchProvider . '/search?from=/call/' . self::$identifierToToken[$identifier];
@@ -2592,7 +2592,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSeesTheFollowingSharedMediaInRoom($user, $objectType, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userSeesTheFollowingSharedMediaInRoom($user, $objectType, $identifier, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share?objectType=' . $objectType);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2608,7 +2608,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSeesTheFollowingSharedOverviewMediaInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userSeesTheFollowingSharedOverviewMediaInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share/overview');
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2661,7 +2661,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userAwaitsTheFollowingMessagesInRoom($user, $identifier, $knownMessage, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userAwaitsTheFollowingMessagesInRoom($user, $identifier, $knownMessage, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$textToMessageId[$knownMessage]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2672,7 +2672,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @param TableNode|null $formData
 	 */
-	protected function compareDataResponse(TableNode $formData = null) {
+	protected function compareDataResponse(?TableNode $formData = null) {
 		$actual = $this->getDataFromResponse($this->response);
 		$messages = [];
 		array_map(function (array $message) use (&$messages) {
@@ -2817,7 +2817,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @param TableNode|null $formData
 	 */
-	protected function compareSearchResponse(TableNode $formData = null) {
+	protected function compareSearchResponse(?TableNode $formData = null) {
 		$messages = $this->getDataFromResponse($this->response)['entries'];
 
 		if ($formData === null) {
@@ -2852,7 +2852,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSeesTheFollowingSystemMessagesInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesTheFollowingSystemMessagesInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2930,7 +2930,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userGetsTheFollowingCandidateMentionsInRoomFor($user, $identifier, $search, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userGetsTheFollowingCandidateMentionsInRoomFor($user, $identifier, $search, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/mentions?search=' . $search);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2999,7 +2999,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userGetsTheFollowingCollaboratorSuggestions($user, $identifier, $search, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userGetsTheFollowingCollaboratorSuggestions($user, $identifier, $search, $statusCode, $apiVersion = 'v1', ?TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/core/autocomplete/get?search=' . $search . '&itemType=call&itemId=' . self::$identifierToToken[$identifier] . '&shareTypes[]=0&shareTypes[]=1&shareTypes[]=7&shareTypes[]=4');
 		$this->assertStatusCode($this->response, $statusCode);
@@ -3105,7 +3105,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCreatesBreakoutRooms(string $user, int $amount, string $modeString, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+	public function userCreatesBreakoutRooms(string $user, int $amount, string $modeString, string $identifier, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		switch ($modeString) {
 			case 'automatic':
 				$mode = 1;
@@ -3163,7 +3163,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userMovesParticipantsInsideBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+	public function userMovesParticipantsInsideBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, ?TableNode $formData = null): void {
 		$data = [];
 		if ($formData instanceof TableNode) {
 			$mapArray = [];
@@ -3388,7 +3388,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param TableNode|null $body
 	 */
-	public function userNotifications(string $user, TableNode $body = null): void {
+	public function userNotifications(string $user, ?TableNode $body = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'GET', '/apps/notifications/api/v2/notifications'
@@ -3600,7 +3600,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Given /^the following brute force attempts are registered$/
 	 */
-	public function assertBruteforceAttempts(TableNode $tableNode = null): void {
+	public function assertBruteforceAttempts(?TableNode $tableNode = null): void {
 		$totalCount = 0;
 		if ($tableNode instanceof TableNode) {
 			foreach ($tableNode->getRowsHash() as $action => $attempts) {
@@ -3846,7 +3846,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Given /^user "([^"]*)" (delete react|react) with "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function userReactWithOnMessageToRoomWith(string $user, string $action, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+	public function userReactWithOnMessageToRoomWith(string $user, string $action, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$token = self::$identifierToToken[$identifier];
 		$messageId = self::$textToMessageId[$message];
 		$this->setCurrentUser($user);
