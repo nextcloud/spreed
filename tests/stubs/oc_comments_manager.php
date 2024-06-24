@@ -27,7 +27,7 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement getTree() method.
 	}
 
-	public function getForObject($objectType, $objectId, $limit = 0, $offset = 0, \DateTime $notOlderThan = null) {
+	public function getForObject($objectType, $objectId, $limit = 0, $offset = 0, ?\DateTime $notOlderThan = null) {
 		// TODO: Implement getForObject() method.
 	}
 
@@ -47,7 +47,7 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement searchForObjects() method.
 	}
 
-	public function getNumberOfCommentsForObject($objectType, $objectId, \DateTime $notOlderThan = null, $verb = '') {
+	public function getNumberOfCommentsForObject($objectType, $objectId, ?\DateTime $notOlderThan = null, $verb = '') {
 		// TODO: Implement getNumberOfCommentsForObject() method.
 	}
 
