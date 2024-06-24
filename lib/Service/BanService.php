@@ -25,30 +25,30 @@ class BanService {
 	/**
 	 * Validate the ban data.
 	 */
-	private function validateBanData(string $actorId, string $actorType, int $roomId, string $bannedByActorId, string $bannedByActorType, ?DateTime $bannedAt, ?string $reason): void {
-		if (empty($actorId) || empty($actorType) || empty($roomId) || empty($bannedByActorId) || empty($bannedByActorType)) {
+	private function validateBanData(string $actorId, string $actorType, int $roomId, string $bannedId, string $bannedType, ?DateTime $bannedTime, ?string $internalNote): void {
+		if (empty($actorId) || empty($actorType) || empty($roomId) || empty($bannedId) || empty($bannedType)) {
 			throw new \InvalidArgumentException("Invalid ban data provided.");
 		}
 
-		if ($bannedAt !== null && !$bannedAt instanceof DateTime) {
-			throw new \InvalidArgumentException("Invalid date format for bannedAt.");
+		if ($bannedTime !== null && !$bannedTime instanceof DateTime) {
+			throw new \InvalidArgumentException("Invalid date format for bannedTime.");
 		}
 	}
 
 	/**
 	 * Create a new ban
 	 */
-	public function createBan(string $actorId, string $actorType, int $roomId, string $bannedByActorId, string $bannedByActorType, ?DateTime $bannedAt, ?string $reason): Ban {
-		$this->validateBanData($actorId, $actorType, $roomId, $bannedByActorId, $bannedByActorType, $bannedAt, $reason);
+	public function createBan(string $actorId, string $actorType, int $roomId, string $bannedId, string $bannedType, ?DateTime $bannedTime, ?string $internalNote): Ban {
+		$this->validateBanData($actorId, $actorType, $roomId, $bannedId, $bannedType, $bannedTime, $internalNote);
 
 		$ban = new Ban();
 		$ban->setActorId($actorId);
 		$ban->setActorType($actorType);
 		$ban->setRoomId($roomId);
-		$ban->setBannedByActorId($bannedByActorId);
-		$ban->setBannedByActorType($bannedByActorType);
-		$ban->setBannedAt($bannedAt ?? $this->timeFactory->getTime());
-		$ban->setReason($reason);
+		$ban->setBannedId($bannedId);
+		$ban->setBannedType($bannedType);
+		$ban->setBannedTime($bannedTime ?? $this->timeFactory->getTime());
+		$ban->setInternalNote($internalNote);
 
 		return $this->banMapper->insert($ban);
 	}
@@ -84,5 +84,17 @@ class BanService {
 	 */
 	public function getBansForRoom(int $roomId): array {
 		return $this->banMapper->findByRoomId($roomId);
+	}
+
+	/**
+	 * Retrieve a ban by its ID and delete it.
+	 */
+	public function findAndDeleteBanById(int $banId): void {
+		try {
+			$ban = $this->banMapper->findByBanId($banId);
+			$this->banMapper->delete($ban);
+		} catch (DoesNotExistException $e) {
+			// Ban does not exist
+		}
 	}
 }
