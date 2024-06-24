@@ -28,7 +28,7 @@ Files: tests/integration/features/*/*.feature
 Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
 License: CC0-1.0
 
-Files: package.json package-lock.json */package.json */package-lock.json composer.json composer.lock */composer.json */composer.lock .gitignore .l10nignore psalm.xml tests/psalm-baseline.xml vendor-bin/*/composer.json vendor-bin/*/composer.lock .tx/config */phpunit.xml tsconfig.json
+Files: package.json package-lock.json */package.json */package-lock.json composer.json composer.lock */composer.json */composer.lock .gitignore .l10nignore psalm.xml tests/psalm-baseline.xml vendor-bin/*/composer.json vendor-bin/*/composer.lock .tx/config */phpunit.xml tsconfig.json redocly.yaml
 Copyright: none
 License: CC0-1.0
 
