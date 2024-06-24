@@ -16,7 +16,7 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-if="message.isReplyable && !isConversationReadOnly"
+			<NcButton v-if="canReply"
 				type="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
@@ -288,7 +288,7 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import { emojiSearch } from '@nextcloud/vue/dist/Functions/emoji.js'
 
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
@@ -550,6 +550,10 @@ export default {
 				actor: this.message.lastEditActorDisplayName,
 			})
 		},
+
+		canReply() {
+			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+		}
 	},
 
 	watch: {
