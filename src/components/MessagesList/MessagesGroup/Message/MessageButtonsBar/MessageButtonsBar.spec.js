@@ -14,7 +14,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 import * as useMessageInfoModule from '../../../../../composables/useMessageInfo.js'
-import { CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
@@ -41,6 +41,7 @@ describe('MessageButtonsBar.vue', () => {
 			lastCommonReadMessage: 0,
 			type: CONVERSATION.TYPE.GROUP,
 			readOnly: CONVERSATION.STATE.READ_WRITE,
+			permissions: PARTICIPANT.PERMISSIONS.CHAT,
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -133,6 +134,25 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides reply button when not replyable', async () => {
 				messageProps.message.isReplyable = false
+				store = new Store(testStoreConfig)
+
+				const wrapper = shallowMount(MessageButtonsBar, {
+					localVue,
+					store,
+					stubs: {
+						NcActionButton,
+						NcButton,
+					},
+					propsData: messageProps,
+					provide: injected,
+				})
+
+				const replyButton = findNcButton(wrapper, 'Reply')
+				expect(replyButton.exists()).toBe(false)
+			})
+
+			test('hides reply button when no chat permission', async () => {
+				conversationProps.permissions = 0
 				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
