@@ -89,6 +89,15 @@ export type setEmojiAvatarParams = ApiOptions<operations['avatar-emoji-avatar'][
 export type setEmojiAvatarResponse = ApiResponse<operations['avatar-emoji-avatar']['responses'][200]['content']['application/json']>
 export type deleteAvatarResponse = ApiResponse<operations['avatar-delete-avatar']['responses'][200]['content']['application/json']>
 
+// Bans
+export type Ban = components['schemas']['Ban']
+
+export type getBansResponse = ApiResponse<operations['ban-list-bans']['responses'][200]['content']['application/json']>
+export type banActorParams = ApiOptions<operations['ban-ban-actor']['parameters']['query']>['params']
+export type banActorResponse = ApiResponse<operations['ban-ban-actor']['responses'][200]['content']['application/json']>
+export type unbanActorParams = ApiOptions<operations['ban-unban-actor']['parameters']['query']>['params']
+export type unbanActorResponse = ApiResponse<operations['ban-unban-actor']['responses'][200]['content']['application/json']>
+
 // Bots
 export type Bot = components['schemas']['Bot']
 export type BotWithDetails = components['schemas']['BotWithDetails']

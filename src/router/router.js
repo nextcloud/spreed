@@ -9,6 +9,7 @@ import Router from 'vue-router'
 import { getRootUrl, generateUrl } from '@nextcloud/router'
 
 import CallView from '../components/CallView/CallView.vue'
+import ForbiddenView from '../views/ForbiddenView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import SessionConflictView from '../views/SessionConflictView.vue'
@@ -49,6 +50,12 @@ export default new Router({
 			path: '/apps/spreed/not-found',
 			name: 'notfound',
 			component: NotFoundView,
+			props: true,
+		},
+		{
+			path: '/apps/spreed/forbidden',
+			name: 'forbidden',
+			component: ForbiddenView,
 			props: true,
 		},
 		{

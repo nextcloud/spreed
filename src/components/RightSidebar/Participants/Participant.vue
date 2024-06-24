@@ -313,6 +313,17 @@
 			:name="removeParticipantLabel"
 			:container="container">
 			<p> {{ removeDialogMessage }} </p>
+			<template v-if="supportBanV1 && showPermissionsOptions">
+				<NcCheckboxRadioSwitch :checked.sync="isBanParticipant">
+					{{ t('spreed', 'Also ban from this conversation') }}
+				</NcCheckboxRadioSwitch>
+				<template v-if="isBanParticipant">
+					<NcTextField v-if="isBanParticipant"
+						class="participant-dialog__input"
+						:label="t('spreed', 'Internal note (reason to ban)')"
+						:value.sync="internalNote" />
+				</template>
+			</template>
 			<template #actions>
 				<NcButton type="tertiary" @click="isRemoveDialogOpen = false">
 					{{ t('spreed', 'Dismiss') }}
@@ -363,7 +374,9 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
@@ -396,7 +409,9 @@ export default {
 		NcActionText,
 		NcActionSeparator,
 		NcButton,
+		NcCheckboxRadioSwitch,
 		NcDialog,
+		NcTextField,
 		ParticipantPermissionsEditor,
 		// Icons
 		Account,
@@ -470,6 +485,8 @@ export default {
 			isStatusTooltipVisible: false,
 			permissionsEditor: false,
 			isRemoveDialogOpen: false,
+			isBanParticipant: false,
+			internalNote: '',
 			disabled: false,
 		}
 	},
@@ -835,6 +852,10 @@ export default {
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 
+		supportBanV1() {
+			return hasTalkFeature(this.token, 'ban-v1')
+		},
+
 		isLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 		},
@@ -977,7 +998,11 @@ export default {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
 				attendeeId: this.attendeeId,
+				banParticipant: this.isBanParticipant,
+				internalNote: this.internalNote,
 			})
+			this.isBanParticipant = false
+			this.internalNote = ''
 			this.isRemoveDialogOpen = false
 		},
 
@@ -1222,6 +1247,12 @@ export default {
 
 .participant-row.isSearched .participant-row__user-name {
 	cursor: pointer;
+}
+
+.participant-dialog {
+	&__input {
+		margin-block-end: 6px;
+	}
 }
 
 .utils {
