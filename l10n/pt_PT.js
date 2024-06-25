@@ -257,6 +257,8 @@ OC.L10N.register(
     "Show screen" : "Mostrar ecrã",
     "Collapse" : "Expandir",
     "Favorite" : "Favorito",
+    "Hide details" : "Ocultar detalhes",
+    "Show details" : "Mostrar detalhes",
     "Disable" : "Desativar",
     "Enable" : "Activar",
     "Choose" : "Escolher",
