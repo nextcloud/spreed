@@ -187,6 +187,7 @@ OC.L10N.register(
     "You" : "Ju",
     "Collapse" : "Tkurre",
     "Favorite" : "I/E Preferuar",
+    "Hide details" : "Fsheh detajet",
     "Disable" : "Çaktivizoje",
     "Enable" : "Aktivizoje",
     "Choose" : "Zgjidhni",

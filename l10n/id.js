@@ -278,6 +278,8 @@ OC.L10N.register(
     "Expand" : "Perluas",
     "Drop your files to upload" : "Lepas berkas Anda untuk mengunggah",
     "Favorite" : "Favorit",
+    "Hide details" : "Sembunyikan detail",
+    "Show details" : "Tampilkan detail",
     "Disable" : "Nonaktifkan",
     "Enable" : "Aktifkan",
     "Choose" : "Pilih",

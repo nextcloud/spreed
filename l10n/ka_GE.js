@@ -66,6 +66,7 @@ OC.L10N.register(
     "Show screen" : "ეკრანის ჩვენება",
     "Collapse" : "აკეცვა",
     "Favorite" : "რჩეული",
+    "Hide details" : "დეტალების დამალვა",
     "Disable" : "გამორთვა",
     "Choose" : "აირჩიეთ",
     "Restricted" : "აკრძალული",
