@@ -41,6 +41,8 @@ OC.L10N.register(
     "You" : "Sina",
     "Collapse" : "Sulge",
     "Favorite" : "Lemmik",
+    "Hide details" : "Peida üksikasjad",
+    "Show details" : "Näita üksikasju",
     "Disable" : "Lülita välja",
     "Choose" : "Vali",
     "Restricted" : "Piiratud",

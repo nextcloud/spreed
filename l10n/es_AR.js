@@ -51,6 +51,8 @@ OC.L10N.register(
     "You" : "Usted",
     "Collapse" : "Colapsar",
     "Favorite" : "Favorito",
+    "Hide details" : "Ocultar detalles",
+    "Show details" : "Mostrar detalles",
     "Disable" : "Deshabilitar",
     "Enable" : "Activar",
     "Choose" : "Elige",
