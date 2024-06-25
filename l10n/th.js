@@ -40,6 +40,8 @@ OC.L10N.register(
     "Copy link" : "คัดลอกลิงก์",
     "Collapse" : "ย่อ",
     "Favorite" : "รายการโปรด",
+    "Hide details" : "ซ่อนข้อมูล",
+    "Show details" : "แสดงข้อมูล",
     "Disable" : "ปิดใช้งาน",
     "Choose" : "เลือก",
     "Restricted" : "ถูกจำกัด",
