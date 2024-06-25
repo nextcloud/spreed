@@ -1456,6 +1456,38 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" bans (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion): void {
+		if ($actorId === 'stranger') {
+			$actorId = '123456789';
+		} else {
+			if ($actorType === 'remote') {
+				$actorId .= '@' . rtrim($this->baseRemoteUrl, '/');
+				$actorType = 'federated_user';
+			}
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier], new TableNode([
+				['actorType', $actorType],
+				['actorId', $actorId],
+			])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+
+
+	/**
 	 * @Then /^user "([^"]*)" deletes room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
@@ -4560,5 +4592,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
 	}
+
+
 
 }
