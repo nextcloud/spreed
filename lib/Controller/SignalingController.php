@@ -15,6 +15,7 @@ use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
@@ -69,6 +70,7 @@ class SignalingController extends OCSController {
 		private IClientService $clientService,
 		private BanService $banService,
 		private LoggerInterface $logger,
+		protected Authenticator $federationAuthenticator,
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -114,6 +116,7 @@ class SignalingController extends OCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[OpenAPI(tags: ['internal_signaling', 'external_signaling'])]
 	public function getSettings(string $token = ''): DataResponse {
 		$isRecordingRequest = false;
@@ -128,9 +131,20 @@ class SignalingController extends OCSController {
 			$isRecordingRequest = true;
 		}
 
+		$isTalkFederation = $this->federationAuthenticator->isFederationRequest();
+
 		try {
+			$action = 'talkRoomToken';
 			if ($token !== '' && $isRecordingRequest) {
 				$room = $this->manager->getRoomByToken($token);
+			} elseif ($token !== '' && $isTalkFederation) {
+				$action = 'talkFederationAccess';
+				$room = $this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->federationAuthenticator->getCloudId(),
+					$this->federationAuthenticator->getAccessToken(),
+				);
 			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 			} else {
@@ -139,7 +153,7 @@ class SignalingController extends OCSController {
 			}
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			$response->throttle(['token' => $token, 'action' => $action]);
 			return $response;
 		}
 
@@ -191,12 +205,45 @@ class SignalingController extends OCSController {
 			'server' => $signaling,
 			'ticket' => $helloAuthParams['1.0']['ticket'],
 			'helloAuthParams' => $helloAuthParams,
+			'federation' => $this->getFederationSettings($room),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
 			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
 		];
 
 		return new DataResponse($data);
+	}
+
+	private function getFederationSettings(?Room $room): array {
+		if ($room === null || !$room->isFederatedConversation()) {
+			return [];
+		}
+
+		try {
+			$participant = $this->participantService->getParticipant($room, $this->userId);
+		} catch (ParticipantNotFoundException $e) {
+			return [];
+		}
+
+		/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\SignalingController $proxy */
+		$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\SignalingController::class);
+		$response = $proxy->getSettings($room, $participant);
+
+		if ($response->getStatus() === Http::STATUS_NOT_FOUND) {
+			return [];
+		}
+
+		/** @var TalkSignalingSettings $data */
+		$data = $response->getData();
+
+		return [
+			'server' => $data['server'],
+			'nextcloudServer' => $room->getRemoteServer(),
+			'helloAuthParams' => [
+				'token' => $data['helloAuthParams']['2.0']['token'],
+			],
+			'roomId' => $room->getRemoteToken(),
+		];
 	}
 
 	/**

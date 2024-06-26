@@ -75,6 +75,7 @@ class SignalingControllerTest extends TestCase {
 	protected IThrottler&MockObject $throttler;
 	protected BanService&MockObject $banService;
 	protected LoggerInterface&MockObject $logger;
+	protected Authenticator&MockObject $authenticator;
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
 	protected ?Config $config = null;
@@ -115,6 +116,7 @@ class SignalingControllerTest extends TestCase {
 		$this->clientService = $this->createMock(IClientService::class);
 		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->authenticator = $this->createMock(Authenticator::class);
 		$this->recreateSignalingController();
 	}
 
@@ -137,6 +139,7 @@ class SignalingControllerTest extends TestCase {
 			$this->clientService,
 			$this->banService,
 			$this->logger,
+			$this->authenticator,
 			$this->userId,
 		);
 	}
@@ -975,7 +978,7 @@ class SignalingControllerTest extends TestCase {
 			$this->timeFactory,
 			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
-			$this->createMock(Authenticator::class),
+			$this->authenticator,
 		);
 		$this->recreateSignalingController();
 

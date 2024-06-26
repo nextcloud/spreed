@@ -282,6 +282,14 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkSignalingSettings = array{
+ *     federation: array{
+ *         server: string,
+ *         nextcloudServer: string,
+ *         helloAuthParams: array{
+ *             token: string,
+ *         },
+ *         roomId: string,
+ *     }|array<empty>,
  *     helloAuthParams: array{
  *         "1.0": array{
  *             userid: ?string,
