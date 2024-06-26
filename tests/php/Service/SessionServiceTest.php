@@ -118,4 +118,79 @@ class SessionServiceTest extends TestCase {
 
 		$session = $this->service->createSessionForAttendee($attendee);
 	}
+
+	public function testCreateSessionForAttendeeWithInvitedCloudId() {
+		$attendee = new Attendee();
+		$attendee->setId(42);
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('test');
+		$this->attendeeIds[] = $attendee->getId();
+
+		$random = self::RANDOM_254 . 'x';
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->with(255)
+			->willReturn($random);
+
+		$cloudId = 'user@server.com';
+		$attendee->setInvitedCloudId($cloudId);
+
+		$session = $this->service->createSessionForAttendee($attendee);
+
+		self::assertEquals($random . '#' . $cloudId, $session->getSessionId());
+	}
+
+	public function testExtendSessionIdWithMaximumLengthCloudId(): void {
+		$attendee = new Attendee();
+		$attendee->setId(42);
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('test');
+		$this->attendeeIds[] = $attendee->getId();
+
+		$random = self::RANDOM_254 . 'x';
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->with(255)
+			->willReturn($random);
+
+		// User ids are 64 characters long at most; total cloud id length needs
+		// to leave room for the '#' joining the ids.
+		$cloudId = 'user123456789abcdef0123456789abcdef1123456789abcdef2123456789abc@server123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef6123456789abcdef7123456789abcdef8123456789abcdef9123456789abcdefa12345.com';
+		$attendee->setInvitedCloudId($cloudId);
+
+		$session = $this->service->createSessionForAttendee($attendee);
+
+		self::assertEquals(256, strlen($cloudId));
+		self::assertEquals(512, strlen($session->getSessionId()));
+		self::assertEquals($random . '#' . $cloudId, $session->getSessionId());
+	}
+
+	public function testExtendSessionIdWithTooLongCloudId(): void {
+		$attendee = new Attendee();
+		$attendee->setId(42);
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('test');
+		$this->attendeeIds[] = $attendee->getId();
+
+		$random = self::RANDOM_254 . 'x';
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->with(255)
+			->willReturn($random);
+
+		// User ids are 64 characters long at most; total cloud id length needs
+		// to leave room for the '#' joining the ids.
+		$cloudId = 'user123456789abcdef0123456789abcdef1123456789abcdef2123456789abc@server123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef6123456789abcdef7123456789abcdef8123456789abcdef9123456789abcdefa123456.com';
+		$trimmedCloudId = 'user123456789abcdef0123456789abcdef1123456789abcdef2123456789abc@server123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef6123456789abcdef7123456789abcdef8123456789abcdef9123456789abcdefa123456.co';
+		$attendee->setInvitedCloudId($cloudId);
+
+		$session = $this->service->createSessionForAttendee($attendee);
+
+		self::assertEquals(257, strlen($cloudId));
+		self::assertEquals(512, strlen($session->getSessionId()));
+		self::assertEquals($random . '#' . $trimmedCloudId, $session->getSessionId());
+	}
 }
