@@ -253,7 +253,7 @@ export default {
 		},
 
 		showParticipantsTab() {
-			return (this.getUserId || this.isModeratorOrUser) && !this.isOneToOne && !this.isNoteToSelf
+			return (this.getUserId || this.isModeratorOrUser) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
 		},
 
 		showSharedItemsTab() {
