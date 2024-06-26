@@ -13,12 +13,21 @@
 			</h2>
 			<!-- Preview -->
 			<div class="media-settings__preview">
-				<!-- eslint-disable-next-line -->
 				<video v-show="showVideo"
 					ref="video"
-					class="preview__video"
+					:class="['preview__video', {'preview__video--mirrored': isMirrored}]"
 					disable-picture-in-picture="true"
 					tabindex="-1" />
+				<NcButton v-if="showVideo"
+					type="secondary"
+					class="media-settings__preview-mirror"
+					:title="mirrorToggleLabel"
+					:aria-label="mirrorToggleLabel"
+					@click="isMirrored = !isMirrored">
+					<template #icon>
+						<ReflectHorizontal :size="20" />
+					</template>
+				</NcButton>
 				<div v-show="!showVideo"
 					class="preview__novideo">
 					<VideoBackground :display-name="displayName"
@@ -189,6 +198,7 @@ import Bell from 'vue-material-design-icons/Bell.vue'
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Creation from 'vue-material-design-icons/Creation.vue'
+import ReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
@@ -242,6 +252,7 @@ export default {
 		NcNoteCard,
 		MediaDevicesSelector,
 		MediaDevicesSpeakerTest,
+		ReflectHorizontal,
 		VideoBackground,
 		VideoIcon,
 		VideoOff,
@@ -314,6 +325,7 @@ export default {
 			videoDeviceStateChanged: false,
 			isRecordingFromStart: false,
 			isPublicShareAuthSidebar: false,
+			isMirrored: false,
 		}
 	},
 
@@ -365,6 +377,12 @@ export default {
 				return t('spreed', 'No camera')
 			}
 			return this.videoOn ? t('spreed', 'Disable video') : t('spreed', 'Enable video')
+		},
+
+		mirrorToggleLabel() {
+			return this.isMirrored
+				? t('spreed', 'Display video as you will see it (mirrored)')
+				: t('spreed', 'Display video as others will see it')
 		},
 
 		conversation() {
@@ -505,6 +523,7 @@ export default {
 			this.videoDeviceStateChanged = false
 			this.isPublicShareAuthSidebar = false
 			this.isRecordingFromStart = false
+			this.isMirrored = false
 			// Update devices preferences
 			this.updatePreferences('audioinput')
 			this.updatePreferences('videoinput')
@@ -699,6 +718,12 @@ export default {
 		aspect-ratio: 4/3;
 	}
 
+	&__preview > &__preview-mirror {
+		position: absolute;
+		top: var(--default-grid-baseline);
+		right: var(--default-grid-baseline);
+	}
+
 	&__toggles-wrapper {
 		width: 100%;
 		display: flex;
@@ -746,6 +771,10 @@ export default {
 		max-width: 100%;
 		object-fit: contain;
 		max-height: 100%;
+
+		&--mirrored {
+			transform: none !important;
+		}
 	}
 
 	&__novideo {
