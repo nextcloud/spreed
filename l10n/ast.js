@@ -558,6 +558,8 @@ OC.L10N.register(
     "Federated conversation" : "Conversación federada",
     "Public conversation" : "Conversación pública",
     "Loading …" : "Cargando…",
+    "Hide details" : "Anubrir los detalles",
+    "Show details" : "Amosar los detalles",
     "Enter a name for this conversation" : "Introduz un nome pa esta conversación",
     "Edit conversation name" : "Editar el nome de la conversación",
     "Edit conversation description" : "Editar la descripción de la conversación",
