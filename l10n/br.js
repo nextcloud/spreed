@@ -548,6 +548,8 @@ OC.L10N.register(
     "You need to be logged in to upload files" : "Ret eo deoc'h bezhañ deuet-tre evit pellkas restroù",
     "Drop your files to upload" : "Laoskit ho restroù evit pellkas",
     "Favorite" : "Pennroll",
+    "Hide details" : "Skoachañ ar munudoù",
+    "Show details" : "Diskouel ar munudoù",
     "Disable" : "Disaotreañ",
     "Enable" : "Aotreañ",
     "Choose" : "Dibab",
