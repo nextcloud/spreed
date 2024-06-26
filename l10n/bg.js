@@ -803,6 +803,8 @@ OC.L10N.register(
     "Drop your files to upload" : "Пуснете вашите файлове, за да ги качите",
     "Favorite" : "Любима",
     "Loading …" : "Зареждане …",
+    "Hide details" : "Скриване на подробностите",
+    "Show details" : "Показване на подробности",
     "Enter a name for this conversation" : "Въведете име за този разговор",
     "Edit conversation name" : "Редактиране на името на разговора",
     "Edit conversation description" : "Редактиране на описанието на разговора",
