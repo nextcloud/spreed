@@ -17,6 +17,7 @@
 		</template>
 		<NcAppSidebarTab v-if="isInCall"
 			id="chat"
+			key="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
 			<template #icon>
@@ -26,6 +27,7 @@
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showParticipantsTab"
 			id="participants"
+			key="participants"
 			ref="participantsTab"
 			:order="2"
 			:name="participantsText">
@@ -38,6 +40,7 @@
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showBreakoutRoomsTab"
 			id="breakout-rooms"
+			key="breakout-rooms"
 			ref="breakout-rooms"
 			:order="3"
 			:name="breakoutRoomsText">
@@ -50,6 +53,7 @@
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showDetailsTab"
 			id="details-tab"
+			key="details-tab"
 			:order="4"
 			:name="t('spreed', 'Details')">
 			<template #icon>
@@ -72,6 +76,7 @@
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showSharedItemsTab"
 			id="shared-items"
+			key="shared-items"
 			ref="sharedItemsTab"
 			:order="5"
 			:name="t('spreed', 'Shared items')">
