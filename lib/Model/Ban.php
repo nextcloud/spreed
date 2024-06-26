@@ -11,6 +11,8 @@ namespace OCA\Talk\Model;
 use OCP\AppFramework\Db\Entity;
 
 /**
+ * @method void setId(int $id)
+ * @method int getId()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setActorType(string $actorType)
@@ -36,6 +38,7 @@ class Ban extends Entity implements \JsonSerializable {
 	protected ?string $internalNote = null;
 
 	public function __construct() {
+		$this->addType('id', 'int');
 		$this->addType('actorId', 'string');
 		$this->addType('actorType', 'string');
 		$this->addType('roomId', 'int');
@@ -47,6 +50,7 @@ class Ban extends Entity implements \JsonSerializable {
 
 	public function jsonSerialize(): array {
 		return [
+			'id' => $this->getId(),
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'roomId' => $this->getRoomId(),

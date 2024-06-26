@@ -47,7 +47,7 @@ class BanService {
 		$ban->setRoomId($roomId);
 		$ban->setBannedId($bannedId);
 		$ban->setBannedType($bannedType);
-		$ban->setBannedTime($bannedTime ?? $this->timeFactory->getTime());
+		$ban->setBannedTime($bannedTime ?? new \DateTime());
 		$ban->setInternalNote($internalNote);
 
 		return $this->banMapper->insert($ban);

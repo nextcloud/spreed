@@ -44,18 +44,18 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 				'notnull' => true,
 				'unsigned' => true,
 			]);
-			$table->addColumn('banned_by_actor_id', Types::STRING, [
+			$table->addColumn('banned_id', Types::STRING, [
 				'length' => 64,
 				'notnull' => true,
 			]);
-			$table->addColumn('banned_by_actor_type', Types::STRING, [
+			$table->addColumn('banned_type', Types::STRING, [
 				'length' => 64,
 				'notnull' => true,
 			]);
-			$table->addColumn('banned_at', Types::DATETIME, [
+			$table->addColumn('banned_time', Types::DATETIME, [
 				'notnull' => false,
 			]);
-			$table->addColumn('internalNote', Types::TEXT, [
+			$table->addColumn('internal_note', Types::TEXT, [
 				'notnull' => false,
 			]);
 

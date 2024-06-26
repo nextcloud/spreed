@@ -82,8 +82,8 @@ class BanController extends AEnvironmentAwareController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
-	public function listBans(int $roomId): DataResponse {
-		$bans = $this->banService->getBansForRoom($roomId);
+	public function listBans(): DataResponse {
+		$bans = $this->banService->getBansForRoom($this->room->getId());
 		$result = array_map(function ($ban) {
 			return $ban->jsonSerialize();
 		}, $bans);
@@ -104,8 +104,16 @@ class BanController extends AEnvironmentAwareController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
-	public function unbanActor(int $banId): DataResponse {
-		$this->banService->findAndDeleteBanById($banId);
+	public function unbanActor(): DataResponse {
+		$banId = $this->request->getParam('id');
+		if ($banId === null) {
+			return new DataResponse([
+				'error' => 'Missing ban ID',
+			], Http::STATUS_BAD_REQUEST);
+		}
+		echo "Ban ID!!!: $banId\n";
+		$this->banService->findAndDeleteBanById((int)$banId);
+		echo "Unbanned successfully\n";
 		return new DataResponse([], Http::STATUS_OK);
 	}
 
