@@ -370,6 +370,8 @@ OC.L10N.register(
     "You need to be logged in to upload files" : "Du skal være logget ind for at kunne uploade filer",
     "Drop your files to upload" : "Drop dine filer for at uploade",
     "Favorite" : "Foretrukken",
+    "Hide details" : "Skjul detaljer",
+    "Show details" : "Vis detaljer",
     "Disable" : "Deaktiver",
     "Enable" : "Aktiver",
     "The file must be a PNG or JPG" : "Fil format: PNG eller JPG",
