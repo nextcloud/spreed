@@ -473,7 +473,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 | field   | type | Description                    |
 |---------|------|--------------------------------|
-| `scope` | int  | New flags for the conversation |
+| `scope` | int  | The room listable scope (See [listable scopes](constants.md#listable-scope)) |
 
 * Response:
     - Status code:
