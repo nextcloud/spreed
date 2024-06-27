@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.10 – 2024-06-27
+### Fixed
+- fix(bots): Fix bots with self-signed certificates
+  [#12469](https://github.com/nextcloud/spreed/pull/12469)
+- fix(shareIntegration): Fix handle to close and open the right sidebar on publish share links
+  [#12495](https://github.com/nextcloud/spreed/pull/12495)
+
 ## 17.1.9 – 2024-05-23
 ### Fixed
 - fix(polls): Remove actor info from system message
