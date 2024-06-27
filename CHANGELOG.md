@@ -1,6 +1,47 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.4 – 2024-06-27
+### Changed
+- feat(call): Add option to mirror video preview
+  [#12593](https://github.com/nextcloud/spreed/pull/12593)
+- feat(call): Add 'Participants' tab to 1-1 calls
+  [#12594](https://github.com/nextcloud/spreed/pull/12594)
+
+### Fixed
+- fix(federation): Update federation invites counter
+  [#12544](https://github.com/nextcloud/spreed/pull/12544)
+- fix(chat): Hide reply button for participants without chat permissions
+  [#12577](https://github.com/nextcloud/spreed/pull/12577)
+- fix(bots): Show error messages during bots setup 
+  [#12572](https://github.com/nextcloud/spreed/pull/12572)
+- fix(sidebar): Restore missing tab after switching a conversation
+  [#12587](https://github.com/nextcloud/spreed/pull/12587)
+- fix(chat): Adjust toast message on message deletion 
+  [#12589](https://github.com/nextcloud/spreed/pull/12589)
+- fix(chat): Fix marking conversation as read for hidden messages
+  [#12592](https://github.com/nextcloud/spreed/pull/12592)
+
+## 18.0.9 – 2024-06-27
+### Fixed
+- fix(bots): Fix bots with self-signed certificates
+  [#12470](https://github.com/nextcloud/spreed/pull/12470)
+- fix(attachments): Fix creating new files from templates
+  [#12487](https://github.com/nextcloud/spreed/pull/12487)
+- fix(shareIntegration): Fix handle to close and open the right sidebar on publish share links
+  [#12494](https://github.com/nextcloud/spreed/pull/12494)
+- fix(bots): Show error messages during bots setup
+  [#12573](https://github.com/nextcloud/spreed/pull/12573)
+- fix(chat): Adjust toast message on message deletion
+  [#12588](https://github.com/nextcloud/spreed/pull/12588)
+
+## 17.1.10 – 2024-06-27
+### Fixed
+- fix(bots): Fix bots with self-signed certificates
+  [#12469](https://github.com/nextcloud/spreed/pull/12469)
+- fix(shareIntegration): Fix handle to close and open the right sidebar on publish share links
+  [#12495](https://github.com/nextcloud/spreed/pull/12495)
+
 ## 19.0.3 – 2024-06-18
 ### Fixed
 - fix(chat): visual alignment of typing indicator for wide screens
