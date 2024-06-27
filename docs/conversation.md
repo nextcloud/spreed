@@ -417,7 +417,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 | field   | type | Description                                                                                                                 |
 |---------|------|-----------------------------------------------------------------------------------------------------------------------------|
-| `level` | int  | The call notification level (See [Participant call notification levels](constants.md#Participant-call-notification-levels)) |
+| `level` | int  | The call notification level (See [Participant call notification levels](constants.md#participant-call-notification-levels)) |
 
 * Response:
     - Status code:
@@ -473,7 +473,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 | field   | type | Description                    |
 |---------|------|--------------------------------|
-| `scope` | int  | New flags for the conversation |
+| `scope` | int  | The room listable scope (See [listable scopes](constants.md#listable-scope)) |
 
 * Response:
     - Status code:
