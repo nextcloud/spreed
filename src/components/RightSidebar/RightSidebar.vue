@@ -22,11 +22,10 @@
 
 <template>
 	<NcAppSidebar v-show="opened"
-		:name="name"
-		:title="name"
-		:active="activeTab"
+		:name="conversation.displayName"
+		:title="conversation.displayName"
+		:active.sync="activeTab"
 		:class="'active-tab-' + activeTab"
-		@update:active="handleUpdateActive"
 		@closed="handleClosed"
 		@close="handleClose">
 		<template #description>
@@ -208,10 +207,6 @@ export default {
 				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== CONVERSATION.OBJECT_TYPE.VIDEO_VERIFICATION))
 		},
 
-		isSearching() {
-			return this.searchText !== ''
-		},
-
 		participantType() {
 			return this.conversation.participantType
 		},
@@ -220,33 +215,12 @@ export default {
 			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 
-		canModerate() {
-			return !this.isOneToOne && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
-		},
-
 		isModeratorOrUser() {
 			return this.$store.getters.isModeratorOrUser
 		},
 
 		isInLobby() {
 			return this.$store.getters.isInLobby
-		},
-
-		/**
-		 * The conversation name value passed into the NcAppSidebar component.
-		 *
-		 * @return {string} The conversation's name.
-		 */
-		name() {
-			if (this.isRenamingConversation) {
-				return this.conversationName
-			} else {
-				return this.conversation.displayName
-			}
-		},
-
-		isRenamingConversation() {
-			return this.$store.getters.isRenamingConversation
 		},
 
 		showSIPSettings() {
@@ -279,7 +253,7 @@ export default {
 		},
 
 		showParticipantsTab() {
-			return (this.getUserId || this.isModeratorOrUser) && !this.isOneToOne && !this.isNoteToSelf
+			return (this.getUserId || this.isModeratorOrUser) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
 		},
 
 		showSharedItemsTab() {
@@ -301,10 +275,6 @@ export default {
 
 	watch: {
 		conversation(newConversation, oldConversation) {
-			if (!this.isRenamingConversation) {
-				this.conversationName = this.conversation.displayName
-			}
-
 			if (newConversation.token === oldConversation.token || !this.showParticipantsTab) {
 				return
 			}
