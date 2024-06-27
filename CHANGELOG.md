@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.9 – 2024-06-27
+### Fixed
+- fix(bots): Fix bots with self-signed certificates
+  [#12470](https://github.com/nextcloud/spreed/pull/12470)
+- fix(attachments): Fix creating new files from templates
+  [#12487](https://github.com/nextcloud/spreed/pull/12487)
+- fix(shareIntegration): Fix handle to close and open the right sidebar on publish share links
+  [#12494](https://github.com/nextcloud/spreed/pull/12494)
+- fix(bots): Show error messages during bots setup
+  [#12573](https://github.com/nextcloud/spreed/pull/12573)
+- fix(chat): Adjust toast message on message deletion
+  [#12588](https://github.com/nextcloud/spreed/pull/12588)
+
+## 17.1.10 – 2024-06-27
+### Fixed
+- fix(bots): Fix bots with self-signed certificates
+  [#12469](https://github.com/nextcloud/spreed/pull/12469)
+- fix(shareIntegration): Fix handle to close and open the right sidebar on publish share links
+  [#12495](https://github.com/nextcloud/spreed/pull/12495)
+
 ## 18.0.8 – 2024-05-23
 ### Fixed
 - fix(polls): Remove actor info from system message
