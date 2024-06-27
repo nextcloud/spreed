@@ -1564,22 +1564,6 @@ class RoomController extends AEnvironmentAwareController {
 
 		$headers = [];
 		if ($room->isFederatedConversation()) {
-			$participant = $this->participantService->getParticipant($room, $this->userId);
-
-			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
-			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
-			$response = $proxy->joinFederatedRoom($room, $participant);
-
-			if ($response->getStatus() === Http::STATUS_NOT_FOUND) {
-				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-
-			$proxyHeaders = $response->getHeaders();
-			if (isset($proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'])) {
-				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'];
-			}
-
 			// Skip password checking
 			$result = [
 				'result' => true,
@@ -1618,23 +1602,49 @@ class RoomController extends AEnvironmentAwareController {
 			$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 		}
 
+		if ($room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+
+			try {
+				$response = $proxy->joinFederatedRoom($room, $participant);
+			} catch (CannotReachRemoteException $e) {
+				$this->participantService->leaveRoomAsSession($room, $participant);
+
+				throw $e;
+			}
+
+			if ($response->getStatus() === Http::STATUS_NOT_FOUND) {
+				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$proxyHeaders = $response->getHeaders();
+			if (isset($proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'])) {
+				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'];
+			}
+		}
+
 		return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $headers);
 	}
 
 	/**
-	 * Fake join a room on the host server to verify the federated user is still part of it
+	 * Join room on the host server using the session id of the federated user.
+	 *
+	 * The session id can be null only for requests from Talk < 20.
 	 *
 	 * @param string $token Token of the room
+	 * @param string $sessionId Federated session id to join with
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
-	 * 200: Federated user is still part of the room
+	 * 200: Federated user joined the room
 	 * 404: Room not found
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
-	public function joinFederatedRoom(string $token): DataResponse {
+	public function joinFederatedRoom(string $token, ?string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
@@ -1643,9 +1653,9 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			try {
-				$this->federationAuthenticator->getRoom();
+				$room = $this->federationAuthenticator->getRoom();
 			} catch (RoomNotFoundException) {
-				$this->manager->getRoomByRemoteAccess(
+				$room = $this->manager->getRoomByRemoteAccess(
 					$token,
 					Attendee::ACTOR_FEDERATED_USERS,
 					$this->federationAuthenticator->getCloudId(),
@@ -1653,12 +1663,16 @@ class RoomController extends AEnvironmentAwareController {
 				);
 			}
 
+			if ($sessionId != null) {
+				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $sessionId);
+			}
+
 			// Let the clients know if they need to reload capabilities
 			$capabilities = $this->capabilities->getCapabilities();
 			return new DataResponse([], Http::STATUS_OK, [
 				'X-Nextcloud-Talk-Hash' => sha1(json_encode($capabilities)),
 			]);
-		} catch (RoomNotFoundException) {
+		} catch (RoomNotFoundException|UnauthorizedException) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => 'talkFederationAccess']);
 			return $response;
@@ -1885,6 +1899,62 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+
+			if ($room->isFederatedConversation()) {
+				/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+				$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+				$response = $proxy->leaveFederatedRoom($room, $participant);
+			}
+
+			$this->participantService->leaveRoomAsSession($room, $participant);
+		} catch (RoomNotFoundException|ParticipantNotFoundException) {
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * Leave room on the host server using the session id of the federated user.
+	 *
+	 * @param string $token Token of the room
+	 * @param string $sessionId Federated session id to leave with
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: Successfully left the room
+	 * 404: Room not found (non-federation request)
+	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	public function leaveFederatedRoom(string $token, string $sessionId): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		try {
+			try {
+				$room = $this->federationAuthenticator->getRoom();
+			} catch (RoomNotFoundException) {
+				$room = $this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->federationAuthenticator->getCloudId(),
+					$this->federationAuthenticator->getAccessToken(),
+				);
+			}
+
+			try {
+				$participant = $this->federationAuthenticator->getParticipant();
+			} catch (ParticipantNotFoundException) {
+				$participant = $this->participantService->getParticipantBySession(
+					$room,
+					$sessionId,
+				);
+				$this->federationAuthenticator->authenticated($room, $participant);
+			}
+
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 		}

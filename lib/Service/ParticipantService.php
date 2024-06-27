@@ -363,7 +363,7 @@ class ParticipantService {
 	/**
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomAsFederatedUser(Room $room, string $actorType, string $actorId): Participant {
+	public function joinRoomAsFederatedUser(Room $room, string $actorType, string $actorId, string $sessionId): Participant {
 		$event = new BeforeFederatedUserJoinedRoomEvent($room, $actorId);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -379,7 +379,7 @@ class ParticipantService {
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
 
-		$session = $this->sessionService->createSessionForAttendee($attendee);
+		$session = $this->sessionService->createSessionForAttendee($attendee, $sessionId);
 
 		$event = new FederatedUserJoinedRoomEvent($room, $actorId);
 		$this->dispatcher->dispatchTyped($event);
