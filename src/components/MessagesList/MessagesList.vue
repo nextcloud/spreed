@@ -934,7 +934,7 @@ export default {
 
 			// When the current message is not visible (reaction or expired)
 			// we use the next message from the list start the scroller-visibility check
-			if (!el) {
+			if (!el || el.offsetParent === null) {
 				const messageId = this.$store.getters.getFirstDisplayableMessageIdAfterReadMarker(this.token, this.conversation.lastReadMessage)
 				el = document.getElementById('message_' + messageId)
 			}
@@ -982,6 +982,18 @@ export default {
 			let el = document.getElementById('message_' + this.visualLastReadMessageId)
 			if (el) {
 				el = el.closest('.message')
+				if (el === null || el.offsetParent === null) {
+					// Exception: when the message remains not visible
+					// e.g: it is the last message in collapsed group
+					// unread marker is set to the combined system message.
+					// Look for the unread marker itself
+					el = document.querySelector('.new-message-marker')
+					if (el) {
+						el = el.closest('.message')
+					} else {
+						console.warn('Visual last read message element not found')
+					}
+				}
 			}
 
 			return el
