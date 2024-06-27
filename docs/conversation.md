@@ -417,7 +417,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 | field   | type | Description                                                                                                                 |
 |---------|------|-----------------------------------------------------------------------------------------------------------------------------|
-| `level` | int  | The call notification level (See [Participant call notification levels](constants.md#Participant-call-notification-levels)) |
+| `level` | int  | The call notification level (See [Participant call notification levels](constants.md#participant-call-notification-levels)) |
 
 * Response:
     - Status code:
