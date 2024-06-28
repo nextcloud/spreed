@@ -18,7 +18,7 @@
 
 | field           | type   | Added | Description                                                                                             |
 |-----------------|--------|-------|---------------------------------------------------------------------------------------------------------|
-| `signalingMode` | string | v1    | See [Signaling modes](constants.md#Signaling_modes)                                                     |
+| `signalingMode` | string | v1    | See [Signaling modes](constants.md#signaling_modes)                                                     |
 | `userId`        | string | v1    | Current user id                                                                                         |
 | `hideWarning`   | string | v1    | Don't show a performance warning although internal signaling is used                                    |
 | `server`        | string | v1    | URL of the external signaling server                                                                    |
