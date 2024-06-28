@@ -20,7 +20,8 @@
 		<template v-if="isInCall" #toggle-icon>
 			<MessageText :size="20" />
 			<NcCounterBubble v-if="unreadMessagesCounter > 0"
-				class="chat-button__unread-messages-counter"
+				class="chat-button-unread-messages-counter"
+				:class="{ 'chat-button-unread-messages-counter--highlighted': hasUnreadMentions }"
 				:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
 				{{ unreadMessagesCounter }}
 			</NcCounterBubble>
@@ -484,13 +485,13 @@ export default {
 	height: 100%;
 }
 
-.chat-button__unread-messages-counter {
+.chat-button-unread-messages-counter {
 	position: absolute;
 	bottom: 2px;
 	right: 2px;
 	pointer-events: none;
 
-	&.counter-bubble__counter--highlighted {
+	&.chat-button-unread-messages-counter--highlighted {
 		color: var(--color-primary-text);
 	}
 }
