@@ -34,13 +34,19 @@
 		@closed="handleClosed"
 		@close="handleClose">
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
-		<template v-if="isInCall" #toggle-icon>
-			<MessageText :size="20" />
-			<NcCounterBubble v-if="unreadMessagesCounter > 0"
-				class="chat-button__unread-messages-counter"
-				:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
-				{{ unreadMessagesCounter }}
-			</NcCounterBubble>
+		<template #toggle-icon>
+			<template v-if="isInCall">
+				<MessageText :size="20" />
+				<NcCounterBubble v-if="unreadMessagesCounter > 0"
+					class="chat-button__unread-messages-counter"
+					:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
+					{{ unreadMessagesCounter }}
+				</NcCounterBubble>
+			</template>
+			<template v-else>
+				<!-- Use the old icon on older versions -->
+				<MenuIcon :size="20" />
+			</template>
 		</template>
 		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
@@ -124,6 +130,7 @@ import CogIcon from 'vue-material-design-icons/Cog.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
@@ -171,6 +178,7 @@ export default {
 		InformationOutline,
 		Message,
 		MessageText,
+		MenuIcon,
 	},
 
 	props: {
