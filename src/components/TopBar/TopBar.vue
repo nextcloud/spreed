@@ -432,7 +432,10 @@ export default {
 			top: 24px;
 			right: 2px;
 			pointer-events: none;
-			color: var(--color-primary-element);
+
+			&.counter-bubble__counter--highlighted {
+				color: var(--color-primary-text);
+			}
 		}
 	}
 }
