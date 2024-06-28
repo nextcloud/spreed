@@ -13,7 +13,7 @@ Webhook based bots are available with the Nextcloud 27.1 compatible Nextcloud Ta
 
 ---
 
-## Receiving chat messages
+## Signing and Verifying Requests
 
 Messages are signed using the shared secret that is specified when installing a bot on the server.
 Create a HMAC with SHA256 over the `RANDOM` header and the request body using the shared secret.
@@ -28,6 +28,10 @@ if (!hash_equals($digest, strtolower($_SERVER['HTTP_X_NEXTCLOUD_TALK_SIGNATURE']
     exit;
 }
 ```
+
+## Receiving chat messages
+
+Bot receives all the chat messages following the same signature/verification method.
 
 ### Headers
 
@@ -78,6 +82,92 @@ The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.
 | object.mediaType | `text/markdown` when the message should be interpreted as Markdown. Otherwise `text/plain`.                                                                                                                                                                                 |
 | target.id        | The token of the conversation in which the message was posted. It can be used to react or reply to the given message.                                                                                                                                                       |
 | target.name      | The name of the conversation in which the message was posted.                                                                                                                                                                                                               |
+
+## Bot added in a chat
+
+When the bot is added to a chat, the server sends a request to the bot, informing it of the event. The same signature/verification method is applied.
+
+### Headers
+
+| Header                            | Content type        | Description                                          |
+|-----------------------------------|---------------------|------------------------------------------------------|
+| `HTTP_X_NEXTCLOUD_TALK_SIGNATURE` | `[a-f0-9]{64}`      | SHA265 signature of the body                         |
+| `HTTP_X_NEXTCLOUD_TALK_RANDOM`    | `[A-Za-z0-9+\]{64}` | Random string used when signing the body             |
+| `HTTP_X_NEXTCLOUD_TALK_BACKEND`   | URI                 | Base URL of the Nextcloud server sending the message |
+
+### Content
+
+The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.org/TR/activitystreams-vocabulary/).
+
+#### Sample request
+
+```json
+{
+    "type": "Join",
+    "actor": {
+        "type": "Application",
+        "id": "bots/bot-a78f46c5c203141b247554e180e1aa3553d282c6",
+        "name": "Bot123"
+    },
+    "target": {
+        "type": "Collection",
+        "id": "n3xtc10ud",
+        "name": "world"
+    }
+}
+```
+
+#### Explanation
+
+| Path             | Description                                                                                                                                                                                                                                                                 |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| actor.id         | Bot's [actor type](constants.md#actor-types-of-chat-messages) followed by the `/` slash character and a bot's unique sha1 identifier with `bot-` prefix.                                                                                               |
+| actor.name       | The display name of the bot.                                                                                                                                                                                                                                                |
+| target.id        | The token of the conversation in which the bot was added.                                                                                                                                                                                                       |
+| target.name      | The name of the conversation in which the bot was added.                                                                                                                                                                                                        |
+
+## Bot removed from a chat
+
+When the bot is removed from a chat, the server sends a request to the bot, informing it of the event. The same signature/verification method is applied.
+
+### Headers
+
+| Header                            | Content type        | Description                                          |
+|-----------------------------------|---------------------|------------------------------------------------------|
+| `HTTP_X_NEXTCLOUD_TALK_SIGNATURE` | `[a-f0-9]{64}`      | SHA265 signature of the body                         |
+| `HTTP_X_NEXTCLOUD_TALK_RANDOM`    | `[A-Za-z0-9+\]{64}` | Random string used when signing the body             |
+| `HTTP_X_NEXTCLOUD_TALK_BACKEND`   | URI                 | Base URL of the Nextcloud server sending the message |
+
+### Content
+
+The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.org/TR/activitystreams-vocabulary/).
+
+#### Sample request
+
+```json
+{
+    "type": "Leave",
+    "actor": {
+        "type": "Application",
+        "id": "bots/bot-a78f46c5c203141b247554e180e1aa3553d282c6",
+        "name": "Bot123"
+    },
+    "target": {
+        "type": "Collection",
+        "id": "n3xtc10ud",
+        "name": "world"
+    }
+}
+```
+
+#### Explanation
+
+| Path             | Description                                                                                                                                                                                                                                                                 |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| actor.id         | Bot's [actor type](constants.md#actor-types-of-chat-messages) followed by the `/` slash character and a bot's unique sha1 identifier with `bot-` prefix.                                                                                               |
+| actor.name       | The display name of the bot.                                                                                                                                                                                                                                                |
+| target.id        | The token of the conversation from which the bot was removed.                                                                                                                                                                                                       |
+| target.name      | The name of the conversation from which the bot was removed.                                                                                                                                                                                                        |
 
 ## Sending a chat message
 
@@ -143,7 +233,7 @@ Bots can also react to a message. The same signature/verification method is appl
 
 ## Delete a reaction
 
-Bots can also remove their previous reaction from amessage. The same signature/verification method is applied.
+Bots can also remove their previous reaction from a message. The same signature/verification method is applied.
 
 * Required capability: `bots-v1`
 * Method: `DELETE`

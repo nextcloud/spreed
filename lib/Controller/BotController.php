@@ -11,6 +11,8 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Events\BotDisabledEvent;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
 use OCA\Talk\Exceptions\ReactionOutOfContextException;
@@ -37,6 +39,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
@@ -58,6 +61,7 @@ class BotController extends AEnvironmentAwareController {
 		protected Manager $manager,
 		protected ReactionManager $reactionManager,
 		protected LoggerInterface $logger,
+		private IEventDispatcher $dispatcher,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -370,6 +374,10 @@ class BotController extends AEnvironmentAwareController {
 		$conversationBot->setState(Bot::STATE_ENABLED);
 
 		$this->botConversationMapper->insert($conversationBot);
+
+		$event = new BotEnabledEvent($this->room, $bot);
+		$this->dispatcher->dispatchTyped($event);
+
 		return new DataResponse($this->formatBot($bot, true), Http::STATUS_CREATED);
 	}
 
@@ -400,6 +408,10 @@ class BotController extends AEnvironmentAwareController {
 		}
 
 		$this->botConversationMapper->deleteByBotIdAndTokens($botId, [$this->room->getToken()]);
+
+		$event = new BotDisabledEvent($this->room, $bot);
+		$this->dispatcher->dispatchTyped($event);
+
 		return new DataResponse($this->formatBot($bot, false), Http::STATUS_OK);
 	}
 

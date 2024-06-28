@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Bot;
 
 use OC\Core\Command\Base;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Bot;
@@ -17,6 +18,7 @@ use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
+use OCP\EventDispatcher\IEventDispatcher;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +28,7 @@ class Setup extends Base {
 		private Manager $roomManager,
 		private BotServerMapper $botServerMapper,
 		private BotConversationMapper $botConversationMapper,
+		private IEventDispatcher $dispatcher,
 	) {
 		parent::__construct();
 	}
@@ -53,7 +56,7 @@ class Setup extends Base {
 		$tokens = $input->getArgument('token');
 
 		try {
-			$this->botServerMapper->findById($botId);
+			$botServer = $this->botServerMapper->findById($botId);
 		} catch (DoesNotExistException) {
 			$output->writeln('<error>Bot could not be found by id: ' . $botId . '</error>');
 			return 1;
@@ -67,10 +70,12 @@ class Setup extends Base {
 				if ($room->isFederatedConversation()) {
 					$output->writeln('<error>Federated conversations can not have bots: ' . $token . '</error>');
 					$returnCode = 2;
+					continue;
 				}
 			} catch (RoomNotFoundException) {
 				$output->writeln('<error>Conversation could not be found by token: ' . $token . '</error>');
 				$returnCode = 2;
+				continue;
 			}
 
 			$bot = new BotConversation();
@@ -81,6 +86,9 @@ class Setup extends Base {
 			try {
 				$this->botConversationMapper->insert($bot);
 				$output->writeln('<info>Successfully set up for conversation ' . $token . '</info>');
+
+				$event = new BotEnabledEvent($room, $botServer);
+				$this->dispatcher->dispatchTyped($event);
 			} catch (\Exception $e) {
 				if ($e instanceof Exception && $e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 					$output->writeln('<error>Bot is already set up for the conversation ' . $token . '</error>');

@@ -176,6 +176,20 @@ listen to the `OCA\Talk\Events\SystemMessagesMultipleSentEvent` event instead.
 * After event: *Not available*
 * Since: 18.0.0
 
+### Bot enabled
+
+Sends a request to the bot server, informing it was added in a chat.
+
+* Event: `OCA\Talk\Events\BotEnabledEvent`
+* Since: 20.0.0
+
+### Bot disabled
+
+Sends a request to the bot server, informing it was removed from a chat.
+
+* Event: `OCA\Talk\Events\BotDisabledEvent`
+* Since: 20.0.0
+
 ## Inbound events to invoke Talk
 
 ### Bot install

@@ -10,12 +10,15 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\BotDisabledEvent;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
+use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
@@ -49,6 +52,38 @@ class BotService {
 		protected LoggerInterface $logger,
 		protected ICertificateManager $certificateManager,
 	) {
+	}
+
+	public function afterBotEnabled(BotEnabledEvent $event): void {
+		$this->sendAsyncRequest($event->getBotServer(), [
+			'type' => 'Join',
+			'actor' => [
+				'type' => 'Application',
+				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
+				'name' => $event->getBotServer()->getName(),
+			],
+			'object' => [
+				'type' => 'Collection',
+				'id' => $event->getRoom()->getToken(),
+				'name' => $event->getRoom()->getName(),
+			],
+		]);
+	}
+
+	public function afterBotDisabled(BotDisabledEvent $event): void {
+		$this->sendAsyncRequest($event->getBotServer(), [
+			'type' => 'Leave',
+			'actor' => [
+				'type' => 'Application',
+				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
+				'name' => $event->getBotServer()->getName(),
+			],
+			'object' => [
+				'type' => 'Collection',
+				'id' => $event->getRoom()->getToken(),
+				'name' => $event->getRoom()->getName(),
+			],
+		]);
 	}
 
 	public function afterChatMessageSent(ChatMessageSentEvent $event, MessageParser $messageParser): void {
@@ -138,6 +173,54 @@ class BotService {
 	}
 
 	/**
+	 * @param BotServer $botServer
+	 * @param array $body
+	 * #param string|null $jsonBody
+	 */
+	protected function sendAsyncRequest(BotServer $botServer, array $body, ?string $jsonBody = null): void {
+		$jsonBody = $jsonBody ?? json_encode($body, JSON_THROW_ON_ERROR);
+
+		$random = $this->secureRandom->generate(64);
+		$hash = hash_hmac('sha256', $random . $jsonBody, $botServer->getSecret());
+		$headers = [
+			'Content-Type' => 'application/json',
+			'X-Nextcloud-Talk-Random' => $random,
+			'X-Nextcloud-Talk-Signature' => $hash,
+			'X-Nextcloud-Talk-Backend' => rtrim($this->serverConfig->getSystemValueString('overwrite.cli.url'), '/') . '/',
+			'OCS-APIRequest' => 'true',
+		];
+
+		$data = [
+			'verify' => $this->certificateManager->getAbsoluteBundlePath(),
+			'nextcloud' => [
+				'allow_local_address' => true,
+			],
+			'headers' => $headers,
+			'timeout' => 5,
+			'body' => $jsonBody,
+		];
+
+		$client = $this->clientService->newClient();
+		$promise = $client->postAsync($botServer->getUrl(), $data);
+
+		$promise->then(function (IResponse $response) use ($botServer) {
+			if ($response->getStatusCode() !== Http::STATUS_OK && $response->getStatusCode() !== Http::STATUS_ACCEPTED) {
+				$this->logger->error('Bot responded with unexpected status code (Received: ' . $response->getStatusCode() . '), increasing error count');
+				$botServer->setErrorCount($botServer->getErrorCount() + 1);
+				$botServer->setLastErrorDate($this->timeFactory->now());
+				$botServer->setLastErrorMessage('UnexpectedStatusCode: ' . $response->getStatusCode());
+				$this->botServerMapper->update($botServer);
+			}
+		}, function (\Exception $exception) use ($botServer) {
+			$this->logger->error('Bot error occurred, increasing error count', ['exception' => $exception]);
+			$botServer->setErrorCount($botServer->getErrorCount() + 1);
+			$botServer->setLastErrorDate($this->timeFactory->now());
+			$botServer->setLastErrorMessage(get_class($exception) . ': ' . $exception->getMessage());
+			$this->botServerMapper->update($botServer);
+		});
+	}
+
+	/**
 	 * @param Bot[] $bots
 	 * @param array $body
 	 */
@@ -145,45 +228,7 @@ class BotService {
 		$jsonBody = json_encode($body, JSON_THROW_ON_ERROR);
 
 		foreach ($bots as $bot) {
-			$botServer = $bot->getBotServer();
-			$random = $this->secureRandom->generate(64);
-			$hash = hash_hmac('sha256', $random . $jsonBody, $botServer->getSecret());
-			$headers = [
-				'Content-Type' => 'application/json',
-				'X-Nextcloud-Talk-Random' => $random,
-				'X-Nextcloud-Talk-Signature' => $hash,
-				'X-Nextcloud-Talk-Backend' => rtrim($this->serverConfig->getSystemValueString('overwrite.cli.url'), '/') . '/',
-				'OCS-APIRequest' => 'true',
-			];
-
-			$data = [
-				'verify' => $this->certificateManager->getAbsoluteBundlePath(),
-				'nextcloud' => [
-					'allow_local_address' => true,
-				],
-				'headers' => $headers,
-				'timeout' => 5,
-				'body' => json_encode($body),
-			];
-
-			$client = $this->clientService->newClient();
-			$promise = $client->postAsync($botServer->getUrl(), $data);
-
-			$promise->then(function (IResponse $response) use ($botServer) {
-				if ($response->getStatusCode() !== Http::STATUS_OK && $response->getStatusCode() !== Http::STATUS_ACCEPTED) {
-					$this->logger->error('Bot responded with unexpected status code (Received: ' . $response->getStatusCode() . '), increasing error count');
-					$botServer->setErrorCount($botServer->getErrorCount() + 1);
-					$botServer->setLastErrorDate($this->timeFactory->now());
-					$botServer->setLastErrorMessage('UnexpectedStatusCode: ' . $response->getStatusCode());
-					$this->botServerMapper->update($botServer);
-				}
-			}, function (\Exception $exception) use ($botServer) {
-				$this->logger->error('Bot error occurred, increasing error count', ['exception' => $exception]);
-				$botServer->setErrorCount($botServer->getErrorCount() + 1);
-				$botServer->setLastErrorDate($this->timeFactory->now());
-				$botServer->setLastErrorMessage(get_class($exception) . ': ' . $exception->getMessage());
-				$this->botServerMapper->update($botServer);
-			});
+			$this->sendAsyncRequest($bot->getBotServer(), $body, $jsonBody);
 		}
 	}
 
