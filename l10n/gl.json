@@ -1217,6 +1217,7 @@
     "Message read by everyone who shares their reading status" : "Mensaxe lida por todos os que comparten o seu estado de lectura",
     "Message sent" : "Mensaxe enviada",
     "Deleting message" : "Eliminando a mensaxe",
+    "Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services" : "A mensaxe foi eliminada correctamente, mais está configurado un bot ou Matterbridge e a mensaxe podería estar xa distribuída a outros servizos",
     "Message deleted successfully" : "A mensaxe foi eliminada satisfactoriamente",
     "Message could not be deleted because it is too old" : "Non foi posíbel eliminar a mensaxe porque é demasiado antiga",
     "Only normal chat messages can be deleted" : "Só é posíbel eliminar as mensaxes normais da parola",
