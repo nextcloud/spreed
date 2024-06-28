@@ -1217,6 +1217,7 @@
     "Message read by everyone who shares their reading status" : "Teachtaireacht léite ag gach duine a roinneann a stádas léitheoireachta",
     "Message sent" : "Teachtaireacht seolta",
     "Deleting message" : "Teachtaireacht á scriosadh",
+    "Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services" : "D'éirigh leis an teachtaireacht a scriosadh, ach tá bot nó Matterbridge cumraithe agus seans go mbeidh an teachtaireacht scaipthe cheana féin ar sheirbhísí eile",
     "Message deleted successfully" : "D'éirigh leis an teachtaireacht a scriosadh",
     "Message could not be deleted because it is too old" : "Níorbh fhéidir an teachtaireacht a scriosadh toisc go bhfuil sé ró-shean",
     "Only normal chat messages can be deleted" : "Ní féidir ach gnáth-theachtaireachtaí comhrá a scriosadh",
