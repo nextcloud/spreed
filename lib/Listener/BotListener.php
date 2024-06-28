@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\BotDisabledEvent;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
@@ -47,17 +49,24 @@ class BotListener implements IEventListener {
 			return;
 		}
 
-		/** @var BotService $service */
-		$service = Server::get(BotService::class);
+		if ($event instanceof BotEnabledEvent) {
+			$this->botService->afterBotEnabled($event);
+			return;
+		}
+		if ($event instanceof BotDisabledEvent) {
+			$this->botService->afterBotDisabled($event);
+			return;
+		}
+
 		/** @var MessageParser $messageParser */
 		$messageParser = Server::get(MessageParser::class);
 
 		if ($event instanceof ChatMessageSentEvent) {
-			$service->afterChatMessageSent($event, $messageParser);
+			$this->botService->afterChatMessageSent($event, $messageParser);
 			return;
 		}
 		if ($event instanceof SystemMessageSentEvent) {
-			$service->afterSystemMessageSent($event, $messageParser);
+			$this->botService->afterSystemMessageSent($event, $messageParser);
 		}
 	}
 

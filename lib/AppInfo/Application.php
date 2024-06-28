@@ -43,6 +43,8 @@ use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
 use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
+use OCA\Talk\Events\BotDisabledEvent;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
@@ -174,6 +176,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(SessionLeftRoomEvent::class, ActivityListener::class, -100);
 
 		// Bot listeners
+		$context->registerEventListener(BotDisabledEvent::class, BotListener::class);
+		$context->registerEventListener(BotEnabledEvent::class, BotListener::class);
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, BotListener::class);
