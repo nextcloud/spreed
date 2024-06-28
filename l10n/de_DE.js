@@ -1219,6 +1219,7 @@ OC.L10N.register(
     "Message read by everyone who shares their reading status" : "Nachricht wird von allen gelesen, die Ihren Lesestatus teilen",
     "Message sent" : "Nachricht gesendet",
     "Deleting message" : "Löschen der Nachricht",
+    "Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services" : "Nachricht erfolgreich gelöscht, aber ein Bot oder Matterbridge ist konfiguriert und die Nachricht wurde unter Umständen bereits an andere Dienste verteilt",
     "Message deleted successfully" : "Nachricht gelöscht",
     "Message could not be deleted because it is too old" : "Nachricht konnte nicht gelöscht werden, da sie zu alt ist.",
     "Only normal chat messages can be deleted" : "Nur normale Chat-Nachrichten können gelöscht werden",

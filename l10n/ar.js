@@ -1219,6 +1219,7 @@ OC.L10N.register(
     "Message read by everyone who shares their reading status" : "تمت قراءة الرسالة من قبل كل من يشاركهم الحالة ",
     "Message sent" : "تم إرسال الرسالة ",
     "Deleting message" : "حذف الرسالة",
+    "Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services" : "تم حذف الرسالة بنجاح، ولكن تم تكوين بُريْمِج bot أو جسر Matterbridge و لربما تمّ توزيع الرسالة بالفعل على خدمات أخرى",
     "Message deleted successfully" : "تم مسح الرسالة بنجاح",
     "Message could not be deleted because it is too old" : "تعذر مسح الرسالة لإنها قديمة جدًا",
     "Only normal chat messages can be deleted" : "يمكن حذف رسائل الدردشة العادية فقط",
