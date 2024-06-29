@@ -1043,7 +1043,6 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Ви зможете приєднатися до дзвінка лише після того, як його розпочне модератор.",
     "Cancel recording start" : "Скасувати початок запису",
     "Recording" : "Запис",
-    "Open sidebar" : "Відкрити бічну панель",
     "Show your screen" : "Демонстрація екрану",
     "Stop screensharing" : "Припинити демонстрацію екрану",
     "Disable background blur" : "Вимкнути розмиття фону",
@@ -1154,6 +1153,7 @@ OC.L10N.register(
     "Add circles" : "Додати кола",
     "Add users, groups or circles" : "Додати користувачів, групи або кола",
     "Add users or circles" : "Додати користувачів або кола",
+    "Open sidebar" : "Відкрити бічну панель",
     "Post to conversation" : "Допис до розмови",
     "Specify commands the users can use in chats" : "Вкажіть команди, які користувачі можуть використовувати в чатах",
     "Remove circle and members" : "Вилучити кола та учасників"

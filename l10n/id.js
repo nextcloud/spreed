@@ -337,6 +337,7 @@ OC.L10N.register(
     "Search or add participants" : "Cari atau tambah peserta",
     "An error occurred while adding the participants" : "Terjadi kesalahan saat menambahkan peserta",
     "Details" : "Detail",
+    "You have new unread messages in the chat." : "Anda memiliki pesan baru yang belum dibaca dalam obrolan.",
     "Projects" : "Proyek",
     "Search conversations or users" : "Cari percakapan atau pengguna",
     "Choose devices" : "Pilih perangkat",
@@ -345,8 +346,6 @@ OC.L10N.register(
     "Performance" : "Performa",
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Search" : "Cari",
-    "Open sidebar" : "Buka jendela samping",
-    "You have new unread messages in the chat." : "Anda memiliki pesan baru yang belum dibaca dalam obrolan.",
     "Grid view" : "Tampilan kotak",
     "Join a conversation or start a new one!" : "Gabung dengan percakapan atau mulai yang baru!",
     "Join a conversation or start a new one" : "Gabung dengan percakapan atau mulai yang baru",
@@ -360,6 +359,7 @@ OC.L10N.register(
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS"
+    "iOS app" : "Aplikasi iOS",
+    "Open sidebar" : "Buka jendela samping"
 },
 "nplurals=1; plural=0;");

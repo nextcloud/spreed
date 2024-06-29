@@ -117,7 +117,6 @@ OC.L10N.register(
     "Privacy" : "Privacidad",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Search" : "Buscar",
-    "Open sidebar" : "Abrir barra lateral",
     "Show your screen" : "Mostrar tu pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",
     "Screensharing options" : "Opciones de compartir pantalla",
@@ -145,6 +144,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
-    "Circles" : "Círculos"
+    "Circles" : "Círculos",
+    "Open sidebar" : "Abrir barra lateral"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

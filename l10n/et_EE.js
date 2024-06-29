@@ -94,7 +94,6 @@ OC.L10N.register(
     "Privacy" : "Privaatsus",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Search" : "Otsi",
-    "Open sidebar" : "Ava külgriba",
     "Screensharing requires the page to be loaded through HTTPS." : "Ekraanijagamiseks tuleb leht laadida üle HTTPS protokolli.",
     "Grid view" : "Ruudustikvaade",
     "Submit" : "Saada",
@@ -108,6 +107,7 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
-    "iOS app" : "iOS-i rakendus"
+    "iOS app" : "iOS-i rakendus",
+    "Open sidebar" : "Ava külgriba"
 },
 "nplurals=2; plural=(n != 1);");

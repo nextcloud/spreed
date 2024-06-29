@@ -685,6 +685,7 @@
     "Details" : "Išsamiau",
     "Shared items" : "Bendrinami elementai",
     "Participants ({count})" : "Dalyviai ({count})",
+    "Open chat" : "Atverti pokalbį",
     "Projects" : "Projektai",
     "No shared items" : "Nėra bendrinamų elementų",
     "Search conversations or users" : "Ieškoti pokalbių ar naudotojų",
@@ -710,8 +711,6 @@
     "Error while setting attachment folder" : "Klaida nustatant priedų aplanką",
     "Your privacy setting has been saved" : "Jūsų privatumo nustatymas įrašytas",
     "Start call" : "Pradėti skambutį",
-    "Open sidebar" : "Atverti šoninę juostą",
-    "Open chat" : "Atverti pokalbį",
     "Show your screen" : "Rodyti savo ekraną",
     "Stop screensharing" : "Stabdyti ekrano bendrinimą",
     "Disable background blur" : "Išjungti fono suliejimą",
@@ -814,6 +813,7 @@
     "Add groups or circles" : "Pridėti grupes ar ratus",
     "Meeting ID: {meetingId}" : "Susitikimo ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Jūsų PIN kodas: {attendeePin}",
+    "Open sidebar" : "Atverti šoninę juostą",
     "Start a conversation" : "Pradėti pokalbį",
     "Mention room" : "Paminėti kambarį"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
