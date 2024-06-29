@@ -224,7 +224,6 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Tastatūras saīsnes",
     "Search" : "Meklēt",
     "Start call" : "Sākt zvanu",
-    "Open sidebar" : "Atvērt sānjoslu",
     "Show your screen" : "Rādīt savu ekrānu",
     "Stop screensharing" : "Apturēt ekrāna koplietošanu",
     "Screensharing options" : "Ekrāna koplietošanas opcijas",
@@ -267,6 +266,7 @@ OC.L10N.register(
     "Enabled for" : "Iespējots",
     "Moderators" : "Regulētāji",
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
+    "Open sidebar" : "Atvērt sānjoslu",
     "Start a conversation" : "Sākt sarunu",
     "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā"
 },

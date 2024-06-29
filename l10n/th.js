@@ -93,7 +93,6 @@ OC.L10N.register(
     "Privacy" : "ความเป็นส่วนตัว",
     "Keyboard shortcuts" : "แป้นพิมพ์ลัด",
     "Search" : "ค้นหา",
-    "Open sidebar" : "เปิดแถบด้านข้าง",
     "Grid view" : "มุมมองแบบตาราง",
     "Submit" : "ส่ง",
     "Media" : "สื่อ",
@@ -105,6 +104,7 @@ OC.L10N.register(
     "Default" : "ค่าเริ่มต้น",
     "The password is wrong. Try again." : "รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอป Android",
-    "iOS app" : "แอป iOS"
+    "iOS app" : "แอป iOS",
+    "Open sidebar" : "เปิดแถบด้านข้าง"
 },
 "nplurals=1; plural=0;");

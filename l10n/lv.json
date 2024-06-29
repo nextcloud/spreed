@@ -222,7 +222,6 @@
     "Keyboard shortcuts" : "Tastatūras saīsnes",
     "Search" : "Meklēt",
     "Start call" : "Sākt zvanu",
-    "Open sidebar" : "Atvērt sānjoslu",
     "Show your screen" : "Rādīt savu ekrānu",
     "Stop screensharing" : "Apturēt ekrāna koplietošanu",
     "Screensharing options" : "Ekrāna koplietošanas opcijas",
@@ -265,6 +264,7 @@
     "Enabled for" : "Iespējots",
     "Moderators" : "Regulētāji",
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
+    "Open sidebar" : "Atvērt sānjoslu",
     "Start a conversation" : "Sākt sarunu",
     "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"

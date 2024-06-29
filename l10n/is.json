@@ -508,6 +508,7 @@
     "Participants" : "Þátttakendur",
     "Chat" : "Spjall",
     "Details" : "Details",
+    "Open chat" : "Opna spjall",
     "Projects" : "Verkefni",
     "No shared items" : "No shared items",
     "Select conversation" : "Veldu samtal",
@@ -517,8 +518,6 @@
     "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
     "Search" : "Search",
     "Start call" : "Hefja samtal",
-    "Open sidebar" : "Opna hliðarspjald",
-    "Open chat" : "Opna spjall",
     "Show your screen" : "Birta skjáinn þinn",
     "Stop screensharing" : "Hætta skjádeilingu",
     "Screensharing options" : "Valkostir skjádeilingar",
@@ -569,6 +568,7 @@
     "Moderators" : "Umsjónarmenn",
     "Circles" : "Hringir",
     "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
+    "Open sidebar" : "Opna hliðarspjald",
     "Start a conversation" : "Hefja samtal",
     "Specify commands the users can use in chats" : "Tilgreindu hvaða skipanir notendur geta notað í spjalli"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"

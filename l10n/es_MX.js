@@ -449,7 +449,6 @@ OC.L10N.register(
     "Performance" : "Desempeño",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Search" : "Buscar",
-    "Open sidebar" : "Abrir barra lateral",
     "Show your screen" : "Mostrar tu pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",
     "Screensharing options" : "Opciones de compartir pantalla",
@@ -490,6 +489,7 @@ OC.L10N.register(
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Ocurrió un error al ejecutar el comando. Por favor solicite al administrador revisar los logs",
     "More unread mentions" : "Más menciones no leídas",
     "Command" : "Comando",
-    "Circles" : "Círculos"
+    "Circles" : "Círculos",
+    "Open sidebar" : "Abrir barra lateral"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

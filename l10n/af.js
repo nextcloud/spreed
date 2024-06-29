@@ -316,7 +316,6 @@ OC.L10N.register(
     "Privacy" : "Privaatheid",
     "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
-    "Open sidebar" : "Open kantbalk",
     "Select a region" : "Kies ’n streek",
     "Submit" : "Dien in",
     "Media" : "Media",
@@ -327,6 +326,7 @@ OC.L10N.register(
     "Default" : "Verstek",
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
-    "iOS app" : "iOS-toep"
+    "iOS app" : "iOS-toep",
+    "Open sidebar" : "Open kantbalk"
 },
 "nplurals=2; plural=(n != 1);");
