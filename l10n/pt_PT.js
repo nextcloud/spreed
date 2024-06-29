@@ -317,7 +317,6 @@ OC.L10N.register(
     "Privacy" : "Privacidade",
     "Keyboard shortcuts" : "Atalhos de teclado",
     "Search" : "Pesquisa sobre",
-    "Open sidebar" : "Abrir barra lateral",
     "Screensharing options" : "Opções de partilha de ecrã",
     "Enable screensharing" : "Activar partilha de ecrã",
     "Screensharing requires the page to be loaded through HTTPS." : "A partilha de ecrã requer que a página seja carregada através de HTTPS.",
@@ -345,6 +344,7 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "Circles" : "Círculos",
+    "Open sidebar" : "Abrir barra lateral",
     "Start a conversation" : "Iniciar uma conversação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

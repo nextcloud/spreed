@@ -550,7 +550,6 @@ OC.L10N.register(
     "Search" : "חיפוש",
     "Shortcuts while in a call" : "קיצורי דרך בזמן שיחה",
     "Start call" : "התחלת שיחה",
-    "Open sidebar" : "פתיחת סרגל הצד",
     "Show your screen" : "הצגת המסך שלך",
     "Stop screensharing" : "הפסקת שיתוף המסך",
     "Screensharing options" : "אפשרויות שיתוף מסך",
@@ -609,6 +608,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Add circles" : "הוספת מעגלים",
     "Add groups or circles" : "הוספת קבוצות או מעגלים",
+    "Open sidebar" : "פתיחת סרגל הצד",
     "Start a conversation" : "התחלת דיון",
     "Mention room" : "אזכור חדר"
 },

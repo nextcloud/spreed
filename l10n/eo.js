@@ -335,7 +335,6 @@ OC.L10N.register(
     "Performance" : "Rendimento",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
-    "Open sidebar" : "Malfermi flankopanelon",
     "Grid view" : "Krada vido",
     "Select a region" : "Elekti regionon",
     "Submit" : "Sendi",
@@ -346,6 +345,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "Circles" : "Rondoj"
+    "Circles" : "Rondoj",
+    "Open sidebar" : "Malfermi flankopanelon"
 },
 "nplurals=2; plural=(n != 1);");
