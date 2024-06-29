@@ -105,7 +105,6 @@
     "Privacy" : "Privacidad",
     "Keyboard shortcuts" : "Atajos de teclado",
     "Search" : "Buscar",
-    "Open sidebar" : "Abrir barra lateral",
     "Show your screen" : "Mostrar su pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",
     "Screensharing requires the page to be loaded through HTTPS." : "Compartir pantalla requiere que la página se cargue a través de HTTPS.",
@@ -133,6 +132,7 @@
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "Circles" : "Círculos",
+    "Open sidebar" : "Abrir barra lateral",
     "Start a conversation" : "Iniciar una conversación"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

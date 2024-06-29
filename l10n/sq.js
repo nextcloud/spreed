@@ -244,7 +244,6 @@ OC.L10N.register(
     "Privacy" : "Privatësia",
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Search" : "Kërko",
-    "Open sidebar" : "Hapni sidebar-in",
     "Show your screen" : "Shfaq ekranin tënd",
     "Stop screensharing" : "Ndalo ndarjen e ekranit",
     "Screensharing requires the page to be loaded through HTTPS." : "Ndarja e ekranit kërkon faqen të ngarkohet përmes HTTPS.",
@@ -270,6 +269,7 @@ OC.L10N.register(
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
     "Circles" : "Rrethet",
+    "Open sidebar" : "Hapni sidebar-in",
     "Start a conversation" : "Filloni një bisedë"
 },
 "nplurals=2; plural=(n != 1);");
