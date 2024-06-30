@@ -1199,7 +1199,7 @@ OC.L10N.register(
     "Apply settings" : "Einstellungen übernehmen",
     "No audio" : "Kein Audio",
     "No camera" : "Keine Kamera",
-    "Display video as you will see it (mirrored)" : "Das Video so anzeigen, wie Sie es sehen werden (gespiegelt)",
+    "Display video as you will see it (mirrored)" : "Video so anzeigen, wie Sie es sehen werden (gespiegelt)",
     "Display video as others will see it" : "Video so anzeigen, wie andere es sehen",
     "Blur" : "Verwischen",
     "Upload" : "Hochladen",
