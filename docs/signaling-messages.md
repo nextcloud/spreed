@@ -218,7 +218,7 @@ Needs `raise-hand` capability
 | ------------------------ | ------- | --------------------------------- |
 | `state`                  | boolean | 0 - hand lowered; 1 - hand raised |
 
-### Internal signaling
+### External signaling
 
 ```
 {
@@ -242,7 +242,7 @@ Needs `raise-hand` capability
 }
 ```
 
-### External signaling
+### Internal signaling
 
 ```
 {
