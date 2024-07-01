@@ -134,6 +134,10 @@ This contains the schema of signaling messages used in Nextcloud Talk.
 
 External signaling only
 
+| field    | type    | Description        |
+| -------- | ------- | ------------------ |
+| `roomid` | string  | conversation token |
+
 ```
 {
     "type": "event",
@@ -153,12 +157,13 @@ External signaling only
 
 External signaling only
 
-| field                    | type    | Description |
-| ------------------------ | ------- | ----------- |
-| `userId`                 | string  | optional    |
-| `nextcloudSessionId`     | string  | optional    |
-| `internal`               | boolean | optional    |
-| `participantPermissions` | integer | Talk >= 13  |
+| field                    | type    | Description        |
+| ------------------------ | ------- | ------------------ |
+| `roomid`                 | string  | conversation token |
+| `userId`                 | string  | optional           |
+| `nextcloudSessionId`     | string  | optional           |
+| `internal`               | boolean | optional           |
+| `participantPermissions` | integer | Talk >= 13         |
 
 Note that `userId` in participants->update comes from the Nextcloud server, so it is `userId`; in other messages, like room->join, it comes directly from the external signaling server, so it is `userid` instead.
 
@@ -194,6 +199,7 @@ Internal signaling only
 
 | field                    | type    | Description                               |
 | ------------------------ | ------- | ----------------------------------------- |
+| `roomId`                 | integer | Internal room id (not conversation token) |
 | `userId`                 | string  | Always included, although it can be empty |
 | `participantPermissions` | integer | Talk >= 13                                |
 
@@ -306,6 +312,10 @@ Needs `raise-hand` capability
 External signaling only
 
 Needs `breakout-rooms-v1` capability and external signaling server >= 1.1.0
+
+| field    | type    | Description        |
+| -------- | ------- | ------------------ |
+| `roomid` | string  | conversation token |
 
 ```
 {
