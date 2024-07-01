@@ -169,7 +169,7 @@ Note that `userId` in participants->update comes from the Nextcloud server, so i
         "target": "participants",
         "type": "update",
         "update": {
-            "roomid": #INTEGER#,
+            "roomid": #STRING#,
             "users": [
                 {
                     "inCall": #INTEGER#,
