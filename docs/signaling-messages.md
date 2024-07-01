@@ -186,12 +186,12 @@ Note that `userId` in participants->update comes from the Nextcloud server, so i
 
 ## Users in room
 
+Internal signaling only
+
 | field                    | type    | Description                               |
 | ------------------------ | ------- | ----------------------------------------- |
 | `userId`                 | string  | Always included, although it can be empty |
 | `participantPermissions` | integer | Talk >= 13                                |
-
-Internal signaling only
 
 ```
 {
@@ -299,9 +299,9 @@ Needs `raise-hand` capability
 
 ## Switchto
 
-Needs `breakout-rooms-v1` capability and external signaling server >= 1.1.0
-
 External signaling only
+
+Needs `breakout-rooms-v1` capability and external signaling server >= 1.1.0
 
 ```
 {
