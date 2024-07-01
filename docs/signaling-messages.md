@@ -156,7 +156,7 @@ This contains the schema of signaling messages used in Nextcloud Talk.
 | `internal`               | boolean | optional    |
 | `participantPermissions` | integer | Talk >= 13  |
 
- Note that `userId` in participants->update comes from the Nextcloud server, so it is `userId`; in other messages, like room->join, it comes directly from the external signaling server, so it is `userId` instead.
+ Note that `userId` in participants->update comes from the Nextcloud server, so it is `userId`; in other messages, like room->join, it comes directly from the external signaling server, so it is `userid` instead.
 
  ```
 {
