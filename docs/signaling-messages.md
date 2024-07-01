@@ -132,6 +132,8 @@ This contains the schema of signaling messages used in Nextcloud Talk.
 
 ## Update all participants
 
+External signaling only
+
 ```
 {
     "type": "event",
@@ -148,6 +150,8 @@ This contains the schema of signaling messages used in Nextcloud Talk.
 ```
 
 ## Update participants
+
+External signaling only
 
 | field                    | type    | Description |
 | ------------------------ | ------- | ----------- |
