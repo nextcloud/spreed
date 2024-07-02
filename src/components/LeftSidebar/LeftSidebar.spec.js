@@ -18,7 +18,7 @@ import router from '../../__mocks__/router.js'
 import { searchPossibleConversations, searchListedConversations } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import storeConfig from '../../store/storeConfig.js'
-import { findNcListItems, findNcActionButton } from '../../test-helpers.js'
+import { findNcListItems, findNcActionButton, findNcButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 jest.mock('../../services/conversationsService', () => ({
@@ -742,7 +742,7 @@ describe('LeftSidebar.vue', () => {
 		subscribe('show-settings', eventHandler)
 		const wrapper = mountComponent()
 
-		const button = wrapper.find('.settings-button')
+		const button = findNcButton(wrapper, 'Talk settings')
 		expect(button.exists()).toBeTruthy()
 
 		await button.trigger('click')
