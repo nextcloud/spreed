@@ -37,6 +37,7 @@ import {
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useSignalingStore } from '../stores/signaling.ts'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
 /**
@@ -687,6 +688,10 @@ const actions = {
 			}
 		}
 
+		const signalingStore = useSignalingStore()
+		const unknownSignalingSessions = Object.values(signalingStore.sessions)
+			.filter(session => !session.attendeeId)
+
 		newParticipants.forEach(participant => {
 			if (context.state.attendees[token]?.[participant.attendeeId]) {
 				context.dispatch('updateParticipantIfHasChanged', { token, participant, hasUserStatuses })
@@ -695,6 +700,11 @@ const actions = {
 				if (hasUserStatuses) {
 					emitUserStatusUpdated(participant)
 				}
+			}
+
+			const session = unknownSignalingSessions.find(session => participant.sessionIds.includes(session.sessionId))
+			if (session) {
+				signalingStore.addSignalingSession({ ...session, attendeeId: participant.attendeeId })
 			}
 
 			if (participant.participantType === PARTICIPANT.TYPE.GUEST
