@@ -603,6 +603,46 @@ class RoomService {
 		return true;
 	}
 
+	/**
+	 * @param Room $room
+	 * @param int $newState New mention permissions from self::MENTION_PERMISSIONS_*
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setMentionPermissions(Room $room, int $newState): bool {
+		$oldState = $room->getMentionPermissions();
+		if ($newState === $oldState) {
+			return true;
+		}
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			return false;
+		}
+
+		if (!in_array($newState, [Room::MENTION_PERMISSIONS_EVERYONE, Room::MENTION_PERMISSIONS_MODERATORS])) {
+			return false;
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, $newState, $oldState);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('mention_permissions', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setMentionPermissions($newState);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, $newState, $oldState);
+		$this->dispatcher->dispatchTyped($event);
+
+		return true;
+	}
+
 	public function setAssignedSignalingServer(Room $room, ?int $signalingServer): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')

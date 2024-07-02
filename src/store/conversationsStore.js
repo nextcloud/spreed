@@ -46,6 +46,7 @@ import {
 	setConversationPassword,
 	createPublicConversation,
 	createPrivateConversation,
+	setMentionPermissions,
 } from '../services/conversationsService.js'
 import {
 	clearConversationHistory,
@@ -75,6 +76,7 @@ const DUMMY_CONVERSATION = {
 	participantType: PARTICIPANT.TYPE.USER,
 	readOnly: CONVERSATION.STATE.READ_ONLY,
 	listable: CONVERSATION.LISTABLE.NONE,
+	mentions: CONVERSATION.MENTION_PERMISSIONS.EVERYONE,
 	hasCall: false,
 	canStartCall: false,
 	lobbyState: WEBINAR.LOBBY.NONE,
@@ -226,6 +228,10 @@ const mutations = {
 
 	setCallPermissions(state, { token, permissions }) {
 		Vue.set(state.conversations[token], 'callPermissions', permissions)
+	},
+
+	setMentionPermissions(state, { token, mentionPermissions }) {
+		Vue.set(state.conversations[token], 'mentionPermissions', mentionPermissions)
 	},
 
 	setCallRecording(state, { token, callRecording }) {
@@ -971,6 +977,15 @@ const actions = {
 			context.commit('setCallPermissions', { token, permissions })
 		} catch (error) {
 			console.error('Error while updating call permissions: ', error)
+		}
+	},
+
+	async setMentionPermissions(context, { token, mentionPermissions }) {
+		try {
+			await setMentionPermissions(token, mentionPermissions)
+			context.commit('setMentionPermissions', { token, mentionPermissions })
+		} catch (error) {
+			console.error('Error while updating mention permissions: ', error)
 		}
 	},
 
