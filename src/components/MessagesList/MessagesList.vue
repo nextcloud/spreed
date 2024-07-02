@@ -297,6 +297,7 @@ export default {
 		EventBus.on('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.on('focus-message', this.focusMessage)
 		EventBus.on('route-change', this.onRouteChange)
+		EventBus.on('message-height-changed', this.onMessageHeightChanged)
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
@@ -317,7 +318,7 @@ export default {
 		EventBus.off('scroll-chat-to-bottom', this.scrollToBottom)
 		EventBus.off('focus-message', this.focusMessage)
 		EventBus.off('route-change', this.onRouteChange)
-
+		EventBus.off('message-height-changed', this.onMessageHeightChanged)
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
 
@@ -1217,6 +1218,11 @@ export default {
 		messagesGroupComponent(group) {
 			return group.isSystemMessagesGroup ? MessagesSystemGroup : MessagesGroup
 		},
+
+		onMessageHeightChanged({ heightDiff }) {
+			// scroll down by the height difference
+			this.$refs.scroller.scrollTop += heightDiff
+		}
 	},
 }
 </script>
