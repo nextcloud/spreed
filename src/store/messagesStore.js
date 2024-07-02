@@ -541,15 +541,6 @@ const actions = {
 				context.commit('addMessage', { token, message: message.parent })
 			}
 
-			// update conversation lastMessage, if it was edited
-			if (message.systemMessage === 'message_edited'
-				&& message.parent.id === context.getters.conversation(token).lastMessage.id) {
-				context.dispatch('updateConversationLastMessage', {
-					token,
-					lastMessage: message.parent,
-				})
-			}
-
 			const reactionsStore = useReactionsStore()
 			if (message.systemMessage === 'message_deleted') {
 				reactionsStore.resetReactions(token, message.parent.id)
@@ -558,6 +549,10 @@ const actions = {
 			}
 
 			if (message.systemMessage === 'message_edited' || message.systemMessage === 'message_deleted') {
+				// update conversation lastMessage, if it was edited or deleted
+				if (message.parent.id === context.getters.conversation(token).lastMessage.id) {
+					context.dispatch('updateConversationLastMessage', { token, lastMessage: message.parent })
+				}
 				// Check existing messages for having a deleted / edited message as parent, and update them
 				context.getters.messagesList(token)
 					.filter(storedMessage => storedMessage.parent?.id === message.parent.id && JSON.stringify(storedMessage.parent) !== JSON.stringify(message.parent))
