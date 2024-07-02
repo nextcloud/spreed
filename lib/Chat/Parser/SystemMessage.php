@@ -755,18 +755,26 @@ class SystemMessage implements IEventListener {
 
 		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
+				$t1 = microtime(true);
+				$ts = [$t1];
 				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
-				if ($userFolder instanceof Node) {
-					$userNodes = $userFolder->getById($share->getNodeId());
+				$ts[] = microtime(true);
+				if (!$userFolder instanceof Node) {
+					throw new ShareNotFound();
+				}
 
-					if (empty($userNodes)) {
-						// FIXME This should be much more sensible, e.g.
-						// 1. Only be executed on "Waiting for new messages"
-						// 2. Once per request
-						\OC_Util::tearDownFS();
-						\OC_Util::setupFS($participant->getAttendee()->getActorId());
-						$userNodes = $userFolder->getById($share->getNodeId());
-					}
+				$node = $userFolder->getFirstNodeById($share->getNodeId());
+				$ts[] = microtime(true);
+				if (!$node instanceof Node) {
+					$ts[] = 'tearDownFS+setupFS';
+					// FIXME This should be much more sensible, e.g.
+					// 1. Only be executed on "Waiting for new messages"
+					// 2. Once per request
+					\OC_Util::tearDownFS();
+					\OC_Util::setupFS($participant->getAttendee()->getActorId());
+					$ts[] = microtime(true);
+					$userNodes = $userFolder->getById($share->getNodeId());
+					$ts[] = microtime(true);
 
 					if (empty($userNodes)) {
 						throw new NotFoundException('File was not found');
@@ -774,11 +782,19 @@ class SystemMessage implements IEventListener {
 
 					/** @var Node $node */
 					$node = reset($userNodes);
-					$fullPath = $node->getPath();
-					$pathSegments = explode('/', $fullPath, 4);
-					$name = $node->getName();
-					$size = $node->getSize();
-					$path = $pathSegments[3] ?? $name;
+				}
+
+				$fullPath = $node->getPath();
+				$pathSegments = explode('/', $fullPath, 4);
+				$name = $node->getName();
+				$size = $node->getSize();
+				$path = $pathSegments[3] ?? $name;
+				$t2 = microtime(true);
+				$ts[] = $t2;
+				if (($t2 - $t1) > 1) {
+					\OC::$server->getLogger()->debug('Slow getFileFromShare detected: [total: ' . round($t2 - $t1, 3) . ', steps: ' . implode(',', $ts) . ']', [
+						'app' => 'spreed-message-loading-time',
+					]);
 				}
 			} else {
 				$node = $share->getNode();
