@@ -1615,6 +1615,12 @@ class RoomController extends AEnvironmentAwareController {
 			$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 		}
 
+		if ($room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+			$response = $proxy->joinFederatedRoom($room, $participant);
+		}
+
 		return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $headers);
 	}
 
@@ -1631,7 +1637,7 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
-	public function joinFederatedRoom(string $token): DataResponse {
+	public function joinFederatedRoom(string $token, ?string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
@@ -1640,14 +1646,18 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			try {
-				$this->federationAuthenticator->getRoom();
+				$room = $this->federationAuthenticator->getRoom();
 			} catch (RoomNotFoundException) {
-				$this->manager->getRoomByRemoteAccess(
+				$room = $this->manager->getRoomByRemoteAccess(
 					$token,
 					Attendee::ACTOR_FEDERATED_USERS,
 					$this->federationAuthenticator->getCloudId(),
 					$this->federationAuthenticator->getAccessToken(),
 				);
+			}
+
+			if ($sessionId) {
+				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $sessionId);
 			}
 
 			// Let the clients know if they need to reload capabilities
@@ -1883,7 +1893,19 @@ class RoomController extends AEnvironmentAwareController {
 			if (!$this->federationAuthenticator->isFederationRequest()) {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+
+				if ($room->isFederatedConversation()) {
+					/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
+					$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
+					$response = $proxy->leaveFederatedRoom($room, $participant);
+
+					if ($response->getStatus() === Http::STATUS_NOT_FOUND) {
+						$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+						return new DataResponse([], Http::STATUS_NOT_FOUND);
+					}
+				}
 			} else {
+				// TODO remove in favour of leaveFederatedRoom?
 				try {
 					$room = $this->federationAuthenticator->getRoom();
 				} catch (RoomNotFoundException) {
@@ -1909,6 +1931,48 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 		}
+
+		return new DataResponse();
+	}
+
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	public function leaveFederatedRoom(string $token, string $sessionId): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		try {
+			try {
+				$room = $this->federationAuthenticator->getRoom();
+			} catch (RoomNotFoundException) {
+				$room = $this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->federationAuthenticator->getCloudId(),
+					$this->federationAuthenticator->getAccessToken(),
+				);
+			}
+
+			try {
+				$participant = $this->federationAuthenticator->getParticipant();
+			} catch (ParticipantNotFoundException) {
+				$participant = $this->participantService->getParticipantBySession(
+					$room,
+					$sessionId,
+				);
+				$this->federationAuthenticator->authenticated($room, $participant);
+			}
+		} catch (RoomNotFoundException|ParticipantNotFoundException) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token, 'action' => 'talkFederationAccess']);
+			return $response;
+		}
+
+		$this->participantService->leaveRoomAsSession($room, $participant);
 
 		return new DataResponse();
 	}

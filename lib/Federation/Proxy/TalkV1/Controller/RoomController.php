@@ -11,6 +11,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -70,10 +71,16 @@ class RoomController {
 	 * 404: Room not found
 	 */
 	public function joinFederatedRoom(Room $room, Participant $participant): DataResponse {
+		$options = [];
+		if ($participant->getSession() instanceof Session) {
+			$options['sessionId'] = $participant->getSession()->getSessionId();
+		}
+
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/federation/active',
+			$options,
 		);
 
 		$statusCode = $proxy->getStatusCode();
@@ -85,6 +92,28 @@ class RoomController {
 		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $this->proxy->overwrittenRemoteTalkHash($proxy->getHeader('X-Nextcloud-Talk-Hash'))];
 
 		return new DataResponse([], $statusCode, $headers);
+	}
+
+	public function leaveFederatedRoom(Room $room, Participant $participant): DataResponse {
+		$options = [];
+		if ($participant->getSession() instanceof Session) {
+			$options['sessionId'] = $participant->getSession()->getSessionId();
+		}
+
+		$proxy = $this->proxy->delete(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/federation/active',
+			$options,
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_NOT_FOUND], true)) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			throw new CannotReachRemoteException();
+		}
+
+		return new DataResponse([], $statusCode);
 	}
 
 	/**

@@ -94,6 +94,9 @@ class SessionService {
 		} else {
 			while (true) {
 				$sessionId = $this->secureRandom->generate(255);
+				if (!empty($attendee->getInvitedCloudId())) {
+					$sessionId = $sessionId . '#' . $attendee->getInvitedCloudId();
+				}
 				$session->setSessionId($sessionId);
 				try {
 					$this->sessionMapper->insert($session);

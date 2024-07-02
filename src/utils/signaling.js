@@ -977,8 +977,8 @@ Signaling.Standalone.prototype.doSend = function(msg, callback) {
 	this.socket.send(JSON.stringify(msg))
 }
 
-Signaling.Standalone.prototype._getBackendUrl = function() {
-	return generateOcsUrl('apps/spreed/api/v3/signaling/backend')
+Signaling.Standalone.prototype._getBackendUrl = function(baseURL = undefined ) {
+	return generateOcsUrl('apps/spreed/api/v3/signaling/backend', {}, { baseURL })
 }
 
 Signaling.Standalone.prototype.sendHello = function() {
@@ -1165,7 +1165,7 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 	}
 
 	console.debug('Join room', token)
-	this.doSend({
+	const message = {
 		type: 'room',
 		room: {
 			roomid: token,
@@ -1174,7 +1174,25 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 			// the (Nextcloud) user is allowed to join the room.
 			sessionid: nextcloudSessionId,
 		},
-	}, function(data) {
+	}
+
+	if (this.settings.federation?.server) {
+		message.room.roomid = this.settings.federation.roomId,
+		message.room.federation = {
+			// TODO Should adding "/spreed" be done in the signaling server
+			// instead? The URL configured in Talk administration settings is
+			// just the base URL, and the clients add "/spreed" to connect to
+			// the WebSocket or "api/v1/..." to connect to the HTTP API. When
+			// connecting to a remote signaling server the local signaling
+			// server becomes a client itself, so it might make sense to just
+			// provide the base URL and add "/spreed" in the signaling server.
+			signaling: this.settings.federation.server + '/spreed',
+			url: this._getBackendUrl(this.settings.federation.nextcloudServer),
+			token: this.settings.federation.helloAuthParams.token,
+		}
+	}
+
+	this.doSend(message, function(data) {
 		this.joinResponseReceived(data, token)
 	}.bind(this))
 }
