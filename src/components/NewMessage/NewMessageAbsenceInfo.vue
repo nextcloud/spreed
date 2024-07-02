@@ -15,6 +15,15 @@
 				disable-tooltip />
 		</template>
 		<h4 class="absence-reminder__caption">{{ userAbsenceCaption }}</h4>
+		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
+			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
+			<p>{{ t('spreed','Replacement: ') }}</p>
+			<NcUserBubble class="absence-reminder__replacement__bubble"
+				:title="t('spreed','Open conversation')"
+				:display-name="userAbsence.replacementUserDisplayName"
+				:user="userAbsence.replacementUserId"
+				@click="openConversationWithReplacementUser" />
+		</div>
 		<NcButton v-if="userAbsenceMessage && isTextMoreThanOneLine"
 			class="absence-reminder__button"
 			type="tertiary"
@@ -34,6 +43,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
@@ -47,6 +57,7 @@ export default {
 		ChevronUp,
 		NcButton,
 		NcNoteCard,
+		NcUserBubble,
 	},
 
 	props: {
@@ -107,6 +118,15 @@ export default {
 		setIsTextMoreThanOneLine() {
 			this.isTextMoreThanOneLine = this.$refs.absenceMessage?.scrollHeight > this.$refs.absenceMessage?.clientHeight
 		},
+
+		async openConversationWithReplacementUser() {
+			this.$router.push({
+				name: 'root',
+				query: {
+					callUser: this.userAbsence.replacementUserId,
+				}
+			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
 	},
 }
 </script>
@@ -121,6 +141,14 @@ export default {
 	&__caption {
 		font-weight: bold;
 		margin: 5px 44px 5px 0;
+	}
+
+	&__replacement {
+		display: flex;
+
+		&__bubble {
+			padding: 3px;
+		}
 	}
 
 	&__message {
