@@ -17,6 +17,6 @@ return [
 		/** @see \OCA\Talk\Controller\BanController::listBans() */
 		['name' => 'Ban#listBans', 'url' => '/api/{apiVersion}/ban/{token}', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BanController::unbanActor() */
-		['name' => 'Ban#unbanActor', 'url' => '/api/{apiVersion}/ban/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'Ban#unbanActor', 'url' => '/api/{apiVersion}/ban/{token}/{banId}', 'verb' => 'DELETE', 'requirements' => $requirements],
 	],
 ];
