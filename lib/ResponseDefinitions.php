@@ -244,6 +244,7 @@ namespace OCA\Talk;
  *     listable: int,
  *     lobbyState: int,
  *     lobbyTimer: int,
+ *     mentionPermissions: int,
  *     messageExpiration: int,
  *     name: string,
  *     notificationCalls: int,

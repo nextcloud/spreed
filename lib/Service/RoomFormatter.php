@@ -139,6 +139,7 @@ class RoomFormatter {
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
+			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -217,6 +218,7 @@ class RoomFormatter {
 			'messageExpiration' => $room->getMessageExpiration(),
 			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
+			'mentionPermissions' => $room->getMentionPermissions(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

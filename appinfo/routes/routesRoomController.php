@@ -107,5 +107,7 @@ return [
 		['name' => 'Room#setMessageExpiration', 'url' => '/api/{apiVersion}/room/{token}/message-expiration', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::getCapabilities() */
 		['name' => 'Room#getCapabilities', 'url' => '/api/{apiVersion}/room/{token}/capabilities', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::setMentionPermissions() */
+		['name' => 'Room#setMentionPermissions', 'url' => '/api/{apiVersion}/room/{token}/mention-permissions', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 	],
 ];

@@ -1439,6 +1439,26 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Update the mention permissoins for a room
+	 *
+	 * @param 0|1 $mentionPermissions New mention permissions
+	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 *
+	 * 200: Permissions updated successfully
+	 * 400: Updating permissions is not possible
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorParticipant]
+	public function setMentionPermissions(int $mentionPermissions): DataResponse {
+		if (!$this->roomService->setMentionPermissions($this->room, $mentionPermissions)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Set a password for a room
 	 *
 	 * @param string $password New password
