@@ -75,6 +75,22 @@ export type paths = {
          * @description Required capability: `ban-v1`
          */
         post: operations["ban-ban-actor"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/ban/{token}/{banId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
         /**
          * Unban an actor or IP address
          * @description Required capability: `ban-v1`
@@ -1907,10 +1923,7 @@ export interface operations {
     };
     "ban-unban-actor": {
         parameters: {
-            query: {
-                /** @description ID of the ban to be removed */
-                banId: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -1918,6 +1931,8 @@ export interface operations {
             path: {
                 apiVersion: "v1";
                 token: string;
+                /** @description ID of the ban to be removed */
+                banId: number;
             };
             cookie?: never;
         };

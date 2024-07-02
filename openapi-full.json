@@ -2196,7 +2196,9 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/ban/{token}/{banId}": {
             "delete": {
                 "operationId": "ban-unban-actor",
                 "summary": "Unban an actor or IP address",
@@ -2214,16 +2216,6 @@
                     }
                 ],
                 "parameters": [
-                    {
-                        "name": "banId",
-                        "in": "query",
-                        "description": "ID of the ban to be removed",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -2243,6 +2235,16 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "banId",
+                        "in": "path",
+                        "description": "ID of the ban to be removed",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
                         }
                     },
                     {
