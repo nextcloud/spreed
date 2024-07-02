@@ -421,49 +421,31 @@ export default {
 		},
 
 		softUpdateAuthorGroups(oldGroups, newGroups, dateTimestamp) {
-			const newGroupIdSet = new Set(this.messagesList.map(message => message.id))
-			const newGroupsKeys = Object.keys(newGroups)
+			const groupIds = new Set([...Object.keys(oldGroups), ...Object.keys(newGroups)])
 
-			Object.entries(oldGroups).forEach(([id, oldGroup]) => {
-				if (newGroupsKeys.includes(id)) {
-					// Group is presented, will be handled in the next loop
-					return
-				}
-
-				if (oldGroup.messages.some(message => !newGroupIdSet.has(message.id))) {
-					// Delete groups of normal and temporary messages,
-					// if at least one message from the group is no longer in the store
+			groupIds.forEach(id => {
+				if (oldGroups[id] && !newGroups[id]) {
+					// group no longer exists, remove
 					this.$delete(this.messagesGroupedByDateByAuthor[dateTimestamp], id)
-				}
-			})
-			Object.entries(newGroups).forEach(([id, newGroup]) => {
-				if (!oldGroups[id]) {
-					const oldId = Object.keys(oldGroups)
-						.find(key => +id < +key && oldGroups[key].nextMessageId <= newGroup.nextMessageId)
-					if (oldId) {
-						// newGroup includes oldGroup and more old messages, remove oldGroup
-						this.$delete(this.messagesGroupedByDateByAuthor[dateTimestamp], oldId)
-					}
-					// newGroup is not presented in the list, add it
-					this.$set(this.messagesGroupedByDateByAuthor[dateTimestamp], id, newGroup)
-				} else if (!this.areGroupsIdentical(newGroup, oldGroups[id])) {
-					// newGroup includes oldGroup and more recent messages
-					this.$set(this.messagesGroupedByDateByAuthor[dateTimestamp], id, newGroup)
+				} else if ((newGroups[id] && !oldGroups[id]) || !this.areGroupsIdentical(newGroups[id], oldGroups[id])) {
+					// group did not exist before, or group differs from previous state, add
+					this.$set(this.messagesGroupedByDateByAuthor[dateTimestamp], id, newGroups[id])
 				}
 			})
 		},
 
 		areGroupsIdentical(group1, group2) {
+			// Compare plain values
 			if (group1.messages.length !== group2.messages.length
-				|| JSON.stringify(group1.messages) !== JSON.stringify(group2.messages)
 				|| group1.dateSeparator !== group2.dateSeparator
 				|| group1.previousMessageId !== group2.previousMessageId
 				|| group1.nextMessageId !== group2.nextMessageId) {
 				return false
 			}
 
-			// Check for temporary messages, replaced with messages from server
-			return group1.messages.every((message, index) => group2.messages[index].id === message.id)
+			// Compare ids and stringified messages (look for temporary, edited, deleted messages, replaced from server)
+			return group1.messages.every((message, index) => group2.messages[index].id === message.id
+				&& JSON.stringify(group2.messages[index]) === JSON.stringify(message))
 		},
 
 		removeExpiredMessagesFromStore() {
