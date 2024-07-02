@@ -151,26 +151,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$userToAttendeeId[$room][$type][$id];
 	}
 
-	public function getBanId(string $type, string $id, string $room, string $user = null) {
-		if (!isset(self::$userToBanId[$room][$type][$id])) {
-			if ($user !== null) {
-				echo "userLoadsBanIdsInRoom\n";
-				$this->userLoadsBanIdsInRoom($user, $room, 'v1');
-			} else {
-				throw new \Exception('Ban id unknown, please call userLoadsBanIdsInRoom with a user that has access before');
-			}
-		}
-	
-		echo "userToBanId\n";
-		echo self::$userToBanId[$room][$type][$id];
-		if (!isset(self::$userToBanId[$room][$type][$id])) {
-			throw new \Exception('Ban id unknown, please call userLoadsBanIdsInRoom with a user that has access before 1');
-		}
-	
-		echo "returned correct banId\n";
-		return self::$userToBanId[$room][$type][$id];
-	}
-
 	/**
 	 * FeatureContext constructor.
 	 */
@@ -194,6 +174,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		];
 		self::$userToSessionId = [];
 		self::$userToAttendeeId = [];
+		self::$userToBanId = [];
 		self::$textToMessageId = [];
 		self::$messageIdToText = [];
 		self::$questionToPollId = [];
@@ -891,33 +872,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		return $a1['actorId'] <=> $a2['actorId'];
 	}
-	
-	/**
-	 * @Then /^user "([^"]*)" loads ban ids in room "([^"]*)" \((v1)\)$/
-	 *
-	 * @param string $user
-	 * @param string $identifier
-	 * @param string $apiVersion
-	 */
-	public function userLoadsBanIdsInRoom(string $user, string $identifier, string $apiVersion = 'v1'): void {
-		$this->setCurrentUser($user);
-		echo "SENDING GET REQUEST\n";
-		echo "selftoken: " . self::$identifierToToken[$identifier] . "\n";
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier]);
-		$this->assertStatusCode($this->response, 200);
-		$bans = $this->getDataFromResponse($this->response);
-
-		echo "BANS: " . print_r($bans, true) . "\n";
-
-		foreach ($bans as $ban) {
-			if (!isset(self::$userToBanId[$identifier][$ban['actorType']])) {
-				self::$userToBanId[$identifier][$ban['actorType']] = [];
-			}
-			self::$userToBanId[$identifier][$ban['actorType']][$ban['actorId']] = $ban['id'];
-		}
-		echo "print the user to ban id array\n";
-		echo print_r(self::$userToBanId, true) . "\n";
-	}
 
 	private function mapParticipantTypeTestInput($participantType) {
 		if (is_numeric($participantType)) {
@@ -1538,15 +1492,38 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		//echo "Request Body: " . json_encode($body) . "\n";
-		echo "self" . self::$identifierToToken[$identifier] . "\n";
-
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier], $body
 		);
 
-		echo "Response: " . $this->response->getBody()->getContents() . "\n";
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 200) {
+			$data = $this->getDataFromResponse($this->response);
+			self::$userToBanId[self::$identifierToToken[$identifier]] ??= [];
+			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType] ??= [];
+			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId] = $data['id'];
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following bans in room "([^"]*)" with (\d+) \((v1)\)$/
+	 */
+	public function userLoadsBanIdsInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $tableNode): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== 200) {
+			return;
+		}
+
+		$bans = $this->getDataFromResponse($this->response);
+
+		var_dump($bans);
+		var_dump($tableNode->getColumnsHash());
+
+		// FIXME compare the 2 arrays
 	}
 
 	/**
@@ -1567,23 +1544,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$actorId .= '@' . rtrim($this->baseRemoteUrl, '/');
 				$actorType = 'federated_user';
 			}
-
-			echo "Getting banID\n";
-			$banId = $this->getBanId($actorType, $actorId, $identifier, $statusCode === 200 ? $user : null);
 		}
+		$banId = self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId];
 
-		echo "starting to delete this ban\n";
 		$this->setCurrentUser($user);
-
-		echo "self: " . self::$identifierToToken[$identifier] . "\n";
-		echo "banId: " . $banId . "\n";
-
 		$this->sendRequest(
-			'DELETE', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier], ['id' => $banId]
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier] . '/' . $banId
 		);
-
-		echo "Response Status Code: " . $this->response->getStatusCode() . "\n";
-		echo "Response Body: " . $this->response->getBody()->getContents() . "\n";
 
 		$this->assertStatusCode($this->response, $statusCode);
 	}
