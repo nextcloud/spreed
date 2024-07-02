@@ -152,6 +152,8 @@ import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
+import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
 const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
@@ -268,6 +270,9 @@ export default {
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
 			debounceMakeGrid: () => {},
+			tempPromotedModels: [],
+			unpromoteSpeakerTimer: {},
+			promotedHistoryMask: [],
 		}
 	},
 
@@ -317,11 +322,11 @@ export default {
 			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
 
 			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * slots) >= this.videos.length) {
-				return this.videos.slice(this.currentPage * slots)
+			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
+				return this.orderedVideos.slice(this.currentPage * slots)
 			}
 
-			return this.videos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
+			return this.orderedVideos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
 		},
 
 		isLessThanTwoVideos() {
@@ -420,7 +425,7 @@ export default {
 		// Hides or displays the `grid-navigation next` button
 		hasNextPage() {
 			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos.at(-1) !== this.videos.at(-1)
+				return this.displayedVideos.at(-1) !== this.orderedVideos.at(-1)
 			} else {
 				return false
 			}
@@ -429,7 +434,7 @@ export default {
 		// Hides or displays the `grid-navigation previous` button
 		hasPreviousPage() {
 			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos[0] !== this.videos[0]
+				return this.displayedVideos[0] !== this.orderedVideos[0]
 			} else {
 				return false
 			}
@@ -478,6 +483,70 @@ export default {
 		stripeOpen() {
 			return this.$store.getters.isStripeOpen && !this.isRecording
 		},
+
+		participantsInitialised() {
+			return this.$store.getters.participantsInitialised(this.token)
+		},
+
+		isGuestNonModerator() {
+			return this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.GUESTS
+				&& this.$store.getters.conversation(this.token).participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR
+		},
+
+		orderedVideos() {
+			// Dynamic ordering is not possible for guests because
+			// participants store is not initialized
+			if (this.isGuestNonModerator) {
+				return this.videos
+			}
+
+			if (!this.participantsInitialised) {
+				return []
+			}
+
+			const objectMap = {
+				modelsWithScreenshare: [],
+				modelsTempPromoted: [],
+				modelsWithVideoEnabled: [],
+				modelsWithAudioOnly: [],
+				modelsWithNoPermissions: [],
+			}
+			const screensSet = new Set(this.screens)
+			const tempPromotedModelsSet = new Set(this.tempPromotedModels.map(model => model.attributes.nextcloudSessionId))
+			const videoTilesMap = new Map()
+			const audioTilesMap = new Map()
+
+			this.callParticipantModels.forEach((model) => {
+				if (screensSet.has(model.attributes.peerId)) {
+					objectMap.modelsWithScreenshare.push(model)
+				} else if (tempPromotedModelsSet.has(model.attributes.nextcloudSessionId)) {
+					objectMap.modelsTempPromoted.push(model)
+				} else if (this.isModelWithVideo(model)) {
+					videoTilesMap.set(model.attributes.nextcloudSessionId, model)
+				} else if (this.isModelWithAudio(model)) {
+					audioTilesMap.set(model.attributes.nextcloudSessionId, model)
+				} else {
+					objectMap.modelsWithNoPermissions.push(model)
+				}
+			})
+
+			objectMap.modelsWithVideoEnabled = this.getOrderedTiles(videoTilesMap, this.promotedHistoryMask)
+			objectMap.modelsWithAudioOnly = this.getOrderedTiles(audioTilesMap, this.promotedHistoryMask)
+
+			return [...objectMap.modelsWithScreenshare,
+				...objectMap.modelsTempPromoted,
+				...objectMap.modelsWithVideoEnabled,
+				...objectMap.modelsWithAudioOnly,
+				...objectMap.modelsWithNoPermissions]
+		},
+
+		speakers() {
+			return this.callParticipantModels.filter(model => model.attributes.speaking)
+		},
+
+		speakersWithAudioOff() {
+			return this.tempPromotedModels.filter(model => !model.attributes.audioAvailable)
+		},
 	},
 
 	watch: {
@@ -522,6 +591,24 @@ export default {
 			if (this.currentPage >= this.numberOfPages) {
 				this.currentPage = Math.max(0, this.numberOfPages - 1)
 			}
+		},
+
+		speakers(models) {
+			models.forEach(model => {
+				this.promoteSpeaker(model)
+				clearTimeout(this.unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
+			})
+		},
+
+		speakersWithAudioOff(newModels, oldModels) {
+			newModels.forEach(speaker => {
+				if (oldModels.includes(speaker)) {
+					return
+				}
+				this.unpromoteSpeakerTimer[speaker.attributes.nextcloudSessionId] = setTimeout(() => {
+					this.unpromoteSpeaker(speaker)
+				}, 10000)
+			})
 		},
 	},
 
@@ -828,6 +915,76 @@ export default {
 			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
 		},
 
+		isModelWithVideo(callParticipantModel) {
+			return callParticipantModel.attributes.videoAvailable
+				&& (typeof callParticipantModel.attributes.stream === 'object')
+		},
+
+		isModelWithAudio(callParticipantModel) {
+			const participant = this.$store.getters.getParticipantBySessionId(this.token, callParticipantModel.attributes.nextcloudSessionId)
+			if (!participant) {
+				return false
+			}
+			return participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
+		},
+
+		unpromoteSpeaker(model) {
+			// remove model from the temp promoted speakers
+			const index = this.tempPromotedModels.indexOf(model)
+			if (index === -1) {
+				return
+			}
+
+			this.tempPromotedModels.splice(index, 1)
+		},
+
+		promoteSpeaker(model) {
+			const id = model.attributes.nextcloudSessionId
+
+			// if model is already in the first page, do nothing
+			if (this.orderedVideos.slice(0, this.slots).find(video => video.attributes.nextcloudSessionId === id)) {
+				return
+			}
+
+			if (this.screens.includes(model.attributes.peerId)) {
+				// tiles with screenshare have a better priority position already
+				// do nothing
+				return
+			}
+
+			// add the model
+			if (!this.tempPromotedModels.includes(model)) {
+				// remove model from the order history if it exists
+				const modelIndex = this.promotedHistoryMask.indexOf(id)
+				if (modelIndex !== -1) {
+					this.promotedHistoryMask.splice(modelIndex, 1)
+				}
+
+				this.tempPromotedModels.unshift(model)
+				// add model to the beginning of the orderedVideos in its category
+				this.promotedHistoryMask.unshift(id)
+			}
+		},
+
+		getOrderedTiles(tilesMap, orderMask) {
+			const orderedTiles = []
+			const rest = []
+			// Get the ordered tiles
+			orderMask.forEach(id => {
+				if (tilesMap.has(id)) {
+					orderedTiles.push(tilesMap.get(id))
+				}
+			})
+
+			// Add remaining tiles not in orderMask to rest
+			tilesMap.forEach((tile, id) => {
+				if (!orderMask.includes(id)) {
+					rest.push(tile)
+				}
+			})
+
+			return [...orderedTiles, ...rest]
+		},
 	},
 }
 

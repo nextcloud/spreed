@@ -266,6 +266,10 @@ const getters = {
 		}
 		return 0
 	},
+
+	getParticipantBySessionId: (state) => (token, sessionId) => {
+		return Object.values(Object(state.attendees[token])).find(attendee => attendee.sessionIds.includes(sessionId))
+	},
 }
 
 const mutations = {
