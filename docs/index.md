@@ -44,3 +44,4 @@
 * [Settings management](settings.md)
 * [Internal Signaling API](internal-signaling.md)
 * [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/)
+* [Signaling Messages](signaling-messages.md)
