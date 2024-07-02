@@ -48,17 +48,16 @@ class BanController extends AEnvironmentAwareController {
 	#[RequireModeratorParticipant]
 	public function banActor(string $actorType, string $actorId, string $internalNote = ''): DataResponse {
 		try {
-			$attendee = $this->participant->getAttendee();
-			$roomId = $attendee->getRoomId();
-			$bannedId = $attendee->getActorId();
-			$bannedType = $attendee->getActorType();
+			$moderator = $this->participant->getAttendee();
+			$moderatorActorType = $moderator->getActorType();
+			$moderatorActorId = $moderator->getActorId();
 
 			$ban = $this->banService->createBan(
+				$moderatorActorId,
+				$moderatorActorType,
+				$this->room->getId(),
 				$actorId,
 				$actorType,
-				$roomId,
-				$bannedId,
-				$bannedType,
 				null,
 				$internalNote
 			);
