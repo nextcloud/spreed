@@ -4,7 +4,10 @@
 -->
 
 <template>
-	<div ref="messageMain" class="message-main">
+	<div ref="messageMain"
+		v-element-size="[onResize, { width: 0, height: 24 }]"
+		v-intersection-observer="onIntersectionObserver"
+		class="message-main">
 		<!-- System or deleted message body content -->
 		<div v-if="isSystemMessage || isDeletedMessage"
 			class="message-main__text"
@@ -109,8 +112,9 @@
 </template>
 
 <script>
+import { vIntersectionObserver as IntersectionObserver, vElementSize as ElementSize } from '@vueuse/components'
 import emojiRegex from 'emoji-regex'
-import { toRefs } from 'vue'
+import { toRefs, ref } from 'vue'
 
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
@@ -154,6 +158,11 @@ export default {
 		CheckAllIcon,
 		ContentCopyIcon,
 		ReloadIcon,
+	},
+
+	directives: {
+		IntersectionObserver,
+		ElementSize,
 	},
 
 	props: {
@@ -200,6 +209,8 @@ export default {
 			codeBlocks: null,
 			currentCodeBlock: null,
 			copyButtonOffset: 0,
+			isVisible: false,
+			previousSize: { width: 0, height: 24 }, // default height of one-line message body without widgets
 		}
 	},
 
@@ -403,6 +414,29 @@ export default {
 			if (messageId === this.message.id) {
 				this.isEditing = value
 			}
+		},
+
+		onIntersectionObserver([{ isIntersecting }]) {
+			this.isVisible = isIntersecting
+		},
+
+		onResize({ width, height }) {
+			const oldWidth = this.previousSize?.width
+			const oldHeight = this.previousSize?.height
+			this.previousSize = { width, height }
+
+			if (!this.isVisible) {
+				return
+			}
+			if (oldWidth && oldWidth !== width) {
+				// Resizing messages list
+				return
+			}
+			if (height === 0) {
+				// component is unmounted
+				return
+			}
+			EventBus.emit('message-height-changed', { heightDiff: height - oldHeight })
 		},
 	},
 }
