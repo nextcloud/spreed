@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div ref="messageMain" class="message-main">
+	<div ref="messageMain" v-element-size="onResize" class="message-main">
 		<!-- System or deleted message body content -->
 		<div v-if="isSystemMessage || isDeletedMessage"
 			class="message-main__text"
@@ -39,7 +39,8 @@
 			<Quote v-if="message.parent" :message="message.parent" />
 
 			<!-- Message content / text -->
-			<NcRichText :text="renderedMessage"
+			<NcRichText v-intersection-observer="onIntersectionObserver"
+				:text="renderedMessage"
 				:arguments="richParameters"
 				:class="{'single-emoji': isSingleEmoji}"
 				autolink
@@ -109,8 +110,9 @@
 </template>
 
 <script>
+import { vIntersectionObserver as IntersectionObserver, vElementSize as ElementSize } from '@vueuse/components'
 import emojiRegex from 'emoji-regex'
-import { toRefs } from 'vue'
+import { toRefs, ref } from 'vue'
 
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
@@ -156,6 +158,11 @@ export default {
 		ReloadIcon,
 	},
 
+	directives: {
+		IntersectionObserver,
+		ElementSize,
+	},
+
 	props: {
 		message: {
 			type: Object,
@@ -199,6 +206,8 @@ export default {
 			codeBlocks: null,
 			currentCodeBlock: null,
 			copyButtonOffset: 0,
+			isVisible: false,
+			previousSize: { width: 0, height: 44 }, // default height of loading icon
 		}
 	},
 
@@ -401,7 +410,28 @@ export default {
 				console.error(error)
 				showError(t('spreed', 'Could not update the message'))
 			}
-		}
+		},
+
+		onIntersectionObserver([{ isIntersecting }]) {
+			this.isVisible = isIntersecting
+		},
+
+		onResize({ width, height }) {
+			if (!this.isVisible) {
+				return
+			}
+			if (this.previousSize?.width && this.previousSize.width !== width) {
+				// Resizing messages list
+				return
+			}
+			if (height === 0) {
+				// remove the default 44px of loading icon
+				this.previousSize = { width: 0, height: 0 }
+			}
+
+			EventBus.emit('message-height-changed', { heightDiff: height - this.previousSize.height })
+			this.previousSize = { width, height }
+		},
 	},
 }
 </script>
