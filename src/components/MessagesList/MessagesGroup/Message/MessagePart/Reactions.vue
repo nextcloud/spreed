@@ -39,12 +39,15 @@
 			</template>
 
 			<div v-if="hasReactionsLoaded" class="reaction-details">
-				<span>{{ getReactionSummary(reaction) }}</span>
-				<NcButton v-if="reactionsCount(reaction) > 3"
-					type="tertiary-no-background"
-					@click="showAllReactions = true">
-					{{ remainingReactionsLabel(reaction) }}
-				</NcButton>
+				<span>{{ getReactionSummary(reaction) }}
+					<a v-if="reactionsCount(reaction) > 3"
+						class="more-reactions-button"
+						role="button"
+						tabindex="0"
+						@click.prevent="showAllReactions = true">
+						{{ remainingReactionsLabel(reaction) }}
+					</a>
+				</span>
 			</div>
 			<div v-else class="details-loading">
 				<NcLoadingIcon />
@@ -303,6 +306,7 @@ export default {
 
 .reaction-details {
 	padding: 8px;
+	max-width: 250px;
 }
 
 .details-loading {
@@ -311,4 +315,10 @@ export default {
 	width: 38px;
 }
 
+.more-reactions-button {
+	text-decoration: underline;
+	&:hover {
+		text-decoration: none;
+	}
+}
 </style>
