@@ -1,0 +1,33 @@
+apis:
+    openapi@v1:
+        root: ./openapi.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi.ts
+    openapi-administration@v1:
+        root: ./openapi-administration.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-administration.ts
+    openapi-backend-recording@v1:
+        root: ./openapi-backend-recording.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-backend-recording.ts
+    openapi-backend-signaling@v1:
+        root: ./openapi-backend-signaling.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-backend-signaling.ts
+    openapi-backend-sipbridge@v1:
+        root: ./openapi-backend-sipbridge.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-backend-sipbridge.ts
+    openapi-bots@v1:
+        root: ./openapi-bots.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-bots.ts
+    openapi-federation@v1:
+        root: ./openapi-federation.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-federation.ts
+    openapi-full@v1:
+        root: ./openapi-full.json
+        x-openapi-ts:
+            output: ./src/types/openapi/openapi-full.ts

@@ -14,8 +14,8 @@ import type { ChatMessage, Mention } from '../types'
  * @param parameters The parameters that contain the mentions
  */
 function parseMentions(text: string, parameters: ChatMessage['messageParameters']): string {
-	for (const key of Object.keys(parameters).filter(key => key.startsWith('mention'))) {
-		const value: Mention = parameters[key]
+	for (const key of Object.keys(Object(parameters)).filter(key => key.startsWith('mention'))) {
+		const value: Mention = parameters[key] as Mention
 		let mention = ''
 
 		if (key.startsWith('mention-call') && value.type === 'call') {

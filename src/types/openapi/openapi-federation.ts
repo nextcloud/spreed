@@ -3,609 +3,729 @@
  * Do not make direct changes to the file.
  */
 
-
-/** OneOf type helpers */
-type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
-type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
-type OneOf<T extends any[]> = T extends [infer Only] ? Only : T extends [infer A, infer B, ...infer Rest] ? OneOf<[XOR<A, B>, ...Rest]> : never;
-
 export type paths = {
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}": {
-    /** Get the avatar of a cloudId user when inviting users while creating a conversation */
-    get: operations["avatar-get-user-proxy-avatar-without-room"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}/dark": {
-    /** Get the dark mode avatar of a cloudId user when inviting users while creating a conversation */
-    get: operations["avatar-get-user-proxy-avatar-dark-without-room"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}": {
-    /** Get the avatar of a cloudId user */
-    get: operations["avatar-get-user-proxy-avatar"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}/dark": {
-    /** Get the dark mode avatar of a cloudId user */
-    get: operations["avatar-get-user-proxy-avatar-dark"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
-    /**
-     * Accept a federation invites
-     * @description 🚧 Draft: Still work in progress
-     */
-    post: operations["federation-accept-share"];
-    /**
-     * Decline a federation invites
-     * @description 🚧 Draft: Still work in progress
-     */
-    delete: operations["federation-reject-share"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
-    /**
-     * Get a list of federation invites
-     * @description 🚧 Draft: Still work in progress
-     */
-    get: operations["federation-get-shares"];
-  };
-  "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
-    /** Fake join a room on the host server to verify the federated user is still part of it */
-    post: operations["room-join-federated-room"];
-  };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the avatar of a cloudId user when inviting users while creating a conversation */
+        get: operations["avatar-get-user-proxy-avatar-without-room"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/new/user-avatar/{size}/dark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the dark mode avatar of a cloudId user when inviting users while creating a conversation */
+        get: operations["avatar-get-user-proxy-avatar-dark-without-room"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the avatar of a cloudId user */
+        get: operations["avatar-get-user-proxy-avatar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/proxy/{token}/user-avatar/{size}/dark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the dark mode avatar of a cloudId user */
+        get: operations["avatar-get-user-proxy-avatar-dark"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept a federation invites
+         * @description 🚧 Draft: Still work in progress
+         */
+        post: operations["federation-accept-share"];
+        /**
+         * Decline a federation invites
+         * @description 🚧 Draft: Still work in progress
+         */
+        delete: operations["federation-reject-share"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a list of federation invites
+         * @description 🚧 Draft: Still work in progress
+         */
+        get: operations["federation-get-shares"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Fake join a room on the host server to verify the federated user is still part of it */
+        post: operations["room-join-federated-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 };
-
 export type webhooks = Record<string, never>;
-
 export type components = {
-  schemas: {
-    BaseMessage: {
-      actorDisplayName: string;
-      actorId: string;
-      actorType: string;
-      /** Format: int64 */
-      expirationTimestamp: number;
-      message: string;
-      messageParameters: {
-        [key: string]: components["schemas"]["RichObjectParameter"];
-      };
-      messageType: string;
-      systemMessage: string;
-    };
-    Capabilities: {
-      features: string[];
-      "features-local": string[];
-      config: {
-        attachments: {
-          allowed: boolean;
-          folder?: string;
+    schemas: {
+        BaseMessage: {
+            actorDisplayName: string;
+            actorId: string;
+            actorType: string;
+            /** Format: int64 */
+            expirationTimestamp: number;
+            message: string;
+            messageParameters: {
+                [key: string]: components["schemas"]["RichObjectParameter"] | undefined;
+            };
+            messageType: string;
+            systemMessage: string;
         };
-        call: {
-          enabled: boolean;
-          "breakout-rooms": boolean;
-          recording: boolean;
-          /** Format: int64 */
-          "recording-consent": number;
-          "supported-reactions": string[];
-          "predefined-backgrounds": string[];
-          "can-upload-background": boolean;
-          "sip-enabled": boolean;
-          "sip-dialout-enabled": boolean;
-          "can-enable-sip": boolean;
+        Capabilities: {
+            features: string[];
+            "features-local": string[];
+            config: {
+                attachments: {
+                    allowed: boolean;
+                    folder?: string;
+                };
+                call: {
+                    enabled: boolean;
+                    "breakout-rooms": boolean;
+                    recording: boolean;
+                    /** Format: int64 */
+                    "recording-consent": number;
+                    "supported-reactions": string[];
+                    "predefined-backgrounds": string[];
+                    "can-upload-background": boolean;
+                    "sip-enabled": boolean;
+                    "sip-dialout-enabled": boolean;
+                    "can-enable-sip": boolean;
+                };
+                chat: {
+                    /** Format: int64 */
+                    "max-length": number;
+                    /** Format: int64 */
+                    "read-privacy": number;
+                    "has-translation-providers": boolean;
+                    /** Format: int64 */
+                    "typing-privacy": number;
+                };
+                conversations: {
+                    "can-create": boolean;
+                };
+                federation: {
+                    enabled: boolean;
+                    "incoming-enabled": boolean;
+                    "outgoing-enabled": boolean;
+                    "only-trusted-servers": boolean;
+                };
+                previews: {
+                    /** Format: int64 */
+                    "max-gif-size": number;
+                };
+                signaling: {
+                    /** Format: int64 */
+                    "session-ping-limit": number;
+                    "hello-v2-token-key"?: string;
+                };
+            };
+            "config-local": {
+                [key: string]: string[] | undefined;
+            };
+            version: string;
         };
-        chat: {
-          /** Format: int64 */
-          "max-length": number;
-          /** Format: int64 */
-          "read-privacy": number;
-          "has-translation-providers": boolean;
-          /** Format: int64 */
-          "typing-privacy": number;
+        ChatMessage: components["schemas"]["BaseMessage"] & {
+            /** @enum {boolean} */
+            deleted?: true;
+            /** Format: int64 */
+            id: number;
+            isReplyable: boolean;
+            markdown: boolean;
+            reactions: {
+                [key: string]: number | undefined;
+            };
+            reactionsSelf?: string[];
+            referenceId: string;
+            /** Format: int64 */
+            timestamp: number;
+            token: string;
+            lastEditActorDisplayName?: string;
+            lastEditActorId?: string;
+            lastEditActorType?: string;
+            /** Format: int64 */
+            lastEditTimestamp?: number;
+            silent?: boolean;
         };
-        conversations: {
-          "can-create": boolean;
+        ChatProxyMessage: components["schemas"]["BaseMessage"];
+        FederationInvite: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            state: number;
+            localCloudId: string;
+            localToken: string;
+            /** Format: int64 */
+            remoteAttendeeId: number;
+            remoteServerUrl: string;
+            remoteToken: string;
+            roomName: string;
+            userId: string;
+            inviterCloudId: string;
+            inviterDisplayName: string;
         };
-        federation: {
-          enabled: boolean;
-          "incoming-enabled": boolean;
-          "outgoing-enabled": boolean;
-          "only-trusted-servers": boolean;
+        OCSMeta: {
+            status: string;
+            statuscode: number;
+            message?: string;
+            totalitems?: string;
+            itemsperpage?: string;
         };
-        previews: {
-          /** Format: int64 */
-          "max-gif-size": number;
+        PublicCapabilities: {
+            spreed: components["schemas"]["Capabilities"];
+        } | unknown[];
+        RichObjectParameter: {
+            type: string;
+            id: string;
+            name: string;
+            server?: string;
+            link?: string;
+            /** @enum {string} */
+            "call-type"?: "one2one" | "group" | "public";
+            "icon-url"?: string;
+            "message-id"?: string;
+            boardname?: string;
+            stackname?: string;
+            size?: string;
+            path?: string;
+            mimetype?: string;
+            /** @enum {string} */
+            "preview-available"?: "yes" | "no";
+            mtime?: string;
+            latitude?: string;
+            longitude?: string;
+            description?: string;
+            thumb?: string;
+            website?: string;
+            /** @enum {string} */
+            visibility?: "0" | "1";
+            /** @enum {string} */
+            assignable?: "0" | "1";
+            conversation?: string;
+            etag?: string;
+            permissions?: string;
+            width?: string;
+            height?: string;
         };
-        signaling: {
-          /** Format: int64 */
-          "session-ping-limit": number;
-          "hello-v2-token-key"?: string;
+        Room: {
+            actorId: string;
+            actorType: string;
+            /** Format: int64 */
+            attendeeId: number;
+            /** Format: int64 */
+            attendeePermissions: number;
+            attendeePin: string | null;
+            avatarVersion: string;
+            /** Format: int64 */
+            breakoutRoomMode: number;
+            /** Format: int64 */
+            breakoutRoomStatus: number;
+            /** Format: int64 */
+            callFlag: number;
+            /** Format: int64 */
+            callPermissions: number;
+            /** Format: int64 */
+            callRecording: number;
+            /** Format: int64 */
+            callStartTime: number;
+            canDeleteConversation: boolean;
+            canEnableSIP: boolean;
+            canLeaveConversation: boolean;
+            canStartCall: boolean;
+            /** Format: int64 */
+            defaultPermissions: number;
+            description: string;
+            displayName: string;
+            hasCall: boolean;
+            hasPassword: boolean;
+            /** Format: int64 */
+            id: number;
+            isCustomAvatar: boolean;
+            isFavorite: boolean;
+            /** Format: int64 */
+            lastActivity: number;
+            /** Format: int64 */
+            lastCommonReadMessage: number;
+            lastMessage: components["schemas"]["RoomLastMessage"] | unknown[];
+            /** Format: int64 */
+            lastPing: number;
+            /** Format: int64 */
+            lastReadMessage: number;
+            /** Format: int64 */
+            listable: number;
+            /** Format: int64 */
+            lobbyState: number;
+            /** Format: int64 */
+            lobbyTimer: number;
+            /** Format: int64 */
+            messageExpiration: number;
+            name: string;
+            /** Format: int64 */
+            notificationCalls: number;
+            /** Format: int64 */
+            notificationLevel: number;
+            objectId: string;
+            objectType: string;
+            /** Format: int64 */
+            participantFlags: number;
+            /** Format: int64 */
+            participantType: number;
+            /** Format: int64 */
+            permissions: number;
+            /** Format: int64 */
+            readOnly: number;
+            /** Format: int64 */
+            recordingConsent: number;
+            sessionId: string;
+            /** Format: int64 */
+            sipEnabled: number;
+            status?: string;
+            /** Format: int64 */
+            statusClearAt?: number | null;
+            statusIcon?: string | null;
+            statusMessage?: string | null;
+            token: string;
+            /** Format: int64 */
+            type: number;
+            unreadMention: boolean;
+            unreadMentionDirect: boolean;
+            /** Format: int64 */
+            unreadMessages: number;
         };
-      };
-      "config-local": {
-        [key: string]: string[];
-      };
-      version: string;
+        RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };
-    ChatMessage: components["schemas"]["BaseMessage"] & {
-      /** @enum {boolean} */
-      deleted?: true;
-      /** Format: int64 */
-      id: number;
-      isReplyable: boolean;
-      markdown: boolean;
-      reactions: {
-        [key: string]: number;
-      };
-      reactionsSelf?: string[];
-      referenceId: string;
-      /** Format: int64 */
-      timestamp: number;
-      token: string;
-      lastEditActorDisplayName?: string;
-      lastEditActorId?: string;
-      lastEditActorType?: string;
-      /** Format: int64 */
-      lastEditTimestamp?: number;
-      silent?: boolean;
-    };
-    ChatProxyMessage: components["schemas"]["BaseMessage"];
-    FederationInvite: {
-      /** Format: int64 */
-      id: number;
-      /** Format: int64 */
-      state: number;
-      localCloudId: string;
-      localToken: string;
-      /** Format: int64 */
-      remoteAttendeeId: number;
-      remoteServerUrl: string;
-      remoteToken: string;
-      roomName: string;
-      userId: string;
-      inviterCloudId: string;
-      inviterDisplayName: string;
-    };
-    OCSMeta: {
-      status: string;
-      statuscode: number;
-      message?: string;
-      totalitems?: string;
-      itemsperpage?: string;
-    };
-    PublicCapabilities: OneOf<[{
-      spreed: components["schemas"]["Capabilities"];
-    }, unknown[]]>;
-    RichObjectParameter: {
-      type: string;
-      id: string;
-      name: string;
-      server?: string;
-      link?: string;
-      /** @enum {string} */
-      "call-type"?: "one2one" | "group" | "public";
-      "icon-url"?: string;
-      "message-id"?: string;
-      boardname?: string;
-      stackname?: string;
-      size?: string;
-      path?: string;
-      mimetype?: string;
-      /** @enum {string} */
-      "preview-available"?: "yes" | "no";
-      mtime?: string;
-      latitude?: string;
-      longitude?: string;
-      description?: string;
-      thumb?: string;
-      website?: string;
-      /** @enum {string} */
-      visibility?: "0" | "1";
-      /** @enum {string} */
-      assignable?: "0" | "1";
-      conversation?: string;
-      etag?: string;
-      permissions?: string;
-      width?: string;
-      height?: string;
-    };
-    Room: {
-      actorId: string;
-      actorType: string;
-      /** Format: int64 */
-      attendeeId: number;
-      /** Format: int64 */
-      attendeePermissions: number;
-      attendeePin: string | null;
-      avatarVersion: string;
-      /** Format: int64 */
-      breakoutRoomMode: number;
-      /** Format: int64 */
-      breakoutRoomStatus: number;
-      /** Format: int64 */
-      callFlag: number;
-      /** Format: int64 */
-      callPermissions: number;
-      /** Format: int64 */
-      callRecording: number;
-      /** Format: int64 */
-      callStartTime: number;
-      canDeleteConversation: boolean;
-      canEnableSIP: boolean;
-      canLeaveConversation: boolean;
-      canStartCall: boolean;
-      /** Format: int64 */
-      defaultPermissions: number;
-      description: string;
-      displayName: string;
-      hasCall: boolean;
-      hasPassword: boolean;
-      /** Format: int64 */
-      id: number;
-      isCustomAvatar: boolean;
-      isFavorite: boolean;
-      /** Format: int64 */
-      lastActivity: number;
-      /** Format: int64 */
-      lastCommonReadMessage: number;
-      lastMessage: components["schemas"]["RoomLastMessage"] | unknown[];
-      /** Format: int64 */
-      lastPing: number;
-      /** Format: int64 */
-      lastReadMessage: number;
-      /** Format: int64 */
-      listable: number;
-      /** Format: int64 */
-      lobbyState: number;
-      /** Format: int64 */
-      lobbyTimer: number;
-      /** Format: int64 */
-      messageExpiration: number;
-      name: string;
-      /** Format: int64 */
-      notificationCalls: number;
-      /** Format: int64 */
-      notificationLevel: number;
-      objectId: string;
-      objectType: string;
-      /** Format: int64 */
-      participantFlags: number;
-      /** Format: int64 */
-      participantType: number;
-      /** Format: int64 */
-      permissions: number;
-      /** Format: int64 */
-      readOnly: number;
-      /** Format: int64 */
-      recordingConsent: number;
-      sessionId: string;
-      /** Format: int64 */
-      sipEnabled: number;
-      status?: string;
-      /** Format: int64 */
-      statusClearAt?: number | null;
-      statusIcon?: string | null;
-      statusMessage?: string | null;
-      token: string;
-      /** Format: int64 */
-      type: number;
-      unreadMention: boolean;
-      unreadMentionDirect: boolean;
-      /** Format: int64 */
-      unreadMessages: number;
-    };
-    RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 };
-
 export type $defs = Record<string, never>;
-
-export type external = Record<string, never>;
-
-export type operations = {
-
-  /** Get the avatar of a cloudId user when inviting users while creating a conversation */
-  "avatar-get-user-proxy-avatar-without-room": {
-    parameters: {
-      query: {
-        /** @description Federation CloudID to get the avatar for */
-        cloudId: string;
-        /** @description Theme used for background */
-        darkTheme?: 0 | 1;
-      };
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        /** @description Avatar size */
-        size: 64 | 512;
-      };
-    };
-    responses: {
-      /** @description User avatar returned */
-      200: {
-        content: {
-          "*/*": string;
-        };
-      };
-    };
-  };
-  /** Get the dark mode avatar of a cloudId user when inviting users while creating a conversation */
-  "avatar-get-user-proxy-avatar-dark-without-room": {
-    parameters: {
-      query: {
-        /** @description Federation CloudID to get the avatar for */
-        cloudId: string;
-      };
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        /** @description Avatar size */
-        size: 64 | 512;
-      };
-    };
-    responses: {
-      /** @description User avatar returned */
-      200: {
-        content: {
-          "*/*": string;
-        };
-      };
-    };
-  };
-  /** Get the avatar of a cloudId user */
-  "avatar-get-user-proxy-avatar": {
-    parameters: {
-      query: {
-        /** @description Federation CloudID to get the avatar for */
-        cloudId: string;
-        /** @description Theme used for background */
-        darkTheme?: 0 | 1;
-      };
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        token: string;
-        /** @description Avatar size */
-        size: 64 | 512;
-      };
-    };
-    responses: {
-      /** @description User avatar returned */
-      200: {
-        content: {
-          "*/*": string;
-        };
-      };
-    };
-  };
-  /** Get the dark mode avatar of a cloudId user */
-  "avatar-get-user-proxy-avatar-dark": {
-    parameters: {
-      query: {
-        /** @description Federation CloudID to get the avatar for */
-        cloudId: string;
-      };
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        token: string;
-        /** @description Avatar size */
-        size: 64 | 512;
-      };
-    };
-    responses: {
-      /** @description User avatar returned */
-      200: {
-        content: {
-          "*/*": string;
-        };
-      };
-    };
-  };
-  /**
-   * Accept a federation invites
-   * @description 🚧 Draft: Still work in progress
-   */
-  "federation-accept-share": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        /** @description ID of the share */
-        id: number;
-      };
-    };
-    responses: {
-      /** @description Invite accepted successfully */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: components["schemas"]["Room"];
+export interface operations {
+    "avatar-get-user-proxy-avatar-without-room": {
+        parameters: {
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+                /** @description Theme used for background */
+                darkTheme?: 0 | 1;
             };
-          };
-        };
-      };
-      /** @description Invite can not be accepted (maybe it was accepted already) */
-      400: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error: string;
-              };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
             };
-          };
-        };
-      };
-      /** @description Invite can not be found */
-      404: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error?: string;
-              };
+            path: {
+                apiVersion: "v1";
+                /** @description Avatar size */
+                size: 64 | 512;
             };
-          };
+            cookie?: never;
         };
-      };
-      /** @description Remote server could not be reached to notify about the acceptance */
-      410: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error: string;
-              };
+        requestBody?: never;
+        responses: {
+            /** @description User avatar returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
             };
-          };
         };
-      };
     };
-  };
-  /**
-   * Decline a federation invites
-   * @description 🚧 Draft: Still work in progress
-   */
-  "federation-reject-share": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-        /** @description ID of the share */
-        id: number;
-      };
-    };
-    responses: {
-      /** @description Invite declined successfully */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
+    "avatar-get-user-proxy-avatar-dark-without-room": {
+        parameters: {
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
             };
-          };
-        };
-      };
-      /** @description Invite was already accepted, use the "Remove the current user from a room" endpoint instead */
-      400: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error?: string;
-              };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
             };
-          };
-        };
-      };
-      /** @description Invite can not be found */
-      404: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: {
-                error?: string;
-              };
+            path: {
+                apiVersion: "v1";
+                /** @description Avatar size */
+                size: 64 | 512;
             };
-          };
+            cookie?: never;
         };
-      };
-    };
-  };
-  /**
-   * Get a list of federation invites
-   * @description 🚧 Draft: Still work in progress
-   */
-  "federation-get-shares": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v1";
-      };
-    };
-    responses: {
-      /** @description Get list of received federation invites successfully */
-      200: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: components["schemas"]["FederationInvite"][];
+        requestBody?: never;
+        responses: {
+            /** @description User avatar returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
             };
-          };
         };
-      };
     };
-  };
-  /** Fake join a room on the host server to verify the federated user is still part of it */
-  "room-join-federated-room": {
-    parameters: {
-      header: {
-        /** @description Required to be true for the API request to pass */
-        "OCS-APIRequest": boolean;
-      };
-      path: {
-        apiVersion: "v4";
-        /** @description Token of the room */
-        token: string;
-      };
-    };
-    responses: {
-      /** @description Federated user is still part of the room */
-      200: {
-        headers: {
-          "X-Nextcloud-Talk-Hash"?: string;
-        };
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
+    "avatar-get-user-proxy-avatar": {
+        parameters: {
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+                /** @description Theme used for background */
+                darkTheme?: 0 | 1;
             };
-          };
-        };
-      };
-      /** @description Room not found */
-      404: {
-        content: {
-          "application/json": {
-            ocs: {
-              meta: components["schemas"]["OCSMeta"];
-              data: unknown;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
             };
-          };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description Avatar size */
+                size: 64 | 512;
+            };
+            cookie?: never;
         };
-      };
+        requestBody?: never;
+        responses: {
+            /** @description User avatar returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
     };
-  };
-};
+    "avatar-get-user-proxy-avatar-dark": {
+        parameters: {
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description Avatar size */
+                size: 64 | 512;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User avatar returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    "federation-accept-share": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                /** @description ID of the share */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invite accepted successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Invite can not be accepted (maybe it was accepted already) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Invite can not be found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Remote server could not be reached to notify about the acceptance */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "federation-reject-share": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                /** @description ID of the share */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invite declined successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Invite was already accepted, use the "Remove the current user from a room" endpoint instead */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Invite can not be found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "federation-get-shares": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get list of received federation invites successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["FederationInvite"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-join-federated-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description Token of the room */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Federated user is still part of the room */
+            200: {
+                headers: {
+                    "X-Nextcloud-Talk-Hash"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Room not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+}
