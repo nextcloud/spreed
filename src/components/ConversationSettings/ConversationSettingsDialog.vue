@@ -37,6 +37,7 @@
 			<NcAppSettingsSection id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
 				<ListableSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-moderate="canFullModerate" />
+				<MentionsSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-moderate="selfIsOwnerOrModerator" />
 				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
 				<ExpirationSettings :token="token" :can-moderate="selfIsOwnerOrModerator" />
@@ -113,6 +114,7 @@ import ListableSettings from './ListableSettings.vue'
 import LobbySettings from './LobbySettings.vue'
 import LockingSettings from './LockingSettings.vue'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
+import MentionsSettings from './MentionsSettings.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
@@ -137,6 +139,7 @@ export default {
 		LobbySettings,
 		LockingSettings,
 		MatterbridgeSettings,
+		MentionsSettings,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcCheckboxRadioSwitch,
