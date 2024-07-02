@@ -603,6 +603,44 @@ class RoomService {
 		return true;
 	}
 
+	/**
+	 * @param Room $room
+	 * @param int $newState New mention permissions from self::MENTION_PERMISSIONS_*
+	 * @throws \InvalidArgumentException When the room type, state or breakout rooms where invalid
+	 */
+	public function setMentionPermissions(Room $room, int $newState): void {
+		$oldState = $room->getMentionPermissions();
+		if ($newState === $oldState) {
+			return;
+		}
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			throw new \InvalidArgumentException('type');
+		}
+
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new \InvalidArgumentException('breakout-room');
+		}
+
+		if (!in_array($newState, [Room::MENTION_PERMISSIONS_EVERYONE, Room::MENTION_PERMISSIONS_MODERATORS], true)) {
+			throw new \InvalidArgumentException('state');
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, $newState, $oldState);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('mention_permissions', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setMentionPermissions($newState);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, $newState, $oldState);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
 	public function setAssignedSignalingServer(Room $room, ?int $signalingServer): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')

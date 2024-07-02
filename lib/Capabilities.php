@@ -100,6 +100,7 @@ class Capabilities implements IPublicCapability {
 		'federation-v1',
 		'ban-v1',
 		'chat-reference-id',
+		'mention-permissions',
 	];
 
 	public const LOCAL_FEATURES = [

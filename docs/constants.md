@@ -47,6 +47,10 @@
 * `0` Stopped (breakout rooms lobbies are enabled)
 * `1` Started (breakout rooms lobbies are disabled)
 
+### Mention permissions
+* `0` Everyone (default) - All participants can mention using `@all`
+* `1` Moderators - Only moderators can mention using `@all`
+
 ## Participants
 
 ### Participant types

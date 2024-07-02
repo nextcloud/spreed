@@ -544,3 +544,18 @@ Feature: chat/notifications
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
+
+  Scenario: At-all with different mention permissions
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant2" sends message "Hi @all" to room "room" with 201
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id       | subject                                                          |
+      | spreed | chat        | room/Hi @all    | participant2-displayname mentioned everyone in conversation room |
+    When user "participant1" reads message "Hi @all" in room "room" with 200
+    And user "participant1" sets mention permissions for room "room" to moderators with 200 (v4)
+    And user "participant2" sends message "Hi @all" to room "room" with 201
+    Then user "participant1" has the following notifications
+      | app | object_type | object_id | subject |

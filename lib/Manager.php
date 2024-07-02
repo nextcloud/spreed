@@ -120,6 +120,7 @@ class Manager {
 			'call_recording' => 0,
 			'recording_consent' => 0,
 			'has_federation' => 0,
+			'mention_permissions' => 0,
 		], $data));
 	}
 
@@ -189,6 +190,7 @@ class Manager {
 			(int) $row['call_recording'],
 			(int) $row['recording_consent'],
 			(int) $row['has_federation'],
+			(int) $row['mention_permissions'],
 		);
 	}
 

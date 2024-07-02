@@ -366,6 +366,7 @@ class RoomServiceTest extends TestCase {
 			Room::RECORDING_NONE,
 			RecordingService::CONSENT_REQUIRED_NO,
 			Room::HAS_FEDERATION_NONE,
+			Room::MENTION_PERMISSIONS_EVERYONE,
 		);
 
 		$verificationResult = $service->verifyPassword($room, '1234');
