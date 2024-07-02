@@ -441,7 +441,7 @@ const actions = {
 			await deleteConversation(token)
 			// upon success, also delete from store
 			await context.dispatch('deleteConversation', token)
-			talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
+			talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations', options: { all: true } })
 		} catch (error) {
 			console.error('Error while deleting the conversation: ', error)
 		}
@@ -878,6 +878,7 @@ const actions = {
 			talkBroadcastChannel.postMessage({
 				message: 'update-conversations',
 				conversations: response.data.ocs.data,
+				invites: response.headers['x-nextcloud-talk-federation-invites'],
 				withRemoving: modifiedSince === 0,
 			})
 			return response
