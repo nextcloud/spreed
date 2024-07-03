@@ -133,6 +133,9 @@ trait TInitialState {
 			$this->serverConfig->getUserValue($user->getUID(), 'spreed', 'play_sounds', 'yes') === 'yes'
 		);
 
+		$this->initialState->provideInitialState(
+			'force_enable_blur_filter',
+			$this->serverConfig->getUserValue($user->getUID(), 'theming', 'force_enable_blur_filter', ''));
 
 		$this->initialState->provideInitialState(
 			'user_group_ids',
