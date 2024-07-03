@@ -7,7 +7,6 @@ declare(strict_types=1);
  */
 namespace OCA\Talk\Migration;
 
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
 use OCP\IConfig;
@@ -99,7 +98,7 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			return;
 		}
 
-		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+		if ($this->connection->getDatabaseProvider() !== IDBConnection::PLATFORM_POSTGRES) {
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_rooms')
 				->set('active_since', 'activeSince')
