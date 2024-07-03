@@ -32,11 +32,11 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 20,
 			]);
-			$table->addColumn('actor_id', Types::STRING, [
+			$table->addColumn('actor_type', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('actor_type', Types::STRING, [
+			$table->addColumn('actor_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
@@ -44,11 +44,11 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 				'notnull' => true,
 				'unsigned' => true,
 			]);
-			$table->addColumn('banned_id', Types::STRING, [
+			$table->addColumn('banned_type', Types::STRING, [
 				'length' => 64,
 				'notnull' => true,
 			]);
-			$table->addColumn('banned_type', Types::STRING, [
+			$table->addColumn('banned_id', Types::STRING, [
 				'length' => 64,
 				'notnull' => true,
 			]);
@@ -60,8 +60,8 @@ class Version20000Date20240621150333 extends SimpleMigrationStep {
 			]);
 
 			$table->setPrimaryKey(['id']);
-			// $table->addUniqueIndex(['user_id', 'room_id'], 'talk_ban_user_room'); //A user should not be banned from the same room more than once
-			// $table->addIndex(['banned_at'], 'talk_ban_banned_at');
+			$table->addUniqueIndex(['banned_type', 'banned_id', 'room_id'], 'talk_bans_unique_actor_room'); //A user should not be banned from the same room more than once
+			$table->addIndex(['room_id']);
 			return $schema;
 		}
 

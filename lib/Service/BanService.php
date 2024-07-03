@@ -15,7 +15,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 
 class BanService {
-	
+
 	public function __construct(
 		protected BanMapper $banMapper,
 		protected ITimeFactory $timeFactory,
@@ -26,12 +26,20 @@ class BanService {
 	 * Validate the ban data.
 	 */
 	private function validateBanData(string $actorId, string $actorType, int $roomId, string $bannedId, string $bannedType, ?DateTime $bannedTime, ?string $internalNote): void {
-		if (empty($actorId) || empty($actorType) || empty($roomId) || empty($bannedId) || empty($bannedType)) {
-			throw new \InvalidArgumentException("Invalid ban data provided.");
+		if (empty($bannedId)) {
+			throw new \InvalidArgumentException("invalid_bannedId.");
 		}
 
+		if (empty($bannedType)) {
+			throw new \InvalidArgumentException("invalid_bannedType.");
+		}
+
+		if (empty($internalNote)) {
+			throw new \InvalidArgumentException("invalid_internalNote.");
+		}
+		
 		if ($bannedTime !== null && !$bannedTime instanceof DateTime) {
-			throw new \InvalidArgumentException("Invalid date format for bannedTime.");
+			throw new \InvalidArgumentException("invalid_bannedTime.");
 		}
 	}
 

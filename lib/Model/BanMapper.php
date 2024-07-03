@@ -10,7 +10,6 @@ namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
-use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -21,7 +20,6 @@ use OCP\IDBConnection;
  * @template-extends QBMapper<Ban>
  */
 class BanMapper extends QBMapper {
-	use TTransactional;
 
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'talk_bans', Ban::class);
@@ -45,11 +43,15 @@ class BanMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->orderBy('id', 'ASC');
 
 		return $this->findEntities($query);
 	}
 
+	/**
+	 * @throws DoesNotExistException
+	 */
 	public function findByBanId(int $banId): Ban {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

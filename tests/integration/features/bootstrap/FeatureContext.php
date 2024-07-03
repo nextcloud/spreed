@@ -1217,6 +1217,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
+
+		$userBanId = self::$userToBanId[self::$identifierToToken[$identifier]]['users'][$user] ?? null;
+		$guestBanId = self::$userToBanId[self::$identifierToToken[$identifier]]['guests'][$user] ?? null;
+
+		if ($userBanId !== null || $guestBanId !== null) {
+			//User is banned
+			return;
+		}
+
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
 			$formData
@@ -1478,6 +1487,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
+		$actorType .= 's';
+
 		$this->setCurrentUser($user);
 		$body = [
 			'actorType' => $actorType,
@@ -1519,11 +1530,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$bans = $this->getDataFromResponse($this->response);
+		foreach ($bans as &$key) {
+			unset($key['id'], $key['roomId'], $key['bannedTime']);
+		}
 
-		var_dump($bans);
-		var_dump($tableNode->getColumnsHash());
-
-		// FIXME compare the 2 arrays
+		Assert::assertEquals($tableNode->getColumnsHash(), $bans);
 	}
 
 	/**
@@ -1545,7 +1556,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$actorType = 'federated_user';
 			}
 		}
+
+		$actorType .= 's';
+
 		$banId = self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId];
+		unset(self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId]);
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
