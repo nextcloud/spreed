@@ -67,7 +67,8 @@
 		<slot v-if="!hideBottomBar" name="bottom-bar">
 			<VideoBottomBar :has-shadow="hasVideo"
 				:participant-name="participantName"
-				v-bind="$props" />
+				v-bind="$props"
+				@bottom-bar-hover="handleHoverEvent" />
 		</slot>
 	</div>
 </template>
@@ -183,7 +184,7 @@ export default {
 		},
 	},
 
-	emits: ['click-video', 'click-presenter'],
+	emits: ['click-video', 'click-presenter', 'force-promote-video'],
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
@@ -588,6 +589,10 @@ export default {
 				// Fallback for Firefox
 				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
 		},
+
+		handleHoverEvent(value) {
+			this.$emit('force-promote-video', value ? this.model : null)
+		}
 	},
 
 }

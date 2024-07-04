@@ -4,7 +4,10 @@
 -->
 
 <template>
-	<div class="wrapper" :class="{'wrapper--big': isBig}">
+	<div class="wrapper"
+		:class="{'wrapper--big': isBig}"
+		@mouseover.stop="mouseover = true"
+		@mouseleave.stop="mouseover = false">
 		<TransitionWrapper name="fade">
 			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
 				<HandBackLeft :size="18" fill-color="#ffffff" />
@@ -176,6 +179,14 @@ export default {
 		},
 	},
 
+	emits: ['bottom-bar-hover'],
+
+	data() {
+		return {
+			mouseover: false,
+		}
+	},
+
 	computed: {
 		connectionStateFailedNoRestart() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
@@ -247,6 +258,15 @@ export default {
 		},
 	},
 
+	watch: {
+		mouseover(value) {
+			if (!this.isBig) {
+				return
+			}
+			this.$emit('bottom-bar-hover', value)
+		}
+	},
+
 	methods: {
 		t,
 		forceMute() {
@@ -278,14 +298,23 @@ export default {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	padding: 0 12px 8px 12px;
+	padding: 0 calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
 	z-index: 1;
 
 	&--big {
 		justify-content: center;
+		margin: 0 var(--default-clickable-area); // grid collapse button
+		width: calc(100% - var(--default-clickable-area) * 2);
 		& .bottom-bar {
 			width: unset;
+			padding: calc(var(--default-grid-baseline) * 2);
+
+			&:hover {
+				background-color: rgba(0, 0, 0, 0.2);
+				border-radius: var(--border-radius-large);
+			}
 		}
+
 		& .participant-name {
 			margin-right: 0;
 		}
@@ -297,7 +326,6 @@ export default {
 	align-items: center;
 	gap: 8px;
 	width: 100%;
-	height: 44px;
 
 	& .media-indicators {
 		display: flex;
