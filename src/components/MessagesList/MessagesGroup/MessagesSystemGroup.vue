@@ -133,28 +133,27 @@ export default {
 				return '' // No previous message
 			}
 
+			if (message1.actorId !== message2.actorId
+				|| message1.actorType !== message2.actorType) {
+				return '' // Different actors
+			}
+
 			// Group users added by one actor
 			if (message1.systemMessage === 'user_added'
-				&& message1.systemMessage === message2.systemMessage
-				&& message1.actorId === message2.actorId
-				&& message1.actorType === message2.actorType) {
+				&& message1.systemMessage === message2.systemMessage) {
 				return 'user_added'
 			}
 
 			// Group users removed by one actor
 			if (message1.systemMessage === 'user_removed'
-				&& message1.systemMessage === message2.systemMessage
-				&& message1.actorId === message2.actorId
-				&& message1.actorType === message2.actorType) {
+				&& message1.systemMessage === message2.systemMessage) {
 				return 'user_removed'
 			}
 
 			// Group users reconnected in a minute
 			if (message1.systemMessage === 'call_joined'
 				&& message2.systemMessage === 'call_left'
-				&& message1.timestamp - message2.timestamp < 60 * 1000
-				&& message1.actorId === message2.actorId
-				&& message1.actorType === message2.actorType) {
+				&& message1.timestamp - message2.timestamp < 60 * 1000) {
 				return 'call_reconnected'
 			}
 
