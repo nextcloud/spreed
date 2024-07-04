@@ -1332,6 +1332,7 @@ OC.L10N.register(
     "The message could not be edited" : "Níorbh fhéidir an teachtaireacht a chur in eagar",
     "File upload is not available in this conversation" : "Níl uaslódáil comhad ar fáil sa chomhrá seo",
     "Group" : "Grúpa",
+    "Replacement: " : "Athsholáthar:",
     "{user} is out of office and might not respond." : "Tá {user} as an oifig agus seans nach bhfreagróidh sé.",
     "Share files to the conversation" : "Roinn comhaid leis an gcomhrá",
     "Upload from device" : "Íosluchtaigh ó gléas",

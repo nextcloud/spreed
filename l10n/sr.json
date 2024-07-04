@@ -1330,6 +1330,7 @@
     "The message could not be edited" : "Порука није могла да се уреди",
     "File upload is not available in this conversation" : "У овај разговор не може да се отпреми фајл",
     "Group" : "Група",
+    "Replacement: " : "Замена:",
     "{user} is out of office and might not respond." : "{user} је ван канцеларије у можда неће одговорити.",
     "Share files to the conversation" : "Дели фајлове у разговор",
     "Upload from device" : "Отпреми са уређаја",
