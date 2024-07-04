@@ -1332,6 +1332,7 @@ OC.L10N.register(
     "The message could not be edited" : "The message could not be edited",
     "File upload is not available in this conversation" : "File upload is not available in this conversation",
     "Group" : "Group",
+    "Replacement: " : "Replacement: ",
     "{user} is out of office and might not respond." : "{user} is out of office and might not respond.",
     "Share files to the conversation" : "Share files to the conversation",
     "Upload from device" : "Upload from device",

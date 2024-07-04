@@ -1332,6 +1332,7 @@ OC.L10N.register(
     "The message could not be edited" : "Die Nachricht konnte nicht bearbeitet werden",
     "File upload is not available in this conversation" : "Das Hochladen von Dateien ist in dieser Unterhaltung nicht verfügbar",
     "Group" : "Gruppe",
+    "Replacement: " : "Ersatz:",
     "{user} is out of office and might not respond." : "{user} ist nicht im Büro und antwortet möglicherweise nicht.",
     "Share files to the conversation" : "Dateien mit der Unterhaltung teilen",
     "Upload from device" : "Von Gerät hochladen",

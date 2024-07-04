@@ -1330,6 +1330,7 @@
     "The message could not be edited" : "Non foi posíbel editar a mensaxe",
     "File upload is not available in this conversation" : "O envío de ficheiros non está dispoñíbel nesta conversa",
     "Group" : "Grupo",
+    "Replacement: " : "Substitución:",
     "{user} is out of office and might not respond." : "{usuario} está fóra da oficina e é posíbel que non responda.",
     "Share files to the conversation" : "Compartir ficheiros na conversa",
     "Upload from device" : "Enviar dende o dispositivo",
