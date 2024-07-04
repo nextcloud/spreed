@@ -39,7 +39,7 @@
 			<!-- Shared from "Projects" app -->
 			<template v-if="projectsEnabled">
 				<NcAppNavigationCaption :name="t('spreed', 'Projects')" />
-				<CollectionList v-if="getUserId && token"
+				<NcCollectionList v-if="getUserId && token"
 					:id="token"
 					type="room"
 					:name="conversation.displayName"
@@ -66,8 +66,6 @@
 </template>
 
 <script>
-import { CollectionList } from 'nextcloud-vue-collections'
-
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 
@@ -76,6 +74,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCollectionList from '@nextcloud/vue/dist/Components/NcCollectionList.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 
@@ -96,12 +95,12 @@ export default {
 	name: 'SharedItemsTab',
 
 	components: {
-		CollectionList,
 		DotsHorizontal,
 		FolderMultipleImage,
 		LoadingComponent,
 		NcAppNavigationCaption,
 		NcButton,
+		NcCollectionList,
 		NcEmptyContent,
 		NcRelatedResourcesPanel,
 		SharedItems,
