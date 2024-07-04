@@ -62,9 +62,23 @@ jest.mock('@nextcloud/capabilities', () => ({
 
 describe('messagesStore', () => {
 	const TOKEN = 'XXTOKENXX'
+	const conversation = {
+		token: TOKEN,
+		lastMessage: {
+			id: 123,
+		},
+	}
+
 	let localVue = null
 	let testStoreConfig
 	let store = null
+	let getActorIdMock
+	let getUserIdMock
+	let getActorTypeMock
+	let getDisplayNameMock
+	let conversationMock
+	let updateConversationLastMessageMock
+	let updateConversationLastReadMessageMock
 	let updateConversationLastActiveAction
 	let reactionsStore
 
@@ -74,10 +88,26 @@ describe('messagesStore', () => {
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 
-		testStoreConfig = cloneDeep(messagesStore)
+		testStoreConfig = cloneDeep(storeConfig)
 
+		getActorIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
+		getUserIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
+		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
+		getDisplayNameMock = jest.fn().mockReturnValue(() => 'actor-display-name-1')
+		conversationMock = jest.fn().mockReturnValue(conversation)
+		updateConversationLastMessageMock = jest.fn()
+		updateConversationLastReadMessageMock = jest.fn()
 		updateConversationLastActiveAction = jest.fn()
-		testStoreConfig.actions.updateConversationLastActive = updateConversationLastActiveAction
+
+		testStoreConfig.modules.actorStore.getters.getActorId = getActorIdMock
+		testStoreConfig.modules.actorStore.getters.getUserId = getUserIdMock
+		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
+		testStoreConfig.modules.actorStore.getters.getDisplayName = getDisplayNameMock
+		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue(conversationMock)
+		testStoreConfig.modules.conversationsStore.actions.updateConversationLastMessage = updateConversationLastMessageMock
+		testStoreConfig.modules.conversationsStore.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
+		testStoreConfig.modules.conversationsStore.actions.updateConversationLastActive = updateConversationLastActiveAction
+		testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
 
 		store = new Vuex.Store(testStoreConfig)
 	})
@@ -98,11 +128,8 @@ describe('messagesStore', () => {
 		})
 
 		test('doesn\'t add specific messages to the store', () => {
-			testStoreConfig = cloneDeep(storeConfig)
-			testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
 			reactionsStore.resetReactions = jest.fn()
 			reactionsStore.processReaction = jest.fn()
-			store = new Vuex.Store(testStoreConfig)
 
 			const messages = [{
 				id: 2,
@@ -223,9 +250,7 @@ describe('messagesStore', () => {
 		let message
 
 		beforeEach(() => {
-			testStoreConfig = cloneDeep(storeConfig)
 			reactionsStore.resetReactions = jest.fn()
-			store = new Vuex.Store(testStoreConfig)
 
 			message = {
 				id: 10,
@@ -355,24 +380,8 @@ describe('messagesStore', () => {
 
 	describe('edit message', () => {
 		let message
-		let conversationMock
-		let updateConversationLastMessageMock
 
 		beforeEach(() => {
-			const conversation = {
-				token: TOKEN,
-				lastMessage: {
-					id: 10,
-				},
-			}
-
-			testStoreConfig = cloneDeep(messagesStore)
-			conversationMock = jest.fn().mockReturnValue(conversation)
-			updateConversationLastMessageMock = jest.fn()
-			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
-			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageMock
-			store = new Vuex.Store(testStoreConfig)
-
 			message = {
 				id: 10,
 				token: TOKEN,
@@ -464,28 +473,13 @@ describe('messagesStore', () => {
 
 	describe('temporary messages', () => {
 		let mockDate
-		let getActorIdMock
-		let getActorTypeMock
-		let getDisplayNameMock
 		let chatExtraStore
 
 		beforeEach(() => {
 			mockDate = new Date('2020-01-01 20:00:00')
 			jest.spyOn(global, 'Date')
 				.mockImplementation(() => mockDate)
-
-			testStoreConfig = cloneDeep(messagesStore)
 			chatExtraStore = useChatExtrasStore()
-
-			getActorIdMock = jest.fn().mockReturnValue(() => 'actor-id-1')
-			getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
-			getDisplayNameMock = jest.fn().mockReturnValue(() => 'actor-display-name-1')
-			testStoreConfig.getters.getActorId = getActorIdMock
-			testStoreConfig.getters.getActorType = getActorTypeMock
-			testStoreConfig.getters.getDisplayName = getDisplayNameMock
-			testStoreConfig.actions.updateConversationLastActive = updateConversationLastActiveAction
-
-			store = new Vuex.Store(testStoreConfig)
 		})
 
 		test('creates temporary message', async () => {
@@ -634,8 +628,10 @@ describe('messagesStore', () => {
 			expect(updateConversationLastActiveAction).toHaveBeenCalledWith(expect.anything(), TOKEN)
 
 			// add again just replaces it
-			temporaryMessage.message = 'replaced'
-			store.dispatch('addTemporaryMessage', { token: TOKEN, message: temporaryMessage })
+			store.dispatch('addTemporaryMessage', {
+				token: TOKEN,
+				message: { ...temporaryMessage, message: 'replaced' }
+			})
 
 			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
@@ -751,31 +747,9 @@ describe('messagesStore', () => {
 	})
 
 	describe('last read message markers', () => {
-		let conversationMock
-		let getUserIdMock
-		let updateConversationLastReadMessageMock
-
 		beforeEach(() => {
-			const conversation = {
-				lastMessage: {
-					id: 123,
-				},
-			}
-
-			testStoreConfig = cloneDeep(messagesStore)
-
-			getUserIdMock = jest.fn()
-			conversationMock = jest.fn().mockReturnValue(conversation)
-			updateConversationLastReadMessageMock = jest.fn()
-			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
-			testStoreConfig.getters.getUserId = jest.fn().mockReturnValue(getUserIdMock)
-			testStoreConfig.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
-			testStoreConfig.actions.addConversation = jest.fn()
-
 			const response = generateOCSResponse({ payload: conversation })
 			updateLastReadMessage.mockResolvedValue(response)
-
-			store = new Vuex.Store(testStoreConfig)
 		})
 
 		test('stores visual last read message id per token', () => {
@@ -787,7 +761,7 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message', async () => {
-			getUserIdMock.mockReturnValue('user-1')
+			getUserIdMock.mockReturnValue(() => 'user-1')
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('clearLastReadMessage', {
@@ -807,7 +781,7 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message for federated conversation', async () => {
-			getUserIdMock.mockReturnValue('federated-user-1')
+			getUserIdMock.mockReturnValue(() => 'federated-user-1')
 			conversationMock.mockReturnValue({
 				lastMessage: {},
 				remoteServer: 'nextcloud.com',
@@ -829,7 +803,7 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message and update visually', async () => {
-			getUserIdMock.mockReturnValue('user-1')
+			getUserIdMock.mockReturnValue(() => 'user-1')
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('clearLastReadMessage', {
@@ -849,7 +823,7 @@ describe('messagesStore', () => {
 		})
 
 		test('clears last read message for guests', async () => {
-			getUserIdMock.mockReturnValue(null)
+			getUserIdMock.mockReturnValue(() => null)
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('clearLastReadMessage', {
@@ -869,7 +843,7 @@ describe('messagesStore', () => {
 		})
 
 		test('updates last read message', async () => {
-			getUserIdMock.mockReturnValue('user-1')
+			getUserIdMock.mockReturnValue(() => 'user-1')
 			const response = generateOCSResponse({
 				payload: {
 					unreadMessages: 0,
@@ -897,7 +871,7 @@ describe('messagesStore', () => {
 		})
 
 		test('updates last read message and update visually', async () => {
-			getUserIdMock.mockReturnValue('user-1')
+			getUserIdMock.mockReturnValue(() => 'user-1')
 			const response = generateOCSResponse({
 				payload: {
 					unreadMessages: 0,
@@ -925,7 +899,7 @@ describe('messagesStore', () => {
 		})
 
 		test('updates last read message for guests', async () => {
-			getUserIdMock.mockReturnValue(null)
+			getUserIdMock.mockReturnValue(() => null)
 
 			store.dispatch('setVisualLastReadMessageId', { token: TOKEN, id: 100 })
 			await store.dispatch('updateLastReadMessage', {
@@ -1784,7 +1758,7 @@ describe('messagesStore', () => {
 				lastMessage: { id: 100 },
 				lastReadMessage: 50,
 			})
-			getUserIdMock.mockReturnValue('current-user')
+			getUserIdMock.mockReturnValue(() => 'current-user')
 
 			const temporaryMessage = {
 				id: 'temp-123',
@@ -1979,11 +1953,10 @@ describe('messagesStore', () => {
 		 */
 		function setupWithValues(lastKnownMessageId, lastConversationMessageId) {
 			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: 123 })
-			const conversationMock = jest.fn().mockReturnValue({
+			conversationMock.mockReturnValue({
+				token: TOKEN,
 				lastMessage: { id: lastConversationMessageId },
 			})
-			testStoreConfig.getters.conversation = jest.fn().mockReturnValue(conversationMock)
-			store = new Vuex.Store(testStoreConfig)
 			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: lastKnownMessageId })
 		}
 
@@ -2009,12 +1982,6 @@ describe('messagesStore', () => {
 		let messageExpected
 
 		beforeEach(() => {
-			localVue = createLocalVue()
-			localVue.use(Vuex)
-
-			testStoreConfig = cloneDeep(storeConfig)
-			store = new Vuex.Store(testStoreConfig)
-
 			message1 = {
 				id: 1,
 				token: TOKEN,
