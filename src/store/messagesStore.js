@@ -227,8 +227,8 @@ const getters = {
 		return null
 	},
 
-	getLastCallStartedMessageId: (state, getters, rootState, rootGetters) => {
-		return getters.messagesList(rootGetters.getToken()).findLast((message) => message.systemMessage === 'call_started')?.id
+	getLastCallStartedMessageId: (state, getters) => (token) => {
+		return getters.messagesList(token).findLast((message) => message.systemMessage === 'call_started')?.id
 	},
 
 	getFirstDisplayableMessageIdAfterReadMarker: (state, getters) => (token, readMessageId) => {
@@ -855,6 +855,7 @@ const actions = {
 			context.dispatch('updateLastReadMessage', { token, id: null, updateVisually })
 			return
 		}
+		// federated conversations don't proxy lastMessage id
 		if (!conversation?.lastMessage?.id) {
 			return
 		}
@@ -884,9 +885,14 @@ const actions = {
 		}
 
 		// optimistic early commit to avoid indicator flickering
-		context.dispatch('updateConversationLastReadMessage', { token, lastReadMessage: id })
-		if (updateVisually) {
-			context.commit('setVisualLastReadMessageId', { token, id })
+		// skip for federated conversations
+		const idToUpdate = (id === null) ? conversation.lastMessage?.id : id
+		if (idToUpdate) {
+			context.dispatch('updateConversationLastReadMessage', { token, lastReadMessage: idToUpdate })
+		}
+		const visualIdToUpdate = idToUpdate ?? context.getters.messagesList(token).at(-1)?.id
+		if (updateVisually && visualIdToUpdate) {
+			context.commit('setVisualLastReadMessageId', { token, id: visualIdToUpdate })
 		}
 
 		if (context.getters.getUserId()) {
