@@ -1332,6 +1332,7 @@ OC.L10N.register(
     "The message could not be edited" : "無法編輯訊息",
     "File upload is not available in this conversation" : "此對話中無法上傳檔案",
     "Group" : "群組",
+    "Replacement: " : "取代：",
     "{user} is out of office and might not respond." : "{user} 不在辦公室，可能不會回覆。",
     "Share files to the conversation" : "分享檔案至對話",
     "Upload from device" : "從裝置上傳",
