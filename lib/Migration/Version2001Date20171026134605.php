@@ -9,7 +9,6 @@ namespace OCA\Talk\Migration;
 
 use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
@@ -193,7 +192,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 */
 	protected function copyParticipants(array $roomIdMap): void {
 		$insert = $this->connection->getQueryBuilder();
-		if (!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+		if ($this->connection->getDatabaseProvider() !== IDBConnection::PLATFORM_POSTGRES) {
 			$insert->insert('talk_participants')
 				->values([
 					'userId' => $insert->createParameter('userId'),
@@ -229,7 +228,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('lastPing', (int) $row['lastPing'], IQueryBuilder::PARAM_INT)
 				->setParameter('sessionId', $row['sessionId'])
 			;
-			if (!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+			if ($this->connection->getDatabaseProvider() !== IDBConnection::PLATFORM_POSTGRES) {
 				$insert->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT);
 			} else {
 				$insert->setParameter('participantType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);
