@@ -133,9 +133,28 @@ export default {
 				return '' // No previous message
 			}
 
+			// Group users joined call
+			if (message1.systemMessage === 'call_joined'
+				&& message1.systemMessage === message2.systemMessage) {
+				return 'call_joined'
+			}
+
+			// Group users left call
+			if (message1.systemMessage === 'call_left'
+				&& message1.systemMessage === message2.systemMessage) {
+				return 'call_left'
+			}
+
 			if (message1.actorId !== message2.actorId
 				|| message1.actorType !== message2.actorType) {
 				return '' // Different actors
+			}
+
+			// Group users reconnected in a minute
+			if (message1.systemMessage === 'call_joined'
+				&& message2.systemMessage === 'call_left'
+				&& message1.timestamp - message2.timestamp < 60 * 1000) {
+				return 'call_reconnected'
 			}
 
 			// Group users added by one actor
@@ -150,32 +169,13 @@ export default {
 				return 'user_removed'
 			}
 
-			// Group users reconnected in a minute
-			if (message1.systemMessage === 'call_joined'
-				&& message2.systemMessage === 'call_left'
-				&& message1.timestamp - message2.timestamp < 60 * 1000) {
-				return 'call_reconnected'
-			}
-
-			// Group users joined call one by one
-			if (message1.systemMessage === 'call_joined'
-				&& message1.systemMessage === message2.systemMessage) {
-				return 'call_joined'
-			}
-
-			// Group users left call one by one
-			if (message1.systemMessage === 'call_left'
-				&& message1.systemMessage === message2.systemMessage) {
-				return 'call_left'
-			}
-
-			// Group users promoted one by one
+			// Group users promoted by one actor
 			if ((message1.systemMessage === 'moderator_promoted' || message1.systemMessage === 'guest_moderator_promoted')
 				&& (message2.systemMessage === 'moderator_promoted' || message2.systemMessage === 'guest_moderator_promoted')) {
 				return 'moderator_promoted'
 			}
 
-			// Group users demoted one by one
+			// Group users demoted by one actor
 			if ((message1.systemMessage === 'moderator_demoted' || message1.systemMessage === 'guest_moderator_demoted')
 				&& (message2.systemMessage === 'moderator_demoted' || message2.systemMessage === 'guest_moderator_demoted')) {
 				return 'moderator_demoted'
