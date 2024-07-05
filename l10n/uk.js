@@ -1060,6 +1060,7 @@ OC.L10N.register(
     "Raise hand" : "Підняти руку",
     "Raise hand (R)" : "Підняти руку (R)",
     "Lower hand" : "Опустити руку",
+    "Select a region" : "Виберіть регіон",
     "Submit" : "Гаразд",
     "Search …" : "Пошук …",
     "Join a conversation or start a new one!" : "Приєднайтеся до розмови або почніть нову!",

@@ -1332,6 +1332,7 @@ OC.L10N.register(
     "The message could not be edited" : "تعذّر تحرير الرسالة",
     "File upload is not available in this conversation" : "رفع الملفات غير متاح في هذه الدردشة",
     "Group" : "المجموعة",
+    "Replacement: " : "البديل:",
     "{user} is out of office and might not respond." : "{user} خارج المكتب الآن، و يمكن ألّا يستجيب",
     "Share files to the conversation" : "مشاركة ملفات في المحادثة",
     "Upload from device" : "إرفع من جهاز",
