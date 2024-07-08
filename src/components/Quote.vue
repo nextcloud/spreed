@@ -25,10 +25,10 @@ components.
 </docs>
 
 <template>
-	<a href="#"
+	<router-link :to="{ hash, params: { skipLeaveWarning: true } }"
 		class="quote"
 		:class="{'quote-own-message': isOwnMessageQuoted}"
-		@click.prevent="handleQuoteClick">
+		@click.native="handleQuoteClick">
 		<div class="quote__main">
 			<div v-if="id"
 				class="quote__main__author"
@@ -66,7 +66,7 @@ components.
 				<Close :size="20" />
 			</template>
 		</NcButton>
-	</a>
+	</router-link>
 </template>
 
 <script>
@@ -260,6 +260,10 @@ export default {
 		cancelQuoteLabel() {
 			return t('spreed', 'Cancel quote')
 		},
+
+		hash() {
+			return '#message_' + this.id
+		},
 	},
 	methods: {
 		handleAbort() {
@@ -272,11 +276,7 @@ export default {
 		},
 
 		handleQuoteClick() {
-			const parentHash = '#message_' + this.id
-			if (this.$route.hash !== parentHash) {
-				// Change route to trigger message fetch, if not fetched yet
-				this.$router.replace(parentHash)
-			} else {
+			if (this.$route.hash === this.hash) {
 				// Already on this message route, just trigger highlight
 				EventBus.$emit('focus-message', this.id)
 			}
