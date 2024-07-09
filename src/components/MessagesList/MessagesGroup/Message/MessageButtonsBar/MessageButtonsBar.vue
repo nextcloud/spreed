@@ -744,7 +744,7 @@ export default {
 	:deep(.action-button::after) {
 		content: " ";
 		width: 20px;
-		height: 44px;
+		height: var(--default-clickable-area);
 		margin-left: auto;
 		background: no-repeat center var(--icon-triangle-e-dark);
 	}

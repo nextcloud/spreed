@@ -11,10 +11,11 @@
 				:token="token"
 				:name="displayName"
 				source="users"
+				:size="AVATAR.SIZE.SMALL"
 				disable-menu
 				disable-tooltip />
 		</template>
-		<h4 class="absence-reminder__caption">{{ userAbsenceCaption }}</h4>
+		<p class="absence-reminder__caption">{{ userAbsenceCaption }}</p>
 		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
 			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
 			<p>{{ t('spreed','Replacement: ') }}</p>
@@ -135,12 +136,14 @@ export default {
 @import '../../assets/variables';
 
 .absence-reminder {
-	margin: 0 16px 12px;
-	padding: 10px 10px 10px 6px;
+	// Override NcNoteCard styles
+	margin: 0 calc(var(--default-grid-baseline) * 4) calc(var(--default-grid-baseline) * 2) !important;
+	padding: calc(var(--default-grid-baseline) * 2) !important;
 
 	&__caption {
 		font-weight: bold;
-		margin: 5px 44px 5px 0;
+		margin: var(--default-grid-baseline) var(--default-clickable-area);
+		margin-left: 0;
 	}
 
 	&__replacement {

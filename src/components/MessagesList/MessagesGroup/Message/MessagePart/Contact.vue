@@ -101,13 +101,13 @@ export default {
 		&__image {
 			display: inline-block;
 			border-radius: 50%;
-			max-width: 44px;
-			max-height: 44px;
+			max-width: var(--clickable-area-large);
+			max-height: var(--clickable-area-large);
 		}
 		&__icon {
 			display: inline-block;
-			width: 44px;
-			height: 44px;
+			width: var(--clickable-area-large);
+			height: var(--clickable-area-large);
 		}
 		&__lineone {
 			height: 30px;
