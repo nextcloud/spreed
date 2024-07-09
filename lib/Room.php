@@ -23,12 +23,6 @@ use OCP\IDBConnection;
 use OCP\Server;
 
 class Room {
-	/**
-	 * Regex that matches SIP incompatible rooms:
-	 * 1. duplicate digit: …11…
-	 * 2. leading zero: 0…
-	 * 3. non-digit: …a…
-	 */
 	public const SIP_INCOMPATIBLE_REGEX = '/((\d)(?=\2+)|^0|\D)/';
 
 	public const TYPE_UNKNOWN = -1;
