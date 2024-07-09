@@ -375,7 +375,7 @@ export default {
 <style lang="scss" scoped>
 .turn-server {
 	display: grid;
-	grid-template-columns: minmax(100px, 180px) 1fr 1fr minmax(100px, 180px) 44px 44px;
+	grid-template-columns: minmax(100px, 180px) 1fr 1fr minmax(100px, 180px) var(--default-clickable-area) var(--default-clickable-area);
 	grid-column-gap: 4px;
 	margin-bottom: 4px;
 
