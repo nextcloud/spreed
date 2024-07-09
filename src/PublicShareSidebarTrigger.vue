@@ -4,31 +4,31 @@
 -->
 
 <template>
-	<div class="button-holder">
+	<div class="button-wrapper">
 		<NcButton type="tertiary-on-primary"
+			:title="ariaLabel"
 			:aria-label="ariaLabel"
 			@click="$emit('click')">
 			<template #icon>
-				<MenuPeople :size="20" />
+				<MessageText :size="20" />
 			</template>
 		</NcButton>
 	</div>
 </template>
 
 <script>
+import MessageText from 'vue-material-design-icons/MessageText.vue'
+
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import MenuPeople from './assets/missingMaterialDesignIcons/MenuPeople.vue'
-
 export default {
-
 	name: 'PublicShareSidebarTrigger',
 
 	components: {
+		MessageText,
 		NcButton,
-		MenuPeople,
 	},
 
 	props: {
@@ -42,11 +42,9 @@ export default {
 
 	computed: {
 		ariaLabel() {
-			if (this.sidebarState.isOpen) {
-				return t('spreed', 'Close Talk sidebar')
-			}
-
-			return t('spreed', 'Open Talk sidebar')
+			return this.sidebarState.isOpen
+				? t('spreed', 'Close Talk sidebar')
+				: t('spreed', 'Open Talk sidebar')
 		},
 	},
 
@@ -57,10 +55,11 @@ export default {
 </script>
 
 <style scoped>
-.button-holder {
-	margin: 2px 5px 2px 2px;
+.button-wrapper {
+	height: var(--header-height) !important;
+	width: var(--default-clickable-area) !important;
 	display: flex;
 	justify-content: center;
-	height: 44px !important;
+	align-items: center;
 }
 </style>

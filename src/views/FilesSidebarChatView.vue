@@ -5,8 +5,8 @@
 
 <template>
 	<div class="talk-tab__wrapper">
-		<CallButton class="call-button" />
-		<ChatView />
+		<CallButton class="talk-tab__call-button" />
+		<ChatView class="talk-tab__chat-view" />
 		<PollViewer />
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 	</div>
@@ -38,23 +38,22 @@ export default {
 
 </script>
 
-<style scoped>
-.talk-tab__wrapper{
-	height: 100%;
-}
+<style lang="scss" scoped>
+.talk-tab {
+	&__wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		height: 100%;
+		padding: var(--default-grid-baseline) 0;
+	}
 
-.call-button {
-	/* Center button horizontally. */
-	margin-left: auto;
-	margin-right: auto;
+	&__call-button {
+		margin: 0 auto calc(var(--default-grid-baseline) * 2);
+	}
 
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.chatView {
-	overflow: hidden;
-	/* Considering the call button height (44px + 10px * 2) */
-	height: calc(100% - 64px);
+	&__chat-view {
+		overflow: hidden;
+	}
 }
 </style>
