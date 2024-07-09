@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { reactive, toRaw } from 'vue'
 
 import EmitterMixin from '../../EmitterMixin.js'
 
@@ -26,7 +27,7 @@ export default function CallParticipantModel(options) {
 
 	this._superEmitterMixin()
 
-	this.attributes = {
+	this.attributes = reactive({
 		peerId: null,
 		nextcloudSessionId: null,
 		peer: null,
@@ -53,7 +54,7 @@ export default function CallParticipantModel(options) {
 			state: false,
 			timestamp: null,
 		},
-	}
+	})
 
 	this.set('peerId', options.peerId)
 
@@ -115,25 +116,26 @@ CallParticipantModel.prototype = {
 	},
 
 	_handlePeerStreamAdded(peer) {
-		if (this.get('peer') === peer) {
+		// FIXME store as a non-reactive, raw value using toRaw to not have proxy created for Peer at all.
+		if (toRaw(this.get('peer')) === toRaw(peer)) {
 			this.set('stream', this.get('peer').stream || null)
 
 			// "peer.nick" is set only for users and when the MCU is not used.
 			if (this.get('peer').nick !== undefined) {
 				this.set('name', this.get('peer').nick)
 			}
-		} else if (this.get('screenPeer') === peer) {
+		} else if (toRaw(this.get('screenPeer')) === toRaw(peer)) {
 			this.set('screen', this.get('screenPeer').stream || null)
 		}
 	},
 
 	_handlePeerStreamRemoved(peer) {
-		if (this.get('peer') === peer) {
+		if (toRaw(this.get('peer')) === toRaw(peer)) {
 			this.set('stream', null)
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
-		} else if (this.get('screenPeer') === peer) {
+		} else if (toRaw(this.get('screenPeer')) === toRaw(peer)) {
 			this.set('screen', null)
 		}
 	},

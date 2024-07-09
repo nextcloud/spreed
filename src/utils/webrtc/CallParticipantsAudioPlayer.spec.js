@@ -69,7 +69,7 @@ describe('CallParticipantsAudioPlayer', () => {
 	 * @param {object} callParticipantModel the CallParticipantModel to add.
 	 */
 	function addCallParticipantModel(callParticipantModel) {
-		callParticipantCollection.callParticipantModels.value.push(callParticipantModel)
+		callParticipantCollection.callParticipantModels.push(callParticipantModel)
 
 		callParticipantCollection._trigger('add', [callParticipantModel])
 	}
@@ -82,8 +82,8 @@ describe('CallParticipantsAudioPlayer', () => {
 	 * @param {object} callParticipantModel the CallParticipantModel to remove.
 	 */
 	function removeCallParticipantModel(callParticipantModel) {
-		const index = callParticipantCollection.callParticipantModels.value.indexOf(callParticipantModel)
-		callParticipantCollection.callParticipantModels.value.splice(index, 1)
+		const index = callParticipantCollection.callParticipantModels.indexOf(callParticipantModel)
+		callParticipantCollection.callParticipantModels.splice(index, 1)
 
 		callParticipantCollection._trigger('remove', [callParticipantModel])
 	}

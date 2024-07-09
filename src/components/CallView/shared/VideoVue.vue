@@ -578,7 +578,7 @@ export default {
 		},
 
 		updateVideoAspectRatio() {
-			if (!this.isBig) {
+			if (!this.isBig || !this.model.attributes.stream) {
 				return
 			}
 

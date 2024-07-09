@@ -785,6 +785,10 @@ export default {
 		},
 
 		checkSticky() {
+			if (!this.$refs.scroller) {
+				return
+			}
+
 			const ulElements = this.$refs['dateGroup-' + this.token]
 			if (!ulElements) {
 				return
@@ -807,7 +811,7 @@ export default {
 			this.isScrolling = true
 			this.endScrollTimeout = setTimeout(this.endScroll, 3000)
 			// handle sticky date
-			if (this.$refs.scroller.scrollTop === 0) {
+			if (this.$refs.scroller?.scrollTop === 0) {
 				this.stickyDate = null
 			} else {
 				this.checkSticky()
