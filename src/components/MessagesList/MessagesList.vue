@@ -267,6 +267,8 @@ export default {
 			this.$store.dispatch('easeMessageList', { token: oldToken })
 			this.stopFetchingOldMessages = false
 			this.messagesGroupedByDateByAuthor = this.prepareMessagesGroups(this.messagesList)
+			this.stickyDate = null
+			this.checkSticky()
 		},
 
 		messagesList: {
