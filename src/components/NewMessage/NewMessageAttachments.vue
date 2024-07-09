@@ -12,7 +12,7 @@
 		:aria-label="t('spreed', 'Share files to the conversation')"
 		:aria-haspopup="true">
 		<template #icon>
-			<Paperclip :size="16" />
+			<Plus :size="16" />
 		</template>
 
 		<NcActionButton v-if="canUploadFiles"
@@ -53,13 +53,22 @@
 			</template>
 			{{ t('spreed', 'Create new poll') }}
 		</NcActionButton>
+
+		<NcActionButton close-after-click
+			@click="showSmartPicker">
+			<template #icon>
+				<SlashForwardBox :size="20" />
+			</template>
+			{{ t('spreed', 'Smart picker') }}
+		</NcActionButton>
 	</NcActions>
 </template>
 
 <script>
 import Folder from 'vue-material-design-icons/Folder.vue'
-import Paperclip from 'vue-material-design-icons/Paperclip.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
+import SlashForwardBox from 'vue-material-design-icons/SlashForwardBox.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -67,6 +76,8 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'
+
+import { EventBus } from '../../services/EventBus.js'
 
 export default {
 	name: 'NewMessageAttachments',
@@ -77,8 +88,9 @@ export default {
 		NcIconSvgWrapper,
 		// Icons
 		Folder,
-		Paperclip,
+		Plus,
 		PollIcon,
+		SlashForwardBox,
 		Upload,
 	},
 
@@ -133,6 +145,10 @@ export default {
 
 	methods: {
 		t,
+
+		showSmartPicker() {
+			EventBus.emit('smart-picker-open')
+		},
 	},
 }
 </script>

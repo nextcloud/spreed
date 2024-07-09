@@ -542,6 +542,7 @@ export default {
 		EventBus.on('upload-start', this.handleUploadSideEffects)
 		EventBus.on('upload-discard', this.handleUploadSideEffects)
 		EventBus.on('retry-message', this.handleRetryMessage)
+		EventBus.on('smart-picker-open', this.handleOpenTributeMenu)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -553,6 +554,7 @@ export default {
 		EventBus.off('upload-start', this.handleUploadSideEffects)
 		EventBus.off('upload-discard', this.handleUploadSideEffects)
 		EventBus.off('retry-message', this.handleRetryMessage)
+		EventBus.off('smart-picker-open', this.handleOpenTributeMenu)
 	},
 
 	methods: {
@@ -762,6 +764,10 @@ export default {
 				this.focusInput()
 				return shareFile(path, this.token)
 			})
+		},
+
+		handleOpenTributeMenu() {
+			this.$refs.richContenteditable.showTribute('/')
 		},
 
 		/**
