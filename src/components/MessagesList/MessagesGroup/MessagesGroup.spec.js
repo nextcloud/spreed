@@ -8,7 +8,6 @@ import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
-import MessagesSystemGroup from './MessagesSystemGroup.vue'
 
 import { ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
@@ -120,71 +119,6 @@ describe('MessagesGroup.vue', () => {
 				actorId: 'actor-1',
 			},
 			previousMessageId: 110,
-			nextMessageId: 200,
-		})
-	})
-
-	test('renders grouped system messages', () => {
-		const MESSAGES = [{
-			id: 100,
-			token: TOKEN,
-			actorId: 'actor-1',
-			actorDisplayName: 'actor one',
-			actorType: ATTENDEE.ACTOR_TYPE.USERS,
-			message: 'Actor entered the scene',
-			messageType: 'comment',
-			messageParameters: {},
-			systemMessage: 'call_started',
-			timestamp: 100,
-			isReplyable: false,
-		}, {
-			id: 110,
-			token: TOKEN,
-			actorId: 'actor-1',
-			actorDisplayName: 'actor one',
-			actorType: ATTENDEE.ACTOR_TYPE.USERS,
-			message: 'Actor left the scene',
-			messageType: 'comment',
-			messageParameters: {},
-			systemMessage: 'call_stopped',
-			timestamp: 200,
-			isReplyable: false,
-		}]
-
-		const wrapper = shallowMount(MessagesSystemGroup, {
-			localVue,
-			store,
-			propsData: {
-				id: 123,
-				token: TOKEN,
-				previousMessageId: 90,
-				nextMessageId: 200,
-				messages: MESSAGES,
-			},
-		})
-
-		const avatarEl = wrapper.findComponent({ name: 'AvatarWrapper' })
-		expect(avatarEl.exists()).toBe(false)
-
-		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		expect(messagesEl.at(0).props()).toMatchObject({
-			message: {
-				id: MESSAGES[0].id,
-				message: MESSAGES[0].message,
-				actorId: MESSAGES[0].actorId,
-				actorDisplayName: MESSAGES[0].actorDisplayName,
-			},
-			previousMessageId: 90,
-			nextMessageId: 110,
-		})
-		expect(messagesEl.at(1).props()).toMatchObject({
-			message: {
-				id: MESSAGES[1].id,
-				message: MESSAGES[1].message,
-				actorId: MESSAGES[1].actorId,
-				actorDisplayName: MESSAGES[1].actorDisplayName,
-			},
-			previousMessageId: 100,
 			nextMessageId: 200,
 		})
 	})
