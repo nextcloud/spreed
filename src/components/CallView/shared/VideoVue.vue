@@ -617,7 +617,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
 .video-container-big {
@@ -650,14 +650,14 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
 .videoWrapper,
 .video {
 	height: 100%;
 	width: 100%;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
 .videoWrapper.presenter-overlay > video {
@@ -704,7 +704,7 @@ export default {
 	width: 100%;
 	top: 0;
 	left: 0;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
 .video-container.presenter-overlay::after {
@@ -727,12 +727,13 @@ export default {
 	position: relative;
 	color: white;
 	left: 50%;
-	transform: translate(-50%, -52px);
+	transform: translate(-50%, calc(var(--default-clickable-area) * -1));
 	opacity: 0.7;
 	background-color: rgba(0, 0, 0, 0.5);
 	border-radius: 50%;
 	padding: 6px;
-	width: 44px;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
 	z-index: 2; // Above video and its border
 
 	&:hover {

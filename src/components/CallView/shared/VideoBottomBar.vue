@@ -324,7 +324,7 @@ export default {
 .bottom-bar {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--default-grid-baseline);
 	width: 100%;
 
 	& .media-indicators {
@@ -359,8 +359,8 @@ export default {
 }
 
 .status-indicator {
-	width: 44px;
-	height: 44px;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
 	display: flex;
 	align-items: center;
 	justify-content: center;

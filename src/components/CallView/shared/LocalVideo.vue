@@ -359,7 +359,7 @@ export default {
 // Always display the local video in the last row
 .localVideoContainer {
 	grid-row-end: -1;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	z-index: 1;
 }
 
@@ -433,7 +433,7 @@ export default {
 	width: 100%;
 	top: 0;
 	left: 0;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
 .hover-shadow:after {
@@ -451,15 +451,14 @@ export default {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	padding: 0 20px 12px 24px;
+	padding: 0 calc(var(--default-grid-baseline) * 3);
+	padding-bottom: calc(var(--default-grid-baseline) * 2);
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 40px;
 
 	&--big {
 		justify-content: center;
-		height: 48px;
 	}
 
 	& &__button {
