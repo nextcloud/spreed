@@ -1,0 +1,192 @@
+# SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+version = 1
+SPDX-PackageName = "talk"
+SPDX-PackageSupplier = "Nextcloud <info@nextcloud.com>"
+SPDX-PackageDownloadLocation = "https://github.com/nextcloud/spreed/"
+
+[[annotations]]
+path = ["l10n/**.js", "l10n/**.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = ["js/**.js.map", "js/**.js"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = ["openapi.json", "openapi-**.json", "src/types/openapi/**.ts"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2023 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = [".github/CODEOWNERS", ".github/ISSUE_TEMPLATE/1_bug_report.md", ".github/ISSUE_TEMPLATE/2_feature_request.md", ".github/ISSUE_TEMPLATE/3_bot_list.yml", ".github/contributing.md", ".github/dependabot.yml", ".github/pull_request_template.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "none"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "docs/**.md"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "tests/integration/features/**/**.feature"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["package.json", "package-lock.json", "**/package.json", "**/package-lock.json", "composer.json", "composer.lock", "**/composer.json", "**/composer.lock", ".gitignore", ".l10nignore", "psalm.xml", "tests/psalm-baseline.xml", "vendor-bin/**/composer.json", "vendor-bin/**/composer.lock", ".tx/config", "**/phpunit.xml", "tsconfig.json", "redocly.yaml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "none"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["src/utils/media/effects/virtual-background/vendor/tflite/**.wasm", "src/utils/media/effects/virtual-background/vendor/models/selfie_segmentation_landscape.tflite", "src/utils/media/effects/virtual-background/vendor/models/Model Card MediaPipe Selfie Segmentation.pdf", "src/utils/media/effects/virtual-background/vendor/README.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019-2022 The MediaPipe Authors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["img/app.svg", "img/app-dark.png", "img/app-dark.svg", "img/changelog.svg", "img/favicon.ico", "img/favicon.png", "img/favicon.svg", "img/favicon-mask.svg", "img/favicon-touch.png", "img/favicon-touch.svg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Nextcloud GmbH <https://nextcloud.com/trademarks/>"
+SPDX-License-Identifier = "LicenseRef-NextcloudTrademarks"
+
+[[annotations]]
+path = ["img/bridge-bot.png", "img/bridge-services/irc.svg", "img/bridge-services/msteams.svg", "img/bridge-services/slack.svg", "img/bridge-services/steam.svg", "img/bridge-services/xmpp.svg", "img/folder-multiple-image.svg", "img/icon-contacts-white.svg", "img/icon-conversation-federation-bright.svg", "img/icon-conversation-federation-dark.svg", "img/icon-conversation-group-bright.svg", "img/icon-conversation-group-dark.svg", "img/icon-conversation-mail-bright.svg", "img/icon-conversation-mail-dark.svg", "img/icon-conversation-password-bright.svg", "img/icon-conversation-password-dark.svg", "img/icon-conversation-phone-bright.svg", "img/icon-conversation-phone-dark.svg", "img/icon-conversation-public-bright.svg", "img/icon-conversation-public-dark.svg", "img/icon-conversation-text-bright.svg", "img/icon-conversation-text-dark.svg", "img/icon-conversation-user-bright.svg", "img/icon-conversation-user-dark.svg", "img/icon-mail-white.svg", "img/icon-password-white.svg", "img/icon-phone-white.svg", "img/icon-public-white.svg", "img/icon-team-white.svg", "img/icon-text-white.svg", "img/icon-user-white.svg", "img/menu-people.svg", "img/no-password.svg", "img/phone.png", "img/reply.svg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018-2024 Google LLC"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "img/emojis/**.gif"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Google LLC"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "img/bridge-services/discord.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Discord Inc."
+SPDX-License-Identifier = "LicenseRef-Discord"
+
+[[annotations]]
+path = "img/bridge-services/matrix.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Matrix.org"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "img/bridge-services/mattermost.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Mattermost, Inc"
+SPDX-License-Identifier = "LicenseRef-Mattermost"
+
+[[annotations]]
+path = "img/bridge-services/rocketchat.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Mattermost, Inc"
+SPDX-License-Identifier = "LicenseRef-RocketChat"
+
+[[annotations]]
+path = "img/bridge-services/telegram.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Telegram"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "img/bridge-services/zulip.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "The Zulip team"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["docs/screenshotplaceholders/placeholder-1.jpeg", "docs/screenshotplaceholders/placeholder-2.jpeg", "docs/screenshotplaceholders/placeholder-4.jpeg", "docs/screenshotplaceholders/placeholder-5.jpeg", "docs/screenshotplaceholders/placeholder-7.jpeg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "docs/screenshotplaceholders/placeholder-0.jpeg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2021 Mart Production"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "docs/screenshotplaceholders/placeholder-3.jpeg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019 Sound On"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["docs/screenshotplaceholders/placeholder-6.jpeg", "docs/screenshotplaceholders/placeholder-8.jpeg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2021 Antoni Shkraba"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["img/join_call.flac", "img/join_call.ogg", "img/leave_call.flac", "img/leave_call.ogg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Marco Ambrosini <marcoambrosini@proton.me>"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["img/LibremPhoneCall.flac", "img/LibremPhoneCall.ogg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Feandesign https://soundcloud.com/feandesign"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "img/backgrounds/1_office.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Breather, https://stocksnap.io/author/746"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "img/backgrounds/2_home.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Naomi Hébert, https://stocksnap.io/author/40931"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "img/backgrounds/3_abstract.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "HD Wallpapers, https://stocksnap.io/author/hdwallpapers"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "img/backgrounds/4_beach.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Flo Dahm, https://stocksnap.io/author/flodahm"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = "img/backgrounds/5_park.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Basile Morin, https://commons.wikimedia.org/wiki/User:Basile_Morin"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = "img/backgrounds/6_theater.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Pietro Tessarin"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = "img/backgrounds/7_library.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Diliff, https://commons.wikimedia.org/wiki/User:Diliff"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = "img/backgrounds/8_space_station.jpg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Karen Nyberg"
+SPDX-License-Identifier = "LicenseRef-Nasa"
