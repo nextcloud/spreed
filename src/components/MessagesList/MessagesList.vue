@@ -1193,7 +1193,10 @@ export default {
 		},
 
 		onWindowFocus() {
-			this.refreshReadMarkerPosition()
+			// setTimeout is needed here for Safari to correctly remove the unread marker
+			setTimeout(() => {
+				this.refreshReadMarkerPosition()
+			}, 2)
 		},
 
 		messagesGroupComponent(group) {
