@@ -181,6 +181,7 @@ export default {
 
 h3 {
 	display: flex;
+	align-items: flex-end;
 	margin-bottom: 0;
 
 	> span {
@@ -201,7 +202,7 @@ h3 {
 input {
 	background-size: 16px;
 	background-position: 14px;
-	padding-left: 44px;
+	padding-left: var(--default-clickable-area);
 	width: 100%;
 	text-overflow: ellipsis;
 	&[type=checkbox] {
@@ -229,11 +230,6 @@ input {
 		background-color: var(--color-background-hover);
 		border-radius: var(--border-radius-large);
 	}
-}
-
-// Force action buttons to be 44px tall;
-:deep(.action-item__menutoggle) {
-	height: var(--default-clickable-area) !important;
 }
 
 .field {

@@ -24,8 +24,7 @@ export default {
 <style lang="scss" scoped>
 	.app-navigation-hint {
 		color: var(--color-text-maxcontrast);
-		line-height: 44px;
-		list-style-type:none;
+		list-style-type: none;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		box-shadow: none !important;

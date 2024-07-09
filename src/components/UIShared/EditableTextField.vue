@@ -278,13 +278,14 @@ export default {
 .spinner {
 	width: var(--default-clickable-area);
 	height: var(--default-clickable-area);
-	margin: 0 0 0 44px;
+	margin-left: var(--default-clickable-area);
+	flex-shrink: 0;
 }
 
 .counter {
 	background-color: var(--color-background-dark);
-	height: 44px;
-	width: 44px;
+	height: var(--default-clickable-area);
+	width: var(--default-clickable-area);
 	border-radius: var(--border-radius-pill);
 	position: absolute;
 	top: 0;

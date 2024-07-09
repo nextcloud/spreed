@@ -153,8 +153,8 @@ export default {
 		}
 
 		&-loader {
-			width: 44px;
-			height: 44px;
+			width: var(--default-clickable-area);
+			height: var(--default-clickable-area);
 			display: flex;
 			justify-content: center;
 			align-items: center;
