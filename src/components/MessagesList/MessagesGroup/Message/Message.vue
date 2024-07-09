@@ -78,7 +78,7 @@
 			@close="isTranslateDialogOpen = false" />
 
 		<div v-if="isLastReadMessage"
-			v-observe-visibility="lastReadMessageVisibilityChanged"
+			v-intersection-observer="lastReadMessageVisibilityChanged"
 			class="new-message-marker">
 			<span>{{ t('spreed', 'Unread messages') }}</span>
 		</div>
@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
+
 import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 
@@ -126,6 +128,10 @@ export default {
 		// Icons
 		UnfoldLess,
 		UnfoldMore,
+	},
+
+	directives: {
+		IntersectionObserver,
 	},
 
 	props: {
@@ -346,8 +352,8 @@ export default {
 
 	methods: {
 		t,
-		lastReadMessageVisibilityChanged(isVisible) {
-			if (isVisible) {
+		lastReadMessageVisibilityChanged([{ isIntersecting }]) {
+			if (isIntersecting) {
 				this.seen = true
 			}
 		},
