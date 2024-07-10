@@ -6,7 +6,7 @@
 <template>
 	<!-- Poll card -->
 	<a v-if="!showAsButton"
-		v-observe-visibility="getPollData"
+		v-intersection-observer="getPollData"
 		:aria-label="t('spreed', 'Poll')"
 		class="poll-card"
 		role="button"
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
+
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -44,6 +46,10 @@ export default {
 	components: {
 		NcButton,
 		PollIcon,
+	},
+
+	directives: {
+		IntersectionObserver,
 	},
 
 	props: {

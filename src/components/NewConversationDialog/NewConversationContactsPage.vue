@@ -8,7 +8,7 @@
 		<!-- Search -->
 		<div class="set-contacts__form">
 			<NcTextField ref="setContacts"
-				v-observe-visibility="visibilityChanged"
+				v-intersection-observer="visibilityChanged"
 				:value.sync="searchText"
 				type="text"
 				class="set-contacts__form-input"
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import debounce from 'debounce'
 import { ref } from 'vue'
 
@@ -91,6 +92,10 @@ export default {
 		// Icons
 		Close,
 		Magnify,
+	},
+
+	directives: {
+		IntersectionObserver,
 	},
 
 	props: {
@@ -225,12 +230,14 @@ export default {
 				this.contactsLoading = false
 			}
 		},
-		visibilityChanged(isVisible) {
-			if (isVisible) {
+
+		visibilityChanged([{ isIntersecting }]) {
+			if (isIntersecting) {
 				// Focus the input field of the current component.
 				this.focusInput()
 			}
 		},
+
 		focusInput() {
 			this.setContacts.focus()
 		},

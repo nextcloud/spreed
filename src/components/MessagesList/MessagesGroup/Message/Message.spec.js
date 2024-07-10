@@ -507,7 +507,7 @@ describe('Message.vue', () => {
 		test('displays unread message marker that marks the message seen when visible', () => {
 			getVisualLastReadMessageIdMock.mockReturnValue(123)
 			messageProps.nextMessageId = 333
-			const observeVisibility = jest.fn()
+			const IntersectionObserver = jest.fn()
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -516,7 +516,7 @@ describe('Message.vue', () => {
 					MessageBody,
 				},
 				directives: {
-					observeVisibility,
+					IntersectionObserver,
 				},
 				propsData: messageProps,
 				provide: injected,
@@ -525,26 +525,26 @@ describe('Message.vue', () => {
 			const marker = wrapper.find('.new-message-marker')
 			expect(marker.exists()).toBe(true)
 
-			expect(observeVisibility).toHaveBeenCalled()
-			const directiveValue = observeVisibility.mock.calls[0][1]
+			expect(IntersectionObserver).toHaveBeenCalled()
+			const directiveValue = IntersectionObserver.mock.calls[0][1]
 
 			expect(wrapper.vm.seen).toEqual(false)
 
-			directiveValue.value(false)
+			directiveValue.value([{ isIntersecting: false }])
 			expect(wrapper.vm.seen).toEqual(false)
 
-			directiveValue.value(true)
+			directiveValue.value([{ isIntersecting: true }])
 			expect(wrapper.vm.seen).toEqual(true)
 
 			// stays true if it was visible once
-			directiveValue.value(false)
+			directiveValue.value([{ isIntersecting: false }])
 			expect(wrapper.vm.seen).toEqual(true)
 		})
 
 		test('does not display read marker on the very last message', () => {
 			messageProps.lastReadMessageId = 123
 			messageProps.nextMessageId = null // last message
-			const observeVisibility = jest.fn()
+			const IntersectionObserver = jest.fn()
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -553,7 +553,7 @@ describe('Message.vue', () => {
 					MessageBody,
 				},
 				directives: {
-					observeVisibility,
+					IntersectionObserver,
 				},
 				propsData: messageProps,
 				provide: injected,
