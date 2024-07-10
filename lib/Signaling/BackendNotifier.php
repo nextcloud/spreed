@@ -324,7 +324,8 @@ class BackendNotifier {
 		foreach ($participants as $participant) {
 			$attendee = $participant->getAttendee();
 			if ($attendee->getActorType() !== Attendee::ACTOR_USERS
-				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS
+				&& $attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 				continue;
 			}
 
@@ -336,7 +337,8 @@ class BackendNotifier {
 				'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 				'displayName' => $attendee->getDisplayName(),
 			];
-			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS
+					|| $attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 				$data['userId'] = $attendee->getActorId();
 			}
 
@@ -414,7 +416,8 @@ class BackendNotifier {
 
 				$attendee = $participant->getAttendee();
 				if ($attendee->getActorType() !== Attendee::ACTOR_USERS
-					&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+					&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS
+					&& $attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 					continue;
 				}
 
@@ -426,7 +429,8 @@ class BackendNotifier {
 					'participantType' => $attendee->getParticipantType(),
 					'participantPermissions' => $participant->getPermissions(),
 				];
-				if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS
+						|| $attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 					$data['userId'] = $attendee->getActorId();
 				}
 
