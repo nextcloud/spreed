@@ -286,7 +286,7 @@ class FederationTest extends TestCase {
 		$ownerFederatedId = 'owner@test.local';
 		$sharedBy = 'Owner\'s name';
 		$sharedByFederatedId = 'owner@test.local';
-		$remote = 'test.local';
+		$remote = 'https://test.local';
 		$shareType = 'user';
 		$roomType = Room::TYPE_GROUP;
 		$roomName = 'Room name';
@@ -345,6 +345,10 @@ class FederationTest extends TestCase {
 			->method('splitUserRemote')
 			->with($ownerFederatedId)
 			->willReturn(['owner', $remote]);
+
+		$this->addressHandler->expects($this->once())
+			->method('urlContainProtocol')
+			->willReturnCallback(static fn (string $url) => str_starts_with($url, 'http://') || str_starts_with($url, 'https://'));
 
 		$this->userManager->expects($this->once())
 			->method('get')
@@ -463,7 +467,7 @@ class FederationTest extends TestCase {
 				[
 					'sharedSecret' => $token,
 					'message' => 'Recipient declined the share',
-					'remoteServerUrl' => 'example.tld',
+					'remoteServerUrl' => 'https://example.tld',
 				]
 			);
 

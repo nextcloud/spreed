@@ -412,10 +412,6 @@ class BackendNotifier {
 			$server = substr($server, 0, -10);
 		}
 
-		if (str_starts_with($server, 'https://')) {
-			return substr($server, strlen('https://'));
-		}
-
 		return $server;
 	}
 }
