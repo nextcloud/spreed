@@ -16,6 +16,7 @@ use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeSystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
+use OCA\Talk\Exceptions\InvalidRoomException;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -668,6 +669,10 @@ class ChatManager {
 	 * @throws NotFoundException
 	 */
 	public function getComment(Room $chat, string $messageId): IComment {
+		if ($chat->isFederatedConversation()) {
+			throw new InvalidRoomException('Can not call ChatManager::getComment() with a federated chat.');
+		}
+
 		$comment = $this->commentsManager->get($messageId);
 
 		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string) $chat->getId()) {

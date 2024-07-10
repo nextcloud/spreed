@@ -507,7 +507,7 @@ class Notifier implements INotifier {
 			}
 		} else {
 			try {
-				$proxy = $this->proxyCacheMessageMapper->findById($messageParameters['proxyId']);
+				$proxy = $this->proxyCacheMessageMapper->findById($room, $messageParameters['proxyId']);
 				$message = $this->messageParser->createMessageFromProxyCache($room, $participant, $proxy, $l);
 			} catch (DoesNotExistException) {
 				throw new AlreadyProcessedException();

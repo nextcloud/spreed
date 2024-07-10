@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\Exceptions\InvalidRoomException;
+use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\AppFramework\Db\TTransactional;
@@ -32,7 +34,11 @@ class ProxyCacheMessageMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findById(int $proxyId): ProxyCacheMessage {
+	public function findById(Room $chat, int $proxyId): ProxyCacheMessage {
+		if (!$chat->isFederatedConversation()) {
+			throw new InvalidRoomException('Can not call ProxyCacheMessageMapper::findById() with a non-federated chat.');
+		}
+
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
