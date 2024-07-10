@@ -32,14 +32,17 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Collaboration\Reference\ADiscoverableReferenceProvider;
 use OCP\Collaboration\Reference\IReference;
 use OCP\Collaboration\Reference\ISearchableReferenceProvider;
 use OCP\Collaboration\Reference\Reference;
+use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 
@@ -53,6 +56,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		protected Manager $roomManager,
 		protected ParticipantService $participantService,
 		protected ChatManager $chatManager,
+		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
 		protected AvatarService $avatarService,
 		protected MessageParser $messageParser,
 		protected IL10N $l,
@@ -176,9 +180,25 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		 */
 		if ($participant && !empty($referenceMatch['message'])) {
 			$messageId = (string) $referenceMatch['message'];
-			$comment = $this->chatManager->getComment($room, $messageId);
-			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
-			$this->messageParser->parseMessage($message);
+			if (!$room->isFederatedConversation()) {
+				try {
+					$comment = $this->chatManager->getComment($room, $messageId);
+				} catch (NotFoundException) {
+					throw new RoomNotFoundException();
+				}
+				$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
+				$this->messageParser->parseMessage($message);
+			} else {
+				try {
+					$proxy = $this->proxyCacheMessageMapper->findById($room, (int) $messageId);
+					if ($proxy->getLocalToken() !== $room->getToken()) {
+						throw new RoomNotFoundException();
+					}
+				} catch (DoesNotExistException) {
+					throw new RoomNotFoundException();
+				}
+				$message = $this->messageParser->createMessageFromProxyCache($room, $participant, $proxy, $this->l);
+			}
 
 			$placeholders = $replacements = [];
 			foreach ($message->getMessageParameters() as $placeholder => $parameter) {
