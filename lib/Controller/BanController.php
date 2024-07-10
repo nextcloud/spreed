@@ -16,6 +16,7 @@ use OCA\Talk\Service\BanService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
 /**
@@ -25,7 +26,8 @@ class BanController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected BanService $banService
+		protected BanService $banService,
+		protected ITimeFactory $timeFactory,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -39,7 +41,7 @@ class BanController extends AEnvironmentAwareController {
 	 * @psalm-param Attendee::ACTOR_*|'ip' $actorType Type of actor to ban, or `ip` when banning a clients remote address
 	 * @param string $actorId Actor ID or the IP address or range in case of type `ip`
 	 * @param string $internalNote Optional internal note
-	 * @return DataResponse<Http::STATUS_OK, TalkBan, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkBan, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'bannedActor'|'internalNote'}, array{}>
 	 *
 	 * 200: Ban successfully
 	 * 400: Actor information is invalid
@@ -58,14 +60,16 @@ class BanController extends AEnvironmentAwareController {
 				$this->room->getId(),
 				$actorId,
 				$actorType,
-				null,
+				$this->timeFactory->getDateTime(),
 				$internalNote
 			);
 
 			return new DataResponse($ban->jsonSerialize(), Http::STATUS_OK);
 		} catch (\InvalidArgumentException $e) {
+			/** @var 'bannedActor'|'internalNote' $message */
+			$message = $e->getMessage();
 			return new DataResponse([
-				'error' => $e->getMessage(),
+				'error' => $message,
 			], Http::STATUS_BAD_REQUEST);
 		}
 	}

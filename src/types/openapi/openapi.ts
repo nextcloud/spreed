@@ -1913,7 +1913,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "bannedActor" | "internalNote";
                             };
                         };
                     };

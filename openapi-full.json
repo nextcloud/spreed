@@ -2099,7 +2099,11 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "bannedActor",
+                                                                "internalNote"
+                                                            ]
                                                         }
                                                     }
                                                 }

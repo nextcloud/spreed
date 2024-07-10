@@ -12,42 +12,27 @@ use DateTime;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Utility\ITimeFactory;
 
 class BanService {
 
 	public function __construct(
 		protected BanMapper $banMapper,
-		protected ITimeFactory $timeFactory,
 	) {
 	}
 
 	/**
-	 * Validate the ban data.
+	 * Create a new ban
+	 *
+	 * @throws \InvalidArgumentException
 	 */
-	private function validateBanData(string $actorId, string $actorType, int $roomId, string $bannedId, string $bannedType, ?DateTime $bannedTime, ?string $internalNote): void {
-		if (empty($bannedId)) {
-			throw new \InvalidArgumentException("invalid_bannedId.");
-		}
-
-		if (empty($bannedType)) {
-			throw new \InvalidArgumentException("invalid_bannedType.");
+	public function createBan(string $actorId, string $actorType, int $roomId, string $bannedId, string $bannedType, DateTime $bannedTime, string $internalNote): Ban {
+		if (empty($bannedId) || empty($bannedType)) {
+			throw new \InvalidArgumentException('bannedActor');
 		}
 
 		if (empty($internalNote)) {
-			throw new \InvalidArgumentException("invalid_internalNote.");
+			throw new \InvalidArgumentException('internalNote');
 		}
-
-		if ($bannedTime !== null && !$bannedTime instanceof DateTime) {
-			throw new \InvalidArgumentException("invalid_bannedTime.");
-		}
-	}
-
-	/**
-	 * Create a new ban
-	 */
-	public function createBan(string $actorId, string $actorType, int $roomId, string $bannedId, string $bannedType, ?DateTime $bannedTime, ?string $internalNote): Ban {
-		$this->validateBanData($actorId, $actorType, $roomId, $bannedId, $bannedType, $bannedTime, $internalNote);
 
 		$ban = new Ban();
 		$ban->setActorId($actorId);
@@ -55,7 +40,7 @@ class BanService {
 		$ban->setRoomId($roomId);
 		$ban->setBannedId($bannedId);
 		$ban->setBannedType($bannedType);
-		$ban->setBannedTime($bannedTime ?? new \DateTime());
+		$ban->setBannedTime($bannedTime);
 		$ban->setInternalNote($internalNote);
 
 		return $this->banMapper->insert($ban);
