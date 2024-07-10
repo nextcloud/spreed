@@ -37,7 +37,9 @@ components.
 			<!-- Message text -->
 			<blockquote v-if="!isFileShareWithoutCaption"
 				class="quote__main__text">
-				<p dir="auto">{{ shortenedQuoteMessage }}</p>
+				<p dir="auto">
+					{{ shortenedQuoteMessage }}
+				</p>
 			</blockquote>
 		</div>
 
