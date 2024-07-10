@@ -5,8 +5,8 @@
  */
 
 import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import { useStore } from 'vuex'
 
-import { useStore } from './useStore.js'
 import { EventBus } from '../services/EventBus.js'
 import SessionStorage from '../services/SessionStorage.js'
 

@@ -91,13 +91,13 @@
 			</div>
 		</div>
 
-		<FilePickerVue v-if="showFilePicker"
+		<!-- <FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'Choose your conversation picture')"
 			container="#vue-avatar-section"
 			:buttons="filePickerButtons"
 			:multiselect="false"
 			:mimetype-filter="validMimeTypes"
-			@close="showFilePicker = false" />
+			@close="showFilePicker = false" /> -->
 	</section>
 </template>
 
@@ -112,8 +112,9 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getRequestToken } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
@@ -136,7 +137,7 @@ export default {
 
 	components: {
 		ConversationIcon,
-		FilePickerVue,
+		// FilePickerVue,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
@@ -170,7 +171,7 @@ export default {
 		},
 	},
 
-	emits: ['avatar-edited'],
+	emits: ['avatarEdited'],
 
 	setup() {
 		return {
@@ -228,12 +229,12 @@ export default {
 	watch: {
 		showCropper(value) {
 			if (this.controlled) {
-				this.$emit('avatar-edited', value)
+				this.$emit('avatarEdited', value)
 			}
 		},
 		emojiAvatar(value) {
 			if (this.controlled) {
-				this.$emit('avatar-edited', !!value)
+				this.$emit('avatarEdited', !!value)
 			}
 		},
 	},
@@ -252,7 +253,7 @@ export default {
 			this.loading = true
 			const file = e.target.files[0]
 			if (!this.validMimeTypes.includes(file.type)) {
-				showError(t('spreed', 'Please select a valid PNG or JPG file'))
+				window.OCP.Toast.error(t('spreed', 'Please select a valid PNG or JPG file'))
 				this.cancel()
 				return
 			}
@@ -281,11 +282,11 @@ export default {
 					this.$refs.cropper.replace(tempAvatar)
 					this.showCropper = true
 				} else {
-					showError(data.data.message)
+					window.OCP.Toast.error(data.data.message)
 					this.cancel()
 				}
 			} catch (e) {
-				showError(t('spreed', 'Error setting conversation picture'))
+				window.OCP.Toast.error(t('spreed', 'Error setting conversation picture'))
 				this.cancel()
 			}
 		},
@@ -304,7 +305,7 @@ export default {
 					await this.savePictureAvatar()
 				}
 			} catch (error) {
-				showError(t('spreed', 'Could not set the conversation picture: {error}', { error: error.message }))
+				window.OCP.Toast.error(t('spreed', 'Could not set the conversation picture: {error}', { error: error.message }))
 				this.cancel()
 			} finally {
 				this.loading = false
@@ -348,7 +349,7 @@ export default {
 					token: this.conversation.token,
 				})
 			} catch (e) {
-				showError(t('spreed', 'Error removing conversation picture'))
+				window.OCP.Toast.error(t('spreed', 'Error removing conversation picture'))
 			} finally {
 				this.loading = false
 			}

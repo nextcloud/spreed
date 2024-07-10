@@ -120,7 +120,8 @@
 <script>
 import debounce from 'debounce'
 
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -430,7 +431,7 @@ export default {
 		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchPeers.clear?.()
 		this.$store.dispatch('isEmptyCallView', true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
@@ -460,7 +461,7 @@ export default {
 			removedModelIds.forEach(removedModelId => {
 				this.sharedDatas[removedModelId].remoteVideoBlocker.destroy()
 
-				this.$delete(this.sharedDatas, removedModelId)
+				delete this.sharedDatas[removedModelId]
 
 				this.speakingUnwatchers[removedModelId]()
 				// Not reactive, but not a problem
@@ -487,7 +488,7 @@ export default {
 					screenVisible: false,
 				}
 
-				this.$set(this.sharedDatas, addedModel.attributes.peerId, sharedData)
+				this.sharedDatas[addedModel.attributes.peerId] = sharedData
 
 				// Not reactive, but not a problem
 				this.speakingUnwatchers[addedModel.attributes.peerId] = this.$watch(function() {
@@ -554,11 +555,11 @@ export default {
 			// sometimes the nick name is not available yet...
 			if (nickName) {
 				if (raisedHand?.state) {
-					showMessage(t('spreed', '{nickName} raised their hand.', { nickName }))
+					window.OCP.Toast.message(t('spreed', '{nickName} raised their hand.', { nickName }))
 				}
 			} else {
 				if (raisedHand?.state) {
-					showMessage(t('spreed', 'A participant raised their hand.'))
+					window.OCP.Toast.message(t('spreed', 'A participant raised their hand.'))
 				}
 			}
 

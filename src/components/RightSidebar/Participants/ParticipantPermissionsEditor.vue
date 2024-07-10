@@ -7,13 +7,14 @@
 	<div class="wrapper">
 		<PermissionEditor :display-name="displayName"
 			:permissions="permissions"
-			v-on="$listeners"
+			@close="$emit('close')"
 			@submit="handleSubmitPermissions" />
 	</div>
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import PermissionEditor from '../../PermissionsEditor/PermissionsEditor.vue'
@@ -97,10 +98,10 @@ export default {
 					attendeeId: this.attendeeId,
 					permissions,
 				})
-				showSuccess(t('spreed', 'Permissions modified for {displayName}', { displayName: this.displayName }))
+				window.OCP.Toast.success(t('spreed', 'Permissions modified for {displayName}', { displayName: this.displayName }))
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.displayName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.displayName }))
 			} finally {
 				// Closes the modal window
 				this.$emit('close')

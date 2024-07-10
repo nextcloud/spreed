@@ -25,7 +25,7 @@
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="formatedTypes"
-						@input="clickAddPart">
+						@update:model-value="clickAddPart">
 						<template #option="option">
 							<img class="icon-multiselect-service"
 								:src="option.iconUrl"
@@ -36,9 +36,9 @@
 				</div>
 				<div v-show="parts.length > 0"
 					class="enable-switch-line">
-					<NcCheckboxRadioSwitch :checked="enabled"
+					<NcCheckboxRadioSwitch :model-value="enabled"
 						type="switch"
-						@update:checked="onEnabled">
+						@update:model-value="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>
@@ -55,7 +55,7 @@
 						container=".matterbridge-settings"
 						@close="closeLogModal">
 						<div class="modal__content">
-							<NcTextArea :value="processLog"
+							<NcTextArea :model-value="processLog"
 								class="log-content"
 								:label="t('spreed', 'Log content')"
 								rows="29"
@@ -87,7 +87,8 @@ import Vue from 'vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 
@@ -535,7 +536,7 @@ export default {
 	beforeMount() {
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 	},
 
 	methods: {
@@ -601,7 +602,7 @@ export default {
 				const result = await editBridge(this.token, this.enabled, this.parts)
 				this.processLog = result.data.ocs.data.log
 				this.processRunning = result.data.ocs.data.running
-				showSuccess(t('spreed', 'Bridge saved'))
+				window.OCP.Toast.success(t('spreed', 'Bridge saved'))
 			} catch (exception) {
 				console.error(exception)
 			}

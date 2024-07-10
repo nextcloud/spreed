@@ -40,20 +40,19 @@
 						@keydown="handleMovement">
 						<template v-if="!devMode && (!isLessThanTwoVideos || !isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
-							<template v-for="callParticipantModel in displayedVideos">
-								<VideoVue :key="callParticipantModel.attributes.peerId"
-									:class="{'video': !isStripe}"
-									:show-video-overlay="showVideoOverlay"
-									:token="token"
-									:model="callParticipantModel"
-									:is-grid="true"
-									:show-talking-highlight="!isStripe"
-									:is-stripe="isStripe"
-									:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
-									:is-selected="isSelected(callParticipantModel)"
-									:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-									@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
-							</template>
+							<VideoVue v-for="callParticipantModel in displayedVideos"
+								:key="callParticipantModel.attributes.peerId"
+								:class="{'video': !isStripe}"
+								:show-video-overlay="showVideoOverlay"
+								:token="token"
+								:model="callParticipantModel"
+								:is-grid="true"
+								:show-talking-highlight="!isStripe"
+								:is-stripe="isStripe"
+								:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+								:is-selected="isSelected(callParticipantModel)"
+								:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+								@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
@@ -246,7 +245,7 @@ export default {
 		},
 	},
 
-	emits: ['select-video', 'click-local-video'],
+	emits: ['selectVideo', 'clickLocalVideo'],
 
 	setup() {
 		return {
@@ -621,7 +620,7 @@ export default {
 
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceMakeGrid.clear?.()
 		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
@@ -904,11 +903,11 @@ export default {
 
 		handleClickVideo(event, peerId) {
 			console.debug('selected-video peer id', peerId)
-			this.$emit('select-video', peerId)
+			this.$emit('selectVideo', peerId)
 		},
 
 		handleClickLocalVideo() {
-			this.$emit('click-local-video')
+			this.$emit('clickLocalVideo')
 		},
 
 		isSelected(callParticipantModel) {

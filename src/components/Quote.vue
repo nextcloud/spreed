@@ -12,7 +12,7 @@ components.
 	<router-link :to="{ hash, params: { skipLeaveWarning: true } }"
 		class="quote"
 		:class="{'quote-own-message': isOwnMessageQuoted}"
-		@click.native="handleQuoteClick">
+		@click="handleQuoteClick">
 		<div class="quote__main">
 			<div v-if="message.id"
 				class="quote__main__author"

@@ -101,12 +101,12 @@
 					:devices="devices"
 					:device-id="audioInputId"
 					@refresh="updateDevices"
-					@update:deviceId="handleAudioInputIdChange" />
+					@update:device-id="handleAudioInputIdChange" />
 				<MediaDevicesSelector kind="videoinput"
 					:devices="devices"
 					:device-id="videoInputId"
 					@refresh="updateDevices"
-					@update:deviceId="handleVideoInputIdChange" />
+					@update:device-id="handleVideoInputIdChange" />
 				<MediaDevicesSpeakerTest />
 			</div>
 
@@ -118,16 +118,16 @@
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
 				class="checkbox"
-				:checked="showMediaSettings || showRecordingWarning"
+				:model-value="showMediaSettings || showRecordingWarning"
 				:disabled="showRecordingWarning"
-				@update:checked="setShowMediaSettings">
+				@update:model-value="setShowMediaSettings">
 				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
 
 			<!-- Moderator options before starting a call-->
 			<NcCheckboxRadioSwitch v-if="!hasCall && canModerateRecording"
-				class="checkbox"
-				:checked.sync="isRecordingFromStart">
+				v-model="isRecordingFromStart"
+				class="checkbox">
 				{{ t('spreed', 'Start recording immediately with the call') }}
 			</NcCheckboxRadioSwitch>
 
@@ -144,8 +144,8 @@
 						{{ t('spreed', 'The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call.') }}
 					</p>
 					<NcCheckboxRadioSwitch class="checkbox--warning"
-						:checked="recordingConsentGiven"
-						@update:checked="setRecordingConsentGiven">
+						:model-value="recordingConsentGiven"
+						@update:model-value="setRecordingConsentGiven">
 						{{ t('spreed', 'Give consent to the recording of this call') }}
 					</NcCheckboxRadioSwitch>
 				</template>
@@ -498,7 +498,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('talk:media-settings:show', this.showModal)
 		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},

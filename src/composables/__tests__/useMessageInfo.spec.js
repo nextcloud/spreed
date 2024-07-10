@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 
 import { ATTENDEE, CONVERSATION } from '../../constants.js'
 import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'
-import { useStore } from '../useStore.js'
 
 // Test messages with 'edit-messages' and without 'delete-messages-unlimited' feature
 jest.mock('@nextcloud/capabilities', () => ({
@@ -18,7 +18,7 @@ jest.mock('@nextcloud/capabilities', () => ({
 		},
 	}))
 }))
-jest.mock('../useStore.js')
+jest.mock('vuex')
 jest.mock('../useConversationInfo.js')
 
 describe('message actions', () => {

@@ -8,8 +8,5 @@
 		"checkJs": false,
 		"allowImportingTsExtensions": true,
 		"lib": ["ESNext"],
-	},
-	"vueCompilerOptions": {
-		"target": 2.7,
 	}
 }

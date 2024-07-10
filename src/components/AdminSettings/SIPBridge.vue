@@ -12,8 +12,8 @@
 		</NcNoteCard>
 
 		<template v-else>
-			<NcCheckboxRadioSwitch type="switch"
-				:checked.sync="dialOutEnabled"
+			<NcCheckboxRadioSwitch v-model="dialOutEnabled"
+				type="switch"
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>
@@ -46,7 +46,7 @@
 				{{ t('spreed', 'Shared secret') }}
 			</label>
 			<NcTextField id="sip-shared-secret"
-				:value.sync="sharedSecret"
+				v-model="sharedSecret"
 				class="form"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
@@ -56,7 +56,7 @@
 				{{ t('spreed', 'Dial-in information') }}
 			</label>
 			<NcTextArea id="dial-in-info"
-				:value.sync="dialInInfo"
+				v-model="dialInInfo"
 				name="message"
 				class="form form__textarea"
 				rows="4"
@@ -80,7 +80,8 @@
 import debounce from 'debounce'
 
 import axios from '@nextcloud/axios'
-import { showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -150,7 +151,7 @@ export default {
 		this.isDialoutSupported()
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceSearchGroup.clear?.()
 	},
 
@@ -198,7 +199,7 @@ export default {
 
 			this.loading = false
 			this.saveCurrentSetup()
-			showSuccess(t('spreed', 'SIP configuration saved!'))
+			window.OCP.Toast.success(t('spreed', 'SIP configuration saved!'))
 		},
 
 		async isDialoutSupported() {

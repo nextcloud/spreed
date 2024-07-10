@@ -11,7 +11,7 @@
 			:label="t('spreed', 'Name')"
 			:error="!!nameErrorLabel"
 			label-visible
-			@keydown.enter="$emit('handle-enter')" />
+			@keydown.enter="$emit('handleEnter')" />
 		<span v-if="nameErrorLabel" class="new-group-conversation__error">
 			{{ nameErrorLabel }}
 		</span>
@@ -32,18 +32,18 @@
 				:conversation="newConversation"
 				controlled
 				editable
-				@avatar-edited="$emit('avatar-edited', $event)" />
+				@avatar-edited="$emit('avatarEdited', $event)" />
 		</template>
 
 		<label class="new-group-conversation__label">
 			{{ t('spreed', 'Conversation visibility') }}
 		</label>
-		<NcCheckboxRadioSwitch :checked.sync="isPublic"
+		<NcCheckboxRadioSwitch v-model="isPublic"
 			type="switch">
 			{{ t('spreed', 'Allow guests to join via link') }}
 		</NcCheckboxRadioSwitch>
 		<div class="new-group-conversation__wrapper">
-			<NcCheckboxRadioSwitch :checked.sync="hasPassword"
+			<NcCheckboxRadioSwitch v-model="hasPassword"
 				type="switch"
 				:disabled="!isPublic">
 				<span class="checkbox__label">{{ t('spreed', 'Password protect') }}</span>
@@ -103,7 +103,7 @@ export default {
 		}
 	},
 
-	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatar-edited', 'handle-enter'],
+	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatarEdited', 'handleEnter'],
 
 	setup() {
 		return { supportsAvatar }
@@ -114,8 +114,8 @@ export default {
 			get() {
 				return this.newConversation.displayName
 			},
-			set(event) {
-				this.updateNewConversation({ displayName: event.target.value })
+			set(value) {
+				this.updateNewConversation({ displayName: value })
 			},
 		},
 
@@ -123,8 +123,8 @@ export default {
 			get() {
 				return this.newConversation.description
 			},
-			set(event) {
-				this.updateNewConversation({ description: event.target.value })
+			set(value) {
+				this.updateNewConversation({ description: value })
 			},
 		},
 
@@ -171,8 +171,8 @@ export default {
 			get() {
 				return this.password
 			},
-			set(event) {
-				this.$emit('update:password', event.target.value)
+			set(value) {
+				this.$emit('update:password', value)
 			},
 		},
 

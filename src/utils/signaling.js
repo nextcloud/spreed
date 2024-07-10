@@ -4,11 +4,12 @@
  */
 
 import axios from '@nextcloud/axios'
-import {
+// eslint-disable-next-line
+/* import {
 	showError,
 	showWarning,
 	TOAST_PERMANENT_TIMEOUT,
-} from '@nextcloud/dialogs'
+} from '@nextcloud/dialogs' */
 import { t } from '@nextcloud/l10n'
 import {
 	generateOcsUrl,
@@ -21,6 +22,8 @@ import { EventBus } from '../services/EventBus.js'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
 import store from '../store/index.js'
+
+const TOAST_PERMANENT_TIMEOUT = -1
 
 const Signaling = {
 	Base: {},
@@ -426,7 +429,7 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		}.bind(this))
 		.catch(function(err) {
 			console.error(err)
-			showError(t('spreed', 'Sending signaling message has failed'))
+			window.OCP.Toast.error(t('spreed', 'Sending signaling message has failed'))
 		})
 }
 
@@ -542,7 +545,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 				EventBus.emit('deleted-session-detected')
 			} else if (token) {
 				if (this.pullMessagesFails === 1) {
-					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
+					this.pullMessageErrorToast = window.OCP.Toast.error(t('spreed', 'Lost connection to signaling server. Trying to reconnect.'), {
 						timeout: TOAST_PERMANENT_TIMEOUT,
 					})
 				}
@@ -552,7 +555,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 					}
 
 					// Giving up after 5 minutes
-					this.pullMessageErrorToast = showError(t('spreed', 'Lost connection to signaling server. Try to reload the page manually.'), {
+					this.pullMessageErrorToast = window.OCP.Toast.error(t('spreed', 'Lost connection to signaling server. Try to reload the page manually.'), {
 						timeout: TOAST_PERMANENT_TIMEOUT,
 					})
 					return
@@ -653,7 +656,7 @@ Signaling.Standalone.prototype.connect = function() {
 	if (this.signalingConnectionError === null
 		&& this.signalingConnectionWarning === null) {
 		this.signalingConnectionTimeout = setTimeout(() => {
-			this.signalingConnectionWarning = showWarning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
+			this.signalingConnectionWarning = window.OCP.Toast.warning(t('spreed', 'Establishing signaling connection is taking longer than expected …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}, 2000)
@@ -709,7 +712,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning = null
 		}
 		if (this.signalingConnectionError === null) {
-			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
+			this.signalingConnectionError = window.OCP.Toast.error(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
@@ -1033,7 +1036,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		this.helloResponseErrorCount++
 
 		if (this.signalingConnectionError === null && this.helloResponseErrorCount < 5) {
-			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
+			this.signalingConnectionError = window.OCP.Toast.error(t('spreed', 'Failed to establish signaling connection. Retrying …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		} else if (this.helloResponseErrorCount === 5) {
@@ -1043,7 +1046,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			if (this.signalingConnectionError) {
 				this.signalingConnectionError.hideToast()
 			}
-			this.signalingConnectionError = showError(t('spreed', 'Failed to establish signaling connection. Something might be wrong in the signaling server configuration'), {
+			this.signalingConnectionError = window.OCP.Toast.error(t('spreed', 'Failed to establish signaling connection. Something might be wrong in the signaling server configuration'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
@@ -1082,7 +1085,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 	}
 
 	if (!this.settings.helloAuthParams.internal && (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all') || !this.hasFeature('switchto'))) {
-		showError(
+		window.OCP.Toast.error(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.'),
 			{
 				timeout: TOAST_PERMANENT_TIMEOUT,

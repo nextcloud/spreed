@@ -5,18 +5,18 @@
 
 <template>
 	<div v-if="canModerate">
-		<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
+		<NcCheckboxRadioSwitch :model-value="listable !== LISTABLE.NONE"
 			:disabled="isListableLoading"
 			type="switch"
-			@update:checked="toggleListableUsers">
+			@update:model-value="toggleListableUsers">
 			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
 		</NcCheckboxRadioSwitch>
 		<NcCheckboxRadioSwitch v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
 			class="additional-top-margin"
-			:checked="listable === LISTABLE.ALL"
+			:model-value="listable === LISTABLE.ALL"
 			:disabled="isListableLoading"
 			type="switch"
-			@update:checked="toggleListableGuests">
+			@update:model-value="toggleListableGuests">
 			{{ t('spreed', 'Also open to users created with the Guests app') }}
 		</NcCheckboxRadioSwitch>
 	</div>
@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -113,7 +114,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.lastNotification) {
 			this.lastNotification.hideToast()
 			this.lastNotification = null
@@ -148,16 +149,16 @@ export default {
 					this.lastNotification = null
 				}
 				if (listable === CONVERSATION.LISTABLE.NONE) {
-					this.lastNotification = showSuccess(t('spreed', 'You limited the conversation to the current participants'))
+					this.lastNotification = window.OCP.Toast.success(t('spreed', 'You limited the conversation to the current participants'))
 				} else if (listable === CONVERSATION.LISTABLE.USERS) {
-					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to registered users'))
+					this.lastNotification = window.OCP.Toast.success(t('spreed', 'You opened the conversation to registered users'))
 				} else if (listable === CONVERSATION.LISTABLE.ALL) {
-					this.lastNotification = showSuccess(t('spreed', 'You opened the conversation to both registered users and users created with the Guests app'))
+					this.lastNotification = window.OCP.Toast.success(t('spreed', 'You opened the conversation to both registered users and users created with the Guests app'))
 				}
 				this.listable = listable
 			} catch (e) {
 				console.error('Error occurred when opening or limiting the conversation', e)
-				showError(t('spreed', 'Error occurred when opening or limiting the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when opening or limiting the conversation'))
 				this.listable = this.conversation.listable
 			}
 			this.isListableLoading = false

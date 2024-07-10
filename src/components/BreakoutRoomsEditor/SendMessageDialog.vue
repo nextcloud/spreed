@@ -6,7 +6,7 @@
 <template>
 	<NcModal ref="modal"
 		:container="container"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="send-message-dialog">
 			<h2 class="send-message-dialog__title">
 				{{ dialogTitle }}
@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -100,14 +101,14 @@ export default {
 	methods: {
 		t,
 		handleMessageSent() {
-			showSuccess(this.broadcast
+			window.OCP.Toast.success(this.broadcast
 				? t('spreed', 'The message was sent to all breakout rooms')
 				: t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
 			this.$emit('close')
 		},
 
 		handleMessageFailure() {
-			showError(t('spreed', 'The message could not be sent'))
+			window.OCP.Toast.error(t('spreed', 'The message could not be sent'))
 			this.$emit('close')
 		},
 	},

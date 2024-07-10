@@ -15,6 +15,20 @@ declare global {
 
 	let __webpack_nonce__: ReturnType<typeof btoa>
 	let __webpack_public_path__: string
+
+	/* eslint @typescript-eslint/ban-types: 0 */
+	/* FIXME remove after @nextcloud/dialogs is restored */
+
+	interface Window {
+		OCP: {
+			Toast: {
+				error: Function,
+				success: Function,
+				message: Function,
+				info: Function,
+			}
+		};
+	}
 }
 
 export {}

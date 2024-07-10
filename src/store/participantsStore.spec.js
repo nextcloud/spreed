@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import mockConsole from 'jest-mock-console'
@@ -65,13 +64,10 @@ jest.mock('@nextcloud/event-bus', () => ({
 describe('participantsStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig = null
-	let localVue = null
 	let store = null
 	let guestNameStore = null
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
 
@@ -162,7 +158,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 1 },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ attendeeId: 42 },
@@ -179,7 +175,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ actorType: 'users', actorId: 'admin' },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ actorType: 'groups', actorId: 'admin' }, // Actor type mismatch
@@ -200,7 +196,7 @@ describe('participantsStore', () => {
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ sessionId: '1234567890' },
-			)).toBe(attendee)
+			)).toStrictEqual(attendee)
 			expect(store.getters.findParticipant(
 				TOKEN,
 				{ sessionId: 'abcdefghi' },

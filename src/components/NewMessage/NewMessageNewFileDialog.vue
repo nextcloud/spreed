@@ -21,14 +21,14 @@
 					:helper-text="newFileError"
 					:label="t('spreed', 'Name of the new file')"
 					:placeholder="newFileTitle"
-					:value="newFileTitle"
-					@update:value="updateNewFileTitle" />
+					:model-value="newFileTitle"
+					@update:model-value="updateNewFileTitle" />
 
 				<ul v-if="templates.length > 1" class="templates-picker__list">
 					<NewMessageTemplatePreview v-for="template in templates"
 						:key="template.fileid"
 						:basename="template.basename"
-						:checked="checked === template.fileid"
+						:model-value="checked === template.fileid"
 						:fileid="template.fileid"
 						:filename="template.filename"
 						:preview-url="template.previewUrl"
@@ -54,7 +54,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -213,10 +214,10 @@ export default {
 			} catch (error) {
 				console.error('Error while creating file', error)
 				if (error?.response?.data?.ocs?.meta?.message) {
-					showError(error.response.data.ocs.meta.message)
+					window.OCP.Toast.error(error.response.data.ocs.meta.message)
 					this.newFileError = error.response.data.ocs.meta.message
 				} else {
-					showError(t('spreed', 'Error while creating file'))
+					window.OCP.Toast.error(t('spreed', 'Error while creating file'))
 				}
 				this.loading = false
 				return

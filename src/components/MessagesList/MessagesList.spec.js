@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -16,14 +16,10 @@ const fakeTimestamp = (value) => new Date(value).getTime() / 1000
 describe('MessagesList.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
-	let localVue
 	let testStoreConfig
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
-
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
 			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
@@ -141,19 +137,20 @@ describe('MessagesList.vue', () => {
 		function testGrouped(...messagesGroups) {
 			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
 			})
 
-			const groups = wrapper.findAll('.messages-group')
+			const groups = wrapper.findAllComponents('.messages-group')
 
-			expect(groups.exists()).toBeTruthy()
+			expect(groups.length).toBeTruthy()
 
-			groups.wrappers.forEach((group, index) => {
+			groups.forEach((group, index) => {
 				expect(group.props('messages')).toStrictEqual(messagesGroups[index])
 			})
 
@@ -167,19 +164,20 @@ describe('MessagesList.vue', () => {
 			messages.forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
 			})
 
-			const groups = wrapper.findAll('.messages-group')
+			const groups = wrapper.findAllComponents('.messages-group')
 
-			expect(groups.exists()).toBeTruthy()
+			expect(groups.length).toBeTruthy()
 
-			groups.wrappers.forEach((group, index) => {
+			groups.forEach((group, index) => {
 				expect(group.props('messages')).toStrictEqual([messages[index]])
 			})
 
@@ -401,9 +399,10 @@ describe('MessagesList.vue', () => {
 		function renderMessagesList(...messagesGroups) {
 			messagesGroups.flat().forEach(message => store.commit('addMessage', { token: TOKEN, message }))
 			return shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
@@ -412,36 +411,38 @@ describe('MessagesList.vue', () => {
 
 		test('renders a placeholder while loading', () => {
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
 			})
 
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(false)
+			expect(groups.length).toBeFalsy()
 
-			const placeholder = wrapper.findAllComponents({ name: 'LoadingPlaceholder' })
+			const placeholder = wrapper.findComponent({ name: 'LoadingPlaceholder' })
 			expect(placeholder.exists()).toBe(true)
 		})
 
 		test('renders an empty content after loading', () => {
 			store.commit('loadedMessagesOfConversation', { token: TOKEN })
 			const wrapper = shallowMount(MessagesList, {
-				localVue,
-				store,
-				propsData: {
+				global: {
+					plugins: [store],
+				},
+				props: {
 					token: TOKEN,
 					isChatScrolledToBottom: true,
 				},
 			})
 
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(false)
+			expect(groups.length).toBeFalsy()
 
-			const placeholder = wrapper.findAllComponents({ name: 'NcEmptyContent' })
+			const placeholder = wrapper.findComponent({ name: 'NcEmptyContent' })
 			expect(placeholder.exists()).toBe(true)
 		})
 
@@ -451,7 +452,6 @@ describe('MessagesList.vue', () => {
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
 
 			// Assert: groups are rendered
-			expect(groups.exists()).toBe(true)
 			expect(groups.at(0).props()).toMatchObject({
 				token: TOKEN,
 				messages: messagesGroup1,
@@ -496,7 +496,6 @@ describe('MessagesList.vue', () => {
 
 			// Assert: both groups are updated
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(true)
 			expect(groups.length).toBe(2)
 			expect(groups.at(0).props()).toMatchObject({
 				token: TOKEN,
@@ -529,7 +528,6 @@ describe('MessagesList.vue', () => {
 
 			// Assert: old group nextMessageId is updated, new group is added
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(true)
 			expect(groups.length).toBe(2)
 			expect(groups.at(0).props()).toMatchObject({
 				token: TOKEN,
@@ -562,7 +560,6 @@ describe('MessagesList.vue', () => {
 
 			// Assert: old group nextMessageId is updated, new group is added
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(true)
 			expect(groups.length).toBe(2)
 
 			expect(groups.at(1).props()).toMatchObject({
@@ -597,7 +594,7 @@ describe('MessagesList.vue', () => {
 
 			// Assert: old messages are removed, system message is added
 			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
-			expect(groups.exists()).toBe(false)
+			expect(groups.length).toBeFalsy()
 			const groupsSystem = wrapper.findAllComponents({ name: 'MessagesSystemGroup' })
 			expect(groupsSystem.length).toBe(1)
 			expect(groupsSystem.at(0).props()).toMatchObject({

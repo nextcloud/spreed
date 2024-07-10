@@ -9,14 +9,14 @@
 			class="signaling-server__textfield"
 			name="signaling_server"
 			placeholder="wss://signaling.example.org"
-			:value="server"
+			:model-value="server"
 			:disabled="loading"
 			:label="t('spreed', 'High-performance backend URL')"
-			@update:value="updateServer" />
+			@update:model-value="updateServer" />
 
-		<NcCheckboxRadioSwitch :checked="verify"
+		<NcCheckboxRadioSwitch :model-value="verify"
 			class="signaling-server__checkbox"
-			@update:checked="updateVerify">
+			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
@@ -90,7 +90,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:server', 'update:verify'],
+	emits: ['removeServer', 'update:server', 'update:verify'],
 
 	data() {
 		return {
@@ -135,7 +135,7 @@ export default {
 	methods: {
 		t,
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 		updateServer(value) {
 			this.$emit('update:server', value)

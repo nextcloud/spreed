@@ -23,7 +23,7 @@
 			<div v-if="modalPage === 'voting'" class="poll-modal__options">
 				<NcCheckboxRadioSwitch v-for="(option, index) in poll.options"
 					:key="'option-' + index"
-					:checked.sync="checked"
+					v-model="checked"
 					:value="index.toString()"
 					:type="isMultipleAnswers ? 'checkbox' : 'radio'"
 					name="answerType">
@@ -260,7 +260,7 @@ export default {
 		EventBus.on('talk:poll-added', this.showPollToast)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('talk:poll-added', this.showPollToast)
 	},
 

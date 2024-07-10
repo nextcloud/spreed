@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall ? true : undefined">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -259,7 +259,7 @@ export default {
 		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.notifyUnreadMessages(null)
 		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
 		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)

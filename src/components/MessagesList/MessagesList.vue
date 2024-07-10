@@ -311,7 +311,7 @@ export default {
 		}, 30000)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceUpdateReadMarkerPosition.clear?.()
 		this.debounceHandleScroll.clear?.()
 
@@ -398,11 +398,11 @@ export default {
 						this.softUpdateAuthorGroups(oldDateGroups[dateTimestamp], newDateGroups[dateTimestamp], dateTimestamp)
 					} else {
 						// the group is new
-						this.$set(this.messagesGroupedByDateByAuthor, dateTimestamp, newDateGroups[dateTimestamp])
+						this.messagesGroupedByDateByAuthor[dateTimestamp] = newDateGroups[dateTimestamp]
 					}
 				} else {
 					// the group is not in the new list, remove it
-					this.$delete(this.messagesGroupedByDateByAuthor, dateTimestamp)
+					delete this.messagesGroupedByDateByAuthor[dateTimestamp]
 				}
 			})
 		},
@@ -413,10 +413,10 @@ export default {
 			groupIds.forEach(id => {
 				if (oldGroups[id] && !newGroups[id]) {
 					// group no longer exists, remove
-					this.$delete(this.messagesGroupedByDateByAuthor[dateTimestamp], id)
+					delete this.messagesGroupedByDateByAuthor[dateTimestamp][id]
 				} else if ((newGroups[id] && !oldGroups[id]) || !this.areGroupsIdentical(newGroups[id], oldGroups[id])) {
 					// group did not exist before, or group differs from previous state, add
-					this.$set(this.messagesGroupedByDateByAuthor[dateTimestamp], id, newGroups[id])
+					this.messagesGroupedByDateByAuthor[dateTimestamp][id] = newGroups[id]
 				}
 			})
 		},

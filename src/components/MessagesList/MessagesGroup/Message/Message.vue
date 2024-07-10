@@ -39,12 +39,12 @@
 		<div class="message-body__scroll">
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
+				v-model:is-action-menu-open="isActionMenuOpen"
+				v-model:is-emoji-picker-open="isEmojiPickerOpen"
+				v-model:is-reactions-menu-open="isReactionsMenuOpen"
+				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
 				:is-translation-available="isTranslationAvailable"
-				:is-action-menu-open.sync="isActionMenuOpen"
-				:is-emoji-picker-open.sync="isEmojiPickerOpen"
-				:is-reactions-menu-open.sync="isReactionsMenuOpen"
-				:is-forwarder-open.sync="isForwarderOpen"
 				:can-react="canReact"
 				:message="message"
 				:previous-message-id="previousMessageId"
@@ -89,7 +89,8 @@
 import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 
-import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -112,6 +113,8 @@ import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
+
+const TOAST_DEFAULT_TIMEOUT = 7000
 
 export default {
 	name: 'Message',
@@ -168,7 +171,7 @@ export default {
 		},
 	},
 
-	emits: ['toggle-combined-system-message'],
+	emits: ['toggleCombinedSystemMessage'],
 
 	setup(props) {
 		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
@@ -340,7 +343,7 @@ export default {
 		EventBus.on('highlight-message', this.highlightMessage)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('highlight-message', this.highlightMessage)
 	},
 
@@ -397,19 +400,19 @@ export default {
 				})
 
 				if (statusCode === 202) {
-					showWarning(t('spreed', 'Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services'), {
+					window.OCP.Toast.warning(t('spreed', 'Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services'), {
 						timeout: TOAST_DEFAULT_TIMEOUT * 2,
 					})
 				} else if (statusCode === 200) {
-					showSuccess(t('spreed', 'Message deleted successfully'))
+					window.OCP.Toast.success(t('spreed', 'Message deleted successfully'))
 				}
 			} catch (e) {
 				if (e?.response?.status === 400) {
-					showError(t('spreed', 'Message could not be deleted because it is too old'))
+					window.OCP.Toast.error(t('spreed', 'Message could not be deleted because it is too old'))
 				} else if (e?.response?.status === 405) {
-					showError(t('spreed', 'Only normal chat messages can be deleted'))
+					window.OCP.Toast.error(t('spreed', 'Only normal chat messages can be deleted'))
 				} else {
-					showError(t('spreed', 'An error occurred while deleting the message'))
+					window.OCP.Toast.error(t('spreed', 'An error occurred while deleting the message'))
 					console.error(e)
 				}
 				this.isDeleting = false
@@ -420,7 +423,7 @@ export default {
 		},
 
 		toggleCombinedSystemMessage() {
-			this.$emit('toggle-combined-system-message')
+			this.$emit('toggleCombinedSystemMessage')
 		},
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen

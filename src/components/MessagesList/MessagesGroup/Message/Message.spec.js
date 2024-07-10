@@ -2,11 +2,10 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue, shallowMount } from '@vue/test-utils'
-import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
+import { shallowMount, flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
-import Vuex, { Store } from 'vuex'
+import { Store } from 'vuex'
 
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
@@ -43,7 +42,6 @@ const RichTextStub = {
 
 describe('Message.vue', () => {
 	const TOKEN = 'XXTOKENXX'
-	let localVue
 	let testStoreConfig
 	let store
 	let messageProps
@@ -53,8 +51,6 @@ describe('Message.vue', () => {
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
 		conversationProps = {
@@ -110,13 +106,14 @@ describe('Message.vue', () => {
 
 		test('renders rich text message', async () => {
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const message = wrapper.findComponent({ name: 'NcRichText' })
@@ -127,13 +124,14 @@ describe('Message.vue', () => {
 			messageProps.isSingleEmoji = true
 			messageProps.message.message = '🌧️'
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const message = wrapper.findComponent({ name: 'NcRichText' })
@@ -164,13 +162,14 @@ describe('Message.vue', () => {
 				conversationProps.hasCall = true
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const richText = wrapper.findComponent({ name: 'NcRichText' })
@@ -187,13 +186,14 @@ describe('Message.vue', () => {
 				conversationProps.hasCall = true
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })
@@ -207,13 +207,14 @@ describe('Message.vue', () => {
 				conversationProps.hasCall = false
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })
@@ -229,13 +230,14 @@ describe('Message.vue', () => {
 				jest.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
 
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })
@@ -249,13 +251,14 @@ describe('Message.vue', () => {
 			conversationProps.hasCall = true
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const richText = wrapper.findComponent({ name: 'NcRichText' })
@@ -264,13 +267,14 @@ describe('Message.vue', () => {
 
 		test('renders date', () => {
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const date = wrapper.find('.date')
@@ -296,13 +300,14 @@ describe('Message.vue', () => {
 			store = new Store(testStoreConfig)
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const quote = wrapper.findComponent(Quote)
@@ -321,14 +326,15 @@ describe('Message.vue', () => {
 				messageProps.message.messageParameters = messageParameters
 				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
 				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						MessageBody,
-						RichText: RichTextStub,
+					global: {
+						plugins: [store],
+						stubs: {
+							MessageBody,
+							RichText: RichTextStub,
+						},
+						provide: injected,
 					},
-					propsData: messageProps,
-					provide: injected,
+					props: messageProps,
 				})
 
 				const messageEl = wrapper.findComponent({ name: 'NcRichText' })
@@ -510,16 +516,17 @@ describe('Message.vue', () => {
 			const observeVisibility = jest.fn()
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				directives: {
 					observeVisibility,
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const marker = wrapper.find('.new-message-marker')
@@ -547,16 +554,17 @@ describe('Message.vue', () => {
 			const observeVisibility = jest.fn()
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
 				},
 				directives: {
 					observeVisibility,
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			const marker = wrapper.find('.new-message-marker')
@@ -574,13 +582,14 @@ describe('Message.vue', () => {
 			messageProps.message.systemMessage = 'this is a system message'
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			await wrapper.find('.message').trigger('mouseover')
@@ -591,13 +600,14 @@ describe('Message.vue', () => {
 			messageProps.message.timestamp = 0
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			await wrapper.find('.message').trigger('mouseover')
@@ -608,13 +618,14 @@ describe('Message.vue', () => {
 			messageProps.message.messageType = 'comment_deleted'
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			await wrapper.find('.message').trigger('mouseover')
@@ -624,14 +635,15 @@ describe('Message.vue', () => {
 		test('Buttons bar is rendered on mouse over', async () => {
 			messageProps.message.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
-					MessageButtonsBar,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+						MessageButtonsBar,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			// Initial state
@@ -663,14 +675,15 @@ describe('Message.vue', () => {
 				.mockImplementation(() => mockDate)
 
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
-					MessageButtonsBar,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+						MessageButtonsBar,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			// Hover the messages in order to render the MessageButtonsBar component
@@ -705,13 +718,14 @@ describe('Message.vue', () => {
 		test('lets user retry sending a timed out message', async () => {
 			messageProps.message.sendingFailure = 'timeout'
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			await wrapper.find('.message-body').trigger('mouseover')
@@ -736,13 +750,14 @@ describe('Message.vue', () => {
 		test('displays the message already with a spinner while sending it', () => {
 			messageProps.message.timestamp = 0
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 			const message = wrapper.findComponent({ name: 'NcRichText' })
 			expect(message.attributes('text')).toBe('test message')
@@ -753,13 +768,14 @@ describe('Message.vue', () => {
 		test('displays icon when message was read by everyone', () => {
 			conversationProps.lastCommonReadMessage = 123
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			expect(wrapper.findComponent(Check).exists()).toBe(false)
@@ -769,13 +785,14 @@ describe('Message.vue', () => {
 		test('displays sent icon when own message was sent', () => {
 			conversationProps.lastCommonReadMessage = 0
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			expect(wrapper.findComponent(Check).exists()).toBe(true)
@@ -787,13 +804,14 @@ describe('Message.vue', () => {
 			messageProps.message.actorId = 'user-id-2'
 			messageProps.message.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					MessageBody,
+				global: {
+					plugins: [store],
+					stubs: {
+						MessageBody,
+					},
+					provide: injected,
 				},
-				propsData: messageProps,
-				provide: injected,
+				props: messageProps,
 			})
 
 			expect(wrapper.findComponent(Check).exists()).toBe(false)

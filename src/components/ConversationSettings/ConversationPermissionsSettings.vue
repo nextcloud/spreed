@@ -17,12 +17,12 @@
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<NcCheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch v-model="radioValue"
 				:disabled="loading"
 				value="all"
 				name="permission_radio"
 				type="radio"
-				@update:checked="handleSubmitPermissions">
+				@update:model-value="handleSubmitPermissions">
 				{{ t('spreed', 'All permissions') }}
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
@@ -33,12 +33,12 @@
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<NcCheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch v-model="radioValue"
 				value="restricted"
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
-				@update:checked="handleSubmitPermissions">
+				@update:model-value="handleSubmitPermissions">
 				{{ t('spreed', 'Restricted') }}
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
@@ -49,12 +49,12 @@
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
-			<NcCheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch v-model="radioValue"
 				value="advanced"
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
-				@update:checked="showPermissionsEditor = true">
+				@update:model-value="showPermissionsEditor = true">
 				{{ t('spreed', 'Advanced permissions') }}
 			</NcCheckboxRadioSwitch>
 
@@ -81,7 +81,8 @@
 <script>
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -184,14 +185,14 @@ export default {
 					token: this.token,
 					permissions,
 				})
-				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
+				window.OCP.Toast.success(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
 
 				// Modify the radio buttons value
 				this.radioValue = this.getPermissionRadioValue(permissions)
 				this.showPermissionsEditor = false
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
+				window.OCP.Toast.error(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
 
 				// Go back to the previous radio value
 				this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)

@@ -5,10 +5,13 @@
 
 import { defineStore } from 'pinia'
 
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+
+const TOAST_PERMANENT_TIMEOUT = -1
 
 /**
  * @typedef {object} State
@@ -73,7 +76,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		 */
 		checkMaintenanceMode(response) {
 			if (response?.status === 503 && !this.maintenanceWarningToast) {
-				this.maintenanceWarningToast = showError(
+				this.maintenanceWarningToast = window.OCP.Toast.error(
 					t('spreed', 'Nextcloud is in maintenance mode, please reload the page'),
 					{ timeout: TOAST_PERMANENT_TIMEOUT }
 				)

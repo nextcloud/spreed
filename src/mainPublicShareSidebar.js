@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue, { reactive } from 'vue'
+import { createPinia } from 'pinia'
+import { createApp, reactive } from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
-import VueShortKey from 'vue-shortkey'
-import Vuex from 'vuex'
+import VueShortKey from 'vue3-shortkey'
 
 import { getRequestToken } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
@@ -17,6 +16,7 @@ import PublicShareSidebarTrigger from './PublicShareSidebarTrigger.vue'
 
 import './init.js'
 import store from './store/index.js'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
@@ -35,14 +35,6 @@ __webpack_nonce__ = btoa(getRequestToken())
 // We do not want the index.php since we're loading files
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
-
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(PiniaVuePlugin)
-Vue.use(Vuex)
-Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
-Vue.use(VueObserveVisibility)
 
 const pinia = createPinia()
 
@@ -91,16 +83,12 @@ function addTalkSidebarTrigger() {
 
 	document.querySelector('.header-right').appendChild(talkSidebarTriggerElement)
 
-	const talkSidebarTriggerVm = new Vue({
-		propsData: {
-			sidebarState,
-		},
-		...PublicShareSidebarTrigger,
-	})
-	talkSidebarTriggerVm.$on('click', () => {
-		sidebarState.isOpen = !sidebarState.isOpen
-	})
-	talkSidebarTriggerVm.$mount('#talk-sidebar-trigger')
+	createApp(PublicShareSidebarTrigger, {
+		sidebarState,
+		onClick: () => {
+			sidebarState.isOpen = !sidebarState.isOpen
+		}
+	}).mount('#talk-sidebar-trigger')
 }
 
 addTalkSidebarTrigger()
@@ -113,14 +101,13 @@ function getShareToken() {
 	return shareTokenElement.value
 }
 
-const talkSidebarVm = new Vue({
-	store,
-	pinia,
-	id: 'talk-chat-tab',
-	propsData: {
-		shareToken: getShareToken(),
-		state: sidebarState,
-	},
-	...PublicShareSidebar,
+createApp(PublicShareSidebar, {
+	shareToken: getShareToken(),
+	state: sidebarState,
 })
-talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))
+	.use(pinia)
+	.use(store)
+	.use(VueObserveVisibility)
+	.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+	.use(NextcloudGlobalsVuePlugin)
+	.mount(document.querySelector('#talk-sidebar'))

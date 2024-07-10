@@ -46,7 +46,7 @@
 			tabindex="1"
 			type="primary"
 			:aria-label="removeAriaLabel"
-			@click="$emit('remove-file', file.id)">
+			@click.stop="$emit('removeFile', file.id)">
 			<template #icon>
 				<Close />
 			</template>
@@ -64,7 +64,8 @@ import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
-import { getUploader } from '@nextcloud/upload'
+// eslint-disable-next-line
+// import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
@@ -154,7 +155,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-file'],
+	emits: ['removeFile'],
 
 	setup() {
 		const { openViewer } = useViewer('talk')
@@ -406,8 +407,10 @@ export default {
 			return this.$store.getters.getUploadFile(this.file.uploadId, this.file.index)
 		},
 
+		// eslint-disable-next-line
 		upload() {
-			return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile?.sharePath))
+			throw new Error('@nextcloud/upload is missing Vue 3 migration')
+			// return this.uploadManager?.queue.find(item => item._source.includes(this.uploadFile?.sharePath))
 		},
 
 		uploadProgress() {
@@ -455,7 +458,7 @@ export default {
 
 	mounted() {
 		if (this.isTemporaryUpload && !this.isUploadEditor) {
-			this.uploadManager = getUploader()
+			// this.uploadManager = getUploader()
 		}
 
 		const img = new Image()
@@ -469,7 +472,7 @@ export default {
 		img.src = this.previewUrl
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.uploadManager = null
 	},
 
@@ -477,7 +480,7 @@ export default {
 		t,
 		handleClick(event) {
 			if (this.isUploadEditor) {
-				this.$emit('remove-file', this.file.id)
+				this.$emit('removeFile', this.file.id)
 				return
 			}
 

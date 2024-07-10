@@ -5,10 +5,10 @@
 
 <template>
 	<NcAppSidebar v-if="token"
+		v-model:active="activeTab"
 		:open="opened"
 		:name="conversation.displayName"
 		:title="conversation.displayName"
-		:active.sync="activeTab"
 		:class="'active-tab-' + activeTab"
 		:toggle-classes="{ 'chat-button-sidebar-toggle': isInCall }"
 		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"
@@ -111,7 +111,8 @@ import InformationOutline from 'vue-material-design-icons/InformationOutline.vue
 import Message from 'vue-material-design-icons/Message.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
-import { showMessage } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showMessage } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -389,7 +390,7 @@ export default {
 		subscribe('spreed:select-active-sidebar-tab', this.handleUpdateActive)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('spreed:select-active-sidebar-tab', this.handleUpdateActive)
 	},
 
@@ -437,7 +438,7 @@ export default {
 				this.unreadNotificationHandle = null
 			}
 			if (message) {
-				this.unreadNotificationHandle = showMessage(message, {
+				this.unreadNotificationHandle = window.OCP.Toast.message(message, {
 					onClick: () => {
 						this.activeTab = 'chat'
 						this.openSidebar()

@@ -74,8 +74,8 @@
 					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
 				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
+					v-model="text"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
-					:value.sync="text"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
 					:user-data="userData"
@@ -86,7 +86,7 @@
 					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
-					@input="handleTyping"
+					@update:model-value="handleTyping"
 					@paste="handlePastedFiles"
 					@submit="handleSubmit" />
 			</div>
@@ -162,12 +162,12 @@
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
 
-		<FilePickerVue v-if="showFilePicker"
+		<!-- <FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
 			:container="container"
 			:buttons="filePickerButtons"
 			allow-pick-directory
-			@close="showFilePicker = false" />
+			@close="showFilePicker = false" /> -->
 	</div>
 </template>
 
@@ -180,8 +180,9 @@ import CloseIcon from 'vue-material-design-icons/Close.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import SendIcon from 'vue-material-design-icons/Send.vue'
 
-import { showError, showWarning } from '@nextcloud/dialogs'
-import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+// eslint-disable-next-line
+// import { showError, showWarning } from '@nextcloud/dialogs'
+// import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
@@ -223,7 +224,7 @@ export default {
 	disableKeyboardShortcuts,
 
 	components: {
-		FilePickerVue,
+		// FilePickerVue,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -548,7 +549,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		EventBus.off('focus-chat-input', this.focusInput)
 		EventBus.off('upload-start', this.handleUploadSideEffects)
 		EventBus.off('upload-discard', this.handleUploadSideEffects)
@@ -726,7 +727,7 @@ export default {
 				this.focusInput()
 			} catch {
 				this.$emit('failure')
-				showError(t('spreed', 'The message could not be edited'))
+				window.OCP.Toast.error(t('spreed', 'The message could not be edited'))
 			}
 		},
 
@@ -820,7 +821,7 @@ export default {
 		 */
 		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			if (!this.canUploadFiles) {
-				showWarning(t('spreed', 'File upload is not available in this conversation'))
+				window.OCP.Toast.warning(t('spreed', 'File upload is not available in this conversation'))
 				return
 			}
 			// Create a unique id for the upload operation

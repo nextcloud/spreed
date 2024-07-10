@@ -96,7 +96,8 @@ import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import VideoOutlineIcon from 'vue-material-design-icons/VideoOutline.vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -449,12 +450,12 @@ export default {
 				await callSIPDialOut(this.token, attendeeId)
 			} catch (error) {
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(t('spreed', 'Phone number could not be called: {error}', {
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called: {error}', {
 						error: error?.response?.data?.ocs?.data?.message
 					}))
 				} else {
 					console.error(error)
-					showError(t('spreed', 'Phone number could not be called'))
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called'))
 				}
 			}
 		},

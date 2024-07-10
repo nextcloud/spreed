@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcModal size="large" :container="container" v-on="$listeners">
+	<NcModal size="large" :container="container" @close="$emit('close')">
 		<div class="shared-items-browser">
 			<div class="shared-items-browser__navigation">
 				<template v-for="type in sharedItemsOrder">
@@ -64,7 +64,7 @@ export default {
 		},
 	},
 
-	emits: ['update:active-tab'],
+	emits: ['close', 'update:active-tab'],
 
 	setup() {
 		const sharedItemsStore = useSharedItemsStore()
@@ -106,7 +106,7 @@ export default {
 		this.firstFetchItems(this.activeTab)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceHandleScroll.clear?.()
 	},
 

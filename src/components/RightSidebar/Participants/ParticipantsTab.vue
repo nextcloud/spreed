@@ -8,22 +8,22 @@
 		<div class="search-form">
 			<SearchBox v-if="canSearch"
 				ref="searchBox"
+				v-model:value="searchText"
+				v-model:is-focused="isFocused"
 				class="search-form__input"
-				:value.sync="searchText"
-				:is-focused.sync="isFocused"
 				:placeholder-text="searchBoxPlaceholder"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
 				@abort-search="abortSearch" />
 			<DialpadPanel v-if="canAddPhones"
-				:value.sync="searchText"
+				v-model:value="searchText"
 				@submit="addParticipants(participantPhoneItem)" />
 		</div>
 
 		<SelectPhoneNumber v-if="canAddPhones"
+			v-model:participant-phone-item="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
-			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipants" />
 
 		<ParticipantsListVirtual v-if="!isSearching"
@@ -55,7 +55,8 @@
 import debounce from 'debounce'
 import { ref, toRefs } from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -208,7 +209,7 @@ export default {
 		subscribe('user_status:status.updated', this.updateUserStatus)
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.debounceFetchSearchResults.clear?.()
 
 		EventBus.off('route-change', this.abortSearch)
@@ -271,7 +272,7 @@ export default {
 					return
 				}
 				console.error(exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -289,7 +290,7 @@ export default {
 				this.cancelableGetParticipants()
 			} catch (exception) {
 				console.debug(exception)
-				showError(t('spreed', 'An error occurred while adding the participants'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while adding the participants'))
 			}
 		},
 

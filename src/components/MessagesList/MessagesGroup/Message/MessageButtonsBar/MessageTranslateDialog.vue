@@ -66,7 +66,8 @@
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -218,7 +219,7 @@ export default {
 				this.translatedMessage = response.data.ocs.data.text
 			} catch (error) {
 				console.error(error)
-				showError(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
+				window.OCP.Toast.error(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
 			} finally {
 				this.isLoading = false
 			}
@@ -227,9 +228,9 @@ export default {
 		async handleCopyTranslation() {
 			try {
 				await navigator.clipboard.writeText(this.translatedMessage)
-				showSuccess(t('spreed', 'Translation copied to clipboard'))
+				window.OCP.Toast.success(t('spreed', 'Translation copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'Translation could not be copied'))
+				window.OCP.Toast.error(t('spreed', 'Translation could not be copied'))
 			}
 		},
 	},

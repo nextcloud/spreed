@@ -13,10 +13,10 @@
 				:input-id="`stun_server_${index}`"
 				name="stun_server"
 				placeholder="stunserver:port"
-				:value="server"
+				:model-value="server"
 				:disabled="loading"
 				:aria-label="t('spreed', 'STUN server URL')"
-				@update:value="update" />
+				@update:model-value="update" />
 		</div>
 
 		<AlertCircle v-show="!isValidServer"
@@ -71,7 +71,7 @@ export default {
 		},
 	},
 
-	emits: ['remove-server', 'update:server'],
+	emits: ['removeServer', 'update:server'],
 
 	computed: {
 		isValidServer() {
@@ -95,7 +95,7 @@ export default {
 	methods: {
 		t,
 		removeServer() {
-			this.$emit('remove-server', this.index)
+			this.$emit('removeServer', this.index)
 		},
 		update(value) {
 			this.$emit('update:server', value)

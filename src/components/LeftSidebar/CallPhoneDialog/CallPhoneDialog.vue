@@ -15,19 +15,19 @@
 
 			<div class="call-phone__form">
 				<NcTextField ref="textField"
+					v-model="searchText"
 					class="call-phone__form-input"
 					:label="t('spreed', 'Search participants or phone numbers')"
 					label-visible
-					:value.sync="searchText"
 					@keydown.enter="createConversation(participantPhoneItem)" />
-				<DialpadPanel container=".call-phone__form"
-					:value.sync="searchText"
+				<DialpadPanel v-model:value="searchText"
+					container=".call-phone__form"
 					@submit="createConversation(participantPhoneItem)" />
 			</div>
 
-			<SelectPhoneNumber :name="t('spreed', 'Call a phone number')"
+			<SelectPhoneNumber v-model:participant-phone-item="participantPhoneItem"
+				:name="t('spreed', 'Call a phone number')"
 				:value="searchText"
-				:participant-phone-item.sync="participantPhoneItem"
 				@select="createConversation" />
 		</template>
 
@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -142,7 +143,7 @@ export default {
 				this.closeModal()
 			} catch (exception) {
 				console.debug(exception)
-				showError(t('spreed', 'An error occurred while calling a phone number'))
+				window.OCP.Toast.error(t('spreed', 'An error occurred while calling a phone number'))
 				if (conversation) {
 					this.$store.dispatch('deleteConversationFromServer', { token: conversation.token })
 				}
@@ -176,12 +177,12 @@ export default {
 				await callSIPDialOut(token, attendeeId)
 			} catch (error) {
 				if (error?.response?.data?.ocs?.data?.message) {
-					showError(t('spreed', 'Phone number could not be called: {error}', {
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called: {error}', {
 						error: error?.response?.data?.ocs?.data?.message
 					}))
 				} else {
 					console.error(error)
-					showError(t('spreed', 'Phone number could not be called'))
+					window.OCP.Toast.error(t('spreed', 'Phone number could not be called'))
 				}
 			}
 		},

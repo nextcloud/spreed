@@ -39,11 +39,11 @@
 			<!-- Shared from "Projects" app -->
 			<template v-if="projectsEnabled">
 				<NcAppNavigationCaption :name="t('spreed', 'Projects')" />
-				<NcCollectionList v-if="getUserId && token"
+				<!-- <NcCollectionList v-if="getUserId && token"
 					:id="token"
 					type="room"
 					:name="conversation.displayName"
-					:is-active="active" />
+					:is-active="active" /> -->
 			</template>
 
 			<!-- No shared content -->
@@ -58,9 +58,9 @@
 
 		<!-- Dialog window -->
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
+			v-model:active-tab="browserActiveTab"
 			:token="token"
 			:shared-items="sharedItems"
-			:active-tab.sync="browserActiveTab"
 			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>
@@ -74,7 +74,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCollectionList from '@nextcloud/vue/dist/Components/NcCollectionList.js'
+// import NcCollectionList from '@nextcloud/vue/dist/Components/NcCollectionList.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 
@@ -100,7 +100,7 @@ export default {
 		LoadingComponent,
 		NcAppNavigationCaption,
 		NcButton,
-		NcCollectionList,
+		// NcCollectionList,
 		NcEmptyContent,
 		NcRelatedResourcesPanel,
 		SharedItems,

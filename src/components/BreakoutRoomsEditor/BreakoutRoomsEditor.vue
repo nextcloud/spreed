@@ -6,7 +6,7 @@
 <template>
 	<NcModal :container="container"
 		:class="{'modal-mask__participants-step': isEditingParticipants}"
-		v-on="$listeners">
+		@close="$emit('close')">
 		<div class="breakout-rooms-editor"
 			:class="{'breakout-rooms-editor__participants-step': isEditingParticipants}">
 			<h2>{{ modalTitle }}</h2>
@@ -18,7 +18,7 @@
 					</p>
 					<NcInputField id="room-number"
 						ref="inputField"
-						:value.sync="amount"
+						v-model="amount"
 						class="breakout-rooms-editor__number-input"
 						type="number"
 						min="1"
@@ -26,19 +26,19 @@
 
 					<label class="breakout-rooms-editor__caption">{{ t('spreed', 'Assignment method') }}</label>
 					<fieldset>
-						<NcCheckboxRadioSwitch :checked.sync="mode"
+						<NcCheckboxRadioSwitch v-model="mode"
 							value="1"
 							name="mode_radio"
 							type="radio">
 							{{ t('spreed', 'Automatically assign participants') }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch :checked.sync="mode"
+						<NcCheckboxRadioSwitch v-model="mode"
 							value="2"
 							name="mode_radio"
 							type="radio">
 							{{ t('spreed', 'Manually assign participants') }}
 						</NcCheckboxRadioSwitch>
-						<NcCheckboxRadioSwitch :checked.sync="mode"
+						<NcCheckboxRadioSwitch v-model="mode"
 							value="3"
 							name="mode_radio"
 							type="radio">
@@ -64,12 +64,12 @@
 			<template v-else>
 				<BreakoutRoomsParticipantsEditor :token="token"
 					:room-number="amount"
-					v-on="$listeners"
+					@close="$emit('close')"
 					@back="isEditingParticipants = false"
 					@create-rooms="handleCreateRooms" />
 			</template>
 		</div>
-	</ncmodal>
+	</NcModal>
 </template>
 
 <script>

@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue from 'vue'
+import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
-import VueRouter from 'vue-router'
-import VueShortKey from 'vue-shortkey'
-import Vuex from 'vuex'
+import VueShortKey from 'vue3-shortkey'
 
 import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
@@ -21,6 +19,7 @@ import App from './App.vue'
 import './init.js'
 import router from './router/router.js'
 import store from './store/index.js'
+import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
@@ -42,30 +41,19 @@ if (!IS_DESKTOP) {
 	__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 }
 
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-
-Vue.use(PiniaVuePlugin)
-Vue.use(Vuex)
-Vue.use(VueRouter)
-Vue.use(VueObserveVisibility)
-Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
-
 const pinia = createPinia()
 
 TooltipOptions.container = '#content-vue'
 store.dispatch('setMainContainerSelector', '#content-vue')
 
-const instance = new Vue({
-	el: '#content',
-	store,
-	pinia,
-	router,
-	propsData: {
-		fileInfo: null,
-	},
-	render: h => h(App),
-})
+const instance = createApp(App, { fileInfo: null })
+	.use(store)
+	.use(pinia)
+	.use(router)
+	.use(VueObserveVisibility)
+	.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
+	.use(NextcloudGlobalsVuePlugin)
+	.mount('#content')
 
 window.store = store
 

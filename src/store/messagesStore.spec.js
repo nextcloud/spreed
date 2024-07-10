@@ -2,13 +2,12 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { createLocalVue } from '@vue/test-utils'
-import flushPromises from 'flush-promises'
+import { flushPromises } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
-import { showError } from '@nextcloud/dialogs'
+// import { showError } from '@nextcloud/dialogs'
 
 import storeConfig from './storeConfig.js'
 // eslint-disable-next-line import/order -- required for testing
@@ -51,10 +50,11 @@ jest.mock('../services/conversationsService', () => ({
 }))
 
 jest.mock('../utils/cancelableRequest')
+/*
 jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),
 }))
-
+*/
 // Test actions with 'chat-read-last' feature
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
@@ -75,7 +75,6 @@ describe('messagesStore', () => {
 		},
 	}
 
-	let localVue = null
 	let testStoreConfig
 	let store = null
 	let getActorIdMock
@@ -89,8 +88,6 @@ describe('messagesStore', () => {
 	let reactionsStore
 
 	beforeEach(() => {
-		localVue = createLocalVue()
-		localVue.use(Vuex)
 		setActivePinia(createPinia())
 		reactionsStore = useReactionsStore()
 
@@ -130,7 +127,7 @@ describe('messagesStore', () => {
 			}
 
 			store.dispatch('processMessage', { token: TOKEN, message: message1 })
-			expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+			expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 		})
 
 		test('doesn\'t add specific messages to the store', () => {
@@ -469,7 +466,7 @@ describe('messagesStore', () => {
 		}
 
 		store.dispatch('processMessage', { token: TOKEN, message: message1 })
-		expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+		expect(store.getters.messagesList(TOKEN)[0]).toStrictEqual(message1)
 
 		store.dispatch('purgeMessagesStore', TOKEN)
 		expect(store.getters.messagesList(TOKEN)).toStrictEqual([])
@@ -1886,7 +1883,7 @@ describe('messagesStore', () => {
 				},
 			])
 
-			expect(showError).toHaveBeenCalled()
+			// expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
 		}
 
@@ -2062,7 +2059,7 @@ describe('messagesStore', () => {
 			await flushPromises()
 
 			// Assert
-			expect(store.getters.conversationsList).toContain(conversations[1])
+			expect(store.getters.conversationsList).toStrictEqual([conversations[1]])
 			expect(postNewMessage).toHaveBeenCalledWith(messageExpected, { silent: false })
 		})
 		test('removes parent message ', () => {

@@ -29,14 +29,15 @@
 				<CallButton class="call-button" />
 				<ChatView />
 				<PollViewer />
-				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
+				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>
 </template>
 
 <script>
-import { showError } from '@nextcloud/dialogs'
+// eslint-disable-next-line
+// import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -139,7 +140,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.preventUnload)
 	},
 
@@ -165,7 +166,7 @@ export default {
 			} catch (exception) {
 				this.joiningConversation = false
 
-				showError(t('spreed', 'Error occurred when joining the conversation'))
+				window.OCP.Toast.error(t('spreed', 'Error occurred when joining the conversation'))
 
 				console.error(exception)
 

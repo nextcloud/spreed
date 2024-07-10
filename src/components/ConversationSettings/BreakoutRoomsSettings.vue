@@ -4,29 +4,25 @@
 -->
 
 <template>
-	<Fragment>
-		<div class="breakout-rooms-settings">
-			<p class="breakout-rooms-settings__hint">
-				{{ hintText }}
-			</p>
-			<NcButton type="secondary"
-				@click="openBreakoutRoomsEditor">
-				<template #icon>
-					<DotsCircle :size="20" />
-				</template>
-				{{ t('spreed', 'Set up breakout rooms for this conversation') }}
-			</NcButton>
-		</div>
-		<!-- Breakout rooms editor -->
-		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-			:token="token"
-			@close="showBreakoutRoomsEditor = false" />
-	</Fragment>
+	<div class="breakout-rooms-settings">
+		<p class="breakout-rooms-settings__hint">
+			{{ hintText }}
+		</p>
+		<NcButton type="secondary"
+			@click="openBreakoutRoomsEditor">
+			<template #icon>
+				<DotsCircle :size="20" />
+			</template>
+			{{ t('spreed', 'Set up breakout rooms for this conversation') }}
+		</NcButton>
+	</div>
+	<!-- Breakout rooms editor -->
+	<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+		:token="token"
+		@close="showBreakoutRoomsEditor = false" />
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -41,7 +37,6 @@ export default {
 	components: {
 		NcButton,
 		BreakoutRoomsEditor,
-		Fragment,
 		DotsCircle,
 	},
 
