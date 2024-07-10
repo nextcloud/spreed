@@ -4,13 +4,13 @@
 -->
 
 <template>
-	<NcModal v-if="modal"
+	<NcDialog :open.sync="modal"
 		:container="container"
+		:name="t('spreed', 'Media settings')"
+		size="normal"
+		close-on-click-outside
 		@close="closeModal">
 		<div class="media-settings">
-			<h2 class="media-settings__title">
-				{{ t('spreed', 'Media settings') }}
-			</h2>
 			<!-- Preview -->
 			<div class="media-settings__preview">
 				<video v-show="showVideo"
@@ -150,7 +150,9 @@
 					</NcCheckboxRadioSwitch>
 				</template>
 			</NcNoteCard>
+		</div>
 
+		<template #actions>
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
@@ -187,8 +189,8 @@
 					{{ t('spreed', 'Apply settings') }}
 				</NcButton>
 			</div>
-		</div>
-	</NcModal>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -209,7 +211,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
@@ -248,7 +250,7 @@ export default {
 		NcActions,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NcModal,
+		NcDialog,
 		NcNoteCard,
 		MediaDevicesSelector,
 		MediaDevicesSpeakerTest,
@@ -698,12 +700,7 @@ export default {
 
 <style lang="scss" scoped>
 .media-settings {
-	padding: calc(var(--default-grid-baseline) * 5);
-	padding-bottom: 0;
-
-	&__title {
-		text-align: center;
-	}
+	padding: 0 calc(var(--default-grid-baseline) * 2);
 
 	&__preview {
 		position: relative;
@@ -746,14 +743,10 @@ export default {
 
 	&__call-buttons {
 		display: flex;
-		z-index: 1;
 		align-items: center;
 		justify-content: center;
 		gap: var(--default-grid-baseline);
-		position: sticky;
-		bottom: 0;
-		background-color: var(--color-main-background);
-		padding: 10px 0 20px;
+		width: 100%;
 	}
 }
 
@@ -790,7 +783,7 @@ export default {
 .checkbox {
 	display: flex;
 	justify-content: center;
-	margin: calc(var(--default-grid-baseline) * 2);
+	margin: calc(var(--default-grid-baseline) * 2) 0;
 
 	&--warning {
 		&:focus-within :deep(.checkbox-radio-switch__label),
