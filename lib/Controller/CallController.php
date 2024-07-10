@@ -121,17 +121,10 @@ class CallController extends AEnvironmentAwareController {
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
 	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
-		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
-			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
-				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
-			}
-			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL
-				&& $this->room->getRecordingConsent() === RecordingService::CONSENT_REQUIRED_YES) {
-				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
-			}
-		} elseif ($recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
-			$attendee = $this->participant->getAttendee();
-			$this->consentService->storeConsent($this->room, $attendee->getActorType(), $attendee->getActorId());
+		try {
+			$this->validateRecordingConsent($recordingConsent);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
@@ -156,6 +149,27 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse();
+	}
+
+	/**
+	 * Validates and stores recording consent.
+	 *
+	 * @throws \InvalidArgumentException if recording consent is required but
+	 *         not given
+	 */
+	protected function validateRecordingConsent(bool $recordingConsent): void {
+		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
+			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
+				throw new \InvalidArgumentException();
+			}
+			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL
+				&& $this->room->getRecordingConsent() === RecordingService::CONSENT_REQUIRED_YES) {
+				throw new \InvalidArgumentException();
+			}
+		} elseif ($recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
+			$attendee = $this->participant->getAttendee();
+			$this->consentService->storeConsent($this->room, $attendee->getActorType(), $attendee->getActorId());
+		}
 	}
 
 	/**
