@@ -5,6 +5,7 @@
 
 <template>
 	<RoomSelector v-if="modal"
+		:open.sync="modal"
 		:container="container"
 		list-open-conversations
 		show-postable-only
