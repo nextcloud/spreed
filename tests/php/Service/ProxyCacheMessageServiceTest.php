@@ -25,8 +25,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Talk\Exceptions\InvalidRoomException;
 use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Model\ProxyCacheMessageMapper;
+use OCA\Talk\Room;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -85,6 +87,10 @@ class ProxyCacheMessageServiceTest extends TestCase {
 	 * @dataProvider dataDeleteExpiredMessages
 	 */
 	public function testDeleteExpiredMessages(?int $messageTime, int $currentTime, bool $expired): void {
+		$room = $this->createMock(Room::class);
+		$room->method('isFederatedConversation')
+			->willReturn(true);
+
 		$m1 = new ProxyCacheMessage();
 		$m1->setLocalToken('local_token');
 		$m1->setRemoteServerUrl('phpunittests');
@@ -100,7 +106,7 @@ class ProxyCacheMessageServiceTest extends TestCase {
 		}
 		$this->mapper->insert($m1);
 
-		$this->mapper->findById($m1->getId());
+		$this->mapper->findById($room, $m1->getId());
 
 		$this->timeFactory->method('getDateTime')
 			->willReturn(new \DateTime('@' . $currentTime));
@@ -109,9 +115,18 @@ class ProxyCacheMessageServiceTest extends TestCase {
 		if ($expired) {
 			$this->expectException(DoesNotExistException::class);
 		}
-		$actual = $this->mapper->findById($m1->getId());
+		$actual = $this->mapper->findById($room, $m1->getId());
 		if (!$expired) {
 			$this->assertEquals($m1->getId(), $actual->getId());
 		}
+	}
+
+	public function testFindByIdThrows(): void {
+		$this->expectException(InvalidRoomException::class);
+		$room = $this->createMock(Room::class);
+		$room->method('isFederatedConversation')
+			->willReturn(false);
+
+		$this->mapper->findById($room, 42);
 	}
 }

@@ -28,6 +28,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\IL10N;
@@ -44,6 +45,8 @@ class TalkReferenceProviderTest extends TestCase {
 	protected $participantService;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
+	/** @var ProxyCacheMessageMapper|MockObject */
+	protected $proxyCacheMessageMapper;
 	/** @var AvatarService|MockObject */
 	protected $avatarService;
 	/** @var MessageParser|MockObject */
@@ -59,6 +62,7 @@ class TalkReferenceProviderTest extends TestCase {
 		$this->roomManager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->proxyCacheMessageMapper = $this->createMock(ProxyCacheMessageMapper::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->l = $this->createMock(IL10N::class);
@@ -68,6 +72,7 @@ class TalkReferenceProviderTest extends TestCase {
 			$this->roomManager,
 			$this->participantService,
 			$this->chatManager,
+			$this->proxyCacheMessageMapper,
 			$this->avatarService,
 			$this->messageParser,
 			$this->l,
