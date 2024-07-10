@@ -10,7 +10,9 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\ActiveSinceModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\BeforeActiveSinceModifiedEvent;
 use OCA\Talk\Events\BeforeLobbyModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomModifiedEvent;
@@ -832,6 +834,16 @@ class RoomService {
 	}
 
 	public function resetActiveSince(Room $room): bool {
+		$oldActiveSince = $room->getActiveSince();
+		$oldCallFlag = $room->getCallFlag();
+
+		if ($oldActiveSince === null && $oldCallFlag === Participant::FLAG_DISCONNECTED) {
+			return false;
+		}
+
+		$event = new BeforeActiveSinceModifiedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag);
+		$this->dispatcher->dispatchTyped($event);
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
@@ -842,10 +854,30 @@ class RoomService {
 
 		$room->resetActiveSince();
 
-		return (bool) $update->executeStatement();
+		$result = (bool) $update->executeStatement();
+
+		$event = new ActiveSinceModifiedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag);
+		$this->dispatcher->dispatchTyped($event);
+
+		return $result;
 	}
 
 	public function setActiveSince(Room $room, \DateTime $since, int $callFlag): bool {
+		$oldActiveSince = $room->getActiveSince();
+		$oldCallFlag = $room->getCallFlag();
+
+		if ($room->getActiveSince() instanceof \DateTime && $oldCallFlag === $callFlag) {
+			return false;
+		}
+
+		if ($room->getActiveSince() instanceof \DateTime) {
+			$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag);
+			$this->dispatcher->dispatchTyped($event);
+		} else {
+			$event = new BeforeActiveSinceModifiedEvent($room, $since, $oldActiveSince, $callFlag, $oldCallFlag);
+			$this->dispatcher->dispatchTyped($event);
+		}
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set(
@@ -857,6 +889,10 @@ class RoomService {
 
 		if ($room->getActiveSince() instanceof \DateTime) {
 			$room->setActiveSince($room->getActiveSince(), $callFlag);
+
+			$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag);
+			$this->dispatcher->dispatchTyped($event);
+
 			return false;
 		}
 
@@ -868,6 +904,9 @@ class RoomService {
 		$update->executeStatement();
 
 		$room->setActiveSince($since, $callFlag);
+
+		$event = new ActiveSinceModifiedEvent($room, $since, $oldActiveSince, $callFlag, $oldCallFlag);
+		$this->dispatcher->dispatchTyped($event);
 
 		return true;
 	}

@@ -47,6 +47,12 @@ Allows to verify a password and set a redirect URL for the invalid case
 * Event: `OCA\Talk\Events\RoomPasswordVerifyEvent`
 * Since: 18.0.0
 
+### Active since modified
+
+* Before event: `OCA\Talk\Events\BeforeActiveSinceModifiedEvent`
+* After event: `OCA\Talk\Events\ActiveSinceModifiedEvent`
+* Since: 20.0.0
+
 ## Participant related events
 
 ### Attendees added

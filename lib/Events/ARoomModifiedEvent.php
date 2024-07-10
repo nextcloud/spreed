@@ -12,6 +12,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 abstract class ARoomModifiedEvent extends ARoomEvent {
+	public const PROPERTY_ACTIVE_SINCE = 'activeSince';
 	public const PROPERTY_AVATAR = 'avatar';
 	public const PROPERTY_BREAKOUT_ROOM_MODE = 'breakoutRoomMode';
 	public const PROPERTY_BREAKOUT_ROOM_STATUS = 'breakoutRoomStatus';
@@ -37,8 +38,8 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
 		protected string $property,
-		protected string|int $newValue,
-		protected string|int|null $oldValue = null,
+		protected \DateTime|string|int|null $newValue,
+		protected \DateTime|string|int|null $oldValue = null,
 		protected ?Participant $actor = null,
 	) {
 		parent::__construct($room);
@@ -48,11 +49,11 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 		return $this->property;
 	}
 
-	public function getNewValue(): string|int {
+	public function getNewValue(): \DateTime|string|int|null {
 		return $this->newValue;
 	}
 
-	public function getOldValue(): string|int|null {
+	public function getOldValue(): \DateTime|string|int|null {
 		return $this->oldValue;
 	}
 

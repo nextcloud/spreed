@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
+use OCA\Talk\Events\AActiveSinceModifiedEvent;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
+use OCA\Talk\Events\ActiveSinceModifiedEvent;
 use OCA\Talk\Events\ALobbyModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
@@ -34,14 +36,17 @@ class RoomModifiedListener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		if (!$event instanceof LobbyModifiedEvent
+		if (!$event instanceof ActiveSinceModifiedEvent
+				&& !$event instanceof LobbyModifiedEvent
 				&& !$event instanceof RoomModifiedEvent) {
 			return;
 		}
 
 		if (!in_array($event->getProperty(), [
+			ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE,
 			ARoomModifiedEvent::PROPERTY_AVATAR,
 			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
+			ARoomModifiedEvent::PROPERTY_IN_CALL,
 			ARoomModifiedEvent::PROPERTY_LOBBY,
 			ARoomModifiedEvent::PROPERTY_NAME,
 			ARoomModifiedEvent::PROPERTY_READ_ONLY,
@@ -54,7 +59,9 @@ class RoomModifiedListener implements IEventListener {
 		foreach ($participants as $participant) {
 			$cloudId = $this->cloudIdManager->resolveCloudId($participant->getAttendee()->getActorId());
 
-			if ($event instanceof ALobbyModifiedEvent) {
+			if ($event instanceof AActiveSinceModifiedEvent) {
+				$success = $this->notifyActiveSinceModified($cloudId, $participant, $event);
+			} elseif ($event instanceof ALobbyModifiedEvent) {
 				$success = $this->notifyLobbyModified($cloudId, $participant, $event);
 			} else {
 				$success = $this->notifyRoomModified($cloudId, $participant, $event);
@@ -64,6 +71,19 @@ class RoomModifiedListener implements IEventListener {
 				$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
 			}
 		}
+	}
+
+	private function notifyActiveSinceModified(ICloudId $cloudId, Participant $participant, AActiveSinceModifiedEvent $event) {
+		return $this->backendNotifier->sendRoomModifiedActiveSinceUpdate(
+			$cloudId->getRemote(),
+			$participant->getAttendee()->getId(),
+			$participant->getAttendee()->getAccessToken(),
+			$event->getRoom()->getToken(),
+			$event->getProperty(),
+			$event->getNewValue(),
+			$event->getOldValue(),
+			$event->getCallFlag(),
+		);
 	}
 
 	private function notifyLobbyModified(ICloudId $cloudId, Participant $participant, ALobbyModifiedEvent $event) {
