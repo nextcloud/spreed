@@ -42,11 +42,8 @@ const banActor = async function(token: string, payload: banActorParams, options?
  * @param banId - ban id
  * @param [options] - request options
  */
-const unbanActor = async function(token: string, banId: unbanActorParams['banId'], options?: object): unbanActorResponse {
-	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/ban/{token}', { token }, options), {
-		...options,
-		params: { banId } as unbanActorParams,
-	})
+const unbanActor = async function(token: string, banId: number, options?: object): unbanActorResponse {
+	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/ban/{token}/{banId}', { token, banId }, options), options)
 }
 
 export {
