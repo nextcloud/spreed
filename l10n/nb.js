@@ -1332,6 +1332,7 @@ OC.L10N.register(
     "The message could not be edited" : "Meldingen kunne ikke redigeres",
     "File upload is not available in this conversation" : "Filopplasting er ikke tilgjengelig i denne samtalen",
     "Group" : "Gruppe",
+    "Replacement: " : "Erstatter:",
     "{user} is out of office and might not respond." : "{user} er fraværende og svarer kanskje ikke.",
     "Share files to the conversation" : "Del filer til samtalen",
     "Upload from device" : "Last opp fra enhet",
