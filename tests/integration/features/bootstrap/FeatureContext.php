@@ -61,6 +61,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $modifiedSince;
 	/** @var array<string, string> */
 	protected static array $createdTeams = [];
+	/** @var array<string, int> */
+	protected static array $userToBanId;
 
 
 	protected static array $permissionsMap = [
@@ -172,6 +174,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		];
 		self::$userToSessionId = [];
 		self::$userToAttendeeId = [];
+		self::$userToBanId = [];
 		self::$textToMessageId = [];
 		self::$messageIdToText = [];
 		self::$questionToPollId = [];
@@ -1214,6 +1217,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
+
+		$userBanId = self::$userToBanId[self::$identifierToToken[$identifier]]['users'][$user] ?? null;
+		$guestBanId = self::$userToBanId[self::$identifierToToken[$identifier]]['guests'][$user] ?? null;
+
+		if ($userBanId !== null || $guestBanId !== null) {
+			//User is banned
+			return;
+		}
+
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
 			$formData
@@ -1452,6 +1464,109 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/attendees',
 			new TableNode([['attendeeId', $attendeeId]])
 		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" bans (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $internalNote): void {
+		if ($actorId === 'stranger') {
+			$actorId = '123456789';
+		} else {
+			if ($actorType === 'remote') {
+				$actorId .= '@' . rtrim($this->baseRemoteUrl, '/');
+				$actorType = 'federated_user';
+			}
+		}
+
+		$actorType .= 's';
+
+		$this->setCurrentUser($user);
+		$body = [
+			'actorType' => $actorType,
+			'actorId' => $actorId,
+		];
+
+		// Add the internal note if it exists
+		if ($internalNote !== null) {
+			$internalNoteData = $internalNote->getRowsHash();
+			if (isset($internalNoteData['internalNote'])) {
+				$body['internalNote'] = $internalNoteData['internalNote'];
+			}
+		}
+
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier], $body
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 200) {
+			$data = $this->getDataFromResponse($this->response);
+			self::$userToBanId[self::$identifierToToken[$identifier]] ??= [];
+			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType] ??= [];
+			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId] = $data['id'];
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following bans in room "([^"]*)" with (\d+) \((v1)\)$/
+	 */
+	public function userLoadsBanIdsInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $tableNode): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== 200) {
+			return;
+		}
+
+		$bans = $this->getDataFromResponse($this->response);
+		foreach ($bans as &$key) {
+			unset($key['id'], $key['roomId'], $key['bannedTime']);
+		}
+
+		Assert::assertEquals($tableNode->getColumnsHash(), $bans);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" unbans (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userUnbansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		if ($actorId === 'stranger') {
+			$actorId = '123456789';
+		} else {
+			if ($actorType === 'remote') {
+				$actorId .= '@' . rtrim($this->baseRemoteUrl, '/');
+				$actorType = 'federated_user';
+			}
+		}
+
+		$actorType .= 's';
+
+		$banId = self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId];
+		unset(self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId]);
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier] . '/' . $banId
+		);
+
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -4560,5 +4675,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
 	}
+
+
 
 }

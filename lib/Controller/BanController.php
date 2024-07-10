@@ -11,10 +11,13 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Ban;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Service\BanService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
 /**
@@ -24,6 +27,8 @@ class BanController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
+		protected BanService $banService,
+		protected ITimeFactory $timeFactory,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -37,7 +42,7 @@ class BanController extends AEnvironmentAwareController {
 	 * @psalm-param Attendee::ACTOR_*|'ip' $actorType Type of actor to ban, or `ip` when banning a clients remote address
 	 * @param string $actorId Actor ID or the IP address or range in case of type `ip`
 	 * @param string $internalNote Optional internal note
-	 * @return DataResponse<Http::STATUS_OK, TalkBan, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkBan, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'bannedActor'|'internalNote'}, array{}>
 	 *
 	 * 200: Ban successfully
 	 * 400: Actor information is invalid
@@ -45,25 +50,29 @@ class BanController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function banActor(string $actorType, string $actorId, string $internalNote = ''): DataResponse {
-		if ($actorId === 'wrong') {
+		try {
+			$moderator = $this->participant->getAttendee();
+			$moderatorActorType = $moderator->getActorType();
+			$moderatorActorId = $moderator->getActorId();
+
+			$ban = $this->banService->createBan(
+				$moderatorActorId,
+				$moderatorActorType,
+				$this->room->getId(),
+				$actorId,
+				$actorType,
+				$this->timeFactory->getDateTime(),
+				$internalNote
+			);
+
+			return new DataResponse($ban->jsonSerialize(), Http::STATUS_OK);
+		} catch (\InvalidArgumentException $e) {
+			/** @var 'bannedActor'|'internalNote' $message */
+			$message = $e->getMessage();
 			return new DataResponse([
-				'error' => 'actor',
+				'error' => $message,
 			], Http::STATUS_BAD_REQUEST);
 		}
-
-
-		return new DataResponse(
-			[
-				'id' => random_int(1, 1337),
-				'actorType' => $this->participant->getAttendee()->getActorType(),
-				'actorId' => $this->participant->getAttendee()->getActorId(),
-				'bannedType' => $actorType,
-				'bannedId' => $actorId,
-				'bannedTime' => time(),
-				'internalNote' => $internalNote ?: 'Lorem ipsum',
-			],
-			Http::STATUS_OK
-		);
 	}
 
 	/**
@@ -71,23 +80,16 @@ class BanController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `ban-v1`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<TalkBan>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkBan[], array{}>
 	 *
 	 * 200: List all bans
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function listBans(): DataResponse {
-		return new DataResponse([
-			$this->randomBan(Attendee::ACTOR_USERS, 'test'),
-			$this->randomBan(Attendee::ACTOR_USERS, '123456'),
-			$this->randomBan(Attendee::ACTOR_FEDERATED_USERS, 'admin@nextcloud.local'),
-			$this->randomBan('ip', '127.0.0.1'),
-			$this->randomBan('ip', '127.0.0.1/32'),
-			$this->randomBan('ip', '127.0.0.0/24'),
-			$this->randomBan('ip', '::1/24'),
-			$this->randomBan('ip', '2001:0db8:85a3::/48'),
-		], Http::STATUS_OK);
+		$bans = $this->banService->getBansForRoom($this->room->getId());
+		$result = array_map(static fn (Ban $ban): array => $ban->jsonSerialize(), $bans);
+		return new DataResponse($result, Http::STATUS_OK);
 	}
 
 	/**
@@ -103,21 +105,7 @@ class BanController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function unbanActor(int $banId): DataResponse {
+		$this->banService->findAndDeleteBanByIdForRoom($banId, $this->room->getId());
 		return new DataResponse([], Http::STATUS_OK);
-	}
-
-	/**
-	 * @psalm-return TalkBan
-	 */
-	protected function randomBan(string $actorType, string $actorId): array {
-		return [
-			'id' => random_int(1, 1337),
-			'actorType' => $this->participant->getAttendee()->getActorType(),
-			'actorId' => $this->participant->getAttendee()->getActorId(),
-			'bannedType' => $actorType,
-			'bannedId' => $actorId,
-			'bannedTime' => random_int(1514747958, 1714747958),
-			'internalNote' => '#NOTE#' . $actorType . '#' . $actorId . '#' . sha1($actorType . $actorId),
-		];
 	}
 }
