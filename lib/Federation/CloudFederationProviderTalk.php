@@ -137,6 +137,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$ownerFederatedId = $share->getOwner();
 		[, $remote] = $this->addressHandler->splitUserRemote($ownerFederatedId);
 
+		if (!$this->addressHandler->urlContainProtocol($remote)) {
+			// Heal federation from before Nextcloud 29.0.4 which sends requests
+			// without the protocol on the remote in case it is https://
+			$remote = 'https://' . $remote;
+		}
+
 		// if no explicit information about the person who created the share was sent
 		// we assume that the share comes from the owner
 		if ($sharedByFederatedId === null) {
@@ -505,6 +511,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		if (!$sharedSecret) {
 			throw new AuthenticationFailedException();
+		}
+
+		if (!$this->addressHandler->urlContainProtocol($remoteServerUrl)) {
+			// Heal federation from before Nextcloud 29.0.4 which sends requests
+			// without the protocol on the remote in case it is https://
+			$remoteServerUrl = 'https://' . $remoteServerUrl;
 		}
 
 		try {
