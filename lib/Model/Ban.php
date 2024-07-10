@@ -8,9 +8,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
+ * @psalm-import-type TalkBan from ResponseDefinitions
+ *
  * @method void setId(int $id)
  * @method int getId()
  * @method void setActorType(string $actorType)
@@ -48,15 +51,17 @@ class Ban extends Entity implements \JsonSerializable {
 		$this->addType('internalNote', 'string');
 	}
 
+	/**
+	 * @return TalkBan
+	 */
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
-			'roomId' => $this->getRoomId(),
 			'bannedType' => $this->getBannedType(),
 			'bannedId' => $this->getBannedId(),
-			'bannedTime' => $this->getBannedTime() ? $this->getBannedTime()->getTimestamp() : null,
+			'bannedTime' => $this->getBannedTime()->getTimestamp(),
 			'internalNote' => $this->getInternalNote(),
 		];
 	}

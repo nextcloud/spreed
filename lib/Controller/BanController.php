@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Ban;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\BanService;
 use OCP\AppFramework\Http;
@@ -79,7 +80,7 @@ class BanController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `ban-v1`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<TalkBan>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkBan[], array{}>
 	 *
 	 * 200: List all bans
 	 */
@@ -87,11 +88,7 @@ class BanController extends AEnvironmentAwareController {
 	#[RequireModeratorParticipant]
 	public function listBans(): DataResponse {
 		$bans = $this->banService->getBansForRoom($this->room->getId());
-		$result = array_map(function ($ban) {
-			return $ban->jsonSerialize();
-		}, $bans);
-
-		/** @psalm-var list<array{actorId: string, actorType: string, bannedId: string, bannedTime: int, bannedType: string, id: int, internalNote: string}> $result */
+		$result = array_map(static fn (Ban $ban): array => $ban->jsonSerialize(), $bans);
 		return new DataResponse($result, Http::STATUS_OK);
 	}
 

@@ -48,6 +48,8 @@ class BanService {
 
 	/**
 	 * Retrieve a ban for a specific actor and room.
+	 *
+	 * @throws DoesNotExistException
 	 */
 	public function getBanForActorAndRoom(string $actorId, string $actorType, int $roomId): Ban {
 		return $this->banMapper->findForActorAndRoom($actorId, $actorType, $roomId);
@@ -55,6 +57,8 @@ class BanService {
 
 	/**
 	 * Retrieve all bans for a specific room.
+	 *
+	 * @return Ban[]
 	 */
 	public function getBansForRoom(int $roomId): array {
 		return $this->banMapper->findByRoomId($roomId);
@@ -67,7 +71,7 @@ class BanService {
 		try {
 			$ban = $this->banMapper->findByBanIdAndRoom($banId, $roomId);
 			$this->banMapper->delete($ban);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			// Ban does not exist
 		}
 	}
