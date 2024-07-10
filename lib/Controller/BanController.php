@@ -111,19 +111,4 @@ class BanController extends AEnvironmentAwareController {
 		$this->banService->findAndDeleteBanByIdForRoom($banId, $this->room->getId());
 		return new DataResponse([], Http::STATUS_OK);
 	}
-
-	/**
-	 * @psalm-return TalkBan
-	 */
-	protected function randomBan(string $actorType, string $actorId): array {
-		return [
-			'id' => random_int(1, 1337),
-			'actorType' => $this->participant->getAttendee()->getActorType(),
-			'actorId' => $this->participant->getAttendee()->getActorId(),
-			'bannedType' => $actorType,
-			'bannedId' => $actorId,
-			'bannedTime' => random_int(1514747958, 1714747958),
-			'internalNote' => '#NOTE#' . $actorType . '#' . $actorId . '#' . sha1($actorType . $actorId),
-		];
-	}
 }

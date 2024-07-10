@@ -54,25 +54,6 @@ class BanService {
 	}
 
 	/**
-	 * Delete a ban for a specific actor and room.
-	 */
-	public function deleteBanForActorAndRoom(string $actorId, string $actorType, int $roomId): void {
-		$this->banMapper->deleteBanForActorAndRoom($actorId, $actorType, $roomId);
-	}
-
-	/**
-	 * Find and delete a ban for a specific actor and room.
-	 */
-	public function findAndDeleteBanForActorAndRoom(string $actorId, string $actorType, int $roomId): void {
-		try {
-			$ban = $this->getBanForActorAndRoom($actorId, $actorType, $roomId);
-			$this->deleteBanForActorAndRoom($actorId, $actorType, $roomId);
-		} catch (DoesNotExistException $e) {
-			// Ban does not exist
-		}
-	}
-
-	/**
 	 * Retrieve all bans for a specific room.
 	 */
 	public function getBansForRoom(int $roomId): array {
