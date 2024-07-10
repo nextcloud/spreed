@@ -37,7 +37,7 @@ class BanService {
 		if (empty($internalNote)) {
 			throw new \InvalidArgumentException("invalid_internalNote.");
 		}
-		
+
 		if ($bannedTime !== null && !$bannedTime instanceof DateTime) {
 			throw new \InvalidArgumentException("invalid_bannedTime.");
 		}
@@ -97,9 +97,9 @@ class BanService {
 	/**
 	 * Retrieve a ban by its ID and delete it.
 	 */
-	public function findAndDeleteBanById(int $banId): void {
+	public function findAndDeleteBanByIdForRoom(int $banId, int $roomId): void {
 		try {
-			$ban = $this->banMapper->findByBanId($banId);
+			$ban = $this->banMapper->findByBanIdAndRoom($banId, $roomId);
 			$this->banMapper->delete($ban);
 		} catch (DoesNotExistException $e) {
 			// Ban does not exist

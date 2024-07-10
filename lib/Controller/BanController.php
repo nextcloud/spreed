@@ -104,7 +104,7 @@ class BanController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function unbanActor(int $banId): DataResponse {
-		$this->banService->findAndDeleteBanById($banId);
+		$this->banService->findAndDeleteBanByIdForRoom($banId, $this->room->getId());
 		return new DataResponse([], Http::STATUS_OK);
 	}
 

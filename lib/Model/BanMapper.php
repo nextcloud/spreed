@@ -52,11 +52,12 @@ class BanMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findByBanId(int $banId): Ban {
+	public function findByBanIdAndRoom(int $banId, int $roomId): Ban {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('id', $query->createNamedParameter($banId, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($banId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
 	}
