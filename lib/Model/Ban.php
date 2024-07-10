@@ -28,8 +28,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getBannedId()
  * @method void setBannedTime(\DateTime $bannedTime)
  * @method \DateTime getBannedTime()
- * @method void setInternalNote(string $internalNote)
- * @method string getInternalNote()
+ * @method void setInternalNote(null|string $internalNote)
+ * @method null|string getInternalNote()
  */
 class Ban extends Entity implements \JsonSerializable {
 	protected string $actorType = '';
@@ -62,7 +62,7 @@ class Ban extends Entity implements \JsonSerializable {
 			'bannedType' => $this->getBannedType(),
 			'bannedId' => $this->getBannedId(),
 			'bannedTime' => $this->getBannedTime()->getTimestamp(),
-			'internalNote' => $this->getInternalNote(),
+			'internalNote' => $this->getInternalNote() ?? '',
 		];
 	}
 }
