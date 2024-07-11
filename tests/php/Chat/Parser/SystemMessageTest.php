@@ -842,7 +842,11 @@ class SystemMessageTest extends TestCase {
 			->willReturn($share);
 
 		$userFolder = $this->createMock(Folder::class);
-		$userFolder->expects($this->exactly(2))
+		$userFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with('54')
+			->willReturn(null);
+		$userFolder->expects($this->once())
 			->method('getById')
 			->with('54')
 			->willReturn([]);
