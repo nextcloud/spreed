@@ -86,12 +86,19 @@
 			:name="t('spreed', 'Performance')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="blur-call-background"
-				:checked="isBackgroundBlurred"
-				type="switch"
+				:checked="isBackgroundBlurred === 'yes'"
+				:indeterminate="isBackgroundBlurred === ''"
+				type="checkbox"
 				class="checkbox"
-				@update:checked="toggleBackgroundBlurred">
+				disabled>
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
+			<a :href="themingUrl"
+				target="_blank"
+				rel="noreferrer nofollow"
+				class="external">
+				{{ t('spreed', 'Background blur for Nextcloud instance can be adjusted in the theming settings.') }} ↗
+			</a>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!disableKeyboardShortcuts"
 			id="shortcuts"
@@ -163,11 +170,13 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
@@ -181,6 +190,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
+const isBackgroundBlurred = loadState('spreed', 'force_enable_blur_filter', '')
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 
 export default {
@@ -201,6 +211,7 @@ export default {
 		return {
 			settingsStore,
 			supportTypingStatus,
+			isBackgroundBlurred,
 		}
 	},
 
@@ -211,7 +222,6 @@ export default {
 			attachmentFolderLoading: true,
 			privacyLoading: false,
 			playSoundsLoading: false,
-			isBackgroundBlurred: true,
 		}
 	},
 
@@ -248,6 +258,10 @@ export default {
 			return generateUrl('/settings/user/notifications')
 		},
 
+		themingUrl() {
+			return generateUrl('/settings/user/theming')
+		},
+
 		disableKeyboardShortcuts() {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
@@ -263,11 +277,12 @@ export default {
 
 	created() {
 		const blurred = BrowserStorage.getItem('background-blurred')
-		if (blurred === null) {
-			BrowserStorage.setItem('background-blurred', 'true')
+		if (blurred === 'false' && isBackgroundBlurred === '') {
+			console.debug('Blur was disabled intentionally, propagating last choice to server')
+			axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/theming/force_enable_blur_filter'),
+				{ configValue: 'no' })
 		}
-
-		this.isBackgroundBlurred = blurred !== 'false'
+		BrowserStorage.removeItem('background-blurred')
 	},
 
 	mounted() {
@@ -321,12 +336,6 @@ export default {
 				showError(t('spreed', 'Error while setting typing status privacy'))
 			}
 			this.privacyLoading = false
-		},
-
-		toggleBackgroundBlurred(value) {
-			this.isBackgroundBlurred = value
-			BrowserStorage.setItem('background-blurred', value)
-			emit('set-background-blurred', value)
 		},
 
 		async togglePlaySounds() {
