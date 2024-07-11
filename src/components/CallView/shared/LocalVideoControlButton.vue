@@ -4,12 +4,10 @@
 -->
 
 <template>
-	<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
-		v-tooltip="videoButtonTooltip"
+	<NcButton v-tooltip="videoButtonTooltip"
 		:type="type"
 		:aria-label="videoButtonAriaLabel"
 		:class="{ 'no-video-available': !isVideoAllowed || !model.attributes.videoAvailable }"
-		@shortkey="toggleVideo"
 		@click.stop="toggleVideo">
 		<template #icon>
 			<VideoIcon v-if="showVideoOn" :size="20" />
@@ -26,6 +24,7 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { PARTICIPANT } from '../../../constants.js'
@@ -123,6 +122,10 @@ export default {
 		},
 	},
 
+	created() {
+		useHotKey('v', this.toggleVideo)
+	},
+
 	mounted() {
 		subscribe('local-video-control-button:toggle-video', this.updateDeviceState)
 	},
@@ -134,14 +137,6 @@ export default {
 	methods: {
 		t,
 		toggleVideo() {
-			/**
-			 * Abort toggling the video if the 'v' key is lifted when pasting an
-			 * image in the new message form.
-			 */
-			if (document.getElementsByClassName('upload-editor').length !== 0) {
-				return
-			}
-
 			if (!this.model.attributes.videoAvailable) {
 				emit('talk:media-settings:show')
 				return
