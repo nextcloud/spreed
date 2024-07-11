@@ -6,11 +6,9 @@
 <template>
 	<div class="top-bar__wrapper">
 		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
-			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
-				v-tooltip="raiseHandButtonLabel"
+			<NcButton v-tooltip="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
 				type="tertiary"
-				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<template #icon>
 					<!-- The following icon is much bigger than all the others
@@ -21,12 +19,10 @@
 		</TransitionExpand>
 
 		<NcActions v-if="!isSidebar"
-			v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
 			v-tooltip="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
 			type="tertiary"
-			:container="container"
-			@shortkey.native="toggleFullscreen">
+			:container="container">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
 				<DotsHorizontal :size="20" />
@@ -173,6 +169,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
@@ -185,6 +182,7 @@ import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
 const AUTO_LOWER_HAND_THRESHOLD = 3000
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
 export default {
 	name: 'TopBarMenu',
@@ -219,16 +217,16 @@ export default {
 
 	props: {
 		/**
-			* The conversation token
-			*/
+		 * The conversation token
+		 */
 		token: {
 			type: String,
 			required: true,
 		},
 
 		/**
-			* The local media model
-			*/
+		 * The local media model
+		 */
 		model: {
 			type: Object,
 			required: true,
@@ -240,8 +238,8 @@ export default {
 		},
 
 		/**
-			* In the sidebar the conversation settings are hidden
-			*/
+		 * In the sidebar the conversation settings are hidden
+		 */
 		isSidebar: {
 			type: Boolean,
 			default: false,
@@ -276,10 +274,9 @@ export default {
 		},
 
 		labelFullscreen() {
-			if (this.isFullscreen) {
-				return t('spreed', 'Exit full screen (F)')
-			}
-			return t('spreed', 'Full screen (F)')
+			return this.isFullscreen
+				? t('spreed', 'Exit full screen (F)')
+				: t('spreed', 'Full screen (F)')
 		},
 
 		isFileConversation() {
@@ -287,11 +284,9 @@ export default {
 		},
 
 		linkToFile() {
-			if (this.isFileConversation) {
-				return generateAbsoluteUrl('/f/{objectId}', { objectId: this.conversation.objectId })
-			} else {
-				return ''
-			}
+			return this.isFileConversation
+				? generateAbsoluteUrl('/f/{objectId}', { objectId: this.conversation.objectId })
+				: ''
 		},
 
 		isOneToOneConversation() {
@@ -304,11 +299,9 @@ export default {
 		},
 
 		changeViewText() {
-			if (this.isGrid) {
-				return t('spreed', 'Speaker view')
-			} else {
-				return t('spreed', 'Grid view')
-			}
+			return this.isGrid
+				? t('spreed', 'Speaker view')
+				: t('spreed', 'Grid view')
 		},
 
 		isGrid() {
@@ -329,19 +322,13 @@ export default {
 
 		raiseHandButtonLabel() {
 			if (!this.isHandRaised) {
-				if (this.disableKeyboardShortcuts) {
-					return t('spreed', 'Raise hand')
-				}
-				return t('spreed', 'Raise hand (R)')
+				return disableKeyboardShortcuts
+					? t('spreed', 'Raise hand')
+					: t('spreed', 'Raise hand (R)')
 			}
-			if (this.disableKeyboardShortcuts) {
-				return t('spreed', 'Lower hand')
-			}
-			return t('spreed', 'Lower hand (R)')
-		},
-
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
+			return disableKeyboardShortcuts
+				? t('spreed', 'Lower hand')
+				: t('spreed', 'Lower hand (R)')
 		},
 
 		participantType() {
@@ -388,11 +375,9 @@ export default {
 		showCallLayoutSwitch() {
 			return !this.$store.getters.isEmptyCallView
 		},
-
 	},
 
 	watch: {
-
 		'model.attributes.speaking'(speaking) {
 			// user stops speaking in lowerHandTimeout
 			if (this.lowerHandTimeout !== null && !speaking) {
@@ -419,7 +404,11 @@ export default {
 				}
 			}, this.lowerHandDelay)
 		},
+	},
 
+	created() {
+		useHotKey('r', this.toggleHandRaised)
+		useHotKey('f', this.toggleFullscreen)
 	},
 
 	methods: {
@@ -431,6 +420,10 @@ export default {
 		},
 
 		toggleFullscreen() {
+			if (this.isSidebar) {
+				return
+			}
+
 			// Don't toggle fullscreen if there is an open modal
 			// FIXME won't be needed without Fulscreen API
 			if (Array.from(document.body.childNodes).filter(child => {
@@ -476,14 +469,6 @@ export default {
 			}
 		},
 
-		toggleVirtualBackground() {
-			if (this.model.attributes.virtualBackgroundEnabled) {
-				this.model.disableVirtualBackground()
-			} else {
-				this.model.enableVirtualBackground()
-			}
-		},
-
 		changeView() {
 			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid, clearLast: false })
 			this.$store.dispatch('selectedVideoPeerId', null)
@@ -494,6 +479,9 @@ export default {
 		},
 
 		toggleHandRaised() {
+			if (!this.isInCall) {
+				return
+			}
 			const newState = !this.isHandRaised
 			this.model.toggleHandRaised(newState)
 			this.$store.dispatch(
