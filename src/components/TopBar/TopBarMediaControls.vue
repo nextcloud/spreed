@@ -3,9 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div v-shortkey.push="disableKeyboardShortcuts ? null : ['space']"
-		class="buttons-bar"
-		@shortkey="handleShortkey">
+	<div class="buttons-bar">
 		<div class="network-connection-state">
 			<NcPopover v-if="qualityWarningTooltip"
 				:boundary="boundaryElement"
@@ -44,8 +42,7 @@
 			</NcPopover>
 		</div>
 
-		<LocalAudioControlButton ref="audioControl"
-			:token="token"
+		<LocalAudioControlButton :token="token"
 			:conversation="conversation"
 			:model="model"
 			type="tertiary" />
@@ -191,8 +188,6 @@ export default {
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
 			qualityWarningInGracePeriodTimeout: null,
-			audioEnabledBeforeSpacebarKeydown: undefined,
-			spacebarKeyDown: false,
 		}
 	},
 
@@ -377,10 +372,6 @@ export default {
 
 			return tooltip
 		},
-
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
-		},
 	},
 
 	watch: {
@@ -409,29 +400,6 @@ export default {
 
 	methods: {
 		t,
-		/**
-		 * This method executes on spacebar keydown and keyup
-		 */
-		handleShortkey() {
-			if (!this.model.attributes.audioAvailable) {
-				return
-			}
-
-			if (!this.spacebarKeyDown) {
-				this.audioEnabledBeforeSpacebarKeydown = this.model.attributes.audioEnabled
-				this.spacebarKeyDown = true
-				this.$refs.audioControl.toggleAudio()
-			} else {
-				this.spacebarKeyDown = false
-				if (this.audioEnabledBeforeSpacebarKeydown) {
-					this.model.enableAudio()
-				} else {
-					this.model.disableAudio()
-				}
-				this.audioEnabledBeforeSpacebarKeydown = undefined
-			}
-
-		},
 
 		setSpeakingWhileMutedNotification(message) {
 			this.speakingWhileMutedNotification = message

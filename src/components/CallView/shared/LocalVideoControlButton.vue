@@ -4,12 +4,11 @@
 -->
 
 <template>
-	<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
+	<NcButton v-key-stroke:v="toggleVideo"
 		v-tooltip="videoButtonTooltip"
 		:type="type"
 		:aria-label="videoButtonAriaLabel"
 		:class="{ 'no-video-available': !isVideoAllowed || !model.attributes.videoAvailable }"
-		@shortkey="toggleVideo"
 		@click.stop="toggleVideo">
 		<template #icon>
 			<VideoIcon v-if="showVideoOn" :size="20" />
@@ -29,6 +28,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { PARTICIPANT } from '../../../constants.js'
+import { KeyStroke } from '../../../directives/keyStroke.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {
@@ -41,6 +41,7 @@ export default {
 	},
 
 	directives: {
+		KeyStroke,
 		Tooltip,
 	},
 
@@ -134,14 +135,6 @@ export default {
 	methods: {
 		t,
 		toggleVideo() {
-			/**
-			 * Abort toggling the video if the 'v' key is lifted when pasting an
-			 * image in the new message form.
-			 */
-			if (document.getElementsByClassName('upload-editor').length !== 0) {
-				return
-			}
-
 			if (!this.model.attributes.videoAvailable) {
 				emit('talk:media-settings:show')
 				return

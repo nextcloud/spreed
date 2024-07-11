@@ -4,12 +4,12 @@
 -->
 
 <template>
-	<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
+	<NcButton v-key-stroke:m="toggleAudio"
+		v-key-stroke:space.push="toggleAudio"
 		v-tooltip="audioButtonTooltip"
 		:type="type"
 		:aria-label="audioButtonAriaLabel"
 		:class="{ 'no-audio-available': !isAudioAllowed || !model.attributes.audioAvailable }"
-		@shortkey="toggleAudio"
 		@click.stop="toggleAudio">
 		<template #icon>
 			<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
@@ -31,6 +31,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
+import { KeyStroke } from '../../../directives/keyStroke.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {
@@ -42,6 +43,7 @@ export default {
 	},
 
 	directives: {
+		KeyStroke,
 		Tooltip,
 	},
 
