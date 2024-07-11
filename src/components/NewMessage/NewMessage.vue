@@ -74,7 +74,7 @@
 					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
 				</NcNoteCard>
 				<NcRichContenteditable ref="richContenteditable"
-					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
+					v-key-stroke:c.stop.prevent="focusInput"
 					:value.sync="text"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
@@ -83,7 +83,6 @@
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
 					dir="auto"
-					@shortkey="focusInput"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@input="handleTyping"
@@ -202,6 +201,7 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import Quote from '../Quote.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
+import { KeyStroke } from '../../directives/keyStroke.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -215,12 +215,8 @@ import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
-const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
-
 export default {
 	name: 'NewMessage',
-
-	disableKeyboardShortcuts,
 
 	components: {
 		FilePickerVue,
@@ -243,6 +239,10 @@ export default {
 		CloseIcon,
 		EmoticonOutline,
 		SendIcon,
+	},
+
+	directives: {
+		KeyStroke,
 	},
 
 	props: {
