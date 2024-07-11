@@ -5,6 +5,38 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.5 – 2024-07-11
+### Fixed
+- fix(federation): Correctly handle federation with Nextcloud Server 29.0.4 or later
+  [#12663](https://github.com/nextcloud/spreed/pull/12663)
+- fix(chat): Fix scrolling to a quoted message in the desktop client
+  [#12653](https://github.com/nextcloud/spreed/pull/12653)
+- fix(conversations): Improve sharing data between different tabs
+  [#12637](https://github.com/nextcloud/spreed/pull/12637)
+- fix(chat): Improve update of messages list in the sidebar and the chat
+  [#12636](https://github.com/nextcloud/spreed/pull/12636)
+- fix(chat): Show loading spinner when submitting an edited message
+  [#12674](https://github.com/nextcloud/spreed/pull/12674)
+- fix(chat): Workaround rendering issue in Safari when unread marker is removed
+  [#12669](https://github.com/nextcloud/spreed/pull/12669)
+- fix(chat): Fix missing reference data when linking to a federated chat message
+  [#12665](https://github.com/nextcloud/spreed/pull/12665)
+- fix(chat): Fix contrast of unread counter when being mentioned in the chat during a call
+  [#12605](https://github.com/nextcloud/spreed/pull/12605)
+- fix(chat): Don't group certain system messages when the actor is different
+  [#12642](https://github.com/nextcloud/spreed/pull/12642)
+- fix(sharing): Improve performance when loading chat messages with file shares
+  [#12554](https://github.com/nextcloud/spreed/pull/12554)
+- fix(sharing): Fix share detection within object stores
+  [#12629](https://github.com/nextcloud/spreed/pull/12629)
+- fix(dashboard): Fix missing dashboard icon
+  [#12673](https://github.com/nextcloud/spreed/pull/12673)
+
+## 18.0.10 – 2024-07-11
+### Fixed
+- fix(sharing): Fix share detection within object stores
+  [#12628](https://github.com/nextcloud/spreed/pull/12628)
+
 ## 19.0.4 – 2024-06-27
 ### Changed
 - feat(call): Add option to mirror video preview
