@@ -657,6 +657,7 @@ const actions = {
 	 * @param {string} payload.updatedMessage The modified text of the message / file share caption
 	 */
 	async editMessage(context, { token, messageId, updatedMessage }) {
+		EventBus.$emit('editing-message-processing', { messageId, value: true })
 		const message = Object.assign({}, context.getters.message(token, messageId))
 		context.commit('addMessage', {
 			token,
@@ -670,10 +671,12 @@ const actions = {
 				updatedMessage,
 			})
 			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			EventBus.$emit('editing-message-processing', { messageId, value: false })
 		} catch (error) {
 			console.error(error)
 			// Restore the previous message state
 			context.commit('addMessage', { token, message })
+			EventBus.$emit('editing-message-processing', { messageId, value: false })
 			throw error
 		}
 	},
