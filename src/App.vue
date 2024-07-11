@@ -4,10 +4,8 @@
 -->
 
 <template>
-	<NcContent v-shortkey.once="disableKeyboardShortcuts ? null : ['ctrl', 'f']"
-		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
-		app-name="talk"
-		@shortkey.native="handleAppSearch">
+	<NcContent :class="{ 'icon-loading': loading, 'in-call': isInCall }"
+		app-name="talk">
 		<LeftSidebar v-if="getUserId && !isFullscreen" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
@@ -30,6 +28,7 @@ import { generateUrl } from '@nextcloud/router'
 
 import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
 import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
@@ -186,10 +185,6 @@ export default {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
-
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
-		},
 	},
 
 	watch: {
@@ -246,6 +241,7 @@ export default {
 
 	created() {
 		window.addEventListener('beforeunload', this.preventUnload)
+		useHotKey('f', this.handleAppSearch, { ctrl: true, stop: true, prevent: true })
 	},
 
 	beforeDestroy() {
