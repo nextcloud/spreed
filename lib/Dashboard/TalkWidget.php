@@ -35,6 +35,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Util;
 
 class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget, IConditionalWidget, IReloadableWidget {
 
@@ -124,6 +125,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * @inheritDoc
 	 */
 	public function load(): void {
+		Util::addStyle('spreed', 'icons');
 	}
 
 	public function getItems(string $userId, ?string $since = null, int $limit = 7): array {
