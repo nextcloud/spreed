@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.10 – 2024-07-11
+### Fixed
+- fix(sharing): Fix share detection within object stores
+  [#12628](https://github.com/nextcloud/spreed/pull/12628)
+
 ## 18.0.9 – 2024-06-27
 ### Fixed
 - fix(bots): Fix bots with self-signed certificates
