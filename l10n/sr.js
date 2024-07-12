@@ -1337,6 +1337,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Дели фајлове у разговор",
     "Upload from device" : "Отпреми са уређаја",
     "Create new poll" : "Направи ново гласање",
+    "Smart picker" : "Паметни бирач",
     "Share from {nextcloud}" : "Дељење од {nextcloud}",
     "Record voice message" : "Сними гласовну поруку",
     "End recording and send" : "Заврши снимање и пошаљи",

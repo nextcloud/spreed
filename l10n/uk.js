@@ -953,6 +953,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Поділитися файлами під час розмови",
     "Upload from device" : "Завантажити з пристрою",
     "Create new poll" : "Створити нове опитування",
+    "Smart picker" : "Асистент розумного вибору",
     "Share from {nextcloud}" : "Поділіться з {nextcloud}",
     "Record voice message" : "Записати голосове повідомлення",
     "Access to the microphone was denied" : "У доступі до мікрофону було відмовлено",

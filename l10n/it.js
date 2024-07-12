@@ -947,6 +947,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Condividi file nella conversazione",
     "Upload from device" : "Carica dal dispositivo",
     "Create new poll" : "Crea nuovo sondaggio",
+    "Smart picker" : "Selettore intelligente",
     "Record voice message" : "Registra messaggio vocale",
     "End recording and send" : "Termina la registrazione e invia",
     "Dismiss recording" : "Annulla la registrazione",

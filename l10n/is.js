@@ -489,6 +489,7 @@ OC.L10N.register(
     "Group" : "Hópur",
     "Upload from device" : "Senda inn frá tæki",
     "Create new poll" : "Búa til nýja könnun",
+    "Smart picker" : "Snjall-veljari",
     "New file" : "Ný skrá",
     "Blank" : "Tóm",
     "Settings" : "Stillingar",

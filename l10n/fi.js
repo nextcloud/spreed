@@ -168,6 +168,7 @@ OC.L10N.register(
     "You stopped the audio recording" : "Lopetit äänitallennuksen",
     "The recording failed" : "Tallenne epäonnistui",
     "Someone voted on the poll {poll}" : "Joku äänesti kyselyssä {poll}",
+    "Message deleted by author" : "Viestin lähettäjä poisti viestin",
     "Deleted user" : "Poistettu käyttäjä",
     "Unknown number" : "Tuntematon numero",
     "%s (guest)" : "%s (vieras)",

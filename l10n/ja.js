@@ -1288,6 +1288,7 @@ OC.L10N.register(
     "Share files to the conversation" : "会話でファイルを共有する",
     "Upload from device" : "デバイスからアップロード",
     "Create new poll" : "投票を作成",
+    "Smart picker" : "スマートピッカー",
     "Share from {nextcloud}" : "{nextcloud} から共有する",
     "Record voice message" : "ボイスメッセージを録音",
     "End recording and send" : "録音を終了して送信する",

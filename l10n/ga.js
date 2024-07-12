@@ -1337,6 +1337,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Roinn comhaid leis an gcomhrá",
     "Upload from device" : "Íosluchtaigh ó gléas",
     "Create new poll" : "Cruthaigh vótaíocht nua",
+    "Smart picker" : "Roghnóir cliste",
     "Share from {nextcloud}" : "Roinn ó {nextcloud}",
     "Record voice message" : "Taifead teachtaireacht gutha",
     "End recording and send" : "Cuir deireadh leis an taifeadadh agus seol",
