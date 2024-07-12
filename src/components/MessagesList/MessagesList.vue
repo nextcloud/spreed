@@ -267,7 +267,6 @@ export default {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
 			this.stopFetchingOldMessages = false
-			this.messagesGroupedByDateByAuthor = this.prepareMessagesGroups(this.messagesList)
 			this.stickyDate = null
 			this.checkSticky()
 		},
@@ -275,13 +274,9 @@ export default {
 		messagesList: {
 			immediate: true,
 			handler(newMessages, oldMessages) {
-				// token watcher will handle the conversations change
-				if (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token) {
-					return
-				}
 				const newGroups = this.prepareMessagesGroups(newMessages)
-				// messages were just loaded
-				if (!oldMessages) {
+				if (!oldMessages || (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token)) {
+					// messages were just loaded or token has changed, reset the messages
 					this.messagesGroupedByDateByAuthor = newGroups
 				} else {
 					this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
@@ -868,7 +863,7 @@ export default {
 			const tolerance = 10
 
 			// For chats, scrolled to bottom or / and fitted in one screen
-			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance && !this.hasMoreMessagesToLoad) {
+			if (Math.abs(scrollOffset - clientHeight) < tolerance && !this.hasMoreMessagesToLoad) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
@@ -1123,6 +1118,11 @@ export default {
 			if (this.$refs.scroller && !smooth) {
 				// scroll the viewport slightly further to make sure the element is about 1/3 from the top
 				this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
+			}
+
+			if (this.$refs.scroller && this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight) {
+				// chat is not scrollable
+				this.setChatScrolledToBottom(true)
 			}
 
 			if (highlightAnimation) {
