@@ -19,7 +19,7 @@ use OCP\Migration\SimpleMigrationStep;
  * Heal federation from before Nextcloud 29.0.4 which sends requests
  * without the protocol on the remote in case it is https://
  */
-class Version19000Date20240709183937 extends SimpleMigrationStep {
+class Version19000Date20240709183938 extends SimpleMigrationStep {
 	public function __construct(
 		protected IDBConnection $connection,
 	) {
@@ -32,15 +32,22 @@ class Version19000Date20240709183937 extends SimpleMigrationStep {
 	 * @param array $options
 	 */
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
+		$this->addMissingProtocol('talk_invitations', 'remote_server_url');
+		$this->addMissingProtocol('talk_proxy_messages', 'remote_server_url');
+		$this->addMissingProtocol('talk_rooms', 'remote_server');
+	}
+
+	protected function addMissingProtocol(string $table, string $column): void {
 		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_invitations')
-			->set('remote_server_url', $query->func()->concat($query->createNamedParameter('https://'), 'remote_server_url'))
-			->where($query->expr()->notLike('remote_server_url', $query->createNamedParameter(
+		$query->update($table)
+			->set($column, $query->func()->concat($query->createNamedParameter('https://'), $column))
+			->where($query->expr()->notLike($column, $query->createNamedParameter(
 				$this->connection->escapeLikeParameter('http://'). '%'
 			)))
-			->andWhere($query->expr()->notLike('remote_server_url', $query->createNamedParameter(
+			->andWhere($query->expr()->notLike($column, $query->createNamedParameter(
 				$this->connection->escapeLikeParameter('https://'). '%'
-			)));
+			)))
+			->andWhere($query->expr()->nonEmptyString($column));
 		$query->executeStatement();
 	}
 }
