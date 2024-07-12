@@ -1849,6 +1849,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 400: The provided new state was invalid
 	 * 404: The participant did not have a session
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireParticipant]
 	public function setSessionState(int $state): DataResponse {
