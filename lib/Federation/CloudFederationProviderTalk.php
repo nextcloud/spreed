@@ -441,7 +441,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		try {
-			$participant = $this->participantService->getParticipant($room, $invite->getUserId(), false);
+			$participant = $this->participantService->getParticipantWithActiveSession($room, $invite->getUserId());
 		} catch (ParticipantNotFoundException) {
 			// Not accepted the invite yet
 			return [];

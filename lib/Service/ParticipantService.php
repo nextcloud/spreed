@@ -1877,6 +1877,37 @@ class ParticipantService {
 	}
 
 	/**
+	 * Get a participant with an active session if there is one, otherwise without session
+	 *
+	 * @param Room $room
+	 * @param string $userId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the user is not a participant
+	 */
+	public function getParticipantWithActiveSession(Room $room, string $userId): Participant {
+		if ($userId === '') {
+			throw new ParticipantNotFoundException('Not a user');
+		}
+
+		$query = $this->connection->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('a.id', 's.attendee_id'),
+				$query->expr()->eq('s.state', $query->createNamedParameter(Session::STATE_ACTIVE, IQueryBuilder::PARAM_INT))
+			))
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
+			->setMaxResults(1);
+
+
+		return $this->getParticipantFromQuery($query, $room);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param string|null $sessionId
 	 * @return Participant
