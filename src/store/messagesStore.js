@@ -1141,6 +1141,7 @@ const actions = {
 		console.debug(`chat_debug: ${requestId.split(':').shift()} | polling start`, {
 			time: new Date().toLocaleString(),
 			requestId,
+			lastKnownMessageId,
 			marker: `polling from ${lastKnownMessageId}`,
 		})
 		const response = await request({
@@ -1153,7 +1154,10 @@ const actions = {
 		console.debug(`chat_debug: ${requestId.split(':').shift()} | polling end`, {
 			time: new Date().toLocaleString(),
 			requestId,
+			lastKnownMessageId,
 			marker: `${response.data.ocs.data?.length} messages received`,
+			'x-chat-last-common-read': response.headers['x-chat-last-common-read'],
+			'x-chat-last-given': response.headers['x-chat-last-given'],
 		})
 		if ('x-chat-last-common-read' in response.headers) {
 			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
