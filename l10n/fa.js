@@ -1160,6 +1160,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Share files to the conversation",
     "Upload from device" : "Upload from device",
     "Create new poll" : "نظرسنجی جدید ایجاد کنید",
+    "Smart picker" : "Smart picker",
     "Share from {nextcloud}" : "Share from {nextcloud}",
     "Record voice message" : "ضبط پیام صوتی",
     "End recording and send" : "End recording and send",

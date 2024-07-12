@@ -1262,6 +1262,7 @@ OC.L10N.register(
     "Share files to the conversation" : "分享文件到对话",
     "Upload from device" : "从设备上传",
     "Create new poll" : "创建新的投票",
+    "Smart picker" : "Smart Picker",
     "Share from {nextcloud}" : "从{nextcloud}分享",
     "Record voice message" : "录制语音消息",
     "End recording and send" : "结束录音并发送",

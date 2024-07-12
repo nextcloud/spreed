@@ -1255,6 +1255,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Dateien mit der Unterhaltung teilen",
     "Upload from device" : "Von Gerät hochladen",
     "Create new poll" : "Neue Umfrage erstellen",
+    "Smart picker" : "Intelligente Auswahl",
     "Share from {nextcloud}" : "Von {nextcloud} teilen",
     "Record voice message" : "Sprachnachricht aufnehmen",
     "End recording and send" : "Aufnahme beenden und senden",

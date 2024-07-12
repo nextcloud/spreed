@@ -1259,6 +1259,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Sdílet soubory do konverzace",
     "Upload from device" : "Nahrát ze zařízení",
     "Create new poll" : "Vytvořit novou anketu",
+    "Smart picker" : "Inteligentní výběr",
     "Share from {nextcloud}" : "Nasdílet z {nextcloud}",
     "Record voice message" : "Nahrát hlasovou zprávu",
     "End recording and send" : "Ukončit pořizování nahrávky a odeslat",

@@ -764,6 +764,7 @@ OC.L10N.register(
     "The message could not be edited" : "Nun se pudo editar el mensaxe",
     "File upload is not available in this conversation" : "La xuba de ficheros nun ta disponible nesta conversación",
     "Group" : "Grupu",
+    "Smart picker" : "Selector intelixente",
     "Name of the new file" : "Nome del ficheru nuevu",
     "New file" : "Ficheru nuevu",
     "Blank" : "Baleru",
