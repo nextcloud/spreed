@@ -1119,6 +1119,11 @@ const actions = {
 	 * @param {number} data.lastKnownMessageId The id of the last message in the store.
 	 */
 	async lookForNewMessages(context, { token, lastKnownMessageId, requestId, requestOptions }) {
+		console.debug(`chat_debug: ${requestId.split(':').shift()} | cancel`, {
+			time: new Date().toLocaleString(),
+			requestId,
+			marker: 'lookForNewMessages action',
+		})
 		context.dispatch('cancelLookForNewMessages', { requestId })
 
 		if (!lastKnownMessageId) {
@@ -1132,14 +1137,24 @@ const actions = {
 
 		// Assign the new cancel function to our data value
 		context.commit('setCancelLookForNewMessages', { cancelFunction: cancel, requestId })
-
+		console.time(`chat_debug: ${requestId.split(':').shift()} | polling time`)
+		console.debug(`chat_debug: ${requestId.split(':').shift()} | polling start`, {
+			time: new Date().toLocaleString(),
+			requestId,
+			marker: `polling from ${lastKnownMessageId}`,
+		})
 		const response = await request({
 			token,
 			lastKnownMessageId,
 			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
 		context.commit('setCancelLookForNewMessages', { requestId })
-
+		console.timeEnd(`chat_debug: ${requestId.split(':').shift()} | polling time`)
+		console.debug(`chat_debug: ${requestId.split(':').shift()} | polling end`, {
+			time: new Date().toLocaleString(),
+			requestId,
+			marker: `${response.data.ocs.data?.length} messages received`,
+		})
 		if ('x-chat-last-common-read' in response.headers) {
 			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
 			context.dispatch('updateLastCommonReadMessage', {

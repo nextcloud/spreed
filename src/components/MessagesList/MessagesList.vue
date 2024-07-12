@@ -270,6 +270,11 @@ export default {
 			immediate: true,
 			handler(newValue, oldValue) {
 				if (oldValue) {
+					console.debug(`chat_debug: ${oldValue.split(':').shift()} | cancel`, {
+						time: new Date().toLocaleString(),
+						requestId: oldValue,
+						marker: 'chatIdentifier watcher',
+					})
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
 				this.handleStartGettingMessagesPreconditions(this.token)
@@ -335,6 +340,11 @@ export default {
 		EventBus.$off('focus-message', this.focusMessage)
 		EventBus.$off('route-change', this.onRouteChange)
 
+		console.debug(`chat_debug: ${this.chatIdentifier.split(':').shift()} | cancel`, {
+			time: new Date().toLocaleString(),
+			requestId: this.chatIdentifier,
+			marker: 'beforeDestroy hook',
+		})
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
 
@@ -665,6 +675,11 @@ export default {
 				await this.lookForNewMessages(token)
 
 			} else {
+				console.debug(`chat_debug: ${this.chatIdentifier.split(':').shift()} | cancel`, {
+					time: new Date().toLocaleString(),
+					requestId: this.chatIdentifier,
+					marker: 'preconditions else block',
+				})
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
 		},
@@ -757,17 +772,24 @@ export default {
 				return
 			}
 			// Make the request
+			const requestId = this.chatIdentifier
 			try {
 				// TODO: move polling logic to the store and also cancel timers on cancel
 				this.pollingErrorTimeout = 1
 				await this.$store.dispatch('lookForNewMessages', {
 					token,
 					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(token),
-					requestId: this.chatIdentifier,
+					requestId,
 				})
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
+					console.timeEnd(`chat_debug: ${requestId.split(':').shift()} | polling time`)
+					console.debug(`chat_debug: ${requestId.split(':').shift()} | polling end`, {
+						time: new Date().toLocaleString(),
+						requestId,
+						marker: 'cancelled request',
+					})
 					return
 				}
 
@@ -775,6 +797,12 @@ export default {
 					// 304 - Not modified
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
+					console.timeEnd(`chat_debug: ${requestId.split(':').shift()} | polling time`)
+					console.debug(`chat_debug: ${requestId.split(':').shift()} | polling end`, {
+						time: new Date().toLocaleString(),
+						requestId,
+						marker: '304 not modified',
+					})
 					setTimeout(() => {
 						this.getNewMessages(token)
 					}, 500)
@@ -787,6 +815,12 @@ export default {
 				}
 
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
+				console.timeEnd(`chat_debug: ${requestId.split(':').shift()} | polling time`)
+				console.debug(`chat_debug: ${requestId.split(':').shift()} | polling end`, {
+					time: new Date().toLocaleString(),
+					requestId,
+					marker: 'unknown error',
+				})
 
 				setTimeout(() => {
 					this.getNewMessages(token)
@@ -1155,6 +1189,11 @@ export default {
 		handleNetworkOffline() {
 			console.debug('Canceling message request as we are offline')
 			if (this.cancelLookForNewMessages) {
+				console.debug(`chat_debug: ${this.chatIdentifier.split(':').shift()} | cancel`, {
+					time: new Date().toLocaleString(),
+					requestId: this.chatIdentifier,
+					marker: 'network offline',
+				})
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
 		},
