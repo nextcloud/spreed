@@ -1326,6 +1326,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Görüşmede dosya paylaş",
     "Upload from device" : "Aygıttan yükle",
     "Create new poll" : "Anket ekle",
+    "Smart picker" : "Akıllı seçici",
     "Share from {nextcloud}" : "{nextcloud} üzerinden paylaş",
     "Record voice message" : "Ses iletisi kaydet",
     "End recording and send" : "Kaydı bitirip gönder",

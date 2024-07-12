@@ -1068,6 +1068,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Споделяне на файлове в разговора",
     "Upload from device" : "Качване от устройство",
     "Create new poll" : "Създаване на нова анкета",
+    "Smart picker" : "Смарт /интелигентен/ инструмент за избор",
     "Share from {nextcloud}" : "Споделяне от {nextcloud}",
     "Record voice message" : "Запис на гласово съобщение",
     "End recording and send" : "Край на записа и изпращане",

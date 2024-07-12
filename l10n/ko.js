@@ -1263,6 +1263,7 @@ OC.L10N.register(
     "Share files to the conversation" : "대화로 파일 공유",
     "Upload from device" : "이 기기에서 업로드",
     "Create new poll" : "새 투표 만들기",
+    "Smart picker" : "스마트 피커",
     "Share from {nextcloud}" : "{nextcloud}에서 공유",
     "Record voice message" : "음성 메시지 녹음",
     "End recording and send" : "녹음 종료 및 보내기",
