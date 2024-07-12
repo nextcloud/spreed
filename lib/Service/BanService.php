@@ -33,7 +33,7 @@ class BanService {
 			throw new \InvalidArgumentException('bannedActor');
 		}
 
-		if (empty($internalNote)) {
+		if (strlen($internalNote) > Ban::NOTE_MAX_LENGTH) {
 			throw new \InvalidArgumentException('internalNote');
 		}
 

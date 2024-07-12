@@ -32,6 +32,8 @@ use OCP\AppFramework\Db\Entity;
  * @method null|string getInternalNote()
  */
 class Ban extends Entity implements \JsonSerializable {
+	public const NOTE_MAX_LENGTH = 4000;
+
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected int $roomId = 0;

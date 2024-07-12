@@ -2389,7 +2389,7 @@ export interface operations {
                 actorType: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "ip";
                 /** @description Actor ID or the IP address or range in case of type `ip` */
                 actorId: string;
-                /** @description Optional internal note */
+                /** @description Optional internal note (max. 4000 characters) */
                 internalNote?: string;
             };
             header: {

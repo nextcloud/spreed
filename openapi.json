@@ -1890,7 +1890,7 @@
                     {
                         "name": "internalNote",
                         "in": "query",
-                        "description": "Optional internal note",
+                        "description": "Optional internal note (max. 4000 characters)",
                         "schema": {
                             "type": "string",
                             "default": ""
