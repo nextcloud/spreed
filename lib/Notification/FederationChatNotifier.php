@@ -13,6 +13,7 @@ use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\ProxyCacheMessage;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Services\IAppConfig;
@@ -41,6 +42,11 @@ class FederationChatNotifier {
 
 		if (isset($metaData[Message::METADATA_SILENT])) {
 			// Silent message, skip notification handling
+			return;
+		}
+
+		if ($participant->getSession() instanceof Session) {
+			// User has an active session
 			return;
 		}
 
