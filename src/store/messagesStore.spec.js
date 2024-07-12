@@ -1300,6 +1300,7 @@ describe('messagesStore', () => {
 
 			await store.dispatch('lookForNewMessages', {
 				token: TOKEN,
+				requestId: 'request1',
 				lastKnownMessageId: 100,
 				requestOptions: {
 					dummyOption: true,
@@ -1349,6 +1350,7 @@ describe('messagesStore', () => {
 
 			await store.dispatch('lookForNewMessages', {
 				token: TOKEN,
+				requestId: 'request1',
 				lastKnownMessageId: 100,
 				requestOptions: {
 					dummyOption: true,
@@ -1464,6 +1466,7 @@ describe('messagesStore', () => {
 
 				await store.dispatch('lookForNewMessages', {
 					token: TOKEN,
+					requestId: 'request1',
 					lastKnownMessageId: 100,
 				})
 
