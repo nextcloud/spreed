@@ -12,8 +12,7 @@
 				type="primary"
 				:wide="true"
 				:disabled="isRequestInProgress"
-				@click="requestPassword"
-				@keydown.enter="requestPassword">
+				@click="requestPassword">
 				{{ t('spreed', 'Request password') }}
 			</NcButton>
 		</div>
