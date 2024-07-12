@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.6 – 2024-07-12
+### Fixed
+- fix(chat): Fix broken widgets by updating nextcloud/vue library
+  [#12610](https://github.com/nextcloud/spreed/pull/12610)
+- fix(chat): Fix sidebar opening and closing
+  [#12610](https://github.com/nextcloud/spreed/pull/12610)
+- fix(federation): Allow sessions to mark themselves as inactive and block notifications when session is active
+  [#12689](https://github.com/nextcloud/spreed/pull/12689)
+- fix(federation): Correctly handle federation with Nextcloud Server 29.0.4 or later - Part 2
+  [#12687](https://github.com/nextcloud/spreed/pull/12687)
+
 ## 19.0.5 – 2024-07-11
 ### Fixed
 - fix(federation): Correctly handle federation with Nextcloud Server 29.0.4 or later
