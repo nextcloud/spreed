@@ -37,6 +37,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\NoteToSelfService;
@@ -108,6 +109,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected Authenticator $federationAuthenticator,
 		protected Capabilities $capabilities,
 		protected FederationManager $federationManager,
+		protected BanService $banService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1512,13 +1514,10 @@ class RoomController extends AEnvironmentAwareController {
 			return $response;
 		}
 
-		if (strtolower($room->getName()) === 'ban user' && $this->userId === 'banned') {
-			return new DataResponse([
-				'error' => 'ban',
-			], Http::STATUS_FORBIDDEN);
-		}
-
-		if (strtolower($room->getName()) === 'ban guest' && !$this->userId) {
+		try {
+			$this->banService->throwIfActorIsBanned($room, $this->userId);
+		} catch (ForbiddenException $e) {
+			$this->logger->info('Participant ' . ($this->userId ?? 'guest') . ' is banned from room ' . $token . ' by ' . $e->getMessage());
 			return new DataResponse([
 				'error' => 'ban',
 			], Http::STATUS_FORBIDDEN);
@@ -1593,6 +1592,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
+				$this->session->setGuestActorIdForRoom($room->getToken(), $participant->getAttendee()->getActorId());
 			}
 			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
 			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomToken', ['token' => $token, 'action' => 'talkRoomToken']);

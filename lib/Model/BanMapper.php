@@ -28,7 +28,7 @@ class BanMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findForActorAndRoom(string $bannedActorType, string $bannedActorId, int $roomId): Ban {
+	public function findForBannedActorAndRoom(string $bannedActorType, string $bannedActorId, int $roomId): Ban {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())

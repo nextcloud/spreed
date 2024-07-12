@@ -9,14 +9,19 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use DateTime;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
 use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\DB\Exception;
+use OCP\IRequest;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class BanService {
 
@@ -25,6 +30,9 @@ class BanService {
 		protected Manager $manager,
 		protected ParticipantService $participantService,
 		protected IUserManager $userManager,
+		protected TalkSession $talkSession,
+		protected IRequest $request,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -87,13 +95,62 @@ class BanService {
 		return $this->banMapper->insert($ban);
 	}
 
+	public function copyBanForRemoteAddress(Ban $ban, string $remoteAddress): void {
+		$this->logger->info('Banned guest detected, banning IP address: ' . $remoteAddress . ' to prevent rejoining.');
+
+		$newBan = new Ban();
+		$newBan->setModeratorActorType($ban->getModeratorActorType());
+		$newBan->setModeratorActorId($ban->getModeratorActorId());
+		$newBan->setModeratorDisplayname($ban->getModeratorDisplayname());
+		$newBan->setRoomId($ban->getRoomId());
+		$newBan->setBannedTime($ban->getBannedTime());
+		$newBan->setInternalNote($ban->getInternalNote());
+
+		$newBan->setBannedActorType('ip');
+		$newBan->setBannedActorId($remoteAddress);
+
+		try {
+			$this->banMapper->insert($newBan);
+		} catch (Exception $e) {
+			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+				return;
+			}
+			throw $e;
+		}
+	}
+
 	/**
-	 * Retrieve a ban for a specific actor and room.
-	 *
-	 * @throws DoesNotExistException
+	 * @throws ForbiddenException
 	 */
-	public function getBanForActorAndRoom(string $bannedActorType, string $bannedActorId, int $roomId): Ban {
-		return $this->banMapper->findForActorAndRoom($bannedActorType, $bannedActorId, $roomId);
+	public function throwIfActorIsBanned(Room $room, ?string $userId): void {
+		if ($userId !== null) {
+			$actorType = Attendee::ACTOR_USERS;
+			$actorId = $userId;
+		} else {
+			$actorType = Attendee::ACTOR_GUESTS;
+			$actorId = $this->talkSession->getGuestActorIdForRoom($room->getToken());
+		}
+
+		if ($actorId !== null) {
+			try {
+				$ban = $this->banMapper->findForBannedActorAndRoom($actorType, $actorId, $room->getId());
+				if ($actorType === Attendee::ACTOR_GUESTS) {
+					$this->copyBanForRemoteAddress($ban, $this->request->getRemoteAddress());
+				}
+				throw new ForbiddenException('actor');
+			} catch (DoesNotExistException) {
+			}
+		}
+
+		if ($actorType !== Attendee::ACTOR_GUESTS) {
+			return;
+		}
+
+		try {
+			$this->banMapper->findForBannedActorAndRoom($this->request->getRemoteAddress(), 'ip', $room->getId());
+			throw new ForbiddenException('ip');
+		} catch (DoesNotExistException) {
+		}
 	}
 
 	/**

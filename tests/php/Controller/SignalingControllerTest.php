@@ -19,6 +19,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -72,6 +73,7 @@ class SignalingControllerTest extends TestCase {
 	protected ITimeFactory&MockObject $timeFactory;
 	protected IClientService&MockObject $clientService;
 	protected IThrottler&MockObject $throttler;
+	protected BanService&MockObject $banService;
 	protected LoggerInterface&MockObject $logger;
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
@@ -111,6 +113,7 @@ class SignalingControllerTest extends TestCase {
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->clientService = $this->createMock(IClientService::class);
+		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->recreateSignalingController();
 	}
@@ -132,8 +135,9 @@ class SignalingControllerTest extends TestCase {
 			$this->dispatcher,
 			$this->timeFactory,
 			$this->clientService,
+			$this->banService,
 			$this->logger,
-			$this->userId
+			$this->userId,
 		);
 	}
 

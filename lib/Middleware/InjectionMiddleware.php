@@ -10,6 +10,7 @@ namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Controller\AEnvironmentAwareController;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -35,6 +36,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -65,6 +67,7 @@ class InjectionMiddleware extends Middleware {
 		protected IURLGenerator $url,
 		protected InvitationMapper $invitationMapper,
 		protected Authenticator $federationAuthenticator,
+		protected BanService $banService,
 		protected LoggerInterface $logger,
 		protected ?string $userId,
 	) {
@@ -77,6 +80,7 @@ class InjectionMiddleware extends Middleware {
 	 * @throws ParticipantNotFoundException
 	 * @throws PermissionsException
 	 * @throws ReadOnlyException
+	 * @throws ForbiddenException
 	 * @throws RoomNotFoundException
 	 */
 	public function beforeController(Controller $controller, string $methodName): void {
@@ -151,11 +155,14 @@ class InjectionMiddleware extends Middleware {
 
 	/**
 	 * @param AEnvironmentAwareController $controller
+	 * @throws ForbiddenException
 	 */
 	protected function getRoom(AEnvironmentAwareController $controller): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomByToken($token);
 		$controller->setRoom($room);
+
+		$this->banService->throwIfActorIsBanned($room, $this->userId);
 	}
 
 	/**
@@ -171,6 +178,8 @@ class InjectionMiddleware extends Middleware {
 
 		$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
 		$controller->setParticipant($participant);
+
+		$this->banService->throwIfActorIsBanned($room, $this->userId);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions(false)) {
 			throw new NotAModeratorException();
@@ -226,6 +235,8 @@ class InjectionMiddleware extends Middleware {
 				}
 			}
 		}
+
+		$this->banService->throwIfActorIsBanned($room, $this->userId);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
 			throw new NotAModeratorException();
@@ -386,6 +397,7 @@ class InjectionMiddleware extends Middleware {
 
 		if ($exception instanceof NotAModeratorException ||
 			$exception instanceof ReadOnlyException ||
+			$exception instanceof ForbiddenException ||
 			$exception instanceof PermissionsException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_FORBIDDEN);
