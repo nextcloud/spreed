@@ -1138,6 +1138,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Partekatu fitxategiak elkarrizketan",
     "Upload from device" : "Igo gailutik",
     "Create new poll" : "Sortu inkesta berria",
+    "Smart picker" : "Hautatzaile adimenduna",
     "Share from {nextcloud}" : "Partekatu {nextcloud} bidez",
     "Record voice message" : "Grabatu ahots mezua",
     "End recording and send" : "Amaitu grabazioa eta bidali",

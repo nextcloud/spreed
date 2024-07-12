@@ -1337,6 +1337,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Del filer til samtalen",
     "Upload from device" : "Last opp fra enhet",
     "Create new poll" : "Opprett ny avstemning",
+    "Smart picker" : "Smartvelger",
     "Share from {nextcloud}" : "Del fra {nextcloud}",
     "Record voice message" : "Ta opp talemelding",
     "End recording and send" : "Avslutt opptak og send",

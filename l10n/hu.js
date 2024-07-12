@@ -1205,6 +1205,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Fájlok megosztása a beszélgetéssel",
     "Upload from device" : "Feltöltés az eszközről",
     "Create new poll" : "Új szavazás létrehozása",
+    "Smart picker" : "Okos választó",
     "Share from {nextcloud}" : "Megosztás innen: {nextcloud}",
     "Record voice message" : "Hangüzenet rögzítése",
     "End recording and send" : "Felvétel befejezése és küldés",

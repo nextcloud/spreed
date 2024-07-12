@@ -426,6 +426,7 @@ OC.L10N.register(
     "Password protect" : "Proteger con contraseña",
     "Group" : "Grupo",
     "Create new poll" : "Crear nueva encuesta",
+    "Smart picker" : "Selector inteligente",
     "New file" : "Archivo nuevo",
     "Blank" : "Vacío",
     "Settings" : "Configuraciones ",

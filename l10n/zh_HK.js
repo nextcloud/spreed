@@ -1337,6 +1337,7 @@ OC.L10N.register(
     "Share files to the conversation" : "在對話中分享文件",
     "Upload from device" : "從裝置上傳",
     "Create new poll" : "創建新民意調查",
+    "Smart picker" : "聰明的選擇器",
     "Share from {nextcloud}" : "透過 {nextcloud} 分享",
     "Record voice message" : "錄製話音短訊",
     "End recording and send" : "結束錄音並傳送",

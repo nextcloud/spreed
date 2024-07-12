@@ -454,6 +454,7 @@ OC.L10N.register(
     "Group" : "Gruppe",
     "Upload from device" : "Upload fra enhed",
     "Create new poll" : "Opret ny afstemning",
+    "Smart picker" : "Smart Vælger",
     "Share from {nextcloud}" : "Del fra {nextcloud}",
     "New file" : "Ny fil",
     "Blank" : "Tom",
