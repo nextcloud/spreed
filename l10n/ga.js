@@ -1524,6 +1524,7 @@ OC.L10N.register(
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Is féidir fuaimeanna le haghaidh fógraí comhrá agus glaonna a choigeartú sna socruithe pearsanta.",
     "Performance" : "Feidhmíocht",
     "Blur background image in the call (may increase GPU load)" : "Doiléirigh íomhá chúlra sa ghlao (d'fhéadfadh sé ualach GPU a mhéadú)",
+    "Background blur for Nextcloud instance can be adjusted in the theming settings." : "Is féidir geamhú an chúlra do shampla Nextcloud a choigeartú sna socruithe téamaí.",
     "Keyboard shortcuts" : "Aicearraí méarchláir",
     "Speed up your Talk experience with these quick shortcuts." : "Déan d'eispéireas Talk a bhrostú leis na haicearraí tapaidh seo.",
     "Focus the chat input" : "Dírigh an t-ionchur comhrá",
