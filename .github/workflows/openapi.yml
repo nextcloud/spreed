@@ -26,14 +26,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Get php version
         id: php_versions
         uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
 
       - name: Set up php
-        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2
+        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2.31.0
         with:
           php-version: ${{ steps.php_versions.outputs.php-available }}
           extensions: xml
@@ -66,7 +66,7 @@ jobs:
 
       - name: Set up npm ${{ steps.node_versions.outputs.npmVersion }}
         if: ${{ steps.node_versions.outputs.nodeVersion }}
-        run: npm i -g npm@"${{ steps.node_versions.outputs.npmVersion }}"
+        run: npm i -g 'npm@${{ steps.node_versions.outputs.npmVersion }}'
 
       - name: Install dependencies & build
         if: ${{ steps.node_versions.outputs.nodeVersion }}

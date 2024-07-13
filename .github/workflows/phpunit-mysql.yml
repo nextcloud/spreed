@@ -24,7 +24,7 @@ jobs:
       matrix: ${{ steps.versions.outputs.sparse-matrix }}
     steps:
       - name: Checkout app
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Get version matrix
         id: versions
@@ -34,6 +34,9 @@ jobs:
 
   changes:
     runs-on: ubuntu-latest-low
+    permissions:
+      contents: read
+      pull-requests: read
 
     outputs:
       src: ${{ steps.changes.outputs.src}}
@@ -83,19 +86,19 @@ jobs:
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
       - name: Checkout server
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
 
       - name: Checkout app
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           path: apps/${{ env.APP_NAME }}
 
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2
+        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2.31.0
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -108,7 +111,7 @@ jobs:
       - name: Enable ONLY_FULL_GROUP_BY MySQL option
         run: |
           echo "SET GLOBAL sql_mode=(SELECT CONCAT(@@sql_mode,',ONLY_FULL_GROUP_BY'));" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
-          echo "SELECT @@sql_mode;" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+          echo 'SELECT @@sql_mode;' | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
 
       - name: Check composer file existence
         id: check_composer
@@ -135,7 +138,7 @@ jobs:
         continue-on-error: true
         working-directory: apps/${{ env.APP_NAME }}
         run: |
-          composer run --list | grep "^  test:unit " | wc -l | grep 1
+          composer run --list | grep '^  test:unit ' | wc -l | grep 1
 
       - name: PHPUnit
         # Only run if phpunit config file exists
@@ -148,7 +151,7 @@ jobs:
         continue-on-error: true
         working-directory: apps/${{ env.APP_NAME }}
         run: |
-          composer run --list | grep "^  test:integration " | wc -l | grep 1
+          composer run --list | grep '^  test:integration ' | wc -l | grep 1
 
       - name: Run Nextcloud
         # Only run if phpunit integration config file exists
