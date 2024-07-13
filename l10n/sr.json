@@ -1522,6 +1522,7 @@
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Звукови за обавештења о чету и позиву могу да се подесе у личним подешавањима.",
     "Performance" : "Перформансе",
     "Blur background image in the call (may increase GPU load)" : "Замути слику позадини током позива (може да повећа оптерећење GPU)",
+    "Background blur for Nextcloud instance can be adjusted in the theming settings." : "Замућење позадине за Nextcloud инстанце се може поставити у подешавањима теме",
     "Keyboard shortcuts" : "Пречице на тастатури",
     "Speed up your Talk experience with these quick shortcuts." : "Убрзајте своје Talk искуство следећим брзим пречицама.",
     "Focus the chat input" : "Фокусирање чет уноса",
