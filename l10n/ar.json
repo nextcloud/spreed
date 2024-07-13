@@ -1522,6 +1522,7 @@
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "يمكن تعديل أصوات تنبيهات الدردشة والمكالمات من الإعدادات الشخصية.",
     "Performance" : "سرعة الأداء",
     "Blur background image in the call (may increase GPU load)" : "طمس صورة الخلفية في المكالمة (يمكن أن تتسبب في زيادة العبء على المعالج GPU)",
+    "Background blur for Nextcloud instance can be adjusted in the theming settings." : "تضبيب الخلفية في نكست كلاود يمكن ضبطه من خلال إعدادات الثيمات theming",
     "Keyboard shortcuts" : "إختصارات لوحة المفاتيح",
     "Speed up your Talk experience with these quick shortcuts." : "استخدم الاختصارات التالية لتجربة سريعه مع تطبيق التحدث",
     "Focus the chat input" : "تركيز على إدخال الدردشة",
