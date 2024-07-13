@@ -1522,6 +1522,7 @@
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Die Töne für Chat- und Anrufbenachrichtigungen können in den persönlichen Einstellungen angepasst werden.",
     "Performance" : "Leistung",
     "Blur background image in the call (may increase GPU load)" : "Unscharfes Hintergrundbild für den Anruf (kann die GPU-Auslastung erhöhen)",
+    "Background blur for Nextcloud instance can be adjusted in the theming settings." : "Die Hintergrundunschärfe für die Nextcloud-Instanz kann in den Designeinstellungen angepasst werden.",
     "Keyboard shortcuts" : "Tastaturkürzel",
     "Speed up your Talk experience with these quick shortcuts." : "Beschleunigen Sie Ihr Gesprächserlebnis mit diesen Schnell-Verknüpfungen.",
     "Focus the chat input" : "Chat-Eingabe in den Vordergrund",
