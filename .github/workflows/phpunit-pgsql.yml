@@ -2,6 +2,9 @@
 #
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2022-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
 
 name: PHPUnit PostgreSQL
 
@@ -22,7 +25,7 @@ jobs:
       server-max: ${{ steps.versions.outputs.branches-max-list }}
     steps:
       - name: Checkout app
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Get version matrix
         id: versions
@@ -30,9 +33,12 @@ jobs:
 
   changes:
     runs-on: ubuntu-latest-low
+    permissions:
+      contents: read
+      pull-requests: read
 
     outputs:
-      src: ${{ steps.changes.outputs.src}}
+      src: ${{ steps.changes.outputs.src }}
 
     steps:
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
@@ -83,19 +89,19 @@ jobs:
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
       - name: Checkout server
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
 
       - name: Checkout app
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           path: apps/${{ env.APP_NAME }}
 
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@a4e22b60bbb9c1021113f2860347b0759f66fe5d # v2
+        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2.31.0
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -107,7 +113,7 @@ jobs:
 
       - name: Check composer file existence
         id: check_composer
-        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v2
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
         with:
           files: apps/${{ env.APP_NAME }}/composer.json
 
@@ -130,7 +136,7 @@ jobs:
         continue-on-error: true
         working-directory: apps/${{ env.APP_NAME }}
         run: |
-          composer run --list | grep "^  test:unit " | wc -l | grep 1
+          composer run --list | grep '^  test:unit ' | wc -l | grep 1
 
       - name: PHPUnit
         # Only run if phpunit config file exists
@@ -143,7 +149,7 @@ jobs:
         continue-on-error: true
         working-directory: apps/${{ env.APP_NAME }}
         run: |
-          composer run --list | grep "^  test:integration " | wc -l | grep 1
+          composer run --list | grep '^  test:integration ' | wc -l | grep 1
 
       - name: Run Nextcloud
         # Only run if phpunit integration config file exists

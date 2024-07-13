@@ -1,10 +1,13 @@
 # SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: MIT
 
-name: Integration pgsql
+name: Integration MariaDB
 
 on:
   pull_request:
+    paths:
+      # Only running on PR for this file to save CI time (otherwise pgsql only)
+      - '.github/workflows/integration-mariadb.yml'
   schedule:
     - cron: "5 2 * * *"
 
@@ -12,7 +15,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: integration-pgsql-${{ github.head_ref || github.run_id }}
+  group: integration-mariadb-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -40,7 +43,7 @@ jobs:
               - 'composer.json'
               - 'composer.lock'
 
-  integration-pgsql:
+  integration-mariadb:
     runs-on: ubuntu-latest
 
     needs: changes
@@ -50,22 +53,20 @@ jobs:
       fail-fast: false
       matrix:
         test-suite: ['callapi', 'chat-1', 'chat-2', 'command', 'conversation-1', 'conversation-2', 'conversation-3', 'conversation-4', 'conversation-5', 'federation', 'integration', 'sharing-1', 'sharing-2', 'sharing-3', 'sharing-4']
-        php-versions: ['8.3']
+        php-versions: ['8.2']
         server-versions: ['stable29']
         guests-versions: ['stable29']
         call-summary-bot-versions: ['main']
         notifications-versions: ['stable29']
 
     services:
-      postgres:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+      mysql:
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest
         ports:
-          - 4444:5432/tcp
+          - 4444:3306/tcp
         env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: rootpassword
-          POSTGRES_DB: nextcloud
-        options: --health-cmd pg_isready --health-interval 5s --health-timeout 2s --health-retries 5
+          MYSQL_ROOT_PASSWORD: rootpassword
+        options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 10
 
     steps:
       - name: Set app env
@@ -79,10 +80,6 @@ jobs:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
-
-      - name: Patch version check for nightly PHP
-        if: ${{ matrix.php-versions == '8.4' }}
-        run: echo "<?php" > lib/versioncheck.php
 
       - name: Checkout app
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -115,11 +112,9 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
-          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
+          extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, mysql, pdo_mysql
           coverage: none
           ini-file: development
-          # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
-          ini-values: apc.enable_cli=on, disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -136,11 +131,9 @@ jobs:
           DB_PORT: 4444
         run: |
           mkdir data
-          ./occ maintenance:install --verbose --database=pgsql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+          ./occ maintenance:install --verbose --database=mysql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
           ./occ config:system:set debug --value=true --type=boolean
           ./occ config:system:set hashing_default_password --value=true --type=boolean
-          ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
-          ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
           ./occ app:enable --force call_summary_bot
           ./occ app:enable --force guests
@@ -159,12 +152,12 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest-low
-    needs: [changes, integration-pgsql]
+    needs: [changes, integration-mariadb]
 
     if: always()
 
-    name: integration-pgsql-summary
+    name: integration-mariadb-summary
 
     steps:
       - name: Summary status
-        run: if ${{ needs.changes.outputs.src != 'false' && needs.integration-pgsql.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes.outputs.src != 'false' && needs.integration-mariadb.result != 'success' }}; then exit 1; fi
