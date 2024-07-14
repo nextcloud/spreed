@@ -1522,6 +1522,7 @@
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "可以在個人設置中調整聊天和通話通告的聲音。",
     "Performance" : "效能",
     "Blur background image in the call (may increase GPU load)" : "通話中模糊背景影像（可能會增加 GPU 負載）",
+    "Background blur for Nextcloud instance can be adjusted in the theming settings." : "可以在主題設置中調整 Nextcloud 實例的背景模糊效果。",
     "Keyboard shortcuts" : "鍵盤快捷鍵",
     "Speed up your Talk experience with these quick shortcuts." : "這些快速捷徑可加快您的 Talk 體驗。",
     "Focus the chat input" : "關注聊天輸入字段",
