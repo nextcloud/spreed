@@ -5,6 +5,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.7 – 2024-07-15
+### Fixed
+- fix(federation): Fix missing notifications in https-federated conversations (Nextcloud Server 29.0.4 or later - Part 3)
+  [#12724](https://github.com/nextcloud/spreed/pull/12724)
+- fix(chat): Fix chat not loading new messages anymore in new conversation when switching quickly after writing a message
+  [#12721](https://github.com/nextcloud/spreed/pull/12721)
+- fix(chat): Fix missing parent message when a chained child message gets edited or deleted
+  [#12719](https://github.com/nextcloud/spreed/pull/12719)
+
 ## 19.0.6 – 2024-07-12
 ### Fixed
 - fix(chat): Fix broken widgets by updating nextcloud/vue library
