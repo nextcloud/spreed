@@ -103,6 +103,7 @@ class SelectHelper {
 			->addSelect($alias . 'session_id')
 			->addSelect($alias . 'in_call')
 			->addSelect($alias . 'last_ping')
+			->selectAlias($alias . 'state', 's_state')
 			->selectAlias($alias . 'id', 's_id');
 	}
 
@@ -116,6 +117,7 @@ class SelectHelper {
 			// BIT_OR would be better, but SQLite does not support something like it.
 			->selectAlias($query->func()->max($alias . 'in_call'), 'in_call')
 			->selectAlias($query->func()->max($alias . 'last_ping'), 'last_ping')
+			->selectAlias($query->func()->max($alias . 'state'), 's_state')
 			->selectAlias($query->func()->max($alias . 'id'), 's_id');
 	}
 }
