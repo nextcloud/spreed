@@ -12,6 +12,7 @@ import { useConversationInfo } from './useConversationInfo.js'
 import { useStore } from './useStore.js'
 import { ATTENDEE } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { useGuestNameStore } from '../stores/guestName.js'
 
 /**
  * Check whether the user can edit the message or not
@@ -88,7 +89,7 @@ export function useMessageInfo(message = ref({})) {
 			&& message.value.lastEditActorType === currentActorType) {
 			return t('spreed', '(edited by you)')
 		} else if (message.value.lastEditActorId === 'deleted_users'
-					&& message.value.lastEditActorType === 'deleted_users') {
+			&& message.value.lastEditActorType === 'deleted_users') {
 			return t('spreed', '(edited by a deleted user)')
 		} else {
 			return t('spreed', '(edited by {moderator})', { moderator: message.value.lastEditActorDisplayName })
@@ -96,17 +97,14 @@ export function useMessageInfo(message = ref({})) {
 	})
 
 	const actorDisplayName = computed(() => {
-		const displayName = message.value.actorDisplayName.trim()
-
-		if (displayName === '' && message.value.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-			return t('spreed', 'Guest')
+		if (message.value.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			const guestNameStore = useGuestNameStore()
+			return guestNameStore.getGuestName(message.value.token, message.value.actorId)
+		} else {
+			const displayName = message.value.actorDisplayName.trim()
+			return displayName === '' ? t('spreed', 'Deleted user') : displayName
 		}
 
-		if (displayName === '') {
-			return t('spreed', 'Deleted user')
-		}
-
-		return displayName
 	})
 
 	return {
@@ -121,7 +119,6 @@ export function useMessageInfo(message = ref({})) {
 		remoteServer,
 		lastEditor,
 		actorDisplayName,
-
 	}
 
 }

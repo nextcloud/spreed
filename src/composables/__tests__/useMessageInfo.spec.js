@@ -2,9 +2,11 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
 
 import { ATTENDEE, CONVERSATION } from '../../constants.js'
+import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'
 import { useStore } from '../useStore.js'
@@ -30,6 +32,8 @@ describe('message actions', () => {
 	jest.useFakeTimers().setSystemTime(new Date('2024-05-01 17:00:00'))
 
 	beforeEach(() => {
+		setActivePinia(createPinia())
+
 		message = ref({
 			message: 'test message',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -317,6 +321,24 @@ describe('message actions', () => {
 		const result = useMessageInfo(message)
 		// Assert
 		expect(result.actorDisplayName.value).toBe('Guest')
+	})
+
+	test('return guest name from store for messages from guests', () => {
+		// Arrange
+		message.value.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
+		message.value.actorDisplayName = ''
+		message.value.actorId = 'guest-name-1'
+		const guestNameStore = useGuestNameStore()
+		guestNameStore.addGuestName({
+			token: TOKEN,
+			actorId: 'guest-name-1',
+			actorDisplayName: 'guest name',
+		}, { noUpdate: true })
+
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.actorDisplayName.value).toBe('guest name')
 	})
 
 	test('return "deleted user" for messages from deleted users without display name', () => {
