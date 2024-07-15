@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use DateTime;
+use OCA\Talk\Manager;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -17,6 +18,8 @@ class BanService {
 
 	public function __construct(
 		protected BanMapper $banMapper,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
 	) {
 	}
 
@@ -32,6 +35,12 @@ class BanService {
 
 		if (empty($internalNote)) {
 			throw new \InvalidArgumentException('internalNote');
+		}
+
+		$bannedParticipant = $this->participantService->getParticipantByActor($this->manager->getRoomById($roomId), $bannedType, $bannedId);
+
+		if ($bannedParticipant->hasModeratorPermissions()) {
+			throw new \InvalidArgumentException('moderator');
 		}
 
 		$ban = new Ban();
