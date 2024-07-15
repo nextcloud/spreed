@@ -5,38 +5,42 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
+import { computed } from 'vue'
 import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
 
+import * as useMessageInfoModule from '../../../composables/useMessageInfo.js'
 import { ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
-import { useGuestNameStore } from '../../../stores/guestName.js'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
 	let localVue
 	let testStoreConfig
-	let guestNameStore
+	let useMessageInfoSpy
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 		setActivePinia(createPinia())
 
-		guestNameStore = useGuestNameStore()
-
 		testStoreConfig = cloneDeep(storeConfig)
 		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
+		useMessageInfoSpy = jest.spyOn(useMessageInfoModule, 'useMessageInfo')
 	})
 
 	afterEach(() => {
 		jest.clearAllMocks()
+		useMessageInfoSpy.mockRestore()
 	})
 
 	test('renders grouped messages', () => {
+		useMessageInfoSpy.mockReturnValue({
+			actorDisplayName: computed(() => 'actor one'),
+		})
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
 			store,
@@ -125,11 +129,9 @@ describe('MessagesGroup.vue', () => {
 
 	test('renders guest display name', () => {
 		// Arrange
-		guestNameStore.addGuestName({
-			token: TOKEN,
-			actorId: 'actor-1',
-			actorDisplayName: 'guest-one-display-name',
-		}, { noUpdate: false })
+		useMessageInfoSpy.mockReturnValue({
+			actorDisplayName: computed(() => 'guest-one-display-name'),
+		})
 
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
@@ -191,6 +193,11 @@ describe('MessagesGroup.vue', () => {
 	})
 
 	test('renders deleted guest display name', () => {
+		// Arrange
+		useMessageInfoSpy.mockReturnValue({
+			actorDisplayName: computed(() => 'Deleted user'),
+	   })
+
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
 			store,

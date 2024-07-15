@@ -17,8 +17,8 @@
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
 				<span class="messages__author-name">{{ actorDisplayName }}</span>
-				<span v-if="isFederatedUser" class="messages__author-server">{{ getRemoteServer }}</span>
-				<span v-if="lastEditTimestamp" class="messages__author-edit">{{ getLastEditor }}</span>
+				<span v-if="remoteServer" class="messages__author-server">{{ remoteServer }}</span>
+				<span v-if="lastEditor" class="messages__author-edit">{{ lastEditor }}</span>
 			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
@@ -30,11 +30,14 @@
 </template>
 
 <script>
+import { toRefs, computed } from 'vue'
+
 import { t } from '@nextcloud/l10n'
 
 import Message from './Message/Message.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
+import { useMessageInfo } from '../../../composables/useMessageInfo.js'
 import { ATTENDEE, AVATAR } from '../../../constants.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 
@@ -75,10 +78,20 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
+		const { messages } = toRefs(props)
+		const firstMessage = computed(() => messages.value[0])
+		const {
+			remoteServer,
+			lastEditor,
+			actorDisplayName,
+		} = useMessageInfo(firstMessage)
 		return {
 			AVATAR,
-			guestNameStore: useGuestNameStore()
+			guestNameStore: useGuestNameStore(),
+			remoteServer,
+			lastEditor,
+			actorDisplayName,
 		}
 	},
 
@@ -89,50 +102,6 @@ export default {
 
 		actorType() {
 			return this.messages[0].actorType
-		},
-
-		lastEditTimestamp() {
-			return this.messages[0].lastEditTimestamp
-		},
-
-		actorDisplayName() {
-			const displayName = this.messages[0].actorDisplayName.trim()
-
-			if (this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return this.guestNameStore.getGuestName(this.token, this.actorId)
-			}
-
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
-		},
-
-		isFederatedUser() {
-			return this.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
-		},
-
-		getRemoteServer() {
-			return this.isFederatedUser ? '(' + this.actorId.split('@').pop() + ')' : ''
-		},
-
-		getLastEditor() {
-			if (!this.lastEditTimestamp) {
-				return ''
-			} else if (this.messages[0].lastEditActorId === this.actorId
-				&& this.messages[0].lastEditActorType === this.actorType) {
-				// TRANSLATORS Edited by the author of the message themselves
-				return t('spreed', '(edited)')
-			} else if (this.messages[0].lastEditActorId === this.$store.getters.getActorId()
-				&& this.messages[0].lastEditActorType === this.$store.getters.getActorType()) {
-				return t('spreed', '(edited by you)')
-			} else if (this.lastEditActorId === 'deleted_users'
-						&& this.lastEditActorType === 'deleted_users') {
-				return t('spreed', '(edited by a deleted user)')
-			} else {
-				return t('spreed', '(edited by {moderator})', { moderator: this.messages[0].lastEditActorDisplayName })
-			}
 		},
 
 		disableMenu() {

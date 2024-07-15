@@ -20,11 +20,13 @@ components.
 				aria-level="4">
 				<AvatarWrapper :id="message.actorId"
 					:token="message.token"
-					:name="getDisplayName"
+					:name="actorDisplayName"
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
-				{{ getDisplayName }}
+				{{ actorDisplayName }}
+				<span v-if="remoteServer" class="quote__main__author-server">{{ remoteServer }}</span>
+				<span v-if="lastEditor" class="quote__main__author-edit">{{ lastEditor }}</span>
 				<div v-if="editMessage" class="quote__main__edit-hint">
 					<PencilIcon :size="20" />
 					{{ t('spreed', '(editing)') }}
@@ -111,6 +113,9 @@ export default {
 		const {
 			isFileShare,
 			isFileShareWithoutCaption,
+			remoteServer,
+			lastEditor,
+			actorDisplayName,
 		} = useMessageInfo(message)
 
 		return {
@@ -118,29 +123,13 @@ export default {
 			chatExtrasStore,
 			isFileShare,
 			isFileShareWithoutCaption,
+			remoteServer,
+			lastEditor,
+			actorDisplayName,
 		}
 	},
 
 	computed: {
-		/**
-		 * The message actor display name.
-		 *
-		 * @return {string}
-		 */
-		getDisplayName() {
-			const displayName = this.message.actorDisplayName.trim()
-
-			if (displayName === '' && this.message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return t('spreed', 'Guest')
-			}
-
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
-		},
-
 		isOwnMessageQuoted() {
 			return this.message.actorId === this.$store.getters.getActorId()
 				&& this.message.actorType === this.$store.getters.getActorType()
@@ -273,12 +262,20 @@ export default {
 		display: flex;
 		flex-direction: column;
 		flex: 1 1 auto;
+		width: 100%;
 
 		&__author {
 			display: flex;
 			align-items: center;
 			gap: 4px;
 			color: var(--color-text-maxcontrast);
+
+			&-edit,
+			&-server {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		}
 
 		&__text {
