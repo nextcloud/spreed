@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: MIT
 
-name: Integration MariaDB
+name: Integration mariadb
 
 on:
   pull_request:
@@ -60,7 +60,7 @@ jobs:
         notifications-versions: ['stable28']
 
     services:
-      mysql:
+      mariadb:
         image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest
         ports:
           - 4444:3306/tcp
@@ -117,6 +117,11 @@ jobs:
           ini-file: development
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable ONLY_FULL_GROUP_BY MariaDB option
+        run: |
+          echo "SET GLOBAL sql_mode=(SELECT CONCAT(@@sql_mode,',ONLY_FULL_GROUP_BY'));" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+          echo 'SELECT @@sql_mode;' | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
 
       - name: Set up production dependencies
         working-directory: apps/${{ env.APP_NAME }}
