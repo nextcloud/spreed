@@ -38,7 +38,7 @@ class UserConverter {
 	public function convertTypeAndId(Room $room, string $type, string $id): array {
 		if ($type === Attendee::ACTOR_USERS) {
 			$type = Attendee::ACTOR_FEDERATED_USERS;
-			$id .= '@' . $room->getRemoteServer();
+			$id = $this->createCloudIdFromUserIdAndFullServerUrl($id, $room->getRemoteServer());
 		} elseif ($type === Attendee::ACTOR_FEDERATED_USERS) {
 			$localParticipants = $this->getLocalParticipants($room);
 			if (isset($localParticipants[$id])) {
@@ -59,7 +59,7 @@ class UserConverter {
 
 		if ($entry[$typeField] === Attendee::ACTOR_USERS) {
 			$entry[$typeField] = Attendee::ACTOR_FEDERATED_USERS;
-			$entry[$idField] .= '@' . $room->getRemoteServer();
+			$entry[$idField] = $this->createCloudIdFromUserIdAndFullServerUrl($entry[$idField], $room->getRemoteServer());
 		} elseif ($entry[$typeField] === Attendee::ACTOR_FEDERATED_USERS) {
 			$localParticipants = $this->getLocalParticipants($room);
 			if (isset($localParticipants[$entry[$idField]])) {
@@ -86,7 +86,7 @@ class UserConverter {
 				$parameter['server'] = $room->getRemoteServer();
 			} elseif ($parameter['server']) {
 				$localParticipants = $this->getLocalParticipants($room);
-				$cloudId = $parameter['id'] . '@' . $parameter['server'];
+				$cloudId = $this->createCloudIdFromUserIdAndFullServerUrl($parameter['id'], $parameter['server']);
 				if (isset($localParticipants[$cloudId])) {
 					unset($parameter['server']);
 					$parameter['name'] = $localParticipants[$cloudId]['displayName'];
@@ -194,5 +194,12 @@ class UserConverter {
 		}
 
 		return $this->participantsPerRoom[$room->getToken()];
+	}
+
+	protected function createCloudIdFromUserIdAndFullServerUrl(string $userId, string $serverUrl): string {
+		if (str_starts_with($serverUrl, 'https://')) {
+			$serverUrl = substr($serverUrl, strlen('https://'));
+		}
+		return $userId . '@' . $serverUrl;
 	}
 }

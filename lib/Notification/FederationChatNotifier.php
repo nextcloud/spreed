@@ -45,7 +45,7 @@ class FederationChatNotifier {
 			return;
 		}
 
-		if ($participant->getSession() instanceof Session) {
+		if ($participant->getSession() instanceof Session && $participant->getSession()->getState() === Session::STATE_ACTIVE) {
 			// User has an active session
 			return;
 		}

@@ -94,6 +94,7 @@ class SessionMapper extends QBMapper {
 			'attendee_id' => (int) $row['a_id'],
 			'in_call' => (int) $row['in_call'],
 			'last_ping' => (int) $row['last_ping'],
+			'state' => (int) $row['s_state'],
 		]);
 	}
 }
