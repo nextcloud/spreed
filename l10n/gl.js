@@ -662,7 +662,7 @@ OC.L10N.register(
     "South Africa" : "Suráfrica",
     "Zambia" : "Zambia",
     "Zimbabwe" : "Cimbabue",
-    "Invalid date, date format must be YYYY-MM-DD" : "Data incorrecta, o formato da date debe ser AAAA-MM-DD",
+    "Invalid date, date format must be YYYY-MM-DD" : "Data incorrecta, o formato da data debe ser AAAA-MM-DD",
     "Conversation not found" : "Non se atopou a conversa",
     "Path is already shared with this conversation" : "A ruta xa está compartida con esta conversa",
     "Chat, video & audio-conferencing using WebRTC" : "Parolas, conferencias de vídeo e son empregando WebRTC ",
