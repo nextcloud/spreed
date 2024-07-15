@@ -49,6 +49,7 @@ import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+import { debugTimer } from '../utils/debugTimer.ts'
 
 const markAsReadWithoutLast = getCapabilities()?.spreed?.features?.includes('chat-read-last')
 const supportMarkdown = getCapabilities()?.spreed?.features?.includes('markdown-messages')
@@ -980,6 +981,7 @@ const actions = {
 		context.commit('loadedMessagesOfConversation', { token })
 
 		if (minimumVisible > 0) {
+			debugTimer.tick(`${token} | fetch history`, 'first chunk')
 			// There are not yet enough visible messages loaded, so fetch another chunk.
 			// This can happen when a lot of reactions or poll votings happen
 			return await context.dispatch('fetchMessages', {
@@ -1069,6 +1071,7 @@ const actions = {
 		context.commit('loadedMessagesOfConversation', { token })
 
 		if (minimumVisible > 0) {
+			debugTimer.tick(`${token} | get context`, 'first chunk')
 			// There are not yet enough visible messages loaded, so fetch another chunk.
 			// This can happen when a lot of reactions or poll votings happen
 			return await context.dispatch('fetchMessages', {
