@@ -57,10 +57,10 @@ class BanController extends AEnvironmentAwareController {
 
 			$ban = $this->banService->createBan(
 				$this->room,
-				$moderatorActorId,
 				$moderatorActorType,
-				$actorId,
+				$moderatorActorId,
 				$actorType,
+				$actorId,
 				$this->timeFactory->getDateTime(),
 				$internalNote
 			);

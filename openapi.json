@@ -24,10 +24,10 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "actorType",
-                    "actorId",
-                    "bannedType",
-                    "bannedId",
+                    "moderatorActorType",
+                    "moderatorActorId",
+                    "bannedActorType",
+                    "bannedActorId",
                     "bannedTime",
                     "internalNote"
                 ],
@@ -36,16 +36,16 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "actorType": {
+                    "moderatorActorType": {
                         "type": "string"
                     },
-                    "actorId": {
+                    "moderatorActorId": {
                         "type": "string"
                     },
-                    "bannedType": {
+                    "bannedActorType": {
                         "type": "string"
                     },
-                    "bannedId": {
+                    "bannedActorId": {
                         "type": "string"
                     },
                     "bannedTime": {

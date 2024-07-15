@@ -1262,10 +1262,10 @@ export type components = {
         Ban: {
             /** Format: int64 */
             id: number;
-            actorType: string;
-            actorId: string;
-            bannedType: string;
-            bannedId: string;
+            moderatorActorType: string;
+            moderatorActorId: string;
+            bannedActorType: string;
+            bannedActorId: string;
             /** Format: int64 */
             bannedTime: number;
             internalNote: string;

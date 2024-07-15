@@ -31,8 +31,8 @@ class BanService {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function createBan(Room $room, string $actorId, string $actorType, string $bannedId, string $bannedType, DateTime $bannedTime, string $internalNote): Ban {
-		if (empty($bannedId) || empty($bannedType)) {
+	public function createBan(Room $room, string $moderatorActorType, string $moderatorActorId, string $bannedActorType, string $bannedActorId, DateTime $bannedTime, string $internalNote): Ban {
+		if (empty($bannedActorId) || empty($bannedActorType)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
 
@@ -40,13 +40,13 @@ class BanService {
 			throw new \InvalidArgumentException('internalNote');
 		}
 
-		if ($bannedType === $actorType && $bannedId === $actorId) {
+		if ($bannedActorType === $moderatorActorType && $bannedActorId === $moderatorActorId) {
 			throw new \InvalidArgumentException('self');
 		}
 
-		if (in_array($bannedType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
+		if (in_array($bannedActorType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
 			try {
-				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedType, $bannedId);
+				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
 				if ($bannedParticipant->hasModeratorPermissions()) {
 					throw new \InvalidArgumentException('moderator');
 				}
@@ -56,11 +56,11 @@ class BanService {
 		}
 
 		$ban = new Ban();
-		$ban->setActorId($actorId);
-		$ban->setActorType($actorType);
+		$ban->setModeratorActorId($moderatorActorId);
+		$ban->setModeratorActorType($moderatorActorType);
 		$ban->setRoomId($room->getId());
-		$ban->setBannedId($bannedId);
-		$ban->setBannedType($bannedType);
+		$ban->setBannedActorId($bannedActorId);
+		$ban->setBannedActorType($bannedActorType);
 		$ban->setBannedTime($bannedTime);
 		$ban->setInternalNote($internalNote);
 
@@ -72,8 +72,8 @@ class BanService {
 	 *
 	 * @throws DoesNotExistException
 	 */
-	public function getBanForActorAndRoom(string $actorId, string $actorType, int $roomId): Ban {
-		return $this->banMapper->findForActorAndRoom($actorId, $actorType, $roomId);
+	public function getBanForActorAndRoom(string $moderatorActorType, string $moderatorActorId, int $roomId): Ban {
+		return $this->banMapper->findForActorAndRoom($moderatorActorType, $moderatorActorId, $roomId);
 	}
 
 	/**

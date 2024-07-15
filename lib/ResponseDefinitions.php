@@ -12,10 +12,10 @@ namespace OCA\Talk;
 /**
  * @psalm-type TalkBan = array{
  *     id: int,
- *     actorType: string,
- *     actorId: string,
- *     bannedType: string,
- *     bannedId: string,
+ *     moderatorActorType: string,
+ *     moderatorActorId: string,
+ *     bannedActorType: string,
+ *     bannedActorId: string,
  *     bannedTime: int,
  *     internalNote: string,
  * }
