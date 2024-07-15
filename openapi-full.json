@@ -1983,6 +1983,7 @@
                             "enum": [
                                 "users",
                                 "groups",
+                                "guests",
                                 "circles",
                                 "emails",
                                 "federated_users",
@@ -2003,7 +2004,7 @@
                     {
                         "name": "internalNote",
                         "in": "query",
-                        "description": "Optional internal note",
+                        "description": "Optional internal note (max. 4000 characters)",
                         "schema": {
                             "type": "string",
                             "default": ""
@@ -2102,7 +2103,9 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "bannedActor",
-                                                                "internalNote"
+                                                                "internalNote",
+                                                                "moderator",
+                                                                "self"
                                                             ]
                                                         }
                                                     }
