@@ -309,7 +309,14 @@ const mutations = {
 		if (!state.messages[token]) {
 			Vue.set(state.messages, token, {})
 		}
-		Vue.set(state.messages[token], message.id, message)
+		// TODO split adding and updating message in the store to different actions
+		// message.parent doesn't contain grand-parent, so we should keep it
+		// when updating message in store from new message.parent object
+		const storedMessage = state.messages[token][message.id]
+		const preparedMessage = !message.parent && storedMessage?.parent
+			? { ...message, parent: storedMessage.parent }
+			: message
+		Vue.set(state.messages[token], message.id, preparedMessage)
 	},
 	/**
 	 * Deletes a message from the store.
