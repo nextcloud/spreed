@@ -756,6 +756,11 @@ export default {
 			if (this.destroying) {
 				return
 			}
+			// Check that the token has not changed
+			if (this.token !== token) {
+				console.debug(`token has changed to ${this.token}, breaking the loop for ${token}`)
+				return
+			}
 			// Make the request
 			try {
 				// TODO: move polling logic to the store and also cancel timers on cancel
