@@ -95,7 +95,7 @@ jobs:
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
         env:
-          NODE_ENV: production
+          CYPRESS_INSTALL_BINARY: 0
         run: |
           cd ${{ env.APP_NAME }}
           npm ci
