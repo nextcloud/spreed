@@ -1983,6 +1983,7 @@
                             "enum": [
                                 "users",
                                 "groups",
+                                "guests",
                                 "circles",
                                 "emails",
                                 "federated_users",
@@ -2102,7 +2103,9 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "bannedActor",
-                                                                "internalNote"
+                                                                "internalNote",
+                                                                "moderator",
+                                                                "self"
                                                             ]
                                                         }
                                                     }

@@ -63,7 +63,7 @@ Feature: conversation/ban
         | roomType | 3 |
         | roomName | room |
         And user "participant2" joins room "room" with 200 (v4)
-        And user "participant1" bans user "participant3" from room "room" with 404 (v1)
+        And user "participant1" bans user "participant3" from room "room" with 200 (v1)
             | internalNote | BannedInvalid |
 
     Scenario: Moderator trying to ban themselves
@@ -73,7 +73,7 @@ Feature: conversation/ban
         And user "participant1" joins room "room" with 200 (v4)
         And user "participant1" bans user "participant1" from room "room" with 400 (v1)
             | internalNote | BannedP1 |
-    
+
     Scenario: Moderator trying to ban moderator
         Given user "participant1" creates room "room" (v4)
         | roomType | 3 |
@@ -93,7 +93,7 @@ Feature: conversation/ban
 
 
 
-    
+
 
 
 
