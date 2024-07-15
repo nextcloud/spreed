@@ -74,6 +74,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
+import { debugTimer } from '../../utils/debugTimer.ts'
 
 export default {
 	name: 'MessagesList',
@@ -675,15 +676,18 @@ export default {
 			// Make the request
 			this.loadingOldMessages = true
 			try {
+				debugTimer.start(`${token} | get context`)
 				await this.$store.dispatch('getMessageContext', {
 					token,
 					messageId,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
+				debugTimer.end(`${token} | get context`, 'status 200')
 				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
+					debugTimer.end(`${token} | get context`, 'cancelled')
 					this.loadingOldMessages = false
 					throw exception
 				}
@@ -691,6 +695,7 @@ export default {
 				if (exception?.response?.status === 304 && exception?.response?.data === '') {
 					// 304 - Not modified
 					// Empty chat, no messages to load
+					debugTimer.end(`${token} | get context`, 'status 304')
 					this.$store.dispatch('loadedMessagesOfConversation', { token: this.token })
 				}
 			}
@@ -706,18 +711,22 @@ export default {
 			// Make the request
 			this.loadingOldMessages = true
 			try {
+				debugTimer.start(`${this.token} | fetch history`)
 				await this.$store.dispatch('fetchMessages', {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
+				debugTimer.end(`${this.token} | fetch history`, 'status 200')
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
+					debugTimer.end(`${this.token} | fetch history`, 'cancelled')
 					console.debug('The request has been canceled', exception)
 				}
 				if (exception?.response?.status === 304) {
 					// 304 - Not modified
+					debugTimer.end(`${this.token} | fetch history`, 'status 304')
 					this.stopFetchingOldMessages = true
 				}
 			}
@@ -750,6 +759,7 @@ export default {
 			}
 			// Make the request
 			try {
+				debugTimer.start(`${token} | long polling`)
 				// TODO: move polling logic to the store and also cancel timers on cancel
 				this.pollingErrorTimeout = 1
 				await this.$store.dispatch('lookForNewMessages', {
@@ -757,13 +767,16 @@ export default {
 					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(token),
 					requestId: this.chatIdentifier,
 				})
+				debugTimer.end(`${token} | long polling`, 'status 200')
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
+					debugTimer.end(`${token} | long polling`, 'cancelled')
 					console.debug('The request has been canceled', exception)
 					return
 				}
 
 				if (exception?.response?.status === 304) {
+					debugTimer.end(`${token} | long polling`, 'status 304')
 					// 304 - Not modified
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
@@ -778,6 +791,7 @@ export default {
 					this.pollingErrorTimeout += 5
 				}
 
+				debugTimer.end(`${token} | long polling`, `status ${exception?.response?.status}`)
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
