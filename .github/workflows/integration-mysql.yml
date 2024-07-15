@@ -126,6 +126,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Enable ONLY_FULL_GROUP_BY MySQL option
+        run: |
+          echo "SET GLOBAL sql_mode=(SELECT CONCAT(@@sql_mode,',ONLY_FULL_GROUP_BY'));" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+          echo 'SELECT @@sql_mode;' | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+
       - name: Set up production dependencies
         working-directory: apps/${{ env.APP_NAME }}
         run: composer i --no-dev
