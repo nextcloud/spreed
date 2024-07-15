@@ -219,6 +219,45 @@ describe('messagesStore', () => {
 			store.dispatch('processMessage', { token: TOKEN, message: message2 })
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([message2])
 		})
+
+		test('replaces existing message from system message and drops outdated properties, apart from parent', () => {
+			const message1 = {
+				id: 2,
+				token: TOKEN,
+				message: 'helo-helo',
+				'outdated-property': 'outdated-value',
+				parent: {
+					id: 1,
+					token: TOKEN,
+					message: 'hello',
+					timestamp: 100,
+				},
+				timestamp: 200,
+			}
+			const message2 = {
+				id: 4,
+				token: TOKEN,
+				message: '👍',
+				messageType: 'system',
+				systemMessage: 'reaction',
+				parent: {
+					id: 2,
+					token: TOKEN,
+					message: 'hello-hello',
+					lastEditTimestamp: 300,
+					timestamp: 200,
+					reactions: { '👍': 1 },
+				},
+				timestamp: 400,
+			}
+
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
+			store.dispatch('processMessage', { token: TOKEN, message: message2 })
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+				...message2.parent,
+				parent: message1.parent,
+			}])
+		})
 	})
 
 	test('message list', () => {
