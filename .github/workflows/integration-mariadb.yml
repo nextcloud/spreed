@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
       # Only running on PR for this file to save CI time (otherwise pgsql only)
-      - '.github/workflows/integration-mysql.yml'
+      - '.github/workflows/integration-mariadb.yml'
   schedule:
     - cron: "5 2 * * *"
 
@@ -62,7 +62,7 @@ jobs:
 
     services:
       mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mysql-8.4:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest
         ports:
           - 4444:3306/tcp
         env:
