@@ -72,8 +72,8 @@ class BanService {
 	 *
 	 * @throws DoesNotExistException
 	 */
-	public function getBanForActorAndRoom(string $moderatorActorType, string $moderatorActorId, int $roomId): Ban {
-		return $this->banMapper->findForActorAndRoom($moderatorActorType, $moderatorActorId, $roomId);
+	public function getBanForActorAndRoom(string $bannedActorType, string $bannedActorId, int $roomId): Ban {
+		return $this->banMapper->findForActorAndRoom($bannedActorType, $bannedActorId, $roomId);
 	}
 
 	/**
