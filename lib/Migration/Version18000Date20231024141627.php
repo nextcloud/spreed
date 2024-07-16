@@ -68,7 +68,6 @@ class Version18000Date20231024141627 extends SimpleMigrationStep {
 
 			$table->addIndex(['local_room_id'], 'talk_fedinv_lri');
 			$table->addUniqueIndex(['remote_server_url', 'remote_attendee_id'], 'talk_fedinv_remote');
-
 			return $schema;
 		}
 		return null;
