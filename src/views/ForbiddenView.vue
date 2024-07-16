@@ -5,7 +5,7 @@
 
 <template>
 	<EmptyView :name="t('spreed', 'You do not have permissions to access this conversation.')"
-		:description="t('spreed', 'Join a conversation or start a new one!')">
+		:description="t('spreed', 'Join a different conversation or start a new one.')">
 		<template #icon>
 			<Octagon />
 		</template>
