@@ -76,7 +76,8 @@
 						fit-video
 						is-big
 						:is-one-to-one="isOneToOne"
-						:is-sidebar="isSidebar" />
+						:is-sidebar="isSidebar"
+						@force-promote-video="forcePromotedModel = $event" />
 				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
@@ -192,12 +193,13 @@ export default {
 			},
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
+			forcePromotedModel: null,
 		}
 	},
 
 	computed: {
 		promotedParticipantModel() {
-			return this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
+			return this.forcePromotedModel ?? this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
 		},
 
 		callParticipantModels() {
