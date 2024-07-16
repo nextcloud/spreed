@@ -800,6 +800,7 @@ export default {
 			return this.canBeModerated
 				&& !this.isModerator
 				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
