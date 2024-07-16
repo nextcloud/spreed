@@ -14,7 +14,7 @@
 					:disabled="joiningConversation"
 					@click="joinConversation">
 					<template #icon>
-						<span v-if="joiningConversation" class="icon icon-loading-small" />
+						<NcLoadingIcon v-if="joiningConversation" />
 					</template>
 					{{ t('spreed', 'Join conversation') }}
 				</NcButton>
@@ -41,6 +41,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
@@ -70,6 +71,7 @@ export default {
 		ChatView,
 		MediaSettings,
 		NcButton,
+		NcLoadingIcon,
 		PollViewer,
 		TopBar,
 		TransitionWrapper,
@@ -272,6 +274,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	padding: var(--default-grid-baseline) 0;
 }
 
 #talk-sidebar > .emptycontent {
@@ -293,14 +296,8 @@ export default {
 	right: -5px;
 }
 
-#talk-sidebar .button-centered,
 #talk-sidebar .call-button {
-	/* Center button horizontally. */
-	margin-left: auto;
-	margin-right: auto;
-
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin: 0 auto calc(var(--default-grid-baseline) * 2);
 }
 
 #talk-sidebar .button-centered {
@@ -309,7 +306,8 @@ export default {
 	 * .emptycontent [class*="icon-"] is matching button-vue--icon-and-text
 	 * setting the height to 64px, so we need to reset this.
 	 */
-	height: 44px;
+	height: var(--default-clickable-area) !important;
+	margin: 0 auto;
 }
 
 #talk-sidebar #call-container {

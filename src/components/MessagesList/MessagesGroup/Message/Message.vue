@@ -500,7 +500,7 @@ export default {
 	top: 8px;
 	position: sticky;
 	background-color: var(--color-main-background);
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	box-shadow: 0 0 4px 0 var(--color-box-shadow);
 	height: var(--default-clickable-area);
 	z-index: 1;

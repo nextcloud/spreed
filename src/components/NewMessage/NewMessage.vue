@@ -1034,14 +1034,14 @@ export default {
 @import '../../assets/variables';
 
 .wrapper {
-	padding: 12px 12px 12px 0;
-	min-height: 69px;
+	padding: calc(var(--default-grid-baseline) * 2);
+	min-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
 }
 
 .new-message-form {
 	align-items: flex-end;
 	display: flex;
-	gap: 4px;
+	gap: var(--default-grid-baseline);
 	position: relative;
 	max-width: $message-input-max-width;
 	margin: 0 auto;
@@ -1060,15 +1060,17 @@ export default {
 
 	// Override NcRichContenteditable styles
 	:deep(.rich-contenteditable__input) {
-		border-radius: calc(var(--default-clickable-area) / 2);
-		padding: 8px 16px 8px 44px;
+		--contenteditable-space: calc((var(--default-clickable-area) - var(--default-line-height) - 4px) / 2);
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+		padding: var(--contenteditable-space);
+		padding-left: calc(var(--contenteditable-space) + var(--default-clickable-area));
 		max-height: 180px;
 	}
 
 	&__quote {
-		margin: 0 16px 12px;
+		margin: 0 calc(var(--default-grid-baseline) * 4) calc(var(--default-grid-baseline) * 2);
 		background-color: var(--color-background-hover);
-		padding: 8px;
+		padding: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 2);
 		border-radius: var(--border-radius-large);
 	}
 

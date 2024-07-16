@@ -208,6 +208,5 @@ export default {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	height: 44px;
 }
 </style>

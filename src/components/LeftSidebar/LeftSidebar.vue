@@ -1014,7 +1014,7 @@ export default {
 .new-conversation {
 	position: relative;
 	display: flex;
-	padding: 8px 4px 8px 12px;
+	padding: calc(var(--default-grid-baseline) * 2);
 	align-items: center;
 	border-bottom: 1px solid transparent;
 

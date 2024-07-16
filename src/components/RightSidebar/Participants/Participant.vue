@@ -338,7 +338,7 @@
 		</NcDialog>
 
 		<!-- Checkmark in case the current participant is selected -->
-		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
+		<div v-if="isSelected" class="icon-checkmark" />
 	</component>
 </template>
 
@@ -1213,40 +1213,37 @@ export default {
 			width: calc(100% - 124px);
 		}
 	}
+
 	&__user-name,
 	&__guest-indicator,
 	&__moderator-indicator {
 		vertical-align: middle;
 		line-height: normal;
 	}
+
 	&__guest-indicator,
 	&__moderator-indicator {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
 		padding-left: 5px;
 	}
+
 	&__user-descriptor {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+
 	&__status {
 		color: var(--color-text-maxcontrast);
 		line-height: 1.3em;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+
 		&--highlighted {
 			font-weight: bold;
 		}
-	}
-	&__icon {
-		width: 44px;
-		height: 44px;
-		cursor: pointer;
-	}
-	&__utils {
-		margin-right: 28px;
 	}
 
 	&__callstate-icon {
@@ -1277,14 +1274,7 @@ export default {
 	}
 }
 
-.utils {
-	&__checkmark {
-		margin-right: 11px;
-	}
-}
-
 .offline {
-
 	.participant-row__user-descriptor > span {
 		color: var(--color-text-maxcontrast);
 	}

@@ -18,9 +18,9 @@
 			id="attachments"
 			:name="t('spreed', 'Attachments folder')"
 			class="app-settings-section">
-			<h3 class="app-settings-section__hint">
+			<em class="app-settings-section__hint">
 				{{ locationHint }}
-			</h3>
+			</em>
 			<div class="app-settings-section__wrapper">
 				<p class="app-settings-section__input" @click="showFilePicker = true">
 					{{ attachmentFolder }}
@@ -390,14 +390,19 @@ export default {
 		gap: 8px;
 	}
 
+	// Copy-pasted styles from NcInputField
 	&__input {
 		width: 300px;
 		height: var(--default-clickable-area);
-		padding: 10px 6px 10px 12px;
-		border: 2px solid var(--color-border-maxcontrast);
+		line-height: var(--default-clickable-area);
+		padding-inline: 12px 6px;
+		border: var(--border-width-input, 2px) solid var(--color-border-maxcontrast);
 		border-radius: var(--border-radius-large);
+		font-size: var(--default-font-size);
 		text-overflow: ellipsis;
 		opacity: 0.7;
+		color: var(--color-main-text);
+		background-color: var(--color-main-background);
 		cursor: pointer;
 	}
 

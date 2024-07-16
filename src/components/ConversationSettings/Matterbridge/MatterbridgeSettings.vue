@@ -647,7 +647,7 @@ export default {
 	h3 {
 		font-weight: bold;
 		padding: 0;
-		height: 44px;
+		height: var(--default-clickable-area);
 		display: flex;
 
 		p {
@@ -694,22 +694,21 @@ export default {
 				margin: 0 10px 0 2px;
 			}
 		}
-		.multiselect {
-			width: calc(100% - 46px);
-		}
 		.icon {
-			display: inline-block;
-			width: 40px;
-			height: 34px;
-			padding: 6px 10px 0;
-			vertical-align: middle;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			width: var(--default-clickable-area);
+			height: var(--default-clickable-area);
 		}
 		.add-part-wrapper {
 			margin-top: 5px;
+			display: flex;
+			align-items: center;
 		}
 		.enable-switch-line {
 			display: flex;
-			height: 44px;
+			height: var(--default-clickable-area);
 			margin-top: 5px;
 
 			label {

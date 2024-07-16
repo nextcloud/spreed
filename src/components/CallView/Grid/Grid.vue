@@ -105,14 +105,7 @@
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
 					@click-video="handleClickLocalVideo" />
-				<!-- page indicator (disabled) -->
-				<div v-if="numberOfPages !== 0 && hasPagination && false"
-					class="pages-indicator">
-					<div v-for="(page, index) in numberOfPages"
-						:key="index"
-						class="pages-indicator__dot"
-						:class="{'pages-indicator__dot--active': index === currentPage }" />
-				</div>
+
 				<div v-if="devMode && !screenshotMode" class="dev-mode__data">
 					<p>GRID INFO</p>
 					<p>Videos (total): {{ videosCount }}</p>
@@ -1070,7 +1063,7 @@ export default {
 
 .dev-mode__title {
 	position: absolute;
-	left: 44px;
+	left: var(--default-clickable-area);
 	color: #00FF41;
 	z-index: 100;
 	line-height: 120px;
@@ -1128,31 +1121,6 @@ export default {
 
 		&__next {
 			right: 16px;
-		}
-	}
-}
-
-.pages-indicator {
-	position: absolute;
-	right: 50%;
-	top: 4px;
-	display: flex;
-	background-color: var(--color-background-hover);
-	height: 44px;
-	padding: 0 22px;
-	border-radius: 22px;
-
-	&__dot {
-		width: 8px;
-		height: 8px;
-		margin: auto 4px;
-		border-radius: 4px;
-		background-color: white;
-		opacity: 80%;
-		box-shadow: 0 0 4px black;
-
-		&--active {
-			opacity: 100%;
 		}
 	}
 }

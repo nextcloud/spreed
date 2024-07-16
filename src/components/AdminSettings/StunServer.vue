@@ -12,10 +12,12 @@
 			<NcTextField ref="stun_server"
 				:input-id="`stun_server_${index}`"
 				name="stun_server"
+				class="stun-server__input"
 				placeholder="stunserver:port"
 				:value="server"
 				:disabled="loading"
 				:aria-label="t('spreed', 'STUN server URL')"
+				label-outside
 				@update:value="update" />
 		</div>
 
@@ -108,6 +110,7 @@ export default {
 .stun-server {
 	display: flex;
 	align-items: center;
+	margin-bottom: calc(var(--default-grid-baseline) * 2);
 
 	&__wrapper {
 		display: flex;
@@ -116,9 +119,14 @@ export default {
 		width: 300px;
 	}
 
+	// Override NcInputField styles
+	&__input {
+		margin-block-start: 0 !important;
+	}
+
 	&__alert {
-		width: 44px;
-		height: 44px;
+		width: var(--default-clickable-area);
+		height: var(--default-clickable-area);
 	}
 }
 </style>

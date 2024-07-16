@@ -11,7 +11,6 @@
 		:show-trailing-button="isFocused"
 		class="search-box"
 		label-outside
-		pill
 		@focus="handleFocus"
 		@blur="handleBlur"
 		@update:value="updateValue"
@@ -170,7 +169,7 @@ export default {
 <style lang="scss" scoped>
 .search-box {
 	:deep(.input-field__input) {
-		&:focus, &:hover {
+		&:focus:not([disabled]), &:hover:not([disabled]), &:active:not([disabled]) {
 			box-shadow: unset !important; // Remove the outer white border which is unnecessary here
 		}
 	}

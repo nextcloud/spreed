@@ -174,7 +174,7 @@ export default {
 	justify-content: center;
 
 	&__caption {
-		padding: 16px 0 4px 0;
+		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
 		color: var(--color-primary-element);
 	}
@@ -183,8 +183,7 @@ export default {
 		display: flex;
 		align-items: center;
 		width: 100%;
-		height: 44px;
-		margin-bottom: 12px;
+		margin-bottom: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__settings {

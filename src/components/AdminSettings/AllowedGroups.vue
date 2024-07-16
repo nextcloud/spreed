@@ -16,7 +16,7 @@
 			{{ t('spreed', 'Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}
 		</p>
 
-		<div class="form">
+		<div class="grid">
 			<NcSelect v-model="allowedGroups"
 				input-id="allow_groups_use_talk"
 				:input-label="t('spreed', 'Limit using Talk')"
@@ -35,14 +35,12 @@
 				label="displayname"
 				no-wrap
 				@search-change="debounceSearchGroup" />
-
 			<NcButton type="primary"
 				:disabled="loading"
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
 			</NcButton>
-		</div>
-		<div class="form">
+
 			<NcSelect v-model="canStartConversations"
 				input-id="allow_groups_start_conversation"
 				:input-label="t('spreed', 'Limit creating a public and group conversation')"
@@ -61,15 +59,12 @@
 				label="displayname"
 				no-wrap
 				@search-change="debounceSearchGroup" />
-
 			<NcButton type="primary"
 				:disabled="loading"
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}
 			</NcButton>
-		</div>
 
-		<div class="form">
 			<NcSelect v-model="startCalls"
 				input-id="start_calls"
 				:input-label="t('spreed', 'Limit starting a call')"
@@ -243,11 +238,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form {
-	display: flex;
+.grid {
+	display: grid;
+	grid-template-columns: 3fr 1fr;
 	align-items: flex-end;
-	gap: 10px;
-	padding-top: 5px;
+	gap: calc(var(--default-grid-baseline) * 2);
+	width: fit-content;
 
 	&__select {
 		min-width: 300px !important;

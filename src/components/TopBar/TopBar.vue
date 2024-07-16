@@ -9,6 +9,7 @@
 			class="conversation-icon"
 			:offline="isPeerInactive"
 			:item="conversation"
+			:size="iconSize"
 			:disable-menu="false"
 			show-user-online-status
 			:hide-favorite="false"
@@ -152,9 +153,12 @@ export default {
 
 	setup() {
 		useGetParticipants()
+		const iconSize = parseFloat(getComputedStyle(document.documentElement)
+			.getPropertyValue('--default-clickable-area'))
 		return {
 			localCallParticipantModel,
 			localMediaModel,
+			iconSize,
 		}
 	},
 
@@ -299,6 +303,7 @@ export default {
 	flex-wrap: wrap;
 	z-index: 10;
 	gap: 3px;
+	align-items: flex-start;
 	justify-content: flex-end;
 	padding: calc(2 * var(--default-grid-baseline));
 	// Reserve space for the sidebar toggle button
@@ -341,7 +346,8 @@ export default {
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
-		height: var(--default-clickable-area);
+		min-height: var(--default-clickable-area);
+		line-height: calc(var(--default-clickable-area) / 2);
 		&--offline {
 			color: var(--color-text-maxcontrast);
 		}

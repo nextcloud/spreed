@@ -40,10 +40,8 @@
 						disable-menu
 						disable-tooltip />
 				</div>
-			</div>
 
-			<!-- Audio and video toggles -->
-			<div class="media-settings__toggles-wrapper">
+				<!-- Audio and video toggles -->
 				<div class="media-settings__toggles">
 					<!-- Audio toggle -->
 					<NcButton v-tooltip="audioButtonTooltip"
@@ -79,6 +77,7 @@
 			<!-- Tabs -->
 			<div class="media-settings__call-preferences">
 				<NcButton :type="showDeviceSelection ? 'secondary' : 'tertiary'"
+					wide
 					@click="toggleTab('devices')">
 					<template #icon>
 						<Cog :size="20" />
@@ -87,6 +86,7 @@
 				</NcButton>
 				<NcButton v-if="isVirtualBackgroundAvailable"
 					:type="showBackgroundEditor ? 'secondary' : 'tertiary'"
+					wide
 					@click="toggleTab('backgrounds')">
 					<template #icon>
 						<Creation :size="20" />
@@ -707,12 +707,11 @@ export default {
 
 	&__preview {
 		position: relative;
-		margin: 0 auto calc(var(--default-grid-baseline) * 3);
+		margin: 0 auto calc(var(--default-grid-baseline) * 4);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		overflow: hidden;
-		border-radius: calc(var(--default-grid-baseline) * 3);
+		border-radius: var(--border-radius-element, var(--border-radius-large));
 		background-color: var(--color-loading-dark);
 		width: 100%;
 		aspect-ratio: 4/3;
@@ -724,20 +723,12 @@ export default {
 		right: var(--default-grid-baseline);
 	}
 
-	&__toggles-wrapper {
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		position: relative;
-		height: calc(var(--default-grid-baseline) * 4);
-	}
-
 	&__toggles {
 		display: flex;
 		position: absolute;
-		top: calc(var(--default-grid-baseline) * -9);
+		bottom: calc(var(--default-grid-baseline) * -2);
 		background: var(--color-main-background);
-		border-radius: var(--border-radius-pill);
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
 	}
 
@@ -771,6 +762,7 @@ export default {
 		max-width: 100%;
 		object-fit: contain;
 		max-height: 100%;
+		border-radius: var(--border-radius-element);
 
 		&--mirrored {
 			transform: none !important;
@@ -778,11 +770,14 @@ export default {
 	}
 
 	&__novideo {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
 		width: 100%;
+		height: 100%;
+		border-radius: var(--border-radius-element);
 	}
 }
 
