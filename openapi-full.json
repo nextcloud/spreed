@@ -26,8 +26,10 @@
                     "id",
                     "moderatorActorType",
                     "moderatorActorId",
+                    "moderatorDisplayName",
                     "bannedActorType",
                     "bannedActorId",
+                    "bannedDisplayName",
                     "bannedTime",
                     "internalNote"
                 ],
@@ -42,10 +44,16 @@
                     "moderatorActorId": {
                         "type": "string"
                     },
+                    "moderatorDisplayName": {
+                        "type": "string"
+                    },
                     "bannedActorType": {
                         "type": "string"
                     },
                     "bannedActorId": {
+                        "type": "string"
+                    },
+                    "bannedDisplayName": {
                         "type": "string"
                     },
                     "bannedTime": {

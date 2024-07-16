@@ -34,19 +34,27 @@ class Version20000Date20240621150335 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('moderator_actor_type', Types::STRING, [
 				'notnull' => true,
-				'length' => 64,
+				'length' => 32,
 			]);
 			$table->addColumn('moderator_actor_id', Types::STRING, [
 				'notnull' => true,
-				'length' => 64,
+				'length' => 255,
+			]);
+			$table->addColumn('moderator_displayname', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
 			]);
 			$table->addColumn('banned_actor_type', Types::STRING, [
-				'length' => 64,
 				'notnull' => true,
+				'length' => 32,
 			]);
 			$table->addColumn('banned_actor_id', Types::STRING, [
-				'length' => 64,
 				'notnull' => true,
+				'length' => 255,
+			]);
+			$table->addColumn('banned_displayname', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
 			]);
 			$table->addColumn('room_id', Types::BIGINT, [
 				'unsigned' => true,

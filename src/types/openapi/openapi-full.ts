@@ -1749,8 +1749,10 @@ export type components = {
             id: number;
             moderatorActorType: string;
             moderatorActorId: string;
+            moderatorDisplayName: string;
             bannedActorType: string;
             bannedActorId: string;
+            bannedDisplayName: string;
             /** Format: int64 */
             bannedTime: number;
             internalNote: string;

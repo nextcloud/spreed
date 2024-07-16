@@ -20,12 +20,16 @@ use OCP\AppFramework\Db\Entity;
  * @method string getModeratorActorType()
  * @method void setModeratorActorId(string $moderatorActorId)
  * @method string getModeratorActorId()
+ * @method void setModeratorDisplayname(?string $moderatorDisplayname)
+ * @method null|string getModeratorDisplayname()
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
  * @method void setBannedActorType(string $bannedActorType)
  * @method string getBannedActorType()
  * @method void setBannedActorId(string $bannedActorId)
  * @method string getBannedActorId()
+ * @method void setBannedDisplayname(?string $bannedDisplayname)
+ * @method null|string getBannedDisplayname()
  * @method void setBannedTime(\DateTime $bannedTime)
  * @method \DateTime getBannedTime()
  * @method void setInternalNote(null|string $internalNote)
@@ -36,9 +40,11 @@ class Ban extends Entity implements \JsonSerializable {
 
 	protected string $moderatorActorType = '';
 	protected string $moderatorActorId = '';
+	protected ?string $moderatorDisplayname = null;
 	protected int $roomId = 0;
 	protected string $bannedActorType = '';
 	protected string $bannedActorId = '';
+	protected ?string $bannedDisplayname = null;
 	protected ?\DateTime $bannedTime = null;
 	protected ?string $internalNote = null;
 
@@ -46,9 +52,11 @@ class Ban extends Entity implements \JsonSerializable {
 		$this->addType('id', 'int');
 		$this->addType('moderatorActorType', 'string');
 		$this->addType('moderatorActorId', 'string');
+		$this->addType('moderatorDisplayname', 'string');
 		$this->addType('roomId', 'int');
 		$this->addType('bannedActorType', 'string');
 		$this->addType('bannedActorId', 'string');
+		$this->addType('bannedDisplayname', 'string');
 		$this->addType('bannedTime', 'datetime');
 		$this->addType('internalNote', 'string');
 	}
@@ -61,8 +69,10 @@ class Ban extends Entity implements \JsonSerializable {
 			'id' => $this->getId(),
 			'moderatorActorType' => $this->getModeratorActorType(),
 			'moderatorActorId' => $this->getModeratorActorId(),
+			'moderatorDisplayName' => $this->getModeratorDisplayname() ?? $this->getModeratorActorId(),
 			'bannedActorType' => $this->getBannedActorType(),
 			'bannedActorId' => $this->getBannedActorId(),
+			'bannedDisplayName' => $this->getBannedDisplayname() ?? $this->getBannedActorId(),
 			'bannedTime' => $this->getBannedTime()->getTimestamp(),
 			'internalNote' => $this->getInternalNote() ?? '',
 		];

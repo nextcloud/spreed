@@ -17,9 +17,9 @@ Feature: conversation/ban
         And user "participant1" bans user "participant3" from room "room" with 200 (v1)
             | internalNote | BannedP3 |
         And user "participant1" sees the following bans in room "room" with 200 (v1)
-          | actorType | actorId      | bannedActorType | bannedActorId     | internalNote |
-          | users     | participant1 | users      | participant2 | BannedP2     |
-          | users     | participant1 | users      | participant3 | BannedP3     |
+          | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
+          | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |
+          | users              | participant1     | participant1-displayname | users           | participant3  | participant3-displayname | BannedP3     |
         And user "participant2" joins room "room" with 403 (v4)
         And user "participant3" joins room "room" with 403 (v4)
         And user "participant1" unbans user "participant2" from room "room" with 200 (v1)
@@ -88,13 +88,5 @@ Feature: conversation/ban
         And user "participant1" bans user "participant2" from room "room" with 200 (v1)
             | internalNote | BannedP2 |
         And user "participant1" sees the following bans in room "room" with 200 (v1)
-          | actorType | actorId      | bannedActorType | bannedActorId     | internalNote |
-          | users     | participant1 | users      | participant2 | BannedP2     |
-
-
-
-
-
-
-
-
+          | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
+          | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |

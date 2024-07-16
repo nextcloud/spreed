@@ -14,8 +14,10 @@ namespace OCA\Talk;
  *     id: int,
  *     moderatorActorType: string,
  *     moderatorActorId: string,
+ *     moderatorDisplayName: string,
  *     bannedActorType: string,
  *     bannedActorId: string,
+ *     bannedDisplayName: string,
  *     bannedTime: int,
  *     internalNote: string,
  * }
