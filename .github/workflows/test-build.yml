@@ -1,0 +1,99 @@
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2021-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Build app test
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check actor permission
+        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v3.0
+        with:
+          require: write
+
+      - name: Set app env
+        run: |
+          # Split and keep last
+          echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+          echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          path: ${{ env.APP_NAME }}
+
+      - name: Get appinfo data
+        id: appinfo
+        uses: skjnldsv/xpath-action@7e6a7c379d0e9abc8acaef43df403ab4fc4f770c # master
+        with:
+          filename: ${{ env.APP_NAME }}/appinfo/info.xml
+          expression: "//info//dependencies//nextcloud/@min-version"
+
+      - name: Read package.json node and npm engines version
+        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4 # v3
+        id: versions
+        # Continue if no package.json
+        continue-on-error: true
+        with:
+          path: ${{ env.APP_NAME }}
+          fallbackNode: '^20'
+          fallbackNpm: '^10'
+
+      - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
+        # Skip if no package.json
+        if: ${{ steps.versions.outputs.nodeVersion }}
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v3
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+
+      - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
+        # Skip if no package.json
+        if: ${{ steps.versions.outputs.npmVersion }}
+        run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
+
+      - name: Get php version
+        id: php-versions
+        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
+        with:
+          filename: ${{ env.APP_NAME }}/appinfo/info.xml
+
+      - name: Set up php ${{ steps.php-versions.outputs.php-min }}
+        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2.31.0
+        with:
+          php-version: ${{ steps.php-versions.outputs.php-min }}
+          coverage: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check composer.json
+        id: check_composer
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        with:
+          files: "${{ env.APP_NAME }}/composer.json"
+
+      - name: Install composer dependencies
+        if: steps.check_composer.outputs.files_exists == 'true'
+        run: |
+          cd ${{ env.APP_NAME }}
+          composer install --no-dev
+
+      - name: Build ${{ env.APP_NAME }}
+        # Skip if no package.json
+        if: ${{ steps.versions.outputs.nodeVersion }}
+        env:
+          NODE_ENV: production
+        run: |
+          cd ${{ env.APP_NAME }}
+          npm ci
+          npm run build --if-present
