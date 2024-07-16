@@ -313,6 +313,7 @@ class CallController extends AEnvironmentAwareController {
 	 * 400: Updating in-call flags is not possible
 	 * 404: Call session not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireParticipant]
 	public function updateCallFlags(int $flags): DataResponse {
@@ -321,9 +322,48 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
+			return $proxy->updateFederatedCallFlags($this->room, $this->participant, $flags);
+		}
+
 		try {
 			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
 		} catch (\Exception $exception) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * Update the in-call flags on the host server using the session id of the
+	 * federated user.
+	 *
+	 * @param string $sessionId Federated session id to update the flags with
+	 * @param int<0, 15> $flags New flags
+	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: In-call flags updated successfully
+	 * 400: Updating in-call flags is not possible
+	 * 404: Call session not found
+	 */
+	#[PublicPage]
+	#[RequireFederatedParticipant]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	public function updateFederatedCallFlags(string $sessionId, int $flags): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		try {
+			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
+		} catch (\Exception) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

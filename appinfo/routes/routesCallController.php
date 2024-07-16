@@ -25,6 +25,8 @@ return [
 		['name' => 'Call#sipDialOut', 'url' => '/api/{apiVersion}/call/{token}/dialout/{attendeeId}', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::updateCallFlags() */
 		['name' => 'Call#updateCallFlags', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'PUT', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\CallController::updateFederatedCallFlags() */
+		['name' => 'Call#updateFederatedCallFlags', 'url' => '/api/{apiVersion}/call/{token}/federation', 'verb' => 'PUT', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::leaveCall() */
 		['name' => 'Call#leaveCall', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::leaveFederatedCall() */

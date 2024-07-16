@@ -72,6 +72,43 @@ class CallController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\RoomController::updateFederatedCallFlags()
+	 *
+	 * @param Room $room the federated room to update the call flags in
+	 * @param Participant $participant the federated user to update the call
+	 *        flags; the participant must have a session
+	 * @param int<0, 15> $flags New flags
+	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: In-call flags updated successfully for federated user
+	 * 400: Updating in-call flags is not possible
+	 * 404: Room not found
+	 */
+	public function updateFederatedCallFlags(Room $room, Participant $participant, int $flags): DataResponse {
+		$options = [
+			'sessionId' => $participant->getSession()->getSessionId(),
+			'flags' => $flags,
+		];
+
+		$proxy = $this->proxy->put(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/call/' . $room->getRemoteToken() . '/federation',
+			$options,
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_BAD_REQUEST, Http::STATUS_NOT_FOUND], true)) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			throw new CannotReachRemoteException();
+		}
+
+		return new DataResponse([], $statusCode);
+	}
+
+	/**
 	 * @see \OCA\Talk\Controller\RoomController::leaveFederatedCall()
 	 *
 	 * @param Room $room the federated room to leave the call in
