@@ -17,7 +17,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
 import Participant from './Participant.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
@@ -113,7 +113,7 @@ describe('Participant.vue', () => {
 				NcCheckboxRadioSwitch,
 				NcDialog,
 				NcInputField,
-				NcTextField,
+				NcTextArea,
 			},
 			directives: {
 				tooltip: tooltipMock,
@@ -676,10 +676,10 @@ describe('Participant.vue', () => {
 				const checkbox = dialog.findComponent(NcCheckboxRadioSwitch)
 				await checkbox.find('input').trigger('change')
 
-				const input = dialog.findComponent(NcTextField)
-				expect(input.exists()).toBeTruthy()
-				input.find('input').setValue(internalNote)
-				await input.find('input').trigger('change')
+				const textarea = dialog.findComponent(NcTextArea)
+				expect(textarea.exists()).toBeTruthy()
+				textarea.find('textarea').setValue(internalNote)
+				await textarea.find('textarea').trigger('change')
 
 				const button = findNcButton(dialog, 'Remove')
 				await button.find('button').trigger('click')
@@ -766,7 +766,7 @@ describe('Participant.vue', () => {
 				await testCannotRemove()
 			})
 
-			test('allows a moderator to ban a moderator', async () => {
+			test('allows a moderator to ban a user', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.participantType = PARTICIPANT.TYPE.USER
 				await testCanBan()

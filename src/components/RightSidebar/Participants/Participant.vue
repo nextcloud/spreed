@@ -318,9 +318,12 @@
 					{{ t('spreed', 'Also ban from this conversation') }}
 				</NcCheckboxRadioSwitch>
 				<template v-if="isBanParticipant">
-					<NcTextField v-if="isBanParticipant"
+					<NcTextArea v-if="isBanParticipant"
 						class="participant-dialog__input"
+						resize="vertical"
 						:label="t('spreed', 'Internal note (reason to ban)')"
+						:error="!!maxLengthWarning"
+						:helper-text="maxLengthWarning"
 						:value.sync="internalNote" />
 				</template>
 			</template>
@@ -328,7 +331,7 @@
 				<NcButton type="tertiary" :disabled="isLoading" @click="isRemoveDialogOpen = false">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton type="error" :disabled="isLoading" @click="removeParticipant">
+				<NcButton type="error" :disabled="isLoading || !!maxLengthWarning" @click="removeParticipant">
 					{{ t('spreed', 'Remove') }}
 				</NcButton>
 			</template>
@@ -376,7 +379,7 @@ import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
@@ -411,7 +414,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcDialog,
-		NcTextField,
+		NcTextArea,
 		ParticipantPermissionsEditor,
 		// Icons
 		Account,
@@ -799,6 +802,16 @@ export default {
 				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
+		},
+
+		maxLengthWarning() {
+			if (this.internalNote.length <= 4000) {
+				return ''
+			}
+			return t('spreed', 'The text must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long.', {
+				maxLength: 4000,
+				charactersCount: this.internalNote.length,
+			})
 		},
 
 		removeParticipantLabel() {
