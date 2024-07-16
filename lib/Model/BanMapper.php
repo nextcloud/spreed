@@ -61,4 +61,20 @@ class BanMapper extends QBMapper {
 
 		return $this->findEntity($query);
 	}
+
+	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('moderator_displayname', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('moderator_actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('moderator_actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('banned_displayname', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('banned_actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('banned_actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+	}
 }

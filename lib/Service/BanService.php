@@ -62,7 +62,7 @@ class BanService {
 				}
 			}
 		}
-		
+
 		if ($displayname === null || $displayname === '') {
 			$displayname = $bannedActorId;
 		}
@@ -109,5 +109,9 @@ class BanService {
 		} catch (DoesNotExistException) {
 			// Ban does not exist
 		}
+	}
+
+	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
+		$this->banMapper->updateDisplayNameForActor($actorType, $actorId, $displayName);
 	}
 }
