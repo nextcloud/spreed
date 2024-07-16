@@ -2,9 +2,11 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { createPinia, setActivePinia } from 'pinia'
 import { computed, ref } from 'vue'
 
 import { ATTENDEE, CONVERSATION } from '../../constants.js'
+import { useGuestNameStore } from '../../stores/guestName.js'
 import { useConversationInfo } from '../useConversationInfo.js'
 import { useMessageInfo } from '../useMessageInfo.js'
 import { useStore } from '../useStore.js'
@@ -30,6 +32,8 @@ describe('message actions', () => {
 	jest.useFakeTimers().setSystemTime(new Date('2024-05-01 17:00:00'))
 
 	beforeEach(() => {
+		setActivePinia(createPinia())
+
 		message = ref({
 			message: 'test message',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -260,6 +264,8 @@ describe('message actions', () => {
 		useStore.mockReturnValue({
 			getters: {
 				conversation: () => null,
+				getActorId: () => 'user-id-1',
+				getActorType: () => ATTENDEE.ACTOR_TYPE.USERS,
 			},
 		})
 		// Act
@@ -267,13 +273,140 @@ describe('message actions', () => {
 	})
 
 	test('error handling, return false when message is not available', () => {
-		// Arrange
-		useStore.mockReturnValue({
-			getters: {
-				conversation: () => conversationProps,
-			},
-		})
 		// Act
 		testErrorHandling(undefined)
 	})
+
+	test('return server name for remote server messages', () => {
+		// Arrange
+		message.value.actorType = ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+		message.value.actorId = 'userid@nc-webroot'
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.remoteServer.value).toBe('(nc-webroot)')
+	})
+
+	test('return empty string for local server messages', () => {
+		// Arrange
+		// actorType remains local user
+		message.value.actorId = 'userid@nc-webroot'
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.remoteServer.value).toBe('')
+	})
+
+	test('return empty string for messages not edited', () => {
+		// Arrange
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.lastEditor.value).toBe('')
+	})
+
+	test('return display name', () => {
+		// Arrange
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.actorDisplayName.value).toBe('user-display-name-1')
+	})
+
+	test('return "Guest" for messages from guests without display name', () => {
+		// Arrange
+		message.value.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
+		message.value.actorDisplayName = ''
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.actorDisplayName.value).toBe('Guest')
+	})
+
+	test('return guest name from store for messages from guests', () => {
+		// Arrange
+		message.value.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
+		message.value.actorDisplayName = ''
+		message.value.actorId = 'guest-name-1'
+		const guestNameStore = useGuestNameStore()
+		guestNameStore.addGuestName({
+			token: TOKEN,
+			actorId: 'guest-name-1',
+			actorDisplayName: 'guest name',
+		}, { noUpdate: true })
+
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.actorDisplayName.value).toBe('guest name')
+	})
+
+	test('return "deleted user" for messages from deleted users without display name', () => {
+		// Arrange
+		message.value.actorDisplayName = ''
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.actorDisplayName.value).toBe('Deleted user')
+	})
+
+	describe('edited messages', () => {
+		beforeEach(() => {
+			message = ref({
+				message: 'test message',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				actorId: 'user-id-1',
+				actorDisplayName: 'user-display-name-1',
+				messageParameters: {},
+				id: 123,
+				isReplyable: true,
+				lastEditTimestamp: new Date('2024-05-01 16:30:00').getTime() / 1000,
+				lastEditActorId: 'user-id-1',
+				lastEditActorType: ATTENDEE.ACTOR_TYPE.USERS,
+				lastEditActorDisplayName: 'user-display-name-1',
+				timestamp: new Date('2024-05-01 16:15:00').getTime() / 1000,
+				token: TOKEN,
+				systemMessage: '',
+				messageType: 'comment',
+			})
+		})
+		test('return last editor when message is edited', () => {
+			// Arrange
+			// Act
+			const result = useMessageInfo(message)
+			// Assert
+			expect(result.lastEditor.value).toBe('(edited)')
+		})
+
+		test('includes editor name when they are not the author of the message', () => {
+			// Arrange
+			message.value.lastEditActorId = 'user-id-2'
+			message.value.lastEditActorDisplayName = 'user-display-name-2'
+			// Act
+			const result = useMessageInfo(message)
+			// Assert
+			expect(result.lastEditor.value).toBe('(edited by user-display-name-2)')
+		})
+
+		test('return "edited by a deleted user" when editor a deleted user', () => {
+			// Arrange
+			message.value.lastEditActorId = 'deleted_users'
+			message.value.lastEditActorType = 'deleted_users'
+			// Act
+			const result = useMessageInfo(message)
+			// Assert
+			expect(result.lastEditor.value).toBe('(edited by a deleted user)')
+		})
+
+		test('return edited by you when the editor is the current user', () => {
+			// Arrange
+			message.value.actorId = 'user-id-2'
+			message.value.actorType = ATTENDEE.ACTOR_TYPE.USERS
+			// Act
+			const result = useMessageInfo(message)
+			// Assert
+			expect(result.lastEditor.value).toBe('(edited by you)')
+		})
+	})
+
 })

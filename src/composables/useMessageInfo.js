@@ -5,11 +5,14 @@
 
 import { computed, ref } from 'vue'
 
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import { useConversationInfo } from './useConversationInfo.js'
 import { useStore } from './useStore.js'
+import { ATTENDEE } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { useGuestNameStore } from '../stores/guestName.js'
 
 /**
  * Check whether the user can edit the message or not
@@ -21,6 +24,8 @@ export function useMessageInfo(message = ref({})) {
 	// Get the conversation
 	const store = useStore()
 	const conversation = computed(() => store.getters.conversation(message.value.token))
+	const currentActorId = store.getters.getActorId()
+	const currentActorType = store.getters.getActorType()
 	// If the conversation or message is not available, return false
 	if (!conversation.value || !message.value.id) {
 		return {
@@ -44,8 +49,8 @@ export function useMessageInfo(message = ref({})) {
 	const isObjectShare = computed(() => Object.keys(Object(message.value.messageParameters)).some(key => key.startsWith('object')))
 
 	const isCurrentUserOwnMessage = computed(() =>
-		message.value.actorId === store.getters.getActorId()
-		&& message.value.actorType === store.getters.getActorType()
+		message.value.actorId === currentActorId
+		&& message.value.actorType === currentActorType
 	)
 
 	const isEditable = computed(() => {
@@ -67,6 +72,41 @@ export function useMessageInfo(message = ref({})) {
 		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 		&& isConversationModifiable.value)
 
+	const remoteServer = computed(() => {
+		return message.value.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+			? '(' + message.value.actorId.split('@').pop() + ')'
+			: ''
+	})
+
+	const lastEditor = computed(() => {
+		if (!message.value.lastEditTimestamp) {
+			return ''
+		} else if (message.value.lastEditActorId === message.value.actorId
+			&& message.value.lastEditActorType === message.value.actorType) {
+			// TRANSLATORS Edited by the author of the message themselves
+			return t('spreed', '(edited)')
+		} else if (message.value.lastEditActorId === currentActorId
+			&& message.value.lastEditActorType === currentActorType) {
+			return t('spreed', '(edited by you)')
+		} else if (message.value.lastEditActorId === 'deleted_users'
+			&& message.value.lastEditActorType === 'deleted_users') {
+			return t('spreed', '(edited by a deleted user)')
+		} else {
+			return t('spreed', '(edited by {moderator})', { moderator: message.value.lastEditActorDisplayName })
+		}
+	})
+
+	const actorDisplayName = computed(() => {
+		if (message.value.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			const guestNameStore = useGuestNameStore()
+			return guestNameStore.getGuestName(message.value.token, message.value.actorId)
+		} else {
+			const displayName = message.value.actorDisplayName.trim()
+			return displayName === '' ? t('spreed', 'Deleted user') : displayName
+		}
+
+	})
+
 	return {
 		isEditable,
 		isDeleteable,
@@ -76,6 +116,9 @@ export function useMessageInfo(message = ref({})) {
 		isConversationReadOnly,
 		isFileShareWithoutCaption,
 		isFileShare,
+		remoteServer,
+		lastEditor,
+		actorDisplayName,
 	}
 
 }
