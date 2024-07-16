@@ -94,5 +94,4 @@ jobs:
         run: |
           cd ${{ env.APP_NAME }}
           npm ci
-          npm install -g webpack-cli
           npm run build --if-present
