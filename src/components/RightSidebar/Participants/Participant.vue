@@ -325,10 +325,10 @@
 				</template>
 			</template>
 			<template #actions>
-				<NcButton type="tertiary" @click="isRemoveDialogOpen = false">
+				<NcButton type="tertiary" :disabled="isLoading" @click="isRemoveDialogOpen = false">
 					{{ t('spreed', 'Dismiss') }}
 				</NcButton>
-				<NcButton type="error" @click="removeParticipant">
+				<NcButton type="error" :disabled="isLoading" @click="removeParticipant">
 					{{ t('spreed', 'Remove') }}
 				</NcButton>
 			</template>
@@ -488,6 +488,7 @@ export default {
 			isBanParticipant: false,
 			internalNote: '',
 			disabled: false,
+			isLoading: false,
 		}
 	},
 
@@ -995,15 +996,22 @@ export default {
 		},
 
 		async removeParticipant() {
-			await this.$store.dispatch('removeParticipant', {
-				token: this.token,
-				attendeeId: this.attendeeId,
-				banParticipant: this.isBanParticipant,
-				internalNote: this.internalNote,
-			})
-			this.isBanParticipant = false
-			this.internalNote = ''
-			this.isRemoveDialogOpen = false
+			this.isLoading = true
+			try {
+				await this.$store.dispatch('removeParticipant', {
+					token: this.token,
+					attendeeId: this.attendeeId,
+					banParticipant: this.isBanParticipant,
+					internalNote: this.internalNote,
+				})
+				this.isBanParticipant = false
+				this.internalNote = ''
+				this.isRemoveDialogOpen = false
+			} catch (error) {
+				console.error('Error while removing the participant: ', error)
+			} finally {
+				this.isLoading = false
+			}
 		},
 
 		grantAllPermissions() {

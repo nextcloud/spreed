@@ -581,7 +581,7 @@ const actions = {
 				showSuccess(t('spreed', 'Participant is banned successfully'))
 			} catch (error) {
 				showError(t('spreed', 'Error while banning the participant'))
-				console.error('Error while banning the participant: ', error)
+				throw error
 			}
 		}
 		await removeAttendeeFromConversation(token, attendeeId)
