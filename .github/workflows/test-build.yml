@@ -8,9 +8,7 @@
 
 name: Build app test
 
-on:
-  release:
-    types: [published]
+on: pull_request
 
 jobs:
   build_and_publish:
