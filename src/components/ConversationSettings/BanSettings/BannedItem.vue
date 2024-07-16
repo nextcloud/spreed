@@ -6,7 +6,7 @@
 <template>
 	<li :key="ban.id" class="ban-item">
 		<div class="ban-item__header">
-			<span class="ban-item__caption">{{ ban.bannedId }}</span>
+			<span class="ban-item__caption">{{ ban.bannedDisplayName }}</span>
 			<div class="ban-item__buttons">
 				<NcButton type="tertiary" @click="showDetails = !showDetails">
 					{{ showDetails ? t('spreed', 'Hide details') : t('spreed', 'Show details') }}
@@ -17,8 +17,10 @@
 			</div>
 		</div>
 		<ul v-if="showDetails" class="ban-item__hint">
-			<!-- eslint-disable-next-line vue/no-v-html -->
-			<li v-for="(item, index) in banInfo" :key="index" v-html="item" />
+			<li v-for="(item, index) in banInfo" :key="index">
+				<strong>{{ item.label }}</strong>
+				<span>{{ item.value }}</span>
+			</li>
 		</ul>
 	</li>
 </template>
@@ -54,12 +56,12 @@ export default {
 	computed: {
 		banInfo() {
 			return [
-				t('spreed', '<strong>Banned by:</strong> {actor}', { actor: this.ban.actorId },
-					undefined, { escape: false, sanitize: false }),
-				t('spreed', '<strong>Date:</strong> {date}', { date: moment(this.ban.bannedTime * 1000).format('lll') },
-					undefined, { escape: false, sanitize: false }),
-				t('spreed', '<strong>Note:</strong> {note}', { note: this.ban.internalNote },
-					undefined, { escape: false, sanitize: false }),
+				// TRANSLATORS name of a moderator who banned a participant
+				{ label: t('spreed', 'Banned by:'), value: this.ban.moderatorDisplayName },
+				// TRANSLATORS Date and time of ban creation
+				{ label: t('spreed', 'Date:'), value: moment(this.ban.bannedTime * 1000).format('lll') },
+				// TRANSLATORS Internal note for moderators, usually a reason for this ban
+				{ label: t('spreed', 'Note:'), value: this.ban.internalNote },
 			]
 		},
 	},
