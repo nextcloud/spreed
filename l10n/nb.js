@@ -1524,6 +1524,7 @@ OC.L10N.register(
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Lyder for chat- og anropsvarsler kan justeres i de personlige innstillingene.",
     "Performance" : "Ytelse",
     "Blur background image in the call (may increase GPU load)" : "Gjør bakgrunnsbildet uskarpt i samtalen (kan øke GPU-belastningen)",
+    "Background blur for Nextcloud instance can be adjusted in the theming settings." : "Bakgrunnsuskarphet for Nextcloud-forekomst kan justeres i temainnstillingene.",
     "Keyboard shortcuts" : "Tastatursnarveier",
     "Speed up your Talk experience with these quick shortcuts." : "Få fart på Talk-opplevelsen med disse raske snarveiene.",
     "Focus the chat input" : "Fokuser chat-inndataene",
