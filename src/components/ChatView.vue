@@ -32,7 +32,7 @@
 
 		<div class="scroll-to-bottom">
 			<TransitionWrapper name="fade">
-				<NcButton v-show="!isChatScrolledToBottom"
+				<NcButton v-show="!isChatScrolledToBottom && !isLoadingChat"
 					type="secondary"
 					:aria-label="t('spreed', 'Scroll to bottom')"
 					class="scroll-to-bottom__button"
@@ -159,7 +159,11 @@ export default {
 
 		container() {
 			return this.$store.getters.getMainContainerSelector()
-		}
+		},
+
+		isLoadingChat() {
+			return !this.$store.getters.isMessageListPopulated(this.token)
+		},
 	},
 
 	watch: {
