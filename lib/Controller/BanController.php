@@ -52,15 +52,14 @@ class BanController extends AEnvironmentAwareController {
 	public function banActor(string $actorType, string $actorId, string $internalNote = ''): DataResponse {
 		try {
 			$moderator = $this->participant->getAttendee();
-			$moderatorActorType = $moderator->getActorType();
-			$moderatorActorId = $moderator->getActorId();
 
 			$ban = $this->banService->createBan(
 				$this->room,
-				$moderatorActorId,
-				$moderatorActorType,
-				$actorId,
+				$moderator->getActorType(),
+				$moderator->getActorId(),
+				$moderator->getDisplayName(),
 				$actorType,
+				$actorId,
 				$this->timeFactory->getDateTime(),
 				$internalNote
 			);

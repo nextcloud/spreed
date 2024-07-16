@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCP\EventDispatcher\Event;
@@ -24,6 +25,7 @@ class DisplayNameListener implements IEventListener {
 	public function __construct(
 		private ParticipantService $participantService,
 		private PollService $pollService,
+		private BanService $banService,
 	) {
 	}
 
@@ -44,6 +46,12 @@ class DisplayNameListener implements IEventListener {
 		);
 
 		$this->pollService->updateDisplayNameForActor(
+			$actorType,
+			$actorId,
+			$newName
+		);
+
+		$this->banService->updateDisplayNameForActor(
 			$actorType,
 			$actorId,
 			$newName

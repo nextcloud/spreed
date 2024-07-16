@@ -16,6 +16,7 @@ use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\IUserManager;
 
 class BanService {
 
@@ -23,6 +24,7 @@ class BanService {
 		protected BanMapper $banMapper,
 		protected Manager $manager,
 		protected ParticipantService $participantService,
+		protected IUserManager $userManager,
 	) {
 	}
 
@@ -31,8 +33,8 @@ class BanService {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function createBan(Room $room, string $actorId, string $actorType, string $bannedId, string $bannedType, DateTime $bannedTime, string $internalNote): Ban {
-		if (empty($bannedId) || empty($bannedType)) {
+	public function createBan(Room $room, string $moderatorActorType, string $moderatorActorId, string $moderatorDisplayname, string $bannedActorType, string $bannedActorId, DateTime $bannedTime, string $internalNote): Ban {
+		if (empty($bannedActorId) || empty($bannedActorType)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
 
@@ -40,27 +42,39 @@ class BanService {
 			throw new \InvalidArgumentException('internalNote');
 		}
 
-		if ($bannedType === $actorType && $bannedId === $actorId) {
+		if ($bannedActorType === $moderatorActorType && $bannedActorId === $moderatorActorId) {
 			throw new \InvalidArgumentException('self');
 		}
 
-		if (in_array($bannedType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
+		/** @var ?string $displayname */
+		$displayname = null;
+		if (in_array($bannedActorType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
 			try {
-				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedType, $bannedId);
+				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
+				$displayname = $bannedParticipant->getAttendee()->getDisplayName();
 				if ($bannedParticipant->hasModeratorPermissions()) {
 					throw new \InvalidArgumentException('moderator');
 				}
 			} catch (ParticipantNotFoundException) {
 				// No failure if the banned actor is not in the room yet/anymore
+				if ($bannedActorType === Attendee::ACTOR_USERS) {
+					$displayname = $this->userManager->getDisplayName($bannedActorId);
+				}
 			}
 		}
 
+		if ($displayname === null || $displayname === '') {
+			$displayname = $bannedActorId;
+		}
+
 		$ban = new Ban();
-		$ban->setActorId($actorId);
-		$ban->setActorType($actorType);
+		$ban->setModeratorActorType($moderatorActorType);
+		$ban->setModeratorActorId($moderatorActorId);
+		$ban->setModeratorDisplayname($moderatorDisplayname);
 		$ban->setRoomId($room->getId());
-		$ban->setBannedId($bannedId);
-		$ban->setBannedType($bannedType);
+		$ban->setBannedActorType($bannedActorType);
+		$ban->setBannedActorId($bannedActorId);
+		$ban->setBannedDisplayname($displayname);
 		$ban->setBannedTime($bannedTime);
 		$ban->setInternalNote($internalNote);
 
@@ -72,8 +86,8 @@ class BanService {
 	 *
 	 * @throws DoesNotExistException
 	 */
-	public function getBanForActorAndRoom(string $actorId, string $actorType, int $roomId): Ban {
-		return $this->banMapper->findForActorAndRoom($actorId, $actorType, $roomId);
+	public function getBanForActorAndRoom(string $bannedActorType, string $bannedActorId, int $roomId): Ban {
+		return $this->banMapper->findForActorAndRoom($bannedActorType, $bannedActorId, $roomId);
 	}
 
 	/**
@@ -95,5 +109,9 @@ class BanService {
 		} catch (DoesNotExistException) {
 			// Ban does not exist
 		}
+	}
+
+	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
+		$this->banMapper->updateDisplayNameForActor($actorType, $actorId, $displayName);
 	}
 }

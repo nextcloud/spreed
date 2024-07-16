@@ -28,12 +28,12 @@ class BanMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findForActorAndRoom(string $actorId, string $actorType, int $roomId): Ban {
+	public function findForActorAndRoom(string $bannedActorType, string $bannedActorId, int $roomId): Ban {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
+			->where($query->expr()->eq('banned_actor_type', $query->createNamedParameter($bannedActorType, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('banned_actor_id', $query->createNamedParameter($bannedActorId, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
@@ -60,5 +60,21 @@ class BanMapper extends QBMapper {
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
+	}
+
+	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('moderator_displayname', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('moderator_actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('moderator_actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('banned_displayname', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('banned_actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('banned_actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
 	}
 }
