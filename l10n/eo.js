@@ -283,6 +283,7 @@ OC.L10N.register(
     "Loading …" : "Ŝargado...",
     "Hide details" : "Kaŝi la detalojn",
     "Show details" : "Montri la detalojn",
+    "Date:" : "Dato:",
     "Disable" : "Malŝalti",
     "Enable" : "Ŝalti",
     "Choose" : "Elekti",

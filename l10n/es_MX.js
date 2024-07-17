@@ -374,6 +374,7 @@ OC.L10N.register(
     "Loading …" : "Cargando …",
     "Hide details" : "Ocultar detalles",
     "Show details" : "Mostrar detalles",
+    "Date:" : "Fecha:",
     "Disable" : "Deshabilitar",
     "Enable" : "Activar",
     "The file must be a PNG or JPG" : "El archivo debe ser PNG o JPG",

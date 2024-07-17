@@ -280,6 +280,7 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Hide details" : "Sembunyikan detail",
     "Show details" : "Tampilkan detail",
+    "Date:" : "Tanggal:",
     "Disable" : "Nonaktifkan",
     "Enable" : "Aktifkan",
     "Choose" : "Pilih",

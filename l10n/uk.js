@@ -809,6 +809,7 @@ OC.L10N.register(
     "Loading …" : "Завантаження …",
     "Hide details" : "Приховати деталі",
     "Show details" : "Показати деталі",
+    "Date:" : "Дата:",
     "Enter a name for this conversation" : "Введіть назву для цієї розмови",
     "Edit conversation name" : "Редагувати назву розмови",
     "Edit conversation description" : "Редагувати опис розмови",
