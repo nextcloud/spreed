@@ -155,6 +155,7 @@ OC.L10N.register(
     "Loading …" : "Ielādē…",
     "Hide details" : "Slēpt detaļas",
     "Show details" : "Rādīt detaļas",
+    "Date:" : "Datums:",
     "Disable" : "Deaktivēt",
     "Enable" : "Iespējot",
     "Choose" : "Izvēlies",
