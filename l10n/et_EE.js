@@ -43,6 +43,7 @@ OC.L10N.register(
     "Favorite" : "Lemmik",
     "Hide details" : "Peida üksikasjad",
     "Show details" : "Näita üksikasju",
+    "Date:" : "Kuupäev:",
     "Disable" : "Lülita välja",
     "Choose" : "Vali",
     "Restricted" : "Piiratud",
