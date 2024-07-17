@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
-use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\BanService;
@@ -38,8 +37,7 @@ class BanController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `ban-v1`
 	 *
-	 * @param 'users'|'groups'|'guests'|'circles'|'emails'|'federated_users'|'phones'|'ip' $actorType Type of actor to ban, or `ip` when banning a clients remote address
-	 * @psalm-param Attendee::ACTOR_*|'ip' $actorType Type of actor to ban, or `ip` when banning a clients remote address
+	 * @param 'users'|'guests'|'ip' $actorType Type of actor to ban, or `ip` when banning a clients remote address
 	 * @param string $actorId Actor ID or the IP address or range in case of type `ip`
 	 * @param string $internalNote Optional internal note (max. 4000 characters)
 	 * @return DataResponse<Http::STATUS_OK, TalkBan, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'bannedActor'|'internalNote'|'moderator'|'self'}, array{}>

@@ -2388,7 +2388,7 @@ export interface operations {
         parameters: {
             query: {
                 /** @description Type of actor to ban, or `ip` when banning a clients remote address */
-                actorType: "users" | "groups" | "guests" | "circles" | "emails" | "federated_users" | "phones" | "ip";
+                actorType: "users" | "guests" | "ip";
                 /** @description Actor ID or the IP address or range in case of type `ip` */
                 actorId: string;
                 /** @description Optional internal note (max. 4000 characters) */

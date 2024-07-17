@@ -1990,12 +1990,7 @@
                             "type": "string",
                             "enum": [
                                 "users",
-                                "groups",
                                 "guests",
-                                "circles",
-                                "emails",
-                                "federated_users",
-                                "phones",
                                 "ip"
                             ]
                         }
