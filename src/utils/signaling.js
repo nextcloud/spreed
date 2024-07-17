@@ -1083,6 +1083,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 
 	if (!this.settings.helloAuthParams.internal
 			&& (!this.hasFeature('audio-video-permissions')
+				|| !this.hasFeature('federation')
 				|| !this.hasFeature('incall-all')
 				|| !this.hasFeature('switchto'))) {
 		showError(
