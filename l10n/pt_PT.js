@@ -259,6 +259,7 @@ OC.L10N.register(
     "Favorite" : "Favorito",
     "Hide details" : "Ocultar detalhes",
     "Show details" : "Mostrar detalhes",
+    "Date:" : "Data:",
     "Disable" : "Desativar",
     "Enable" : "Activar",
     "Choose" : "Escolher",

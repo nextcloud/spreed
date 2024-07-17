@@ -418,6 +418,8 @@ OC.L10N.register(
     "Loading …" : "Hleð inn …",
     "Hide details" : "Fela nánari upplýsingar",
     "Show details" : "Birta nánari upplýsingar",
+    "Date:" : "Dagsetning:",
+    "Note:" : "Athugaðu:",
     "Disable" : "Gera óvirkt",
     "The file must be a PNG or JPG" : "Skráin verður að vera PNG eða JPG",
     "Choose" : "Velja",
