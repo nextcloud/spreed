@@ -100,7 +100,7 @@ class SessionService {
 					break;
 				} catch (Exception $e) {
 					// 255 chars are not unique? Try again...
-					if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+					if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 						throw $e;
 					}
 				}
