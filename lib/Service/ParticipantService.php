@@ -1896,7 +1896,8 @@ class ParticipantService {
 		$query->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
 				$query->expr()->eq('a.id', 's.attendee_id'),
-				$query->expr()->eq('s.state', $query->createNamedParameter(Session::STATE_ACTIVE, IQueryBuilder::PARAM_INT))
+				$query->expr()->eq('s.state', $query->createNamedParameter(Session::STATE_ACTIVE, IQueryBuilder::PARAM_INT)),
+				$query->expr()->gte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT, IQueryBuilder::PARAM_INT)),
 			))
 			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
