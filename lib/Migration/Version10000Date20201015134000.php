@@ -108,7 +108,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 
 			$table->addUniqueIndex(['room_id', 'actor_type', 'actor_id'], 'ta_ident');
 			$table->addIndex(['room_id', 'pin'], 'ta_roompin');
-			$table->addIndex(['room_id'], 'ta_room');
+			//$table->addIndex(['room_id'], 'ta_room'); Removed in Version20000Date20240717180417
 			$table->addIndex(['actor_type', 'actor_id'], 'ta_actor');
 		}
 
