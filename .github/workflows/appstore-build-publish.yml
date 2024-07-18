@@ -56,7 +56,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v3
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -72,7 +72,7 @@ jobs:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
 
       - name: Set up php ${{ steps.php-versions.outputs.php-min }}
-        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2.31.0
+        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # v2.31.1
         with:
           php-version: ${{ steps.php-versions.outputs.php-min }}
           coverage: none
@@ -95,7 +95,7 @@ jobs:
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
         env:
-          NODE_ENV: production
+          CYPRESS_INSTALL_BINARY: 0
         run: |
           cd ${{ env.APP_NAME }}
           npm ci
