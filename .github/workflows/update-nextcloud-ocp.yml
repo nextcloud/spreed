@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - id: checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: ${{ matrix.branches }}
           submodules: true
@@ -34,7 +34,7 @@ jobs:
 
       - name: Set up php8.2
         if: steps.checkout.outcome == 'success'
-        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2
+        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # v2.31.1
         with:
           php-version: 8.2
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -57,15 +57,15 @@ jobs:
       - name: Composer update nextcloud/ocp
         id: update_branch
         if: ${{ steps.checkout.outcome == 'success' && matrix.branches != 'main' }}
-        run: composer require --dev nextcloud/ocp:dev-${{ matrix.branches }}
+        run: composer require --dev 'nextcloud/ocp:dev-${{ matrix.branches }}'
 
       - name: Raise on issue on failure
         uses: dacbd/create-issue-action@cdb57ab6ff8862aa09fee2be6ba77a59581921c2 # v2.0.0
         if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_branch.conclusion == 'failure' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}
-          body: Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}
+          title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
+          body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
 
       - name: Composer update nextcloud/ocp
         id: update_main
@@ -77,8 +77,8 @@ jobs:
         if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_main.conclusion == 'failure' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}
-          body: Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}
+          title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
+          body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
 
       - name: Reset checkout 3rdparty
         if: steps.checkout.outcome == 'success'
@@ -103,15 +103,15 @@ jobs:
 
       - name: Create Pull Request
         if: steps.checkout.outcome == 'success'
-        uses: peter-evans/create-pull-request@6d6857d36972b65feb161a90e484f2984215f83e # v6.0.5
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
-          commit-message: "chore(dev-deps): Bump nextcloud/ocp package"
+          commit-message: 'chore(dev-deps): Bump nextcloud/ocp package'
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
           signoff: true
-          branch: automated/noid/${{ matrix.branches }}-update-nextcloud-ocp
-          title: "[${{ matrix.branches }}] Update nextcloud/ocp dependency"
+          branch: 'automated/noid/${{ matrix.branches }}-update-nextcloud-ocp'
+          title: '[${{ matrix.branches }}] Update nextcloud/ocp dependency'
           body: |
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
