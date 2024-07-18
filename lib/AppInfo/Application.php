@@ -263,6 +263,7 @@ class Application extends App implements IBootstrap {
 
 		// Federation listeners
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);
+		$context->registerEventListener(LobbyModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, TalkV1MessageSentListener::class);

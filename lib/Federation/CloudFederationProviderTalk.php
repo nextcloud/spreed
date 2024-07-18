@@ -288,7 +288,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null, dateTime?: string, timerReached?: bool} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
@@ -311,6 +311,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->roomService->setAvatar($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_LOBBY) {
+			$dateTime = !empty($notification['dateTime']) ? \DateTime::createFromFormat('U', $notification['dateTime']) : null;
+			$this->roomService->setLobby($room, $notification['newValue'], $dateTime, $notification['timerReached'] ?? false);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_NAME) {
 			$this->roomService->setName($room, $notification['newValue'], $notification['oldValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_READ_ONLY) {
