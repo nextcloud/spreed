@@ -1092,12 +1092,15 @@ class RoomShareProvider implements IShareProvider {
 		$cursor->closeCursor();
 
 		if (!empty($ids)) {
+			$delete = $this->dbConnection->getQueryBuilder();
+			$delete->delete('share')
+				->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+				->andWhere($delete->expr()->in('parent', $delete->createParameter('ids')));
+
 			$chunks = array_chunk($ids, 100);
 			foreach ($chunks as $chunk) {
-				$qb->delete('share')
-					->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
-					->andWhere($qb->expr()->in('parent', $qb->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)));
-				$qb->executeStatement();
+				$delete->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+				$delete->executeStatement();
 			}
 		}
 
