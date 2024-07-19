@@ -99,74 +99,29 @@ class Attendee extends Entity {
 	public const PERMISSIONS_MODIFY_REMOVE = 'remove';
 	public const PERMISSIONS_MODIFY_ADD = 'add';
 
-	/** @var int */
-	protected $roomId;
-
-	/** @var string */
-	protected $actorType;
-
-	/** @var string */
-	protected $actorId;
-
-	/** @var null|string */
-	protected $displayName;
-
-	/** @var null|string */
-	protected $pin;
-
-	/** @var int */
-	protected $participantType;
-
-	/** @var bool */
-	protected $favorite;
-
-	/** @var int */
-	protected $notificationLevel;
-
-	/** @var int */
-	protected $notificationCalls;
-
-	/** @var int */
-	protected $lastJoinedCall;
-
-	/** @var int */
-	protected $lastReadMessage;
-
-	/** @var int */
-	protected $lastMentionMessage;
-
-	/** @var int */
-	protected $lastMentionDirect;
-
-	/** @var int */
-	protected $readPrivacy;
-
-	/** @var int */
-	protected $permissions;
-
-	/** @var string */
-	protected $accessToken;
-
-	/** @var string */
-	protected $remoteId;
-
-	/** @var string */
-	protected $invitedCloudId;
-
-	/** @var null|string */
-	protected $phoneNumber;
-
-	/** @var null|string */
-	protected $callId;
-
-	/** @var int */
-	protected $state;
-
-	/** @var int */
-	protected $unreadMessages;
-
-	/** @var int */
-	protected $lastAttendeeActivity;
+	protected int $roomId = 0;
+	protected string $actorType = '';
+	protected string $actorId = '';
+	protected ?string $displayName = null;
+	protected ?string $pin = null;
+	protected int $participantType = 0;
+	protected bool $favorite = false;
+	protected int $notificationLevel = 0;
+	protected int $notificationCalls = 0;
+	protected int $lastJoinedCall = 0;
+	protected int $lastReadMessage = 0;
+	protected int $lastMentionMessage = 0;
+	protected int $lastMentionDirect = 0;
+	protected int $readPrivacy = 0;
+	protected int $permissions = 0;
+	protected ?string $accessToken = null;
+	protected ?string $remoteId = null;
+	protected ?string $invitedCloudId = null;
+	protected ?string $phoneNumber = null;
+	protected ?string $callId = null;
+	protected int $state = 0;
+	protected int $unreadMessages = 0;
+	protected int $lastAttendeeActivity = 0;
 
 	public function __construct() {
 		$this->addType('roomId', 'int');
@@ -196,34 +151,5 @@ class Attendee extends Entity {
 
 	public function getDisplayName(): string {
 		return (string) $this->displayName;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function asArray(): array {
-		return [
-			'id' => $this->getId(),
-			'room_id' => $this->getRoomId(),
-			'actor_type' => $this->getActorType(),
-			'actor_id' => $this->getActorId(),
-			'display_name' => $this->getDisplayName(),
-			'pin' => $this->getPin(),
-			'participant_type' => $this->getParticipantType(),
-			'favorite' => $this->isFavorite(),
-			'notification_level' => $this->getNotificationLevel(),
-			'notification_calls' => $this->getNotificationCalls(),
-			'last_joined_call' => $this->getLastJoinedCall(),
-			'last_read_message' => $this->getLastReadMessage(),
-			'last_mention_message' => $this->getLastMentionMessage(),
-			'last_mention_direct' => $this->getLastMentionDirect(),
-			'read_privacy' => $this->getReadPrivacy(),
-			'permissions' => $this->getPermissions(),
-			'remote_id' => $this->getRemoteId(),
-			'invited_cloud_id' => $this->getInvitedCloudId(),
-			'phone_number' => $this->getPhoneNumber(),
-			'call_id' => $this->getCallId(),
-			'last_attendee_activity' => $this->getLastAttendeeActivity(),
-		];
 	}
 }
