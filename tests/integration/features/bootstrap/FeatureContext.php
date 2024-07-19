@@ -577,7 +577,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($formData) {
 			if ($status === 200) {
 				if (!isset(self::$tokenToIdentifier[$response['token']])) {
-					self::$identifierToToken[$server . '::' . $identifier] = $response['token'];
+					self::$tokenToIdentifier[$response['token']] = $server . '::' . $identifier;
 				}
 
 				$this->assertRooms([$response], $formData);
