@@ -562,8 +562,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, int $status, string $apiVersion, TableNode $formData = null): void {
-		$inviteId = self::$remoteToInviteId[$server . '::' . $roomName];
+	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $identifier, string $server, int $status, string $apiVersion, TableNode $formData = null): void {
+		$inviteId = self::$remoteToInviteId[$server . '::' . $identifier];
 
 		$verb = $acceptsDeclines === 'accepts' ? 'POST' : 'DELETE';
 
@@ -577,7 +577,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($formData) {
 			if ($status === 200) {
 				if (!isset(self::$tokenToIdentifier[$response['token']])) {
-					self::$identifierToToken[$server . '::' . $identifier] = $response['token'];
+					self::$tokenToIdentifier[$response['token']] = $server . '::' . $identifier;
 				}
 
 				$this->assertRooms([$response], $formData);

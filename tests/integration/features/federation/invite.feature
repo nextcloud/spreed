@@ -60,11 +60,11 @@ Feature: federation/invite
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 3    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 3    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 3    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 3    | LOCAL        | room        |
     Then last response has federation invites header set to "NULL"
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 400 (v1)
       | error | state |
@@ -128,8 +128,8 @@ Feature: federation/invite
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 3    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 3    | LOCAL        | room        |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 400 (v1)
       | error | state |
     And user "participant2" declines invite to room "room" of server "LOCAL" with 400 (v1)
@@ -261,8 +261,8 @@ Feature: federation/invite
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 3    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 3    | LOCAL        | room        |
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 1     | participant1@http://localhost:8080 | participant1-displayname |
@@ -291,15 +291,15 @@ Feature: federation/invite
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 2    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | name | type |
-      | room | room | 2    |
+      | id          | name | type |
+      | LOCAL::room | room | 2    |
     And user "participant1" renames room "room" to "Federated room" with 200 (v4)
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | name           | type |
-      | room | Federated room | 2    |
+      | id          | name           | type |
+      | LOCAL::room | Federated room | 2    |
 
   Scenario: Allow accessing conversation and room avatars for invited users
     Given the following "spreed" app config is set
@@ -314,8 +314,8 @@ Feature: federation/invite
     When as user "participant2"
     Then the room "LOCAL::room" has an avatar with 200
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 2    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     When as user "participant2"
     Then the room "LOCAL::room" has an avatar with 200
     And user "participant2" removes themselves from room "LOCAL::room" with 200 (v4)
