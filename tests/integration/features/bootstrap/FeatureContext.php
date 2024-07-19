@@ -557,7 +557,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Then /^user "([^"]*)" (accepts|declines) invite to room "([^"]*)" of server "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
-	 * @param string $roomName
+	 * @param string $identifier
 	 * @param string $server
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
@@ -577,7 +577,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($formData) {
 			if ($status === 200) {
 				if (!isset(self::$tokenToIdentifier[$response['token']])) {
-					self::$identifierToToken[$server . '::' . $roomName] = $response['token'];
+					self::$identifierToToken[$server . '::' . $identifier] = $response['token'];
 				}
 
 				$this->assertRooms([$response], $formData);
