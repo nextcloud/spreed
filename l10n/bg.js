@@ -805,6 +805,7 @@ OC.L10N.register(
     "Loading …" : "Зареждане …",
     "Hide details" : "Скриване на подробностите",
     "Show details" : "Показване на подробности",
+    "Date:" : "Дата:",
     "Enter a name for this conversation" : "Въведете име за този разговор",
     "Edit conversation name" : "Редактиране на името на разговора",
     "Edit conversation description" : "Редактиране на описанието на разговора",
