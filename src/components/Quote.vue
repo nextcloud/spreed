@@ -37,11 +37,8 @@ components.
 				text="{file}"
 				:arguments="richParameters" />
 			<!-- Message text -->
-			<blockquote v-if="!isFileShareWithoutCaption"
-				class="quote__main__text">
-				<p dir="auto">
-					{{ shortenedQuoteMessage }}
-				</p>
+			<blockquote v-if="!isFileShareWithoutCaption" dir="auto" class="quote__main__text">
+				{{ shortenedQuoteMessage }}
 			</blockquote>
 		</div>
 
@@ -192,11 +189,9 @@ export default {
 		 * fit, the css rules won't ellipsize the text-overflow.
 		 */
 		shortenedQuoteMessage() {
-			if (this.simpleQuotedMessage.length >= 250) {
-				return this.simpleQuotedMessage.substring(0, 250) + '…'
-			} else {
-				return this.simpleQuotedMessage
-			}
+			return this.simpleQuotedMessage.length >= 250
+				? this.simpleQuotedMessage.substring(0, 250) + '…'
+				: this.simpleQuotedMessage
 		},
 
 		cancelQuoteLabel() {
@@ -280,18 +275,10 @@ export default {
 
 		&__text {
 			color: var(--color-text-maxcontrast);
-			white-space: pre-wrap;
-			word-break: break-word;
-
-			& p {
-				text-overflow: ellipsis;
-				overflow: hidden;
-				// Allow 1 line max and ellipsize the overflow;
-				display: -webkit-box;
-				-webkit-line-clamp: 1;
-				-webkit-box-orient: vertical;
-				text-align: start;
-			}
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			text-align: start;
 		}
 
 		&__edit-hint {
