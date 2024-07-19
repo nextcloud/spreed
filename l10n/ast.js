@@ -560,6 +560,7 @@ OC.L10N.register(
     "Loading …" : "Cargando…",
     "Hide details" : "Anubrir los detalles",
     "Show details" : "Amosar los detalles",
+    "Date:" : "Data:",
     "Enter a name for this conversation" : "Introduz un nome pa esta conversación",
     "Edit conversation name" : "Editar el nome de la conversación",
     "Edit conversation description" : "Editar la descripción de la conversación",
