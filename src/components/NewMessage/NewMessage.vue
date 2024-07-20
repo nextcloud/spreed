@@ -46,8 +46,8 @@
 						:close-on-select="false"
 						@select="addEmoji">
 						<NcButton :disabled="disabled"
+							type="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
-							type="tertiary-no-background"
 							:aria-haspopup="true">
 							<template #icon>
 								<EmoticonOutline :size="16" />
@@ -1048,8 +1048,15 @@ export default {
 
 	&__emoji-picker {
 		position: absolute;
-		bottom: 0;
+		bottom: var(--border-width-input-focused, 2px);
+		left: var(--border-width-input-focused, 2px);
 		z-index: 1;
+
+		:deep(.button-vue) {
+			// Overwrite NcButton styles to fit inside NcRichContenteditable
+			--button-size: calc(var(--default-clickable-area) - var(--border-width-input-focused, 2px) * 2) !important;
+			--button-radius: calc(var(--border-radius-element, calc(var(--button-size) / 2)) - var(--border-width-input-focused, 2px)) !important;
+		}
 	}
 
 	&__input {
