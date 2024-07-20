@@ -1027,14 +1027,14 @@ export default {
 
 	.filters {
 		position: absolute;
-		top: 8px;
-		right: 56px;
+		top: calc(var(--default-grid-baseline) * 2);
+		right: calc(var(--default-grid-baseline) * 3 + var(--default-clickable-area));
 	}
 
 	.actions {
 		position: absolute;
-		top: 8px;
-		right: 8px;
+		top: calc(var(--default-grid-baseline) * 2);
+		right: calc(var(--default-grid-baseline) * 2);
 	}
 }
 
@@ -1074,15 +1074,12 @@ export default {
 .conversations-search {
 	transition: all 0.15s ease;
 	z-index: 1;
-	// New conversation button width : 52 px
-	// Filters button width : 44 px
-	// Spacing : 3px + 1px
-	// Total : 100 px
-	width: calc(100% - 100px);
+	// TODO replace with NcAppNavigationSearch
+	width: calc(100% - var(--default-grid-baseline) * 2 - var(--default-clickable-area) * 2);
 	display: flex;
 
 	&--expanded {
-		width: calc(100% - 8px);
+		width: 100%;
 	}
 
 	:deep(.input-field) {
