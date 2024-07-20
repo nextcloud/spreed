@@ -15,6 +15,7 @@ use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -46,6 +47,7 @@ class Config {
 		private ISecureRandom $secureRandom,
 		private IGroupManager $groupManager,
 		private IUserManager $userManager,
+		private ICloudIdManager $cloudIdManager,
 		private IURLGenerator $urlGenerator,
 		protected ITimeFactory $timeFactory,
 		private IEventDispatcher $dispatcher,
@@ -572,7 +574,8 @@ class Config {
 	}
 
 	/**
-	 * @param string|null $userId
+	 * @param string|null $userId if given, the id of a user in this instance or
+	 *        a cloud id.
 	 * @return string
 	 */
 	private function getSignalingTicketV2(?string $userId): string {
@@ -586,6 +589,8 @@ class Config {
 		if ($user instanceof IUser) {
 			$data['sub'] = $user->getUID();
 			$data['userdata'] = $this->getSignalingUserData($user);
+		} elseif (!empty($userId) && $this->cloudIdManager->isValidCloudId($userId)) {
+			$data['sub'] = $userId;
 		}
 
 		$alg = $this->getSignalingTokenAlgorithm();

@@ -15,6 +15,7 @@ use OCA\Talk\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -36,12 +37,14 @@ class ConfigTest extends TestCase {
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
 		$userManager = $this->createMock(IUserManager::class);
+		/** @var MockObject|ICloudIdManager $cloudIdManager */
+		$cloudIdManager = $this->createMock(ICloudIdManager::class);
 		/** @var MockObject|IURLGenerator $urlGenerator */
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $cloudIdManager, $urlGenerator, $timeFactory, $dispatcher);
 		return $helper;
 	}
 
@@ -145,6 +148,8 @@ class ConfigTest extends TestCase {
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
 		$userManager = $this->createMock(IUserManager::class);
+		/** @var MockObject|ICloudIdManager $cloudIdManager */
+		$cloudIdManager = $this->createMock(ICloudIdManager::class);
 		/** @var MockObject|IURLGenerator $urlGenerator */
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
@@ -157,7 +162,7 @@ class ConfigTest extends TestCase {
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $cloudIdManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		//
 		$settings = $helper->getTurnSettings();
@@ -221,6 +226,9 @@ class ConfigTest extends TestCase {
 		/** @var MockObject|IUserManager $userManager */
 		$userManager = $this->createMock(IUserManager::class);
 
+		/** @var MockObject|ICloudIdManager $cloudIdManager */
+		$cloudIdManager = $this->createMock(ICloudIdManager::class);
+
 		/** @var MockObject|IURLGenerator $urlGenerator */
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 
@@ -249,7 +257,7 @@ class ConfigTest extends TestCase {
 
 		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $cloudIdManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		$settings = $helper->getTurnSettings();
 		$this->assertSame($servers, $settings);
@@ -354,6 +362,8 @@ class ConfigTest extends TestCase {
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
 		$userManager = $this->createMock(IUserManager::class);
+		/** @var MockObject|ICloudIdManager $cloudIdManager */
+		$cloudIdManager = $this->createMock(ICloudIdManager::class);
 		/** @var MockObject|IURLGenerator $urlGenerator */
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
@@ -385,7 +395,7 @@ class ConfigTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('Jane Doe');
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $cloudIdManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
@@ -419,6 +429,8 @@ class ConfigTest extends TestCase {
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
 		$userManager = $this->createMock(IUserManager::class);
+		/** @var MockObject|ICloudIdManager $cloudIdManager */
+		$cloudIdManager = $this->createMock(ICloudIdManager::class);
 		/** @var MockObject|IURLGenerator $urlGenerator */
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
@@ -435,7 +447,7 @@ class ConfigTest extends TestCase {
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $cloudIdManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
