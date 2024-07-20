@@ -9,6 +9,7 @@
 		:name="item.displayName"
 		:title="item.displayName"
 		:data-nav-id="`conversation_${item.token}`"
+		:class="['conversation', { 'conversation--active': isActive }]"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
 		:bold="!!item.unreadMessages"
@@ -325,6 +326,28 @@ export default {
 <style lang="scss" scoped>
 .critical > :deep(.action-button) {
 	color: var(--color-error);
+}
+
+.conversation {
+	// Overwrite ConversationIcon styles to blend a type icon with NcListItem
+	& :deep(.list-item:hover .conversation-icon__type) {
+		background-color: var(--color-background-hover);
+		border-color: var(--color-background-hover);
+	}
+
+	&--active {
+		&:deep(.list-item .conversation-icon__type) {
+			color: var(--color-primary-element-text);
+			background-color: var(--color-primary-element);
+			border-color: var(--color-primary-element);
+		}
+
+		&:deep(.list-item:hover .conversation-icon__type) {
+			color: var(--color-primary-element-text);
+			background-color: var(--color-primary-element-hover);
+			border-color: var(--color-primary-element-hover);
+		}
+	}
 }
 
 :deep(.dialog) {
