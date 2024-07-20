@@ -36,6 +36,7 @@
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
 			:label="t('spreed', 'Description')"
 			:error="!!descriptionErrorLabel"
+			resize="vertical"
 			label-visible />
 		<span v-if="descriptionErrorLabel" class="new-group-conversation__error">
 			{{ descriptionErrorLabel }}
