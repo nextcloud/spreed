@@ -230,6 +230,10 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($event->getRoom()->isFederatedConversation()) {
+			return;
+		}
+
 		if ($event->getNewValue() === Room::TYPE_PUBLIC) {
 			$this->sendSystemMessage($event->getRoom(), 'guests_allowed');
 		} elseif ($event->getNewValue() === Room::TYPE_GROUP) {
