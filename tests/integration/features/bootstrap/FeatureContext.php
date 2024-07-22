@@ -30,6 +30,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array<string, string> */
 	protected static array $sessionIdToUser;
 	/** @var array<string, string> */
+	protected static array $sessionNameToActorId;
+	/** @var array<string, string> */
 	protected static array $userToSessionId;
 	/** @var array<string, int> */
 	protected static array $userToAttendeeId;
@@ -167,6 +169,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$identifierToToken = [];
 		self::$identifierToId = [];
 		self::$tokenToIdentifier = [];
+		self::$sessionNameToActorId = [];
 		self::$sessionIdToUser = [
 			'cli' => 'cli',
 			'system' => 'system',
@@ -1218,14 +1221,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userJoinsRoomWithNamedSession(string $user, string $identifier, int $statusCode, string $apiVersion, string $sessionName, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user, $identifier);
 
-		$userBanId = self::$userToBanId[self::$identifierToToken[$identifier]]['users'][$user] ?? null;
-		$guestBanId = self::$userToBanId[self::$identifierToToken[$identifier]]['guests'][$user] ?? null;
-
-		if ($userBanId !== null || $guestBanId !== null) {
-			//User is banned
-			return;
-		}
-
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants/active',
 			$formData
@@ -1246,6 +1241,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			self::$userToSessionId[$user] = $response['sessionId'];
 			if ($sessionName) {
 				self::$userToSessionId[$user . '#' . $sessionName] = $response['sessionId'];
+				self::$sessionNameToActorId[$sessionName] = $response['actorId'];
 			}
 			if (!isset(self::$userToAttendeeId[$identifier][$response['actorType']])) {
 				self::$userToAttendeeId[$identifier][$response['actorType']] = [];
@@ -1468,7 +1464,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" bans (user|group|email|remote) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
+	 * @When /^user "([^"]*)" bans (user|group|email|remote|guest) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
 	 *
 	 * @param string $user
 	 * @param string $actorType
@@ -1478,7 +1474,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $internalNote): void {
-		if ($actorId === 'stranger') {
+		if ($actorType === 'guest') {
+			$actorId = self::$sessionNameToActorId[$actorId];
+		} elseif ($actorId === 'stranger') {
 			$actorId = '123456789';
 		} else {
 			if ($actorType === 'remote') {
@@ -1529,12 +1527,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$bans = $this->getDataFromResponse($this->response);
-		foreach ($bans as &$key) {
-			unset($key['id'], $key['roomId'], $key['bannedTime']);
+		if ($tableNode instanceof TableNode) {
+			$expected = array_map(static function (array $ban): array {
+				if (preg_match('/^SESSION\(([a-z0-9]+)\)$/', $ban['bannedActorId'], $match)) {
+					$ban['bannedActorId'] = self::$sessionNameToActorId[$match[1]];
+				}
+				if (preg_match('/^SESSION\(([a-z0-9]+)\)$/', $ban['bannedDisplayName'], $match)) {
+					$ban['bannedDisplayName'] = self::$sessionNameToActorId[$match[1]];
+				}
+				return $ban;
+			}, $tableNode->getColumnsHash());
+		} else {
+			$expected = [];
 		}
 
-		Assert::assertEquals($tableNode->getColumnsHash(), $bans);
+		$bans = array_map(static function (array $ban, array $expectedBan): array {
+			if ($expectedBan['bannedActorId'] === 'LOCAL_IP') {
+				if ($ban['bannedActorId'] === '127.0.0.1' || $ban['bannedActorId'] === '::1') {
+					$ban['bannedActorId'] = 'LOCAL_IP';
+				}
+			}
+			if ($expectedBan['bannedDisplayName'] === 'LOCAL_IP') {
+				if ($ban['bannedDisplayName'] === '127.0.0.1' || $ban['bannedDisplayName'] === '::1') {
+					$ban['bannedDisplayName'] = 'LOCAL_IP';
+				}
+			}
+			unset($ban['id'], $ban['roomId'], $ban['bannedTime']);
+			return $ban;
+		}, $this->getDataFromResponse($this->response), $expected);
+
+		Assert::assertEquals($expected, $bans);
 	}
 
 	/**

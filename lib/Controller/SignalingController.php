@@ -12,6 +12,7 @@ use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -20,6 +21,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
@@ -65,6 +67,7 @@ class SignalingController extends OCSController {
 		private IEventDispatcher $dispatcher,
 		private ITimeFactory $timeFactory,
 		private IClientService $clientService,
+		private BanService $banService,
 		private LoggerInterface $logger,
 		private ?string $userId,
 	) {
@@ -372,7 +375,8 @@ class SignalingController extends OCSController {
 			if ($participant->getSession() instanceof Session) {
 				$this->sessionService->updateLastPing($participant->getSession(), $pingTimestamp);
 			}
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
+			$this->banIpIfGuestGotBanned($token);
 			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 		}
 
@@ -413,7 +417,8 @@ class SignalingController extends OCSController {
 			// Add an update of the room participants at the end of the waiting
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
 			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
+			$this->banIpIfGuestGotBanned($token);
 			$data[] = ['type' => 'usersInRoom', 'data' => []];
 
 			// Was the session killed or the complete conversation?
@@ -477,6 +482,23 @@ class SignalingController extends OCSController {
 		}
 
 		return $usersInRoom;
+	}
+
+	protected function banIpIfGuestGotBanned(string $token): void {
+		if ($this->userId !== null) {
+			return;
+		}
+
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException) {
+			return;
+		}
+
+		try {
+			$this->banService->throwIfActorIsBanned($room, null);
+		} catch (ForbiddenException) {
+		}
 	}
 
 	/**
