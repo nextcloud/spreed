@@ -1902,7 +1902,6 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			// The participant is just joining, so enforce to not load any session
 			if (!$this->federationAuthenticator->isFederationRequest()) {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
