@@ -34,9 +34,15 @@ class BanService {
 	 * @throws \InvalidArgumentException
 	 */
 	public function createBan(Room $room, string $moderatorActorType, string $moderatorActorId, string $moderatorDisplayname, string $bannedActorType, string $bannedActorId, DateTime $bannedTime, string $internalNote): Ban {
-		if (empty($bannedActorId) || empty($bannedActorType)) {
+		if (!in_array($bannedActorType, ['users', 'guests', 'ip'], true)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
+
+		if (empty($bannedActorId)) {
+			throw new \InvalidArgumentException('bannedActor');
+		}
+
+		// Fix missing IP and range validation
 
 		if (strlen($internalNote) > Ban::NOTE_MAX_LENGTH) {
 			throw new \InvalidArgumentException('internalNote');
