@@ -98,6 +98,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { CALL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.js'
 
 const recordingConsentCapability = hasTalkFeature('local', 'recording-consent')
 const recordingConsentOptions = [
@@ -152,19 +153,20 @@ export default {
 
 	beforeMount() {
 		this.debounceUpdateServers = debounce(this.updateServers, 1000)
+
 		const state = loadState('spreed', 'recording_servers')
 		this.servers = state.servers
 		this.secret = state.secret
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
-	},
 
-	mounted() {
 		const signaling = loadState('spreed', 'signaling_servers')
-		this.showForm = signaling.servers.length > 0
+		this.updateSignalingServers(signaling.servers)
+		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	beforeDestroy() {
 		this.debounceUpdateServers.clear?.()
+		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -229,6 +231,10 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
+		},
+
+		updateSignalingServers(servers) {
+			this.showForm = servers.length > 0
 		},
 	},
 }

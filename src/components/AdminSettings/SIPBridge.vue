@@ -94,6 +94,7 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
+import { EventBus } from '../../services/EventBus.js'
 import { setSIPSettings } from '../../services/settingsService.js'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
@@ -147,13 +148,17 @@ export default {
 		this.debounceSearchGroup('')
 		this.loading = false
 		this.saveCurrentSetup()
+
 		const signaling = loadState('spreed', 'signaling_servers')
-		this.showForm = signaling.servers.length > 0
+		this.updateSignalingServers(signaling.servers)
+		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
+
 		this.isDialoutSupported()
 	},
 
 	beforeDestroy() {
 		this.debounceSearchGroup.clear?.()
+		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -218,6 +223,10 @@ export default {
 					this.dialOutSupported = false
 				}
 			}
+		},
+
+		updateSignalingServers(servers) {
+			this.showForm = servers.length > 0
 		},
 	},
 }
