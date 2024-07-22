@@ -21,7 +21,8 @@ use Test\TestCase;
  */
 class SessionServiceTest extends TestCase {
 	protected ?SessionMapper $sessionMapper = null;
-	protected ISecureRandom&MockObject $secureRandom;
+	/** @var ISecureRandom|MockObject */
+	protected $secureRandom;
 	private ?SessionService $service = null;
 
 	private const RANDOM_254 = '123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef6123456789abcdef7123456789abcdef8123456789abcdef9123456789abcdefa123456789abcdefb123456789abcdefc123456789abcdefd123456789abcdefe123456789abcde';
