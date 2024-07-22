@@ -103,6 +103,26 @@ class AttendeeMapper extends QBMapper {
 
 	/**
 	 * @param int $roomId
+	 * @param array $actorTypes
+	 * @param int|null $lastJoinedCall
+	 * @return Attendee[]
+	 */
+	public function getActorsByTypes(int $roomId, array $actorTypes, ?int $lastJoinedCall = null): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->in('actor_type', $query->createNamedParameter($actorTypes, IQueryBuilder::PARAM_STR_ARRAY)));
+
+		if ($lastJoinedCall !== null) {
+			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($lastJoinedCall, IQueryBuilder::PARAM_INT)));
+		}
+
+		return $this->findEntities($query);
+	}
+
+	/**
+	 * @param int $roomId
 	 * @param array $participantType
 	 * @return Attendee[]
 	 * @throws DBException

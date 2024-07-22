@@ -1619,11 +1619,18 @@ class ParticipantService {
 	 * @return string[]
 	 */
 	public function getParticipantUserIds(Room $room, ?\DateTime $maxLastJoined = null): array {
+		return $this->getParticipantActorIdsByActorType($room, [Attendee::ACTOR_USERS], $maxLastJoined);
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getParticipantActorIdsByActorType(Room $room, array $actorTypes, ?\DateTime $maxLastJoined = null): array {
 		$maxLastJoinedTimestamp = null;
 		if ($maxLastJoined !== null) {
 			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
 		}
-		$attendees = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_USERS, $maxLastJoinedTimestamp);
+		$attendees = $this->attendeeMapper->getActorsByTypes($room->getId(), $actorTypes, $maxLastJoinedTimestamp);
 
 		return array_map(static function (Attendee $attendee) {
 			return $attendee->getActorId();
