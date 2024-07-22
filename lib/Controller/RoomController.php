@@ -1506,33 +1506,16 @@ class RoomController extends AEnvironmentAwareController {
 	 * 409: Session already exists
 	 */
 	#[PublicPage]
-	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomPassword')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
-		$isTalkFederation = $this->federationAuthenticator->isFederationRequest();
 		try {
 			// The participant is just joining, so enforce to not load any session
-			if (!$isTalkFederation) {
-				$action = 'talkRoomToken';
-				$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
-			} else {
-				$action = 'talkFederationAccess';
-				try {
-					$room = $this->federationAuthenticator->getRoom();
-				} catch (RoomNotFoundException) {
-					$room = $this->manager->getRoomByRemoteAccess(
-						$token,
-						Attendee::ACTOR_FEDERATED_USERS,
-						$this->federationAuthenticator->getCloudId(),
-						$this->federationAuthenticator->getAccessToken(),
-					);
-				}
-			}
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token, 'action' => $action]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
@@ -1610,8 +1593,6 @@ class RoomController extends AEnvironmentAwareController {
 			if ($user instanceof IUser) {
 				$participant = $this->participantService->joinRoom($this->roomService, $room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
-			} elseif ($isTalkFederation) {
-				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 				$this->session->setGuestActorIdForRoom($room->getToken(), $participant->getAttendee()->getActorId());
@@ -1626,7 +1607,7 @@ class RoomController extends AEnvironmentAwareController {
 			return $response;
 		} catch (UnauthorizedException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token, 'action' => $action]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
@@ -1902,32 +1883,8 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			if (!$this->federationAuthenticator->isFederationRequest()) {
-				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
-				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
-			} else {
-				try {
-					$room = $this->federationAuthenticator->getRoom();
-				} catch (RoomNotFoundException) {
-					$room = $this->manager->getRoomByRemoteAccess(
-						$token,
-						Attendee::ACTOR_FEDERATED_USERS,
-						$this->federationAuthenticator->getCloudId(),
-						$this->federationAuthenticator->getAccessToken(),
-					);
-				}
-
-				try {
-					$participant = $this->federationAuthenticator->getParticipant();
-				} catch (ParticipantNotFoundException) {
-					$participant = $this->participantService->getParticipantByActor(
-						$room,
-						Attendee::ACTOR_FEDERATED_USERS,
-						$this->federationAuthenticator->getCloudId(),
-					);
-					$this->federationAuthenticator->authenticated($room, $participant);
-				}
-			}
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 		}
