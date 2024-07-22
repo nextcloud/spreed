@@ -497,7 +497,7 @@ export default {
 .message-buttons-bar {
 	display: flex;
 	right: 14px;
-	top: 8px;
+	top: 0;
 	position: sticky;
 	background-color: var(--color-main-background);
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
