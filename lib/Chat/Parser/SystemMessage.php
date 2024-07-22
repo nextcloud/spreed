@@ -763,10 +763,9 @@ class SystemMessage implements IEventListener {
 				}
 
 				$fullPath = $node->getPath();
-				$pathSegments = explode('/', $fullPath, 4);
 				$name = $node->getName();
 				$size = $node->getSize();
-				$path = $pathSegments[3] ?? $name;
+				$path = "Shared/" . ($userFolder->getRelativePath($fullPath) ?? $name);
 			} else {
 				$node = $share->getNode();
 				$name = $node->getName();
