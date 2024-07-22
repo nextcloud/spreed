@@ -1625,6 +1625,13 @@ class ParticipantService {
 	/**
 	 * @return string[]
 	 */
+	public function getParticipantUserIdsAndFederatedUserCloudIds(Room $room, ?\DateTime $maxLastJoined = null): array {
+		return $this->getParticipantActorIdsByActorType($room, [Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], $maxLastJoined);
+	}
+
+	/**
+	 * @return string[]
+	 */
 	public function getParticipantActorIdsByActorType(Room $room, array $actorTypes, ?\DateTime $maxLastJoined = null): array {
 		$maxLastJoinedTimestamp = null;
 		if ($maxLastJoined !== null) {
