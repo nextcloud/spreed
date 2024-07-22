@@ -630,7 +630,9 @@ class ChatControllerTest extends TestCase {
 			'systemMessage' => '',
 			'messageType' => 'comment',
 			'isReplyable' => true,
-		], Http::STATUS_CREATED);
+		], Http::STATUS_CREATED, [
+			'X-Chat-Last-Common-Read' => '0',
+		]);
 
 		$this->assertEquals($expected, $response);
 	}
