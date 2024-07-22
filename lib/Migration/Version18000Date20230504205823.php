@@ -93,7 +93,7 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['token', 'state'], 'talk_bots_convo_token');
-			$table->addIndex(['bot_id'], 'talk_bots_convo_id');
+			//$table->addIndex(['bot_id'], 'talk_bots_convo_id'); Removed in Version20000Date20240717180417
 			$table->addUniqueIndex(['bot_id', 'token'], 'talk_bots_convo_uniq');
 			return $schema;
 		}
