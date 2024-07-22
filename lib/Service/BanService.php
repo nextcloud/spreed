@@ -160,10 +160,31 @@ class BanService {
 			return;
 		}
 
+
+		$ipBans = $this->banMapper->findByRoomId($room->getId(), 'ip');
+
+		if (empty($ipBans)) {
+			return;
+		}
+
 		try {
-			$this->banMapper->findForBannedActorAndRoom($this->request->getRemoteAddress(), 'ip', $room->getId());
-			throw new ForbiddenException('ip');
-		} catch (DoesNotExistException) {
+			$remoteAddress = $this->ipFactory->addressFromString($this->request->getRemoteAddress());
+		} catch (\InvalidArgumentException) {
+			return;
+		}
+
+		foreach ($ipBans as $ban) {
+			if ($ban->getBannedActorId() === $this->request->getRemoteAddress()) {
+				throw new ForbiddenException('ip');
+			}
+
+			try {
+				$range = $this->ipFactory->rangeFromString($ban->getBannedActorId());
+				if ($range->contains($remoteAddress)) {
+					throw new ForbiddenException('ip');
+				}
+			} catch (\InvalidArgumentException) {
+			}
 		}
 	}
 
