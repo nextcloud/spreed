@@ -21,6 +21,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\Security\Ip\IFactory;
 use Psr\Log\LoggerInterface;
 
 class BanService {
@@ -33,6 +34,7 @@ class BanService {
 		protected TalkSession $talkSession,
 		protected IRequest $request,
 		protected LoggerInterface $logger,
+		protected IFactory $ipFactory,
 	) {
 	}
 
@@ -50,7 +52,19 @@ class BanService {
 			throw new \InvalidArgumentException('bannedActor');
 		}
 
-		// Fix missing IP and range validation
+		if ($bannedActorType === 'ip') {
+			try {
+				$this->ipFactory->addressFromString($bannedActorId);
+			} catch (\InvalidArgumentException) {
+				// Not an IP, check if it's a range
+				try {
+					$this->ipFactory->addressFromString($bannedActorId);
+				} catch (\InvalidArgumentException) {
+					// Not an IP, see if it's a range
+					throw new \InvalidArgumentException('bannedActor');
+				}
+			}
+		}
 
 		if (strlen($internalNote) > Ban::NOTE_MAX_LENGTH) {
 			throw new \InvalidArgumentException('internalNote');
