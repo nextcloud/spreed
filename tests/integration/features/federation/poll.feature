@@ -14,11 +14,11 @@ Feature: federation/poll
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
-      | id   | name | type | remoteServer | remoteToken |
-      | room | room | 2    | LOCAL        | room        |
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type |
-      | room | 2    |
+      | id          | type |
+      | LOCAL::room | 2    |
     When user "participant2" creates a poll in room "LOCAL::room" with 201
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
