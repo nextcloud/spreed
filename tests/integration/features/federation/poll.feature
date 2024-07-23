@@ -92,7 +92,7 @@ Feature: federation/poll
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | votedSelf  | not voted |
-      | details    | [{"actorType":"federated_users","actorId":"participant1@{$BASE_URL}","actorDisplayName":"participant1-displayname","optionId":1}] |
+      | details    | [{"actorType":"federated_users","actorId":"participant1@{$LOCAL_URL}","actorDisplayName":"participant1-displayname","optionId":1}] |
     Then user "participant1" sees poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |

@@ -86,6 +86,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var CookieJar[] */
 	private array $cookieJars;
 
+	protected string $localServerUrl;
+
+	protected string $remoteServerUrl;
+
 	protected string $baseUrl;
 
 	protected string $baseRemoteUrl;
@@ -158,8 +162,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function __construct() {
 		$this->cookieJars = [];
-		$this->baseUrl = getenv('TEST_SERVER_URL');
-		$this->baseRemoteUrl = getenv('TEST_REMOTE_URL');
+		$this->localServerUrl = getenv('TEST_SERVER_URL');
+		$this->remoteServerUrl = getenv('TEST_REMOTE_URL');
+		$this->baseUrl = $this->localServerUrl;
+		$this->baseRemoteUrl = $this->remoteServerUrl;
 	}
 
 	/**
@@ -493,8 +499,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedRoom['lastMessageActorId'])) {
 				$data['lastMessageActorId'] = $room['lastMessage'] ? $room['lastMessage']['actorId'] : '';
-				$data['lastMessageActorId'] = str_replace(rtrim($this->baseUrl, '/'), '{$BASE_URL}', $data['lastMessageActorId']);
-				$data['lastMessageActorId'] = str_replace(rtrim($this->baseRemoteUrl, '/'), '{$REMOTE_URL}', $data['lastMessageActorId']);
+				$data['lastMessageActorId'] = str_replace(rtrim($this->localServerUrl, '/'), '{$LOCAL_URL}', $data['lastMessageActorId']);
+				$data['lastMessageActorId'] = str_replace(rtrim($this->remoteServerUrl, '/'), '{$REMOTE_URL}', $data['lastMessageActorId']);
 			}
 			if (isset($expectedRoom['lastReadMessage'])) {
 				$data['lastReadMessage'] = self::$messageIdToText[(int) $room['lastReadMessage']] ?? (!$room['lastReadMessage'] ? 'ZERO': 'UNKNOWN_MESSAGE');
@@ -2120,8 +2126,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
 		$message = substr($message, 1, -1);
 		$message = str_replace('\n', "\n", $message);
-		$message = str_replace('{$BASE_URL}', $this->baseUrl, $message);
-		$message = str_replace('{$REMOTE_URL}', $this->baseRemoteUrl, $message);
+		$message = str_replace('{$LOCAL_URL}', $this->localServerUrl, $message);
+		$message = str_replace('{$REMOTE_URL}', $this->remoteServerUrl, $message);
 
 		if ($message === '413 Payload Too Large') {
 			$message .= "\n" . str_repeat('1', 32000);
@@ -2403,19 +2409,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected['status'] = 1;
 		}
 
-		if (str_ends_with($expected['actorId'], '@{$BASE_URL}')) {
-			$expected['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected['actorId']);
+		if (str_ends_with($expected['actorId'], '@{$LOCAL_URL}')) {
+			$expected['actorId'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $expected['actorId']);
 		}
 		if (str_ends_with($expected['actorId'], '@{$REMOTE_URL}')) {
-			$expected['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected['actorId']);
+			$expected['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $expected['actorId']);
 		}
 
 		if (isset($expected['details'])) {
-			if (str_contains($expected['details'], '@{$BASE_URL}')) {
-				$expected['details'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected['details']);
+			if (str_contains($expected['details'], '@{$LOCAL_URL}')) {
+				$expected['details'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $expected['details']);
 			}
 			if (str_contains($expected['details'], '@{$REMOTE_URL}')) {
-				$expected['details'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected['details']);
+				$expected['details'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $expected['details']);
 			}
 		}
 
@@ -2865,26 +2871,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			$expected[$i]['message'] = str_replace('\n', "\n", $expected[$i]['message']);
 
-			if (str_ends_with($expected[$i]['actorId'], '@{$BASE_URL}')) {
-				$expected[$i]['actorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['actorId']);
+			if (str_ends_with($expected[$i]['actorId'], '@{$LOCAL_URL}')) {
+				$expected[$i]['actorId'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $expected[$i]['actorId']);
 			}
 			if (str_ends_with($expected[$i]['actorId'], '@{$REMOTE_URL}')) {
-				$expected[$i]['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['actorId']);
+				$expected[$i]['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $expected[$i]['actorId']);
 			}
 
-			if (str_contains($expected[$i]['messageParameters'], '{$BASE_URL}')) {
-				$expected[$i]['messageParameters'] = str_replace('{$BASE_URL}', str_replace('/', '\/', rtrim($this->baseUrl, '/')), $expected[$i]['messageParameters']);
+			if (str_contains($expected[$i]['messageParameters'], '{$LOCAL_URL}')) {
+				$expected[$i]['messageParameters'] = str_replace('{$LOCAL_URL}', str_replace('/', '\/', rtrim($this->localServerUrl, '/')), $expected[$i]['messageParameters']);
 			}
 			if (str_contains($expected[$i]['messageParameters'], '{$REMOTE_URL}')) {
-				$expected[$i]['messageParameters'] = str_replace('{$REMOTE_URL}', str_replace('/', '\/', rtrim($this->baseRemoteUrl, '/')), $expected[$i]['messageParameters']);
+				$expected[$i]['messageParameters'] = str_replace('{$REMOTE_URL}', str_replace('/', '\/', rtrim($this->remoteServerUrl, '/')), $expected[$i]['messageParameters']);
 			}
 
 			if (isset($expected[$i]['lastEditActorId'])) {
-				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$BASE_URL}')) {
-					$expected[$i]['lastEditActorId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $expected[$i]['lastEditActorId']);
+				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$LOCAL_URL}')) {
+					$expected[$i]['lastEditActorId'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $expected[$i]['lastEditActorId']);
 				}
 				if (str_ends_with($expected[$i]['lastEditActorId'], '@{$REMOTE_URL}')) {
-					$expected[$i]['lastEditActorId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $expected[$i]['lastEditActorId']);
+					$expected[$i]['lastEditActorId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $expected[$i]['lastEditActorId']);
 				}
 			}
 
@@ -3113,17 +3119,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				Assert::assertMatchesRegularExpression('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['mentionId']);
 				$mentions[$key]['mentionId'] = 'GUEST_ID';
 			}
-			if (str_ends_with($row['id'], '@{$BASE_URL}')) {
-				$row['id'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $row['id']);
+			if (str_ends_with($row['id'], '@{$LOCAL_URL}')) {
+				$row['id'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $row['id']);
 			}
 			if (str_ends_with($row['id'], '@{$REMOTE_URL}')) {
-				$row['id'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['id']);
+				$row['id'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $row['id']);
 			}
 			if (str_ends_with($row['mentionId'], '@{$BASE_URL}')) {
-				$row['mentionId'] = str_replace('{$BASE_URL}', rtrim($this->baseUrl, '/'), $row['mentionId']);
+				$row['mentionId'] = str_replace('{$BASE_URL}', rtrim($this->localServerUrl, '/'), $row['mentionId']);
 			}
 			if (str_ends_with($row['mentionId'], '@{$REMOTE_URL}')) {
-				$row['mentionId'] = str_replace('{$REMOTE_URL}', rtrim($this->baseRemoteUrl, '/'), $row['mentionId']);
+				$row['mentionId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $row['mentionId']);
 			}
 			if (array_key_exists('avatar', $row)) {
 				Assert::assertMatchesRegularExpression('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
@@ -3565,8 +3571,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					[$roomToken, $message] = explode('/', $notification['object_id']);
 					$messageText = self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
 
-					$messageText = str_replace($this->baseUrl, '{$BASE_URL}', $messageText);
-					$messageText = str_replace($this->baseRemoteUrl, '{$REMOTE_URL}', $messageText);
+					$messageText = str_replace($this->localServerUrl, '{$LOCAL_URL}', $messageText);
+					$messageText = str_replace($this->remoteServerUrl, '{$REMOTE_URL}', $messageText);
 
 					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . $messageText;
 				} elseif (strpos($expectedNotification['object_id'], 'INVITE_ID') !== false) {
@@ -4053,8 +4059,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				unset($reaction['timestamp']);
 				$reaction['actorId'] = ($reaction['actorType'] === 'guests') ? self::$sessionIdToUser[$reaction['actorId']] : (string) $reaction['actorId'];
 				if ($reaction['actorType'] === 'federated_users') {
-					$reaction['actorId'] = str_replace(rtrim($this->baseUrl, '/'), '{$BASE_URL}', $reaction['actorId']);
-					$reaction['actorId'] = str_replace(rtrim($this->baseRemoteUrl, '/'), '{$REMOTE_URL}', $reaction['actorId']);
+					$reaction['actorId'] = str_replace(rtrim($this->localServerUrl, '/'), '{$LOCAL_URL}', $reaction['actorId']);
+					$reaction['actorId'] = str_replace(rtrim($this->remoteServerUrl, '/'), '{$REMOTE_URL}', $reaction['actorId']);
 				}
 				return $reaction;
 			}, $list);

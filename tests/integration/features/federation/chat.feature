@@ -27,10 +27,10 @@ Feature: federation/chat
       | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL}  |
       | users           | participant3               | participant3-displayname | participant3                               |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    | mentionId    |
-      | calls           | all                      | room                     | all          |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1 |
-      | federated_users | participant3@{$BASE_URL} | participant3-displayname | participant3 |
+      | source          | id                        | label                    | mentionId    |
+      | calls           | all                       | room                     | all          |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | participant1 |
+      | federated_users | participant3@{$LOCAL_URL} | participant3-displayname | participant3 |
 
   Scenario: Get mention suggestions (translating federated users of the same server to local users)
     Given the following "spreed" app config is set
@@ -61,10 +61,10 @@ Feature: federation/chat
       | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
       | federated_users | participant3@{$REMOTE_URL} | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    | mentionId                                 |
-      | calls           | all                      | room                     | all                                       |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1                              |
-      | users           | participant3             | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
+      | source          | id                        | label                    | mentionId                                 |
+      | calls           | all                       | room                     | all                                       |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | participant1                              |
+      | users           | participant3              | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
 
   Scenario: Basic chatting including posting, getting, editing and deleting
     Given the following "spreed" app config is set
@@ -104,9 +104,9 @@ Feature: federation/chat
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
-      | room        | actorType       | actorId                  | actorDisplayName         | message     | messageParameters | parentMessage |
-      | LOCAL::room | users           | participant2             | participant2-displayname | Message 1-1 | []                | Message 1     |
-      | LOCAL::room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message 1   | []                |               |
+      | room        | actorType       | actorId                   | actorDisplayName         | message     | messageParameters | parentMessage |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message 1-1 | []                | Message 1     |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message 1   | []                |               |
     And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     And user "participant2" edits message "Message 1-1" in room "LOCAL::room" to "Message 1-1 - Edit 1" with 200
     Then user "participant2" is participant of the following rooms (v4)
@@ -119,9 +119,9 @@ Feature: federation/chat
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
-      | room        | actorType       | actorId                  | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId          | lastEditActorDisplayName |
-      | LOCAL::room | users           | participant2             | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | users             | participant2             | participant2-displayname |
-      | LOCAL::room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message 1 - Edit 1   | []                |                    | federated_users   | participant1@{$BASE_URL} | participant1-displayname |
+      | room        | actorType       | actorId                   | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId           | lastEditActorDisplayName |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | users             | participant2              | participant2-displayname |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message 1 - Edit 1   | []                |                    | federated_users   | participant1@{$LOCAL_URL} | participant1-displayname |
     And user "participant1" deletes message "Message 1 - Edit 1" from room "room" with 200
     And user "participant2" deletes message "Message 1-1 - Edit 1" from room "LOCAL::room" with 200
     Then user "participant1" sees the following messages in room "room" with 200
@@ -131,9 +131,9 @@ Feature: federation/chat
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
-      | room        | actorType       | actorId                  | actorDisplayName         | message                   | messageParameters | parentMessage             |
-      | LOCAL::room | users           | participant2             | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
-      | LOCAL::room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$BASE_URL}"}} |                           |
+      | room        | actorType       | actorId                   | actorDisplayName         | message                   | messageParameters | parentMessage             |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$LOCAL_URL}"}} |                           |
     Then user "participant2" is participant of the following rooms (v4)
       | id          | type | lastMessage |
       | LOCAL::room | 2    | Message deleted by author |
@@ -159,7 +159,7 @@ Feature: federation/chat
     Then user "participant1" is participant of the following unordered rooms (v4)
       | id          | name | type | remoteServer | remoteToken | lastMessage | lastMessageActorType | lastMessageActorId |
       | room        | room | 2    |              |             | Message 1   | users                | participant1       |
-      | LOCAL::room | room | 2    | LOCAL        | room        | Message 1   | federated_users      | participant1@{$BASE_URL} |
+      | LOCAL::room | room | 2    | LOCAL        | room        | Message 1   | federated_users      | participant1@{$LOCAL_URL} |
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "LOCAL::room" with 201
     Then user "participant1" is participant of the following unordered rooms (v4)
       | id          | name | type | remoteServer | remoteToken | lastMessage | lastMessageActorType | lastMessageActorId |
@@ -449,9 +449,9 @@ Feature: federation/chat
       | actorType       | actorId                  | actorDisplayName         | reaction |
       | users           | participant1             | participant1-displayname | 🚀       |
     And user "participant2" react with "🚀" on message "Message 1" to room "LOCAL::room" with 201
-      | actorType       | actorId                  | actorDisplayName         | reaction |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname | 🚀       |
-      | users           | participant2             | participant2-displayname | 🚀       |
+      | actorType       | actorId                   | actorDisplayName         | reaction |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | 🚀       |
+      | users           | participant2              | participant2-displayname | 🚀       |
     And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
       | actorType       | actorId                    | actorDisplayName         | reaction |
       | users           | participant1               | participant1-displayname | 🚀       |
