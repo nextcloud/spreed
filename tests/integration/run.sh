@@ -50,7 +50,7 @@ trap 'pkill -P $PHPPID1; pkill -P $PHPPID2; pkill -P $PROCESS_ID; wait $PHPPID1;
 NEXTCLOUD_ROOT_DIR=${ROOT_DIR}
 export NEXTCLOUD_ROOT_DIR
 export TEST_SERVER_URL="http://localhost:8080/"
-export TEST_REMOTE_URL="http://localhost:8180/"
+export TEST_LOCAL_REMOTE_URL="http://localhost:8180/"
 
 OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "http://localhost:8080/"
