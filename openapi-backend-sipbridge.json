@@ -1120,16 +1120,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "pin",
-                        "in": "query",
-                        "description": "PIN the participant used to dial-in",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "pin"
+                                ],
+                                "properties": {
+                                    "pin": {
+                                        "type": "string",
+                                        "description": "PIN the participant used to dial-in"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -1296,24 +1306,43 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "number"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "string",
+                                        "description": "E164 formatted phone number"
+                                    },
+                                    "options": {
+                                        "type": "object",
+                                        "default": [],
+                                        "description": "Additional details to verify the validity of the request",
+                                        "properties": {
+                                            "actorId": {
+                                                "type": "string"
+                                            },
+                                            "actorType": {
+                                                "type": "string"
+                                            },
+                                            "attendeeId": {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "number",
-                        "in": "query",
-                        "description": "E164 formatted phone number",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "options",
-                        "in": "query",
-                        "description": "Additional details to verify the validity of the request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -1647,24 +1676,43 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "callId"
+                                ],
+                                "properties": {
+                                    "callId": {
+                                        "type": "string",
+                                        "description": "The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate"
+                                    },
+                                    "options": {
+                                        "type": "object",
+                                        "default": [],
+                                        "description": "Additional details to verify the validity of the request",
+                                        "properties": {
+                                            "actorId": {
+                                                "type": "string"
+                                            },
+                                            "actorType": {
+                                                "type": "string"
+                                            },
+                                            "attendeeId": {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "callId",
-                        "in": "query",
-                        "description": "The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "options",
-                        "in": "query",
-                        "description": "Additional details to verify the validity of the request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",

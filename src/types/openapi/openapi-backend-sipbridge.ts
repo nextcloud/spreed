@@ -478,10 +478,7 @@ export interface operations {
     };
     "room-verify-dial-in-pin": {
         parameters: {
-            query: {
-                /** @description PIN the participant used to dial-in */
-                pin: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -492,7 +489,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description PIN the participant used to dial-in */
+                    pin: string;
+                };
+            };
+        };
         responses: {
             /** @description Participant returned */
             200: {
@@ -554,12 +558,7 @@ export interface operations {
     };
     "room-verify-dial-out-number": {
         parameters: {
-            query: {
-                /** @description E164 formatted phone number */
-                number: string;
-                /** @description Additional details to verify the validity of the request */
-                options?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -570,7 +569,24 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description E164 formatted phone number */
+                    number: string;
+                    /**
+                     * @description Additional details to verify the validity of the request
+                     * @default []
+                     */
+                    options?: {
+                        actorId?: string;
+                        actorType?: string;
+                        /** Format: int64 */
+                        attendeeId?: number;
+                    };
+                };
+            };
+        };
         responses: {
             /** @description Participant created successfully */
             200: {
@@ -705,12 +721,7 @@ export interface operations {
     };
     "room-rejected-dial-out-request": {
         parameters: {
-            query: {
-                /** @description The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate */
-                callId: string;
-                /** @description Additional details to verify the validity of the request */
-                options?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -721,7 +732,24 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate */
+                    callId: string;
+                    /**
+                     * @description Additional details to verify the validity of the request
+                     * @default []
+                     */
+                    options?: {
+                        actorId?: string;
+                        actorType?: string;
+                        /** Format: int64 */
+                        attendeeId?: number;
+                    };
+                };
+            };
+        };
         responses: {
             /** @description Call ID reset */
             200: {

@@ -121,16 +121,7 @@ export type $defs = Record<string, never>;
 export interface operations {
     "bot-send-message": {
         parameters: {
-            query: {
-                /** @description The message to send */
-                message: string;
-                /** @description For the message to be able to later identify it again */
-                referenceId?: string;
-                /** @description Parent id which this message is a reply to */
-                replyTo?: number;
-                /** @description If sent silent the chat message will not create any notifications */
-                silent?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -142,7 +133,30 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The message to send */
+                    message: string;
+                    /**
+                     * @description For the message to be able to later identify it again
+                     * @default
+                     */
+                    referenceId?: string;
+                    /**
+                     * Format: int64
+                     * @description Parent id which this message is a reply to
+                     * @default 0
+                     */
+                    replyTo?: number;
+                    /**
+                     * @description If sent silent the chat message will not create any notifications
+                     * @default false
+                     */
+                    silent?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Message sent successfully */
             201: {
@@ -204,10 +218,7 @@ export interface operations {
     };
     "bot-react": {
         parameters: {
-            query: {
-                /** @description Reaction to add */
-                reaction: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -221,7 +232,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Reaction to add */
+                    reaction: string;
+                };
+            };
+        };
         responses: {
             /** @description Reaction already exists */
             200: {
@@ -297,10 +315,7 @@ export interface operations {
     };
     "bot-delete-reaction": {
         parameters: {
-            query: {
-                /** @description Reaction to delete */
-                reaction: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -314,7 +329,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Reaction to delete */
+                    reaction: string;
+                };
+            };
+        };
         responses: {
             /** @description Reaction deleted successfully */
             200: {
