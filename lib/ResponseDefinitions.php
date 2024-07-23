@@ -56,11 +56,11 @@ namespace OCA\Talk;
  *     label: string,
  *     source: string,
  *     mentionId: string,
- *     details: ?string,
- *     status: ?string,
- *     statusClearAt: ?int,
- *     statusIcon: ?string,
- *     statusMessage: ?string,
+ *     details?: string,
+ *     status?: string,
+ *     statusClearAt?: ?int,
+ *     statusIcon?: ?string,
+ *     statusMessage?: ?string,
  * }
  *
  * @psalm-type TalkRichObjectParameter = array{

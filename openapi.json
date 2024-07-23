@@ -377,12 +377,7 @@
                     "id",
                     "label",
                     "source",
-                    "mentionId",
-                    "details",
-                    "status",
-                    "statusClearAt",
-                    "statusIcon",
-                    "statusMessage"
+                    "mentionId"
                 ],
                 "properties": {
                     "id": {
@@ -398,12 +393,10 @@
                         "type": "string"
                     },
                     "details": {
-                        "type": "string",
-                        "nullable": true
+                        "type": "string"
                     },
                     "status": {
-                        "type": "string",
-                        "nullable": true
+                        "type": "string"
                     },
                     "statusClearAt": {
                         "type": "integer",
