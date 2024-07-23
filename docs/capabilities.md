@@ -152,3 +152,4 @@
 
 ## 20
 * `ban-v1` - Whether the API to ban attendees is available
+* `mention-permissions` - Whether non-moderators are allowed to mention `@all`

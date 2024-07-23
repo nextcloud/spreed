@@ -80,6 +80,9 @@ class Room {
 	public const HAS_FEDERATION_NONE = 0;
 	public const HAS_FEDERATION_TALKv1 = 1;
 
+	public const MENTION_PERMISSIONS_EVERYONE = 0;
+	public const MENTION_PERMISSIONS_MODERATORS = 1;
+
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
 
@@ -124,6 +127,7 @@ class Room {
 		private int $callRecording,
 		private int $recordingConsent,
 		private int $hasFederation,
+		private int $mentionPermissions,
 	) {
 	}
 
@@ -558,5 +562,13 @@ class Room {
 	 */
 	public function setFederatedParticipants(int $hasFederation): void {
 		$this->hasFederation = $hasFederation;
+	}
+
+	public function getMentionPermissions(): int {
+		return $this->mentionPermissions;
+	}
+
+	public function setMentionPermissions(int $mentionPermissions): void {
+		$this->mentionPermissions = $mentionPermissions;
 	}
 }

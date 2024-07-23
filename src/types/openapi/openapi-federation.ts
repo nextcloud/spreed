@@ -337,6 +337,8 @@ export type components = {
             /** Format: int64 */
             lobbyTimer: number;
             /** Format: int64 */
+            mentionPermissions: number;
+            /** Format: int64 */
             messageExpiration: number;
             name: string;
             /** Format: int64 */

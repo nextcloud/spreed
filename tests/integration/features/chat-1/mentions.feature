@@ -633,3 +633,25 @@ Feature: chat/mentions
     Then user "participant1" sees the following messages in room "participant1-note-to-self" with 200
       | room                      | actorType | actorId      | actorDisplayName         | message                | messageParameters |
       | participant1-note-to-self | users     | participant1 | participant1-displayname | Test {mention-call1}   | "IGNORE"          |
+
+  Scenario: get mentions with different mention permissions available
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
+      | id           | label                    | source | mentionId    |
+      | all          | room                     | calls  | all          |
+      | participant2 | participant2-displayname | users  | participant2 |
+    And user "participant2" gets the following candidate mentions in room "group room" for "" with 200
+      | id           | label                    | source | mentionId    |
+      | all          | room                     | calls  | all          |
+      | participant1 | participant1-displayname | users  | participant1 |
+    When user "participant1" sets mention permissions for room "group room" to moderators with 200 (v4)
+    Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
+      | id           | label                    | source | mentionId    |
+      | all          | room                     | calls  | all          |
+      | participant2 | participant2-displayname | users  | participant2 |
+    And user "participant2" gets the following candidate mentions in room "group room" for "" with 200
+      | id           | label                    | source | mentionId    |
+      | participant1 | participant1-displayname | users  | participant1 |

@@ -694,7 +694,22 @@ class ChatManagerTest extends TestCase {
 			],
 			[
 				'',
-				['getDisplayName' => 'test'],
+				['getDisplayName' => 'test', 'getMentionPermissions' => 0],
+				['getAttendee' => Attendee::fromRow([
+					'actor_type' => Attendee::ACTOR_USERS,
+					'actor_id' => 'user',
+				])],
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
+			],
+			[
+				'',
+				['getMentionPermissions' => 1],
+				['hasModeratorPermissions' => false],
+				[]
+			],
+			[
+				'all',
+				['getDisplayName' => 'test', 'getMentionPermissions' => 0],
 				['getAttendee' => Attendee::fromRow([
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
@@ -703,29 +718,32 @@ class ChatManagerTest extends TestCase {
 			],
 			[
 				'all',
-				['getDisplayName' => 'test'],
-				['getAttendee' => Attendee::fromRow([
-					'actor_type' => Attendee::ACTOR_USERS,
-					'actor_id' => 'user',
-				])],
+				['getDisplayName' => 'test', 'getMentionPermissions' => 1],
+				[
+					'getAttendee' => Attendee::fromRow([
+						'actor_type' => Attendee::ACTOR_USERS,
+						'actor_id' => 'user',
+					]),
+					'hasModeratorPermissions' => true,
+				],
 				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
 			],
 			[
 				'here',
-				['getDisplayName' => 'test'],
+				['getDisplayName' => 'test', 'getMentionPermissions' => 0],
 				['getAttendee' => Attendee::fromRow([
 					'actor_type' => Attendee::ACTOR_GUESTS,
 					'actor_id' => 'guest',
 				])],
 				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
-			]
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider dataAddConversationNotify
 	 */
-	public function testAddConversationNotify(string $search, array$roomMocks, array $participantMocks, array $expected): void {
+	public function testAddConversationNotify(string $search, array $roomMocks, array $participantMocks, array $expected): void {
 		$room = $this->createMock(Room::class);
 		foreach ($roomMocks as $method => $return) {
 			$room->expects($this->once())

@@ -176,7 +176,8 @@ class NotifierTest extends TestCase {
 		$room = $this->getRoom();
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$notifier = $this->getNotifier([]);
-		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false);
+		$participant = $this->createMock(Participant::class);
+		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false, $participant);
 
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
@@ -286,6 +287,8 @@ class NotifierTest extends TestCase {
 			'not notify' => [
 				[],
 				[],
+				0,
+				true,
 				[],
 			],
 			'preserve notify list and do not notify all' => [
@@ -293,6 +296,8 @@ class NotifierTest extends TestCase {
 					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 				[],
+				0,
+				true,
 				[
 					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
@@ -306,9 +311,26 @@ class NotifierTest extends TestCase {
 					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
 					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
 				],
+				0,
+				false,
 				[
 					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 					['id' => 'user2', 'type' => Attendee::ACTOR_USERS, 'reason' => 'all'],
+				],
+			],
+			'prevent non-moderator to notify all' => [
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+					['id' => 'all', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+				],
+				[
+					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
+					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
+				],
+				1,
+				false,
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 		];
@@ -317,13 +339,20 @@ class NotifierTest extends TestCase {
 	/**
 	 * @dataProvider dataAddMentionAllToList
 	 */
-	public function testAddMentionAllToList(array $usersToNotify, array $participants, array $return): void {
+	public function testAddMentionAllToList(array $usersToNotify, array $participants, int $mentionPermissions, bool $moderatorPermissions, array $return): void {
 		$room = $this->createMock(Room::class);
+		$room->method('getMentionPermissions')
+			->willReturn($mentionPermissions);
+
 		$this->participantService
 			->method('getActorsByType')
 			->willReturn($participants);
 
-		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('hasModeratorPermissions')
+			->willReturn($moderatorPermissions);
+
+		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify, $participant]);
 		$this->assertCount(count($return), $actual);
 		foreach ($actual as $key => $value) {
 			$this->assertIsArray($value);

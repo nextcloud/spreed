@@ -587,6 +587,7 @@
                     "listable",
                     "lobbyState",
                     "lobbyTimer",
+                    "mentionPermissions",
                     "messageExpiration",
                     "name",
                     "notificationCalls",
@@ -726,6 +727,10 @@
                         "format": "int64"
                     },
                     "lobbyTimer": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "mentionPermissions": {
                         "type": "integer",
                         "format": "int64"
                     },

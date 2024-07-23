@@ -4628,6 +4628,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sets mention permissions for room "([^"]*)" to (all|moderators) with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $mentionPermissions
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsMentionPermissionsOfTheRoom(string $user, string $identifier, string $mentionPermissions, int $statusCode, string $apiVersion): void {
+		$intMentionPermissions = 0; // all - default
+		if($mentionPermissions === 'moderators') {
+			$intMentionPermissions = 1;
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/mention-permissions',
+			new TableNode([
+				['mentionPermissions', $intMentionPermissions],
+			])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @param string $verb
 	 * @param string $url
 	 * @param TableNode|array|null $body

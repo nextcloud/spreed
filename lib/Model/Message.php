@@ -23,6 +23,7 @@ class Message {
 	public const METADATA_LAST_EDITED_BY_ID = 'last_edited_by_id';
 	public const METADATA_LAST_EDITED_TIME = 'last_edited_time';
 	public const METADATA_SILENT = 'silent';
+	public const METADATA_CAN_MENTION_ALL = 'can_mention_all';
 
 	/** @var bool */
 	protected $visible = true;

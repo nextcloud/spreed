@@ -90,8 +90,13 @@ class UserMention implements IEventListener {
 			return mb_strlen($m2['id']) <=> mb_strlen($m1['id']);
 		});
 
+		$metadata = $comment->getMetaData() ?? [];
 		foreach ($mentions as $mention) {
 			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
+				if (!isset($metadata[Message::METADATA_CAN_MENTION_ALL])) {
+					continue;
+				}
+
 				$mention['type'] = 'call';
 			}
 

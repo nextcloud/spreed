@@ -109,6 +109,7 @@
 | `callStartTime`         | int     | v4    |         | Timestamp when the call was started (only available with `recording-v1` capability)                                                                                                                                                                                                                                                                                                               |
 | `callRecording`         | int     | v4    |         | Type of call recording (see [Constants - Call recording status](constants.md#call-recording-status)) (only available with `recording-v1` capability)                                                                                                                                                                                                                                              |
 | `recordingConsent`      | int     | v4    |         | Whether recording consent is required before joining a call (see [constants list](constants.md#recording-consent-required)) (only available with `recording-consent` capability)                                                                                                                                                                                                                  |
+| `mentionPermissions`    | int     | v4    |         | Whether all participants can mention using `@all` or only moderators (see [constants list](constants.md#mention-permissions)) (only available with `mention-permissions` capability)                                                                                                                                                                                                              |
 
 ## Creating a new conversation
 
@@ -482,6 +483,26 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
+
+## Set mention permissions
+
+* Required capability: `mention-permissions`
+* Method: `PUT`
+* Endpoint: `/room/{token}/mention-permissions`
+* Data:
+
+| field                | type | Description                                                                                               |
+|----------------------|------|-----------------------------------------------------------------------------------------------------------|
+| `mentionPermissions` | int  | New mention permissions for the conversation (See [mention permssions](constants.md#mention-permissions)) |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the conversation type does not support setting mention permissions (only group and public conversation)
+		+ `400 Bad Request` When the conversation is a breakout room
+		+ `400 Bad Request` When permissions value is invalid
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
 
 ## Get conversation capabilities
 

@@ -306,6 +306,12 @@ const changeListable = async function(token, listable) {
 	})
 }
 
+const setMentionPermissions = async function(token, mentionPermissions) {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/mention-permissions', { token }), {
+		mentionPermissions,
+	})
+}
+
 /**
  * Set the default permissions for participants in a conversation.
  *
@@ -375,4 +381,5 @@ export {
 	setConversationPermissions,
 	setCallPermissions,
 	setMessageExpiration,
+	setMentionPermissions,
 }

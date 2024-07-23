@@ -1185,6 +1185,23 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/mention-permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update the mention permissions for a room */
+        put: operations["room-set-mention-permissions"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
         parameters: {
             query?: never;
@@ -1571,6 +1588,8 @@ export type components = {
             lobbyState: number;
             /** Format: int64 */
             lobbyTimer: number;
+            /** Format: int64 */
+            mentionPermissions: number;
             /** Format: int64 */
             messageExpiration: number;
             name: string;
@@ -6900,6 +6919,54 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Capabilities"] | unknown[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-mention-permissions": {
+        parameters: {
+            query: {
+                /** @description New mention permissions */
+                mentionPermissions: 0 | 1;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Permissions updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Updating permissions is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };

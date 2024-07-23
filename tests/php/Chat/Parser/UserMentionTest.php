@@ -65,12 +65,17 @@ class UserMentionTest extends TestCase {
 
 	/**
 	 * @param array $mentions
+	 * @param array|null $metadata
 	 * @return MockObject|IComment
 	 */
-	private function newComment(array $mentions): IComment {
+	private function newComment(array $mentions, ?array $metadata = null): IComment {
 		$comment = $this->createMock(IComment::class);
 
 		$comment->method('getMentions')->willReturn($mentions);
+
+		if ($metadata !== null) {
+			$comment->method('getMetaData')->willReturn($metadata);
+		}
 
 		return $comment;
 	}
@@ -385,7 +390,10 @@ class UserMentionTest extends TestCase {
 		$mentions = [
 			['type' => 'user', 'id' => 'all'],
 		];
-		$comment = $this->newComment($mentions);
+		$metadata = [
+			Message::METADATA_CAN_MENTION_ALL => true,
+		];
+		$comment = $this->newComment($mentions, $metadata);
 
 		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
