@@ -56,6 +56,11 @@ export const CONVERSATION = {
 		ALL: 2,
 	},
 
+	MENTION_PERMISSIONS: {
+		EVERYONE: 0,
+		MODERATORS: 1,
+	},
+
 	TYPE: {
 		ONE_TO_ONE: 1,
 		GROUP: 2,
