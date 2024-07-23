@@ -39,6 +39,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
@@ -97,6 +98,7 @@ class ChatManager {
 		protected IReferenceManager $referenceManager,
 		protected ILimiter $rateLimiter,
 		protected IRequest $request,
+		protected IL10N $l,
 		protected LoggerInterface $logger,
 	) {
 		$this->cache = $cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
@@ -961,12 +963,14 @@ class ChatManager {
 			$roomDisplayName = $room->getDisplayName('');
 		}
 		if ($search === '' || $this->searchIsPartOfConversationNameOrAtAll($search, $roomDisplayName)) {
-			array_unshift($results, [
+			$participantCount = $this->participantService->getNumberOfUsers($room);
+			$results[] = [
 				'id' => 'all',
 				'label' => $roomDisplayName,
+				'details' => $this->l->n('All %n participant', 'All %n participants', $participantCount),
 				'source' => 'calls',
 				'mentionId' => 'all',
-			]);
+			];
 		}
 		return $results;
 	}

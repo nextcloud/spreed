@@ -28,6 +28,7 @@ use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
@@ -58,6 +59,7 @@ class ChatManagerTest extends TestCase {
 	protected ILimiter&MockObject $rateLimiter;
 	protected IRequest&MockObject $request;
 	protected LoggerInterface&MockObject $logger;
+	protected IL10N&MockObject $l;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -77,7 +79,14 @@ class ChatManagerTest extends TestCase {
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
 		$this->rateLimiter = $this->createMock(ILimiter::class);
 		$this->request = $this->createMock(IRequest::class);
+		$this->l = $this->createMock(IL10N::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+
+		$this->l->method('n')
+			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
+				$text = $count === 1 ? $singular : $plural;
+				return vsprintf(str_replace('%n', (string) $count, $text), $parameters);
+			});
 
 		$this->chatManager = $this->getManager();
 	}
@@ -108,6 +117,7 @@ class ChatManagerTest extends TestCase {
 					$this->referenceManager,
 					$this->rateLimiter,
 					$this->request,
+					$this->l,
 					$this->logger,
 				])
 				->onlyMethods($methods)
@@ -131,6 +141,7 @@ class ChatManagerTest extends TestCase {
 			$this->referenceManager,
 			$this->rateLimiter,
 			$this->request,
+			$this->l,
 			$this->logger,
 		);
 	}
@@ -690,7 +701,8 @@ class ChatManagerTest extends TestCase {
 				'',
 				['getType' => Room::TYPE_ONE_TO_ONE],
 				[],
-				[]
+				null,
+				[],
 			],
 			[
 				'',
@@ -699,13 +711,15 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
+				324,
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all', 'details' => 'All 324 participants']]
 			],
 			[
 				'',
 				['getMentionPermissions' => 1],
 				['hasModeratorPermissions' => false],
-				[]
+				null,
+				[],
 			],
 			[
 				'all',
@@ -714,7 +728,8 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
+				1,
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all', 'details' => 'All 1 participant']],
 			],
 			[
 				'all',
@@ -726,7 +741,8 @@ class ChatManagerTest extends TestCase {
 					]),
 					'hasModeratorPermissions' => true,
 				],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
+				8,
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all', 'details' => 'All 8 participants']],
 			],
 			[
 				'here',
@@ -735,7 +751,8 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_GUESTS,
 					'actor_id' => 'guest',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all']]
+				12,
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'mentionId' => 'all', 'details' => 'All 12 participants']],
 			],
 		];
 	}
@@ -743,7 +760,7 @@ class ChatManagerTest extends TestCase {
 	/**
 	 * @dataProvider dataAddConversationNotify
 	 */
-	public function testAddConversationNotify(string $search, array $roomMocks, array $participantMocks, array $expected): void {
+	public function testAddConversationNotify(string $search, array $roomMocks, array $participantMocks, ?int $totalCount, array $expected): void {
 		$room = $this->createMock(Room::class);
 		foreach ($roomMocks as $method => $return) {
 			$room->expects($this->once())
@@ -756,6 +773,11 @@ class ChatManagerTest extends TestCase {
 			$participant->expects($this->once())
 				->method($method)
 				->willReturn($return);
+		}
+
+		if ($totalCount !== null) {
+			$this->participantService->method('getNumberOfUsers')
+				->willReturn($totalCount);
 		}
 
 		$actual = $this->chatManager->addConversationNotify([], $search, $room, $participant);

@@ -500,6 +500,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 | `status`        | string | Optional: Only available with `includeStatus=true` and for users with a set status                                                                                                                                                                                        |
 | `statusIcon`    | string | Optional: Only available with `includeStatus=true` and for users with a set status                                                                                                                                                                                        |
 | `statusMessage` | string | Optional: Only available with `includeStatus=true` and for users with a set status                                                                                                                                                                                        |
+| `details`       | string | Optional: Only provided for the "Everyone" option and can be used as a subline directly                                                                                                                                                                                   |
 
 ## System messages
 
