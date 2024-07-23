@@ -1640,6 +1640,14 @@ export type components = {
             userId: string;
         };
         SignalingSettings: {
+            federation: {
+                server: string;
+                nextcloudServer: string;
+                helloAuthParams: {
+                    token: string;
+                };
+                roomId: string;
+            } | unknown[];
             helloAuthParams: {
                 "1.0": {
                     userid: string | null;

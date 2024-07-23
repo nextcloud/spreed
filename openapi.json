@@ -1260,6 +1260,7 @@
             "SignalingSettings": {
                 "type": "object",
                 "required": [
+                    "federation",
                     "helloAuthParams",
                     "hideWarning",
                     "server",
@@ -1271,6 +1272,45 @@
                     "userId"
                 ],
                 "properties": {
+                    "federation": {
+                        "oneOf": [
+                            {
+                                "type": "object",
+                                "required": [
+                                    "server",
+                                    "nextcloudServer",
+                                    "helloAuthParams",
+                                    "roomId"
+                                ],
+                                "properties": {
+                                    "server": {
+                                        "type": "string"
+                                    },
+                                    "nextcloudServer": {
+                                        "type": "string"
+                                    },
+                                    "helloAuthParams": {
+                                        "type": "object",
+                                        "required": [
+                                            "token"
+                                        ],
+                                        "properties": {
+                                            "token": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "roomId": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "array",
+                                "maxItems": 0
+                            }
+                        ]
+                    },
                     "helloAuthParams": {
                         "type": "object",
                         "required": [
