@@ -29,12 +29,12 @@ class Changelog implements IEventListener {
 		}
 
 		if ($chatMessage->getActorType() !== Attendee::ACTOR_GUESTS ||
-			$chatMessage->getActorId() !== Attendee::ACTOR_ID_CHANGELOG) {
+			$chatMessage->getActorId() !== Attendee::CHANGELOG_ACTOR_ID) {
 			return;
 		}
 
 		$l = $chatMessage->getL10n();
-		$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::ACTOR_ID_CHANGELOG, $l->t('Talk updates ✅'));
+		$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::CHANGELOG_ACTOR_ID, $l->t('Talk updates ✅'));
 		$event->stopPropagation();
 	}
 }

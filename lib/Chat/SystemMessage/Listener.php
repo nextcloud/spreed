@@ -428,7 +428,7 @@ class Listener implements IEventListener {
 			$actorId = $participant->getAttendee()->getActorId();
 		} elseif ($forceSystemAsActor) {
 			$actorType = Attendee::ACTOR_GUESTS;
-			$actorId = Attendee::ACTOR_ID_SYSTEM;
+			$actorId = Attendee::SYSTEM_ACTOR_ID;
 		} else {
 			$user = $this->userSession->getUser();
 			if ($user instanceof IUser) {
@@ -436,7 +436,7 @@ class Listener implements IEventListener {
 				$actorId = $user->getUID();
 			} elseif (\OC::$CLI || $this->session->exists('talk-overwrite-actor-cli')) {
 				$actorType = Attendee::ACTOR_GUESTS;
-				$actorId = Attendee::ACTOR_ID_CLI;
+				$actorId = Attendee::CLI_ACTOR_ID;
 			} elseif ($this->session->exists('talk-overwrite-actor-type')) {
 				$actorType = $this->session->get('talk-overwrite-actor-type');
 				$actorId = $this->session->get('talk-overwrite-actor-id');

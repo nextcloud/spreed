@@ -21,10 +21,13 @@ use OCP\AppFramework\Db\Entity;
  * @method string getSessionId()
  * @method void setInCall(int $inCall)
  * @method int getInCall()
+ * @psalm-method int-mask<1, 2, 4, 8> getInCall()
  * @method void setLastPing(int $lastPing)
  * @method int getLastPing()
+ * @psalm-method int<0, max> getLastPing()
  * @method void setState(int $state)
  * @method int getState()
+ * @psalm-method self::STATE_* getState()
  */
 class Session extends Entity {
 	public const STATE_INACTIVE = 0;
