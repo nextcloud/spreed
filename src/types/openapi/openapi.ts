@@ -1674,10 +1674,7 @@ export type $defs = Record<string, never>;
 export interface operations {
     "avatar-get-avatar": {
         parameters: {
-            query?: {
-                /** @description Theme used for background */
-                darkTheme?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -1688,7 +1685,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Theme used for background
+                     * @default false
+                     */
+                    darkTheme?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Room avatar returned */
             200: {
@@ -1781,12 +1788,7 @@ export interface operations {
     };
     "avatar-emoji-avatar": {
         parameters: {
-            query: {
-                /** @description Emoji */
-                emoji: string;
-                /** @description Color of the emoji */
-                color?: string | null;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -1797,7 +1799,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Emoji */
+                    emoji: string;
+                    /** @description Color of the emoji */
+                    color?: string | null;
+                };
+            };
+        };
         responses: {
             /** @description Avatar set successfully */
             200: {
@@ -1890,14 +1901,7 @@ export interface operations {
     };
     "ban-ban-actor": {
         parameters: {
-            query: {
-                /** @description Type of actor to ban, or `ip` when banning a clients remote address */
-                actorType: "users" | "guests" | "ip";
-                /** @description Actor ID or the IP address or range in case of type `ip` */
-                actorId: string;
-                /** @description Optional internal note (max. 4000 characters) */
-                internalNote?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -1908,7 +1912,24 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Type of actor to ban, or `ip` when banning a clients remote address
+                     * @enum {string}
+                     */
+                    actorType: "users" | "guests" | "ip";
+                    /** @description Actor ID or the IP address or range in case of type `ip` */
+                    actorId: string;
+                    /**
+                     * @description Optional internal note (max. 4000 characters)
+                     * @default
+                     */
+                    internalNote?: string;
+                };
+            };
+        };
         responses: {
             /** @description Ban successfully */
             200: {
@@ -2121,14 +2142,7 @@ export interface operations {
     };
     "breakout_room-configure-breakout-rooms": {
         parameters: {
-            query: {
-                /** @description Mode of the breakout rooms */
-                mode: 0 | 1 | 2 | 3;
-                /** @description Number of breakout rooms - Constants {@see BreakoutRoom::MINIMUM_ROOM_AMOUNT} and {@see BreakoutRoom::MAXIMUM_ROOM_AMOUNT} */
-                amount: number;
-                /** @description Mapping of the attendees to breakout rooms */
-                attendeeMap?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2139,7 +2153,28 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Mode of the breakout rooms
+                     * @enum {integer}
+                     */
+                    mode: 0 | 1 | 2 | 3;
+                    /**
+                     * Format: int64
+                     * @description Number of breakout rooms - Constants {@see BreakoutRoom::MINIMUM_ROOM_AMOUNT} and {@see BreakoutRoom::MAXIMUM_ROOM_AMOUNT}
+                     */
+                    amount: number;
+                    /**
+                     * @description Mapping of the attendees to breakout rooms
+                     * @default []
+                     */
+                    attendeeMap?: string;
+                };
+            };
+        };
         responses: {
             /** @description Breakout rooms configured successfully */
             200: {
@@ -2206,10 +2241,7 @@ export interface operations {
     };
     "breakout_room-broadcast-chat-message": {
         parameters: {
-            query: {
-                /** @description Message to broadcast */
-                message: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2220,7 +2252,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Message to broadcast */
+                    message: string;
+                };
+            };
+        };
         responses: {
             /** @description Chat message broadcasted successfully */
             201: {
@@ -2272,10 +2311,7 @@ export interface operations {
     };
     "breakout_room-apply-attendee-map": {
         parameters: {
-            query: {
-                /** @description JSON encoded mapping of the attendees to breakout rooms `array<int, int>` */
-                attendeeMap: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2286,7 +2322,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description JSON encoded mapping of the attendees to breakout rooms `array<int, int>` */
+                    attendeeMap: string;
+                };
+            };
+        };
         responses: {
             /** @description Attendee map applied successfully */
             200: {
@@ -2510,10 +2553,7 @@ export interface operations {
     };
     "breakout_room-switch-breakout-room": {
         parameters: {
-            query: {
-                /** @description Target breakout room */
-                target: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2524,7 +2564,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Target breakout room */
+                    target: string;
+                };
+            };
+        };
         responses: {
             /** @description Switched to breakout room successfully */
             200: {
@@ -2591,10 +2638,7 @@ export interface operations {
     };
     "call-update-call-flags": {
         parameters: {
-            query: {
-                /** @description New flags */
-                flags: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2605,7 +2649,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New flags
+                     */
+                    flags: number;
+                };
+            };
+        };
         responses: {
             /** @description In-call flags updated successfully */
             200: {
@@ -2653,16 +2707,7 @@ export interface operations {
     };
     "call-join-call": {
         parameters: {
-            query?: {
-                /** @description In-Call flags */
-                flags?: number | null;
-                /** @description In-call permissions */
-                forcePermissions?: number | null;
-                /** @description Join the call silently */
-                silent?: 0 | 1;
-                /** @description When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES} or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL} and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} ) */
-                recordingConsent?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2673,7 +2718,35 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description In-Call flags
+                     */
+                    flags?: number | null;
+                    /**
+                     * Format: int64
+                     * @description In-call permissions
+                     */
+                    forcePermissions?: number | null;
+                    /**
+                     * @description Join the call silently
+                     * @default false
+                     */
+                    silent?: boolean;
+                    /**
+                     * @description When the user ticked a checkbox and agreed with being recorded
+                     *      (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
+                     *       or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
+                     *       and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
+                     * @default false
+                     */
+                    recordingConsent?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Call joined successfully */
             200: {
@@ -2723,10 +2796,7 @@ export interface operations {
     };
     "call-leave-call": {
         parameters: {
-            query?: {
-                /** @description whether to also terminate the call for all participants */
-                all?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2737,7 +2807,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description whether to also terminate the call for all participants
+                     * @default false
+                     */
+                    all?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Call left successfully */
             200: {
@@ -2921,26 +3001,7 @@ export interface operations {
     };
     "chat-receive-messages": {
         parameters: {
-            query: {
-                /** @description Polling for new messages (1) or getting the history of the chat (0) */
-                lookIntoFuture: 0 | 1;
-                /** @description Number of chat messages to receive (100 by default, 200 at most) */
-                limit?: number;
-                /** @description The last known message (serves as offset) */
-                lastKnownMessageId?: number;
-                /** @description The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages) */
-                lastCommonReadId?: number;
-                /** @description Number of seconds to wait for new messages (30 by default, 30 at most) */
-                timeout?: number;
-                /** @description Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0 */
-                setReadMarker?: 0 | 1;
-                /** @description Include the $lastKnownMessageId in the messages when 1 (default 0) */
-                includeLastKnown?: 0 | 1;
-                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
-                noStatusUpdate?: 0 | 1;
-                /** @description Set to 0 when notifications should not be marked as read (default 1) */
-                markNotificationsAsRead?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2951,7 +3012,73 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Polling for new messages (1) or getting the history of the chat (0)
+                     * @enum {integer}
+                     */
+                    lookIntoFuture: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Number of chat messages to receive (100 by default, 200 at most)
+                     * @default 100
+                     */
+                    limit?: number;
+                    /**
+                     * Format: int64
+                     * @description The last known message (serves as offset)
+                     * @default 0
+                     */
+                    lastKnownMessageId?: number;
+                    /**
+                     * Format: int64
+                     * @description The last known common read message
+                     *                                  (so the response is 200 instead of 304 when
+                     *                                  it changes even when there are no messages)
+                     * @default 0
+                     */
+                    lastCommonReadId?: number;
+                    /**
+                     * Format: int64
+                     * @description Number of seconds to wait for new messages (30 by default, 30 at most)
+                     * @default 30
+                     */
+                    timeout?: number;
+                    /**
+                     * Format: int64
+                     * @description Automatically set the last read marker when 1,
+                     *                               if your client does this itself via chat/{token}/read set to 0
+                     * @default 1
+                     * @enum {integer}
+                     */
+                    setReadMarker?: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Include the $lastKnownMessageId in the messages when 1 (default 0)
+                     * @default 0
+                     * @enum {integer}
+                     */
+                    includeLastKnown?: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description When the user status should not be automatically set to online set to 1 (default 0)
+                     * @default 0
+                     * @enum {integer}
+                     */
+                    noStatusUpdate?: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Set to 0 when notifications should not be marked as read (default 1)
+                     * @default 1
+                     * @enum {integer}
+                     */
+                    markNotificationsAsRead?: 0 | 1;
+                };
+            };
+        };
         responses: {
             /** @description Messages returned */
             200: {
@@ -2980,18 +3107,7 @@ export interface operations {
     };
     "chat-send-message": {
         parameters: {
-            query: {
-                /** @description the message to send */
-                message: string;
-                /** @description for guests */
-                actorDisplayName?: string;
-                /** @description for the message to be able to later identify it again */
-                referenceId?: string;
-                /** @description Parent id which this message is a reply to */
-                replyTo?: number;
-                /** @description If sent silent the chat message will not create any notifications */
-                silent?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3002,7 +3118,35 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the message to send */
+                    message: string;
+                    /**
+                     * @description for guests
+                     * @default
+                     */
+                    actorDisplayName?: string;
+                    /**
+                     * @description for the message to be able to later identify it again
+                     * @default
+                     */
+                    referenceId?: string;
+                    /**
+                     * Format: int64
+                     * @description Parent id which this message is a reply to
+                     * @default 0
+                     */
+                    replyTo?: number;
+                    /**
+                     * @description If sent silent the chat message will not create any notifications
+                     * @default false
+                     */
+                    silent?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Message sent successfully */
             201: {
@@ -3140,10 +3284,7 @@ export interface operations {
     };
     "chat-edit-message": {
         parameters: {
-            query: {
-                /** @description the message to send */
-                message: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3156,7 +3297,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the message to send */
+                    message: string;
+                };
+            };
+        };
         responses: {
             /** @description Message edited successfully */
             200: {
@@ -3369,10 +3517,7 @@ export interface operations {
     };
     "chat-get-message-context": {
         parameters: {
-            query?: {
-                /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
-                limit?: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3385,7 +3530,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
+                     * @default 50
+                     */
+                    limit?: number;
+                };
+            };
+        };
         responses: {
             /** @description Message context returned */
             200: {
@@ -3463,10 +3619,7 @@ export interface operations {
     };
     "chat-set-reminder": {
         parameters: {
-            query: {
-                /** @description Timestamp of the reminder */
-                timestamp: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3479,7 +3632,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Timestamp of the reminder
+                     */
+                    timestamp: number;
+                };
+            };
+        };
         responses: {
             /** @description Reminder created successfully */
             201: {
@@ -3566,10 +3729,7 @@ export interface operations {
     };
     "chat-set-read-marker": {
         parameters: {
-            query?: {
-                /** @description ID if the last read message (Optional only with `chat-read-last` capability) */
-                lastReadMessage?: number | null;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3580,7 +3740,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID if the last read message (Optional only with `chat-read-last` capability)
+                     */
+                    lastReadMessage?: number | null;
+                };
+            };
+        };
         responses: {
             /** @description Read marker set successfully */
             200: {
@@ -3633,14 +3803,7 @@ export interface operations {
     };
     "chat-mentions": {
         parameters: {
-            query: {
-                /** @description Text to search for */
-                search: string;
-                /** @description Maximum number of results */
-                limit?: number;
-                /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3651,7 +3814,25 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Text to search for */
+                    search: string;
+                    /**
+                     * Format: int64
+                     * @description Maximum number of results
+                     * @default 20
+                     */
+                    limit?: number;
+                    /**
+                     * @description Include the user statuses
+                     * @default false
+                     */
+                    includeStatus?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description List of mention suggestions returned */
             200: {
@@ -3671,14 +3852,7 @@ export interface operations {
     };
     "chat-get-objects-shared-in-room": {
         parameters: {
-            query: {
-                /** @description Type of the objects */
-                objectType: string;
-                /** @description ID of the last known message */
-                lastKnownMessageId?: number;
-                /** @description Maximum number of objects */
-                limit?: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3689,7 +3863,26 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Type of the objects */
+                    objectType: string;
+                    /**
+                     * Format: int64
+                     * @description ID of the last known message
+                     * @default 0
+                     */
+                    lastKnownMessageId?: number;
+                    /**
+                     * Format: int64
+                     * @description Maximum number of objects
+                     * @default 100
+                     */
+                    limit?: number;
+                };
+            };
+        };
         responses: {
             /** @description List of shared objects messages returned */
             200: {
@@ -3710,18 +3903,7 @@ export interface operations {
     };
     "chat-share-object-to-chat": {
         parameters: {
-            query: {
-                /** @description Type of the object */
-                objectType: string;
-                /** @description ID of the object */
-                objectId: string;
-                /** @description Additional metadata */
-                metaData?: string;
-                /** @description Guest name */
-                actorDisplayName?: string;
-                /** @description Reference ID */
-                referenceId?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3732,7 +3914,31 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Type of the object */
+                    objectType: string;
+                    /** @description ID of the object */
+                    objectId: string;
+                    /**
+                     * @description Additional metadata
+                     * @default
+                     */
+                    metaData?: string;
+                    /**
+                     * @description Guest name
+                     * @default
+                     */
+                    actorDisplayName?: string;
+                    /**
+                     * @description Reference ID
+                     * @default
+                     */
+                    referenceId?: string;
+                };
+            };
+        };
         responses: {
             /** @description Object shared successfully */
             201: {
@@ -3795,10 +4001,7 @@ export interface operations {
     };
     "chat-get-objects-shared-in-room-overview": {
         parameters: {
-            query?: {
-                /** @description Maximum number of objects */
-                limit?: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3809,7 +4012,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Maximum number of objects
+                     * @default 7
+                     */
+                    limit?: number;
+                };
+            };
+        };
         responses: {
             /** @description List of shared objects messages of each type returned */
             200: {
@@ -3957,10 +4171,7 @@ export interface operations {
     };
     "guest-set-display-name": {
         parameters: {
-            query: {
-                /** @description New display name */
-                displayName: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3971,7 +4182,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New display name */
+                    displayName: string;
+                };
+            };
+        };
         responses: {
             /** @description Display name updated successfully */
             200: {
@@ -4050,12 +4268,7 @@ export interface operations {
     };
     "matterbridge-edit-bridge-of-room": {
         parameters: {
-            query: {
-                /** @description If the bridge should be enabled */
-                enabled: 0 | 1;
-                /** @description New parts */
-                parts?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4066,7 +4279,19 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description If the bridge should be enabled */
+                    enabled: boolean;
+                    /**
+                     * @description New parts
+                     * @default []
+                     */
+                    parts?: components["schemas"]["MatterbridgeConfigFields"];
+                };
+            };
+        };
         responses: {
             /** @description Bridge edited successfully */
             200: {
@@ -4180,16 +4405,7 @@ export interface operations {
     };
     "poll-create-poll": {
         parameters: {
-            query: {
-                /** @description Question of the poll */
-                question: string;
-                /** @description Options of the poll */
-                "options[]": string[];
-                /** @description Mode how the results will be shown */
-                resultMode: 0 | 1;
-                /** @description Number of maximum votes per voter */
-                maxVotes: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4200,7 +4416,27 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Question of the poll */
+                    question: string;
+                    /** @description Options of the poll */
+                    options: string[];
+                    /**
+                     * Format: int64
+                     * @description Mode how the results will be shown
+                     * @enum {integer}
+                     */
+                    resultMode: 0 | 1;
+                    /**
+                     * Format: int64
+                     * @description Number of maximum votes per voter
+                     */
+                    maxVotes: number;
+                };
+            };
+        };
         responses: {
             /** @description Poll created successfully */
             201: {
@@ -4281,10 +4517,7 @@ export interface operations {
     };
     "poll-vote-poll": {
         parameters: {
-            query?: {
-                /** @description IDs of the selected options */
-                "optionIds[]"?: number[];
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4297,7 +4530,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description IDs of the selected options
+                     * @default []
+                     */
+                    optionIds?: number[];
+                };
+            };
+        };
         responses: {
             /** @description Voted successfully */
             200: {
@@ -4433,10 +4676,7 @@ export interface operations {
     };
     "public_share_auth-create-room": {
         parameters: {
-            query: {
-                /** @description Token of the file share */
-                shareToken: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4446,7 +4686,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Token of the file share */
+                    shareToken: string;
+                };
+            };
+        };
         responses: {
             /** @description Room created successfully */
             201: {
@@ -4484,10 +4731,7 @@ export interface operations {
     };
     "reaction-get-reactions": {
         parameters: {
-            query?: {
-                /** @description Emoji to filter */
-                reaction?: string | null;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4500,7 +4744,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description Emoji to filter */
+                    reaction?: string | null;
+                };
+            };
+        };
         responses: {
             /** @description Reactions returned */
             200: {
@@ -4536,10 +4787,7 @@ export interface operations {
     };
     "reaction-react": {
         parameters: {
-            query: {
-                /** @description Emoji to add */
-                reaction: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4552,7 +4800,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Emoji to add */
+                    reaction: string;
+                };
+            };
+        };
         responses: {
             /** @description Reaction already existed */
             200: {
@@ -4618,10 +4873,7 @@ export interface operations {
     };
     "reaction-delete": {
         parameters: {
-            query: {
-                /** @description Emoji to remove */
-                reaction: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4634,7 +4886,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Emoji to remove */
+                    reaction: string;
+                };
+            };
+        };
         responses: {
             /** @description Reaction deleted successfully */
             200: {
@@ -4684,10 +4943,7 @@ export interface operations {
     };
     "recording-start": {
         parameters: {
-            query: {
-                /** @description Type of the recording */
-                status: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4698,7 +4954,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Type of the recording
+                     */
+                    status: number;
+                };
+            };
+        };
         responses: {
             /** @description Recording started successfully */
             200: {
@@ -4781,10 +5047,7 @@ export interface operations {
     };
     "recording-notification-dismiss": {
         parameters: {
-            query: {
-                /** @description Timestamp of the notification to be dismissed */
-                timestamp: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4795,7 +5058,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Timestamp of the notification to be dismissed
+                     */
+                    timestamp: number;
+                };
+            };
+        };
         responses: {
             /** @description Notification dismissed successfully */
             200: {
@@ -4831,12 +5104,7 @@ export interface operations {
     };
     "recording-share-to-chat": {
         parameters: {
-            query: {
-                /** @description ID of the file */
-                fileId: number;
-                /** @description Timestamp of the notification to be dismissed */
-                timestamp: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4847,7 +5115,22 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the file
+                     */
+                    fileId: number;
+                    /**
+                     * Format: int64
+                     * @description Timestamp of the notification to be dismissed
+                     */
+                    timestamp: number;
+                };
+            };
+        };
         responses: {
             /** @description Recording shared to chat successfully */
             200: {
@@ -4883,14 +5166,7 @@ export interface operations {
     };
     "room-get-rooms": {
         parameters: {
-            query?: {
-                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
-                noStatusUpdate?: 0 | 1;
-                /** @description Include the user status */
-                includeStatus?: 0 | 1;
-                /** @description Filter rooms modified after a timestamp */
-                modifiedSince?: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4900,7 +5176,30 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description When the user status should not be automatically set to online set to 1 (default 0)
+                     * @default 0
+                     * @enum {integer}
+                     */
+                    noStatusUpdate?: 0 | 1;
+                    /**
+                     * @description Include the user status
+                     * @default false
+                     */
+                    includeStatus?: boolean;
+                    /**
+                     * Format: int64
+                     * @description Filter rooms modified after a timestamp
+                     * @default 0
+                     */
+                    modifiedSince?: number;
+                };
+            };
+        };
         responses: {
             /** @description Return list of rooms */
             200: {
@@ -4923,20 +5222,7 @@ export interface operations {
     };
     "room-create-room": {
         parameters: {
-            query: {
-                /** @description Type of the room */
-                roomType: number;
-                /** @description User, group, … ID to invite */
-                invite?: string;
-                /** @description Name of the room */
-                roomName?: string;
-                /** @description Source of the invite ID ('circles' to create a room with a circle, etc.) */
-                source?: string;
-                /** @description Type of the object */
-                objectType?: string;
-                /** @description ID of the object */
-                objectId?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4946,7 +5232,42 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Type of the room
+                     */
+                    roomType: number;
+                    /**
+                     * @description User, group, … ID to invite
+                     * @default
+                     */
+                    invite?: string;
+                    /**
+                     * @description Name of the room
+                     * @default
+                     */
+                    roomName?: string;
+                    /**
+                     * @description Source of the invite ID ('circles' to create a room with a circle, etc.)
+                     * @default
+                     */
+                    source?: string;
+                    /**
+                     * @description Type of the object
+                     * @default
+                     */
+                    objectType?: string;
+                    /**
+                     * @description ID of the object
+                     * @default
+                     */
+                    objectId?: string;
+                };
+            };
+        };
         responses: {
             /** @description Room already existed */
             200: {
@@ -5024,10 +5345,7 @@ export interface operations {
     };
     "room-get-listed-rooms": {
         parameters: {
-            query?: {
-                /** @description search term */
-                searchTerm?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5037,7 +5355,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description search term
+                     * @default
+                     */
+                    searchTerm?: string;
+                };
+            };
+        };
         responses: {
             /** @description Return list of matching rooms */
             200: {
@@ -5149,10 +5477,7 @@ export interface operations {
     };
     "room-rename-room": {
         parameters: {
-            query: {
-                /** @description New name */
-                roomName: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5163,7 +5488,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New name */
+                    roomName: string;
+                };
+            };
+        };
         responses: {
             /** @description Room renamed successfully */
             200: {
@@ -5379,10 +5711,7 @@ export interface operations {
     };
     "room-set-description": {
         parameters: {
-            query: {
-                /** @description New description */
-                description: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5393,7 +5722,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New description */
+                    description: string;
+                };
+            };
+        };
         responses: {
             /** @description Description updated successfully */
             200: {
@@ -5427,10 +5763,7 @@ export interface operations {
     };
     "room-set-read-only": {
         parameters: {
-            query: {
-                /** @description New read-only state */
-                state: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5441,7 +5774,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New read-only state
+                     * @enum {integer}
+                     */
+                    state: 0 | 1;
+                };
+            };
+        };
         responses: {
             /** @description Read-only state updated successfully */
             200: {
@@ -5475,10 +5819,7 @@ export interface operations {
     };
     "room-set-listable": {
         parameters: {
-            query: {
-                /** @description Scope where the room is listable */
-                scope: 0 | 1 | 2;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5489,7 +5830,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Scope where the room is listable
+                     * @enum {integer}
+                     */
+                    scope: 0 | 1 | 2;
+                };
+            };
+        };
         responses: {
             /** @description Made room listable successfully */
             200: {
@@ -5523,10 +5875,7 @@ export interface operations {
     };
     "room-set-password": {
         parameters: {
-            query: {
-                /** @description New password */
-                password: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5537,7 +5886,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New password */
+                    password: string;
+                };
+            };
+        };
         responses: {
             /** @description Password set successfully */
             200: {
@@ -5587,10 +5943,7 @@ export interface operations {
     };
     "room-set-permissions": {
         parameters: {
-            query: {
-                /** @description New permissions */
-                permissions: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5603,7 +5956,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New permissions
+                     */
+                    permissions: number;
+                };
+            };
+        };
         responses: {
             /** @description Permissions updated successfully */
             200: {
@@ -5637,10 +6000,7 @@ export interface operations {
     };
     "room-get-participants": {
         parameters: {
-            query?: {
-                /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5651,7 +6011,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Include the user statuses
+                     * @default false
+                     */
+                    includeStatus?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Participants returned */
             200: {
@@ -5686,12 +6056,7 @@ export interface operations {
     };
     "room-add-participant-to-room": {
         parameters: {
-            query: {
-                /** @description New participant */
-                newParticipant: string;
-                /** @description Source of the participant */
-                source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones";
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5702,7 +6067,20 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New participant */
+                    newParticipant: string;
+                    /**
+                     * @description Source of the participant
+                     * @default users
+                     * @enum {string}
+                     */
+                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones";
+                };
+            };
+        };
         responses: {
             /** @description Participant successfully added */
             200: {
@@ -5769,10 +6147,7 @@ export interface operations {
     };
     "room-get-breakout-room-participants": {
         parameters: {
-            query?: {
-                /** @description Include the user statuses */
-                includeStatus?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5783,7 +6158,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Include the user statuses
+                     * @default false
+                     */
+                    includeStatus?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Breakout room participants returned */
             200: {
@@ -5893,10 +6278,7 @@ export interface operations {
     };
     "room-remove-attendee-from-room": {
         parameters: {
-            query: {
-                /** @description ID of the attendee */
-                attendeeId: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5907,7 +6289,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the attendee
+                     */
+                    attendeeId: number;
+                };
+            };
+        };
         responses: {
             /** @description Attendee removed successfully */
             200: {
@@ -5969,14 +6361,7 @@ export interface operations {
     };
     "room-set-attendee-permissions": {
         parameters: {
-            query: {
-                /** @description ID of the attendee */
-                attendeeId: number;
-                /** @description Method of updating permissions ('set', 'remove', 'add') */
-                method: "set" | "remove" | "add";
-                /** @description New permissions */
-                permissions: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5987,7 +6372,27 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the attendee
+                     */
+                    attendeeId: number;
+                    /**
+                     * @description Method of updating permissions ('set', 'remove', 'add')
+                     * @enum {string}
+                     */
+                    method: "set" | "remove" | "add";
+                    /**
+                     * Format: int64
+                     * @description New permissions
+                     */
+                    permissions: number;
+                };
+            };
+        };
         responses: {
             /** @description Permissions updated successfully */
             200: {
@@ -6049,12 +6454,7 @@ export interface operations {
     };
     "room-set-all-attendees-permissions": {
         parameters: {
-            query: {
-                /** @description Method of updating permissions ('set', 'remove', 'add') */
-                method: "set" | "remove" | "add";
-                /** @description New permissions */
-                permissions: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6065,7 +6465,22 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Method of updating permissions ('set', 'remove', 'add')
+                     * @enum {string}
+                     */
+                    method: "set" | "remove" | "add";
+                    /**
+                     * Format: int64
+                     * @description New permissions
+                     */
+                    permissions: number;
+                };
+            };
+        };
         responses: {
             /** @description Permissions updated successfully */
             200: {
@@ -6099,12 +6514,7 @@ export interface operations {
     };
     "room-join-room": {
         parameters: {
-            query?: {
-                /** @description Password of the room */
-                password?: string;
-                /** @description Create a new session if necessary */
-                force?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6116,7 +6526,22 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Password of the room
+                     * @default
+                     */
+                    password?: string;
+                    /**
+                     * @description Create a new session if necessary
+                     * @default true
+                     */
+                    force?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description Room joined successfully */
             200: {
@@ -6220,10 +6645,7 @@ export interface operations {
     };
     "room-resend-invitations": {
         parameters: {
-            query?: {
-                /** @description ID of the attendee */
-                attendeeId?: number | null;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6234,7 +6656,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the attendee
+                     */
+                    attendeeId?: number | null;
+                };
+            };
+        };
         responses: {
             /** @description Invitation resent successfully */
             200: {
@@ -6268,10 +6700,7 @@ export interface operations {
     };
     "room-set-session-state": {
         parameters: {
-            query: {
-                /** @description of the room */
-                state: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6282,7 +6711,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description of the room
+                     * @enum {integer}
+                     */
+                    state: 0 | 1;
+                };
+            };
+        };
         responses: {
             /** @description Session state set successfully */
             200: {
@@ -6330,10 +6770,7 @@ export interface operations {
     };
     "room-promote-moderator": {
         parameters: {
-            query: {
-                /** @description ID of the attendee */
-                attendeeId: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6344,7 +6781,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the attendee
+                     */
+                    attendeeId: number;
+                };
+            };
+        };
         responses: {
             /** @description Attendee promoted to moderator successfully */
             200: {
@@ -6406,10 +6853,7 @@ export interface operations {
     };
     "room-demote-moderator": {
         parameters: {
-            query: {
-                /** @description ID of the attendee */
-                attendeeId: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6420,7 +6864,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the attendee
+                     */
+                    attendeeId: number;
+                };
+            };
+        };
         responses: {
             /** @description Attendee demoted from moderator successfully */
             200: {
@@ -6544,10 +6998,7 @@ export interface operations {
     };
     "room-set-notification-level": {
         parameters: {
-            query: {
-                /** @description New level */
-                level: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6558,7 +7009,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New level
+                     */
+                    level: number;
+                };
+            };
+        };
         responses: {
             /** @description Notification level updated successfully */
             200: {
@@ -6592,10 +7053,7 @@ export interface operations {
     };
     "room-set-notification-calls": {
         parameters: {
-            query: {
-                /** @description New level */
-                level: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6606,7 +7064,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New level
+                     */
+                    level: number;
+                };
+            };
+        };
         responses: {
             /** @description Call notification level updated successfully */
             200: {
@@ -6640,12 +7108,7 @@ export interface operations {
     };
     "room-set-lobby": {
         parameters: {
-            query: {
-                /** @description New state */
-                state: number;
-                /** @description Timer when the lobby will be removed */
-                timer?: number | null;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6656,7 +7119,22 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New state
+                     */
+                    state: number;
+                    /**
+                     * Format: int64
+                     * @description Timer when the lobby will be removed
+                     */
+                    timer?: number | null;
+                };
+            };
+        };
         responses: {
             /** @description Lobby state updated successfully */
             200: {
@@ -6690,10 +7168,7 @@ export interface operations {
     };
     "room-setsip-enabled": {
         parameters: {
-            query: {
-                /** @description New state */
-                state: 0 | 1 | 2;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6704,7 +7179,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New state
+                     * @enum {integer}
+                     */
+                    state: 0 | 1 | 2;
+                };
+            };
+        };
         responses: {
             /** @description SIP enabled state updated successfully */
             200: {
@@ -6780,10 +7266,7 @@ export interface operations {
     };
     "room-set-recording-consent": {
         parameters: {
-            query: {
-                /** @description New consent setting for the conversation (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.) */
-                recordingConsent: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6794,7 +7277,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New consent setting for the conversation
+                     *       (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
+                     */
+                    recordingConsent: number;
+                };
+            };
+        };
         responses: {
             /** @description Recording consent requirement set successfully */
             200: {
@@ -6844,10 +7338,7 @@ export interface operations {
     };
     "room-set-message-expiration": {
         parameters: {
-            query: {
-                /** @description New time */
-                seconds: number;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6858,7 +7349,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New time
+                     */
+                    seconds: number;
+                };
+            };
+        };
         responses: {
             /** @description Message expiration time updated successfully */
             200: {
@@ -6927,10 +7428,7 @@ export interface operations {
     };
     "room-set-mention-permissions": {
         parameters: {
-            query: {
-                /** @description New mention permissions */
-                mentionPermissions: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6941,7 +7439,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New mention permissions
+                     * @enum {integer}
+                     */
+                    mentionPermissions: 0 | 1;
+                };
+            };
+        };
         responses: {
             /** @description Permissions updated successfully */
             200: {
@@ -6975,12 +7484,7 @@ export interface operations {
     };
     "settings-set-user-setting": {
         parameters: {
-            query: {
-                /** @description Key to update */
-                key: "attachment_folder" | "read_status_privacy" | "typing_privacy" | "play_sounds";
-                /** @description New value for the key */
-                value?: (string | number) | null;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6990,7 +7494,19 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Key to update
+                     * @enum {string}
+                     */
+                    key: "attachment_folder" | "read_status_privacy" | "typing_privacy" | "play_sounds";
+                    /** @description New value for the key */
+                    value?: (string | number) | null;
+                };
+            };
+        };
         responses: {
             /** @description User setting updated successfully */
             200: {
@@ -7024,10 +7540,7 @@ export interface operations {
     };
     "signaling-get-settings": {
         parameters: {
-            query?: {
-                /** @description Token of the room */
-                token?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -7037,7 +7550,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Token of the room
+                     * @default
+                     */
+                    token?: string;
+                };
+            };
+        };
         responses: {
             /** @description Signaling settings returned */
             200: {
@@ -7168,10 +7691,7 @@ export interface operations {
     };
     "signaling-send-messages": {
         parameters: {
-            query: {
-                /** @description JSON encoded messages */
-                messages: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -7183,7 +7703,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description JSON encoded messages */
+                    messages: string;
+                };
+            };
+        };
         responses: {
             /** @description Signaling message sent successfully */
             200: {

@@ -288,48 +288,42 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "The message to send"
+                                    },
+                                    "referenceId": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "For the message to be able to later identify it again"
+                                    },
+                                    "replyTo": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Parent id which this message is a reply to"
+                                    },
+                                    "silent": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "If sent silent the chat message will not create any notifications"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "message",
-                        "in": "query",
-                        "description": "The message to send",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "referenceId",
-                        "in": "query",
-                        "description": "For the message to be able to later identify it again",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "replyTo",
-                        "in": "query",
-                        "description": "Parent id which this message is a reply to",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0
-                        }
-                    },
-                    {
-                        "name": "silent",
-                        "in": "query",
-                        "description": "If sent silent the chat message will not create any notifications",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -495,16 +489,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Reaction to add",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "reaction"
+                                ],
+                                "properties": {
+                                    "reaction": {
+                                        "type": "string",
+                                        "description": "Reaction to add"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -706,16 +710,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Reaction to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "reaction"
+                                ],
+                                "properties": {
+                                    "reaction": {
+                                        "type": "string",
+                                        "description": "Reaction to delete"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",

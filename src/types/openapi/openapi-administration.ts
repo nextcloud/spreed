@@ -313,10 +313,7 @@ export interface operations {
     };
     "certificate-get-certificate-expiration": {
         parameters: {
-            query: {
-                /** @description Host to check */
-                host: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -326,7 +323,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Host to check */
+                    host: string;
+                };
+            };
+        };
         responses: {
             /** @description Certificate expiration returned */
             200: {
@@ -365,18 +369,7 @@ export interface operations {
     };
     "hosted_signaling_server-request-trial": {
         parameters: {
-            query: {
-                /** @description Server URL */
-                url: string;
-                /** @description Display name of the user */
-                name: string;
-                /** @description Email of the user */
-                email: string;
-                /** @description Language of the user */
-                language: string;
-                /** @description Country of the user */
-                country: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -386,7 +379,22 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Server URL */
+                    url: string;
+                    /** @description Display name of the user */
+                    name: string;
+                    /** @description Email of the user */
+                    email: string;
+                    /** @description Language of the user */
+                    language: string;
+                    /** @description Country of the user */
+                    country: string;
+                };
+            };
+        };
         responses: {
             /** @description Trial requested successfully */
             200: {
@@ -651,14 +659,7 @@ export interface operations {
     };
     "settings-setsip-settings": {
         parameters: {
-            query?: {
-                /** @description New SIP groups */
-                "sipGroups[]"?: string[];
-                /** @description New dial info */
-                dialInInfo?: string;
-                /** @description New shared secret */
-                sharedSecret?: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -668,7 +669,27 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description New SIP groups
+                     * @default []
+                     */
+                    sipGroups?: string[];
+                    /**
+                     * @description New dial info
+                     * @default
+                     */
+                    dialInInfo?: string;
+                    /**
+                     * @description New shared secret
+                     * @default
+                     */
+                    sharedSecret?: string;
+                };
+            };
+        };
         responses: {
             /** @description Successfully set new SIP settings */
             200: {

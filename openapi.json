@@ -1510,20 +1510,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "darkTheme",
-                        "in": "query",
-                        "description": "Theme used for background",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "darkTheme": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Theme used for background"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -1668,25 +1672,31 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "emoji"
+                                ],
+                                "properties": {
+                                    "emoji": {
+                                        "type": "string",
+                                        "description": "Emoji"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "Color of the emoji"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "emoji",
-                        "in": "query",
-                        "description": "Emoji",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "color",
-                        "in": "query",
-                        "description": "Color of the emoji",
-                        "schema": {
-                            "type": "string",
-                            "nullable": true
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -1872,39 +1882,41 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "actorType",
+                                    "actorId"
+                                ],
+                                "properties": {
+                                    "actorType": {
+                                        "type": "string",
+                                        "enum": [
+                                            "users",
+                                            "guests",
+                                            "ip"
+                                        ],
+                                        "description": "Type of actor to ban, or `ip` when banning a clients remote address"
+                                    },
+                                    "actorId": {
+                                        "type": "string",
+                                        "description": "Actor ID or the IP address or range in case of type `ip`"
+                                    },
+                                    "internalNote": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Optional internal note (max. 4000 characters)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "actorType",
-                        "in": "query",
-                        "description": "Type of actor to ban, or `ip` when banning a clients remote address",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "users",
-                                "guests",
-                                "ip"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "actorId",
-                        "in": "query",
-                        "description": "Actor ID or the IP address or range in case of type `ip`",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "internalNote",
-                        "in": "query",
-                        "description": "Optional internal note (max. 4000 characters)",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -2583,44 +2595,46 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "mode",
+                                    "amount"
+                                ],
+                                "properties": {
+                                    "mode": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "description": "Mode of the breakout rooms"
+                                    },
+                                    "amount": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Number of breakout rooms - Constants {@see BreakoutRoom::MINIMUM_ROOM_AMOUNT} and {@see BreakoutRoom::MAXIMUM_ROOM_AMOUNT}",
+                                        "minimum": 1,
+                                        "maximum": 20
+                                    },
+                                    "attendeeMap": {
+                                        "type": "string",
+                                        "default": "[]",
+                                        "description": "Mapping of the attendees to breakout rooms"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "mode",
-                        "in": "query",
-                        "description": "Mode of the breakout rooms",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1,
-                                2,
-                                3
-                            ]
-                        }
-                    },
-                    {
-                        "name": "amount",
-                        "in": "query",
-                        "description": "Number of breakout rooms - Constants {@see BreakoutRoom::MINIMUM_ROOM_AMOUNT} and {@see BreakoutRoom::MAXIMUM_ROOM_AMOUNT}",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 1,
-                            "maximum": 20
-                        }
-                    },
-                    {
-                        "name": "attendeeMap",
-                        "in": "query",
-                        "description": "Mapping of the attendees to breakout rooms",
-                        "schema": {
-                            "type": "string",
-                            "default": "[]"
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -2823,16 +2837,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "message",
-                        "in": "query",
-                        "description": "Message to broadcast",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Message to broadcast"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -2993,16 +3017,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "attendeeMap",
-                        "in": "query",
-                        "description": "JSON encoded mapping of the attendees to breakout rooms `array<int, int>`",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "attendeeMap"
+                                ],
+                                "properties": {
+                                    "attendeeMap": {
+                                        "type": "string",
+                                        "description": "JSON encoded mapping of the attendees to breakout rooms `array<int, int>`"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -3607,16 +3641,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "target",
-                        "in": "query",
-                        "description": "Target breakout room",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "target"
+                                ],
+                                "properties": {
+                                    "target": {
+                                        "type": "string",
+                                        "description": "Target breakout room"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -3821,57 +3865,45 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "flags": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "In-Call flags",
+                                        "minimum": 0,
+                                        "maximum": 15
+                                    },
+                                    "forcePermissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "In-call permissions",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    },
+                                    "silent": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Join the call silently"
+                                    },
+                                    "recordingConsent": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "When the user ticked a checkbox and agreed with being recorded\n (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}\n  or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}\n  and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "flags",
-                        "in": "query",
-                        "description": "In-Call flags",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "nullable": true,
-                            "minimum": 0,
-                            "maximum": 15
-                        }
-                    },
-                    {
-                        "name": "forcePermissions",
-                        "in": "query",
-                        "description": "In-call permissions",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "nullable": true,
-                            "minimum": 0,
-                            "maximum": 255
-                        }
-                    },
-                    {
-                        "name": "silent",
-                        "in": "query",
-                        "description": "Join the call silently",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "recordingConsent",
-                        "in": "query",
-                        "description": "When the user ticked a checkbox and agreed with being recorded (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES} or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL} and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -4013,19 +4045,29 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "flags",
-                        "in": "query",
-                        "description": "New flags",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0,
-                            "maximum": 15
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "flags"
+                                ],
+                                "properties": {
+                                    "flags": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New flags",
+                                        "minimum": 0,
+                                        "maximum": 15
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -4160,20 +4202,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "all",
-                        "in": "query",
-                        "description": "whether to also terminate the call for all participants",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "all": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "whether to also terminate the call for all participants"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -4655,121 +4701,99 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "lookIntoFuture"
+                                ],
+                                "properties": {
+                                    "lookIntoFuture": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Polling for new messages (1) or getting the history of the chat (0)"
+                                    },
+                                    "limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 100,
+                                        "description": "Number of chat messages to receive (100 by default, 200 at most)"
+                                    },
+                                    "lastKnownMessageId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "The last known message (serves as offset)",
+                                        "minimum": 0
+                                    },
+                                    "lastCommonReadId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "The last known common read message\n                             (so the response is 200 instead of 304 when\n                             it changes even when there are no messages)",
+                                        "minimum": 0
+                                    },
+                                    "timeout": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 30,
+                                        "description": "Number of seconds to wait for new messages (30 by default, 30 at most)",
+                                        "minimum": 0,
+                                        "maximum": 30
+                                    },
+                                    "setReadMarker": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 1,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Automatically set the last read marker when 1,\n                          if your client does this itself via chat/{token}/read set to 0"
+                                    },
+                                    "includeLastKnown": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Include the $lastKnownMessageId in the messages when 1 (default 0)"
+                                    },
+                                    "noStatusUpdate": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "When the user status should not be automatically set to online set to 1 (default 0)"
+                                    },
+                                    "markNotificationsAsRead": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 1,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Set to 0 when notifications should not be marked as read (default 1)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "lookIntoFuture",
-                        "in": "query",
-                        "description": "Polling for new messages (1) or getting the history of the chat (0)",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Number of chat messages to receive (100 by default, 200 at most)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "lastKnownMessageId",
-                        "in": "query",
-                        "description": "The last known message (serves as offset)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "lastCommonReadId",
-                        "in": "query",
-                        "description": "The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "timeout",
-                        "in": "query",
-                        "description": "Number of seconds to wait for new messages (30 by default, 30 at most)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 30,
-                            "minimum": 0,
-                            "maximum": 30
-                        }
-                    },
-                    {
-                        "name": "setReadMarker",
-                        "in": "query",
-                        "description": "Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 1,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "includeLastKnown",
-                        "in": "query",
-                        "description": "Include the $lastKnownMessageId in the messages when 1 (default 0)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "noStatusUpdate",
-                        "in": "query",
-                        "description": "When the user status should not be automatically set to online set to 1 (default 0)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "markNotificationsAsRead",
-                        "in": "query",
-                        "description": "Set to 0 when notifications should not be marked as read (default 1)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 1,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -4869,58 +4893,48 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "the message to send"
+                                    },
+                                    "actorDisplayName": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "for guests"
+                                    },
+                                    "referenceId": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "for the message to be able to later identify it again"
+                                    },
+                                    "replyTo": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Parent id which this message is a reply to",
+                                        "minimum": 0
+                                    },
+                                    "silent": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "If sent silent the chat message will not create any notifications"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "message",
-                        "in": "query",
-                        "description": "the message to send",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "actorDisplayName",
-                        "in": "query",
-                        "description": "for guests",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "referenceId",
-                        "in": "query",
-                        "description": "for the message to be able to later identify it again",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "replyTo",
-                        "in": "query",
-                        "description": "Parent id which this message is a reply to",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "silent",
-                        "in": "query",
-                        "description": "If sent silent the chat message will not create any notifications",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -5523,16 +5537,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "message",
-                        "in": "query",
-                        "description": "the message to send",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "description": "the message to send"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -5820,19 +5844,27 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 50,
-                            "minimum": 1,
-                            "maximum": 100
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 50,
+                                        "description": "Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)",
+                                        "minimum": 1,
+                                        "maximum": 100
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -5943,18 +5975,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "timestamp",
-                        "in": "query",
-                        "description": "Timestamp of the reminder",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "timestamp"
+                                ],
+                                "properties": {
+                                    "timestamp": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Timestamp of the reminder",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -6340,18 +6382,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "lastReadMessage",
-                        "in": "query",
-                        "description": "ID if the last read message (Optional only with `chat-read-last` capability)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "nullable": true,
-                            "minimum": 0
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "lastReadMessage": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "ID if the last read message (Optional only with `chat-read-last` capability)",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -6529,39 +6579,37 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "search"
+                                ],
+                                "properties": {
+                                    "search": {
+                                        "type": "string",
+                                        "description": "Text to search for"
+                                    },
+                                    "limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 20,
+                                        "description": "Maximum number of results"
+                                    },
+                                    "includeStatus": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Include the user statuses"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Text to search for",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Maximum number of results",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 20
-                        }
-                    },
-                    {
-                        "name": "includeStatus",
-                        "in": "query",
-                        "description": "Include the user statuses",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -6648,52 +6696,46 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "objectType",
+                                    "objectId"
+                                ],
+                                "properties": {
+                                    "objectType": {
+                                        "type": "string",
+                                        "description": "Type of the object"
+                                    },
+                                    "objectId": {
+                                        "type": "string",
+                                        "description": "ID of the object"
+                                    },
+                                    "metaData": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Additional metadata"
+                                    },
+                                    "actorDisplayName": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Guest name"
+                                    },
+                                    "referenceId": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Reference ID"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "objectType",
-                        "in": "query",
-                        "description": "Type of the object",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "objectId",
-                        "in": "query",
-                        "description": "ID of the object",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "metaData",
-                        "in": "query",
-                        "description": "Additional metadata",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "actorDisplayName",
-                        "in": "query",
-                        "description": "Guest name",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "referenceId",
-                        "in": "query",
-                        "description": "Reference ID",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -6866,39 +6908,41 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "objectType"
+                                ],
+                                "properties": {
+                                    "objectType": {
+                                        "type": "string",
+                                        "description": "Type of the objects"
+                                    },
+                                    "lastKnownMessageId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "ID of the last known message",
+                                        "minimum": 0
+                                    },
+                                    "limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 100,
+                                        "description": "Maximum number of objects",
+                                        "minimum": 1,
+                                        "maximum": 200
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "objectType",
-                        "in": "query",
-                        "description": "Type of the objects",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "lastKnownMessageId",
-                        "in": "query",
-                        "description": "ID of the last known message",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Maximum number of objects",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 100,
-                            "minimum": 1,
-                            "maximum": 200
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -6991,19 +7035,27 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Maximum number of objects",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 7,
-                            "minimum": 1,
-                            "maximum": 20
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 7,
+                                        "description": "Maximum number of objects",
+                                        "minimum": 1,
+                                        "maximum": 20
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -7397,16 +7449,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "displayName",
-                        "in": "query",
-                        "description": "New display name",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "displayName"
+                                ],
+                                "properties": {
+                                    "displayName": {
+                                        "type": "string",
+                                        "description": "New display name"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -7622,28 +7684,31 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "enabled"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean",
+                                        "description": "If the bridge should be enabled"
+                                    },
+                                    "parts": {
+                                        "$ref": "#/components/schemas/MatterbridgeConfigFields",
+                                        "default": [],
+                                        "description": "New parts"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "enabled",
-                        "in": "query",
-                        "description": "If the bridge should be enabled",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "parts",
-                        "in": "query",
-                        "description": "New parts",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -7964,52 +8029,50 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "question",
-                        "in": "query",
-                        "description": "Question of the poll",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "options[]",
-                        "in": "query",
-                        "description": "Options of the poll",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "question",
+                                    "options",
+                                    "resultMode",
+                                    "maxVotes"
+                                ],
+                                "properties": {
+                                    "question": {
+                                        "type": "string",
+                                        "description": "Question of the poll"
+                                    },
+                                    "options": {
+                                        "type": "array",
+                                        "description": "Options of the poll",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "resultMode": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Mode how the results will be shown"
+                                    },
+                                    "maxVotes": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Number of maximum votes per voter"
+                                    }
+                                }
                             }
                         }
-                    },
-                    {
-                        "name": "resultMode",
-                        "in": "query",
-                        "description": "Mode how the results will be shown",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "maxVotes",
-                        "in": "query",
-                        "description": "Number of maximum votes per voter",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -8240,20 +8303,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "optionIds[]",
-                        "in": "query",
-                        "description": "IDs of the selected options",
-                        "schema": {
-                            "type": "array",
-                            "default": [],
-                            "items": {
-                                "type": "integer",
-                                "format": "int64"
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "optionIds": {
+                                        "type": "array",
+                                        "default": [],
+                                        "description": "IDs of the selected options",
+                                        "items": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        }
+                                    }
+                                }
                             }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -8608,16 +8679,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "shareToken",
-                        "in": "query",
-                        "description": "Token of the file share",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "shareToken"
+                                ],
+                                "properties": {
+                                    "shareToken": {
+                                        "type": "string",
+                                        "description": "Token of the file share"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -8735,16 +8816,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Emoji to add",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "reaction"
+                                ],
+                                "properties": {
+                                    "reaction": {
+                                        "type": "string",
+                                        "description": "Emoji to add"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -8934,16 +9025,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Emoji to remove",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "reaction"
+                                ],
+                                "properties": {
+                                    "reaction": {
+                                        "type": "string",
+                                        "description": "Emoji to remove"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -9097,16 +9198,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Emoji to filter",
-                        "schema": {
-                            "type": "string",
-                            "nullable": true
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "reaction": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "Emoji to filter"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -9233,17 +9342,27 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Type of the recording",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Type of the recording"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -9477,18 +9596,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "timestamp",
-                        "in": "query",
-                        "description": "Timestamp of the notification to be dismissed",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "timestamp"
+                                ],
+                                "properties": {
+                                    "timestamp": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Timestamp of the notification to be dismissed",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -9606,29 +9735,35 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "fileId",
+                                    "timestamp"
+                                ],
+                                "properties": {
+                                    "fileId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "ID of the file",
+                                        "minimum": 0
+                                    },
+                                    "timestamp": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Timestamp of the notification to be dismissed",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "fileId",
-                        "in": "query",
-                        "description": "ID of the file",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "timestamp",
-                        "in": "query",
-                        "description": "Timestamp of the notification to be dismissed",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -9746,45 +9881,41 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "noStatusUpdate": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "When the user status should not be automatically set to online set to 1 (default 0)"
+                                    },
+                                    "includeStatus": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Include the user status"
+                                    },
+                                    "modifiedSince": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Filter rooms modified after a timestamp",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "noStatusUpdate",
-                        "in": "query",
-                        "description": "When the user status should not be automatically set to online set to 1 (default 0)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "includeStatus",
-                        "in": "query",
-                        "description": "Include the user status",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "modifiedSince",
-                        "in": "query",
-                        "description": "Filter rooms modified after a timestamp",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0,
-                            "minimum": 0
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -9875,62 +10006,52 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "roomType"
+                                ],
+                                "properties": {
+                                    "roomType": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Type of the room"
+                                    },
+                                    "invite": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User, group, … ID to invite"
+                                    },
+                                    "roomName": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Name of the room"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.)"
+                                    },
+                                    "objectType": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Type of the object"
+                                    },
+                                    "objectId": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "ID of the object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "roomType",
-                        "in": "query",
-                        "description": "Type of the room",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "invite",
-                        "in": "query",
-                        "description": "User, group, … ID to invite",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "roomName",
-                        "in": "query",
-                        "description": "Name of the room",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "source",
-                        "in": "query",
-                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.)",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "objectType",
-                        "in": "query",
-                        "description": "Type of the object",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "objectId",
-                        "in": "query",
-                        "description": "ID of the object",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -10124,16 +10245,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "searchTerm",
-                        "in": "query",
-                        "description": "search term",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "searchTerm": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "search term"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -10440,16 +10569,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "roomName",
-                        "in": "query",
-                        "description": "New name",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "roomName"
+                                ],
+                                "properties": {
+                                    "roomName": {
+                                        "type": "string",
+                                        "description": "New name"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11003,16 +11142,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "description",
-                        "in": "query",
-                        "description": "New description",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "description"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "description": "New description"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11120,21 +11269,31 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "state",
-                        "in": "query",
-                        "description": "New read-only state",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "state"
+                                ],
+                                "properties": {
+                                    "state": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "New read-only state"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11242,22 +11401,32 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "scope",
-                        "in": "query",
-                        "description": "Scope where the room is listable",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1,
-                                2
-                            ]
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "scope"
+                                ],
+                                "properties": {
+                                    "scope": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "description": "Scope where the room is listable"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11366,16 +11535,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "New password",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "description": "New password"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11519,19 +11698,29 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "permissions",
-                        "in": "query",
-                        "description": "New permissions",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0,
-                            "maximum": 255
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "permissions"
+                                ],
+                                "properties": {
+                                    "permissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New permissions",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11656,20 +11845,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "includeStatus",
-                        "in": "query",
-                        "description": "Include the user statuses",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "includeStatus": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Include the user statuses"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -11787,33 +11980,39 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "newParticipant"
+                                ],
+                                "properties": {
+                                    "newParticipant": {
+                                        "type": "string",
+                                        "description": "New participant"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "default": "users",
+                                        "enum": [
+                                            "users",
+                                            "groups",
+                                            "circles",
+                                            "emails",
+                                            "federated_users",
+                                            "phones"
+                                        ],
+                                        "description": "Source of the participant"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "newParticipant",
-                        "in": "query",
-                        "description": "New participant",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "source",
-                        "in": "query",
-                        "description": "Source of the participant",
-                        "schema": {
-                            "type": "string",
-                            "default": "users",
-                            "enum": [
-                                "users",
-                                "groups",
-                                "circles",
-                                "emails",
-                                "federated_users",
-                                "phones"
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -12004,20 +12203,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "includeStatus",
-                        "in": "query",
-                        "description": "Include the user statuses",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "includeStatus": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Include the user statuses"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -12312,18 +12515,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "attendeeId",
-                        "in": "query",
-                        "description": "ID of the attendee",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "attendeeId"
+                                ],
+                                "properties": {
+                                    "attendeeId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "ID of the attendee",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -12488,44 +12701,46 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "attendeeId",
+                                    "method",
+                                    "permissions"
+                                ],
+                                "properties": {
+                                    "attendeeId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "ID of the attendee",
+                                        "minimum": 0
+                                    },
+                                    "method": {
+                                        "type": "string",
+                                        "enum": [
+                                            "set",
+                                            "remove",
+                                            "add"
+                                        ],
+                                        "description": "Method of updating permissions ('set', 'remove', 'add')"
+                                    },
+                                    "permissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New permissions",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "attendeeId",
-                        "in": "query",
-                        "description": "ID of the attendee",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
-                        }
-                    },
-                    {
-                        "name": "method",
-                        "in": "query",
-                        "description": "Method of updating permissions ('set', 'remove', 'add')",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "set",
-                                "remove",
-                                "add"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "permissions",
-                        "in": "query",
-                        "description": "New permissions",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0,
-                            "maximum": 255
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -12690,33 +12905,39 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "method",
+                                    "permissions"
+                                ],
+                                "properties": {
+                                    "method": {
+                                        "type": "string",
+                                        "enum": [
+                                            "set",
+                                            "remove",
+                                            "add"
+                                        ],
+                                        "description": "Method of updating permissions ('set', 'remove', 'add')"
+                                    },
+                                    "permissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New permissions",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "method",
-                        "in": "query",
-                        "description": "Method of updating permissions ('set', 'remove', 'add')",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "set",
-                                "remove",
-                                "add"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "permissions",
-                        "in": "query",
-                        "description": "New permissions",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0,
-                            "maximum": 255
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -12827,29 +13048,29 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Password of the room"
+                                    },
+                                    "force": {
+                                        "type": "boolean",
+                                        "default": true,
+                                        "description": "Create a new session if necessary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "Password of the room",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "force",
-                        "in": "query",
-                        "description": "Create a new session if necessary",
-                        "schema": {
-                            "type": "integer",
-                            "default": 1,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -13137,18 +13358,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "attendeeId",
-                        "in": "query",
-                        "description": "ID of the attendee",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "nullable": true,
-                            "minimum": 0
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "attendeeId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "ID of the attendee",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -13257,21 +13486,31 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "state",
-                        "in": "query",
-                        "description": "of the room",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "state"
+                                ],
+                                "properties": {
+                                    "state": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "of the room"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -13410,18 +13649,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "attendeeId",
-                        "in": "query",
-                        "description": "ID of the attendee",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "attendeeId"
+                                ],
+                                "properties": {
+                                    "attendeeId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "ID of the attendee",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -13584,18 +13833,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "attendeeId",
-                        "in": "query",
-                        "description": "ID of the attendee",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "attendeeId"
+                                ],
+                                "properties": {
+                                    "attendeeId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "ID of the attendee",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -13917,17 +14176,27 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "level",
-                        "in": "query",
-                        "description": "New level",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "level"
+                                ],
+                                "properties": {
+                                    "level": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New level"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -14035,17 +14304,27 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "level",
-                        "in": "query",
-                        "description": "New level",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "level"
+                                ],
+                                "properties": {
+                                    "level": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New level"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -14153,28 +14432,34 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "state"
+                                ],
+                                "properties": {
+                                    "state": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New state"
+                                    },
+                                    "timer": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "description": "Timer when the lobby will be removed",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "state",
-                        "in": "query",
-                        "description": "New state",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "timer",
-                        "in": "query",
-                        "description": "Timer when the lobby will be removed",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "nullable": true,
-                            "minimum": 0
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -14284,22 +14569,32 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "state",
-                        "in": "query",
-                        "description": "New state",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1,
-                                2
-                            ]
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "state"
+                                ],
+                                "properties": {
+                                    "state": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "description": "New state"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -14493,17 +14788,27 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "recordingConsent",
-                        "in": "query",
-                        "description": "New consent setting for the conversation (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "recordingConsent"
+                                ],
+                                "properties": {
+                                    "recordingConsent": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New consent setting for the conversation\n  (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -14652,18 +14957,28 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "seconds",
-                        "in": "query",
-                        "description": "New time",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "minimum": 0
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "seconds"
+                                ],
+                                "properties": {
+                                    "seconds": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "New time",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -14882,21 +15197,31 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "mentionPermissions",
-                        "in": "query",
-                        "description": "New mention permissions",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "enum": [
-                                0,
-                                1
-                            ]
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "mentionPermissions"
+                                ],
+                                "properties": {
+                                    "mentionPermissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "New mention permissions"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -15006,39 +15331,45 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "key",
-                        "in": "query",
-                        "description": "Key to update",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "attachment_folder",
-                                "read_status_privacy",
-                                "typing_privacy",
-                                "play_sounds"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "value",
-                        "in": "query",
-                        "description": "New value for the key",
-                        "schema": {
-                            "nullable": true,
-                            "oneOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer",
-                                    "format": "int64"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "key"
+                                ],
+                                "properties": {
+                                    "key": {
+                                        "type": "string",
+                                        "enum": [
+                                            "attachment_folder",
+                                            "read_status_privacy",
+                                            "typing_privacy",
+                                            "play_sounds"
+                                        ],
+                                        "description": "Key to update"
+                                    },
+                                    "value": {
+                                        "nullable": true,
+                                        "description": "New value for the key",
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            }
+                                        ]
+                                    }
                                 }
-                            ]
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -15139,16 +15470,24 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "token",
-                        "in": "query",
-                        "description": "Token of the room",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Token of the room"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -15278,16 +15617,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "messages",
-                        "in": "query",
-                        "description": "JSON encoded messages",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "messages"
+                                ],
+                                "properties": {
+                                    "messages": {
+                                        "type": "string",
+                                        "description": "JSON encoded messages"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",

@@ -845,29 +845,31 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "cloudId"
+                                ],
+                                "properties": {
+                                    "cloudId": {
+                                        "type": "string",
+                                        "description": "Federation CloudID to get the avatar for"
+                                    },
+                                    "darkTheme": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Theme used for background"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "cloudId",
-                        "in": "query",
-                        "description": "Federation CloudID to get the avatar for",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "darkTheme",
-                        "in": "query",
-                        "description": "Theme used for background",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -935,16 +937,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "cloudId",
-                        "in": "query",
-                        "description": "Federation CloudID to get the avatar for",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "cloudId"
+                                ],
+                                "properties": {
+                                    "cloudId": {
+                                        "type": "string",
+                                        "description": "Federation CloudID to get the avatar for"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -1013,29 +1025,31 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "cloudId"
+                                ],
+                                "properties": {
+                                    "cloudId": {
+                                        "type": "string",
+                                        "description": "Federation CloudID to get the avatar for"
+                                    },
+                                    "darkTheme": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Theme used for background"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
-                    {
-                        "name": "cloudId",
-                        "in": "query",
-                        "description": "Federation CloudID to get the avatar for",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "darkTheme",
-                        "in": "query",
-                        "description": "Theme used for background",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
                     {
                         "name": "apiVersion",
                         "in": "path",
@@ -1113,16 +1127,26 @@
                         "basic_auth": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "cloudId",
-                        "in": "query",
-                        "description": "Federation CloudID to get the avatar for",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "cloudId"
+                                ],
+                                "properties": {
+                                    "cloudId": {
+                                        "type": "string",
+                                        "description": "Federation CloudID to get the avatar for"
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
+                },
+                "parameters": [
                     {
                         "name": "apiVersion",
                         "in": "path",

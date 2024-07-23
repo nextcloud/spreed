@@ -385,12 +385,7 @@ export type $defs = Record<string, never>;
 export interface operations {
     "avatar-get-user-proxy-avatar-without-room": {
         parameters: {
-            query: {
-                /** @description Federation CloudID to get the avatar for */
-                cloudId: string;
-                /** @description Theme used for background */
-                darkTheme?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -402,7 +397,19 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Federation CloudID to get the avatar for */
+                    cloudId: string;
+                    /**
+                     * @description Theme used for background
+                     * @default false
+                     */
+                    darkTheme?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description User avatar returned */
             200: {
@@ -417,10 +424,7 @@ export interface operations {
     };
     "avatar-get-user-proxy-avatar-dark-without-room": {
         parameters: {
-            query: {
-                /** @description Federation CloudID to get the avatar for */
-                cloudId: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -432,7 +436,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Federation CloudID to get the avatar for */
+                    cloudId: string;
+                };
+            };
+        };
         responses: {
             /** @description User avatar returned */
             200: {
@@ -447,12 +458,7 @@ export interface operations {
     };
     "avatar-get-user-proxy-avatar": {
         parameters: {
-            query: {
-                /** @description Federation CloudID to get the avatar for */
-                cloudId: string;
-                /** @description Theme used for background */
-                darkTheme?: 0 | 1;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -465,7 +471,19 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Federation CloudID to get the avatar for */
+                    cloudId: string;
+                    /**
+                     * @description Theme used for background
+                     * @default false
+                     */
+                    darkTheme?: boolean;
+                };
+            };
+        };
         responses: {
             /** @description User avatar returned */
             200: {
@@ -480,10 +498,7 @@ export interface operations {
     };
     "avatar-get-user-proxy-avatar-dark": {
         parameters: {
-            query: {
-                /** @description Federation CloudID to get the avatar for */
-                cloudId: string;
-            };
+            query?: never;
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -496,7 +511,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Federation CloudID to get the avatar for */
+                    cloudId: string;
+                };
+            };
+        };
         responses: {
             /** @description User avatar returned */
             200: {
