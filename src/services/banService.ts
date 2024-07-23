@@ -10,7 +10,6 @@ import type {
 	getBansResponse,
 	banActorParams,
 	banActorResponse,
-	unbanActorParams,
 	unbanActorResponse,
 } from '../types'
 
