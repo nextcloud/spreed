@@ -1877,6 +1877,7 @@ export type components = {
             label: string;
             source: string;
             mentionId: string;
+            details: string | null;
             status: string | null;
             /** Format: int64 */
             statusClearAt: number | null;

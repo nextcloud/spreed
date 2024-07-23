@@ -911,7 +911,7 @@ export default {
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-user-forced-white'
 					possibleMention.iconUrl = getConversationAvatarOcsUrl(this.token, isDarkTheme)
-					possibleMention.subline = t('spreed', 'Everyone')
+					possibleMention.subline = possibleMention?.details ? possibleMention.details : t('spreed', 'Everyone')
 				} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.GROUPS) {
 					possibleMention.icon = 'icon-group-forced-white'
 					possibleMention.subline = t('spreed', 'Group')

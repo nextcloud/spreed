@@ -3080,8 +3080,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEmpty($mentions);
 			return;
 		}
+		$expected = $formData->getHash();
+		if (empty($expected)) {
+			Assert::assertEmpty($mentions);
+			return;
+		}
 
-		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match' . "\n" . json_encode($mentions, JSON_PRETTY_PRINT));
+		Assert::assertCount(count($expected), $mentions, 'Mentions count does not match' . "\n" . json_encode($mentions, JSON_PRETTY_PRINT));
 
 		usort($mentions, function ($a, $b) {
 			if ($a['source'] === $b['source']) {
@@ -3090,13 +3095,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $a['source'] <=> $b['source'];
 		});
 
-		$expected = $formData->getHash();
 		usort($expected, function ($a, $b) {
 			if ($a['source'] === $b['source']) {
 				return $a['label'] <=> $b['label'];
 			}
 			return $a['source'] <=> $b['source'];
 		});
+
+		$checkDetails = array_key_exists('details', $expected[0]);
 
 		foreach ($expected as $key => $row) {
 			if ($row['id'] === 'GUEST_ID') {
@@ -3124,6 +3130,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				unset($row['avatar']);
 			}
 			unset($mentions[$key]['avatar']);
+			if (!$checkDetails) {
+				unset($mentions[$key]['details']);
+			} elseif (empty($row['details'])) {
+				unset($row['details']);
+			}
 			Assert::assertEquals($row, $mentions[$key]);
 		}
 	}

@@ -48,8 +48,8 @@ Feature: chat/mentions
       | roomType | 2 |
       | roomName | room |
     Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
-      | id           | label                    | source | mentionId    |
-      | all          | room                     | calls  | all          |
+      | id           | label                    | source | mentionId    | details           |
+      | all          | room                     | calls  | all          | All 1 participant |
 
   Scenario: get mentions in a group room
     When user "participant1" creates room "group room" (v4)
@@ -223,7 +223,6 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | FooBar                   | guests | GUEST_ID     |
     And user "guest1" gets the following candidate mentions in room "public room" for "oob" with 200
-      | id           | label                    | source | mentionId    |
     And user "guest2" gets the following candidate mentions in room "public room" for "oob" with 200
       | id           | label                    | source | mentionId    |
       | GUEST_ID     | FooBar                   | guests | GUEST_ID     |
