@@ -8,6 +8,11 @@ use PHPUnit\Framework\Assert;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
+// The following attributes are expected to be available in the class that uses
+// this trait:
+// - currentServer
+// - localServerUrl
+// - remoteServerUrl
 trait CommandLineTrait {
 	/** @var int return code of last command */
 	private int $lastCode = 0;
@@ -26,7 +31,7 @@ trait CommandLineTrait {
 	 * @param []string $env environment variables
 	 * @return int exit code
 	 */
-	public function runOcc($args = [], $env = null) {
+	public function runOcc($args = [], $env = []) {
 		// Set UTF-8 locale to ensure that escapeshellarg will not strip
 		// multibyte characters.
 		setlocale(LC_CTYPE, "C.UTF-8");
@@ -45,6 +50,12 @@ trait CommandLineTrait {
 		$args[] = '--no-ansi';
 		$argString = implode(' ', $args);
 
+		if ($this->currentServer === 'REMOTE') {
+			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('REAL_FEDERATED_SERVER_CONFIG_DIR');
+		} else {
+			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('MAIN_SERVER_CONFIG_DIR');
+		}
+
 		$descriptor = [
 			0 => ['pipe', 'r'],
 			1 => ['pipe', 'w'],
@@ -58,7 +69,12 @@ trait CommandLineTrait {
 		if ($clearOpcodeCache) {
 			// Clean opcode cache
 			$client = new GuzzleHttp\Client();
-			$client->request('GET', 'http://localhost:8080/apps/testing/clean_opcode_cache.php');
+
+			if ($this->currentServer === 'REMOTE') {
+				$client->request('GET', $this->remoteServerUrl . 'apps/testing/clean_opcode_cache.php');
+			} else {
+				$client->request('GET', $this->localServerUrl . 'apps/testing/clean_opcode_cache.php');
+			}
 		}
 
 		return $this->lastCode;
