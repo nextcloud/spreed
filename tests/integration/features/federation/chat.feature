@@ -1,5 +1,9 @@
 Feature: federation/chat
   Background:
+    Given using server "REMOTE"
+    And user "participant2" exists
+    And user "participant3" exists
+    And using server "LOCAL"
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
@@ -227,12 +231,17 @@ Feature: federation/chat
     And user "participant2" sends message "413 Payload Too Large" to room "LOCAL::room" with 413
 
   Scenario: Mentioning a federated user triggers a notification for them
-    Given the following "spreed" app config is set
+    Given using server "REMOTE"
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
+    And using server "LOCAL"
+    And the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -251,19 +260,23 @@ Feature: federation/chat
     Then user "participant2" sees the following entries for dashboard widgets "spreed" (v2)
       | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
       | room  | Message 1          | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+    When using server "LOCAL"
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "room" with 201
+    Then using server "REMOTE"
     Then user "participant2" sees the following entries for dashboard widgets "spreed" (v1)
       | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
       | room  | You were mentioned | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     Then user "participant2" sees the following entries for dashboard widgets "spreed" (v2)
       | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
       | room  | You were mentioned | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
-    And user "participant1" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "room" with 201
+    And using server "LOCAL"
+    And user "participant1" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
     And user "participant1" sends message 'Hi @all bye' to room "room" with 201
+    Then using server "REMOTE"
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
       | spreed | chat        | LOCAL::room/Hi @all bye         | participant1-displayname mentioned everyone in conversation room       | Hi room bye |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
       | spreed | chat        | LOCAL::room/Message 1-1         | participant1-displayname replied to your message in conversation room  | Message 1-1 |
     When next message request has the following parameters set
       | timeout                  | 0         |
@@ -274,12 +287,17 @@ Feature: federation/chat
       | app    | object_type | object_id                | subject                                                                | message     |
 
   Scenario: Mentioning a federated user as a guest also triggers a notification for them
-    Given the following "spreed" app config is set
+    Given using server "REMOTE"
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
+    And using server "LOCAL"
+    And the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -292,23 +310,30 @@ Feature: federation/chat
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
     And user "guest" joins room "room" with 200 (v4)
-    When user "guest" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "room" with 201
+    When user "guest" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
     When user "guest" sends message "Message 2" to room "room" with 201
+    Then using server "REMOTE"
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye | A guest mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | A guest mentioned you in conversation room | Hi @participant2-displayname bye |
     Then user "participant2" reads message "Message 2" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
 
   Scenario: Mentioning a federated user with an active session does not trigger a notification but inactive does
-    Given the following "spreed" app config is set
+    Given using server "REMOTE"
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
+    And using server "LOCAL"
+    And the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -321,25 +346,34 @@ Feature: federation/chat
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" sets session state to 1 in room "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
     And user "guest" joins room "room" with 200 (v4)
-    When user "guest" sends message 'Sent to @"federated_user/participant2@{$LOCAL_REMOTE_URL}" while active' to room "room" with 201
+    When user "guest" sends message 'Sent to @"federated_user/participant2@{$REMOTE_URL}" while active' to room "room" with 201
+    Given using server "REMOTE"
     Given user "participant2" sets session state to 0 in room "LOCAL::room" with 200 (v4)
-    When user "guest" sends message 'User @"federated_user/participant2@{$LOCAL_REMOTE_URL}" is inactive' to room "room" with 201
+    When using server "LOCAL"
+    When user "guest" sends message 'User @"federated_user/participant2@{$REMOTE_URL}" is inactive' to room "room" with 201
     When user "guest" sends message "Message 3" to room "room" with 201
+    Then using server "REMOTE"
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/User @"federated_user/participant2@{$LOCAL_REMOTE_URL}" is inactive | A guest mentioned you in conversation room | User @participant2-displayname is inactive |
+      | spreed | chat        | LOCAL::room/User @"federated_user/participant2@{$REMOTE_URL}" is inactive | A guest mentioned you in conversation room | User @participant2-displayname is inactive |
     Then user "participant2" reads message "Message 3" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
 
   Scenario: Mentioning a federated user as a federated user that is a local user to the mentioned one also triggers a notification for them
-    Given the following "spreed" app config is set
+    Given using server "REMOTE"
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
+    And using server "LOCAL"
+    And the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -349,7 +383,9 @@ Feature: federation/chat
     Then user "participant2" is participant of the following rooms (v4)
       | id          | type |
       | LOCAL::room | 3    |
-    And user "participant1" adds federated_user "participant3" to room "room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" adds federated_user "participant3@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant3" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -362,18 +398,23 @@ Feature: federation/chat
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
-    When user "participant3" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "LOCAL::room" with 201
+    When user "participant3" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "LOCAL::room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye | participant3-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant3-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
 
   Scenario: Mentioning and replying to self does not do notifications
-    Given the following "spreed" app config is set
+    Given using server "REMOTE"
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
+    And using server "LOCAL"
+    And the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -383,7 +424,9 @@ Feature: federation/chat
     Then user "participant2" is participant of the following rooms (v4)
       | id          | type |
       | LOCAL::room | 3    |
-    And user "participant1" adds federated_user "participant3" to room "room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" adds federated_user "participant3@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant3" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -394,6 +437,7 @@ Feature: federation/chat
       | id          | type |
       | LOCAL::room | 3    |
     # Join and leave to clear the invite notification
+    Given using server "REMOTE"
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
     When user "participant2" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "LOCAL::room" with 201
@@ -426,12 +470,17 @@ Feature: federation/chat
       | app    | object_type | object_id                | subject                                                                | message     |
 
   Scenario: Reaction on federated chat messages
-    Given the following "spreed" app config is set
+    Given using server "REMOTE"
+    And the following "spreed" app config is set
+      | federation_enabled | yes |
+    And using server "LOCAL"
+    And the following "spreed" app config is set
       | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
       | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
@@ -445,14 +494,17 @@ Feature: federation/chat
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
     And user "participant2" sends message "Message 1" to room "LOCAL::room" with 201
+    And using server "LOCAL"
     And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
       | actorType       | actorId                  | actorDisplayName         | reaction |
       | users           | participant1             | participant1-displayname | 🚀       |
+    And using server "REMOTE"
     And user "participant2" react with "🚀" on message "Message 1" to room "LOCAL::room" with 201
       | actorType       | actorId                   | actorDisplayName         | reaction |
       | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | 🚀       |
       | users           | participant2              | participant2-displayname | 🚀       |
+    And using server "LOCAL"
     And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
       | actorType       | actorId                    | actorDisplayName         | reaction |
       | users           | participant1               | participant1-displayname | 🚀       |
-      | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | 🚀       |
+      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | 🚀       |
