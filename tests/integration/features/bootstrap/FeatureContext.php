@@ -839,7 +839,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$attendee['actorId'] = sha1(self::$userToSessionId[trim($attendee['actorId'], '"')]);
 				}
 
-				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users') {
+				if (isset($attendee['actorId']) && str_ends_with($attendee['actorId'], '@{$LOCAL_URL}')) {
+					$attendee['actorId'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $attendee['actorId']);
+				}
+				if (isset($attendee['actorId']) && str_ends_with($attendee['actorId'], '@{$LOCAL_REMOTE_URL}')) {
+					$attendee['actorId'] = str_replace('{$LOCAL_REMOTE_URL}', rtrim($this->localRemoteServerUrl, '/'), $attendee['actorId']);
+				}
+				if (isset($attendee['actorId']) && str_ends_with($attendee['actorId'], '@{$REMOTE_URL}')) {
+					$attendee['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $attendee['actorId']);
+				}
+
+				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users' && !str_contains($attendee['actorId'], '@')) {
 					$attendee['actorId'] .= '@' . rtrim($this->localRemoteServerUrl, '/');
 				}
 
