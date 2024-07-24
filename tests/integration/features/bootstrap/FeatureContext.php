@@ -61,7 +61,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static ?array $nextChatRequestParameters = null;
 	/** @var array<string, int> */
 	protected static array $modifiedSince;
-	/** @var array<string, string> */
+	/** @var array */
 	protected static array $createdTeams = [];
 	/** @var array<string, int> */
 	protected static array $userToBanId;
@@ -92,6 +92,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	protected string $baseUrl;
 
+	protected string $currentServer;
+
 	/** @var string[] */
 	protected array $createdUsers = [];
 
@@ -108,9 +110,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	private ?SharingContext $sharingContext;
 
-	private ?bool $guestsAppWasEnabled = null;
+	private array $guestsAppWasEnabled = [];
 
-	private string $guestsOldWhitelist;
+	private array $guestsOldWhitelist = [];
 
 	use CommandLineTrait;
 	use RecordingTrait;
@@ -119,8 +121,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$identifierToToken[$identifier];
 	}
 
-	public static function getTeamIdForLabel(string $label): string {
-		return self::$createdTeams[$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
+	public static function getTeamIdForLabel(string $server, string $label): string {
+		return self::$createdTeams[$server][$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
 	}
 
 	public static function getMessageIdForText(string $text): int {
@@ -162,13 +164,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->cookieJars = [];
 		$this->localServerUrl = getenv('TEST_SERVER_URL');
 		$this->localRemoteServerUrl = getenv('TEST_LOCAL_REMOTE_URL');
-		$this->baseUrl = $this->localServerUrl;
+
+		foreach (['LOCAL'] as $server) {
+			$this->changedConfigs[$server] = [];
+			$this->guestsAppWasEnabled[$server] = null;
+			$this->guestsOldWhitelist[$server] = '';
+		}
 	}
 
 	/**
 	 * @BeforeScenario
 	 */
-	public function setUp() {
+	public function setUp(BeforeScenarioScope $scope) {
 		self::$identifierToToken = [];
 		self::$identifierToId = [];
 		self::$tokenToIdentifier = [];
@@ -188,10 +195,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$phoneNumberToActorId = [];
 		self::$modifiedSince = [];
 
-		$this->createdUsers = [];
-		$this->createdGroups = [];
-		self::$createdTeams = [];
-		$this->createdGuestAccountUsers = [];
+		foreach (['LOCAL'] as $server) {
+			$this->createdUsers[$server] = [];
+			$this->createdGroups[$server] = [];
+			self::$createdTeams[$server] = [];
+			$this->createdGuestAccountUsers[$server] = [];
+		}
+
+		// Force getting sibling contexts to ensure that sharingContext is set
+		// before using it.
+		$this->getOtherRequiredSiblingContexts($scope);
+
+		$this->usingServer('LOCAL');
 	}
 
 	/**
@@ -207,17 +222,33 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @AfterScenario
 	 */
 	public function tearDown() {
-		foreach ($this->createdUsers as $user) {
-			$this->deleteUser($user);
+		foreach (['LOCAL'] as $server) {
+			$this->usingServer($server);
+
+			foreach ($this->createdUsers[$server] as $user) {
+				$this->deleteUser($user);
+			}
+			foreach ($this->createdGroups[$server] as $group) {
+				$this->deleteGroup($group);
+			}
+			foreach (self::$createdTeams[$server] as $team => $id) {
+				$this->deleteTeam($team);
+			}
+			foreach ($this->createdGuestAccountUsers[$server] as $user) {
+				$this->deleteGuestUser($user);
+			}
 		}
-		foreach ($this->createdGroups as $group) {
-			$this->deleteGroup($group);
-		}
-		foreach (self::$createdTeams as $team => $id) {
-			$this->deleteTeam($team);
-		}
-		foreach ($this->createdGuestAccountUsers as $user) {
-			$this->deleteGuestUser($user);
+	}
+
+	/**
+	 * @param string $server
+	 */
+	public function usingServer(string $server) {
+		if ($server === 'LOCAL') {
+			$this->baseUrl = $this->localServerUrl;
+			$this->currentServer = $server;
+
+			$this->sharingContext->setCurrentServer($this->currentServer, $this->localServerUrl);
 		}
 	}
 
@@ -3502,7 +3533,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $row[0], [
 				'value' => $row[1],
 			]);
-			$this->changedConfigs[$appId][] = $row[0];
+			$this->changedConfigs[$this->currentServer][$appId][] = $row[0];
 		}
 		$this->setCurrentUser($currentUser);
 	}
@@ -3614,9 +3645,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/cloud/apps?filter=enabled');
 		$this->assertStatusCode($this->response, 200);
 		$data = $this->getDataFromResponse($this->response);
-		$this->guestsAppWasEnabled = in_array('guests', $data['apps'], true);
+		$this->guestsAppWasEnabled[$this->currentServer] = in_array('guests', $data['apps'], true);
 
-		if (!$this->guestsAppWasEnabled) {
+		if (!$this->guestsAppWasEnabled[$this->currentServer]) {
 			// enable Guests app
 			/*
 			$this->sendRequest('POST', '/cloud/apps/guests');
@@ -3629,7 +3660,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		// save previously set whitelist
 		$this->sendRequest('GET', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist');
 		$this->assertStatusCode($this->response, 200);
-		$this->guestsOldWhitelist = $this->getDataFromResponse($this->response)['data'];
+		$this->guestsOldWhitelist[$this->currentServer] = $this->getDataFromResponse($this->response)['data'];
 
 		// set whitelist to allow spreed only
 		$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist', [
@@ -3644,46 +3675,57 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @AfterScenario
 	 */
 	public function resetSpreedAppData() {
-		$currentUser = $this->setCurrentUser('admin');
-		$this->sendRequest('DELETE', '/apps/spreedcheats/');
-		foreach ($this->changedConfigs as $appId => $configs) {
-			foreach ($configs as $config) {
-				$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $config);
+		foreach (['LOCAL'] as $server) {
+			$this->usingServer($server);
+
+			$currentUser = $this->setCurrentUser('admin');
+			$this->sendRequest('DELETE', '/apps/spreedcheats/');
+			foreach ($this->changedConfigs[$server] as $appId => $configs) {
+				foreach ($configs as $config) {
+					$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $config);
+				}
+			}
+
+			$this->setCurrentUser($currentUser);
+			if ($this->changedBruteforceSetting) {
+				$this->enableDisableBruteForceProtection('disable');
 			}
 		}
 
-		$this->setCurrentUser($currentUser);
-		if ($this->changedBruteforceSetting) {
-			$this->enableDisableBruteForceProtection('disable');
-		}
+		$this->usingServer('LOCAL');
 	}
 
 	/**
 	 * @AfterScenario
 	 */
 	public function resetGuestsAppState() {
-		if ($this->guestsAppWasEnabled === null) {
-			// Guests app was not touched
-			return;
+		foreach (['LOCAL'] as $server) {
+			$this->usingServer($server);
+
+			if ($this->guestsAppWasEnabled[$server] === null) {
+				// Guests app was not touched
+				return;
+			}
+
+			$currentUser = $this->setCurrentUser('admin');
+
+			if ($this->guestsOldWhitelist[$server]) {
+				// restore old whitelist
+				$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist', [
+					'value' => $this->guestsOldWhitelist[$server],
+				]);
+			} else {
+				// restore to default
+				$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist');
+			}
+
+			// restore app's enabled state
+			$this->sendRequest($this->guestsAppWasEnabled[$server] ? 'POST' : 'DELETE', '/cloud/apps/guests');
+
+			$this->setCurrentUser($currentUser);
+
+			$this->guestsAppWasEnabled[$server] = null;
 		}
-
-		$currentUser = $this->setCurrentUser('admin');
-
-		if ($this->guestsOldWhitelist) {
-			// restore old whitelist
-			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist', [
-				'value' => $this->guestsOldWhitelist,
-			]);
-		} else {
-			// restore to default
-			$this->sendRequest('DELETE', '/apps/provisioning_api/api/v1/config/apps/guests/whitelist');
-		}
-
-		// restore app's enabled state
-		$this->sendRequest($this->guestsAppWasEnabled ? 'POST' : 'DELETE', '/cloud/apps/guests');
-
-		$this->setCurrentUser($currentUser);
-		$this->guestsAppWasEnabled = null;
 	}
 
 	/*
@@ -3798,14 +3840,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$output = $this->getLastStdOut();
 		$data = json_decode($output, true);
 
-		self::$createdTeams[$team] = $data['id'];
+		self::$createdTeams[$this->currentServer][$team] = $data['id'];
 	}
 
 	/**
 	 * @Given /^add user "([^"]*)" to team "([^"]*)"$/
 	 */
 	public function addTeamMember(string $user, string $team): void {
-		$this->runOcc(['circles:members:add', '--type', '1', self::$createdTeams[$team], $user]);
+		$this->runOcc(['circles:members:add', '--type', '1', self::$createdTeams[$this->currentServer][$team], $user]);
 		$this->theCommandWasSuccessful();
 	}
 
@@ -3813,10 +3855,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^delete team "([^"]*)"$/
 	 */
 	public function deleteTeam(string $team): void {
-		$this->runOcc(['circles:manage:destroy', self::$createdTeams[$team]]);
+		$this->runOcc(['circles:manage:destroy', self::$createdTeams[$this->currentServer][$team]]);
 		$this->theCommandWasSuccessful();
 
-		unset(self::$createdTeams[$team]);
+		unset(self::$createdTeams[$this->currentServer][$team]);
 	}
 
 	/**
@@ -3842,7 +3884,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		]);
 		Assert::assertEquals(0, $lastCode, 'Guest creation succeeded for ' . $email);
 
-		$this->createdGuestAccountUsers[$email] = $email;
+		$this->createdGuestAccountUsers[$this->currentServer][$email] = $email;
 		$this->setCurrentUser($currentUser);
 	}
 
@@ -3866,7 +3908,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/cloud/users' . '/' . $user);
 		$this->assertStatusCode($this->response, 200, 'Failed to do first login');
 
-		$this->createdUsers[$user] = $user;
+		$this->createdUsers[$this->currentServer][$user] = $user;
 
 		$this->setCurrentUser($currentUser);
 	}
@@ -3893,7 +3935,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('DELETE', '/cloud/users/' . $user);
 		$this->setCurrentUser($currentUser);
 
-		unset($this->createdUsers[$user]);
+		unset($this->createdUsers[$this->currentServer][$user]);
 
 		return $this->response;
 	}
@@ -3903,7 +3945,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('DELETE', '/cloud/users/' . $user);
 		$this->setCurrentUser($currentUser);
 
-		unset($this->createdGuestAccountUsers[$user]);
+		unset($this->createdGuestAccountUsers[$this->currentServer][$user]);
 
 		return $this->response;
 	}
@@ -3942,7 +3984,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($currentUser);
 
-		$this->createdGroups[$group] = $group;
+		$this->createdGroups[$this->currentServer][$group] = $group;
 	}
 
 	/**
@@ -3966,7 +4008,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('DELETE', '/cloud/groups/' . $group);
 		$this->setCurrentUser($currentUser);
 
-		unset($this->createdGroups[$group]);
+		unset($this->createdGroups[$this->currentServer][$group]);
 		$this->setCurrentUser($currentUser);
 	}
 
