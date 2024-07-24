@@ -474,11 +474,11 @@ export type components = {
       label: string;
       source: string;
       mentionId: string;
-      status: string | null;
+      status?: string;
       /** Format: int64 */
-      statusClearAt: number | null;
-      statusIcon: string | null;
-      statusMessage: string | null;
+      statusClearAt?: number | null;
+      statusIcon?: string | null;
+      statusMessage?: string | null;
     };
     ChatMessage: components["schemas"]["BaseMessage"] & {
       /** @enum {boolean} */
