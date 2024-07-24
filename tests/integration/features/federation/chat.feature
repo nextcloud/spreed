@@ -22,15 +22,15 @@ Feature: federation/chat
       | id          | type |
       | LOCAL::room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                    | mentionId                                  |
-      | calls           | all                        | room                     | all                                        |
-      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL}  |
-      | users           | participant3               | participant3-displayname | participant3                               |
+      | source          | id                               | label                    | mentionId                                        |
+      | calls           | all                              | room                     | all                                              |
+      | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | federated_user/participant2@{$LOCAL_REMOTE_URL}  |
+      | users           | participant3                     | participant3-displayname | participant3                                     |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    | mentionId    |
-      | calls           | all                      | room                     | all          |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1 |
-      | federated_users | participant3@{$BASE_URL} | participant3-displayname | participant3 |
+      | source          | id                        | label                    | mentionId    |
+      | calls           | all                       | room                     | all          |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | participant1 |
+      | federated_users | participant3@{$LOCAL_URL} | participant3-displayname | participant3 |
 
   Scenario: Get mention suggestions (translating federated users of the same server to local users)
     Given the following "spreed" app config is set
@@ -56,15 +56,15 @@ Feature: federation/chat
       | id          | type |
       | LOCAL::room | 2    |
     And user "participant1" gets the following candidate mentions in room "room" for "" with 200
-      | source          | id                         | label                    | mentionId                                 |
-      | calls           | all                        | room                     | all                                       |
-      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | federated_user/participant2@{$REMOTE_URL} |
-      | federated_users | participant3@{$REMOTE_URL} | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
+      | source          | id                               | label                    | mentionId                                       |
+      | calls           | all                              | room                     | all                                             |
+      | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | federated_user/participant2@{$LOCAL_REMOTE_URL} |
+      | federated_users | participant3@{$LOCAL_REMOTE_URL} | participant3-displayname | federated_user/participant3@{$LOCAL_REMOTE_URL} |
     And user "participant2" gets the following candidate mentions in room "LOCAL::room" for "" with 200
-      | source          | id                       | label                    | mentionId                                 |
-      | calls           | all                      | room                     | all                                       |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname | participant1                              |
-      | users           | participant3             | participant3-displayname | federated_user/participant3@{$REMOTE_URL} |
+      | source          | id                        | label                    | mentionId                                       |
+      | calls           | all                       | room                     | all                                             |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | participant1                                    |
+      | users           | participant3              | participant3-displayname | federated_user/participant3@{$LOCAL_REMOTE_URL} |
 
   Scenario: Basic chatting including posting, getting, editing and deleting
     Given the following "spreed" app config is set
@@ -98,42 +98,42 @@ Feature: federation/chat
       | id          | type | lastMessage |
       | LOCAL::room | 2    | Message 1-1 |
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType       | actorId                    | actorDisplayName         | message     | messageParameters | parentMessage |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message 1-1 | []                | Message 1     |
-      | room | users           | participant1               | participant1-displayname | Message 1   | []                |               |
+      | room | actorType       | actorId                          | actorDisplayName         | message     | messageParameters | parentMessage |
+      | room | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | Message 1-1 | []                | Message 1     |
+      | room | users           | participant1                     | participant1-displayname | Message 1   | []                |               |
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
-      | room        | actorType       | actorId                  | actorDisplayName         | message     | messageParameters | parentMessage |
-      | LOCAL::room | users           | participant2             | participant2-displayname | Message 1-1 | []                | Message 1     |
-      | LOCAL::room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message 1   | []                |               |
+      | room        | actorType       | actorId                   | actorDisplayName         | message     | messageParameters | parentMessage |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message 1-1 | []                | Message 1     |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message 1   | []                |               |
     And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     And user "participant2" edits message "Message 1-1" in room "LOCAL::room" to "Message 1-1 - Edit 1" with 200
     Then user "participant2" is participant of the following rooms (v4)
       | id          | type | lastMessage |
       | LOCAL::room | 2    | Message 1-1 - Edit 1 |
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType       | actorId                    | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId            | lastEditActorDisplayName |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | federated_users   | participant2@{$REMOTE_URL} | participant2-displayname |
-      | room | users           | participant1               | participant1-displayname | Message 1 - Edit 1   | []                |                    | users             | participant1               | participant1-displayname |
+      | room | actorType       | actorId                          | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId                  | lastEditActorDisplayName |
+      | room | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | federated_users   | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname |
+      | room | users           | participant1                     | participant1-displayname | Message 1 - Edit 1   | []                |                    | users             | participant1                     | participant1-displayname |
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
-      | room        | actorType       | actorId                  | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId          | lastEditActorDisplayName |
-      | LOCAL::room | users           | participant2             | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | users             | participant2             | participant2-displayname |
-      | LOCAL::room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message 1 - Edit 1   | []                |                    | federated_users   | participant1@{$BASE_URL} | participant1-displayname |
+      | room        | actorType       | actorId                   | actorDisplayName         | message              | messageParameters | parentMessage      | lastEditActorType | lastEditActorId           | lastEditActorDisplayName |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message 1-1 - Edit 1 | []                | Message 1 - Edit 1 | users             | participant2              | participant2-displayname |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message 1 - Edit 1   | []                |                    | federated_users   | participant1@{$LOCAL_URL} | participant1-displayname |
     And user "participant1" deletes message "Message 1 - Edit 1" from room "room" with 200
     And user "participant2" deletes message "Message 1-1 - Edit 1" from room "LOCAL::room" with 200
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType       | actorId                    | actorDisplayName         | message                   | messageParameters | parentMessage          |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"{$REMOTE_URL}"}} | Message deleted by you |
-      | room | users           | participant1               | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                          |                        |
+      | room | actorType       | actorId                          | actorDisplayName         | message                   | messageParameters | parentMessage          |
+      | room | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"{$LOCAL_REMOTE_URL}"}} | Message deleted by you |
+      | room | users           | participant1                     | participant1-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}}                          |                        |
     When next message request has the following parameters set
       | timeout                  | 0         |
     And user "participant2" sees the following messages in room "LOCAL::room" with 200
-      | room        | actorType       | actorId                  | actorDisplayName         | message                   | messageParameters | parentMessage             |
-      | LOCAL::room | users           | participant2             | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
-      | LOCAL::room | federated_users | participant1@{$BASE_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$BASE_URL}"}} |                           |
+      | room        | actorType       | actorId                   | actorDisplayName         | message                   | messageParameters | parentMessage             |
+      | LOCAL::room | users           | participant2              | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$LOCAL_URL}"}} |                           |
     Then user "participant2" is participant of the following rooms (v4)
       | id          | type | lastMessage |
       | LOCAL::room | 2    | Message deleted by author |
@@ -159,11 +159,11 @@ Feature: federation/chat
     Then user "participant1" is participant of the following unordered rooms (v4)
       | id          | name | type | remoteServer | remoteToken | lastMessage | lastMessageActorType | lastMessageActorId |
       | room        | room | 2    |              |             | Message 1   | users                | participant1       |
-      | LOCAL::room | room | 2    | LOCAL        | room        | Message 1   | federated_users      | participant1@{$BASE_URL} |
+      | LOCAL::room | room | 2    | LOCAL        | room        | Message 1   | federated_users      | participant1@{$LOCAL_URL} |
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "LOCAL::room" with 201
     Then user "participant1" is participant of the following unordered rooms (v4)
       | id          | name | type | remoteServer | remoteToken | lastMessage | lastMessageActorType | lastMessageActorId |
-      | room        | room | 2    |              |             | Message 1-1 | federated_users      | participant1@{$REMOTE_URL} |
+      | room        | room | 2    |              |             | Message 1-1 | federated_users      | participant1@{$LOCAL_REMOTE_URL} |
       | LOCAL::room | room | 2    | LOCAL        | room        | Message 1-1 | users                | participant1       |
 
   Scenario: Read marker checking
@@ -258,12 +258,12 @@ Feature: federation/chat
     Then user "participant2" sees the following entries for dashboard widgets "spreed" (v2)
       | title | subtitle           | link        | iconUrl                                                               | sinceId | overlayIconUrl |
       | room  | You were mentioned | LOCAL::room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
-    And user "participant1" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
+    And user "participant1" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "room" with 201
     And user "participant1" sends message 'Hi @all bye' to room "room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
       | spreed | chat        | LOCAL::room/Hi @all bye         | participant1-displayname mentioned everyone in conversation room       | Hi room bye |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye | participant1-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
       | spreed | chat        | LOCAL::room/Message 1-1         | participant1-displayname replied to your message in conversation room  | Message 1-1 |
     When next message request has the following parameters set
       | timeout                  | 0         |
@@ -293,11 +293,11 @@ Feature: federation/chat
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    When user "guest" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "room" with 201
+    When user "guest" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "room" with 201
     When user "guest" sends message "Message 2" to room "room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | A guest mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye | A guest mentioned you in conversation room | Hi @participant2-displayname bye |
     Then user "participant2" reads message "Message 2" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
@@ -322,13 +322,13 @@ Feature: federation/chat
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" sets session state to 1 in room "LOCAL::room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
-    When user "guest" sends message 'Sent to @"federated_user/participant2@{$REMOTE_URL}" while active' to room "room" with 201
+    When user "guest" sends message 'Sent to @"federated_user/participant2@{$LOCAL_REMOTE_URL}" while active' to room "room" with 201
     Given user "participant2" sets session state to 0 in room "LOCAL::room" with 200 (v4)
-    When user "guest" sends message 'User @"federated_user/participant2@{$REMOTE_URL}" is inactive' to room "room" with 201
+    When user "guest" sends message 'User @"federated_user/participant2@{$LOCAL_REMOTE_URL}" is inactive' to room "room" with 201
     When user "guest" sends message "Message 3" to room "room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/User @"federated_user/participant2@{$REMOTE_URL}" is inactive | A guest mentioned you in conversation room | User @participant2-displayname is inactive |
+      | spreed | chat        | LOCAL::room/User @"federated_user/participant2@{$LOCAL_REMOTE_URL}" is inactive | A guest mentioned you in conversation room | User @participant2-displayname is inactive |
     Then user "participant2" reads message "Message 3" in room "LOCAL::room" with 200 (v1)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
@@ -362,10 +362,10 @@ Feature: federation/chat
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
-    When user "participant3" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "LOCAL::room" with 201
+    When user "participant3" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "LOCAL::room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
-      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$REMOTE_URL}" bye | participant3-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
+      | spreed | chat        | LOCAL::room/Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye | participant3-displayname mentioned you in conversation room | Hi @participant2-displayname bye |
 
   Scenario: Mentioning and replying to self does not do notifications
     Given the following "spreed" app config is set
@@ -396,7 +396,7 @@ Feature: federation/chat
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
-    When user "participant2" sends message 'Hi @"federated_user/participant2@{$REMOTE_URL}" bye' to room "LOCAL::room" with 201
+    When user "participant2" sends message 'Hi @"federated_user/participant2@{$LOCAL_REMOTE_URL}" bye' to room "LOCAL::room" with 201
     And user "participant2" sends message "Message 1" to room "LOCAL::room" with 201
     When user "participant2" sends reply "Message 1-1" on message "Message 1" to room "LOCAL::room" with 201
     Then user "participant2" has the following notifications
@@ -449,10 +449,10 @@ Feature: federation/chat
       | actorType       | actorId                  | actorDisplayName         | reaction |
       | users           | participant1             | participant1-displayname | 🚀       |
     And user "participant2" react with "🚀" on message "Message 1" to room "LOCAL::room" with 201
-      | actorType       | actorId                  | actorDisplayName         | reaction |
-      | federated_users | participant1@{$BASE_URL} | participant1-displayname | 🚀       |
-      | users           | participant2             | participant2-displayname | 🚀       |
+      | actorType       | actorId                   | actorDisplayName         | reaction |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | 🚀       |
+      | users           | participant2              | participant2-displayname | 🚀       |
     And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
       | actorType       | actorId                    | actorDisplayName         | reaction |
       | users           | participant1               | participant1-displayname | 🚀       |
-      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | 🚀       |
+      | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | 🚀       |

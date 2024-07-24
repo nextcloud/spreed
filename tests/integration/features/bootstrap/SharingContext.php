@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class SharingContext implements Context {
 	private string $baseUrl;
+	private string $currentServer;
 	private ?ResponseInterface $response = null;
 	private string $currentUser = '';
 	private array $adminUser;
@@ -29,6 +30,15 @@ class SharingContext implements Context {
 		if ($testServerUrl !== false) {
 			$this->baseUrl = $testServerUrl;
 		}
+	}
+
+	/**
+	 * @param string $currentServer
+	 * @param string $baseUrl
+	 */
+	public function setCurrentServer(string $currentServer, string $baseUrl) {
+		$this->currentServer = $currentServer;
+		$this->baseUrl = $baseUrl;
 	}
 
 	/**
@@ -165,7 +175,7 @@ class SharingContext implements Context {
 	 * @param int $statusCode
 	 */
 	public function userSharesWithTeamWithOcs(string $user, string $path, string $sharee, int $statusCode) {
-		$this->userSharesWithTeam($user, $path, FeatureContext::getTeamIdForLabel($sharee));
+		$this->userSharesWithTeam($user, $path, FeatureContext::getTeamIdForLabel($this->currentServer, $sharee));
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 

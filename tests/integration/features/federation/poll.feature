@@ -26,7 +26,7 @@ Feature: federation/poll
       | maxVotes   | unlimited |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
-      | room | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | {object} | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"},"object":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
+      | room | federated_users | participant2@{$LOCAL_REMOTE_URL} | participant2-displayname | {object} | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"},"object":{"type":"talk-poll","id":POLL_ID(What is the question?),"name":"What is the question?"}} |
     Then user "participant2" sees poll "What is the question?" in room "LOCAL::room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
@@ -49,7 +49,7 @@ Feature: federation/poll
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | federated_users |
-      | actorId    | participant2@{$REMOTE_URL} |
+      | actorId    | participant2@{$LOCAL_REMOTE_URL} |
       | actorDisplayName    | participant2-displayname |
       | status     | open |
       | votedSelf  | [1] |
@@ -62,7 +62,7 @@ Feature: federation/poll
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | federated_users |
-      | actorId    | participant2@{$REMOTE_URL} |
+      | actorId    | participant2@{$LOCAL_REMOTE_URL} |
       | actorDisplayName    | participant2-displayname |
       | status     | open |
       | votedSelf  | [1] |
@@ -92,7 +92,7 @@ Feature: federation/poll
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | votedSelf  | not voted |
-      | details    | [{"actorType":"federated_users","actorId":"participant1@{$BASE_URL}","actorDisplayName":"participant1-displayname","optionId":1}] |
+      | details    | [{"actorType":"federated_users","actorId":"participant1@{$LOCAL_URL}","actorDisplayName":"participant1-displayname","optionId":1}] |
     Then user "participant1" sees poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
@@ -102,7 +102,7 @@ Feature: federation/poll
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | federated_users |
-      | actorId    | participant2@{$REMOTE_URL} |
+      | actorId    | participant2@{$LOCAL_REMOTE_URL} |
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | votedSelf  | [1] |
