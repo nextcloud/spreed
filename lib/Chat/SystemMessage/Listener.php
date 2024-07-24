@@ -13,6 +13,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
@@ -70,6 +71,10 @@ class Listener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
+		if ($event instanceof ARoomEvent && $event->getRoom()->isFederatedConversation()) {
+			return;
+		}
+
 		if ($event instanceof AttendeesAddedEvent) {
 			$this->attendeesAddedEvent($event);
 		} elseif ($event instanceof AttendeeRemovedEvent) {
@@ -150,10 +155,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutConversationCreated(RoomCreatedEvent $event): void {
-		if ($event->getRoom()->isFederatedConversation()) {
-			return;
-		}
-
 		if ($event->getRoom()->getType() === Room::TYPE_CHANGELOG || $this->isCreatingNoteToSelfAutomatically($event)) {
 			$this->sendSystemMessage($event->getRoom(), 'conversation_created', forceSystemAsActor: true);
 		} else {
@@ -167,11 +168,6 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getRoom()->isFederatedConversation()) {
-			return;
-		}
-
-
 		$this->sendSystemMessage($event->getRoom(), 'conversation_renamed', [
 			'newName' => $event->getNewValue(),
 			'oldName' => $event->getOldValue(),
@@ -179,10 +175,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutRoomDescriptionChanges(RoomModifiedEvent $event): void {
-		if ($event->getRoom()->isFederatedConversation()) {
-			return;
-		}
-
 		if ($event->getNewValue() !== '') {
 			if ($this->isCreatingNoteToSelf($event)) {
 				return;
@@ -197,10 +189,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function sendSystemMessageAboutRoomPassword(RoomModifiedEvent $event): void {
-		if ($event->getRoom()->isFederatedConversation()) {
-			return;
-		}
-
 		if ($event->getNewValue() !== '') {
 			$this->sendSystemMessage($event->getRoom(), 'password_set');
 		} else {
@@ -224,10 +212,6 @@ class Listener implements IEventListener {
 		$room = $event->getRoom();
 
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
-			return;
-		}
-
-		if ($room->isFederatedConversation()) {
 			return;
 		}
 
@@ -279,10 +263,6 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($room->isFederatedConversation()) {
-			return;
-		}
-
 		$userJoinedFileRoom = $room->getObjectType() === Room::OBJECT_TYPE_FILE && $attendee->getParticipantType() !== Participant::USER_SELF_JOINED;
 
 		// add a message "X joined the conversation", whenever user $userId:
@@ -317,10 +297,6 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($room->isFederatedConversation()) {
-			return;
-		}
-
 		if ($event->getReason() === AAttendeeRemovedEvent::REASON_LEFT
 			&& $event->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 			// Self-joined user closes the tab/window or leaves via the menu
@@ -336,10 +312,6 @@ class Listener implements IEventListener {
 		$attendee = $event->getParticipant()->getAttendee();
 
 		if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
-			return;
-		}
-
-		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
@@ -388,9 +360,6 @@ class Listener implements IEventListener {
 			return;
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
-		if ($room->isFederatedConversation()) {
-			return;
-		}
 
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);
@@ -422,10 +391,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
-		if ($event->getRoom()->isFederatedConversation()) {
-			return;
-		}
-
 		foreach ($event->getAttendees() as $attendee) {
 			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" added to room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
@@ -443,10 +408,6 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesRemovedEvent(AttendeesRemovedEvent $event): void {
-		if ($event->getRoom()->isFederatedConversation()) {
-			return;
-		}
-
 		foreach ($event->getAttendees() as $attendee) {
 			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" removed from room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
