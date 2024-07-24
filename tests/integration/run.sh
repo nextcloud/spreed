@@ -47,8 +47,10 @@ MAIN_SERVER_CONFIG_DIR=${ROOT_DIR}/config
 MAIN_SERVER_DATA_DIR=$(${ROOT_DIR}/occ config:system:get datadirectory)
 REAL_FEDERATED_SERVER_CONFIG_DIR="$MAIN_SERVER_DATA_DIR/tests-talk-real-federated-server/config"
 REAL_FEDERATED_SERVER_DATA_DIR="$MAIN_SERVER_DATA_DIR/tests-talk-real-federated-server/data"
+DESTROY_REAL_FEDERATED_SERVER=false
 
 if [ ! -d "$REAL_FEDERATED_SERVER_CONFIG_DIR" ] || NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR" ${ROOT_DIR}/occ status | grep "installed: false"; then
+	DESTROY_REAL_FEDERATED_SERVER=true
 	echo ''
 	echo -e "\033[0;31mReal federated server not installed in $REAL_FEDERATED_SERVER_CONFIG_DIR\033[0m"
 	echo -e "\033[0;33mPerforming basic SQLite installation with data directory in $REAL_FEDERATED_SERVER_DATA_DIR\033[0m"
@@ -189,6 +191,11 @@ for CONFIG_DIR in $MAIN_SERVER_CONFIG_DIR $REAL_FEDERATED_SERVER_CONFIG_DIR; do
 		${ROOT_DIR}/occ config:system:set skeletondirectory --value "$SKELETON_DIR"
 	fi
 done
+
+if $DESTROY_REAL_FEDERATED_SERVER; then
+	rm -rf "$REAL_FEDERATED_SERVER_CONFIG_DIR" "$REAL_FEDERATED_SERVER_DATA_DIR"
+fi
+
 rm -rf ../../../spreedcheats
 
 wait $PHPPID1
