@@ -21,8 +21,7 @@
 /drone
 
 # PHP Dev server output (integration tests)
-/tests/integration/phpserver.log
-/tests/integration/phpserver_fed.log
+/tests/integration/phpserver*.log
 
 # Compiled javascript
 /js
