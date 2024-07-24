@@ -142,11 +142,7 @@
                 "required": [
                     "id",
                     "label",
-                    "source",
-                    "status",
-                    "statusClearAt",
-                    "statusIcon",
-                    "statusMessage"
+                    "source"
                 ],
                 "properties": {
                     "id": {
@@ -159,8 +155,7 @@
                         "type": "string"
                     },
                     "status": {
-                        "type": "string",
-                        "nullable": true
+                        "type": "string"
                     },
                     "statusClearAt": {
                         "type": "integer",

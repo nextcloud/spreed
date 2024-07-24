@@ -60,10 +60,10 @@ namespace OCA\Talk;
  *     id: string,
  *     label: string,
  *     source: string,
- *     status: ?string,
- *     statusClearAt: ?int,
- *     statusIcon: ?string,
- *     statusMessage: ?string,
+ *     status?: string,
+ *     statusClearAt?: ?int,
+ *     statusIcon?: ?string,
+ *     statusMessage?: ?string,
  * }
  *
  * @psalm-type TalkChatMessage = array{
