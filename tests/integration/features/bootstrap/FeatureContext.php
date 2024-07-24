@@ -92,8 +92,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	protected string $baseUrl;
 
-	protected string $baseRemoteUrl;
-
 	/** @var string[] */
 	protected array $createdUsers = [];
 
@@ -165,7 +163,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->localServerUrl = getenv('TEST_SERVER_URL');
 		$this->localRemoteServerUrl = getenv('TEST_LOCAL_REMOTE_URL');
 		$this->baseUrl = $this->localServerUrl;
-		$this->baseRemoteUrl = $this->localRemoteServerUrl;
 	}
 
 	/**
@@ -575,7 +572,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($user);
 		if ($server === 'LOCAL') {
-			$this->sendRemoteRequest($verb, '/apps/spreed/api/' . $apiVersion . '/federation/invitation/' . $inviteId);
+			$this->baseUrl = $this->localRemoteServerUrl;
+			$this->sendRequest($verb, '/apps/spreed/api/' . $apiVersion . '/federation/invitation/' . $inviteId);
+			$this->baseUrl = $this->localServerUrl;
 		}
 		$this->assertStatusCode($this->response, $status);
 		$response = $this->getDataFromResponse($this->response);
@@ -4667,17 +4666,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-	}
-
-	/**
-	 * @param string $verb
-	 * @param string $url
-	 * @param TableNode|array|null $body
-	 * @param array $headers
-	 */
-	public function sendRemoteRequest($verb, $url, $body = null, array $headers = []) {
-		$fullUrl = $this->baseRemoteUrl . 'ocs/v2.php' . $url;
-		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers);
 	}
 
 	/**
