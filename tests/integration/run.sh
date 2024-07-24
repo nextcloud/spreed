@@ -45,6 +45,7 @@ tail -f phpserver_fed.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | gre
 
 MAIN_SERVER_CONFIG_DIR=${ROOT_DIR}/config
 MAIN_SERVER_DATA_DIR=$(${ROOT_DIR}/occ config:system:get datadirectory)
+MAIN_SERVER_APPS_PATHS=$(${ROOT_DIR}/occ config:system:get apps_paths --output json)
 REAL_FEDERATED_SERVER_CONFIG_DIR="$MAIN_SERVER_DATA_DIR/tests-talk-real-federated-server/config"
 REAL_FEDERATED_SERVER_DATA_DIR="$MAIN_SERVER_DATA_DIR/tests-talk-real-federated-server/data"
 DESTROY_REAL_FEDERATED_SERVER=false
@@ -57,6 +58,12 @@ if [ ! -d "$REAL_FEDERATED_SERVER_CONFIG_DIR" ] || NEXTCLOUD_CONFIG_DIR="$REAL_F
 	mkdir --parents "$REAL_FEDERATED_SERVER_CONFIG_DIR" "$REAL_FEDERATED_SERVER_DATA_DIR"
 	NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR" ${ROOT_DIR}/occ maintenance:install --admin-pass=admin --data-dir="$REAL_FEDERATED_SERVER_DATA_DIR"
 	echo ''
+	if [ $MAIN_SERVER_APPS_PATHS ]; then
+		echo -e "\033[0;33mCopying custom apps_paths\033[0m"
+		echo "{\"system\":{\"apps_paths\":$MAIN_SERVER_APPS_PATHS}}" > "$REAL_FEDERATED_SERVER_CONFIG_DIR/apps_paths.json"
+		NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR" ${ROOT_DIR}/occ config:import < "$REAL_FEDERATED_SERVER_CONFIG_DIR/apps_paths.json"
+		echo ''
+	fi
 fi
 
 PORT_FED_REAL=8280
