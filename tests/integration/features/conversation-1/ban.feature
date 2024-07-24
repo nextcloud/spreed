@@ -124,3 +124,19 @@ Feature: conversation/ban
       | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId   | bannedDisplayName   | internalNote |
       | users              | participant1     | participant1-displayname | guests          | SESSION(guest1) | SESSION(guest1)     | Banned guest |
       | users              | participant1     | participant1-displayname | ip              | LOCAL_IP        | LOCAL_IP            | Banned guest |
+
+  Scenario: Banned user cannot be added to the room
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" joins room "room" with 200 (v4)
+    And user "participant1" bans user "participant2" from room "room" with 200 (v1)
+      | internalNote | BannedP2 |
+    And user "participant1" sees the following bans in room "room" with 200 (v1)
+      | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
+      | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |
+    And user "participant1" adds user "participant2" to room "room" with 400 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant2" sees the following messages in room "room" with 403
+    And user "participant1" unbans user "participant2" from room "room" with 200 (v1)
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)

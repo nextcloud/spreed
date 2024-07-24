@@ -189,6 +189,20 @@ class BanService {
 	}
 
 	/**
+	 * Check if the actor is banned without logging
+	 *
+	 * @return bool True if the actor is banned, false otherwise
+	 */
+	public function isActorBanned(Room $room, string $actorType, string $actorId): bool {
+		try {
+			$this->banMapper->findForBannedActorAndRoom($actorType, $actorId, $room->getId());
+			return true;
+		} catch (DoesNotExistException) {
+			return false;
+		}
+	}
+
+	/**
 	 * Retrieve all bans for a specific room.
 	 *
 	 * @return Ban[]

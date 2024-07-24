@@ -6759,7 +6759,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Adding participant is not possible */
+            /** @description Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key) */
             400: {
                 headers: {
                     [name: string]: unknown;
