@@ -785,7 +785,7 @@ export default {
 		isOffline() {
 			return !this.sessionIds.length && !this.isSearched
 				&& (this.isUserActor || this.isFederatedActor || this.isGuestActor)
-				&& (!hasTalkFeature(this.token, 'federation-v1') || (!this.conversation.remoteServer && !this.isFederatedActor))
+				&& (hasTalkFeature(this.token, 'federation-v2') || !hasTalkFeature(this.token, 'federation-v1') || (!this.conversation.remoteServer && !this.isFederatedActor))
 		},
 
 		isGuest() {

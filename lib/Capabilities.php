@@ -98,6 +98,7 @@ class Capabilities implements IPublicCapability {
 		'silent-send-state',
 		'chat-read-last',
 		'federation-v1',
+		'federation-v2',
 		'ban-v1',
 		'chat-reference-id',
 		'mention-permissions',

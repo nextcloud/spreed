@@ -30,6 +30,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -70,11 +71,13 @@ class SignalingControllerTest extends TestCase {
 	protected SessionService&MockObject $sessionService;
 	protected Messages&MockObject $messages;
 	protected IUserManager&MockObject $userManager;
+	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected IClientService&MockObject $clientService;
 	protected IThrottler&MockObject $throttler;
 	protected BanService&MockObject $banService;
 	protected LoggerInterface&MockObject $logger;
+	protected Authenticator&MockObject $authenticator;
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
 	protected ?Config $config = null;
@@ -100,9 +103,10 @@ class SignalingControllerTest extends TestCase {
 		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
+		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $this->cloudIdManager, $urlGenerator, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
@@ -115,6 +119,7 @@ class SignalingControllerTest extends TestCase {
 		$this->clientService = $this->createMock(IClientService::class);
 		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->authenticator = $this->createMock(Authenticator::class);
 		$this->recreateSignalingController();
 	}
 
@@ -137,6 +142,7 @@ class SignalingControllerTest extends TestCase {
 			$this->clientService,
 			$this->banService,
 			$this->logger,
+			$this->authenticator,
 			$this->userId,
 		);
 	}
@@ -975,7 +981,7 @@ class SignalingControllerTest extends TestCase {
 			$this->timeFactory,
 			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
-			$this->createMock(Authenticator::class),
+			$this->authenticator,
 		);
 		$this->recreateSignalingController();
 

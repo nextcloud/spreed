@@ -155,7 +155,7 @@ class BackendNotifier {
 				'userids' => $userIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->participantService->getParticipantUserIds($room),
+				'alluserids' => $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room),
 				'properties' => $room->getPropertiesForSignaling('', false),
 			],
 		]);
@@ -176,7 +176,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited(Room $room, array $attendees): void {
-		$allUserIds = $this->participantService->getParticipantUserIds($room);
+		$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
 		sort($allUserIds);
 		$userIds = [];
 		foreach ($attendees as $attendee) {
@@ -212,7 +212,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
-		$allUserIds = $this->participantService->getParticipantUserIds($room);
+		$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
 		sort($allUserIds);
 		$start = microtime(true);
 		$this->backendRequest($room, [
@@ -245,6 +245,9 @@ class BackendNotifier {
 		$this->backendRequest($room, [
 			'type' => 'update',
 			'update' => [
+				// Message not sent for federated users, as they will receive
+				// the message from their federated Nextcloud server once the
+				// property change is propagated.
 				'userids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $room->getPropertiesForSignaling(''),
 			],

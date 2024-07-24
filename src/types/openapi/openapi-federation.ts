@@ -125,9 +125,13 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Fake join a room on the host server to verify the federated user is still part of it */
+        /**
+         * Join room on the host server using the session id of the federated user.
+         * @description The session id can be null only for requests from Talk < 20.
+         */
         post: operations["room-join-federated-room"];
-        delete?: never;
+        /** Leave room on the host server using the session id of the federated user. */
+        delete: operations["room-leave-federated-room"];
         options?: never;
         head?: never;
         patch?: never;
@@ -719,9 +723,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Federated session id to join with */
+                    sessionId: string;
+                };
+            };
+        };
         responses: {
-            /** @description Federated user is still part of the room */
+            /** @description Federated user joined the room */
             200: {
                 headers: {
                     "X-Nextcloud-Talk-Hash"?: string;
@@ -737,6 +748,59 @@ export interface operations {
                 };
             };
             /** @description Room not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-leave-federated-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description Token of the room */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Federated session id to leave with */
+                    sessionId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successfully left the room */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Room not found (non-federation request) */
             404: {
                 headers: {
                     [name: string]: unknown;

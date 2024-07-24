@@ -94,6 +94,9 @@ class SessionService {
 		} else {
 			while (true) {
 				$sessionId = $this->secureRandom->generate(255);
+				if (!empty($attendee->getInvitedCloudId())) {
+					$sessionId = $this->extendSessionIdWithCloudId($sessionId, $attendee->getInvitedCloudId());
+				}
 				$session->setSessionId($sessionId);
 				try {
 					$this->sessionMapper->insert($session);
@@ -108,5 +111,25 @@ class SessionService {
 		}
 
 		return $session;
+	}
+
+	/**
+	 * Adds the given cloud id to the given session id.
+	 *
+	 * The session id and the cloud id are separated by '#'.
+	 *
+	 * If the resulting session id is longer than the column length it is
+	 * trimmed at the end as needed.
+	 *
+	 * @param string $sessionId
+	 * @param string $invitedCloudId
+	 * @return string
+	 */
+	public function extendSessionIdWithCloudId(string $sessionId, string $invitedCloudId): string {
+		// Session id column length is 512, while generated session ids are 255
+		// characters.
+		$invitedCloudId = substr($invitedCloudId, 0, 256);
+
+		return $sessionId . '#' . $invitedCloudId;
 	}
 }

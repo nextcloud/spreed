@@ -1373,6 +1373,7 @@
             "SignalingSettings": {
                 "type": "object",
                 "required": [
+                    "federation",
                     "helloAuthParams",
                     "hideWarning",
                     "server",
@@ -1384,6 +1385,45 @@
                     "userId"
                 ],
                 "properties": {
+                    "federation": {
+                        "oneOf": [
+                            {
+                                "type": "object",
+                                "required": [
+                                    "server",
+                                    "nextcloudServer",
+                                    "helloAuthParams",
+                                    "roomId"
+                                ],
+                                "properties": {
+                                    "server": {
+                                        "type": "string"
+                                    },
+                                    "nextcloudServer": {
+                                        "type": "string"
+                                    },
+                                    "helloAuthParams": {
+                                        "type": "object",
+                                        "required": [
+                                            "token"
+                                        ],
+                                        "properties": {
+                                            "token": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "roomId": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "array",
+                                "maxItems": 0
+                            }
+                        ]
+                    },
                     "helloAuthParams": {
                         "type": "object",
                         "required": [
@@ -16844,7 +16884,8 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/federation/active": {
             "post": {
                 "operationId": "room-join-federated-room",
-                "summary": "Fake join a room on the host server to verify the federated user is still part of it",
+                "summary": "Join room on the host server using the session id of the federated user.",
+                "description": "The session id can be null only for requests from Talk < 20.",
                 "tags": [
                     "room"
                 ],
@@ -16857,6 +16898,25 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "sessionId"
+                                ],
+                                "properties": {
+                                    "sessionId": {
+                                        "type": "string",
+                                        "description": "Federated session id to join with"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -16893,7 +16953,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Federated user is still part of the room",
+                        "description": "Federated user joined the room",
                         "headers": {
                             "X-Nextcloud-Talk-Hash": {
                                 "schema": {
@@ -16929,6 +16989,135 @@
                     },
                     "404": {
                         "description": "Room not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "room-leave-federated-room",
+                "summary": "Leave room on the host server using the session id of the federated user.",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "sessionId"
+                                ],
+                                "properties": {
+                                    "sessionId": {
+                                        "type": "string",
+                                        "description": "Federated session id to leave with"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Token of the room",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully left the room",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Room not found (non-federation request)",
                         "content": {
                             "application/json": {
                                 "schema": {

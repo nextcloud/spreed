@@ -820,6 +820,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['callId'])) {
 					$data['callId'] = (string) $attendee['callId'];
 				}
+				if (isset($expectedKeys['sessionIds'])) {
+					$sessionIds = '[';
+					foreach ($attendee['sessionIds'] as $sessionId) {
+						if (str_contains($sessionId, '#')) {
+							$sessionIds .= 'SESSION' . substr($sessionId, strpos($sessionId, '#')) . ',';
+						} else {
+							$sessionIds .= 'SESSION,';
+						}
+					}
+					$sessionIds .= ']';
+
+					$data['sessionIds'] = $sessionIds;
+				}
 
 				if (!isset(self::$userToAttendeeId[$identifier][$attendee['actorType']])) {
 					self::$userToAttendeeId[$identifier][$attendee['actorType']] = [];
@@ -851,6 +864,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users' && !str_contains($attendee['actorId'], '@')) {
 					$attendee['actorId'] .= '@' . rtrim($this->localRemoteServerUrl, '/');
+				}
+
+				if (isset($attendee['sessionIds']) && str_contains($attendee['sessionIds'], '@{$LOCAL_URL}')) {
+					$attendee['sessionIds'] = str_replace('{$LOCAL_URL}', rtrim($this->localServerUrl, '/'), $attendee['sessionIds']);
+				}
+				if (isset($attendee['sessionIds']) && str_contains($attendee['sessionIds'], '@{$LOCAL_REMOTE_URL}')) {
+					$attendee['sessionIds'] = str_replace('{$LOCAL_REMOTE_URL}', rtrim($this->localRemoteServerUrl, '/'), $attendee['sessionIds']);
+				}
+				if (isset($attendee['sessionIds']) && str_contains($attendee['sessionIds'], '@{$REMOTE_URL}')) {
+					$attendee['sessionIds'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $attendee['sessionIds']);
 				}
 
 				if (isset($attendee['actorId'], $attendee['actorType'], $attendee['phoneNumber'])

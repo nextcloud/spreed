@@ -125,6 +125,8 @@ async function connectSignaling(token) {
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
+	} else {
+		signaling.setSettings(settings)
 	}
 
 	tokensInSignaling[token] = true

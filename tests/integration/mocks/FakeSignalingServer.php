@@ -57,6 +57,7 @@ if (preg_match('/\/api\/v1\/room\/([^\/]+)/', $_SERVER['REQUEST_URI'], $matches)
 
 	header('X-Spreed-Signaling-Features: ' . implode(',', [
 		'audio-video-permissions',
+		'federation',
 		'incall-all',
 		'hello-v2',
 		'switchto',

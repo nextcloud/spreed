@@ -977,8 +977,8 @@ Signaling.Standalone.prototype.doSend = function(msg, callback) {
 	this.socket.send(JSON.stringify(msg))
 }
 
-Signaling.Standalone.prototype._getBackendUrl = function() {
-	return generateOcsUrl('apps/spreed/api/v3/signaling/backend')
+Signaling.Standalone.prototype._getBackendUrl = function(baseURL = undefined) {
+	return generateOcsUrl('apps/spreed/api/v3/signaling/backend', {}, { baseURL })
 }
 
 Signaling.Standalone.prototype.sendHello = function() {
@@ -1081,7 +1081,11 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		}
 	}
 
-	if (!this.settings.helloAuthParams.internal && (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all') || !this.hasFeature('switchto'))) {
+	if (!this.settings.helloAuthParams.internal
+			&& (!this.hasFeature('audio-video-permissions')
+				|| !this.hasFeature('federation')
+				|| !this.hasFeature('incall-all')
+				|| !this.hasFeature('switchto'))) {
 		showError(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.'),
 			{
@@ -1165,7 +1169,7 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 	}
 
 	console.debug('Join room', token)
-	this.doSend({
+	const message = {
 		type: 'room',
 		room: {
 			roomid: token,
@@ -1174,7 +1178,18 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 			// the (Nextcloud) user is allowed to join the room.
 			sessionid: nextcloudSessionId,
 		},
-	}, function(data) {
+	}
+
+	if (this.settings.federation?.server) {
+		message.room.federation = {
+			signaling: this.settings.federation.server,
+			url: this._getBackendUrl(this.settings.federation.nextcloudServer),
+			roomid: this.settings.federation.roomId,
+			token: this.settings.federation.helloAuthParams.token,
+		}
+	}
+
+	this.doSend(message, function(data) {
 		this.joinResponseReceived(data, token)
 	}.bind(this))
 }
