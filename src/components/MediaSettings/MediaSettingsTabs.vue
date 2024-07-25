@@ -1,0 +1,158 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import type { Component } from 'vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import TransitionExpandDown from './TransitionExpandDown.vue'
+
+type TabDefinition = {
+	id: string,
+	label: string,
+	icon: Component,
+}
+
+const props = defineProps<{
+    tabs: TabDefinition[],
+    active?: string,
+}>()
+
+const emit = defineEmits<{
+    (event: 'update:active', value?: string): void
+}>()
+
+/** Whether the tab panel is open */
+const isOpen = ref(!!props.active)
+
+// A11y ReferenceIDs
+const randomId = Math.random().toString(36).substring(7)
+const getRefId = (scope: 'tab' | 'panel', key: string) => `tab-${randomId}-${scope}-${key}`
+
+/**
+ * Whether the tab panel horizontal transition is enabled.
+ * Used to prevent the panel switch transition when the tab is first rendered.
+ */
+const enableTransition = ref(false)
+
+/** Index of the active tab for the transition effect */
+const activeIndex = computed(() => props.tabs.findIndex(tab => tab.id === props.active))
+
+/**
+ * Whether the tab is active
+ * @param tabId - Tab ID
+ */
+function isActive(tabId: string) {
+	return tabId === props.active
+}
+
+/**
+ * Whether the tab is selected on UI
+ * @param tabId - Tab ID
+ */
+function isSelected(tabId: string) {
+	return isOpen.value && isActive(tabId)
+}
+
+/**
+ * Toggle the tab:
+ * - Toggle the tab on the current tab click
+ * - Switch and open tab on a new tab click
+ * @param tabId - New selected tabId
+ */
+function handleTabClick(tabId: string) {
+	if (isActive(tabId)) {
+		isOpen.value = !isOpen.value
+	} else {
+		emit('update:active', tabId)
+		isOpen.value = true
+	}
+}
+
+/**
+ * Handle the tab panel opening transition finish
+ */
+function handleTabsAfterOpen() {
+	// Enable horizontal slide transition only after the tab panel is fully open
+	// Otherwise it slides to the active tab during opening
+	enableTransition.value = true
+}
+
+/**
+ * Handle the tab panel closing transition finish
+ */
+function handleTabsAfterClosed() {
+	// Emit tab change to none only when the tab panel is fully closed
+	// Otherwise visually open tab disappears with transition during closing
+	emit('update:active', undefined)
+	enableTransition.value = false
+}
+</script>
+
+<template>
+	<div class="tabs">
+		<div class="tab-list" role="tablist">
+			<NcButton v-for="tab in tabs"
+				:id="getRefId('tab', tab.id)"
+				:key="tab.id"
+				wide
+				role="tab"
+				:type="isSelected(tab.id) ? 'secondary' : 'tertiary'"
+				:aria-selected="isSelected(tab.id) ? 'true' : 'false'"
+				:aria-controls="getRefId('panel', tab.id)"
+				@click.stop="handleTabClick(tab.id)">
+				<template #icon>
+					<component :is="tab.icon" :size="20" />
+				</template>
+				{{ tab.label }}
+			</NcButton>
+		</div>
+
+		<TransitionExpandDown :show="isOpen" @after-enter="handleTabsAfterOpen" @after-leave="handleTabsAfterClosed">
+			<div class="tab-panels-container">
+				<div v-for="tab in tabs"
+					:id="getRefId('panel', tab.id)"
+					:key="tab.id"
+					class="tab-panel"
+					:class="{ 'tab-panel--with-transition': enableTransition }"
+					role="tabpanel"
+					:inert="!isActive(tab.id)"
+					:aria-hidden="!isActive(tab.id)"
+					:aria-labelledby="getRefId('tab', tab.id)"
+					:style="activeIndex !== -1 ? `transform: translateX(${-activeIndex * 100}%)` : ''">
+					<slot :name="`tab-panel:${tab.id}`" />
+				</div>
+			</div>
+		</TransitionExpandDown>
+	</div>
+</template>
+
+<style lang="scss" scoped>
+.tab-list {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) * 2);
+}
+
+.tab-panels-container {
+	display: flex;
+	width: 100%;
+	overflow: hidden;
+	transition: height ease var(--animation-slow);
+}
+
+.tab-panel {
+	width: 100%;
+	flex: 1 0 100%;
+	transition: none;
+
+	&--with-transition {
+		transition: transform ease var(--animation-slow);
+	}
+}
+</style>
