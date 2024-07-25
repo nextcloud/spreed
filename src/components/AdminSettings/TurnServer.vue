@@ -55,6 +55,7 @@
 		<NcButton v-show="!loading"
 			type="tertiary"
 			:aria-label="testResult"
+			:disabled="!testAvailable"
 			@click="testServer">
 			<template #icon>
 				<span v-if="testing" class="icon icon-loading-small" />
@@ -196,6 +197,11 @@ export default {
 			}
 			return t('spreed', 'Test this server')
 		},
+		testAvailable() {
+			const schemes = this.schemes.split(',')
+			const protocols = this.protocols.split(',')
+			return !!(schemes.length && this.server && this.secret && protocols.length)
+		},
 	},
 
 	mounted() {
@@ -212,15 +218,16 @@ export default {
 	methods: {
 		t,
 		testServer() {
-			this.testing = true
 			this.testingError = false
 			this.testingSuccess = false
 
 			const schemes = this.schemes.split(',')
 			const protocols = this.protocols.split(',')
-			if (!schemes.length || !this.server || !this.secret || !protocols.length) {
+			if (!this.testAvailable) {
 				return
 			}
+
+			this.testing = true
 
 			const urls = []
 			for (let i = 0; i < schemes.length; i++) {
