@@ -5,9 +5,7 @@
 
 <template>
 	<div class="media-devices-checker">
-		<div class="media-devices-checker__icon">
-			<VolumeHighIcon :size="16" />
-		</div>
+		<VolumeHighIcon class="media-devices-checker__icon" :size="16" />
 		<NcButton type="secondary" @click="playTestSound">
 			{{ buttonLabel }}
 		</NcButton>
@@ -82,13 +80,15 @@ export default {
 <style lang="scss" scoped>
 .media-devices-checker {
 	display: flex;
-	margin: 16px 0;
+	gap: var(--default-grid-baseline);
+	margin: calc(3 * var(--default-grid-baseline)) 0;
 
 	&__icon {
 		display: flex;
-		justify-content: flex-start;
+		justify-content: center;
 		align-items: center;
-		width: 36px;
+		width: var(--default-clickable-area);
+		flex-shrink: 0;
 	}
 
 	.equalizer {
