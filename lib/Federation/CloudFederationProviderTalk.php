@@ -328,6 +328,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_READ_ONLY) {
 			$this->roomService->setReadOnly($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT) {
+			/** @psalm-suppress InvalidArgument */
 			$this->roomService->setRecordingConsent($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_TYPE) {
 			$this->roomService->setType($room, $notification['newValue']);
