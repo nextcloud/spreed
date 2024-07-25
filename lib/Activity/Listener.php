@@ -75,8 +75,7 @@ class Listener implements IEventListener {
 		$this->roomService->setActiveSince(
 			$event->getRoom(),
 			$this->timeFactory->getDateTime(),
-			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED,
-			$participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
+			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED
 		);
 	}
 

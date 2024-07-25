@@ -834,7 +834,6 @@ class RoomService {
 	public function resetActiveSince(Room $room): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('active_guests', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
 			->set('call_flag', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('call_permissions', $update->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
@@ -846,30 +845,18 @@ class RoomService {
 		return (bool) $update->executeStatement();
 	}
 
-	public function setActiveSince(Room $room, \DateTime $since, int $callFlag, bool $isGuest): bool {
-		if ($isGuest && $room->getType() === Room::TYPE_PUBLIC) {
-			$update = $this->db->getQueryBuilder();
-			$update->update('talk_rooms')
-				->set('active_guests', $update->createFunction($update->getColumnName('active_guests') . ' + 1'))
-				->set(
-					'call_flag',
-					$update->expr()->bitwiseOr('call_flag', $callFlag)
-				)
-				->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
-			$update->executeStatement();
-		} elseif (!$isGuest) {
-			$update = $this->db->getQueryBuilder();
-			$update->update('talk_rooms')
-				->set(
-					'call_flag',
-					$update->expr()->bitwiseOr('call_flag', $callFlag)
-				)
-				->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
-			$update->executeStatement();
-		}
+	public function setActiveSince(Room $room, \DateTime $since, int $callFlag): bool {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set(
+				'call_flag',
+				$update->expr()->bitwiseOr('call_flag', $callFlag)
+			)
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 
 		if ($room->getActiveSince() instanceof \DateTime) {
-			$room->setActiveSince($room->getActiveSince(), $callFlag, $isGuest);
+			$room->setActiveSince($room->getActiveSince(), $callFlag);
 			return false;
 		}
 
@@ -880,7 +867,7 @@ class RoomService {
 			->andWhere($update->expr()->isNull('active_since'));
 		$update->executeStatement();
 
-		$room->setActiveSince($since, $callFlag, $isGuest);
+		$room->setActiveSince($since, $callFlag);
 
 		return true;
 	}

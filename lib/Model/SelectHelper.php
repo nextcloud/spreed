@@ -26,7 +26,6 @@ class SelectHelper {
 			->addSelect($alias . 'description')
 			->addSelect($alias . 'password')
 			->addSelect($alias . 'avatar')
-			->addSelect($alias . 'active_guests')
 			->addSelect($alias . 'active_since')
 			->addSelect($alias . 'default_permissions')
 			->addSelect($alias . 'call_permissions')
