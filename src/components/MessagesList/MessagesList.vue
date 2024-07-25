@@ -1286,7 +1286,7 @@ export default {
 		left: 50%;
 		color: var(--color-text-maxcontrast);
 		background-color: var(--color-background-dark);
-		border-radius: var(--border-radius-pill);
+		border-radius: var(--border-radius-element, var(--border-radius-pill));
 	}
 
 	&:last-child {

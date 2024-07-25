@@ -19,7 +19,7 @@
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
 
-		<NcButton type="tertiary-no-background"
+		<NcButton type="tertiary"
 			:title="t('spreed', 'Refresh devices list')"
 			:aria-lebel="t('spreed', 'Refresh devices list')"
 			@click="$emit('refresh')">
