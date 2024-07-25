@@ -53,7 +53,7 @@
 			@input="updateProtocols" />
 
 		<NcButton v-show="!loading"
-			type="tertiary-no-background"
+			type="tertiary"
 			:aria-label="testResult"
 			@click="testServer">
 			<template #icon>
@@ -64,7 +64,7 @@
 			</template>
 		</NcButton>
 		<NcButton v-show="!loading"
-			type="tertiary-no-background"
+			type="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
