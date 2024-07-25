@@ -244,7 +244,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * Given /^using server (LOCAL|REMOTE)$/
+	 * @Given /^using server "(LOCAL|REMOTE)"$/
+	 *
 	 * @param string $server
 	 */
 	public function usingServer(string $server) {
