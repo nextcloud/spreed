@@ -54,9 +54,10 @@
 			</NcCheckboxRadioSwitch>
 		</template>
 
-		<NcTextField class="form__textfield additional-top-margin"
+		<NcPasswordField class="form__textfield additional-top-margin"
 			:value="secret"
 			name="signaling_secret"
+			autocomplete="new-password"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
@@ -77,7 +78,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -91,7 +92,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcNoteCard,
-		NcTextField,
+		NcPasswordField,
 		Plus,
 		SignalingServer,
 		TransitionWrapper,

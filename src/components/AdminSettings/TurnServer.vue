@@ -29,8 +29,9 @@
 			:label="t('spreed', 'TURN server URL')"
 			@update:value="updateServer" />
 
-		<NcTextField ref="turn_secret"
+		<NcPasswordField ref="turn_secret"
 			name="turn_secret"
+			autocomplete="new-password"
 			placeholder="secret"
 			class="turn-server__textfield"
 			:value="secret"
@@ -87,6 +88,7 @@ import Pulse from 'vue-material-design-icons/Pulse.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -107,6 +109,7 @@ export default {
 		NcButton,
 		NcSelect,
 		NcTextField,
+		NcPasswordField,
 		Pulse,
 	},
 
