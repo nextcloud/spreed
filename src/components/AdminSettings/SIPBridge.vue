@@ -45,9 +45,11 @@
 			<label for="sip-shared-secret" class="form__label additional-top-margin">
 				{{ t('spreed', 'Shared secret') }}
 			</label>
-			<NcTextField id="sip-shared-secret"
+			<NcPasswordField id="sip-shared-secret"
 				:value.sync="sharedSecret"
 				class="form"
+				name="sip-shared-secret"
+				autocomplete="new-password"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
 				label-outside />
@@ -88,9 +90,9 @@ import { generateOcsUrl } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setSIPSettings } from '../../services/settingsService.js'
 import { getWelcomeMessage } from '../../services/signalingService.js'
@@ -104,7 +106,7 @@ export default {
 		NcNoteCard,
 		NcSelect,
 		NcTextArea,
-		NcTextField,
+		NcPasswordField,
 	},
 
 	data() {
