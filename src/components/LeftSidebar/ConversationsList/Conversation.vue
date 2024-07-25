@@ -329,15 +329,6 @@ export default {
 }
 
 .conversation {
-	// Overwrite NcListItem styles to reduce a component height
-	padding: 0 !important;
-	margin: var(--default-grid-baseline);
-	width: calc(100% - var(--default-grid-baseline) * 2);
-
-	:deep(.list-item) {
-		padding-block: var(--default-grid-baseline);
-	}
-
 	// Overwrite ConversationIcon styles to blend a type icon with NcListItem
 	& :deep(.list-item:hover .conversation-icon__type) {
 		background-color: var(--color-background-hover);

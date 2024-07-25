@@ -180,7 +180,7 @@
 					data-nav-id="conversation_create_new"
 					@click="createConversation(searchText)">
 					<template #icon>
-						<ChatPlus :size="44" />
+						<ChatPlus :size="AVATAR.SIZE.TWO_LINES" />
 					</template>
 					<template #subname>
 						{{ t('spreed', 'New group conversation') }}
@@ -206,7 +206,7 @@
 						:name="item.label"
 						@click="createAndJoinConversation(item)">
 						<template #icon>
-							<AvatarWrapper v-bind="iconData(item)" />
+							<AvatarWrapper v-bind="iconData(item)" :size="AVATAR.SIZE.TWO_LINES" />
 						</template>
 						<template #subname>
 							{{ t('spreed', 'New private conversation') }}
@@ -259,7 +259,7 @@
 							:name="item.label"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<AvatarWrapper v-bind="iconData(item)" />
+								<AvatarWrapper v-bind="iconData(item)" :size="AVATAR.SIZE.TWO_LINES" />
 							</template>
 							<template #subname>
 								{{ t('spreed', 'New group conversation') }}
@@ -336,7 +336,7 @@ import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
-import { ATTENDEE, CONVERSATION } from '../../constants.js'
+import { ATTENDEE, AVATAR, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import {
@@ -410,6 +410,7 @@ export default {
 		const isMobile = useIsMobile()
 
 		return {
+			AVATAR,
 			initializeNavigation,
 			resetNavigation,
 			leftSidebar,
@@ -1005,7 +1006,7 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	height: 100%;
-	padding-left: calc(var(--default-grid-baseline) * 2);
+	padding-left: var(--default-grid-baseline);
 	overflow-y: scroll !important; // reserve a place for scrollbar
 }
 
@@ -1013,6 +1014,8 @@ export default {
 	position: relative;
 	display: flex;
 	padding: calc(var(--default-grid-baseline) * 2);
+	padding-right: var(--default-grid-baseline);
+	overflow-y: scroll !important; // reserve a place for scrollbar
 	align-items: center;
 	border-bottom: 1px solid transparent;
 
@@ -1023,13 +1026,13 @@ export default {
 	.filters {
 		position: absolute;
 		top: calc(var(--default-grid-baseline) * 2);
-		right: calc(var(--default-grid-baseline) * 3 + var(--default-clickable-area));
+		right: calc(var(--default-grid-baseline) * 2 + var(--default-clickable-area));
 	}
 
 	.actions {
 		position: absolute;
 		top: calc(var(--default-grid-baseline) * 2);
-		right: calc(var(--default-grid-baseline) * 2);
+		right: calc(var(--default-grid-baseline) * 1);
 	}
 }
 

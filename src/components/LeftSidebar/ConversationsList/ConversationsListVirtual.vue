@@ -29,9 +29,9 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 /* Consider:
  * 48 = 2 * var(--default-line-height) - 2 lines of text
  * 8 = 2 * var(--default-grid-baseline) - item padding
- * 4 = var(--default-grid-baseline) - item margin (collapsed)
+ * 8 = 2 * var(--default-grid-baseline) - focus offset
  */
-const CONVERSATION_ITEM_SIZE = 60
+const CONVERSATION_ITEM_SIZE = 64
 
 export default {
 	name: 'ConversationsListVirtual',
