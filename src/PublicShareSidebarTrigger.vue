@@ -10,7 +10,7 @@
 			:aria-label="ariaLabel"
 			@click="$emit('click')">
 			<template #icon>
-				<MessageText :size="20" />
+				<MessageText fill-color="var(--color-background-plain-text)" :size="20" />
 			</template>
 		</NcButton>
 	</div>
