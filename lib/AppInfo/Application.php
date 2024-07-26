@@ -30,6 +30,7 @@ use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
+use OCA\Talk\Events\ActiveSinceModifiedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
@@ -263,6 +264,7 @@ class Application extends App implements IBootstrap {
 
 		// Federation listeners
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);
+		$context->registerEventListener(ActiveSinceModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(LobbyModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, TalkV1MessageSentListener::class);

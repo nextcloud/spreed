@@ -11,7 +11,11 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Federation\Authenticator;
+use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
+use OCA\Talk\Middleware\Attribute\RequireFederatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
@@ -27,6 +31,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SIPDialOutService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -41,12 +46,14 @@ class CallController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
+		protected Manager $manager,
 		private ConsentService $consentService,
 		private ParticipantService $participantService,
 		private RoomService $roomService,
 		private IUserManager $userManager,
 		private ITimeFactory $timeFactory,
 		private Config $talkConfig,
+		protected Authenticator $federationAuthenticator,
 		private SIPDialOutService $dialOutService,
 	) {
 		parent::__construct($appName, $request);
@@ -115,23 +122,17 @@ class CallController extends AEnvironmentAwareController {
 	 * 400: No recording consent was given
 	 * 404: Call not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
 	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
-		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
-			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
-				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
-			}
-			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL
-				&& $this->room->getRecordingConsent() === RecordingService::CONSENT_REQUIRED_YES) {
-				return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
-			}
-		} elseif ($recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
-			$attendee = $this->participant->getAttendee();
-			$this->consentService->storeConsent($this->room, $attendee->getActorType(), $attendee->getActorId());
+		try {
+			$this->validateRecordingConsent($recordingConsent);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
@@ -146,6 +147,12 @@ class CallController extends AEnvironmentAwareController {
 			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
 		}
 
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
+			return $proxy->joinFederatedCall($this->room, $this->participant, $flags, $silent, $recordingConsent);
+		}
+
 		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
 			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
@@ -155,6 +162,69 @@ class CallController extends AEnvironmentAwareController {
 		if (!$joined) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
+		return new DataResponse();
+	}
+
+	/**
+	 * Validates and stores recording consent.
+	 *
+	 * @throws \InvalidArgumentException if recording consent is required but
+	 *         not given
+	 */
+	protected function validateRecordingConsent(bool $recordingConsent): void {
+		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
+			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
+				throw new \InvalidArgumentException();
+			}
+			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL
+				&& $this->room->getRecordingConsent() === RecordingService::CONSENT_REQUIRED_YES) {
+				throw new \InvalidArgumentException();
+			}
+		} elseif ($recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
+			$attendee = $this->participant->getAttendee();
+			$this->consentService->storeConsent($this->room, $attendee->getActorType(), $attendee->getActorId());
+		}
+	}
+
+	/**
+	 * Join call on the host server using the session id of the federated user.
+	 *
+	 * @param string $sessionId Federated session id to join with
+	 * @param int<0, 15>|null $flags In-Call flags
+	 * @psalm-param int-mask-of<Participant::FLAG_*>|null $flags
+	 * @param bool $silent Join the call silently
+	 * @param bool $recordingConsent Agreement to be recorded
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: Call joined successfully
+	 * 400: Conditions to join not met
+	 * 404: Call not found
+	 */
+	#[PublicPage]
+	#[RequireCallEnabled]
+	#[RequireModeratorOrNoLobby]
+	#[RequireFederatedParticipant]
+	#[RequireReadWriteConversation]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	public function joinFederatedCall(string $sessionId, ?int $flags = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		try {
+			$this->validateRecordingConsent($recordingConsent);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$joined = $this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
+		if (!$joined) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		return new DataResponse();
 	}
 
@@ -243,6 +313,7 @@ class CallController extends AEnvironmentAwareController {
 	 * 400: Updating in-call flags is not possible
 	 * 404: Call session not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireParticipant]
 	public function updateCallFlags(int $flags): DataResponse {
@@ -251,9 +322,48 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
+			return $proxy->updateFederatedCallFlags($this->room, $this->participant, $flags);
+		}
+
 		try {
 			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
 		} catch (\Exception $exception) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * Update the in-call flags on the host server using the session id of the
+	 * federated user.
+	 *
+	 * @param string $sessionId Federated session id to update the flags with
+	 * @param int<0, 15> $flags New flags
+	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: In-call flags updated successfully
+	 * 400: Updating in-call flags is not possible
+	 * 404: Call session not found
+	 */
+	#[PublicPage]
+	#[RequireFederatedParticipant]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	public function updateFederatedCallFlags(string $sessionId, int $flags): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		try {
+			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
+		} catch (\Exception) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -269,6 +379,7 @@ class CallController extends AEnvironmentAwareController {
 	 * 200: Call left successfully
 	 * 404: Call session not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireParticipant]
 	public function leaveCall(bool $all = false): DataResponse {
@@ -277,11 +388,43 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
+			return $proxy->leaveFederatedCall($this->room, $this->participant);
+		}
+
 		if ($all && $this->participant->hasModeratorPermissions()) {
 			$this->participantService->endCallForEveryone($this->room, $this->participant);
 		} else {
 			$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
 		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * Leave a call on the host server using the session id of the federated
+	 * user.
+	 *
+	 * @param string $sessionId Federated session id to leave with
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: Call left successfully
+	 * 404: Call session not found
+	 */
+	#[PublicPage]
+	#[RequireFederatedParticipant]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	public function leaveFederatedCall(string $sessionId): DataResponse {
+		if (!$this->federationAuthenticator->isFederationRequest()) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
 
 		return new DataResponse();
 	}

@@ -19,6 +19,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
+use OCA\Talk\Middleware\Attribute\RequireFederatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -34,6 +35,7 @@ use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\InvitationMapper;
+use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
@@ -118,6 +120,12 @@ class InjectionMiddleware extends Middleware {
 			$this->getLoggedInOrGuest($controller, false, true);
 		}
 
+		$attributes = $reflectionMethod->getAttributes(RequireFederatedParticipant::class);
+		if (!empty($attributes)) {
+			$sessionIdParameter = $this->readSessionIdParameterFromAttributes($attributes);
+			$this->getLoggedInOrGuest($controller, false, sessionIdParameter: $sessionIdParameter);
+		}
+
 		if (!empty($reflectionMethod->getAttributes(RequireParticipant::class))) {
 			$this->getLoggedInOrGuest($controller, false);
 		}
@@ -151,6 +159,17 @@ class InjectionMiddleware extends Middleware {
 				$this->checkPermission($controller, $requirement->getPermission());
 			}
 		}
+	}
+
+	protected function readSessionIdParameterFromAttributes(array $attributes): ?string {
+		foreach ($attributes as $attribute) {
+			/** @var RequireFederatedParticipant $instance */
+			$instance = $attribute->newInstance();
+			if ($instance->getSessionIdParameter() !== null) {
+				return $instance->getSessionIdParameter();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -193,22 +212,40 @@ class InjectionMiddleware extends Middleware {
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired, bool $requireListedWhenNoParticipant = false, bool $requireFederationWhenNotLoggedIn = false): void {
+	protected function getLoggedInOrGuest(
+		AEnvironmentAwareController $controller,
+		bool $moderatorRequired,
+		bool $requireListedWhenNoParticipant = false,
+		bool $requireFederationWhenNotLoggedIn = false,
+		?string $sessionIdParameter = null
+	): void {
 		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isFederationRequest()) {
 			throw new ParticipantNotFoundException();
 		}
 
+		if ($sessionIdParameter !== null && !$this->federationAuthenticator->isFederationRequest()) {
+			throw new ParticipantNotFoundException();
+		}
+
 		$room = $controller->getRoom();
+		$sessionId = null;
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
-			$sessionId = $this->talkSession->getSessionForRoom($token);
 			if (!$this->federationAuthenticator->isFederationRequest()) {
+				$sessionId = $this->talkSession->getSessionForRoom($token);
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			} else {
-				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $this->federationAuthenticator->getAccessToken());
+				$sessionId = $sessionIdParameter !== null ? $this->request->getParam($sessionIdParameter) : null;
+				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $this->federationAuthenticator->getAccessToken(), $sessionId);
 
 				// Get and set the participant already, so we don't retry public access
 				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
+
+				if ($sessionIdParameter !== null && !$participant->getSession() instanceof Session) {
+					// If a session is required, fail if we didn't find it
+					throw new ParticipantNotFoundException();
+				}
+
 				$this->federationAuthenticator->authenticated($room, $participant);
 				$controller->setParticipant($participant);
 			}

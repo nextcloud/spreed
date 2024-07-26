@@ -10,6 +10,7 @@ namespace OCA\Talk\Activity;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
@@ -47,6 +48,10 @@ class Listener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
+		if ($event instanceof ARoomEvent && $event->getRoom()->isFederatedConversation()) {
+			return;
+		}
+
 		match (get_class($event)) {
 			BeforeCallEndedForEveryoneEvent::class => $this->generateCallActivity($event->getRoom(), true, $event->getActor()),
 			SessionLeftRoomEvent::class,
@@ -70,8 +75,7 @@ class Listener implements IEventListener {
 		$this->roomService->setActiveSince(
 			$event->getRoom(),
 			$this->timeFactory->getDateTime(),
-			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED,
-			$participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
+			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED
 		);
 	}
 

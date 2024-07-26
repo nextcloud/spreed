@@ -111,7 +111,6 @@ class Room {
 		private string $avatar,
 		private string $remoteServer,
 		private string $remoteToken,
-		private int $activeGuests,
 		private int $defaultPermissions,
 		private int $callPermissions,
 		private int $callFlag,
@@ -296,7 +295,6 @@ class Room {
 	}
 
 	public function resetActiveSince(): void {
-		$this->activeGuests = 0;
 		$this->activeSince = null;
 	}
 
@@ -500,14 +498,11 @@ class Room {
 		return $this->manager->createParticipantObject($this, $row);
 	}
 
-	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): void {
+	public function setActiveSince(\DateTime $since, int $callFlag): void {
 		if (!$this->activeSince) {
 			$this->activeSince = $since;
 		}
 		$this->callFlag |= $callFlag;
-		if ($isGuest) {
-			$this->activeGuests++;
-		}
 	}
 
 	public function getBreakoutRoomMode(): int {

@@ -241,6 +241,49 @@ class BackendNotifier {
 	}
 
 	/**
+	 * Send information to remote participants that "active since" was updated
+	 * Sent from Host server to Remote participant server
+	 */
+	public function sendRoomModifiedActiveSinceUpdate(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		string $changedProperty,
+		?\DateTime $newValue,
+		?\DateTime $oldValue,
+		int $callFlag,
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		if ($newValue instanceof \DateTime) {
+			$newValue = (string) $newValue->getTimestamp();
+		}
+		if ($oldValue instanceof \DateTime) {
+			$oldValue = (string) $oldValue->getTimestamp();
+		}
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_ROOM_MODIFIED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'changedProperty' => $changedProperty,
+				'newValue' => $newValue,
+				'oldValue' => $oldValue,
+				'callFlag' => $callFlag,
+			],
+		);
+
+		return $this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
 	 * Send information to remote participants that the lobby was updated
 	 * Sent from Host server to Remote participant server
 	 */

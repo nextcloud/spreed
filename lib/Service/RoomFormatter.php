@@ -142,6 +142,10 @@ class RoomFormatter {
 			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
 		];
 
+		if ($room->isFederatedConversation()) {
+			$roomData['recordingConsent'] = $room->getRecordingConsent();
+		}
+
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
 			$lastActivity = $lastActivity->getTimestamp();
@@ -220,6 +224,10 @@ class RoomFormatter {
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 			'mentionPermissions' => $room->getMentionPermissions(),
 		]);
+
+		if ($room->isFederatedConversation()) {
+			$roomData['recordingConsent'] = $room->getRecordingConsent();
+		}
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			if (isset($commonReadMessages[$room->getId()])) {
