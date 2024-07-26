@@ -84,6 +84,7 @@ import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { SIGNALING } from '../../constants.js'
+import { EventBus } from '../../services/EventBus.js'
 
 export default {
 	name: 'SignalingServers',
@@ -165,6 +166,7 @@ export default {
 			}), {
 				success: () => {
 					showSuccess(t('spreed', 'High-performance backend settings saved'))
+					EventBus.emit('signaling-servers-updated', this.servers)
 					this.loading = false
 					this.toggleSave()
 				},

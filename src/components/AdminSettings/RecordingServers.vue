@@ -10,63 +10,69 @@
 			{{ t('spreed', 'Recording backend') }}
 		</h2>
 
-		<NcNoteCard v-if="showUploadLimitWarning" type="warning">
-			{{ uploadLimitWarning }}
+		<NcNoteCard v-if="!showForm" type="warning">
+			{{ t('spreed', 'Recording backend configuration is only possible with a high-performance backend.') }}
 		</NcNoteCard>
 
-		<TransitionWrapper v-if="servers.length"
-			name="fade"
-			tag="ul"
-			group>
-			<RecordingServer v-for="(server, index) in servers"
-				:key="`server${index}`"
-				:server.sync="servers[index].server"
-				:verify.sync="servers[index].verify"
-				:index="index"
-				:loading="loading"
-				@remove-server="removeServer"
-				@update:server="debounceUpdateServers"
-				@update:verify="debounceUpdateServers" />
-		</TransitionWrapper>
+		<template v-else>
+			<NcNoteCard v-if="showUploadLimitWarning" type="warning">
+				{{ uploadLimitWarning }}
+			</NcNoteCard>
 
-		<NcButton v-else
-			class="additional-top-margin"
-			:disabled="loading"
-			@click="newServer">
-			<template #icon>
-				<span v-if="loading" class="icon icon-loading-small" />
-				<Plus v-else :size="20" />
-			</template>
-			{{ t('spreed', 'Add a new recording backend server') }}
-		</NcButton>
+			<TransitionWrapper v-if="servers.length"
+				name="fade"
+				tag="ul"
+				group>
+				<RecordingServer v-for="(server, index) in servers"
+					:key="`server${index}`"
+					:server.sync="servers[index].server"
+					:verify.sync="servers[index].verify"
+					:index="index"
+					:loading="loading"
+					@remove-server="removeServer"
+					@update:server="debounceUpdateServers"
+					@update:verify="debounceUpdateServers" />
+			</TransitionWrapper>
 
-		<NcPasswordField class="form__textfield additional-top-margin"
-			:value="secret"
-			name="recording_secret"
-			autocomplete="new-password"
-			:disabled="loading"
-			:placeholder="t('spreed', 'Shared secret')"
-			:label="t('spreed', 'Shared secret')"
-			label-visible
-			@update:value="updateSecret" />
+			<NcButton v-else
+				class="additional-top-margin"
+				:disabled="loading"
+				@click="newServer">
+				<template #icon>
+					<span v-if="loading" class="icon icon-loading-small" />
+					<Plus v-else :size="20" />
+				</template>
+				{{ t('spreed', 'Add a new recording backend server') }}
+			</NcButton>
 
-		<template v-if="servers.length && recordingConsentCapability">
-			<h3>{{ t('spreed', 'Recording consent') }}</h3>
+			<NcPasswordField class="form__textfield additional-top-margin"
+				:value="secret"
+				name="recording_secret"
+				autocomplete="new-password"
+				:disabled="loading"
+				:placeholder="t('spreed', 'Shared secret')"
+				:label="t('spreed', 'Shared secret')"
+				label-visible
+				@update:value="updateSecret" />
 
-			<template v-for="level in recordingConsentOptions">
-				<NcCheckboxRadioSwitch :key="level.value + '_radio'"
-					:value="level.value.toString()"
-					:checked.sync="recordingConsentSelected"
-					name="recording-consent"
-					type="radio"
-					:disabled="loading"
-					@update:checked="setRecordingConsent">
-					{{ level.label }}
-				</NcCheckboxRadioSwitch>
+			<template v-if="servers.length && recordingConsentCapability">
+				<h3>{{ t('spreed', 'Recording consent') }}</h3>
 
-				<p :key="level.value + '_description'" class="consent-description">
-					{{ getRecordingConsentDescription(level.value) }}
-				</p>
+				<template v-for="level in recordingConsentOptions">
+					<NcCheckboxRadioSwitch :key="level.value + '_radio'"
+						:value="level.value.toString()"
+						:checked.sync="recordingConsentSelected"
+						name="recording-consent"
+						type="radio"
+						:disabled="loading"
+						@update:checked="setRecordingConsent">
+						{{ level.label }}
+					</NcCheckboxRadioSwitch>
+
+					<p :key="level.value + '_description'" class="consent-description">
+						{{ getRecordingConsentDescription(level.value) }}
+					</p>
+				</template>
 			</template>
 		</template>
 	</section>
@@ -92,6 +98,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { CALL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.js'
 
 const recordingConsentCapability = hasTalkFeature('local', 'recording-consent')
 const recordingConsentOptions = [
@@ -127,6 +134,7 @@ export default {
 			uploadLimit: 0,
 			loading: false,
 			saved: false,
+			showForm: true,
 			recordingConsentSelected: loadState('spreed', 'recording_consent').toString(),
 			debounceUpdateServers: () => {},
 		}
@@ -145,14 +153,20 @@ export default {
 
 	beforeMount() {
 		this.debounceUpdateServers = debounce(this.updateServers, 1000)
+
 		const state = loadState('spreed', 'recording_servers')
 		this.servers = state.servers
 		this.secret = state.secret
 		this.uploadLimit = parseInt(state.uploadLimit, 10)
+
+		const signaling = loadState('spreed', 'signaling_servers')
+		this.updateSignalingServers(signaling.servers)
+		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	beforeDestroy() {
 		this.debounceUpdateServers.clear?.()
+		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -217,6 +231,10 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
+		},
+
+		updateSignalingServers(servers) {
+			this.showForm = servers.length > 0
 		},
 	},
 }

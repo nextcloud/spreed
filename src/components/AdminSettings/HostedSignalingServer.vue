@@ -129,6 +129,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import { EventBus } from '../../services/EventBus.js'
+
 export default {
 	name: 'HostedSignalingServer',
 
@@ -209,8 +211,12 @@ export default {
 		this.hostedHPBCountry = this.countries.find(country => country.code === state.country) ?? this.countries[0]
 
 		const signaling = loadState('spreed', 'signaling_servers')
-		this.showForm = this.trialAccount.length !== 0
-			|| signaling.servers.length === 0
+		this.updateSignalingServers(signaling.servers)
+		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
+	},
+
+	beforeDestroy() {
+		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
@@ -249,6 +255,10 @@ export default {
 			} finally {
 				this.loading = false
 			}
+		},
+
+		updateSignalingServers(servers) {
+			this.showForm = this.trialAccount.length !== 0 || servers.length === 0
 		},
 	},
 }
