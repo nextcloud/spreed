@@ -5,6 +5,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-beta.1 – 2024-07-26
+### Added
+- Banning users and guests
+  [#12291](https://github.com/nextcloud/spreed/issues/12291)
+- Allow to prevent "@all" mentions for non-moderators
+  [#9074](https://github.com/nextcloud/spreed/issues/9074)
+- Add button to show smart picker
+  [#12250](https://github.com/nextcloud/spreed/issues/12250)
+- Dispatch events when enabling or disabling bots
+  [#12551](https://github.com/nextcloud/spreed/pull/12551)
+- Preview: Federated calls
+  [#11232](https://github.com/nextcloud/spreed/issues/11232)
+
+### Changed
+- Requires Nextcloud 30
+- External signaling requires [federation support](https://github.com/strukturag/nextcloud-spreed-signaling/pull/776)
+- API performance improvements
+- Dynamic order of tiles in a call
+  [#11393](https://github.com/nextcloud/spreed/issues/11393)
+- Automatically lower raised hand when participant speaks
+  [#12399](https://github.com/nextcloud/spreed/issues/12399)
+- Show confirmation dialog when removing a participant
+  [#12543](https://github.com/nextcloud/spreed/pull/12543)
+- Show description when listing open conversations
+  [#12209](https://github.com/nextcloud/spreed/issues/12209)
+- Outline the participant count when trying to mention everyone
+  [#12782](https://github.com/nextcloud/spreed/pull/12782)
+- Show out-of-office replacement in the out-of-office message
+  [#12510](https://github.com/nextcloud/spreed/pull/12510)
+
+### Known issues
+- Design: not fully adjusted to changes in Nextcloud 30
+- Federated calls: broken participant avatars and missing call notifications
+
 ## 19.0.7 – 2024-07-15
 ### Fixed
 - fix(federation): Fix missing notifications in https-federated conversations (Nextcloud Server 29.0.4 or later - Part 3)
