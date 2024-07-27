@@ -16,7 +16,7 @@
 				<video v-show="showVideo"
 					ref="video"
 					:class="['preview__video', {'preview__video--mirrored': isMirrored}]"
-					disable-picture-in-picture="true"
+					disablePictureInPicture
 					tabindex="-1" />
 				<NcButton v-if="showVideo"
 					type="secondary"
