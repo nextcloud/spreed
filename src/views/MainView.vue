@@ -7,12 +7,10 @@
 	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar :is-in-call="showChatInSidebar" />
+			<TopBar :is-in-call="isInCall" />
 			<TransitionWrapper name="fade">
-				<ChatView v-if="!showChatInSidebar" />
-				<template v-else>
-					<CallView :token="token" />
-				</template>
+				<ChatView v-if="!isInCall" />
+				<CallView v-else :token="token" />
 			</TransitionWrapper>
 			<PollViewer />
 		</template>
@@ -55,10 +53,6 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
-		},
-
-		showChatInSidebar() {
-			return this.isInCall
 		},
 
 		isInLobby() {

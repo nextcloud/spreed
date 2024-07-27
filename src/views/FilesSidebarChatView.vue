@@ -6,7 +6,7 @@
 <template>
 	<div class="talk-tab__wrapper">
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
-		<ChatView class="talk-tab__chat-view" />
+		<ChatView class="talk-tab__chat-view" is-sidebar />
 		<PollViewer />
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 	</div>

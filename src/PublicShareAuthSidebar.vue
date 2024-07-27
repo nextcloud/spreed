@@ -11,10 +11,9 @@
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
 			<template v-else>
-				<TopBar :is-in-call="true"
-					:is-sidebar="true" />
-				<CallView :token="token" :is-sidebar="true" />
-				<ChatView />
+				<TopBar is-in-call is-sidebar />
+				<CallView :token="token" is-sidebar />
+				<ChatView is-sidebar />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>
