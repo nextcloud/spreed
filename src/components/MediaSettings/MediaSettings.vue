@@ -719,8 +719,8 @@ export default {
 
 	&__preview > &__preview-mirror {
 		position: absolute;
-		top: var(--default-grid-baseline);
-		right: var(--default-grid-baseline);
+		top: calc(var(--default-grid-baseline) * 2);
+		right: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__toggles {
