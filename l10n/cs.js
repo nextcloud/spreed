@@ -139,6 +139,7 @@ OC.L10N.register(
     "An administrator removed {user}" : "Správce odebral {user}",
     "{actor} invited {federated_user}" : "{actor} pozval(a) {federated_user}",
     "You invited {federated_user}" : "Pozvali jste {federated_user}",
+    "An administrator invited you" : "Správce vás pozval",
     "An administrator invited {federated_user}" : "Správce pozval {federated_user}",
     "{federated_user} accepted the invitation" : "{federated_user} přijal pozvání",
     "{actor} removed {federated_user}" : "{actor} odebral(a) {federated_user}",

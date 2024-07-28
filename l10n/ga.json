@@ -778,6 +778,7 @@
     "Error: Server responded with: {error}" : "Earráid: D'fhreagair an freastalaí le: {error}",
     "Error: Unknown error occurred" : "Earráid: Tharla earráid anaithnid",
     "Recording backend" : "Inneall taifeadta",
+    "Recording backend configuration is only possible with a high-performance backend." : "Ní féidir cumraíocht inneall a thaifeadadh ach le hinnill ardfheidhmíochta.",
     "Add a new recording backend server" : "Cuir freastalaí inneall taifeadta nua leis",
     "Shared secret" : "Rún comhroinnte",
     "Recording consent" : "Toiliú taifeadta",
