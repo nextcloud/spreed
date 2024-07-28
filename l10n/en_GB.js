@@ -780,6 +780,7 @@ OC.L10N.register(
     "Error: Server responded with: {error}" : "Error: Server responded with: {error}",
     "Error: Unknown error occurred" : "Error: Unknown error occurred",
     "Recording backend" : "Recording backend",
+    "Recording backend configuration is only possible with a high-performance backend." : "Recording backend configuration is only possible with a high-performance backend.",
     "Add a new recording backend server" : "Add a new recording backend server",
     "Shared secret" : "Shared secret",
     "Recording consent" : "Recording consent",
