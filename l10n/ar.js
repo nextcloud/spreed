@@ -780,6 +780,7 @@ OC.L10N.register(
     "Error: Server responded with: {error}" : "خطأ: الخادم اجاب بـ: {error}",
     "Error: Unknown error occurred" : "خطأ: غير معروف",
     "Recording backend" : "خلفية التسجيل",
+    "Recording backend configuration is only possible with a high-performance backend." : "لا يمكن تسجيل تكوين الواجهة الخلفية إلا من خلال واجهة خلفية عالية الأداء.",
     "Add a new recording backend server" : "أضِف خادوماً جديداً لخلفية التسجيل recording backend",
     "Shared secret" : "السر المشترك",
     "Recording consent" : "الإذن بالتسجيل",
