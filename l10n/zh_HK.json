@@ -778,6 +778,7 @@
     "Error: Server responded with: {error}" : "錯誤：伺服器回應：{error}",
     "Error: Unknown error occurred" : "錯誤：發生不詳錯誤",
     "Recording backend" : "記録後端系統中",
+    "Recording backend configuration is only possible with a high-performance backend." : "只有使用高性能後端才能配置錄製後端。",
     "Add a new recording backend server" : "添加新後端系統記録伺服器",
     "Shared secret" : "分享了密碼",
     "Recording consent" : "錄製同意",

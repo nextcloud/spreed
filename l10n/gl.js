@@ -780,6 +780,7 @@ OC.L10N.register(
     "Error: Server responded with: {error}" : "Erro: o servidor respondeu con: {error}",
     "Error: Unknown error occurred" : "Erro: produciuse un erro descoñecido",
     "Recording backend" : "Infraestrutura de gravación",
+    "Recording backend configuration is only possible with a high-performance backend." : "A configuración da infraestrutura de gravación só é posíbel cunha infraestrutura de alto rendemento.",
     "Add a new recording backend server" : "Engadir un novo servidor de infraestrutura de gravación",
     "Shared secret" : "Segredo compartido",
     "Recording consent" : "Consentimento de gravación",
