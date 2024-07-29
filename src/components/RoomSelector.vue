@@ -4,12 +4,12 @@
 -->
 
 <template>
-	<NcModal size="small" :container="container" @close="close">
+	<NcDialog :name="dialogTitle"
+		:open="open"
+		:container="container"
+		close-on-click-outside
+		@close="close">
 		<div class="selector">
-			<!-- Heading, search field -->
-			<h2 class="selector__heading">
-				{{ dialogTitle }}
-			</h2>
 			<p v-if="dialogSubtitle" class="selector__subtitle">
 				{{ dialogSubtitle }}
 			</p>
@@ -26,24 +26,23 @@
 			<ConversationsSearchListVirtual v-if="loading || availableRooms.length > 0"
 				:conversations="availableRooms"
 				:loading="loading"
-				class="selector__list"
 				@select="onSelect" />
 			<NcEmptyContent v-else :name="noMatchFoundTitle" :description="noMatchFoundSubtitle">
 				<template #icon>
 					<MessageOutline :size="64" />
 				</template>
 			</NcEmptyContent>
+		</div>
 
-			<!-- Actions -->
+		<template #actions>
 			<NcButton v-if="!loading && availableRooms.length > 0"
-				class="selector__action"
 				type="primary"
 				:disabled="!selectedRoom"
 				@click="onSubmit">
 				{{ t('spreed', 'Select conversation') }}
 			</NcButton>
-		</div>
-	</NcModal>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -55,8 +54,8 @@ import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
@@ -72,7 +71,7 @@ export default {
 		ConversationsSearchListVirtual,
 		NcButton,
 		NcEmptyContent,
-		NcModal,
+		NcDialog,
 		NcTextField,
 		// Icons
 		Magnify,
@@ -80,6 +79,11 @@ export default {
 	},
 
 	props: {
+		open: {
+			type: Boolean,
+			default: false,
+		},
+
 		container: {
 			type: String,
 			default: undefined,
@@ -120,7 +124,7 @@ export default {
 		},
 	},
 
-	emits: ['close', 'select'],
+	emits: ['close', 'select', 'update:open'],
 
 	setup() {
 		const selectedRoom = ref(null)
@@ -199,8 +203,10 @@ export default {
 		close() {
 			if (this.isPlugin) {
 				this.$root.$emit('close')
+				this.$root.$emit('update:open', false)
 			} else {
 				this.$emit('close')
+				this.$emit('update:open', false)
 			}
 		},
 
@@ -231,32 +237,17 @@ export default {
 }
 
 .selector {
-	width: 100%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	padding: 16px;
-
-	&__heading {
-		margin-bottom: 4px;
-	}
 
 	&__subtitle {
 		color: var(--color-text-maxcontrast);
-		margin-bottom: 8px;
+		margin-bottom: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__search {
-		margin-bottom: 10px;
-	}
-
-	&__list {
-		height: 100%;
-	}
-
-	&__action {
-		flex-shrink: 0;
-		margin-left: auto;
+		margin-bottom: calc(var(--default-grid-baseline) * 2);
 	}
 }
 </style>

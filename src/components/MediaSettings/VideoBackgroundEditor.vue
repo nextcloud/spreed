@@ -288,7 +288,7 @@ export default {
 	&__element {
 		border: none;
 		margin: 0 !important;
-		border-radius: calc(var(--border-radius-large) * 1.5);
+		border-radius: var(--border-radius-large);
 		height: calc(var(--default-grid-baseline) * 16);
 		display: flex;
 		flex-direction: column;

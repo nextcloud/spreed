@@ -7,7 +7,8 @@
 	<div class="message-forwarder">
 		<!-- First step of the flow: selection of the room to which forward the
 		message to -->
-		<RoomSelector v-if="!showForwardedConfirmation"
+		<RoomSelector v-if="open"
+			:open.sync="open"
 			:container="container"
 			show-postable-only
 			:dialog-title="dialogTitle"
@@ -94,6 +95,10 @@ export default {
 	},
 
 	computed: {
+		open() {
+			return !this.showForwardedConfirmation
+		},
+
 		container() {
 			return this.$store.getters.getMainContainerSelector()
 		},

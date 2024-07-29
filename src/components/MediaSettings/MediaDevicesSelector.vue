@@ -5,14 +5,10 @@
 
 <template>
 	<div class="media-devices-selector">
-		<div class="media-devices-selector__icon">
-			<Microphone v-if="deviceIcon === 'microphone'"
-				title=""
-				:size="16" />
-			<VideoIcon v-if="deviceIcon === 'camera'"
-				title=""
-				:size="16" />
-		</div>
+		<component :is="deviceIcon"
+			class="media-devices-selector__icon"
+			title=""
+			:size="16" />
 
 		<NcSelect v-model="deviceSelectedOption"
 			:input-id="deviceSelectorId"
@@ -90,14 +86,12 @@ export default {
 
 		deviceIcon() {
 			if (this.kind === 'audioinput') {
-				return 'microphone'
+				return Microphone
+			} else if (this.kind === 'videoinput') {
+				return VideoIcon
+			} else {
+				return null
 			}
-
-			if (this.kind === 'videoinput') {
-				return 'camera'
-			}
-
-			return null
 		},
 
 		deviceOptionsAvailable() {
@@ -203,15 +197,14 @@ export default {
 <style lang="scss" scoped>
 .media-devices-selector {
 	display: flex;
-	margin: 16px 0;
+	margin: calc(var(--default-grid-baseline) * 2) 0;
+
 	&__icon {
 		display: flex;
-		justify-content: flex-start;
+		justify-content: center;
 		align-items: center;
-		width: 36px;
-	}
-	&__heading {
-		font-weight: bold;
+		width: var(--default-clickable-area);
+		flex-shrink: 0;
 	}
 
 	:deep(.v-select.select) {
