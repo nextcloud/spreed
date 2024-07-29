@@ -387,6 +387,7 @@ export default {
 	display: grid;
 	grid-template-columns: minmax(100px, 180px) 1fr 1fr minmax(100px, 180px) var(--default-clickable-area) var(--default-clickable-area);
 	grid-column-gap: 4px;
+	align-items: center;
 	margin-bottom: 4px;
 
 	& &__textfield {
