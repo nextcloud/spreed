@@ -57,9 +57,10 @@
 			{{ t('spreed', 'Add a new recording backend server') }}
 		</NcButton>
 
-		<NcTextField class="form__textfield additional-top-margin"
+		<NcPasswordField class="form__textfield additional-top-margin"
 			:value="secret"
 			name="recording_secret"
+			autocomplete="new-password"
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
@@ -101,7 +102,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -122,7 +123,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcNoteCard,
-		NcTextField,
+		NcPasswordField,
 		Plus,
 		RecordingServer,
 		TransitionWrapper,
