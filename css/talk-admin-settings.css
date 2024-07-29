@@ -1,0 +1,49 @@
+/**
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.settings-section-placeholder {
+	--settings-section-placeholder-header-height: 30px;
+	--settings-section-placeholder-line-height: var(--default-line-height);
+	--settings-section-placeholder-padding: 1em;
+	--settings-section-placeholder-image: linear-gradient(90deg, var(--color-placeholder-light) 65%, var(--color-placeholder-dark) 70%, var(--color-placeholder-light) 75%);
+	position: relative;
+	height: calc(2 * (7 * var(--default-grid-baseline)) + var(--settings-section-placeholder-header-height) + 3 * (var(--settings-section-placeholder-line-height) + 1em));
+}
+
+.settings-section-placeholder::before,
+.settings-section-placeholder::after {
+	content: '';
+	position: absolute;
+	inset: calc(7 * var(--default-grid-baseline));
+	background-clip: content-box;
+	background-origin: content-box;
+	animation: loading-animation 3s forwards infinite linear;
+}
+
+.settings-section-placeholder::before {
+	max-width: 300px;
+	background: var(--settings-section-placeholder-image) 0 0 / 200vw var(--settings-section-placeholder-header-height) repeat-x content-box;
+}
+
+.settings-section-placeholder::after {
+	max-width: 900px;
+	background: 
+		var(--settings-section-placeholder-image) 0 calc(var(--settings-section-placeholder-header-height) + 1em + 0 * (var(--settings-section-placeholder-line-height) + 1em)) / 200vw var(--settings-section-placeholder-line-height) repeat-x content-box,
+		var(--settings-section-placeholder-image) 0 calc(var(--settings-section-placeholder-header-height) + 1em + 1 * (var(--settings-section-placeholder-line-height) + 1em)) / 200vw var(--settings-section-placeholder-line-height) repeat-x content-box,
+		var(--settings-section-placeholder-image) 0 calc(var(--settings-section-placeholder-header-height) + 1em + 2 * (var(--settings-section-placeholder-line-height) + 1em)) / 200vw var(--settings-section-placeholder-line-height) repeat-x content-box;
+}
+
+.settings-section-placeholder + .settings-section-placeholder {
+	border-top: 1px solid var(--color-border);
+}
+
+@keyframes loading-animation {
+	0% {
+		background-position-x: 0;
+	}
+	100% {
+		background-position-x: 140vw;
+	}
+}

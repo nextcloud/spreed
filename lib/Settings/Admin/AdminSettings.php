@@ -62,6 +62,7 @@ class AdminSettings implements ISettings {
 
 
 		Util::addScript('spreed', 'talk-admin-settings');
+		Util::addStyle('spreed', 'talk-admin-settings');
 
 		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
 	}
