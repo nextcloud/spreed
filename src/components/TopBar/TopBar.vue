@@ -17,30 +17,14 @@
 		<!-- conversation header -->
 		<a role="button"
 			class="conversation-header"
+			:class="{ 'conversation-header--offline': isPeerInactive }"
 			@click="openConversationSettings">
-			<div class="conversation-header__text"
-				:class="{'conversation-header__text--offline': isPeerInactive}">
-				<p class="title">
-					{{ conversation.displayName }}
-				</p>
-				<p v-if="showUserStatusAsDescription"
-					class="description"
-					:class="{'description__in-chat' : !isInCall }">
-					{{ statusMessage }}
-				</p>
-				<template v-if="conversation.description">
-					<p v-tooltip.bottom="{
-							content: renderedDescription,
-							delay: { show: 500, hide: 500 },
-							autoHide: false,
-							html: true,
-						}"
-						class="description"
-						:class="{'description__in-chat' : !isInCall }">
-						{{ conversation.description }}
-					</p>
-				</template>
-			</div>
+			<span class="conversation-header__name">
+				{{ conversation.displayName }}
+			</span>
+			<span v-if="showUserStatus" class="conversation-header__status">
+				{{ statusMessage }}
+			</span>
 		</a>
 
 		<!-- Call time -->
@@ -190,16 +174,12 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		showUserStatusAsDescription() {
+		showUserStatus() {
 			return this.isOneToOneConversation && this.statusMessage
 		},
 
 		statusMessage() {
 			return getStatusMessage(this.conversation)
-		},
-
-		renderedDescription() {
-			return this.renderContent(this.conversation.description)
 		},
 
 		/**
@@ -332,38 +312,31 @@ export default {
 .conversation-header {
 	position: relative;
 	display: flex;
+	margin: 0 calc(2 * var(--default-grid-baseline));
 	overflow-x: hidden;
 	overflow-y: clip;
 	white-space: nowrap;
-	width: 0;
+	align-self: center;
 	flex-grow: 1;
+	text-overflow: ellipsis;
+	line-height: var(--default-line-height);
 	cursor: pointer;
-	&__text {
-		display: flex;
-		flex-direction:column;
-		flex-grow: 1;
-		margin-left: 8px;
-		justify-content: center;
-		width: 100%;
-		overflow: hidden;
-		min-height: var(--default-clickable-area);
-		line-height: calc(var(--default-clickable-area) / 2);
-		&--offline {
-			color: var(--color-text-maxcontrast);
-		}
+
+	&--offline {
+		color: var(--color-text-maxcontrast);
 	}
-	.title {
+
+	&__name {
+		flex-shrink: 0;
+		padding-inline: var(--default-grid-baseline);
 		font-weight: bold;
 		overflow: hidden;
-		text-overflow: ellipsis;
 	}
-	.description {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: fit-content;
-		&__in-chat {
-			color: var(--color-text-maxcontrast);
-		}
+
+	&__status {
+		padding-inline: var(--default-grid-baseline);
+		border-left: 1px solid var(--color-border-maxcontrast);
+		color: var(--color-text-maxcontrast);
 	}
 }
 
