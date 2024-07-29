@@ -12,6 +12,7 @@
 		:class="'active-tab-' + activeTab"
 		:toggle-classes="{ 'chat-button-sidebar-toggle': isInCall }"
 		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"
+		force-tabs
 		@update:open="handleUpdateOpen"
 		@update:active="handleUpdateActive"
 		@closed="handleClosed"
@@ -27,6 +28,12 @@
 			</NcCounterBubble>
 		</template>
 		<template #description>
+			<NcRichText v-if="conversation.description"
+				class="rich-text-description"
+				:text="conversation.description"
+				dir="auto"
+				autolink
+				use-extended-markdown />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
 		<NcAppSidebarTab v-if="isInCall"
@@ -119,6 +126,7 @@ import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import LobbyStatus from './LobbyStatus.vue'
@@ -142,6 +150,7 @@ export default {
 		NcAppSidebarTab,
 		NcButton,
 		NcCounterBubble,
+		NcRichText,
 		ParticipantsTab,
 		SetGuestUsername,
 		SharedItemsTab,
@@ -450,7 +459,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+@import '../../assets/markdown';
 /* Override style set in server for "#app-sidebar" to match the style set in
  * nextcloud-vue for ".app-sidebar". */
 #app-sidebar {
@@ -483,6 +492,14 @@ export default {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;
 	height: 100%;
+}
+
+:deep(.app-sidebar-header__description) {
+	.rich-text-description {
+		width: 100%;
+		text-align: start;
+		@include markdown;
+	}
 }
 
 .chat-button-unread-messages-counter {
