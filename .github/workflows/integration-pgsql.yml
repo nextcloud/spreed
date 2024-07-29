@@ -54,7 +54,7 @@ jobs:
         php-versions: ['8.2']
         server-versions: ['stable27']
         guests-versions: ['stable2.5']
-        call-summary-bot-versions: ['main']
+        call-summary-bot-versions: ['stable27']
         notifications-versions: ['stable27']
 
     services:
