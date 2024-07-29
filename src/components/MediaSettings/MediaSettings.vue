@@ -107,7 +107,12 @@
 					:device-id="videoInputId"
 					@refresh="updateDevices"
 					@update:deviceId="handleVideoInputIdChange" />
-				<MediaDevicesSpeakerTest />
+				<MediaDevicesSelector kind="audiooutput"
+					:devices="devices"
+					:device-id="audioOutputId"
+					@refresh="updateDevices"
+					@update:deviceId="handleAudioOutputIdChange" />
+				<MediaDevicesSpeakerTest :device-id="audioOutputId" />
 			</div>
 
 			<!-- Background selection -->
@@ -326,6 +331,7 @@ export default {
 			isRecordingFromStart: false,
 			isPublicShareAuthSidebar: false,
 			isMirrored: false,
+			audioOutputId: null,
 		}
 	},
 
@@ -691,6 +697,10 @@ export default {
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
+		},
+
+		handleAudioOutputIdChange(audioOutputId) {
+			this.audioOutputId = audioOutputId
 		},
 	},
 }

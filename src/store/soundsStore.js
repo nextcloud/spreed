@@ -17,6 +17,7 @@ const state = {
 	joinAudioObject: null,
 	leaveAudioObject: null,
 	waitAudioObject: null,
+	waitAudioObjectSinkId: null,
 }
 
 const getters = {
@@ -72,6 +73,7 @@ const mutations = {
 	 */
 	setWaitAudioObject(state, audioObject) {
 		state.waitAudioObject = audioObject
+		state.waitAudioObjectSinkId = audioObject.sinkId
 	},
 
 	/**
@@ -171,14 +173,19 @@ const actions = {
 	 * Plays the wait audio file with a volume of 0.5
 	 *
 	 * @param {object} context default store context
+	 * @param {string} deviceId id of audioOutput device to play sound via
 	 */
-	playWaitAudio(context) {
+	async playWaitAudio(context, deviceId) {
 		// Make sure the audio objects are really created before playing it
-		context.dispatch('createAudioObjects')
+		await context.dispatch('createAudioObjects')
 
 		const audio = context.state.waitAudioObject
 		audio.load()
 		audio.volume = 0.5
+
+		if (deviceId) {
+			await audio.setSinkId(deviceId)
+		}
 		audio.play()
 
 		return audio
@@ -195,6 +202,7 @@ const actions = {
 
 		const audio = context.state.waitAudioObject
 		audio.pause()
+		audio.setSinkId(context.state.waitAudioObjectSinkId)
 	},
 
 	/**

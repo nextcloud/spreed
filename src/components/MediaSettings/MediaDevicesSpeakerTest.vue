@@ -36,6 +36,13 @@ export default {
 		VolumeHighIcon,
 	},
 
+	props: {
+		deviceId: {
+			type: String,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
 			isPlayingTestSound: false,
@@ -69,7 +76,7 @@ export default {
 				return
 			}
 			this.isPlayingTestSound = true
-			this.$store.dispatch('playWaitAudio').then((response) => {
+			this.$store.dispatch('playWaitAudio', this.deviceId).then((response) => {
 				response.addEventListener('ended', () => {
 					this.isPlayingTestSound = false
 				})
