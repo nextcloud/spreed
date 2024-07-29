@@ -302,6 +302,11 @@ export default {
 		&--selected {
 			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary-element);
 		}
+
+		&:focus-visible {
+			// Do not overflow container
+			outline-offset: -2px; // inline with server's global focus outline
+		}
 	}
 }
 

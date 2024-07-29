@@ -74,46 +74,28 @@
 				</div>
 			</div>
 
-			<!-- Tabs -->
-			<div class="media-settings__call-preferences">
-				<NcButton :type="showDeviceSelection ? 'secondary' : 'tertiary'"
-					wide
-					@click="toggleTab('devices')">
-					<template #icon>
-						<Cog :size="20" />
-					</template>
-					{{ t('spreed', 'Devices') }}
-				</NcButton>
-				<NcButton v-if="isVirtualBackgroundAvailable"
-					:type="showBackgroundEditor ? 'secondary' : 'tertiary'"
-					wide
-					@click="toggleTab('backgrounds')">
-					<template #icon>
-						<Creation :size="20" />
-					</template>
-					{{ t('spreed', 'Backgrounds') }}
-				</NcButton>
-			</div>
+			<!-- Tab panels -->
+			<MediaSettingsTabs :active.sync="tabContent" :tabs="tabs">
+				<template #tab-panel:devices>
+					<MediaDevicesSelector kind="audioinput"
+						:devices="devices"
+						:device-id="audioInputId"
+						@refresh="updateDevices"
+						@update:deviceId="handleAudioInputIdChange" />
+					<MediaDevicesSelector kind="videoinput"
+						:devices="devices"
+						:device-id="videoInputId"
+						@refresh="updateDevices"
+						@update:deviceId="handleVideoInputIdChange" />
+					<MediaDevicesSpeakerTest />
+				</template>
 
-			<!-- Device selection -->
-			<div v-if="showDeviceSelection" class="media-settings__device-selection">
-				<MediaDevicesSelector kind="audioinput"
-					:devices="devices"
-					:device-id="audioInputId"
-					@refresh="updateDevices"
-					@update:deviceId="handleAudioInputIdChange" />
-				<MediaDevicesSelector kind="videoinput"
-					:devices="devices"
-					:device-id="videoInputId"
-					@refresh="updateDevices"
-					@update:deviceId="handleVideoInputIdChange" />
-				<MediaDevicesSpeakerTest />
-			</div>
-
-			<!-- Background selection -->
-			<VideoBackgroundEditor v-if="showBackgroundEditor"
-				:token="token"
-				@update-background="handleUpdateVirtualBackground" />
+				<template #tab-panel:backgrounds>
+					<VideoBackgroundEditor class="media-settings__tab"
+						:token="token"
+						@update-background="handleUpdateVirtualBackground" />
+				</template>
+			</MediaSettingsTabs>
 
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch v-if="!isPublicShareAuthSidebar"
@@ -192,7 +174,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed, markRaw, ref } from 'vue'
 
 import Bell from 'vue-material-design-icons/Bell.vue'
 import BellOff from 'vue-material-design-icons/BellOff.vue'
@@ -215,6 +197,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
+import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
@@ -242,8 +225,6 @@ export default {
 		Bell,
 		BellOff,
 		CallButton,
-		Cog,
-		Creation,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -252,6 +233,7 @@ export default {
 		NcNoteCard,
 		MediaDevicesSelector,
 		MediaDevicesSpeakerTest,
+		MediaSettingsTabs,
 		ReflectHorizontal,
 		VideoBackground,
 		VideoIcon,
@@ -290,6 +272,20 @@ export default {
 			virtualBackground,
 		} = useDevices(video, false)
 
+		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value.isAvailable())
+
+		const devicesTab = {
+			id: 'devices',
+			label: t('spreed', 'Devices'),
+			icon: markRaw(Cog),
+		}
+		const backgroundsTab = {
+			id: 'backgrounds',
+			label: t('spreed', 'Backgrounds'),
+			icon: markRaw(Creation),
+		}
+		const tabs = computed(() => isVirtualBackgroundAvailable.value ? [devicesTab, backgroundsTab] : [devicesTab])
+
 		return {
 			AVATAR,
 			isInCall,
@@ -310,13 +306,14 @@ export default {
 			stopDevices,
 			virtualBackground,
 			model: localMediaModel,
+			tabs,
 		}
 	},
 
 	data() {
 		return {
 			modal: false,
-			tabContent: 'none',
+			tabContent: undefined,
 			audioOn: undefined,
 			videoOn: undefined,
 			silentCall: false,
@@ -428,18 +425,6 @@ export default {
 			return !(this.hasCall && !this.isInLobby) && !this.isPublicShareAuthSidebar
 		},
 
-		showDeviceSelection() {
-			return this.tabContent === 'devices'
-		},
-
-		showBackgroundEditor() {
-			return this.tabContent === 'backgrounds'
-		},
-
-		isVirtualBackgroundAvailable() {
-			return this.virtualBackground.isAvailable()
-		},
-
 		showUpdateChangesButton() {
 			return this.updatedBackground || this.audioDeviceStateChanged
 				|| this.videoDeviceStateChanged
@@ -471,13 +456,13 @@ export default {
 		},
 
 		audioInputId(audioInputId) {
-			if (this.showDeviceSelection && audioInputId && !this.audioOn) {
+			if (this.tabContent === 'devices' && audioInputId && !this.audioOn) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
-			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
+			if (this.tabContent === 'devices' && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
 		},
@@ -667,14 +652,6 @@ export default {
 			}
 		},
 
-		toggleTab(tab) {
-			if (this.tabContent !== tab) {
-				this.tabContent = tab
-			} else {
-				this.tabContent = 'none'
-			}
-		},
-
 		setShowMediaSettings(newValue) {
 			this.settingsStore.setShowMediaSettings(this.token, newValue)
 		},
@@ -730,18 +707,6 @@ export default {
 		background: var(--color-main-background);
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
-	}
-
-	&__device-selection {
-		width: 100%;
-	}
-
-	&__call-preferences {
-		height: var(--default-clickable-area);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: calc(var(--default-grid-baseline) * 2);
 	}
 
 	&__call-buttons {
