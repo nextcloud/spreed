@@ -27,7 +27,7 @@
 			fill-color="#E9322D" />
 
 		<NcButton v-show="!loading"
-			type="tertiary-no-background"
+			type="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
@@ -111,6 +111,7 @@ export default {
 	display: flex;
 	align-items: center;
 	margin-bottom: calc(var(--default-grid-baseline) * 2);
+	gap: var(--default-grid-baseline);
 
 	&__wrapper {
 		display: flex;

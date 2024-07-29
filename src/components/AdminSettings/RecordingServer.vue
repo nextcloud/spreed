@@ -22,7 +22,7 @@
 		</NcCheckboxRadioSwitch>
 
 		<NcButton v-show="!loading"
-			type="tertiary-no-background"
+			type="tertiary"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
