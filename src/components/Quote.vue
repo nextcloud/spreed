@@ -25,7 +25,8 @@ components.
 </docs>
 
 <template>
-	<router-link :to="{ hash, params: { skipLeaveWarning: true } }"
+	<component :is="component.tag"
+		:to="component.link"
 		class="quote"
 		:class="{'quote-own-message': isOwnMessageQuoted}"
 		@click.native="handleQuoteClick">
@@ -60,13 +61,14 @@ components.
 		<NcButton v-if="canCancel"
 			class="quote__close"
 			type="tertiary"
+			:title="cancelQuoteLabel"
 			:aria-label="cancelQuoteLabel"
 			@click="handleAbort">
 			<template #icon>
 				<Close :size="20" />
 			</template>
 		</NcButton>
-	</router-link>
+	</component>
 </template>
 
 <script>
@@ -165,6 +167,12 @@ export default {
 	},
 
 	computed: {
+		component() {
+			return this.canCancel
+				? { tag: 'div', link: undefined }
+				: { tag: 'router-link', link: { hash: this.hash, params: { skipLeaveWarning: true } } }
+		},
+
 		/**
 		 * The message actor display name.
 		 *
@@ -276,6 +284,10 @@ export default {
 		},
 
 		handleQuoteClick() {
+			if (this.canCancel) {
+				return
+			}
+
 			if (this.$route.hash === this.hash) {
 				// Already on this message route, just trigger highlight
 				EventBus.$emit('focus-message', this.id)
