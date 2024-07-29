@@ -4,8 +4,7 @@
 -->
 
 <template>
-	<section id="allowed_groups" class="videocalls section">
-		<h2>{{ t('spreed', 'Limit to groups') }}</h2>
+	<NcSettingsSection id="allowed_groups" :name="t('spreed', 'Limit to groups')">
 		<p class="settings-hint">
 			{{ t('spreed', 'When at least one group is selected, only people of the listed groups can be part of conversations.') }}
 		</p>
@@ -82,7 +81,7 @@
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -95,6 +94,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
@@ -109,6 +109,7 @@ export default {
 	components: {
 		NcButton,
 		NcSelect,
+		NcSettingsSection,
 	},
 
 	data() {

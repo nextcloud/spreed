@@ -4,15 +4,11 @@
 -->
 
 <template>
-	<section id="signaling_server" class="signaling-servers section">
-		<h2>
-			{{ t('spreed', 'High-performance backend') }}
-		</h2>
-
-		<p class="settings-hint">
-			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
-		</p>
-
+	<NcSettingsSection id="signaling_server"
+		class="signaling-servers"
+		:name="t('spreed', 'High-performance backend')"
+		:description="t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.')"
+		doc-url="https://github.com/strukturag/nextcloud-spreed-signaling/">
 		<NcNoteCard v-if="!isCacheConfigured" type="warning">
 			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
 		</NcNoteCard>
@@ -63,7 +59,7 @@
 			:label="t('spreed', 'Shared secret')"
 			label-visible
 			@update:value="updateSecret" />
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -79,6 +75,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -94,6 +91,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcNoteCard,
 		NcPasswordField,
+		NcSettingsSection,
 		Plus,
 		SignalingServer,
 		TransitionWrapper,
