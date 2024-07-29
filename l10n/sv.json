@@ -1464,6 +1464,7 @@
     "Check spelling or use complete words." : "Kontrollera stavningen eller använd fullständiga ord.",
     "Phone numbers" : "Telefonnummer",
     "Number length is not valid" : "Sifferlängden är inte giltig",
+    "Region code is not valid" : "Regionkoden är ogiltig",
     "Number length is too short" : "Sifferlängden är för kort",
     "Number length is too long" : "Sifferlängden är för lång",
     "Number is not valid" : "Numret är inte giltigt",
