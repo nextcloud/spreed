@@ -28,7 +28,7 @@
 					:value.sync="pollOptions[index]"
 					:label="t('spreed', 'Answer {option}', {option: index + 1})" />
 				<NcButton v-if="pollOptions.length > 2"
-					type="tertiary-no-background"
+					type="tertiary"
 					:aria-label="t('spreed', 'Delete poll option')"
 					@click="deleteOption(index)">
 					<template #icon>
@@ -38,7 +38,7 @@
 			</div>
 
 			<!-- Add options -->
-			<NcButton class="poll-editor__add-more" type="tertiary-no-background" @click="addOption">
+			<NcButton class="poll-editor__add-more" type="tertiary" @click="addOption">
 				<template #icon>
 					<Plus />
 				</template>
@@ -181,7 +181,8 @@ export default {
 
 	&__option {
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
 		width: 100%;
 		margin-bottom: calc(var(--default-grid-baseline) * 2);
 	}

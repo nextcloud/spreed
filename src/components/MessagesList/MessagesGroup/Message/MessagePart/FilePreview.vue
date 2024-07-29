@@ -588,6 +588,7 @@ export default {
 	.image-container {
 		position: relative;
 		display: inline-block;
+		width: 100%;
 		height: 100%;
 
 		&.playable {

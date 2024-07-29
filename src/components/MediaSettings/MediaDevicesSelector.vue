@@ -5,14 +5,10 @@
 
 <template>
 	<div class="media-devices-selector">
-		<div class="media-devices-selector__icon">
-			<Microphone v-if="deviceIcon === 'microphone'"
-				title=""
-				:size="16" />
-			<VideoIcon v-if="deviceIcon === 'camera'"
-				title=""
-				:size="16" />
-		</div>
+		<component :is="deviceIcon"
+			class="media-devices-selector__icon"
+			title=""
+			:size="16" />
 
 		<NcSelect v-model="deviceSelectedOption"
 			:input-id="deviceSelectorId"
@@ -23,7 +19,7 @@
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
 
-		<NcButton type="tertiary-no-background"
+		<NcButton type="tertiary"
 			:title="t('spreed', 'Refresh devices list')"
 			:aria-lebel="t('spreed', 'Refresh devices list')"
 			@click="$emit('refresh')">
@@ -89,15 +85,11 @@ export default {
 		},
 
 		deviceIcon() {
-			if (this.kind === 'audioinput') {
-				return 'microphone'
+			switch (this.kind) {
+			case 'audioinput': return Microphone
+			case 'videoinput': return VideoIcon
+			default: return null
 			}
-
-			if (this.kind === 'videoinput') {
-				return 'camera'
-			}
-
-			return null
 		},
 
 		deviceOptionsAvailable() {
@@ -203,15 +195,15 @@ export default {
 <style lang="scss" scoped>
 .media-devices-selector {
 	display: flex;
-	margin: 16px 0;
+	gap: var(--default-grid-baseline);
+	margin: calc(3 * var(--default-grid-baseline)) 0;
+
 	&__icon {
 		display: flex;
-		justify-content: flex-start;
+		justify-content: center;
 		align-items: center;
-		width: 36px;
-	}
-	&__heading {
-		font-weight: bold;
+		width: var(--default-clickable-area);
+		flex-shrink: 0;
 	}
 
 	:deep(.v-select.select) {

@@ -274,6 +274,7 @@ export const AVATAR = {
 		EXTRA_SMALL: 22,
 		SMALL: 32,
 		DEFAULT: 44,
+		TWO_LINES: 48, // 2 * var(--default-line-height)
 		MEDIUM: 64,
 		LARGE: 128,
 		EXTRA_LARGE: 180,
