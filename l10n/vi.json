@@ -709,10 +709,6 @@
     "Please use a different browser like Firefox or Chrome" : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome",
     "Error while accessing microphone & camera" : "Lỗi khi truy cập micrô và máy ảnh",
     "The password is wrong. Try again." : "Sai mật khẩu. Thử lại.",
-    "TURN server" : "Máy chủ TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia đằng sau tường lửa.",
-    "Signaling servers" : "Máy chủ báo hiệu",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ.",
     "%s Talk on your mobile devices" : "%sNói chuyện trên thiết bị di động của bạn ",
     "Join conversations at any time, anywhere, on any device." : "Tham gia các cuộc trò chuyện mọi lúc, mọi nơi, trên mọi thiết bị.",
     "Android app" : "Ứng dụng Android",
@@ -751,6 +747,10 @@
     "Start a conversation" : "Bắt đầu một cuộc Đàm thoại",
     "Mention room" : "Nhắc đến phòng",
     "Post to conversation" : "Đăng lên cuộc trò chuyện",
-    "Specify commands the users can use in chats" : "Chỉ định các lệnh mà người dùng có thể sử dụng trong các cuộc trò chuyện"
+    "Specify commands the users can use in chats" : "Chỉ định các lệnh mà người dùng có thể sử dụng trong các cuộc trò chuyện",
+    "TURN server" : "Máy chủ TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia đằng sau tường lửa.",
+    "Signaling servers" : "Máy chủ báo hiệu",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

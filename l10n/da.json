@@ -548,10 +548,6 @@
     "Please use a different browser like Firefox or Chrome" : "Benyt venligst en anden browser f.eks. Firefox eller Chrome",
     "Error while accessing microphone & camera" : "Der opstod en fejl da vi prøvede at få adgang til din mikrofon og kamera",
     "The password is wrong. Try again." : "Passwordet er forkert. Prøv igen.",
-    "TURN server" : "TURN server",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveren bliver brugt til at proxy trafikken fra deltagerne bagved en firewall.",
-    "Signaling servers" : "Signaleringsservere",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver kan eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver.",
     "%s Talk on your mobile devices" : "%s Talk på dine mobilenheder",
     "Join conversations at any time, anywhere, on any device." : "Deltag i samtaler når som helst, hvor som helst og på en hvilken som helst enhed.",
     "Android app" : "Android app",
@@ -585,6 +581,10 @@
     "Open sidebar" : "Åbn sidebar",
     "Start a conversation" : "Start en samtale",
     "Mention room" : "Nævn rum",
-    "Specify commands the users can use in chats" : "Definer kommandoer brugerne kan bruge i chats"
+    "Specify commands the users can use in chats" : "Definer kommandoer brugerne kan bruge i chats",
+    "TURN server" : "TURN server",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveren bliver brugt til at proxy trafikken fra deltagerne bagved en firewall.",
+    "Signaling servers" : "Signaleringsservere",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signaleringsserver kan eventuelt bruges i større installationer. Efterlad tom for at bruge intern signaleringsserver."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -555,10 +555,6 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Veldu einhvern annan vafra eins og Firefox eða Chrome",
     "Error while accessing microphone & camera" : "Villa kom upp þegar reynt var að opna hljóðnema og myndavél",
     "The password is wrong. Try again." : "Lykilorðið er rangt. Reyndu aftur.",
-    "TURN server" : "TURN-þjónn",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
-    "Signaling servers" : "Merkjasendingaþjónar",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn.",
     "%s Talk on your mobile devices" : "%s Talaðu á snjalltækjunum þínum",
     "Android app" : "Android-forrit",
     "iOS app" : "iOS-forrit",
@@ -575,6 +571,10 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
     "Open sidebar" : "Opna hliðarspjald",
     "Start a conversation" : "Hefja samtal",
-    "Specify commands the users can use in chats" : "Tilgreindu hvaða skipanir notendur geta notað í spjalli"
+    "Specify commands the users can use in chats" : "Tilgreindu hvaða skipanir notendur geta notað í spjalli",
+    "TURN server" : "TURN-þjónn",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
+    "Signaling servers" : "Merkjasendingaþjónar",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn."
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

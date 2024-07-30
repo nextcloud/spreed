@@ -250,10 +250,6 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Lūdzu, izmantojiet citu pārlūkprogrammu, piemēram Firefox vai Chrome",
     "Error while accessing microphone & camera" : "Kļūda, piekļūstot mikrofonam un kamerai",
     "The password is wrong. Try again." : "Nepareiza parole. Mēģiniet vēlreiz.",
-    "TURN server" : "TURN serveris",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
-    "Signaling servers" : "Signalizēšanas serveri",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ārējo signalizēšanas serveri var pēc izvēles izmantot lielākām instalācijām. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri.",
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
@@ -269,6 +265,10 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
     "Open sidebar" : "Atvērt sānjoslu",
     "Start a conversation" : "Sākt sarunu",
-    "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā"
+    "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā",
+    "TURN server" : "TURN serveris",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN serveris tiek izmantots, lai bloķētu dalībnieku datplūsmu aiz ugunsmūra.",
+    "Signaling servers" : "Signalizēšanas serveri",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ārējo signalizēšanas serveri var pēc izvēles izmantot lielākām instalācijām. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

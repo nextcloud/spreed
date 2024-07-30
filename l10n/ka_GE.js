@@ -144,11 +144,11 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "გთხოვთ გამოიყენოთ სხვა ბრაუზერი, Firefox-ი ან Chrome-ი",
     "Error while accessing microphone & camera" : "მიკროფონზე და კამერაზე წვდომისას წარმოიშვა შეცდომა",
     "The password is wrong. Try again." : "პაროლი არასწორია. სცადეთ ახლიდან.",
-    "TURN server" : "TURN სერვერი",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
-    "Circles" : "წრეები"
+    "Circles" : "წრეები",
+    "TURN server" : "TURN სერვერი",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი."
 },
 "nplurals=2; plural=(n!=1);");
