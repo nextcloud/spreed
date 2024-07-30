@@ -82,7 +82,7 @@
 			:model="localMediaModel"
 			@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
-		<CallButton shrink-on-mobile :is-screensharing="!!localMediaModel.attributes.localScreen" />
+		<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
 
 		<!-- Breakout rooms editor -->
 		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
