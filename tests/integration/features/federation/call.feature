@@ -140,8 +140,6 @@ Feature: federation/call
       | federated_users | participant1@{$LOCAL_URL} | 0      |
       | users           | participant2              | 0      |
 
-
-
   Scenario: normal call notification for federated user
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
@@ -160,8 +158,8 @@ Feature: federation/call
     When user "participant1" joins call "room" with 200 (v4)
     Then using server "REMOTE"
     And user "participant2" has the following notifications
-      | app    | object_type | object_id | subject                          |
-      | spreed | call        | room      | A group call has started in room |
+      | app    | object_type | object_id   | subject                          |
+      | spreed | call        | LOCAL::room | A group call has started in room |
 
   Scenario: normal call notification for federated user is cleared when joining
     Given user "participant1" creates room "room" (v4)
@@ -181,9 +179,9 @@ Feature: federation/call
     When user "participant1" joins call "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" has the following notifications
-      | app    | object_type | object_id | subject                          |
-      | spreed | call        | room      | A group call has started in room |
-    When user "participant2" joins call "room" with 200 (v4)
+      | app    | object_type | object_id   | subject                          |
+      | spreed | call        | LOCAL::room | A group call has started in room |
+    When user "participant2" joins call "LOCAL::room" with 200 (v4)
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
 
@@ -206,8 +204,8 @@ Feature: federation/call
     When user "participant1" leaves call "room" with 200 (v4)
     Then using server "REMOTE"
     And user "participant2" has the following notifications
-      | app    | object_type | object_id | subject                         |
-      | spreed | call        | room      | You missed a group call in room |
+      | app    | object_type | object_id   | subject                         |
+      | spreed | call        | LOCAL::room | You missed a group call in room |
 
   Scenario: silent call by federated user does not trigger call notification
     Given user "participant1" creates room "room" (v4)
@@ -222,7 +220,7 @@ Feature: federation/call
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
-    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    And user "participant1" joins room "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" joins room "LOCAL::room" with 200 (v4)
     When user "participant2" joins call "LOCAL::room" with 200 (v4)
@@ -231,7 +229,7 @@ Feature: federation/call
     And user "participant1" has the following notifications
       | app | object_type | object_id | subject |
 
-  Scenario: silent call by federated user does not trigger call notification
+  Scenario: missed silent call by federated user does not trigger call notification
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -244,7 +242,7 @@ Feature: federation/call
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
     And using server "LOCAL"
-    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    And user "participant1" joins room "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" joins room "LOCAL::room" with 200 (v4)
     And user "participant2" joins call "LOCAL::room" with 200 (v4)
