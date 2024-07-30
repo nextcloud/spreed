@@ -587,9 +587,6 @@
     "Please use a different browser like Firefox or Chrome" : "נא להשתמש בדפדפן אחר כגון Firefox או Chrome",
     "Error while accessing microphone & camera" : "אירעה שגיאה בעת גישה למיקרופון ולמצלמה",
     "The password is wrong. Try again." : "הססמה שגויה. נא לנסות שוב.",
-    "TURN server" : "שרת TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "שרת ה־TURN משמש לתיווך התעבורה מהמשתמשים שנמצאים מאחורי חומת אש.",
-    "Signaling servers" : "שרתי איתות",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
     "There are currently no commands available." : "אין פקודות זמינות.",
@@ -610,6 +607,9 @@
     "Add groups or circles" : "הוספת קבוצות או מעגלים",
     "Open sidebar" : "פתיחת סרגל הצד",
     "Start a conversation" : "התחלת דיון",
-    "Mention room" : "אזכור חדר"
+    "Mention room" : "אזכור חדר",
+    "TURN server" : "שרת TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "שרת ה־TURN משמש לתיווך התעבורה מהמשתמשים שנמצאים מאחורי חומת אש.",
+    "Signaling servers" : "שרתי איתות"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"
 }

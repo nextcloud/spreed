@@ -1065,10 +1065,6 @@
     "Please use a different browser like Firefox or Chrome" : "Koristite se drugim preglednikom kao što je Firefox ili Chrome",
     "Error while accessing microphone & camera" : "Došlo je do pogreške pri pristupanju mikrofonu i kameri",
     "The password is wrong. Try again." : "Pogrešna zaporka. Pokušajte ponovno.",
-    "TURN server" : "Poslužitelj TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida.",
-    "Signaling servers" : "Signalni poslužitelji",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Vanjski signalni poslužitelj može se upotrebljavati u većim instancama. Ostavite prazno ako želite upotrebljavati interni signalizacijski poslužitelj.",
     "%s Talk on your mobile devices" : "%s aplikacija Talk na vašim mobilnim uređajima",
     "Join conversations at any time, anywhere, on any device." : "Pridružite se razgovorima u bilo koje vrijeme, bilo gdje, na bilo kojem uređaju.",
     "Android app" : "Aplikacija za Android",
@@ -1116,6 +1112,10 @@
     "Mention room" : "Spomeni sobu",
     "Post to conversation" : "Objavi u razgovoru",
     "Specify commands the users can use in chats" : "Navedite naredbe koje korisnici mogu koristiti pri razmjeni poruka",
+    "TURN server" : "Poslužitelj TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida.",
+    "Signaling servers" : "Signalni poslužitelji",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Vanjski signalni poslužitelj može se upotrebljavati u većim instancama. Ostavite prazno ako želite upotrebljavati interni signalizacijski poslužitelj.",
     "Remove circle and members" : "Ukloni krug i članove"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
 }
