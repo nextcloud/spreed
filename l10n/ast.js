@@ -697,10 +697,10 @@ OC.L10N.register(
     "No camera available" : "Nun hai nenguna cámara disponible",
     "None" : "Nada",
     "Media settings" : "Configuración multimedia",
-    "Devices" : "Preseos",
-    "Backgrounds" : "Fondos",
     "The call is being recorded." : "La llamada ta grabándose",
     "Normal call" : "Llamada normal",
+    "Devices" : "Preseos",
+    "Backgrounds" : "Fondos",
     "Blur" : "Emborrinar",
     "Upload" : "Xunir",
     "Files" : "Ficheros",
@@ -935,7 +935,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC nun ye compatible col restolador",
     "This conversation is password-protected." : "Esta conversación ta protexida con una contraseña.",
     "The password is wrong. Try again." : "La contraseña ye incorreuta. Volvi tentalo.",
-    "TURN server" : "Sirividor TURN",
     "Android app" : "Aplicación p'Android",
     "iOS app" : "Aplicación pa iOS",
     "The command does not exist" : "El comandu nun esiste",
@@ -959,6 +958,7 @@ OC.L10N.register(
     "Groups and circles" : "Grupos y círculos",
     "Open sidebar" : "Abrir la barra llateral",
     "Start a conversation" : "Aniciar una conversación",
+    "TURN server" : "Sirividor TURN",
     "Delete Conversation" : "Desaniciar la conversación"
 },
 "nplurals=2; plural=(n != 1);");

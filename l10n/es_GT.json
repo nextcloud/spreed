@@ -148,11 +148,11 @@
     "Please use a different browser like Firefox or Chrome" : "Por favor usa un navegador diferente como Firefox o Chrome",
     "Error while accessing microphone & camera" : "Se pressentó un error al acceder al micrófono & cámara",
     "The password is wrong. Try again." : "La contraseña está equivoada. Por favor vuelve a intentarlo. ",
-    "TURN server" : "Servidor TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
-    "Circles" : "Círculos"
+    "Circles" : "Círculos",
+    "TURN server" : "Servidor TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. "
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

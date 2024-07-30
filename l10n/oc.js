@@ -1109,9 +1109,6 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Volgatz utilizar un navegador diferent coma Firefox o Chrome",
     "Error while accessing microphone & camera" : "Error pendent l’accès al microfòn e a la camèra",
     "The password is wrong. Try again." : "Lo senhal es incorrècte. Ensajatz tornamai.",
-    "TURN server" : "Servidor TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Lo servidor TURN es utilizat per desviar lo trafic dels participants darrièr un parafuòc.",
-    "Signaling servers" : "Servidors de senhalizacion",
     "%s Talk on your mobile devices" : "%sTalk on vòstres aparelhs mobiles",
     "Join conversations at any time, anywhere, on any device." : "Participatz a las conversacion quand volètz, d’ont volètz, sus tot aparelh.",
     "Android app" : "Aplicacion Android",
@@ -1158,6 +1155,9 @@ OC.L10N.register(
     "Post to conversation" : "Publicar a la conversacion",
     "Share to conversation" : "Partejar dins una conversacion",
     "Specify commands the users can use in chats" : "Indicar las comandas que los utilizaires pòdon utilizar als chats",
+    "TURN server" : "Servidor TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Lo servidor TURN es utilizat per desviar lo trafic dels participants darrièr un parafuòc.",
+    "Signaling servers" : "Servidors de senhalizacion",
     "Delete Conversation" : "Suprimir la conversacion"
 },
 "nplurals=2; plural=(n > 1);");

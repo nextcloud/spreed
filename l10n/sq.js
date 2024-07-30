@@ -264,12 +264,12 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Ju lutem zgjidhni një shfletues tjetër si Firefox apo Chrome",
     "Error while accessing microphone & camera" : "gabim ",
     "The password is wrong. Try again." : "Fjalëkalim i gabuar. Provojeni sërish.",
-    "TURN server" : "Serveri TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
     "Circles" : "Rrethet",
     "Open sidebar" : "Hapni sidebar-in",
-    "Start a conversation" : "Filloni një bisedë"
+    "Start a conversation" : "Filloni një bisedë",
+    "TURN server" : "Serveri TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli."
 },
 "nplurals=2; plural=(n != 1);");

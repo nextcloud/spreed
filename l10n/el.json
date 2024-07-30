@@ -757,8 +757,8 @@
     "No camera available" : "Δεν υπάρχει διαθέσιμη κάμερα",
     "Select camera" : "Επιλογή κάμερας",
     "None" : "Κανένα",
-    "Devices" : "Συσκευές",
     "The call is being recorded." : "Η κλήση καταγράφεται.",
+    "Devices" : "Συσκευές",
     "No audio" : "Χωρίς ήχο",
     "No camera" : "Χωρίς κάμερα",
     "Upload" : "Μεταφόρτωση",
@@ -995,10 +995,6 @@
     "Please use a different browser like Firefox or Chrome" : "Παρακαλούμε χρησιμοποιήστε διαφορετικό φυλλομετρητή όπως ο Firefox ή Chrome",
     "Error while accessing microphone & camera" : "Σφάλμα κατά την πρόσβαση στο μικρόφωνο & την κάμερα",
     "The password is wrong. Try again." : "Το συνθηματικό είναι λανθασμένο. Δοκιμάστε ξανά.",
-    "TURN server" : "Διακομιστής TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Ο διακομιστής TURN χρησιμοποιείται ως ενδιάμεσος για την μεταφορά της κίνησης δεδομένων απο τους συμμετέχοντες έως πίσω από το τοίχος προστασίας.",
-    "Signaling servers" : "Διακομιστές σηματοδότησης",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ένας εξωτερικός διακομιστής σηματοδότησης μπορεί να χρησιμοποιηθεί για μεγάλες εγκαταστάσεις. Αφήστε το κενό για χρήστη εσωτερικού διακομιστή σηματοδότησης.",
     "%s Talk on your mobile devices" : "%s Talk στις κινητές συσκευές σας",
     "Join conversations at any time, anywhere, on any device." : "Συμμετέχετε σε συνομιλίες πάντα και παντού από όλες τις συσκευές.",
     "Android app" : "Εφαρμογή Android",
@@ -1036,6 +1032,10 @@
     "Start a conversation" : "Έναρξη συνομιλίας",
     "Mention room" : "Αναφορά στο δωμάτιο",
     "Specify commands the users can use in chats" : "Καθορίστε τις εντολές που μπορούν να χρησιμοποιήσουν οι χρήστες στις συνομιλίες",
+    "TURN server" : "Διακομιστής TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Ο διακομιστής TURN χρησιμοποιείται ως ενδιάμεσος για την μεταφορά της κίνησης δεδομένων απο τους συμμετέχοντες έως πίσω από το τοίχος προστασίας.",
+    "Signaling servers" : "Διακομιστές σηματοδότησης",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ένας εξωτερικός διακομιστής σηματοδότησης μπορεί να χρησιμοποιηθεί για μεγάλες εγκαταστάσεις. Αφήστε το κενό για χρήστη εσωτερικού διακομιστή σηματοδότησης.",
     "Remove circle and members" : "Αφαίρεση κύκλων και μελών"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
