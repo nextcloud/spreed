@@ -1375,21 +1375,26 @@ class ParticipantService {
 	 * @psalm-return  array<int, int>
 	 */
 	public function getLastCommonReadChatMessageForMultipleRooms(array $roomIds): array {
+		$commonReads = array_fill_keys($roomIds, 0);
+
 		$query = $this->connection->getQueryBuilder();
 		$query->select('room_id')
 			->selectAlias($query->func()->min('last_read_message'), 'last_common_read_message')
 			->from('talk_attendees')
 			->where($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($query->expr()->in('room_id', $query->createNamedParameter($roomIds, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($query->expr()->in('room_id', $query->createParameter('roomIds')))
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)))
 			->groupBy('room_id');
 
-		$commonReads = array_fill_keys($roomIds, 0);
-		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
-			$commonReads[(int) $row['room_id']] = (int) $row['last_common_read_message'];
+		$chunks = array_chunk($roomIds, 1000);
+		foreach ($chunks as $chunk) {
+			$query->setParameter('roomIds', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$result = $query->executeQuery();
+			while ($row = $result->fetch()) {
+				$commonReads[(int) $row['room_id']] = (int) $row['last_common_read_message'];
+			}
+			$result->closeCursor();
 		}
-		$result->closeCursor();
 
 		return $commonReads;
 	}
