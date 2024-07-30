@@ -4,7 +4,10 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar"
+		:class="{ 'top-bar--sidebar': isSidebar}"
+		:style="topBarStyle"
+		:data-theme-dark="isInCall">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -307,7 +310,7 @@ export default {
 	justify-content: flex-end;
 	padding: calc(2 * var(--default-grid-baseline));
 	// Reserve space for the sidebar toggle button
-	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset));
+	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset, 0));
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border);
 
@@ -322,6 +325,10 @@ export default {
 		top: 0;
 		left: 0;
 		background-color: transparent;
+	}
+
+	&--sidebar {
+		padding: calc(2 * var(--default-grid-baseline));
 	}
 }
 
