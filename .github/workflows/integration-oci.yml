@@ -57,7 +57,7 @@ jobs:
         php-versions: ['8.2']
         server-versions: ['stable27']
         guests-versions: ['stable2.5']
-        call-summary-bot-versions: ['main']
+        call-summary-bot-versions: ['stable27']
         notifications-versions: ['stable27']
 
     services:
@@ -128,6 +128,8 @@ jobs:
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, oci8
           coverage: none
           ini-file: development
+          # Temporary workaround for missing pcntl_*
+          ini-values: disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -3799,9 +3799,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function runReminderBackgroundJobs(string $useForce, string $class): void {
 		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=' . $class]);
-		$list = json_decode($this->lastStdOut, true, 512, JSON_THROW_ON_ERROR);
+		$list = json_decode($this->lastStdOut, true);
 
-		Assert::assertNotEmpty($list, 'List of ' . $class . ' should not be empty');
+		Assert::assertNotEmpty($list, 'List of ' . $class . ' should not be empty: ' . "\n" . $this->lastStdOut);
 
 		foreach ($list as $job) {
 			if ($useForce === 'force run') {
