@@ -150,7 +150,13 @@ class CallController extends AEnvironmentAwareController {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
-			return $proxy->joinFederatedCall($this->room, $this->participant, $flags, $silent, $recordingConsent);
+			$response = $proxy->joinFederatedCall($this->room, $this->participant, $flags, $silent, $recordingConsent);
+
+			if ($response->getStatus() === Http::STATUS_OK) {
+				$this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
+			}
+
+			return $response;
 		}
 
 		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
@@ -325,7 +331,13 @@ class CallController extends AEnvironmentAwareController {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
-			return $proxy->updateFederatedCallFlags($this->room, $this->participant, $flags);
+			$response = $proxy->updateFederatedCallFlags($this->room, $this->participant, $flags);
+
+			if ($response->getStatus() === Http::STATUS_OK) {
+				$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
+			}
+
+			return $response;
 		}
 
 		try {
@@ -391,7 +403,13 @@ class CallController extends AEnvironmentAwareController {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
-			return $proxy->leaveFederatedCall($this->room, $this->participant);
+			$response = $proxy->leaveFederatedCall($this->room, $this->participant);
+
+			if ($response->getStatus() === Http::STATUS_OK) {
+				$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
+			}
+
+			return $response;
 		}
 
 		if ($all && $this->participant->hasModeratorPermissions()) {
