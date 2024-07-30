@@ -1028,10 +1028,6 @@
     "Please use a different browser like Firefox or Chrome" : "Imprea un'àteru navigadore, comente Firefox o Chrome",
     "Error while accessing microphone & camera" : "Errore in s'atzessu a micròfonu e fotocàmera",
     "The password is wrong. Try again." : "Sa crae est isballiada. Torra a proare.",
-    "TURN server" : "Serbidore TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN s'impreat pro imbiare su tràficu dae is partetzipantes a secus de unu firewall.",
-    "Signaling servers" : "Serbidores de signalatzione",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Unu serbidore de signalatzione de foras podet èssere impreadu a sèberu pro installatziones prus mannas. Lassa bòidu pro impreare unu serbidore de signalatzione de intro.",
     "%s Talk on your mobile devices" : "%s Talk in is dispositivos mòbiles tuos",
     "Join conversations at any time, anywhere, on any device." : "Intra in una resonada in cada momentu, dae cada parte, in cada dispositivu",
     "Android app" : "Aplicatzione Android",
@@ -1073,6 +1069,10 @@
     "Mention room" : "Mentova s'aposentu",
     "Post to conversation" : "Pùblica in sa resonada",
     "Specify commands the users can use in chats" : "Ispetzìfica is commandos chi is utentes podent impreare in sa tzarrada",
+    "TURN server" : "Serbidore TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN s'impreat pro imbiare su tràficu dae is partetzipantes a secus de unu firewall.",
+    "Signaling servers" : "Serbidores de signalatzione",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Unu serbidore de signalatzione de foras podet èssere impreadu a sèberu pro installatziones prus mannas. Lassa bòidu pro impreare unu serbidore de signalatzione de intro.",
     "Remove circle and members" : "Boga·nche giru e partetzipantes"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

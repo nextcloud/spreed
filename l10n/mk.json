@@ -990,7 +990,6 @@
     "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Детектирани се повеќе неуспешни најавувања од вашата IP адреса. Затоа вашиот следен обид за најавување е одложено за 30 секунди.",
     "This conversation is password-protected." : "Овој разговор е заштитен со лозинка.",
     "The password is wrong. Try again." : "Лозинката е погрешна. Обидите се повторно.",
-    "TURN server" : "TURN сервер",
     "%s Talk on your mobile devices" : "%s Разговор на вашиоте мобилни уреди",
     "Join conversations at any time, anywhere, on any device." : "Придружете се на разговор во секое време, каде и да било, на кој било уред.",
     "Android app" : "Android апликација",
@@ -1037,6 +1036,7 @@
     "Start a conversation" : "Започни разговор",
     "Mention room" : "Спомни соба",
     "Post to conversation" : "Објава во разговор",
-    "Share to conversation" : "Споделено во разговор"
+    "Share to conversation" : "Споделено во разговор",
+    "TURN server" : "TURN сервер"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

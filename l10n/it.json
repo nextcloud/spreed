@@ -874,8 +874,8 @@
     "No camera available" : "Nessuna fotocamera disponibile",
     "Select camera" : "Seleziona fotocamera",
     "None" : "Nessuno",
-    "Devices" : "Dispositivi",
     "Call without notification" : "Chiama senza notifica",
+    "Devices" : "Dispositivi",
     "No audio" : "Nessun audio",
     "No camera" : "Nessuna fotocamera",
     "Blur" : "Sfocatura",
@@ -1176,10 +1176,6 @@
     "Please use a different browser like Firefox or Chrome" : "Utilizza un browser diverso come Firefox o Chrome",
     "Error while accessing microphone & camera" : "Errore durante l'accesso a microfono e fotocamera",
     "The password is wrong. Try again." : "La password è errata. Prova ancora.",
-    "TURN server" : "Server TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Il server TURN è utilizzato come proxy per il traffico generato da partecipanti dietro un firewall.",
-    "Signaling servers" : "Server di segnalazione",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno.",
     "%s Talk on your mobile devices" : "%s Talk sui tuoi dispositivi mobili ",
     "Join conversations at any time, anywhere, on any device." : "Unisciti alle conversazioni in qualsiasi momento, ovunque, su qualsiasi dispositivo.",
     "Android app" : "Applicazione Android",
@@ -1227,6 +1223,10 @@
     "Mention room" : "Menziona la stanza",
     "Post to conversation" : "Pubblica in conversazione",
     "Specify commands the users can use in chats" : "Specifica i comandi che gli utenti possono usare in chat",
+    "TURN server" : "Server TURN",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Il server TURN è utilizzato come proxy per il traffico generato da partecipanti dietro un firewall.",
+    "Signaling servers" : "Server di segnalazione",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno.",
     "Remove circle and members" : "Rimuovi cerchia e membri"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
