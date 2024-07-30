@@ -856,7 +856,7 @@ class RoomService {
 
 		$result = (bool) $update->executeStatement();
 
-		$event = new ActiveSinceModifiedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag);
+		$event = new ActiveSinceModifiedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag, $result);
 		$this->dispatcher->dispatchTyped($event);
 
 		return $result;
@@ -901,14 +901,14 @@ class RoomService {
 			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->isNull('active_since'));
-		$update->executeStatement();
+		$result = (bool) $update->executeStatement();
 
 		$room->setActiveSince($since, $callFlag);
 
-		$event = new ActiveSinceModifiedEvent($room, $since, $oldActiveSince, $callFlag, $oldCallFlag);
+		$event = new ActiveSinceModifiedEvent($room, $since, $oldActiveSince, $callFlag, $oldCallFlag, $result);
 		$this->dispatcher->dispatchTyped($event);
 
-		return true;
+		return $result;
 	}
 
 	public function setLastMessage(Room $room, IComment $message): void {
