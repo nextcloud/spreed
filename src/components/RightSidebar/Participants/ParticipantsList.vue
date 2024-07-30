@@ -4,19 +4,29 @@
 -->
 
 <template>
-	<ul>
-		<Participant v-for="item in items"
-			:key="generateKey(item)"
-			:participant="item"
-			:show-user-status="showUserStatus"
-			@click-participant="handleClickParticipant" />
-		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
+	<ul v-if="!loading">
+		<template v-if="isSearchResult">
+			<ParticipantSelectable v-for="item in items"
+				:key="generateKey(item)"
+				:participant="item"
+				:show-user-status="showUserStatus"
+				@click-participant="handleClickParticipant" />
+		</template>
+		<template v-else>
+			<Participant v-for="item in items"
+				:key="generateKey(item)"
+				:participant="item"
+				:show-user-status="showUserStatus"
+				@click-participant="handleClickParticipant" />
+		</template>
 	</ul>
+	<LoadingPlaceholder v-else type="participants" :count="dummyParticipants" />
 </template>
 
 <script>
 
 import Participant from './Participant.vue'
+import ParticipantSelectable from './ParticipantSelectable.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 
 export default {
@@ -25,6 +35,7 @@ export default {
 	components: {
 		LoadingPlaceholder,
 		Participant,
+		ParticipantSelectable,
 	},
 
 	props: {
@@ -39,15 +50,15 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isSearchResult: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['click'],
 
 	computed: {
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		showUserStatus() {
 			return this.items.length < 100
 		},
@@ -64,15 +75,14 @@ export default {
 		},
 
 		generateKey(participant) {
-			let key = ''
 			if (participant.attendeeId) {
 				// Attendee from participant list
-				key = 'attendee#' + participant.attendeeId
+				return 'attendee#' + participant.attendeeId
 			} else if (participant.source) {
 				// Search result candidate
-				key = 'search#' + participant.source + '#' + participant.id
+				return 'search#' + participant.source + '#' + participant.id
 			}
-			return key
+			return ''
 		},
 	},
 }
