@@ -253,6 +253,7 @@ export default {
 
 		topBarStyle() {
 			return {
+				'--original-color-main-text': window.getComputedStyle(document.body).getPropertyValue('--color-main-text'),
 				'--original-color-main-background': window.getComputedStyle(document.body).getPropertyValue('--color-main-background')
 			}
 		},
@@ -329,6 +330,10 @@ export default {
 
 	&--sidebar {
 		padding: calc(2 * var(--default-grid-baseline));
+
+		.conversation-icon {
+			margin-left: 0;
+		}
 	}
 }
 
@@ -375,6 +380,7 @@ export default {
 }
 
 :deep(.conversation-icon__type) {
+	color: var(--original-color-main-text) !important;
 	border-color: var(--original-color-main-background) !important;
 	background-color: var(--original-color-main-background) !important;
 }
