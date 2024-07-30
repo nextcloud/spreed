@@ -109,6 +109,9 @@
 				<CheckIcon :size="16" />
 			</div>
 		</div>
+
+		<!-- Reactions slot -->
+		<slot v-if="!isDeletedMessage" />
 	</div>
 </template>
 
@@ -450,6 +453,7 @@ export default {
 .message-main {
 	display: grid;
 	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+	grid-row-gap: var(--default-grid-baseline);
 	justify-content: space-between;
 	align-items: flex-start;
 	min-width: 100%;

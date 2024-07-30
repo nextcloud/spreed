@@ -24,15 +24,15 @@
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
-				:read-info="readInfo" />
-
-			<!-- reactions buttons and popover with details -->
-			<Reactions v-if="Object.keys(message.reactions).length"
-				:id="message.id"
-				:token="message.token"
-				:can-react="canReact"
-				:show-controls="isHovered || isFollowUpEmojiPickerOpen"
-				@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
+				:read-info="readInfo">
+				<!-- reactions buttons and popover with details -->
+				<Reactions v-if="Object.keys(message.reactions).length"
+					:id="message.id"
+					:token="message.token"
+					:can-react="canReact"
+					:show-controls="isHovered || isFollowUpEmojiPickerOpen"
+					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
+			</MessageBody>
 		</div>
 
 		<!-- Message actions -->
