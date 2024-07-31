@@ -314,6 +314,8 @@ export type components = {
             readOnly: number;
             /** Format: int64 */
             recordingConsent: number;
+            remoteServer?: string;
+            remoteToken?: string;
             sessionId: string;
             /** Format: int64 */
             sipEnabled: number;
