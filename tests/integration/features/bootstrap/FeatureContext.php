@@ -218,7 +218,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function getOtherRequiredSiblingContexts(BeforeScenarioScope $scope) {
 		$environment = $scope->getEnvironment();
 
-		$this->sharingContext = $environment->getContext("SharingContext");
+		$this->sharingContext = $environment->getContext('SharingContext');
 	}
 
 	/**

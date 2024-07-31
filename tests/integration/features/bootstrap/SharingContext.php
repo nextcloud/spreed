@@ -829,7 +829,7 @@ class SharingContext implements Context {
 	 * @param TableNode $body
 	 */
 	private function sendingTo(string $verb, string $url, ?TableNode $body = null) {
-		$fullUrl = $this->baseUrl . "ocs/v1.php" . $url;
+		$fullUrl = $this->baseUrl . 'ocs/v1.php' . $url;
 		$client = new Client();
 		$options = [];
 		if ($this->currentUser === 'admin') {
@@ -862,7 +862,7 @@ class SharingContext implements Context {
 	 * @param string $body
 	 */
 	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null) {
-		$fullUrl = $this->baseUrl . "remote.php/dav/files" . $url;
+		$fullUrl = $this->baseUrl . 'remote.php/dav/files' . $url;
 		$client = new Client();
 		$options = [];
 		if ($this->currentUser === 'admin') {
@@ -994,7 +994,7 @@ class SharingContext implements Context {
 		}
 
 		if ($field === 'expiration' && !empty($contentExpected)) {
-			$contentExpected = date('Y-m-d', strtotime($contentExpected)) . " 00:00:00";
+			$contentExpected = date('Y-m-d', strtotime($contentExpected)) . ' 00:00:00';
 		}
 
 		if ($contentExpected === 'A_NUMBER') {

@@ -135,7 +135,7 @@ class UpdateDocs extends Base {
 
 		return
 			'| `' . $name . '` | ' .
-			($description ? preg_replace('/\s*[\r\n]\s*/', " ", $description) : '') . ' | '.
+			($description ? preg_replace('/\s*[\r\n]\s*/', ' ', $description) : '') . ' | '.
 			($option->acceptValue() ? 'yes' : 'no') . ' | ' .
 			($option->isValueRequired() ? 'yes' : 'no') . ' | ' .
 			($option->isArray() ? 'yes' : 'no') . ' | ' .

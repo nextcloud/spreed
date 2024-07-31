@@ -23,22 +23,22 @@ class CertificateServiceTest extends TestCase {
 	}
 
 	public function testGetParsedTlsHost(): void {
-		$actual = $this->service->getParsedTlsHost("domain.com");
-		$this->assertEquals($actual, "domain.com");
+		$actual = $this->service->getParsedTlsHost('domain.com');
+		$this->assertEquals($actual, 'domain.com');
 
-		$actual = $this->service->getParsedTlsHost("subdomain.domain.com");
-		$this->assertEquals($actual, "subdomain.domain.com");
+		$actual = $this->service->getParsedTlsHost('subdomain.domain.com');
+		$this->assertEquals($actual, 'subdomain.domain.com');
 
-		$actual = $this->service->getParsedTlsHost("https://domain.com");
-		$this->assertEquals($actual, "domain.com");
+		$actual = $this->service->getParsedTlsHost('https://domain.com');
+		$this->assertEquals($actual, 'domain.com');
 
-		$actual = $this->service->getParsedTlsHost("https://domain.com:1234");
-		$this->assertEquals($actual, "domain.com:1234");
+		$actual = $this->service->getParsedTlsHost('https://domain.com:1234');
+		$this->assertEquals($actual, 'domain.com:1234');
 
-		$actual = $this->service->getParsedTlsHost("https://domain.com:1234/path/1/");
-		$this->assertEquals($actual, "domain.com:1234");
+		$actual = $this->service->getParsedTlsHost('https://domain.com:1234/path/1/');
+		$this->assertEquals($actual, 'domain.com:1234');
 
-		$actual = $this->service->getParsedTlsHost("http://domain.com:1234/path/1/");
+		$actual = $this->service->getParsedTlsHost('http://domain.com:1234/path/1/');
 		$this->assertNull($actual);
 	}
 }
