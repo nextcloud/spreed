@@ -342,7 +342,7 @@ class MatterbridgeManager {
 					$serverUrl = $part['server'];
 				} else {
 					$serverUrl = preg_replace('/\/+$/', '', $this->urlGenerator->getAbsoluteURL(''));
-					$content .= "	SeparateDisplayName = true" ."\n";
+					$content .= '	SeparateDisplayName = true' ."\n";
 					// TODO remove that
 					//$serverUrl = preg_replace('/https:/', 'http:', $serverUrl);
 				}

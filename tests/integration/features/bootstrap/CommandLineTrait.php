@@ -34,7 +34,7 @@ trait CommandLineTrait {
 	public function runOcc($args = [], $env = []) {
 		// Set UTF-8 locale to ensure that escapeshellarg will not strip
 		// multibyte characters.
-		setlocale(LC_CTYPE, "C.UTF-8");
+		setlocale(LC_CTYPE, 'C.UTF-8');
 
 		$clearOpcodeCache = in_array($args[0], [
 			'app:disable',

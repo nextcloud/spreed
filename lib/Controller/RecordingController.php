@@ -126,12 +126,12 @@ class RecordingController extends AEnvironmentAwareController {
 	private function validateBackendRequest(string $data): bool {
 		$random = $this->request->getHeader('Talk-Recording-Random');
 		if (empty($random) || strlen($random) < 32) {
-			$this->logger->debug("Missing random");
+			$this->logger->debug('Missing random');
 			return false;
 		}
 		$checksum = $this->request->getHeader('Talk-Recording-Checksum');
 		if (empty($checksum)) {
-			$this->logger->debug("Missing checksum");
+			$this->logger->debug('Missing checksum');
 			return false;
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getRecordingSecret());
