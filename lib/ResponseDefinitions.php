@@ -259,6 +259,8 @@ namespace OCA\Talk;
  *     permissions: int,
  *     readOnly: int,
  *     recordingConsent: int,
+ *     remoteServer?: string,
+ *     remoteToken?: string,
  *     sessionId: string,
  *     sipEnabled: int,
  *     status?: string,

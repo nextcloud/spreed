@@ -1283,6 +1283,12 @@
                         "type": "integer",
                         "format": "int64"
                     },
+                    "remoteServer": {
+                        "type": "string"
+                    },
+                    "remoteToken": {
+                        "type": "string"
+                    },
                     "sessionId": {
                         "type": "string"
                     },
