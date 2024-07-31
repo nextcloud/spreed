@@ -310,7 +310,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		if ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE) {
 			if ($notification['newValue'] === null) {
-				$this->roomService->resetActiveSince($room);
+				$this->roomService->resetActiveSince($room, null);
 			} else {
 				$activeSince = $this->timeFactory->getDateTime('@' . $notification['newValue']);
 				$this->roomService->setActiveSince($room, null, $activeSince, $notification['callFlag'], !empty($notification['details'][AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT]));

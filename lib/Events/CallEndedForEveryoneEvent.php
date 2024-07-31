@@ -14,7 +14,8 @@ use OCA\Talk\Room;
 class CallEndedForEveryoneEvent extends ACallEndedForEveryoneEvent {
 	public function __construct(
 		Room $room,
-		?Participant $actor = null,
+		?Participant $actor,
+		\DateTime $oldActiveSince,
 		/** @var string[] */
 		protected array $sessionIds = [],
 		/** @var string[] */
@@ -22,7 +23,8 @@ class CallEndedForEveryoneEvent extends ACallEndedForEveryoneEvent {
 	) {
 		parent::__construct(
 			$room,
-			$actor
+			$actor,
+			$oldActiveSince,
 		);
 	}
 

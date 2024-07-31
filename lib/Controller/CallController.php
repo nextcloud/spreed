@@ -417,8 +417,12 @@ class CallController extends AEnvironmentAwareController {
 
 		if ($all && $this->participant->hasModeratorPermissions()) {
 			$this->participantService->endCallForEveryone($this->room, $this->participant);
+			$this->roomService->resetActiveSince($this->room, $this->participant, true);
 		} else {
 			$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
+			if (!$this->participantService->hasActiveSessionsInCall($this->room)) {
+				$this->roomService->resetActiveSince($this->room, $this->participant);
+			}
 		}
 
 		return new DataResponse();
@@ -446,6 +450,9 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
+		if (!$this->participantService->hasActiveSessionsInCall($this->room)) {
+			$this->roomService->resetActiveSince($this->room, $this->participant);
+		}
 
 		return new DataResponse();
 	}

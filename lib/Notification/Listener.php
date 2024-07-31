@@ -10,12 +10,11 @@ namespace OCA\Talk\Notification;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Controller\ChatController;
-use OCA\Talk\Events\BeforeCallStartedEvent;
-use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
-use OCA\Talk\Events\BeforeParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeCallStartedEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
+use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Model\Attendee;

@@ -11,12 +11,14 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AParticipantModifiedEvent;
-use OCA\Talk\Events\BeforeCallStartedEvent;
-use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\BeforeCallEndedEvent;
+use OCA\Talk\Events\BeforeCallStartedEvent;
 use OCA\Talk\Events\BeforeLobbyModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomModifiedEvent;
+use OCA\Talk\Events\CallEndedEvent;
+use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -834,16 +836,18 @@ class RoomService {
 		return true;
 	}
 
-	public function resetActiveSince(Room $room): bool {
+	public function resetActiveSince(Room $room, ?Participant $participant, bool $alreadyTriggeredCallEndedForEveryone = false): void {
 		$oldActiveSince = $room->getActiveSince();
 		$oldCallFlag = $room->getCallFlag();
 
-		if ($oldActiveSince === null && $oldCallFlag === Participant::FLAG_DISCONNECTED) {
-			return false;
-		}
+		if (!$alreadyTriggeredCallEndedForEveryone) {
+			if ($oldActiveSince === null && $oldCallFlag === Participant::FLAG_DISCONNECTED) {
+				return;
+			}
 
-		$event = new BeforeCallStartedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag);
-		$this->dispatcher->dispatchTyped($event);
+			$event = new BeforeCallEndedEvent($room, $participant, $oldActiveSince);
+			$this->dispatcher->dispatchTyped($event);
+		}
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
@@ -853,14 +857,22 @@ class RoomService {
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->isNotNull('active_since'));
 
-		$room->resetActiveSince();
-
 		$result = (bool) $update->executeStatement();
 
-		$event = new CallStartedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag, $result);
-		$this->dispatcher->dispatchTyped($event);
+		$room->resetActiveSince();
+		$room->setCallPermissions(Attendee::PERMISSIONS_DEFAULT);
 
-		return $result;
+		if ($alreadyTriggeredCallEndedForEveryone) {
+			return;
+		}
+
+		if (!$result) {
+			// Lost the race, someone else updated the database
+			return;
+		}
+
+		$event = new CallEndedEvent($room, $participant, $oldActiveSince);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	public function setActiveSince(Room $room, ?Participant $participant, \DateTime $since, int $callFlag, bool $silent): bool {

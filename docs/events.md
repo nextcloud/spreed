@@ -47,6 +47,17 @@ See the general [Nextcloud Developers - Events](https://docs.nextcloud.com/serve
 * Before event: `OCA\Talk\Events\BeforeCallEndedForEveryoneEvent`
 * After event: `OCA\Talk\Events\CallEndedForEveryoneEvent`
 * Since: 18.0.0
+* Since: 20.0.0 Extends the abstract `ACallEndedEvent`
+
+### Call ended
+
+When the last participant is leaving the call, the session expired or the participant was removed. 
+
+* Before event: `OCA\Talk\Events\BeforeCallEndedEvent`
+* After event: `OCA\Talk\Events\CallEndedEvent`
+  The after event might be skipped if the request lost the race to update the database.
+  A parallel request will have triggered the before and after events in the meantime.
+* Since: 20.0.0
 
 ### Conversation password verify
 

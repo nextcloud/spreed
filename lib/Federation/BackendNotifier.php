@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use OCA\FederatedFileSharing\AddressHandler;
-use OCA\Talk\Events\ACallStartedEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\RetryNotification;
@@ -271,6 +271,45 @@ class BackendNotifier {
 				'remoteToken' => $localToken,
 				'changedProperty' => $changedProperty,
 				'newValue' => $activeSince->getTimestamp(),
+				'oldValue' => null,
+				'callFlag' => $callFlag,
+				'details' => $details,
+			],
+		);
+
+		return $this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
+	 * Send information to remote participants that "active since" was updated
+	 * Sent from Host server to Remote participant server
+	 *
+	 * @psalm-param array<AParticipantModifiedEvent::DETAIL_*, bool> $details
+	 */
+	public function sendCallEnded(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		string $changedProperty,
+		?\DateTime $activeSince,
+		int $callFlag,
+		array $details,
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_ROOM_MODIFIED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'changedProperty' => $changedProperty,
+				'newValue' => $activeSince?->getTimestamp(),
 				'oldValue' => null,
 				'callFlag' => $callFlag,
 				'details' => $details,

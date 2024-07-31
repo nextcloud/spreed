@@ -840,6 +840,8 @@ class ParticipantService {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
 
 			$this->removeUser($room, $user, AAttendeeRemovedEvent::REASON_LEFT);
+		} else {
+			$this->resetCallStateWhenNeeded($room);
 		}
 	}
 
@@ -890,6 +892,8 @@ class ParticipantService {
 		} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 			$this->removeCircleMembers($room, $participant, $reason);
 		}
+
+		$this->resetCallStateWhenNeeded($room);
 	}
 
 	/**
@@ -1028,6 +1032,8 @@ class ParticipantService {
 
 		$attendeeEvent = new AttendeesRemovedEvent($room, [$attendee]);
 		$this->dispatcher->dispatchTyped($attendeeEvent);
+
+		$this->resetCallStateWhenNeeded($room);
 	}
 
 	public function cleanGuestParticipants(Room $room): void {
@@ -1093,10 +1099,13 @@ class ParticipantService {
 
 		$event = new GuestsCleanedUpEvent($room);
 		$this->dispatcher->dispatchTyped($event);
+
+		$this->resetCallStateWhenNeeded($room);
 	}
 
 	public function endCallForEveryone(Room $room, Participant $moderator): void {
-		$event = new BeforeCallEndedForEveryoneEvent($room, $moderator);
+		$oldActiveSince = $room->getActiveSince();
+		$event = new BeforeCallEndedForEveryoneEvent($room, $moderator, $oldActiveSince);
 		$this->dispatcher->dispatchTyped($event);
 
 		$participants = $this->getParticipantsInCall($room);
@@ -1114,7 +1123,7 @@ class ParticipantService {
 
 		$this->sessionMapper->resetInCallByIds($changedSessionIds);
 
-		$event = new CallEndedForEveryoneEvent($room, $moderator, $changedSessionIds, $changedUserIds);
+		$event = new CallEndedForEveryoneEvent($room, $moderator, $oldActiveSince, $changedSessionIds, $changedUserIds);
 		$this->dispatcher->dispatchTyped($event);
 	}
 
@@ -1784,6 +1793,21 @@ class ParticipantService {
 			$this->sessionCache[$room->getId()] ??= [];
 			$this->sessionCache[$room->getId()][$participantSessionId] = $participant;
 		}
+	}
+
+	protected function resetCallStateWhenNeeded(Room $room): void {
+		if ($room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
+			// No call
+			return;
+		}
+
+		if ($this->hasActiveSessionsInCall($room)) {
+			// Still others there
+			return;
+		}
+
+		$roomService = Server::get(RoomService::class);
+		$roomService->resetActiveSince($room, null);
 	}
 
 	/**

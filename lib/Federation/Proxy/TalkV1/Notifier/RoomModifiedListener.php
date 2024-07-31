@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
-use OCA\Talk\Events\AActiveSinceModifiedEvent;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ALobbyModifiedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
@@ -40,6 +39,8 @@ class RoomModifiedListener implements IEventListener {
 
 	public function handle(Event $event): void {
 		if (!$event instanceof CallStartedEvent
+				&& !$event instanceof CallEndedEvent
+				&& !$event instanceof CallEndedForEveryoneEvent
 				&& !$event instanceof LobbyModifiedEvent
 				&& !$event instanceof RoomModifiedEvent) {
 			return;
@@ -65,6 +66,8 @@ class RoomModifiedListener implements IEventListener {
 
 			if ($event instanceof CallStartedEvent) {
 				$success = $this->notifyCallStarted($cloudId, $participant, $event);
+			} elseif ($event instanceof CallEndedEvent || $event instanceof CallEndedForEveryoneEvent) {
+				$success = $this->notifyCallEnded($cloudId, $participant, $event);
 			} elseif ($event instanceof ALobbyModifiedEvent) {
 				$success = $this->notifyLobbyModified($cloudId, $participant, $event);
 			} else {
@@ -91,6 +94,24 @@ class RoomModifiedListener implements IEventListener {
 			$event->getProperty(),
 			$event->getNewValue(),
 			$event->getCallFlag(),
+			$details,
+		);
+	}
+
+	private function notifyCallEnded(ICloudId $cloudId, Participant $participant, CallEndedEvent|CallEndedForEveryoneEvent $event) {
+		$details = [];
+		if ($event instanceof CallEndedForEveryoneEvent) {
+			$details = [AParticipantModifiedEvent::DETAIL_IN_CALL_END_FOR_EVERYONE => true];
+		}
+
+		return $this->backendNotifier->sendCallEnded(
+			$cloudId->getRemote(),
+			$participant->getAttendee()->getId(),
+			$participant->getAttendee()->getAccessToken(),
+			$event->getRoom()->getToken(),
+			ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE,
+			null,
+			Participant::FLAG_DISCONNECTED,
 			$details,
 		);
 	}

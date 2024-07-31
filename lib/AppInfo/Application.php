@@ -30,14 +30,12 @@ use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
-use OCA\Talk\Events\BeforeCallStartedEvent;
-use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeesAddedEvent;
-use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
+use OCA\Talk\Events\BeforeCallStartedEvent;
 use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
 use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -49,8 +47,10 @@ use OCA\Talk\Events\BotDisabledEvent;
 use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
+use OCA\Talk\Events\CallEndedEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
+use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\EmailInvitationSentEvent;
 use OCA\Talk\Events\GuestJoinedRoomEvent;
@@ -172,10 +172,8 @@ class Application extends App implements IBootstrap {
 
 		// Activity listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
-		$context->registerEventListener(AttendeeRemovedEvent::class, ActivityListener::class);
-		$context->registerEventListener(BeforeCallEndedForEveryoneEvent::class, ActivityListener::class);
-		$context->registerEventListener(ParticipantModifiedEvent::class, ActivityListener::class, 75);
-		$context->registerEventListener(SessionLeftRoomEvent::class, ActivityListener::class, -100);
+		$context->registerEventListener(CallEndedEvent::class, ActivityListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, ActivityListener::class);
 
 		// Bot listeners
 		$context->registerEventListener(BotDisabledEvent::class, BotListener::class);
@@ -266,6 +264,8 @@ class Application extends App implements IBootstrap {
 
 		// Federation listeners
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);
+		$context->registerEventListener(CallEndedEvent::class, TalkV1RoomModifiedListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(CallStartedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(LobbyModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
