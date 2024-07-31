@@ -259,6 +259,8 @@ class Application extends App implements IBootstrap {
 
 		// Recording listeners
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
+		$context->registerEventListener(CallEndedEvent::class, RecordingListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
 		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
 
