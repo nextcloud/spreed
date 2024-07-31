@@ -548,7 +548,7 @@ class Notifier implements INotifier {
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
 			$botId = $subjectParameters['userId'];
 			try {
-				$bot = $this->botServerMapper->findByUrlHash(substr($botId, strlen(Attendee::ACTOR_BOT_PREFIX)));
+				$bot = $this->botServerMapper->findByUrlHash(substr($botId, strlen(Attendee::BOT_ACTOR_PREFIX)));
 				$richSubjectUser = [
 					'type' => 'highlight',
 					'id' => $botId,

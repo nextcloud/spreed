@@ -59,7 +59,7 @@ class BotService {
 			'type' => 'Join',
 			'actor' => [
 				'type' => 'Application',
-				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
+				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::BOT_ACTOR_PREFIX . $event->getBotServer()->getUrlHash(),
 				'name' => $event->getBotServer()->getName(),
 			],
 			'object' => [
@@ -75,7 +75,7 @@ class BotService {
 			'type' => 'Leave',
 			'actor' => [
 				'type' => 'Application',
-				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
+				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::BOT_ACTOR_PREFIX . $event->getBotServer()->getUrlHash(),
 				'name' => $event->getBotServer()->getName(),
 			],
 			'object' => [

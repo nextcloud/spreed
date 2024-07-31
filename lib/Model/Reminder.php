@@ -14,10 +14,13 @@ use OCP\AppFramework\Db\Entity;
 /**
  * @method void setUserId(string $userId)
  * @method string getUserId()
+ * @psalm-method non-empty-string getUserId()
  * @method void setToken(string $token)
  * @method string getToken()
+ * @psalm-method non-empty-string getToken()
  * @method void setMessageId(int $messageId)
  * @method int getMessageId()
+ * @psalm-method int<1, max> getMessageId()
  * @method void setDateTime(\DateTime $dateTime)
  * @method \DateTime getDateTime()
  *
@@ -44,7 +47,7 @@ class Reminder extends Entity implements \JsonSerializable {
 			'userId' => $this->getUserId(),
 			'token' => $this->getToken(),
 			'messageId' => $this->getMessageId(),
-			'timestamp' => $this->getDateTime()->getTimestamp(),
+			'timestamp' => max(0, $this->getDateTime()->getTimestamp()),
 		];
 	}
 }

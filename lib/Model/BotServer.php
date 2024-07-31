@@ -12,26 +12,34 @@ use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
+ * @psalm-method int<1, max> getId()
  * @method void setName(string $name)
  * @method string getName()
+ * @psalm-method non-empty-string getName()
  * @method void setUrl(string $url)
  * @method string getUrl()
+ * @psalm-method non-empty-string getUrl()
  * @method void setUrlHash(string $urlHash)
  * @method string getUrlHash()
+ * @psalm-method non-empty-string getUrlHash()
  * @method void setDescription(?string $description)
  * @method null|string getDescription()
  * @method void setSecret(string $secret)
  * @method string getSecret()
+ * @psalm-method non-empty-string getSecret()
  * @method void setErrorCount(int $errorCount)
  * @method int getErrorCount()
+ * @psalm-method int<0, max> getErrorCount()
  * @method void setLastErrorDate(?\DateTimeImmutable $lastErrorDate)
- * @method ?\DateTimeImmutable getLastErrorDate()
+ * @method null|\DateTimeImmutable getLastErrorDate()
  * @method void setLastErrorMessage(string $lastErrorMessage)
  * @method string getLastErrorMessage()
  * @method void setState(int $state)
  * @method int getState()
+ * @psalm-method Bot::STATE_* getState()
  * @method void setFeatures(int $features)
  * @method int getFeatures()
+ * @psalm-method int-mask<1, 2> getFeatures()
  *
  * @psalm-import-type TalkBotWithDetailsAndSecret from ResponseDefinitions
  */
@@ -72,7 +80,7 @@ class BotServer extends Entity implements \JsonSerializable {
 			'description' => $this->getDescription(),
 			'secret' => $this->getSecret(),
 			'error_count' => $this->getErrorCount(),
-			'last_error_date' => $this->getLastErrorDate() ? $this->getLastErrorDate()->getTimestamp() : 0,
+			'last_error_date' => $this->getLastErrorDate() ? max(0, $this->getLastErrorDate()->getTimestamp()) : 0,
 			'last_error_message' => $this->getLastErrorMessage(),
 			'state' => $this->getState(),
 			'features' => $this->getFeatures(),
