@@ -40,7 +40,7 @@ export function hasTalkFeature(token: string = 'local', feature: string): boolea
  * @param key2 second-level key (e.g. 'allowed')
  */
 export function getTalkConfig(token: string = 'local', key1: keyof Config, key2: keyof Config[keyof Config]) {
-	if (localCapabilities?.spreed?.['config-local']?.[key1]?.[key2]) {
+	if (localCapabilities?.spreed?.['config-local']?.[key1]?.includes(key2)) {
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
 	} else if (token === 'local' || !remoteCapabilities[token]) {
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
