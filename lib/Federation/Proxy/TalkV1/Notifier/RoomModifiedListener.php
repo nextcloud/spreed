@@ -10,9 +10,12 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Events\AActiveSinceModifiedEvent;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
-use OCA\Talk\Events\ActiveSinceModifiedEvent;
 use OCA\Talk\Events\ALobbyModifiedEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\CallEndedEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
+use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Federation\BackendNotifier;
@@ -36,7 +39,7 @@ class RoomModifiedListener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		if (!$event instanceof ActiveSinceModifiedEvent
+		if (!$event instanceof CallStartedEvent
 				&& !$event instanceof LobbyModifiedEvent
 				&& !$event instanceof RoomModifiedEvent) {
 			return;
@@ -60,8 +63,8 @@ class RoomModifiedListener implements IEventListener {
 		foreach ($participants as $participant) {
 			$cloudId = $this->cloudIdManager->resolveCloudId($participant->getAttendee()->getActorId());
 
-			if ($event instanceof AActiveSinceModifiedEvent) {
-				$success = $this->notifyActiveSinceModified($cloudId, $participant, $event);
+			if ($event instanceof CallStartedEvent) {
+				$success = $this->notifyCallStarted($cloudId, $participant, $event);
 			} elseif ($event instanceof ALobbyModifiedEvent) {
 				$success = $this->notifyLobbyModified($cloudId, $participant, $event);
 			} else {
@@ -74,16 +77,21 @@ class RoomModifiedListener implements IEventListener {
 		}
 	}
 
-	private function notifyActiveSinceModified(ICloudId $cloudId, Participant $participant, AActiveSinceModifiedEvent $event) {
-		return $this->backendNotifier->sendRoomModifiedActiveSinceUpdate(
+	private function notifyCallStarted(ICloudId $cloudId, Participant $participant, CallStartedEvent $event) {
+		$details = [];
+		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT)) {
+			$details = [AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT => true];
+		}
+
+		return $this->backendNotifier->sendCallStarted(
 			$cloudId->getRemote(),
 			$participant->getAttendee()->getId(),
 			$participant->getAttendee()->getAccessToken(),
 			$event->getRoom()->getToken(),
 			$event->getProperty(),
 			$event->getNewValue(),
-			$event->getOldValue(),
 			$event->getCallFlag(),
+			$details,
 		);
 	}
 

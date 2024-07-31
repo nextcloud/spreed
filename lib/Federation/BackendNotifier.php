@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use OCA\FederatedFileSharing\AddressHandler;
+use OCA\Talk\Events\ACallStartedEvent;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\RetryNotification;
@@ -243,26 +244,21 @@ class BackendNotifier {
 	/**
 	 * Send information to remote participants that "active since" was updated
 	 * Sent from Host server to Remote participant server
+	 *
+	 * @psalm-param array<AParticipantModifiedEvent::DETAIL_*, bool> $details
 	 */
-	public function sendRoomModifiedActiveSinceUpdate(
+	public function sendCallStarted(
 		string $remoteServer,
 		int $localAttendeeId,
 		#[SensitiveParameter]
 		string $accessToken,
 		string $localToken,
 		string $changedProperty,
-		?\DateTime $newValue,
-		?\DateTime $oldValue,
+		\DateTime $activeSince,
 		int $callFlag,
+		array $details,
 	): ?bool {
 		$remote = $this->prepareRemoteUrl($remoteServer);
-
-		if ($newValue instanceof \DateTime) {
-			$newValue = (string) $newValue->getTimestamp();
-		}
-		if ($oldValue instanceof \DateTime) {
-			$oldValue = (string) $oldValue->getTimestamp();
-		}
 
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
@@ -274,9 +270,10 @@ class BackendNotifier {
 				'sharedSecret' => $accessToken,
 				'remoteToken' => $localToken,
 				'changedProperty' => $changedProperty,
-				'newValue' => $newValue,
-				'oldValue' => $oldValue,
+				'newValue' => $activeSince->getTimestamp(),
+				'oldValue' => null,
 				'callFlag' => $callFlag,
+				'details' => $details,
 			],
 		);
 

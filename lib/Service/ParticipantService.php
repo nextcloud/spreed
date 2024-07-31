@@ -1103,7 +1103,7 @@ class ParticipantService {
 		$changedSessionIds = [];
 		$changedUserIds = [];
 
-		// kick out all participants out of the call
+		// kick all participants out of the call
 		foreach ($participants as $participant) {
 			$changedSessionIds[] = $participant->getSession()->getSessionId();
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
@@ -1118,16 +1118,20 @@ class ParticipantService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): bool {
+	/**
+	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags
+	 * @throws \InvalidArgumentException
+	 */
+	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): void {
 		if ($room->getType() === Room::TYPE_CHANGELOG
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
-			return false;
+			throw new \InvalidArgumentException('type');
 		}
 
 		$session = $participant->getSession();
 		if (!$session instanceof Session) {
-			return false;
+			throw new \InvalidArgumentException('session');
 		}
 
 		$permissions = $participant->getPermissions();
@@ -1166,8 +1170,6 @@ class ParticipantService {
 
 		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags, $details);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1294,6 +1296,8 @@ class ParticipantService {
 
 		$session->setInCall($flags);
 		$this->sessionMapper->update($session);
+
+		// FIXME Missing potential update of call flags on room level
 
 		$event = new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_IN_CALL, $flags, $oldFlags);
 		$this->dispatcher->dispatchTyped($event);

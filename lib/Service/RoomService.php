@@ -10,9 +10,10 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
-use OCA\Talk\Events\ActiveSinceModifiedEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeCallStartedEvent;
+use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
-use OCA\Talk\Events\BeforeActiveSinceModifiedEvent;
 use OCA\Talk\Events\BeforeLobbyModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomModifiedEvent;
@@ -841,7 +842,7 @@ class RoomService {
 			return false;
 		}
 
-		$event = new BeforeActiveSinceModifiedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag);
+		$event = new BeforeCallStartedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag);
 		$this->dispatcher->dispatchTyped($event);
 
 		$update = $this->db->getQueryBuilder();
@@ -856,25 +857,31 @@ class RoomService {
 
 		$result = (bool) $update->executeStatement();
 
-		$event = new ActiveSinceModifiedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag, $result);
+		$event = new CallStartedEvent($room, null, $oldActiveSince, Participant::FLAG_DISCONNECTED, $oldCallFlag, $result);
 		$this->dispatcher->dispatchTyped($event);
 
 		return $result;
 	}
 
-	public function setActiveSince(Room $room, \DateTime $since, int $callFlag): bool {
-		$oldActiveSince = $room->getActiveSince();
+	public function setActiveSince(Room $room, ?Participant $participant, \DateTime $since, int $callFlag, bool $silent): bool {
 		$oldCallFlag = $room->getCallFlag();
+		$callFlag |= $oldCallFlag; // Merge the callFlags, so events and response are with the best values
 
 		if ($room->getActiveSince() instanceof \DateTime && $oldCallFlag === $callFlag) {
+			// Call flags of the conversation are unchanged and it's already marked active
 			return false;
 		}
 
 		if ($room->getActiveSince() instanceof \DateTime) {
-			$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag);
+			// Call is already active, just someone upgrading the call flags
+			$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag, $participant);
 			$this->dispatcher->dispatchTyped($event);
 		} else {
-			$event = new BeforeActiveSinceModifiedEvent($room, $since, $oldActiveSince, $callFlag, $oldCallFlag);
+			$details = [];
+			if ($silent) {
+				$details[AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT] = true;
+			}
+			$event = new BeforeCallStartedEvent($room, $since, $callFlag, $details, $participant);
 			$this->dispatcher->dispatchTyped($event);
 		}
 
@@ -888,6 +895,7 @@ class RoomService {
 		$update->executeStatement();
 
 		if ($room->getActiveSince() instanceof \DateTime) {
+			// Call is already active, just someone upgrading the call flags
 			$room->setActiveSince($room->getActiveSince(), $callFlag);
 
 			$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag);
@@ -905,10 +913,15 @@ class RoomService {
 
 		$room->setActiveSince($since, $callFlag);
 
-		$event = new ActiveSinceModifiedEvent($room, $since, $oldActiveSince, $callFlag, $oldCallFlag, $result);
+		if (!$result) {
+			// Lost the race, someone else updated the database
+			return false;
+		}
+
+		$event = new CallStartedEvent($room, $since, $callFlag, $details, $participant);
 		$this->dispatcher->dispatchTyped($event);
 
-		return $result;
+		return true;
 	}
 
 	public function setLastMessage(Room $room, IComment $message): void {

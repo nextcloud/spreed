@@ -8,21 +8,26 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-abstract class AActiveSinceModifiedEvent extends ARoomModifiedEvent {
+abstract class ACallStartedEvent extends ARoomModifiedEvent {
+	/**
+	 * @param array<AParticipantModifiedEvent::DETAIL_*, bool> $details
+	 */
 	public function __construct(
 		Room $room,
 		?\DateTime $newValue,
-		?\DateTime $oldValue,
 		protected int $callFlag,
-		protected int $oldCallFlag,
+		protected array $details,
+		?Participant $actor,
 	) {
 		parent::__construct(
 			$room,
 			self::PROPERTY_ACTIVE_SINCE,
 			$newValue,
-			$oldValue,
+			null,
+			$actor,
 		);
 	}
 
@@ -30,7 +35,10 @@ abstract class AActiveSinceModifiedEvent extends ARoomModifiedEvent {
 		return $this->callFlag;
 	}
 
-	public function getOldCallFlag(): int {
-		return $this->oldCallFlag;
+	/**
+	 * @param AParticipantModifiedEvent::DETAIL_* $detail
+	 */
+	public function getDetail(string $detail): ?bool {
+		return $this->details[$detail] ?? null;
 	}
 }

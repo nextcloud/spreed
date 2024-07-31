@@ -34,6 +34,14 @@ See the general [Nextcloud Developers - Events](https://docs.nextcloud.com/serve
 * After event: `OCA\Talk\Events\LobbyModifiedEvent`
 * Since: 18.0.0
 
+### Call started
+
+* Before event: `OCA\Talk\Events\BeforeCallStartedEvent`
+* After event: `OCA\Talk\Events\CallStartedEvent`
+  The after event might be skipped if the request lost the race to update the database.
+  A parallel request will have triggered the before and after events in the meantime.
+* Since: 20.0.0
+
 ### Call ended for everyone
 
 * Before event: `OCA\Talk\Events\BeforeCallEndedForEveryoneEvent`
@@ -46,12 +54,6 @@ Allows to verify a password and set a redirect URL for the invalid case
 
 * Event: `OCA\Talk\Events\RoomPasswordVerifyEvent`
 * Since: 18.0.0
-
-### Active since modified
-
-* Before event: `OCA\Talk\Events\BeforeActiveSinceModifiedEvent`
-* After event: `OCA\Talk\Events\ActiveSinceModifiedEvent`
-* Since: 20.0.0
 
 ## Participant related events
 

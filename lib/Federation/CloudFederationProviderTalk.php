@@ -14,6 +14,7 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
@@ -288,7 +289,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null, callFlag?: int, dateTime?: string, timerReached?: bool} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null, callFlag?: int, dateTime?: string, timerReached?: bool, details?: array<AParticipantModifiedEvent::DETAIL_*, bool>} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
@@ -311,15 +312,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			if ($notification['newValue'] === null) {
 				$this->roomService->resetActiveSince($room);
 			} else {
-				$activeSince = \DateTime::createFromFormat('U', $notification['newValue']);
-				$this->roomService->setActiveSince($room, $activeSince, $notification['callFlag']);
+				$activeSince = $this->timeFactory->getDateTime('@' . $notification['newValue']);
+				$this->roomService->setActiveSince($room, null, $activeSince, $notification['callFlag'], !empty($notification['details'][AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT]));
 			}
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_AVATAR) {
 			$this->roomService->setAvatar($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_IN_CALL) {
-			$this->roomService->setActiveSince($room, $room->getActiveSince(), $notification['newValue']);
+			$this->roomService->setActiveSince($room, null, $room->getActiveSince(), $notification['newValue'], true);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_LOBBY) {
 			$dateTime = !empty($notification['dateTime']) ? \DateTime::createFromFormat('U', $notification['dateTime']) : null;
 			$this->roomService->setLobby($room, $notification['newValue'], $dateTime, $notification['timerReached'] ?? false);

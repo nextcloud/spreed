@@ -61,24 +61,6 @@ class Listener implements IEventListener {
 		};
 	}
 
-	protected function setActive(ParticipantModifiedEvent $event): void {
-		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
-			return;
-		}
-
-		if ($event->getOldValue() !== Participant::FLAG_DISCONNECTED
-			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
-			return;
-		}
-
-		$participant = $event->getParticipant();
-		$this->roomService->setActiveSince(
-			$event->getRoom(),
-			$this->timeFactory->getDateTime(),
-			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED
-		);
-	}
-
 	protected function handleParticipantModified(ParticipantModifiedEvent $event): void {
 		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
 			return;
@@ -86,7 +68,6 @@ class Listener implements IEventListener {
 
 		if ($event->getOldValue() === Participant::FLAG_DISCONNECTED
 			|| $event->getNewValue() !== Participant::FLAG_DISCONNECTED) {
-			$this->setActive($event);
 			return;
 		}
 
