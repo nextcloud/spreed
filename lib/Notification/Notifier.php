@@ -1032,7 +1032,10 @@ class Notifier implements INotifier {
 				throw new AlreadyProcessedException();
 			}
 		} elseif (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {
+			if ($this->notificationManager->isPreparingPushNotification()
+				|| (!$room->isFederatedConversation() && $this->participantService->hasActiveSessionsInCall($room))
+				|| ($room->isFederatedConversation() && $room->getActiveSince())
+			) {
 				$notification = $this->addActionButton($notification, 'call_view', $l->t('Join call'), true, true);
 				$subject = $l->t('A group call has started in {call}');
 			} else {

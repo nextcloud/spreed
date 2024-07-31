@@ -10,6 +10,7 @@ namespace OCA\Talk\Notification;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Controller\ChatController;
+use OCA\Talk\Events\ActiveSinceModifiedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
@@ -61,6 +62,7 @@ class Listener implements IEventListener {
 			UserJoinedRoomEvent::class => $this->handleUserJoinedRoomEvent($event),
 			BeforeParticipantModifiedEvent::class => $this->checkCallNotifications($event),
 			ParticipantModifiedEvent::class => $this->afterParticipantJoinedCall($event),
+			ActiveSinceModifiedEvent::class => $this->afterActiveSinceModified($event),
 		};
 	}
 
@@ -220,6 +222,18 @@ class Listener implements IEventListener {
 		if ($this->shouldSendCallNotification) {
 			$this->sendCallNotifications($event->getRoom());
 		}
+	}
+
+	protected function afterActiveSinceModified(ActiveSinceModifiedEvent $event): void {
+		if (!$event->hasUpdatedActiveSince()) {
+			return;
+		}
+
+		if (!$event->getRoom()->isFederatedConversation()) {
+			return;
+		}
+
+		$this->sendCallNotifications($event->getRoom());
 	}
 
 	/**

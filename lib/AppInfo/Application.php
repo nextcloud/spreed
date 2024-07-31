@@ -246,6 +246,7 @@ class Application extends App implements IBootstrap {
 
 		// Notification listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, NotificationListener::class);
+		$context->registerEventListener(ActiveSinceModifiedEvent::class, NotificationListener::class);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, NotificationListener::class);
 		$context->registerEventListener(CallNotificationSendEvent::class, NotificationListener::class);
 		$context->registerEventListener(ParticipantModifiedEvent::class, NotificationListener::class);
