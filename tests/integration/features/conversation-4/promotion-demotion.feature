@@ -23,7 +23,7 @@ Feature: conversation-2/promotion-demotion
     # "participantsModified" once the clients no longer expect a
     # "roomModified" message for participant type changes.
       | room  | {"type":"update","update":{"userids":["participant1","participant2"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
-      | room  | {"type":"participants","participants":{"changed":[],"users":[{"inCall":0,"lastPing":0,"sessionId":"0","participantType":1,"participantPermissions":1,"displayName":"participant1-displayname","userId":"participant1"},{"inCall":0,"lastPing":0,"sessionId":"0","participantType":2,"participantPermissions":1,"displayName":"participant2-displayname","userId":"participant2"}]}} |
+      | room  | {"type":"participants","participants":{"changed":[],"users":[{"inCall":0,"lastPing":0,"sessionId":"0","participantType":1,"participantPermissions":1,"displayName":"participant1-displayname","actorType":"users","actorId":"participant1","userId":"participant1"},{"inCall":0,"lastPing":0,"sessionId":"0","participantType":2,"participantPermissions":1,"displayName":"participant2-displayname","actorType":"users","actorId":"participant2","userId":"participant2"}]}} |
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 2               |
