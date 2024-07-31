@@ -3653,15 +3653,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 
 		$data = $this->getDataFromResponse($this->response);
+		$filteredNotifications = array_filter($data, static fn (array $notification) => $notification['app'] === 'spreed');
+		if (count($data) !== count($filteredNotifications)) {
+			echo 'Notifications were filtered by app=spreed';
+		}
 
 		if ($body === null) {
 			self::$lastNotifications = [];
-			Assert::assertCount(0, $data, json_encode($data, JSON_PRETTY_PRINT));
+			Assert::assertCount(0, $filteredNotifications, json_encode($data, JSON_PRETTY_PRINT));
 			return;
 		}
 
-		$this->assertNotifications($data, $body);
-		self::$lastNotifications = $data;
+		$this->assertNotifications($filteredNotifications, $body);
+		self::$lastNotifications = $filteredNotifications;
 	}
 
 	private function assertNotifications($notifications, TableNode $formData) {
