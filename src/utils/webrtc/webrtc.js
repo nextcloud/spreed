@@ -293,6 +293,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				webRtc: webrtc,
 			})
 		}
+		callParticipantModel.setActor(user.actorType, user.actorId)
 		callParticipantModel.setUserId(userId)
 		callParticipantModel.setNextcloudSessionId(nextcloudSessionId)
 		if (user.internal) {
