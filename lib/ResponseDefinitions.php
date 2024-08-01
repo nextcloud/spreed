@@ -275,6 +275,8 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkSignalingSession = array{
+ *     actorId: string,
+ *     actorType: string,
  *     inCall: int,
  *     lastPing: int,
  *     participantPermissions: int,

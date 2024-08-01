@@ -526,6 +526,8 @@ class SignalingController extends OCSController {
 				'sessionId' => $session->getSessionId(),
 				'inCall' => $session->getInCall(),
 				'participantPermissions' => $participant->getPermissions(),
+				'actorType' => $participant->getAttendee()->getActorType(),
+				'actorId' => $participant->getAttendee()->getActorId(),
 			];
 		}
 

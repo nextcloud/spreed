@@ -336,9 +336,10 @@ class BackendNotifier {
 				'participantType' => $attendee->getParticipantType(),
 				'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 				'displayName' => $attendee->getDisplayName(),
+				'actorType' => $attendee->getActorType(),
+				'actorId' => $attendee->getActorId(),
 			];
-			if ($attendee->getActorType() === Attendee::ACTOR_USERS
-					|| $attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
 			}
 
@@ -428,9 +429,10 @@ class BackendNotifier {
 					'nextcloudSessionId' => $session->getSessionId(),
 					'participantType' => $attendee->getParticipantType(),
 					'participantPermissions' => $participant->getPermissions(),
+					'actorType' => $attendee->getActorType(),
+					'actorId' => $attendee->getActorId(),
 				];
-				if ($attendee->getActorType() === Attendee::ACTOR_USERS
-						|| $attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 					$data['userId'] = $attendee->getActorId();
 				}
 

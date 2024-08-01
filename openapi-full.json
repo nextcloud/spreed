@@ -1344,6 +1344,8 @@
             "SignalingSession": {
                 "type": "object",
                 "required": [
+                    "actorId",
+                    "actorType",
                     "inCall",
                     "lastPing",
                     "participantPermissions",
@@ -1352,6 +1354,12 @@
                     "userId"
                 ],
                 "properties": {
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
                     "inCall": {
                         "type": "integer",
                         "format": "int64"

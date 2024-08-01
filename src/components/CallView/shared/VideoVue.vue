@@ -358,7 +358,9 @@ export default {
 		},
 
 		participantActorType() {
-			if (this.participant?.actorType) {
+			if (this.model.attributes.actorType) {
+				return this.model.attributes.actorType
+			} else if (this.participant?.actorType) {
 				return this.participant.actorType
 			} else if (this.peerData?.actorType) {
 				return this.peerData.actorType
@@ -370,6 +372,10 @@ export default {
 		},
 
 		participantUserId() {
+			if (this.model.attributes.actorId) {
+				return this.model.attributes.actorId
+			}
+
 			if (this.model.attributes.userId) {
 				return this.model.attributes.userId
 			}

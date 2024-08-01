@@ -33,6 +33,8 @@ export default function CallParticipantModel(options) {
 		screenPeer: null,
 		// "undefined" is used for values not known yet; "null" or "false"
 		// are used for known but negative/empty values.
+		actorType: undefined,
+		actorId: undefined,
 		userId: undefined,
 		name: undefined,
 		internal: undefined,
@@ -347,6 +349,11 @@ CallParticipantModel.prototype = {
 		if (this._simulcastScreenQuality !== undefined) {
 			this.setSimulcastScreenQuality(this._simulcastScreenQuality)
 		}
+	},
+
+	setActor(actorType, actorId) {
+		this.set('actorType', actorType)
+		this.set('actorId', actorId)
 	},
 
 	setUserId(userId) {
