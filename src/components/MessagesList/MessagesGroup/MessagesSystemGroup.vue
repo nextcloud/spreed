@@ -8,8 +8,7 @@
 		<div v-for="messagesCollapsed in messagesGroupedBySystemMessage"
 			:key="messagesCollapsed.id"
 			class="messages-group__system">
-			<ul v-if="messagesCollapsed.messages?.length > 1"
-				class="messages messages--header">
+			<ul v-if="messagesCollapsed.messages?.length > 1" class="messages">
 				<Message is-combined-system-message
 					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
@@ -254,13 +253,12 @@ export default {
 }
 
 .wrapper {
-	max-width: $messages-list-max-width;
 	display: flex;
-	margin: auto;
+	width: 100%;
 	padding: 0;
 	&--system {
 		flex-direction: column;
-		padding-left: calc(var(--default-clickable-area) + 8px);
+		padding-left: calc($messages-avatar-width);
 	}
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
@@ -274,8 +272,6 @@ export default {
 	width: 100%;
 	min-width: 0;
 
-	&--header {
-	}
 	&--collapsed {
 		border-radius: var(--border-radius-large);
 		background-color: var(--color-background-hover);

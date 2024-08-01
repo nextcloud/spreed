@@ -143,7 +143,7 @@ export default {
 	margin-bottom: 4px;
 
 	&__wrapper {
-		max-width: $message-input-max-width;
+		max-width: $messages-input-max-width;
 		display: flex;
 		align-items: center;
 		margin: auto;

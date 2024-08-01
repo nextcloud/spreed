@@ -69,7 +69,7 @@
 
 		<!-- Additional message info-->
 		<div v-if="!isDeletedMessage" class="message-main__info">
-			<span :class="['date', { 'date--hidden': hideDate }]" :title="messageDate">{{ messageTime }}</span>
+			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
 			<div v-if="message.sendingFailure"
@@ -83,6 +83,7 @@
 				@mouseleave="showReloadButton = false"
 				@blur="showReloadButton = false">
 				<NcButton v-if="sendingErrorCanRetry && showReloadButton"
+					size="small"
 					:aria-label="sendingErrorIconTooltip"
 					@click="handleRetry">
 					<template #icon>
@@ -447,16 +448,14 @@ export default {
 @import '../../../../../assets/variables';
 
 .message-main {
-	display: flex;
+	display: grid;
+	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
 	justify-content: space-between;
 	align-items: flex-start;
 	min-width: 100%;
 
 	&__text {
-		flex: 0 1 $messages-text-max-width;
 		width: 100%;
-		min-width: 0;
-		max-width: $messages-text-max-width;
 		color: var(--color-text-light);
 
 		& > .single-emoji {
@@ -507,32 +506,34 @@ export default {
 	}
 
 	&__info {
-		justify-self: flex-start;
-		justify-content: flex-end;
 		position: relative;
 		user-select: none;
 		display: flex;
+		justify-content: flex-end;
 		color: var(--color-text-maxcontrast);
 		font-size: var(--default-font-size);
-		flex: 1 0 auto;
-		padding: 0 calc(2 * var(--default-grid-baseline));
+		width: $messages-info-width;
+		padding-inline: calc(2 * var(--default-grid-baseline));
 
 		.date {
+			width: 8ch;
+			text-align: end;
+
 			&--hidden {
 				pointer-events: none;
 				opacity: 0;
 			}
 
 			&:last-child {
-				margin-right: var(--default-clickable-area);
+				margin-right: var(--clickable-area-small, 24px);
 			}
 		}
 	}
 }
 
 .message-status {
-	width: var(--default-clickable-area);
-	height: 24px;
+	width: var(--clickable-area-small, 24px);
+	height: var(--clickable-area-small, 24px);
 	display: flex;
 	justify-content: center;
 	align-items: center;

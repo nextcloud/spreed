@@ -21,7 +21,8 @@
 			:key="`section_${dateTimestamp}`"
 			:ref="`dateGroup-${token}`"
 			:data-date-timestamp="dateTimestamp"
-			:class="{'has-sticky': dateTimestamp === stickyDate}">
+			class="scroller__content"
+			:class="{ 'has-sticky': dateTimestamp === stickyDate }">
 			<li class="messages-group__date">
 				<span class="messages-group__date-text" role="heading" aria-level="3">
 					{{ dateSeparatorLabels[dateTimestamp] }}
@@ -1228,7 +1229,7 @@ export default {
 		onMessageHeightChanged({ heightDiff }) {
 			// scroll down by the height difference
 			this.$refs.scroller.scrollTop += heightDiff
-		}
+		},
 	},
 }
 </script>
@@ -1247,6 +1248,11 @@ export default {
 
 	&--chatScrolledToBottom {
 		border-bottom-color: transparent;
+	}
+
+	&__content {
+		max-width: $messages-list-max-width;
+		margin: 0 auto;
 	}
 
 	&__loading {
@@ -1272,18 +1278,19 @@ export default {
 	&__date {
 		position: sticky;
 		top: 0;
-		display: flex;
-		justify-content: center;
+		display: grid;
+		grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
 		z-index: 2;
+		margin-left: calc($messages-avatar-width);
 		margin-bottom: 5px;
+		padding-inline: var(--default-grid-baseline);
 		pointer-events: none;
 	}
 
 	&__date-text {
-		margin-right: calc(var(--default-clickable-area) * 2);
-		content: attr(data-date);
-		padding: 4px 12px;
-		left: 50%;
+		margin: 0 auto;
+		padding: var(--default-grid-baseline) calc(3 * var(--default-grid-baseline));
+		text-wrap: nowrap;
 		color: var(--color-text-maxcontrast);
 		background-color: var(--color-background-dark);
 		border-radius: var(--border-radius-element, var(--border-radius-pill));

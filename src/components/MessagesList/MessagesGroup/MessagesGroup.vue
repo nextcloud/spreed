@@ -121,9 +121,9 @@ export default {
 @import '../../../assets/variables';
 
 .wrapper {
-	max-width: $messages-list-max-width;
 	display: flex;
-	margin: auto;
+	align-items: flex-start;
+	width: 100%;
 	padding: 0;
 
 	&:focus {
@@ -134,7 +134,7 @@ export default {
 .messages {
 	flex: auto;
 	display: flex;
-	padding: 8px 0 8px 0;
+	padding: var(--default-grid-baseline) 0;
 	flex-direction: column;
 	width: 100%;
 	min-width: 0;
@@ -142,16 +142,15 @@ export default {
 	&__avatar {
 		position: sticky;
 		top: 0;
-		height: 52px;
-		width: 52px;
-		padding: 18px 10px 10px 10px;
+		padding: calc(2 * var(--default-grid-baseline));
+		margin-top: calc(2 * var(--default-grid-baseline));
 	}
 
 	&__author {
 		display: flex;
 		gap: 4px;
 		max-width: $messages-text-max-width;
-		padding: var(--default-grid-baseline) 0 0 calc(2 * var(--default-grid-baseline));
+		padding-left: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
 
 		&-name {

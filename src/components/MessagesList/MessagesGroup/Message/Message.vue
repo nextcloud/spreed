@@ -449,7 +449,6 @@ export default {
 
 .message-body {
 	padding: var(--default-grid-baseline);
-	padding-left: calc(2 * var(--default-grid-baseline));
 	font-size: var(--default-font-size);
 	line-height: var(--default-line-height);
 	position: relative;

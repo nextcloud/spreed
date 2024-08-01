@@ -1043,7 +1043,7 @@ export default {
 	display: flex;
 	gap: var(--default-grid-baseline);
 	position: relative;
-	max-width: $message-input-max-width;
+	max-width: $messages-input-max-width;
 	margin: 0 auto;
 
 	&__emoji-picker {
