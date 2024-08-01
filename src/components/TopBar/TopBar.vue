@@ -303,15 +303,13 @@ export default {
 <style lang="scss" scoped>
 .top-bar {
 	--border-width: 1px;
-	// hardcoded 1.5 value of line-height for compatibility with older versions
-	--text-height: calc(1.5 * (var(--default-font-size) + var(--font-size-small, 15px)));
 	display: flex;
 	flex-wrap: wrap;
 	z-index: 10;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
-	min-height: calc(2 * var(--default-grid-baseline) + var(--text-height) + var(--border-width));
+	min-height: calc(var(--border-width) + 2 * (2 * var(--default-grid-baseline)) + var(--default-clickable-area));
 	padding-block: var(--default-grid-baseline);
 	// Reserve space for the sidebar toggle button
 	padding-inline: calc(2 * var(--default-grid-baseline)) calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset, 0));
@@ -361,6 +359,8 @@ export default {
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
+		// Text is guaranteed to be one line. Make line-height 1.2 to fit top bar
+		line-height: 1.2;
 		&--offline {
 			color: var(--color-text-maxcontrast);
 		}
@@ -371,7 +371,6 @@ export default {
 		text-overflow: ellipsis;
 	}
 	.description {
-		font-size: var(--font-size-small, 15px);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: fit-content;
