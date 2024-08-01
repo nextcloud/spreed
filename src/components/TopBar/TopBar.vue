@@ -303,17 +303,21 @@ export default {
 
 <style lang="scss" scoped>
 .top-bar {
+	--border-width: 1px;
+	// hardcoded 1.5 value of line-height for compatibility with older versions
+	--text-height: calc(1.5 * (var(--default-font-size) + var(--font-size-small, 15px)));
 	display: flex;
 	flex-wrap: wrap;
 	z-index: 10;
 	gap: 3px;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: flex-end;
-	padding: calc(2 * var(--default-grid-baseline));
+	min-height: calc(2 * var(--default-grid-baseline) + var(--text-height) + var(--border-width));
+	padding-block: var(--default-grid-baseline);
 	// Reserve space for the sidebar toggle button
-	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset, 0));
+	padding-inline: calc(2 * var(--default-grid-baseline)) calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset, 0));
 	background-color: var(--color-main-background);
-	border-bottom: 1px solid var(--color-border);
+	border-bottom: var(--border-width) solid var(--color-border);
 
 	.talk-sidebar-callview & {
 		margin-right: var(--default-clickable-area);
@@ -358,8 +362,6 @@ export default {
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
-		min-height: var(--default-clickable-area);
-		line-height: calc(var(--default-clickable-area) / 2);
 		&--offline {
 			color: var(--color-text-maxcontrast);
 		}
@@ -370,6 +372,7 @@ export default {
 		text-overflow: ellipsis;
 	}
 	.description {
+		font-size: var(--font-size-small, 15px);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: fit-content;
