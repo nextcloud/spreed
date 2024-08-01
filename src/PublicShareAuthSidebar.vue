@@ -204,16 +204,24 @@ export default {
 }
 </script>
 
+<style lang="css">
+#talk-sidebar,
+#talk-sidebar *,
+#talk-sidebar *::before,
+#talk-sidebar *::after {
+	box-sizing: border-box;
+}
+</style>
+
 <style lang="scss" scoped>
 @import './assets/variables';
 
-/* Properties based on the app-sidebar */
+/* Styles based on the NcAppSidebar */
 #talk-sidebar {
 	position: relative;
 	flex-shrink: 0;
-	width: 27vw;
-	min-width: 300px;
-	max-width: 500px;
+	width: clamp(300px, 27vw, 500px);
+	height: 100%;
 
 	background: var(--color-main-background);
 	border-left: 1px solid var(--color-border);
@@ -228,71 +236,57 @@ export default {
 
 	/* Unset conflicting rules from guest.css for the sidebar. */
 	text-align: left;
-}
 
-#talk-sidebar > .emptycontent {
-	/* Remove default margin-top as it is unneeded when showing only the empty
-	 * content in a flex sidebar. */
-	margin-top: 0;
-}
+	& > .emptycontent {
+		/* Remove default margin-top as it is unneeded when showing only the empty
+		 * content in a flex sidebar. */
+		margin-top: 0;
+	}
 
-#talk-sidebar #call-container {
-	position: relative;
+	& #call-container {
+		position: relative;
 
-	flex-grow: 1;
+		flex-grow: 1;
 
-	/* Prevent shadows of videos from leaking on other elements. */
-	overflow: hidden;
+		/* Prevent shadows of videos from leaking on other elements. */
+		overflow: hidden;
 
-	/* Distribute available height between call container and chat view. */
-	height: 50%;
+		/* Distribute available height between call container and chat view. */
+		height: 40%;
 
-	/* Ensure that the background will be black also in voice only calls. */
-	background-color: $color-call-background;
-}
+		/* Ensure that the background will be black also in voice only calls. */
+		background-color: $color-call-background;
 
-#talk-sidebar #call-container :deep(.videoContainer) {
-	/* The video container has some small padding to prevent the video from
-	 * reaching the edges, but it also uses "width: 100%", so the padding should
-	 * be included in the full width of the element. */
-	box-sizing: border-box;
-}
+		:deep(.videoContainer.promoted video) {
+			/* Base the size of the video on its width instead of on its height;
+			 * otherwise the video could appear in full height but cropped on the sides
+			 * due to the space available in the sidebar being typically larger in
+			 * vertical than in horizontal. */
+			width: 100%;
+			height: auto;
+		}
+	}
 
-#talk-sidebar #call-container :deep(.videoContainer.promoted video) {
-	/* Base the size of the video on its width instead of on its height;
-	 * otherwise the video could appear in full height but cropped on the sides
-	 * due to the space available in the sidebar being typically larger in
-	 * vertical than in horizontal. */
-	width: 100%;
-	height: auto;
-}
+	& .chatView {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		position: relative;
 
-#talk-sidebar #call-container :deep(.nameIndicator) {
-	/* The name indicator has some small padding to prevent the name from
-	 * reaching the edges, but it also uses "width: 100%", so the padding should
-	 * be included in the full width of the element. */
-	box-sizing: border-box;
-}
+		flex-grow: 1;
 
-#talk-sidebar .chatView {
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	position: relative;
+		/* Distribute available height between call container and chat view. */
+		height: 60%;
+	}
 
-	flex-grow: 1;
+	& :deep(.wrapper) {
+		margin-top: 0;
+	}
 
-	/* Distribute available height between call container and chat view. */
-	height: 50%;
-}
-
-#talk-sidebar :deep(.wrapper) {
-	margin-top: 0;
-}
-
-/* Restore rules from style.scss overriden by guest.css for the sidebar. */
-#talk-sidebar :deep(a) {
-	color: var(--color-main-text);
-	font-weight: inherit;
+	/* Restore rules from style.scss overwritten by guest.css for the sidebar. */
+	& :deep(a) {
+		color: var(--color-main-text);
+		font-weight: inherit;
+	}
 }
 </style>

@@ -178,7 +178,15 @@ export default {
 		},
 
 		/**
-		 * Whether the to use text on button at mobile view
+		 * Whether to use text on button (e.g. at sidebar)
+		 */
+		hideText: {
+			type: Boolean,
+			default: false,
+		},
+
+		/**
+		 * Whether to use text on button at mobile view
 		 */
 		shrinkOnMobile: {
 			type: Boolean,
@@ -217,7 +225,7 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 		showButtonText() {
-			return !this.isMobile || !this.shrinkOnMobile
+			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
 		},
 		showRecordingWarning() {
 			return [CALL.RECORDING.VIDEO_STARTING, CALL.RECORDING.AUDIO_STARTING,

@@ -26,7 +26,7 @@
 				<CallView v-if="isInCall"
 					:token="token"
 					:is-sidebar="true" />
-				<CallButton class="call-button" />
+				<CallButton v-if="!isInCall" class="call-button" />
 				<ChatView />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
@@ -274,7 +274,6 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding: var(--default-grid-baseline) 0;
 }
 
 #talk-sidebar > .emptycontent {
@@ -297,7 +296,7 @@ export default {
 }
 
 #talk-sidebar .call-button {
-	margin: 0 auto calc(var(--default-grid-baseline) * 2);
+	margin: calc(var(--default-grid-baseline) * 2) auto;
 }
 
 #talk-sidebar .button-centered {

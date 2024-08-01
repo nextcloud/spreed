@@ -13,10 +13,8 @@
  * layout was adjusted. */
 body.talk-sidebar-enabled {
 	/* Move rules set for body by guest.scss to the wrapped body. */
-	display: unset;
-	flex-direction: unset;
-	justify-content: unset;
-	align-items: unset;
+	flex-direction: row;
+	height: 100vh;
 }
 
 body.talk-sidebar-enabled #body-login {

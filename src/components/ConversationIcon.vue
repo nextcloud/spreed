@@ -272,6 +272,7 @@ export default {
 		width: 18px;
 		border: 2px solid var(--color-main-background);
 		background-color: var(--color-main-background);
+		color: var(--color-main-text);
 		border-radius: 50%;
 	}
 

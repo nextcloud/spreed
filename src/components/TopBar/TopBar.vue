@@ -4,7 +4,10 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar"
+		:class="{ 'top-bar--sidebar': isSidebar}"
+		:style="topBarStyle"
+		:data-theme-dark="isInCall">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -79,7 +82,7 @@
 			:model="localMediaModel"
 			@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
-		<CallButton shrink-on-mobile :is-screensharing="!!localMediaModel.attributes.localScreen" />
+		<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
 
 		<!-- Breakout rooms editor -->
 		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
@@ -250,6 +253,7 @@ export default {
 
 		topBarStyle() {
 			return {
+				'--original-color-main-text': window.getComputedStyle(document.body).getPropertyValue('--color-main-text'),
 				'--original-color-main-background': window.getComputedStyle(document.body).getPropertyValue('--color-main-background')
 			}
 		},
@@ -307,7 +311,7 @@ export default {
 	justify-content: flex-end;
 	padding: calc(2 * var(--default-grid-baseline));
 	// Reserve space for the sidebar toggle button
-	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset));
+	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset, 0));
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border);
 
@@ -322,6 +326,14 @@ export default {
 		top: 0;
 		left: 0;
 		background-color: transparent;
+	}
+
+	&--sidebar {
+		padding: calc(2 * var(--default-grid-baseline));
+
+		.conversation-icon {
+			margin-left: 0;
+		}
 	}
 }
 
@@ -368,6 +380,7 @@ export default {
 }
 
 :deep(.conversation-icon__type) {
+	color: var(--original-color-main-text) !important;
 	border-color: var(--original-color-main-background) !important;
 	background-color: var(--original-color-main-background) !important;
 }
