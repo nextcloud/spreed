@@ -9,6 +9,7 @@ import { t } from '@nextcloud/l10n'
 
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
+import { useTalkHashStore } from '../stores/talkHash.js'
 import type { Capabilities, JoinRoomFullResponse } from '../types'
 
 type Config = Capabilities['spreed']['config']
@@ -61,6 +62,10 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === remoteCapabilities[token]?.hash) {
 		return
 	}
+
+	// Mark the hash as dirty to prevent any activity in the conversation
+	const talkHashStore = useTalkHashStore()
+	talkHashStore.setTalkProxyHashDirty(token)
 
 	const response = await getRemoteCapabilities(token)
 	if (Array.isArray(response.data.ocs.data)) {
