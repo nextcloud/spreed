@@ -37,7 +37,7 @@
 			<template #icon>
 				<Message :size="20" />
 			</template>
-			<ChatView :is-visible="opened" />
+			<ChatView :is-visible="opened" is-sidebar />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showParticipantsTab"
 			id="participants"

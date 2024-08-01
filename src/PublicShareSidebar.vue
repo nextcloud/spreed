@@ -20,14 +20,10 @@
 				</NcButton>
 			</div>
 			<template v-else>
-				<TopBar v-if="isInCall"
-					:is-in-call="true"
-					:is-sidebar="true" />
-				<CallView v-if="isInCall"
-					:token="token"
-					:is-sidebar="true" />
+				<TopBar v-if="isInCall" is-in-call is-sidebar />
+				<CallView v-if="isInCall" :token="token" is-sidebar />
 				<CallButton v-if="!isInCall" class="call-button" />
-				<ChatView />
+				<ChatView is-sidebar />
 				<PollViewer />
 				<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
 			</template>

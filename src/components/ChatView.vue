@@ -95,6 +95,11 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+
+		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup() {
