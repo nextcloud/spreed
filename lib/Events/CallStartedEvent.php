@@ -8,5 +8,5 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-class BeforeActiveSinceModifiedEvent extends AActiveSinceModifiedEvent {
+class CallStartedEvent extends ACallStartedEvent {
 }

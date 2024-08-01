@@ -296,6 +296,7 @@ class Room {
 
 	public function resetActiveSince(): void {
 		$this->activeSince = null;
+		$this->callFlag = Participant::FLAG_DISCONNECTED;
 	}
 
 	public function getDefaultPermissions(): int {

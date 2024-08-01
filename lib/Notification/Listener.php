@@ -10,11 +10,11 @@ namespace OCA\Talk\Notification;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Controller\ChatController;
-use OCA\Talk\Events\ActiveSinceModifiedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
-use OCA\Talk\Events\BeforeParticipantModifiedEvent;
+use OCA\Talk\Events\BeforeCallStartedEvent;
 use OCA\Talk\Events\CallNotificationSendEvent;
+use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Model\Attendee;
@@ -60,9 +60,9 @@ class Listener implements IEventListener {
 			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee()),
 			AttendeesAddedEvent::class => $this->generateInvitation($event->getRoom(), $event->getAttendees()),
 			UserJoinedRoomEvent::class => $this->handleUserJoinedRoomEvent($event),
-			BeforeParticipantModifiedEvent::class => $this->checkCallNotifications($event),
+			BeforeCallStartedEvent::class => $this->checkCallNotifications($event),
 			ParticipantModifiedEvent::class => $this->afterParticipantJoinedCall($event),
-			ActiveSinceModifiedEvent::class => $this->afterActiveSinceModified($event),
+			CallStartedEvent::class => $this->afterCallStarted($event),
 		};
 	}
 
@@ -178,29 +178,13 @@ class Listener implements IEventListener {
 	/**
 	 * Call notification: "{user} wants to talk with you"
 	 */
-	protected function checkCallNotifications(BeforeParticipantModifiedEvent $event): void {
-		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
-			return;
-		}
-
-		if ($event->getOldValue() !== Participant::FLAG_DISCONNECTED
-			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
-			return;
-		}
-
+	protected function checkCallNotifications(BeforeCallStartedEvent $event): void {
 		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT)) {
 			$this->shouldSendCallNotification = false;
 			return;
 		}
 
-		$room = $event->getRoom();
-		if ($room->getActiveSince() instanceof \DateTime) {
-			// Call already active => No new notifications
-			$this->shouldSendCallNotification = false;
-			return;
-		}
-
-		if ($room->getObjectType() === Room::OBJECT_TYPE_FILE) {
+		if ($event->getRoom()->getObjectType() === Room::OBJECT_TYPE_FILE) {
 			$this->shouldSendCallNotification = false;
 			return;
 		}
@@ -218,22 +202,18 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		// Purge received call notifications on joining
 		$this->markCallNotificationsRead($event->getRoom());
-		if ($this->shouldSendCallNotification) {
-			$this->sendCallNotifications($event->getRoom());
-		}
 	}
 
-	protected function afterActiveSinceModified(ActiveSinceModifiedEvent $event): void {
-		if (!$event->hasUpdatedActiveSince()) {
+	protected function afterCallStarted(CallStartedEvent $event): void {
+		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT)) {
 			return;
 		}
 
-		if (!$event->getRoom()->isFederatedConversation()) {
-			return;
+		if ($this->shouldSendCallNotification || $event->getRoom()->isFederatedConversation()) {
+			$this->sendCallNotifications($event->getRoom());
 		}
-
-		$this->sendCallNotifications($event->getRoom());
 	}
 
 	/**

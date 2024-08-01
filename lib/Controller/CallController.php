@@ -163,10 +163,11 @@ class CallController extends AEnvironmentAwareController {
 			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
 
-		$joined = $this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
-
-		if (!$joined) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent);
+			$this->roomService->setActiveSince($this->room, $this->participant, $this->timeFactory->getDateTime(), $flags, silent: $silent);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse();
 	}
@@ -226,8 +227,10 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse(['error' => 'consent'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$joined = $this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
-		if (!$joined) {
+		try {
+			$this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
+			$this->roomService->setActiveSince($this->room, $this->participant, $this->timeFactory->getDateTime(), $flags, silent: $silent);
+		} catch (\InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -414,8 +417,12 @@ class CallController extends AEnvironmentAwareController {
 
 		if ($all && $this->participant->hasModeratorPermissions()) {
 			$this->participantService->endCallForEveryone($this->room, $this->participant);
+			$this->roomService->resetActiveSince($this->room, $this->participant, true);
 		} else {
 			$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
+			if (!$this->participantService->hasActiveSessionsInCall($this->room)) {
+				$this->roomService->resetActiveSince($this->room, $this->participant);
+			}
 		}
 
 		return new DataResponse();
@@ -443,6 +450,9 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
+		if (!$this->participantService->hasActiveSessionsInCall($this->room)) {
+			$this->roomService->resetActiveSince($this->room, $this->participant);
+		}
 
 		return new DataResponse();
 	}

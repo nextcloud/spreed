@@ -9,19 +9,18 @@ declare(strict_types=1);
 namespace OCA\Talk\Activity;
 
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ACallEndedEvent;
 use OCA\Talk\Events\ARoomEvent;
-use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
-use OCA\Talk\Events\BeforeCallEndedForEveryoneEvent;
-use OCA\Talk\Events\ParticipantModifiedEvent;
-use OCA\Talk\Events\SessionLeftRoomEvent;
+use OCA\Talk\Events\CallEndedEvent;
+use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
+use OCP\Activity\Exceptions\InvalidValueException;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
@@ -53,85 +52,31 @@ class Listener implements IEventListener {
 		}
 
 		match (get_class($event)) {
-			BeforeCallEndedForEveryoneEvent::class => $this->generateCallActivity($event->getRoom(), true, $event->getActor()),
-			SessionLeftRoomEvent::class,
-			AttendeeRemovedEvent::class => $this->generateCallActivity($event->getRoom()),
-			ParticipantModifiedEvent::class => $this->handleParticipantModified($event),
+			CallEndedEvent::class,
+			CallEndedForEveryoneEvent::class => $this->generateCallActivity($event),
 			AttendeesAddedEvent::class => $this->generateInvitationActivity($event->getRoom(), $event->getAttendees()),
 		};
 	}
 
-	protected function setActive(ParticipantModifiedEvent $event): void {
-		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
-			return;
-		}
-
-		if ($event->getOldValue() !== Participant::FLAG_DISCONNECTED
-			|| $event->getNewValue() === Participant::FLAG_DISCONNECTED) {
-			return;
-		}
-
-		$participant = $event->getParticipant();
-		$this->roomService->setActiveSince(
-			$event->getRoom(),
-			$this->timeFactory->getDateTime(),
-			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED
-		);
-	}
-
-	protected function handleParticipantModified(ParticipantModifiedEvent $event): void {
-		if ($event->getProperty() !== AParticipantModifiedEvent::PROPERTY_IN_CALL) {
-			return;
-		}
-
-		if ($event->getOldValue() === Participant::FLAG_DISCONNECTED
-			|| $event->getNewValue() !== Participant::FLAG_DISCONNECTED) {
-			$this->setActive($event);
-			return;
-		}
-
-		if ($event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_END_FOR_EVERYONE)) {
-			// The call activity was generated already if the call is ended
-			// for everyone
-			return;
-		}
-
-		$this->generateCallActivity($event->getRoom());
-	}
-
 	/**
 	 * Call activity: "You attended a call with {user1} and {user2}"
-	 *
-	 * @param Room $room
-	 * @param bool $endForEveryone
-	 * @param Participant|null $actor
-	 * @return bool True if activity was generated, false otherwise
 	 */
-	protected function generateCallActivity(Room $room, bool $endForEveryone = false, ?Participant $actor = null): bool {
-		$activeSince = $room->getActiveSince();
-		if (!$activeSince instanceof \DateTime || (!$endForEveryone && $this->participantService->hasActiveSessionsInCall($room))) {
-			return false;
-		}
+	protected function generateCallActivity(ACallEndedEvent $event): void {
+		$room = $event->getRoom();
+		$actor = $event->getActor();
+		$activeSince = $event->getOldValue();
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$userIds = $this->participantService->getParticipantUserIds($room, $activeSince);
 		$numGuests = $this->participantService->getGuestCount($room, $activeSince);
 
 		$message = 'call_ended';
-		if ($endForEveryone) {
+		if ($event instanceof CallEndedForEveryoneEvent) {
 			$message = 'call_ended_everyone';
 		} elseif (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) && \count($userIds) === 1) {
 			$message = 'call_missed';
 		}
 
-		if (!$this->roomService->resetActiveSince($room)) {
-			// Race-condition, the room was already reset.
-			return false;
-		}
-
-		if ($room->getCallRecording() !== Room::RECORDING_NONE && $room->getCallRecording() !== Room::RECORDING_FAILED) {
-			$this->recordingService->stop($room);
-		}
 		if ($actor instanceof Participant) {
 			$actorId = $actor->getAttendee()->getActorId();
 			$actorType = $actor->getAttendee()->getActorType();
@@ -149,12 +94,12 @@ class Listener implements IEventListener {
 		]), $this->timeFactory->getDateTime(), false);
 
 		if (empty($userIds)) {
-			return false;
+			return;
 		}
 
-		$event = $this->activityManager->generateEvent();
+		$activity = $this->activityManager->generateEvent();
 		try {
-			$event->setApp('spreed')
+			$activity->setApp('spreed')
 				->setType('spreed')
 				->setAuthor('')
 				->setObject('room', $room->getId())
@@ -165,21 +110,19 @@ class Listener implements IEventListener {
 					'guests' => $numGuests,
 					'duration' => $duration,
 				]);
-		} catch (\InvalidArgumentException $e) {
+		} catch (InvalidValueException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			return false;
+			return;
 		}
 
 		foreach ($userIds as $userId) {
 			try {
-				$event->setAffectedUser($userId);
-				$this->activityManager->publish($event);
+				$activity->setAffectedUser($userId);
+				$this->activityManager->publish($activity);
 			} catch (\Throwable $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
-
-		return true;
 	}
 
 	/**

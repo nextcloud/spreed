@@ -40,7 +40,7 @@ class CallController {
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags
 	 * @param bool $silent Join the call silently
 	 * @param bool $recordingConsent Agreement to be recorded
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Federated user is now in the call

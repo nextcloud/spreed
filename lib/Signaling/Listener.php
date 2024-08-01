@@ -177,7 +177,7 @@ class Listener implements IEventListener {
 
 		$this->externalSignaling->roomInCallChanged(
 			$event->getRoom(),
-			$event->getNewValue(),
+			$event->getCallFlag(),
 			[],
 			true
 		);

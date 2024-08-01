@@ -8,29 +8,28 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
-abstract class AActiveSinceModifiedEvent extends ARoomModifiedEvent {
+/**
+ * @psalm-method \DateTime getOldValue()
+ */
+abstract class ACallEndedEvent extends ARoomModifiedEvent {
 	public function __construct(
 		Room $room,
-		?\DateTime $newValue,
-		?\DateTime $oldValue,
-		protected int $callFlag,
-		protected int $oldCallFlag,
+		?Participant $actor,
+		\DateTime $oldActiveSince,
 	) {
 		parent::__construct(
 			$room,
 			self::PROPERTY_ACTIVE_SINCE,
-			$newValue,
-			$oldValue,
+			null,
+			$oldActiveSince,
+			$actor
 		);
 	}
 
 	public function getCallFlag(): int {
-		return $this->callFlag;
-	}
-
-	public function getOldCallFlag(): int {
-		return $this->oldCallFlag;
+		return Participant::FLAG_DISCONNECTED;
 	}
 }
