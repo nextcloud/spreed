@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-beta.2 – 2024-08-01
+### Fixed
+- fix(calls): Add notifications for federated calls
+  [#12845](https://github.com/nextcloud/spreed/issues/12845)
+  [#12856](https://github.com/nextcloud/spreed/issues/12856)
+  [#12874](https://github.com/nextcloud/spreed/issues/12874)
+- fix(calls): Fix broken avatar of remote users in calls
+  [#12863](https://github.com/nextcloud/spreed/issues/12863)
+- fix(videoverification): Fix design
+  [#12853](https://github.com/nextcloud/spreed/issues/12853)
+- fix(chat): Prevent leave call dialog when canceling quoting
+  [#12824](https://github.com/nextcloud/spreed/issues/12824)
+- fix(UI): More design adjustments for nextcloud/vue changes
+  [#12810](https://github.com/nextcloud/spreed/issues/12810)
+
 ## 20.0.0-beta.1 – 2024-07-26
 ### Added
 - Banning users and guests
