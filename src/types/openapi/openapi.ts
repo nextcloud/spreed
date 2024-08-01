@@ -1649,6 +1649,8 @@ export type components = {
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         SignalingSession: {
+            actorId: string;
+            actorType: string;
             /** Format: int64 */
             inCall: number;
             /** Format: int64 */
