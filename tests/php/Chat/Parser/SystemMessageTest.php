@@ -514,7 +514,7 @@ class SystemMessageTest extends TestCase {
 		if ($message === 'call_ended') {
 			$parser->expects($this->once())
 				->method('parseCall')
-				->with($message, $parameters, ['actor' => ['id' => 'actor', 'type' => 'user']])
+				->with($room, $message, $parameters, ['actor' => ['id' => 'actor', 'type' => 'user']])
 				->willReturn([$expectedMessage, $expectedParameters]);
 		} else {
 			$parser->expects($this->never())
@@ -1374,6 +1374,7 @@ class SystemMessageTest extends TestCase {
 	 * @dataProvider dataParseCall
 	 */
 	public function testParseCall(string $message, array $parameters, array $actor, array $expected): void {
+		$room = $this->createMock(Room::class);
 		$parser = $this->getParser(['getDuration', 'getUser']);
 		$parser->expects($this->once())
 			->method('getDuration')
@@ -1389,7 +1390,7 @@ class SystemMessageTest extends TestCase {
 		// Prepend the actor
 		$expected[1]['actor'] = $actor;
 
-		$this->assertEquals($expected, self::invokePrivate($parser, 'parseCall', [$message, $parameters, ['actor' => $actor]]));
+		$this->assertEquals($expected, self::invokePrivate($parser, 'parseCall', [$room, $message, $parameters, ['actor' => $actor]]));
 	}
 
 	public static function dataGetDuration(): array {

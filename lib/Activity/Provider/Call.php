@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Activity\Provider;
 
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Room;
 use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\IL10N;
@@ -28,16 +30,15 @@ class Call extends Base {
 			$l = $this->languageFactory->get('spreed', $language);
 			$parameters = $event->getSubjectParameters();
 
-			//			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
-			//			try {
-			//				$room = $this->manager->getRoomById((int) $parameters['room']);
-			//				$roomParameter = $this->getRoom($l, $room);
-			//			} catch (RoomNotFoundException $e) {
-			//			}
+			try {
+				$room = $this->manager->getRoomForUser((int) $parameters['room'], $this->activityManager->getCurrentUserId());
+			} catch (RoomNotFoundException) {
+				$room = null;
+			}
 
-			$result = $this->parseCall($event, $l);
+			$result = $this->parseCall($room, $event, $l);
 			$result['subject'] .= ' ' . $this->getDuration($l, (int) $parameters['duration']);
-			//			$result['params']['call'] = $roomParameter;
+			// $result['params']['call'] = $roomParameter;
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {
 			throw new UnknownActivityException('subject');
@@ -61,7 +62,7 @@ class Call extends Base {
 		return $l->t('(Duration %s)', $duration);
 	}
 
-	protected function parseCall(IEvent $event, IL10N $l): array {
+	protected function parseCall(?Room $room, IEvent $event, IL10N $l): array {
 		$parameters = $event->getSubjectParameters();
 
 		$currentUser = array_search($this->activityManager->getCurrentUserId(), $parameters['users'], true);
@@ -71,8 +72,23 @@ class Call extends Base {
 		unset($parameters['users'][$currentUser]);
 		sort($parameters['users']);
 
-		$numUsers = \count($parameters['users']);
+		if (!isset($parameters['cloudIds'])) {
+			// Compatibility with old messages
+			$parameters['cloudIds'] = [];
+		}
+		sort($parameters['users']);
+		sort($parameters['cloudIds']);
+
+		$numUsers = $numRealUsers = count($parameters['users']);
+
+		// Without room, we can not resolve cloudIds, so we list them as guests instead
+		if (!$room instanceof Room) {
+			$numUsers += count($parameters['cloudIds']);
+		} else {
+			$parameters['guests'] += count($parameters['cloudIds']);
+		}
 		$displayedUsers = $numUsers;
+
 		switch ($numUsers) {
 			case 0:
 				$subject = $l->t('You attended a call with {user1}');
@@ -124,7 +140,11 @@ class Call extends Base {
 
 		$params = [];
 		for ($i = 1; $i <= $displayedUsers; $i++) {
-			$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+			if ($i <= $numRealUsers) {
+				$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+			} else {
+				$params['user' . $i] = $this->getRemoteUser($room, $parameters['cloudIds'][$i - $numRealUsers - 1]);
+			}
 		}
 
 		return [

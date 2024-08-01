@@ -68,6 +68,7 @@ class Listener implements IEventListener {
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$userIds = $this->participantService->getParticipantUserIds($room, $activeSince);
+		$cloudIds = $this->participantService->getParticipantActorIdsByActorType($room, [Attendee::ACTOR_FEDERATED_USERS], $activeSince);
 		$numGuests = $this->participantService->getGuestCount($room, $activeSince);
 
 		$message = 'call_ended';
@@ -88,6 +89,7 @@ class Listener implements IEventListener {
 			'message' => $message,
 			'parameters' => [
 				'users' => $userIds,
+				'cloudIds' => $cloudIds,
 				'guests' => $numGuests,
 				'duration' => $duration,
 			],
@@ -107,6 +109,7 @@ class Listener implements IEventListener {
 				->setSubject('call', [
 					'room' => $room->getId(),
 					'users' => $userIds,
+					'cloudIds' => $cloudIds,
 					'guests' => $numGuests,
 					'duration' => $duration,
 				]);
