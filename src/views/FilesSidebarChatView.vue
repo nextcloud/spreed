@@ -5,7 +5,7 @@
 
 <template>
 	<div class="talk-tab__wrapper">
-		<CallButton class="talk-tab__call-button" />
+		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
 		<ChatView class="talk-tab__chat-view" />
 		<PollViewer />
 		<MediaSettings :recording-consent-given.sync="recordingConsentGiven" />
@@ -18,6 +18,8 @@ import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import CallButton from '../components/TopBar/CallButton.vue'
 
+import { useIsInCall } from '../composables/useIsInCall.js'
+
 export default {
 
 	name: 'FilesSidebarChatView',
@@ -27,6 +29,12 @@ export default {
 		ChatView,
 		MediaSettings,
 		PollViewer,
+	},
+
+	setup() {
+		return {
+			isInCall: useIsInCall(),
+		}
 	},
 
 	data() {
