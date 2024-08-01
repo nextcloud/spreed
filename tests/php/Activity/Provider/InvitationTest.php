@@ -14,9 +14,11 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
+use OCP\Federation\ICloudIdManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -36,6 +38,8 @@ class InvitationTest extends TestCase {
 	protected Config&MockObject $config;
 	protected IManager&MockObject $activityManager;
 	protected IUserManager&MockObject $userManager;
+	protected ICloudIdManager&MockObject $cloudIdManager;
+	protected ParticipantService&MockObject $participantService;
 	protected AvatarService&MockObject $avatarService;
 	protected Manager&MockObject $manager;
 
@@ -47,6 +51,8 @@ class InvitationTest extends TestCase {
 		$this->config = $this->createMock(Config::class);
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->manager = $this->createMock(Manager::class);
 	}
@@ -64,6 +70,8 @@ class InvitationTest extends TestCase {
 					$this->config,
 					$this->activityManager,
 					$this->userManager,
+					$this->cloudIdManager,
+					$this->participantService,
 					$this->avatarService,
 					$this->manager,
 				])
@@ -76,6 +84,8 @@ class InvitationTest extends TestCase {
 			$this->config,
 			$this->activityManager,
 			$this->userManager,
+			$this->cloudIdManager,
+			$this->participantService,
 			$this->avatarService,
 			$this->manager
 		);

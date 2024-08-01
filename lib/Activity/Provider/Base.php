@@ -9,13 +9,17 @@ declare(strict_types=1);
 namespace OCA\Talk\Activity\Provider;
 
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
+use OCP\Federation\ICloudIdManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -30,6 +34,8 @@ abstract class Base implements IProvider {
 		protected Config $config,
 		protected IManager $activityManager,
 		protected IUserManager $userManager,
+		protected ICloudIdManager $cloudIdManager,
+		protected ParticipantService $participantService,
 		protected AvatarService $avatarService,
 		protected Manager $manager,
 	) {
@@ -115,6 +121,23 @@ abstract class Base implements IProvider {
 			'type' => 'user',
 			'id' => $uid,
 			'name' => $this->userManager->getDisplayName($uid) ?? $uid,
+		];
+	}
+
+	protected function getRemoteUser(Room $room, string $federationId): array {
+		$cloudId = $this->cloudIdManager->resolveCloudId($federationId);
+		$displayName = $cloudId->getDisplayId();
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $federationId);
+			$displayName = $participant->getAttendee()->getDisplayName();
+		} catch (ParticipantNotFoundException) {
+		}
+
+		return [
+			'type' => 'user',
+			'id' => $cloudId->getUser(),
+			'name' => $displayName,
+			'server' => $cloudId->getRemote(),
 		];
 	}
 }

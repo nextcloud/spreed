@@ -220,7 +220,7 @@ class SystemMessage implements IEventListener {
 		} elseif ($message === 'call_missed') {
 			[$parsedMessage, $parsedParameters, $message] = $this->parseMissedCall($room, $parameters, $currentActorType === Attendee::ACTOR_FEDERATED_USERS ? null : $currentActorId);
 		} elseif ($message === 'call_ended' || $message === 'call_ended_everyone') {
-			[$parsedMessage, $parsedParameters] = $this->parseCall($message, $parameters, $parsedParameters);
+			[$parsedMessage, $parsedParameters] = $this->parseCall($room, $message, $parameters, $parsedParameters);
 		} elseif ($message === 'read_only_off') {
 			$parsedMessage = $this->l->t('{actor} unlocked the conversation');
 			if ($currentUserIsActor) {
@@ -1077,7 +1077,7 @@ class SystemMessage implements IEventListener {
 	}
 
 
-	protected function parseCall(string $message, array $parameters, array $params): array {
+	protected function parseCall(Room $room, string $message, array $parameters, array $params): array {
 		if ($message === 'call_ended_everyone') {
 			if ($params['actor']['type'] === 'user') {
 				$entry = array_keys($parameters['users'], $params['actor']['id'], true);
@@ -1088,8 +1088,15 @@ class SystemMessage implements IEventListener {
 				$parameters['guests']--;
 			}
 		}
+		if (!isset($parameters['cloudIds'])) {
+			// Compatibility with old messages
+			$parameters['cloudIds'] = [];
+		}
 		sort($parameters['users']);
-		$numUsers = \count($parameters['users']);
+		sort($parameters['cloudIds']);
+
+		$numRealUsers = count($parameters['users']);
+		$numUsers = $numRealUsers + count($parameters['cloudIds']);
 		$displayedUsers = $numUsers;
 
 		switch ($numUsers) {
@@ -1186,7 +1193,11 @@ class SystemMessage implements IEventListener {
 
 		if ($displayedUsers > 0) {
 			for ($i = 1; $i <= $displayedUsers; $i++) {
-				$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+				if ($i <= $numRealUsers) {
+					$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+				} else {
+					$params['user' . $i] = $this->getRemoteUser($room, $parameters['cloudIds'][$i - $numRealUsers - 1]);
+				}
 			}
 		}
 
