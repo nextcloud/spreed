@@ -5,7 +5,7 @@
 
 .settings-section-placeholder {
 	--settings-section-placeholder-header-height: 30px;
-	--settings-section-placeholder-line-height: var(--default-line-height);
+	--settings-section-placeholder-line-height: 1lh;
 	--settings-section-placeholder-padding: 1em;
 	--settings-section-placeholder-image: linear-gradient(90deg, var(--color-placeholder-light) 65%, var(--color-placeholder-dark) 70%, var(--color-placeholder-light) 75%);
 	position: relative;
@@ -29,7 +29,7 @@
 
 .settings-section-placeholder::after {
 	max-width: 900px;
-	background: 
+	background:
 		var(--settings-section-placeholder-image) 0 calc(var(--settings-section-placeholder-header-height) + 1em + 0 * (var(--settings-section-placeholder-line-height) + 1em)) / 200vw var(--settings-section-placeholder-line-height) repeat-x content-box,
 		var(--settings-section-placeholder-image) 0 calc(var(--settings-section-placeholder-header-height) + 1em + 1 * (var(--settings-section-placeholder-line-height) + 1em)) / 200vw var(--settings-section-placeholder-line-height) repeat-x content-box,
 		var(--settings-section-placeholder-image) 0 calc(var(--settings-section-placeholder-header-height) + 1em + 2 * (var(--settings-section-placeholder-line-height) + 1em)) / 200vw var(--settings-section-placeholder-line-height) repeat-x content-box;

@@ -1067,7 +1067,7 @@ export default {
 
 	// Override NcRichContenteditable styles
 	:deep(.rich-contenteditable__input) {
-		--contenteditable-space: calc((var(--default-clickable-area) - var(--default-line-height) - 4px) / 2);
+		--contenteditable-space: calc((var(--default-clickable-area) - 1lh - 4px) / 2);
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 		padding: var(--contenteditable-space);
 		padding-left: calc(var(--contenteditable-space) + var(--default-clickable-area));
