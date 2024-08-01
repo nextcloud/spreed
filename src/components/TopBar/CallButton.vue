@@ -217,6 +217,7 @@ export default {
 		},
 		isNextcloudTalkHashDirty() {
 			return this.talkHashStore.isNextcloudTalkHashDirty
+				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]
 		},
 		container() {
 			return this.$store.getters.getMainContainerSelector()
