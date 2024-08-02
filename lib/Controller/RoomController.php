@@ -1070,7 +1070,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse<Http::STATUS_OK, array{type: int}|array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
 	 *
 	 * 200: Participant successfully added
-	 * 400: Adding participant is not possible
+	 * 400: Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key)
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
 	 */
@@ -1115,6 +1115,11 @@ class RoomController extends AEnvironmentAwareController {
 			$newUser = $this->userManager->get($newParticipant);
 			if (!$newUser instanceof IUser) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			//Check if the user is banned
+			if ($this->banService->isActorBanned($this->room, Attendee::ACTOR_USERS, $newUser->getUID())) {
+				return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
 			}
 
 			$participantsToAdd[] = [

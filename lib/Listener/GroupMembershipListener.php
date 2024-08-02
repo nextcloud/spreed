@@ -30,7 +30,17 @@ class GroupMembershipListener extends AMembershipListener {
 	protected function addNewMemberToRooms(IGroup $group, IUser $user): void {
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $group->getGID());
 
+		if (empty($rooms)) {
+			return;
+		}
+
+		$bannedRoomIds = $this->banService->getBannedRoomsForUserId($user->getUID());
 		foreach ($rooms as $room) {
+			if (isset($bannedRoomIds[$room->getId()])) {
+				$this->logger->warning('User ' . $user->getUID() . ' is banned from conversation ' . $room->getToken() . ' and was skipped while adding them to group ' . $group->getDisplayName());
+				continue;
+			}
+
 			try {
 				$participant = $this->participantService->getParticipant($room, $user->getUID());
 				if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {

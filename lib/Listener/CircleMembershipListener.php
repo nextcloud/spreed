@@ -15,6 +15,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
 use OCP\EventDispatcher\Event;
@@ -22,6 +23,7 @@ use OCP\IGroupManager;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class CircleMembershipListener extends AMembershipListener {
 
@@ -30,6 +32,8 @@ class CircleMembershipListener extends AMembershipListener {
 		IAppManager $appManager,
 		IGroupManager $groupManager,
 		ParticipantService $participantService,
+		BanService $banService,
+		LoggerInterface $logger,
 		private IUserManager $userManager,
 		private ISession $session,
 	) {
@@ -37,7 +41,9 @@ class CircleMembershipListener extends AMembershipListener {
 			$manager,
 			$appManager,
 			$groupManager,
-			$participantService
+			$participantService,
+			$banService,
+			$logger,
 		);
 	}
 
@@ -101,6 +107,10 @@ class CircleMembershipListener extends AMembershipListener {
 	}
 
 	protected function addNewMemberToRooms(array $rooms, Member $member): void {
+		if (empty($rooms)) {
+			return;
+		}
+
 		if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
 			// Not a user?
 			return;
@@ -111,7 +121,13 @@ class CircleMembershipListener extends AMembershipListener {
 			return;
 		}
 
+		$bannedRoomIds = $this->banService->getBannedRoomsForUserId($user->getUID());
 		foreach ($rooms as $room) {
+			if (isset($bannedRoomIds[$room->getId()])) {
+				$this->logger->warning('User ' . $user->getUID() . ' is banned from conversation ' . $room->getToken() . ' and was skipped while adding them to circle ' . $member->getCircle()->getDisplayName());
+				continue;
+			}
+
 			try {
 				$participant = $room->getParticipant($member->getUserId());
 				if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {

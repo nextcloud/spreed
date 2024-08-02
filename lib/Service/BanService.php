@@ -189,12 +189,46 @@ class BanService {
 	}
 
 	/**
+	 * Check if the actor is banned without logging
+	 *
+	 * @return bool True if the actor is banned, false otherwise
+	 */
+	public function isActorBanned(Room $room, string $actorType, string $actorId): bool {
+		try {
+			$this->banMapper->findForBannedActorAndRoom($actorType, $actorId, $room->getId());
+			return true;
+		} catch (DoesNotExistException) {
+			return false;
+		}
+	}
+
+	/**
 	 * Retrieve all bans for a specific room.
 	 *
 	 * @return Ban[]
 	 */
 	public function getBansForRoom(int $roomId): array {
 		return $this->banMapper->findByRoomId($roomId);
+	}
+
+	/**
+	 * Retrieve all banned userIDs for a specific room.
+	 *
+	 * @return array<string, mixed> Key is the user ID
+	 */
+	public function getBannedUserIdsForRoom(int $roomId): array {
+		$bans = $this->banMapper->findByRoomId($roomId, Attendee::ACTOR_USERS);
+		return array_flip(array_map(static fn (Ban $ban) => $ban->getBannedActorId(), $bans));
+	}
+
+	/**
+	 * Retrieve all room IDs a user is banned from
+	 *
+	 * @return array<int, mixed> Key is the room ID
+	 */
+	public function getBannedRoomsForUserId(string $userId): array {
+		$bans = $this->banMapper->findByUserId($userId);
+		return array_flip(array_map(static fn (Ban $ban) => $ban->getRoomId(), $bans));
 	}
 
 	/**

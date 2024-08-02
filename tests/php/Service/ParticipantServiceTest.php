@@ -31,6 +31,7 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use OCP\UserStatus\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 /**
@@ -53,6 +54,7 @@ class ParticipantServiceTest extends TestCase {
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected IManager&MockObject $userStatusManager;
 	private ?ParticipantService $service = null;
+	protected LoggerInterface&MockObject $logger;
 
 
 	public function setUp(): void {
@@ -73,6 +75,7 @@ class ParticipantServiceTest extends TestCase {
 		$this->time = $this->createMock(ITimeFactory::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->userStatusManager = $this->createMock(IManager::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new ParticipantService(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -90,6 +93,7 @@ class ParticipantServiceTest extends TestCase {
 			$this->time,
 			$this->cacheFactory,
 			$this->userStatusManager,
+			$this->logger
 		);
 	}
 
