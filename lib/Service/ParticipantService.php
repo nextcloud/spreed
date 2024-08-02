@@ -47,7 +47,6 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
-use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
