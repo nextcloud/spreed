@@ -59,3 +59,18 @@ Feature: chat/message-expiration
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
     And user "participant1" gets last share
     And the OCS status code should be 404
+
+  Scenario: Cannot set message expiration in a former one to one room
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 1    | 1               |
+    When user "participant2" is deleted
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 5    | 1               |
+    And user "participant1" set the message expiration to 3 of room "room" with 400 (v4)

@@ -756,10 +756,10 @@ class RoomService {
 	}
 
 	/**
-	 * @throws InvalidArgumentException When the room is a breakout room
+	 * @throws InvalidArgumentException When the room is a breakout room or the room is a former one-to-one conversation
 	 */
 	public function setMessageExpiration(Room $room, int $seconds): void {
-		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			throw new InvalidArgumentException('room');
 		}
 
