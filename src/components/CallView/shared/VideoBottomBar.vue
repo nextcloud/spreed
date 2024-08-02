@@ -9,6 +9,11 @@
 		@mouseover.stop="mouseover = true"
 		@mouseleave.stop="mouseover = false">
 		<TransitionWrapper name="fade">
+			<div v-if="showHint" class="hint">
+				{{ t('spreed', 'You are sharing video and screen…') }}
+			</div>
+		</TransitionWrapper>
+		<TransitionWrapper name="fade">
 			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
 				<HandBackLeft :size="18" fill-color="#ffffff" />
 			</div>
@@ -184,6 +189,7 @@ export default {
 	data() {
 		return {
 			mouseover: false,
+			showHint: false,
 		}
 	},
 
@@ -256,6 +262,10 @@ export default {
 		canFullModerate() {
 			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
+
+		isVideoAndScreen() {
+			return this.model.attributes.videoEnabled && this.model.attributes.localScreen
+		},
 	},
 
 	watch: {
@@ -264,7 +274,19 @@ export default {
 				return
 			}
 			this.$emit('bottom-bar-hover', value)
-		}
+		},
+
+		isVideoAndScreen: {
+			immediate: true,
+			handler(value) {
+				if (value) {
+					this.showHint = true
+					setTimeout(() => {
+						this.showHint = false
+					}, 5000)
+				}
+			},
+		},
 	},
 
 	methods: {
@@ -319,6 +341,15 @@ export default {
 			margin-right: 0;
 		}
 	}
+}
+
+.hint {
+	position: absolute;
+	left: 0;
+	padding: 0 calc(var(--default-grid-baseline) * 2) var(--default-grid-baseline);
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius: var(--border-radius-large);
+	color: white;
 }
 
 .bottom-bar {
