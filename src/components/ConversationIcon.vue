@@ -214,7 +214,6 @@ export default {
 
 		isOneToOne() {
 			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
-				|| this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		conversationType() {
