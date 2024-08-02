@@ -3,8 +3,7 @@ Feature: conversation/ban
         Given user "participant1" exists
         Given user "participant2" exists
         Given user "participant3" exists
-        And guest accounts can be created
-        And user "user-guest@example.com" is a guest account user
+        Given group "group1" exists
 
     Scenario: Moderator banning and unbanning multiple users
         Given user "participant1" creates room "room" (v4)
@@ -129,14 +128,54 @@ Feature: conversation/ban
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
-    And user "participant2" joins room "room" with 200 (v4)
     And user "participant1" bans user "participant2" from room "room" with 200 (v1)
       | internalNote | BannedP2 |
     And user "participant1" sees the following bans in room "room" with 200 (v1)
       | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
       | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |
     And user "participant1" adds user "participant2" to room "room" with 400 (v4)
-    And user "participant1" sends message "Message 1" to room "room" with 201
-    And user "participant2" sees the following messages in room "room" with 403
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId                     |
+      | users      | participant1                |
     And user "participant1" unbans user "participant2" from room "room" with 200 (v1)
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId                     |
+      | users      | participant1                |
+      | users      | participant2                |
+
+  Scenario: Banned user is not added when adding a group they are a member of
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" is member of group "group1"
+    And user "participant1" bans user "participant2" from room "room" with 200 (v1)
+      | internalNote | BannedP2 |
+    And user "participant1" sees the following bans in room "room" with 200 (v1)
+      | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
+      | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |
+    And user "participant1" adds group "group1" to room "room" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId                     |
+      | users      | participant1                |
+      | groups     | group1                      |
+
+  Scenario: Banned user is not added when adding them to a group that is member in a room they are banned in
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" bans user "participant2" from room "room" with 200 (v1)
+      | internalNote | BannedP2 |
+    And user "participant1" sees the following bans in room "room" with 200 (v1)
+      | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
+      | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |
+    And user "participant1" adds group "group1" to room "room" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId                     |
+      | users      | participant1                |
+      | groups     | group1                      |
+    And user "participant2" is member of group "group1"
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId                     |
+      | users      | participant1                |
+      | groups     | group1                      |

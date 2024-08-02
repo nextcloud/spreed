@@ -16,6 +16,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
 use OCP\EventDispatcher\Event;
@@ -35,6 +36,8 @@ abstract class AMembershipListener implements IEventListener {
 		protected IAppManager $appManager,
 		protected IGroupManager $groupManager,
 		protected ParticipantService $participantService,
+		protected BanService $banService,
+		protected LoggerInterface $logger,
 	) {
 	}
 

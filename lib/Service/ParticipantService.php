@@ -47,6 +47,7 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
@@ -73,6 +74,7 @@ use OCP\Security\ISecureRandom;
 use OCP\Server;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
+use Psr\Log\LoggerInterface;
 
 class ParticipantService {
 
@@ -98,6 +100,7 @@ class ParticipantService {
 		private ITimeFactory $timeFactory,
 		private ICacheFactory $cacheFactory,
 		private IUserStatusManager $userStatusManager,
+		private LoggerInterface $logger,
 	) {
 	}
 
@@ -456,7 +459,7 @@ class ParticipantService {
 	 * @throws CannotReachRemoteException thrown when sending the federation request didn't work
 	 * @throws \Exception thrown if $addedBy is not set when adding a federated user
 	 */
-	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): array {
+	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null, bool $bansAlreadyChecked = false): array {
 		if (empty($participants)) {
 			return [];
 		}
@@ -466,10 +469,20 @@ class ParticipantService {
 			$lastMessage = (int) $room->getLastMessage()->getId();
 		}
 
+		$bannedUserIds = [];
+		if (!$bansAlreadyChecked) {
+			$banService = Server::get(BanService::class);
+			$bannedUserIds = $banService->getBannedUserIdsForRoom($room->getId());
+		}
 		$attendees = [];
 		foreach ($participants as $participant) {
 			$readPrivacy = Participant::PRIVACY_PUBLIC;
 			if ($participant['actorType'] === Attendee::ACTOR_USERS) {
+				if (isset($bannedUserIds[$participant['actorId']])) {
+					$this->logger->warning('User ' . $participant['actorId'] . ' is banned from conversation ' . $room->getToken() . ' and was skipped while adding users');
+					continue;
+				}
+
 				$readPrivacy = $this->talkConfig->getUserReadPrivacy($participant['actorId']);
 			} elseif ($participant['actorType'] === Attendee::ACTOR_FEDERATED_USERS) {
 				if ($addedBy === null) {
@@ -603,6 +616,8 @@ class ParticipantService {
 			$existingParticipants = $this->getParticipantsForRoom($room);
 		}
 
+		$banService = Server::get(BanService::class);
+		$bannedUserIds = $banService->getBannedUserIdsForRoom($room->getId());
 		$participantsByUserId = [];
 		foreach ($existingParticipants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
@@ -619,6 +634,11 @@ class ParticipantService {
 				}
 
 				// Participant is already in the conversation, so skip them.
+				continue;
+			}
+
+			if (isset($bannedUserIds[$user->getUID()])) {
+				$this->logger->warning('User ' . $user->getUID() . ' is banned from conversation ' . $room->getToken() . ' and was skipped while adding group ' . $group->getDisplayName());
 				continue;
 			}
 
@@ -646,7 +666,7 @@ class ParticipantService {
 			$this->dispatcher->dispatchTyped($attendeeEvent);
 		}
 
-		$this->addUsers($room, $newParticipants);
+		$this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
 	}
 
 	/**
@@ -688,6 +708,8 @@ class ParticipantService {
 			$existingParticipants = $this->getParticipantsForRoom($room);
 		}
 
+		$banService = Server::get(BanService::class);
+		$bannedUserIds = $banService->getBannedUserIdsForRoom($room->getId());
 		$participantsByUserId = [];
 		foreach ($existingParticipants as $participant) {
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
@@ -723,6 +745,11 @@ class ParticipantService {
 				continue;
 			}
 
+			if (isset($bannedUserIds[$user->getUID()])) {
+				$this->logger->warning('User ' . $user->getUID() . ' is banned from conversation ' . $room->getToken() . ' and was skipped while adding circle ' . $circle->getDisplayName());
+				continue;
+			}
+
 			$newParticipants[] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
@@ -747,7 +774,7 @@ class ParticipantService {
 			$this->dispatcher->dispatchTyped($attendeeEvent);
 		}
 
-		$this->addUsers($room, $newParticipants);
+		$this->addUsers($room, $newParticipants, bansAlreadyChecked: true);
 	}
 
 	/**

@@ -53,6 +53,17 @@ class BanMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
+	public function findByUserId(string $userId): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('banned_actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('banned_actor_id', $query->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
+			->orderBy('id', 'ASC');
+
+		return $this->findEntities($query);
+	}
+
 	/**
 	 * @throws DoesNotExistException
 	 */

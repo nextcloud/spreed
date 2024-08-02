@@ -212,6 +212,26 @@ class BanService {
 	}
 
 	/**
+	 * Retrieve all banned userIDs for a specific room.
+	 *
+	 * @return array<string, mixed> Key is the user ID
+	 */
+	public function getBannedUserIdsForRoom(int $roomId): array {
+		$bans = $this->banMapper->findByRoomId($roomId, Attendee::ACTOR_USERS);
+		return array_flip(array_map(static fn (Ban $ban) => $ban->getBannedActorId(), $bans));
+	}
+
+	/**
+	 * Retrieve all room IDs a user is banned from
+	 *
+	 * @return array<int, mixed> Key is the room ID
+	 */
+	public function getBannedRoomsForUserId(string $userId): array {
+		$bans = $this->banMapper->findByUserId($userId);
+		return array_flip(array_map(static fn (Ban $ban) => $ban->getRoomId(), $bans));
+	}
+
+	/**
 	 * Retrieve a ban by its ID and delete it.
 	 */
 	public function findAndDeleteBanByIdForRoom(int $banId, int $roomId): void {

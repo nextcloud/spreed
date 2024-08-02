@@ -900,6 +900,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 				return $attendee;
 			}, $formData->getHash(), $result);
+			$expected = array_filter($expected);
 
 			$result = array_map(function ($attendee) {
 				if (isset($attendee['permissions'])) {
@@ -918,7 +919,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				'expected' => $expected,
 				'actual' => $attendees,
 				'result' => $result,
-			]));
+			], true));
 		} else {
 			Assert::assertNull($formData);
 		}
