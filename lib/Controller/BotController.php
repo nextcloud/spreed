@@ -26,6 +26,7 @@ use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Room;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
@@ -340,7 +341,7 @@ class BotController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function enableBot(int $botId): DataResponse {
-		if ($this->room->isFederatedConversation()) {
+		if ($this->room->isFederatedConversation() || $this->room->getType() === ROOM::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([
 				'error' => 'room',
 			], Http::STATUS_BAD_REQUEST);
