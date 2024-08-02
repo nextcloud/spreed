@@ -614,6 +614,7 @@ OC.L10N.register(
     "Hide details" : "Сокриј детали",
     "Show details" : "Прикажи детали",
     "Date:" : "Датум:",
+    "Note:" : "Белешка:",
     "Edit conversation name" : "Уреди име на разговор",
     "Edit conversation description" : "Уреди опис на разговор",
     "Enter a description for this conversation" : "Внесете опис за овој разговор",
