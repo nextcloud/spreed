@@ -208,8 +208,8 @@ export default {
 
 		canFullModerate() {
 			return this.selfIsOwnerOrModerator
-				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+				&& (this.conversation.type === CONVERSATION.TYPE.GROUP
+				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
 		},
 
 		canDeleteConversation() {
