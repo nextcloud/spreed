@@ -401,6 +401,7 @@ OC.L10N.register(
     "Notifications" : "Notificaciones",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a favoritos",
+    "Clear filter" : "Limpiar filtro",
     "Unread mentions" : "Menciones sin leer",
     "Users" : " Usuarios",
     "Groups" : "Grupos",

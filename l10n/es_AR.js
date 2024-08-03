@@ -40,6 +40,7 @@ OC.L10N.register(
     "Error" : "Error",
     "Blocked" : "Bloqueado",
     "TURN server protocols" : "Protocolos del servidor TURN",
+    "Failed" : "Error",
     "OK" : "OK",
     "Back" : "Atrás",
     "Cancel" : "Cancelar",

@@ -778,6 +778,7 @@
     "Error: Server responded with: {error}" : "Feil: server svarte med: {error}",
     "Error: Unknown error occurred" : "Feil: ukjent feil oppstod",
     "Recording backend" : "Opptaks-backend",
+    "Recording backend configuration is only possible with a high-performance backend." : "Opptak av backend-konfigurasjon er bare mulig med en backend med høy ytelse.",
     "Add a new recording backend server" : "Legg til en ny opptaks-backend server",
     "Shared secret" : "Delt hemmelighet",
     "Recording consent" : "Samtykke til opptak",
