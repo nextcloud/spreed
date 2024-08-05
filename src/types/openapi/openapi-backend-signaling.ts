@@ -78,7 +78,7 @@ export type components = {
                 };
             };
             "config-local": {
-                [key: string]: string[] | undefined;
+                [key: string]: string[];
             };
             version: string;
         };
@@ -134,18 +134,18 @@ export interface operations {
                                     version: string;
                                     userid?: string;
                                     user?: {
-                                        [key: string]: Record<string, never> | undefined;
+                                        [key: string]: Record<string, never>;
                                     };
                                 };
                                 room?: {
                                     version: string;
                                     roomid?: string;
                                     properties?: {
-                                        [key: string]: Record<string, never> | undefined;
+                                        [key: string]: Record<string, never>;
                                     };
                                     permissions?: string[];
                                     session?: {
-                                        [key: string]: Record<string, never> | undefined;
+                                        [key: string]: Record<string, never>;
                                     };
                                 };
                             };

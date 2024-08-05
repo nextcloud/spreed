@@ -92,7 +92,7 @@ export type components = {
                 };
             };
             "config-local": {
-                [key: string]: string[] | undefined;
+                [key: string]: string[];
             };
             version: string;
         };

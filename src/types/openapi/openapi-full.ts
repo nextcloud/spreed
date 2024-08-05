@@ -1805,7 +1805,7 @@ export type components = {
             expirationTimestamp: number;
             message: string;
             messageParameters: {
-                [key: string]: components["schemas"]["RichObjectParameter"] | undefined;
+                [key: string]: components["schemas"]["RichObjectParameter"];
             };
             messageType: string;
             systemMessage: string;
@@ -1891,7 +1891,7 @@ export type components = {
                 };
             };
             "config-local": {
-                [key: string]: string[] | undefined;
+                [key: string]: string[];
             };
             version: string;
         };
@@ -1915,7 +1915,7 @@ export type components = {
             isReplyable: boolean;
             markdown: boolean;
             reactions: {
-                [key: string]: number | undefined;
+                [key: string]: number;
             };
             reactionsSelf?: string[];
             referenceId: string;
@@ -1964,7 +1964,7 @@ export type components = {
             pid: number;
         };
         MatterbridgeConfigFields: {
-            [key: string]: Record<string, never> | undefined;
+            [key: string]: Record<string, never>;
         }[];
         MatterbridgeProcessState: {
             log: string;
@@ -2024,7 +2024,7 @@ export type components = {
             status: number;
             votedSelf?: number[];
             votes?: {
-                [key: string]: number | undefined;
+                [key: string]: number;
             };
         };
         PollVote: {
@@ -4792,7 +4792,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: components["schemas"]["ChatMessage"][] | undefined;
+                                [key: string]: components["schemas"]["ChatMessage"][];
                             };
                         };
                     };
@@ -5520,7 +5520,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: components["schemas"]["Reaction"][] | undefined;
+                                [key: string]: components["schemas"]["Reaction"][];
                             };
                         };
                     };
@@ -5576,7 +5576,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: components["schemas"]["Reaction"][] | undefined;
+                                [key: string]: components["schemas"]["Reaction"][];
                             };
                         };
                     };
@@ -5592,7 +5592,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: components["schemas"]["Reaction"][] | undefined;
+                                [key: string]: components["schemas"]["Reaction"][];
                             };
                         };
                     };
@@ -5662,7 +5662,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: components["schemas"]["Reaction"][] | undefined;
+                                [key: string]: components["schemas"]["Reaction"][];
                             };
                         };
                     };
@@ -9319,7 +9319,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: Record<string, never> | undefined;
+                                [key: string]: Record<string, never>;
                             };
                         };
                     };
@@ -9646,7 +9646,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: Record<string, never> | undefined;
+                                [key: string]: Record<string, never>;
                             };
                         };
                     };
@@ -10303,18 +10303,18 @@ export interface operations {
                                     version: string;
                                     userid?: string;
                                     user?: {
-                                        [key: string]: Record<string, never> | undefined;
+                                        [key: string]: Record<string, never>;
                                     };
                                 };
                                 room?: {
                                     version: string;
                                     roomid?: string;
                                     properties?: {
-                                        [key: string]: Record<string, never> | undefined;
+                                        [key: string]: Record<string, never>;
                                     };
                                     permissions?: string[];
                                     session?: {
-                                        [key: string]: Record<string, never> | undefined;
+                                        [key: string]: Record<string, never>;
                                     };
                                 };
                             };
