@@ -14,7 +14,9 @@
 		@scroll="onScroll"
 		@scrollend="endScroll">
 		<TransitionWrapper name="fade">
-			<ul v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+			<div class="scroller__loading">
+				<NcLoadingIcon v-if="displayMessagesLoader" class="scroller__loading-element" :size="32" />
+			</div>
 		</TransitionWrapper>
 
 		<ul v-for="(list, dateTimestamp) in messagesGroupedByDateByAuthor"
@@ -66,6 +68,7 @@ import { t, n } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
@@ -83,6 +86,7 @@ export default {
 		LoadingPlaceholder,
 		Message,
 		NcEmptyContent,
+		NcLoadingIcon,
 		TransitionWrapper
 	},
 
@@ -885,9 +889,9 @@ export default {
 				this.displayMessagesLoader = false
 
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
-					// scroll to previous position + added height - loading spinner height
+					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
-						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight) - 40,
+						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
 					})
 				}
 			}
@@ -1240,7 +1244,7 @@ export default {
 .scroller {
 	position: relative;
 	flex: 1 0;
-	padding-top: 20px;
+	padding-top: var(--default-grid-baseline);
 	overflow-y: scroll;
 	overflow-x: hidden;
 	border-bottom: 1px solid var(--color-border);
@@ -1256,8 +1260,16 @@ export default {
 	}
 
 	&__loading {
-		height: 40px;
-		transform: translatex(-64px);
+		position: relative;
+		height: 0;
+		max-width: $messages-list-max-width;
+		margin: 0 auto;
+
+		&-element {
+			position: absolute;
+			top: 0;
+			left: calc(2 * var(--default-grid-baseline));
+		}
 	}
 }
 
