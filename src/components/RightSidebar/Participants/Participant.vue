@@ -95,14 +95,31 @@
 			:title="callIcon.tooltip"
 			:size="callIcon.size" />
 
+		<!-- Grant or revoke lobby permissions (inline button) -->
+		<template v-if="showToggleLobbyAction">
+			<NcButton v-if="canSkipLobby"
+				type="tertiary"
+				:title="t('spreed', 'Move back to lobby')"
+				@click="setLobbyPermission(false)">
+				<template #icon>
+					<AccountMinusIcon :size="20" />
+				</template>
+			</NcButton>
+			<NcButton v-else
+				type="tertiary"
+				:title="t('spreed', 'Move to conversation')"
+				@click="setLobbyPermission(true)">
+				<template #icon>
+					<AccountPlusIcon :size="20" />
+				</template>
+			</NcButton>
+		</template>
+
 		<!-- Participant's actions menu -->
 		<NcActions v-if="(canBeModerated || canSendCallNotification) && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
-			:inline="showToggleLobbyAction ? 1 : 0"
-			:force-menu="!showToggleLobbyAction"
-			placement="bottom-end"
-			class="participant__actions">
+			force-menu>
 			<template v-if="actionIcon" #icon>
 				<component :is="actionIcon" :size="20" />
 			</template>
@@ -114,27 +131,6 @@
 				</template>
 				{{ attendeePin }}
 			</NcActionText>
-			<!-- Grant or revoke lobby permissions (inline button) -->
-			<template v-if="showToggleLobbyAction">
-				<NcActionButton v-if="canSkipLobby"
-					key="lobby-permission-skip"
-					close-after-click
-					@click="setLobbyPermission(false)">
-					<template #icon>
-						<AccountMinusIcon :size="20" />
-					</template>
-					{{ t('spreed', 'Move back to lobby') }}
-				</NcActionButton>
-				<NcActionButton v-else
-					key="lobby-permission-join"
-					close-after-click
-					@click="setLobbyPermission(true)">
-					<template #icon>
-						<AccountPlusIcon :size="20" />
-					</template>
-					{{ t('spreed', 'Move to conversation') }}
-				</NcActionButton>
-			</template>
 			<!-- Grant or revoke moderator permissions -->
 			<NcActionButton v-if="canBeDemoted"
 				key="demote-moderator"
