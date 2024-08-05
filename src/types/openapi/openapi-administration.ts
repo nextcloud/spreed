@@ -258,7 +258,7 @@ export type components = {
                 };
             };
             "config-local": {
-                [key: string]: string[] | undefined;
+                [key: string]: string[];
             };
             version: string;
         };
@@ -406,7 +406,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: Record<string, never> | undefined;
+                                [key: string]: Record<string, never>;
                             };
                         };
                     };
@@ -733,7 +733,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                [key: string]: Record<string, never> | undefined;
+                                [key: string]: Record<string, never>;
                             };
                         };
                     };

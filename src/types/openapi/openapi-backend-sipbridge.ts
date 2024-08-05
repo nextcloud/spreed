@@ -118,7 +118,7 @@ export type components = {
             expirationTimestamp: number;
             message: string;
             messageParameters: {
-                [key: string]: components["schemas"]["RichObjectParameter"] | undefined;
+                [key: string]: components["schemas"]["RichObjectParameter"];
             };
             messageType: string;
             systemMessage: string;
@@ -173,7 +173,7 @@ export type components = {
                 };
             };
             "config-local": {
-                [key: string]: string[] | undefined;
+                [key: string]: string[];
             };
             version: string;
         };
@@ -185,7 +185,7 @@ export type components = {
             isReplyable: boolean;
             markdown: boolean;
             reactions: {
-                [key: string]: number | undefined;
+                [key: string]: number;
             };
             reactionsSelf?: string[];
             referenceId: string;
