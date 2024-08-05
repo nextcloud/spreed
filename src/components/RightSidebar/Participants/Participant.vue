@@ -4,36 +4,33 @@
 -->
 
 <template>
-	<component :is="tag"
+	<NcListItem :name="computedName"
 		:data-nav-id="participantNavigationId"
 		class="participant"
 		:class="{
 			'participant--offline': isOffline,
-			'participant--searched': isSearched,
-			'participant--selected': isSelected }"
+			'participant--searched': isSearched }"
+		:active="isSelected"
 		:aria-label="participantAriaLabel"
-		:role="isSearched ? 'listitem' : undefined"
-		:tabindex="0"
+		:actions-aria-label="participantSettingsAriaLabel"
+		force-display-actions
 		@click="handleClick"
 		@keydown.enter="handleClick">
 		<!-- Participant's avatar -->
-		<AvatarWrapper :id="computedId"
-			:token="isSearched ? 'new' : token"
-			:name="computedName"
-			:source="participant.source || participant.actorType"
-			:disable-menu="isSearched"
-			disable-tooltip
-			:show-user-status="showUserStatus"
-			:preloaded-user-status="preloadedUserStatus"
-			:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
-			:offline="isOffline" />
+		<template #icon>
+			<AvatarWrapper :id="computedId"
+				:token="isSearched ? 'new' : token"
+				:name="computedName"
+				:source="participant.source || participant.actorType"
+				:disable-menu="isSearched"
+				disable-tooltip
+				:show-user-status="showUserStatus"
+				:preloaded-user-status="preloadedUserStatus"
+				:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
+				:offline="isOffline" />
+		</template>
 
-		<!-- Participant's data -->
-		<div class="participant__user-wrapper"
-			:class="{
-				'has-call-icon': callIcon,
-				'has-menu-icon': (canBeModerated || canSendCallNotification) && !isSearched
-			}">
+		<template #name>
 			<!-- First line: participant's name and type -->
 			<span ref="userName" class="participant__user" @mouseover="updateUserNameNeedsTooltip">
 				<span :title="userTooltipText" class="participant__user-name">{{ computedName }}</span>
@@ -42,7 +39,9 @@
 				<span v-if="isGuest" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
 				<span v-if="!isSelf && isLobbyEnabled && !canSkipLobby" class="participant__user-badge">({{ t('spreed', 'in the lobby') }})</span>
 			</span>
+		</template>
 
+		<template #subname>
 			<!-- Second line: participant status message if applicable -->
 			<span v-if="isSearched && shareWithDisplayNameUnique" class="participant__status">
 				{{ shareWithDisplayNameUnique }}
@@ -55,75 +54,71 @@
 				@mouseover="updateStatusNeedsTooltip">
 				{{ statusMessage }}
 			</span>
-		</div>
+		</template>
 
-		<!-- Phone participant dial action -->
-		<div v-if="isInCall && canBeModerated && isPhoneActor"
-			:id="participantNavigationId"
-			class="participant__dial-actions">
-			<NcButton v-if="!participant.inCall"
-				type="success"
-				:aria-label="t('spreed', 'Dial out phone')"
-				:title="t('spreed', 'Dial out phone')"
-				:disabled="disabled"
-				@click="dialOutPhoneNumber">
-				<template #icon>
-					<Phone :size="20" />
-				</template>
-			</NcButton>
-			<template v-else>
-				<NcButton type="error"
-					:aria-label="t('spreed', 'Hang up phone')"
-					:title="t('spreed', 'Hang up phone')"
+		<template v-if="!isSearched" #extra-actions>
+			<!-- Phone participant dial action -->
+			<template v-if="isInCall && canBeModerated && isPhoneActor">
+				<NcButton v-if="!participant.inCall"
+					type="success"
+					:aria-label="t('spreed', 'Dial out phone')"
+					:title="t('spreed', 'Dial out phone')"
 					:disabled="disabled"
-					@click="hangupPhoneNumber">
+					@click="dialOutPhoneNumber">
 					<template #icon>
-						<PhoneHangup :size="20" />
+						<Phone :size="20" />
 					</template>
 				</NcButton>
-				<DialpadPanel :disabled="disabled"
-					container="#tab-participants"
-					dialing
-					@dial:type="dialType" />
+				<template v-else>
+					<NcButton type="error"
+						:aria-label="t('spreed', 'Hang up phone')"
+						:title="t('spreed', 'Hang up phone')"
+						:disabled="disabled"
+						@click="hangupPhoneNumber">
+						<template #icon>
+							<PhoneHangup :size="20" />
+						</template>
+					</NcButton>
+					<DialpadPanel :disabled="disabled"
+						container="#tab-participants"
+						dialing
+						@dial:type="dialType" />
+				</template>
 			</template>
-		</div>
 
-		<!-- Call state icon -->
-		<component :is="callIcon.icon"
-			v-else-if="callIcon"
-			class="participant__call-state"
-			:title="callIcon.tooltip"
-			:size="callIcon.size" />
+			<!-- Call state icon -->
+			<component :is="callIcon.icon"
+				v-else-if="callIcon"
+				class="participant__call-state"
+				:title="callIcon.tooltip"
+				:size="callIcon.size" />
 
-		<!-- Grant or revoke lobby permissions (inline button) -->
-		<template v-if="showToggleLobbyAction">
-			<NcButton v-if="canSkipLobby"
-				type="tertiary"
-				:title="t('spreed', 'Move back to lobby')"
-				@click="setLobbyPermission(false)">
-				<template #icon>
-					<AccountMinusIcon :size="20" />
-				</template>
-			</NcButton>
-			<NcButton v-else
-				type="tertiary"
-				:title="t('spreed', 'Move to conversation')"
-				@click="setLobbyPermission(true)">
-				<template #icon>
-					<AccountPlusIcon :size="20" />
-				</template>
-			</NcButton>
+			<!-- Grant or revoke lobby permissions (inline button) -->
+			<template v-if="showToggleLobbyAction">
+				<NcButton v-if="canSkipLobby"
+					type="tertiary"
+					:title="t('spreed', 'Move back to lobby')"
+					@click="setLobbyPermission(false)">
+					<template #icon>
+						<AccountMinusIcon :size="20" />
+					</template>
+				</NcButton>
+				<NcButton v-else
+					type="tertiary"
+					:title="t('spreed', 'Move to conversation')"
+					@click="setLobbyPermission(true)">
+					<template #icon>
+						<AccountPlusIcon :size="20" />
+					</template>
+				</NcButton>
+			</template>
 		</template>
 
 		<!-- Participant's actions menu -->
-		<NcActions v-if="(canBeModerated || canSendCallNotification) && !isSearched"
-			:container="container"
-			:aria-label="participantSettingsAriaLabel"
-			force-menu>
-			<template v-if="actionIcon" #icon>
-				<component :is="actionIcon" :size="20" />
-			</template>
-
+		<template v-if="showParticipantActions && actionIcon" #actions-icon>
+			<component :is="actionIcon" :size="20" />
+		</template>
+		<template v-if="showParticipantActions" #actions>
 			<!-- Information and rights -->
 			<NcActionText v-if="attendeePin" :name="t('spreed', 'Dial-in PIN')">
 				<template #icon>
@@ -277,48 +272,47 @@
 				</template>
 				{{ removeParticipantLabel }}
 			</NcActionButton>
-		</NcActions>
+		</template>
 
-		<ParticipantPermissionsEditor v-if="permissionsEditor"
-			:actor-id="participant.actorId"
-			close-after-click
-			:participant="participant"
-			:token="token"
-			@close="hidePermissionsEditor" />
+		<template #extra>
+			<ParticipantPermissionsEditor v-if="permissionsEditor"
+				:actor-id="participant.actorId"
+				close-after-click
+				:participant="participant"
+				:token="token"
+				@close="hidePermissionsEditor" />
 
-		<!-- Confirmation required to remove participant -->
-		<NcDialog v-if="isRemoveDialogOpen"
-			:open.sync="isRemoveDialogOpen"
-			:name="removeParticipantLabel"
-			:container="container">
-			<p> {{ removeDialogMessage }} </p>
-			<template v-if="supportBanV1 && showPermissionsOptions">
-				<NcCheckboxRadioSwitch :checked.sync="isBanParticipant">
-					{{ t('spreed', 'Also ban from this conversation') }}
-				</NcCheckboxRadioSwitch>
-				<template v-if="isBanParticipant">
-					<NcTextArea v-if="isBanParticipant"
-						class="participant-dialog__input"
-						resize="vertical"
-						:label="t('spreed', 'Internal note (reason to ban)')"
-						:error="!!maxLengthWarning"
-						:helper-text="maxLengthWarning"
-						:value.sync="internalNote" />
+			<!-- Confirmation required to remove participant -->
+			<NcDialog v-if="isRemoveDialogOpen"
+				:open.sync="isRemoveDialogOpen"
+				:name="removeParticipantLabel"
+				:container="container">
+				<p> {{ removeDialogMessage }} </p>
+				<template v-if="supportBanV1 && showPermissionsOptions">
+					<NcCheckboxRadioSwitch :checked.sync="isBanParticipant">
+						{{ t('spreed', 'Also ban from this conversation') }}
+					</NcCheckboxRadioSwitch>
+					<template v-if="isBanParticipant">
+						<NcTextArea v-if="isBanParticipant"
+							class="participant-dialog__input"
+							resize="vertical"
+							:label="t('spreed', 'Internal note (reason to ban)')"
+							:error="!!maxLengthWarning"
+							:helper-text="maxLengthWarning"
+							:value.sync="internalNote" />
+					</template>
 				</template>
-			</template>
-			<template #actions>
-				<NcButton type="tertiary" :disabled="isLoading" @click="isRemoveDialogOpen = false">
-					{{ t('spreed', 'Dismiss') }}
-				</NcButton>
-				<NcButton type="error" :disabled="isLoading || !!maxLengthWarning" @click="removeParticipant">
-					{{ t('spreed', 'Remove') }}
-				</NcButton>
-			</template>
-		</NcDialog>
-
-		<!-- Checkmark in case the current participant is selected -->
-		<div v-if="isSelected" class="icon-checkmark" />
-	</component>
+				<template #actions>
+					<NcButton type="tertiary" :disabled="isLoading" @click="isRemoveDialogOpen = false">
+						{{ t('spreed', 'Dismiss') }}
+					</NcButton>
+					<NcButton type="error" :disabled="isLoading || !!maxLengthWarning" @click="removeParticipant">
+						{{ t('spreed', 'Remove') }}
+					</NcButton>
+				</template>
+			</NcDialog>
+		</template>
+	</NcListItem>
 </template>
 
 <script>
@@ -351,12 +345,12 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
@@ -384,13 +378,13 @@ export default {
 	components: {
 		AvatarWrapper,
 		DialpadPanel,
-		NcActions,
 		NcActionButton,
 		NcActionText,
 		NcActionSeparator,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcDialog,
+		NcListItem,
 		NcTextArea,
 		ParticipantPermissionsEditor,
 		// Icons
@@ -418,11 +412,6 @@ export default {
 	},
 
 	props: {
-		tag: {
-			type: String,
-			default: 'li',
-		},
-
 		participant: {
 			type: Object,
 			required: true,
@@ -838,6 +827,10 @@ export default {
 			return this.canBeModerated && !this.isModerator && this.isLobbyEnabled
 		},
 
+		showParticipantActions() {
+			return !this.isSearched && (this.canBeModerated || this.canSendCallNotification)
+		},
+
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
 				// We preloaded the status when via participants API
@@ -1132,57 +1125,56 @@ export default {
 
 <style lang="scss" scoped>
 .participant {
-	display: flex;
-	align-items: center;
-	cursor: default;
-	margin: 4px 0;
-	border-radius: var(--border-radius-pill);
-	height: 56px;
-	padding: 0 4px;
+	// Overwrite NcListItem styles
+	:deep(.list-item) {
+		overflow: hidden;
+		outline-offset: -2px;
+		cursor: default;
+
+		a, a * {
+			cursor: default;
+		}
+
+		button, button * {
+			cursor: pointer;
+		}
+	}
 
 	&--offline &__user-name {
 		color: var(--color-text-maxcontrast);
 	}
 
-	&--searched {
+	&--searched :deep(.list-item),
+	&--searched :deep(.list-item a),
+	&--searched :deep(.list-item a *) {
 		cursor: pointer;
 	}
 
-	&--selected {
-		background-color: var(--color-primary-element-light);
-		border-radius: 5px;
-	}
+	&.list-item__wrapper--active,
+	&.list-item__wrapper.active {
+		:deep(.list-item) {
+			background-color: var(--color-primary-element-light);
 
-	&__user-wrapper {
-		margin-top: -4px;
-		margin-left: 12px;
-		width: calc(100% - 100px);
-		display: flex;
-		flex-direction: column;
+			&:hover,
+			&:focus-within,
+			&:has(:focus-visible),
+			&:has(:active) {
+				background-color: var(--color-primary-element-light-hover);
+			}
 
-		&.has-call-icon {
-			/** reduce text width to have some distance from call icon */
-			padding-right: 5px;
-			/** call icon on the right most column */
-			width: calc(100% - 90px);
+			.list-item-content__name,
+			.list-item-content__subname,
+			.list-item-content__details,
+			.list-item-details__details {
+				color: var(--color-primary-light-text) !important;
+			}
 		}
-
-		&.has-call-icon.has-menu-icon {
-			/** make room for the call icon + menu icon */
-			width: calc(100% - 124px);
-		}
-	}
-
-	&__user-name,
-	&__user-badge {
-		vertical-align: middle;
-		line-height: normal;
 	}
 
 	&__user-badge {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
-		padding-left: 5px;
+		padding-inline-start: var(--default-grid-baseline);
 	}
 
 	&__user {
@@ -1192,32 +1184,20 @@ export default {
 	}
 
 	&__status {
-		color: var(--color-text-maxcontrast);
-		line-height: 1.3em;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
 		&--highlighted {
 			font-weight: bold;
 		}
 	}
 
 	&__call-state {
-		opacity: .4;
+		height: 100%;
 		display: flex;
 		align-items: center;
+		color: var(--color-text-maxcontrast);
 	}
 
-	&__dial-actions {
-		display: flex;
-		gap: 4px;
-	}
-
-	&:focus,
-	&:focus-visible {
-		z-index: 1;
-		outline: 2px solid var(--color-primary-element);
+	:deep(.list-item-content__actions > .critical) {
+		color: var(--color-error);
 	}
 }
 

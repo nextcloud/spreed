@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createLocalVue, shallowMount } from '@vue/test-utils'
+import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -17,6 +18,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
 import Participant from './Participant.vue'
@@ -32,33 +34,10 @@ describe('Participant.vue', () => {
 	let store
 	let localVue
 	let testStoreConfig
-	let tooltipMock
-
-	/**
-	 * @param {object} wrapper Wrapper where the tooltip is mounted in
-	 * @param {HTMLElement} htmlEl Tooltip to find
-	 */
-	async function getLastTooltipValue(wrapper, htmlEl) {
-		tooltipMock.mockClear()
-		await wrapper.vm.forceEnableTooltips()
-
-		const filteredCalls = tooltipMock.mock.calls.filter((call) => {
-			// only keep calls on wanted node
-			return call[0] === htmlEl
-		})
-
-		if (filteredCalls.length) {
-			return filteredCalls.at(-1)[1].value
-		}
-
-		return null
-	}
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
-
-		tooltipMock = jest.fn()
 
 		participant = {
 			displayName: 'Alice',
@@ -113,10 +92,8 @@ describe('Participant.vue', () => {
 				NcCheckboxRadioSwitch,
 				NcDialog,
 				NcInputField,
+				NcListItem,
 				NcTextArea,
-			},
-			directives: {
-				tooltip: tooltipMock,
 			},
 			mixins: [{
 				// force tooltip display for testing
@@ -201,103 +178,106 @@ describe('Participant.vue', () => {
 	})
 
 	describe('user name', () => {
-		/**
-		 * @param {object} wrapper Wrapper where the tooltip is mounted in
-		 */
-		async function getUserTooltip(wrapper) {
-			const tooltipEl = wrapper.find('.participant-row__user-name').element
-			return getLastTooltipValue(wrapper, tooltipEl)
-		}
-
 		beforeEach(() => {
 			participant.statusIcon = ''
 			participant.statusMessage = ''
 		})
 
-		test('renders plain user name for regular user', async () => {
+		/**
+		 * Check which text is currently rendered as a name
+		 * @param {object} participant participant object
+		 * @param {RegExp} regexp regex pattern which expected to be rendered
+		 */
+		function checkUserNameRendered(participant, regexp) {
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toBe('Alice')
-			expect(await getUserTooltip(wrapper)).toBe('Alice')
+			expect(wrapper.find('.participant__user').exists()).toBeTruthy()
+			expect(wrapper.find('.participant__user').text()).toMatch(regexp)
+		}
+
+		test('renders plain user name for regular user', async () => {
+			checkUserNameRendered(participant, /^Alice$/)
 		})
 
 		test('renders guest suffix for guests', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(guest\)$/))
-			expect(await getUserTooltip(wrapper)).toBe('Alice (guest)')
+			checkUserNameRendered(participant, /^Alice\s+\(guest\)$/)
 		})
 
 		test('renders moderator suffix for moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.MODERATOR
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)$/))
-			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator)')
+			checkUserNameRendered(participant, /^Alice\s+\(moderator\)$/)
 		})
 
 		test('renders guest moderator suffix for guest moderators', async () => {
 			participant.participantType = PARTICIPANT.TYPE.GUEST_MODERATOR
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(moderator\)\s+\(guest\)$/))
-			expect(await getUserTooltip(wrapper)).toBe('Alice (moderator) (guest)')
+			checkUserNameRendered(participant, /^Alice\s+\(moderator\)\s+\(guest\)$/)
 		})
 
 		test('renders bot suffix for bots', async () => {
 			participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 			participant.actorId = ATTENDEE.BRIDGE_BOT_ID
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.text()).toStrictEqual(expect.stringMatching(/^Alice\s+\(bot\)$/))
-			expect(await getUserTooltip(wrapper)).toBe('Alice (bot)')
+			checkUserNameRendered(participant, /^Alice\s+\(bot\)$/)
 		})
 	})
 
 	describe('user status', () => {
 		/**
-		 * @param {object} wrapper Wrapper where the tooltip is mounted in
+		 * Check which status is currently rendered
+		 * @param {object} participant participant object
+		 * @param {string|null} status status which expected to be rendered
 		 */
-		async function getStatusTooltip(wrapper) {
-			const tooltipEl = wrapper.find('.participant-row__status>span').element
-			return getLastTooltipValue(wrapper, tooltipEl)
+		async function checkUserSubnameRendered(participant, status) {
+			const wrapper = mountParticipant(participant)
+			await flushPromises()
+			if (status) {
+				expect(wrapper.find('.participant__status').exists()).toBeTruthy()
+				expect(wrapper.find('.participant__status').text()).toBe(status)
+			} else {
+				expect(wrapper.find('.participant__status').exists()).toBeFalsy()
+			}
 		}
 
 		test('renders user status', async () => {
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.find('.participant-row__status').text()).toBe('🌧️ rainy')
-			expect(await getStatusTooltip(wrapper)).toBe('🌧️ rainy')
+			await checkUserSubnameRendered(participant, '🌧️ rainy')
 		})
 
-		test('does not render user status when not set', () => {
+		test('does not render user status when not set', async () => {
 			participant.statusIcon = ''
 			participant.statusMessage = ''
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.find('.participant-row__status').exists()).toBe(false)
+			await checkUserSubnameRendered(participant, null)
 		})
 
 		test('renders dnd status', async () => {
 			participant.statusMessage = ''
 			participant.status = 'dnd'
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.find('.participant-row__status').text()).toBe('🌧️ Do not disturb')
-			expect(await getStatusTooltip(wrapper)).toBe('🌧️ Do not disturb')
+			await checkUserSubnameRendered(participant, '🌧️ Do not disturb')
 		})
 
 		test('renders away status', async () => {
 			participant.statusMessage = ''
 			participant.status = 'away'
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.find('.participant-row__status').text()).toBe('🌧️ Away')
-			expect(await getStatusTooltip(wrapper)).toBe('🌧️ Away')
+			await checkUserSubnameRendered(participant, '🌧️ Away')
 		})
 	})
 
 	describe('call icons', () => {
 		let getParticipantRaisedHandMock
+		const components = [VideoIcon, Phone, Microphone, HandBackLeft]
 
 		/**
-		 * @param {object} wrapper Wrapper where the tooltip is mounted in
+		 * Check which icons are currently rendered
+		 * @param {object} participant participant object
+		 * @param {object} icon icon which expected to be rendered
 		 */
-		async function getCallIconTooltip(wrapper) {
-			const tooltipEl = wrapper.find('.participant-row__callstate-icon').element
-			return getLastTooltipValue(wrapper, tooltipEl)
+		function checkStateIconsRendered(participant, icon) {
+			const wrapper = mountParticipant(participant)
+			if (icon) {
+				expect(wrapper.findComponent(icon).exists()).toBeTruthy()
+			} else {
+				components.forEach(component => {
+					expect(wrapper.findComponent(component).exists()).toBeFalsy()
+				})
+			}
 		}
 
 		beforeEach(() => {
@@ -307,86 +287,43 @@ describe('Participant.vue', () => {
 			testStoreConfig.modules.callViewStore.getters.getParticipantRaisedHand = () => getParticipantRaisedHandMock
 			store = new Vuex.Store(testStoreConfig)
 		})
-		test('does not renders call icon when disconnected', () => {
+
+		test('does not renders call icon and hand raised icon when disconnected', () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
-			expect(wrapper.findComponent(Phone).exists()).toBe(false)
-			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
+			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
+
+			checkStateIconsRendered(participant, null)
+			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
 		})
 		test('renders video call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(VideoIcon).exists()).toBe(true)
-			expect(wrapper.findComponent(Phone).exists()).toBe(false)
-			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
-
-			expect(await getCallIconTooltip(wrapper)).toBe('Joined with video')
+			checkStateIconsRendered(participant, VideoIcon)
 		})
 		test('renders audio call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_AUDIO
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
-			expect(wrapper.findComponent(Phone).exists()).toBe(false)
-			expect(wrapper.findComponent(Microphone).exists()).toBe(true)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
-
-			expect(await getCallIconTooltip(wrapper)).toBe('Joined with audio')
+			checkStateIconsRendered(participant, Microphone)
 		})
 		test('renders phone call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_PHONE
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
-			expect(wrapper.findComponent(Phone).exists()).toBe(true)
-			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
-
-			expect(await getCallIconTooltip(wrapper)).toBe('Joined via phone')
+			checkStateIconsRendered(participant, Phone)
 		})
 		test('renders hand raised icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
-			expect(wrapper.findComponent(Phone).exists()).toBe(false)
-			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(true)
-
+			checkStateIconsRendered(participant, HandBackLeft)
 			expect(getParticipantRaisedHandMock).toHaveBeenCalledWith(['session-id-alice'])
-
-			expect(await getCallIconTooltip(wrapper)).toBe('Raised their hand')
 		})
 		test('renders video call icon when joined with multiple', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO | PARTICIPANT.CALL_FLAG.WITH_PHONE
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(VideoIcon).exists()).toBe(true)
-			expect(wrapper.findComponent(Phone).exists()).toBe(false)
-			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
-
-			expect(await getCallIconTooltip(wrapper)).toBe('Joined with video')
+			checkStateIconsRendered(participant, VideoIcon)
 		})
-		test('does not render hand raised icon when disconnected', () => {
-			participant.inCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
-			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
-
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
-
-			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
-		})
-
 		test('does not render hand raised icon when searched', () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			participant.label = 'searched result'
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
-			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
-
+			checkStateIconsRendered(participant, null)
 			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
 		})
 	})
@@ -868,7 +805,7 @@ describe('Participant.vue', () => {
 			const wrapper = mountParticipant(participant)
 			wrapper.vm.$on('click-participant', eventHandler)
 
-			await wrapper.find('li').trigger('click')
+			wrapper.find('a').trigger('click')
 
 			expect(eventHandler).toHaveBeenCalledWith(participant)
 		})
@@ -880,7 +817,7 @@ describe('Participant.vue', () => {
 			const wrapper = mountParticipant(participant)
 			wrapper.vm.$on('click-participant', eventHandler)
 
-			await wrapper.find('li').trigger('click')
+			wrapper.find('a').trigger('click')
 
 			expect(eventHandler).not.toHaveBeenCalledWith(participant)
 		})
