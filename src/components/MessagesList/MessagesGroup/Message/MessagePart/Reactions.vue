@@ -15,7 +15,7 @@
 			@after-show="fetchReactions">
 			<template #trigger>
 				<NcButton :type="userHasReacted(reaction) ? 'primary' : 'secondary'"
-					class="reaction-button"
+					size="small"
 					@click="handleReactionClick(reaction)">
 					{{ reaction }} {{ reactionsCount(reaction) }}
 				</NcButton>
@@ -39,11 +39,12 @@
 
 		<!-- all reactions button -->
 		<NcButton v-if="showControls"
-			class="reaction-button"
+			size="small"
 			:title="t('spreed', 'Show all reactions')"
 			@click="showAllReactions = true">
 			<HeartOutlineIcon :size="15" />
 		</NcButton>
+		<span v-else class="reaction-button--thumbnail" />
 
 		<!-- More reactions picker -->
 		<NcEmojiPicker v-if="canReact && showControls"
@@ -52,7 +53,7 @@
 			@select="handleReactionClick"
 			@after-show="emitEmojiPickerStatus"
 			@after-hide="emitEmojiPickerStatus">
-			<NcButton class="reaction-button"
+			<NcButton size="small"
 				:title="t('spreed', 'Add more reactions')"
 				:aria-label="t('spreed', 'Add more reactions')">
 				<template #icon>
@@ -60,6 +61,7 @@
 				</template>
 			</NcButton>
 		</NcEmojiPicker>
+		<span v-else-if="canReact" class="reaction-button--thumbnail" />
 
 		<!-- all reactions modal-->
 		<ReactionsList v-if="showAllReactions"
@@ -274,19 +276,23 @@ export default {
 </script>
 <style lang="scss" scoped>
 .reactions-wrapper {
+	--minimal-button-width: 48px;
 	display: flex;
 	flex-wrap: wrap;
-	margin: 4px 175px 4px -2px;
-}
-.reaction-button {
-	// Clear server rules
-	min-height: 0 !important;
-	margin: 2px;
-	height: 26px;
-	padding: 0 6px !important;
+	gap: var(--default-grid-baseline);
 
+	// Overwrite NcButton styles
+	:deep(.button-vue) {
+		min-width: var(--minimal-button-width);
+	}
 	:deep(.button-vue__text) {
 		font-weight: normal;
+	}
+
+	.reaction-button--thumbnail {
+		height: var(--clickable-area-small);
+		width: var(--minimal-button-width);
+		pointer-events: none;
 	}
 }
 
