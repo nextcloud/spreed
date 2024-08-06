@@ -129,7 +129,7 @@ export default {
 
 		size: {
 			type: Number,
-			default: AVATAR.SIZE.TWO_LINES,
+			default: AVATAR.SIZE.DEFAULT,
 		},
 	},
 
