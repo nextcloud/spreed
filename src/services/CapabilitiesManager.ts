@@ -34,6 +34,16 @@ function generateTokenMap() {
 }
 
 /**
+ * Patch token map with new / updated remote conversation
+ * @param conversation conversation object from join response
+ */
+function patchTokenMap(conversation: Conversation) {
+	if (conversation.remoteServer) {
+		remoteTokenMap[conversation.token] = conversation.remoteServer
+	}
+}
+
+/**
  * Check whether the feature is presented (in case of federation - on both servers)
  * @param token conversation token
  * @param feature feature capability in string format
@@ -122,6 +132,7 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 	remoteCapabilities[remoteServer].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
 	remoteCapabilities[remoteServer].tokens = [...new Set((remoteCapabilities[remoteServer].tokens || []).concat(token))]
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
+	patchTokenMap(joinRoomResponse.data.ocs.data)
 
 	// As normal capabilities update, requires a reload to take effect
 	showError(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
