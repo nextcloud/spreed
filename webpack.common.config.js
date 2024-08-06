@@ -1,10 +1,11 @@
-/**
+/*
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 const nextcloudWebpackRules = require('@nextcloud/webpack-vue-config/rules')
 const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { mergeWithRules } = require('webpack-merge')
 
 // Replace rules with the same modules
@@ -20,13 +21,21 @@ module.exports = mergeWithRules({
 })(
 	{
 		module: {
-		// Reuse @nextcloud/webpack-vue-config/rules
+			// Reuse @nextcloud/webpack-vue-config/rules
 			rules: Object.values(nextcloudWebpackRules),
 		},
 	},
 	{
 		module: {
 			rules: [
+				{
+					test: /\.css$/,
+					use: [MiniCssExtractPlugin.loader, 'css-loader'],
+				},
+				{
+					test: /\.scss$/,
+					use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+				},
 				{
 					test: /\.js$/,
 					loader: 'esbuild-loader',
