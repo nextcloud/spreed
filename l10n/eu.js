@@ -878,6 +878,7 @@ OC.L10N.register(
     "Hide details" : "Ezkutatu xehetasunak",
     "Show details" : "Erakutsi xehetasunak",
     "Date:" : "Data:",
+    "Note:" : "Oharra:",
     "Enter a name for this conversation" : "Idatzi izen bat elkarrizketa honetarako",
     "Edit conversation name" : "Editatu elkarrizketaren izena",
     "Edit conversation description" : "Editatu elkarrizketaren deskribapena",
