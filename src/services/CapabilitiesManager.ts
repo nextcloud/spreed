@@ -10,26 +10,32 @@ import { t } from '@nextcloud/l10n'
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
-import type { Capabilities, JoinRoomFullResponse } from '../types'
+import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & Partial<{ hash: string, tokens: string[] }>
 type RemoteCapabilities = Record<string, RemoteCapability>
+type TokenMap = Record<string, string|null>
+
+let remoteTokenMap: TokenMap = generateTokenMap()
 
 const localCapabilities: Capabilities = _getCapabilities() as Capabilities
 const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
-let remoteTokenMap: Record<string, string> = generateTokenMap()
 
 /**
- * Generate new token map based on remoteCapabilities
+ * Generate new token map based on remoteCapabilities and cachedConversation
  */
 function generateTokenMap() {
-	const tokenMap: Record<string, string> = {}
-	Object.keys(remoteCapabilities).forEach(remoteServer => {
-		remoteCapabilities[remoteServer].tokens?.forEach(token => {
-			tokenMap[token] = remoteServer
-		})
+	const tokenMap: TokenMap = {}
+	const storageValue = BrowserStorage.getItem('cachedConversations')
+	if (!storageValue?.length) {
+		return {}
+	}
+	const cachedConversations = JSON.parse(storageValue) as Conversation[]
+	cachedConversations.forEach(conversation => {
+		tokenMap[conversation.token] = conversation.remoteServer || null
 	})
+
 	return tokenMap
 }
 
