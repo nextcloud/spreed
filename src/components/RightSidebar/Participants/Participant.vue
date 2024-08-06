@@ -32,8 +32,8 @@
 
 		<template #name>
 			<!-- First line: participant's name and type -->
-			<span ref="userName" class="participant__user" @mouseover="updateUserNameNeedsTooltip">
-				<span :title="userTooltipText" class="participant__user-name">{{ computedName }}</span>
+			<span ref="userName" class="participant__user" @mouseover="updateUserNameNeedsTitle">
+				<span :title="userNameTitle" class="participant__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant__user-badge">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isBridgeBotUser" class="participant__user-badge">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuest" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
@@ -50,8 +50,8 @@
 				ref="statusMessage"
 				class="participant__status"
 				:class="{ 'participant__status--highlighted': isParticipantSpeaking }"
-				:title="statusMessageTooltip"
-				@mouseover="updateStatusNeedsTooltip">
+				:title="statusTitle"
+				@mouseover="updateStatusNeedsTitle">
 				{{ statusMessage }}
 			</span>
 		</template>
@@ -90,7 +90,7 @@
 			<component :is="callIcon.icon"
 				v-else-if="callIcon"
 				class="participant__call-state"
-				:title="callIcon.tooltip"
+				:title="callIcon.title"
 				:size="callIcon.size" />
 
 			<!-- Grant or revoke lobby permissions (inline button) -->
@@ -445,8 +445,8 @@ export default {
 
 	data() {
 		return {
-			isUserNameTooltipVisible: false,
-			isStatusTooltipVisible: false,
+			isUserNameTitleVisible: false,
+			isStatusTitleVisible: false,
 			permissionsEditor: false,
 			isRemoveDialogOpen: false,
 			isBanParticipant: false,
@@ -481,8 +481,8 @@ export default {
 			}
 		},
 
-		userTooltipText() {
-			if (!this.isUserNameTooltipVisible) {
+		userNameTitle() {
+			if (!this.isUserNameTitleVisible) {
 				return ''
 			}
 			let text = this.computedName
@@ -553,8 +553,8 @@ export default {
 			return getStatusMessage(this.participant)
 		},
 
-		statusMessageTooltip() {
-			if (!this.isStatusTooltipVisible) {
+		statusTitle() {
+			if (!this.isStatusTitleVisible) {
 				return false
 			}
 
@@ -660,13 +660,13 @@ export default {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return null
 			} else if (this.isHandRaised) {
-				return { icon: HandBackLeft, size: 18, tooltip: t('spreed', 'Raised their hand') }
+				return { icon: HandBackLeft, size: 18, title: t('spreed', 'Raised their hand') }
 			} if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO) {
-				return { icon: VideoIcon, size: 20, tooltip: t('spreed', 'Joined with video') }
+				return { icon: VideoIcon, size: 20, title: t('spreed', 'Joined with video') }
 			} else if (this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_PHONE) {
-				return { icon: Phone, size: 20, tooltip: t('spreed', 'Joined via phone') }
+				return { icon: Phone, size: 20, title: t('spreed', 'Joined via phone') }
 			} else {
-				return { icon: Microphone, size: 20, tooltip: t('spreed', 'Joined with audio') }
+				return { icon: Microphone, size: 20, title: t('spreed', 'Joined with audio') }
 			}
 		},
 
@@ -895,16 +895,16 @@ export default {
 		t,
 		formattedTime,
 
-		updateUserNameNeedsTooltip() {
+		updateUserNameNeedsTitle() {
 			// check if ellipsized
 			const e = this.$refs.userName
-			this.isUserNameTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
+			this.isUserNameTitleVisible = (e && e.offsetWidth < e.scrollWidth)
 		},
 
-		updateStatusNeedsTooltip() {
+		updateStatusNeedsTitle() {
 			// check if ellipsized
 			const e = this.$refs.statusMessage
-			this.isStatusTooltipVisible = (e && e.offsetWidth < e.scrollWidth)
+			this.isStatusTitleVisible = (e && e.offsetWidth < e.scrollWidth)
 		},
 
 		// Used to allow selecting participants in a search.
