@@ -737,8 +737,8 @@ export default {
 #videos {
 	position: absolute;
 	width: 100%;
-	height: calc(100% - 60px);
-	top: 60px;
+	height: calc(100% - 50px);
+	top: 50px;
 	overflow: hidden;
 	display: -webkit-box;
 	display: -moz-box;
