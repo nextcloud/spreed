@@ -390,6 +390,9 @@ export default {
 			if (this.$refs.participantsTab) {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
+
+			// Discard notification if the conversation changes or closed
+			this.notifyUnreadMessages(null)
 		},
 
 		isModeratorOrUser(newValue) {
