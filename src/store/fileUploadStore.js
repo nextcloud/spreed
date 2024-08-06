@@ -429,7 +429,7 @@ const actions = {
 	 */
 	async shareFiles(context, { token, uploadId, lastIndex, caption, options }) {
 		const performShare = async (share) => {
-			if (!Array.isArray(share)) {
+			if (!share) {
 				return
 			}
 			const [index, shareableFile] = share
@@ -457,7 +457,9 @@ const actions = {
 		}
 
 		const shares = context.getters.getShareableFiles(uploadId)
-		shares.forEach(share => performShare(share))
+		for (const share of shares) {
+			await performShare(share)
+		}
 	},
 
 	/**
