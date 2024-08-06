@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import flushPromises from 'flush-promises'
 import { createPinia, setActivePinia } from 'pinia'
 
 import { mockedCapabilities, mockedRemotes } from '../../__mocks__/capabilities.ts'
@@ -16,25 +15,17 @@ import {
 } from '../CapabilitiesManager.ts'
 import { getRemoteCapabilities } from '../federationService.ts'
 
-const mockedConversations = {
-	TOKEN1: { token: 'TOKEN1', remoteServer: undefined },
-	TOKEN2: { token: 'TOKEN2', remoteServer: undefined },
-	TOKEN3FED1: { token: 'TOKEN3FED1', remoteServer: 'https://nextcloud1.local' },
-	TOKEN4FED1: { token: 'TOKEN4FED1', remoteServer: 'https://nextcloud1.local' },
-	TOKEN5FED2: { token: 'TOKEN5FED2', remoteServer: 'https://nextcloud2.local' },
-	TOKEN6FED2: { token: 'TOKEN6FED2', remoteServer: 'https://nextcloud2.local' },
-}
-
-jest.mock('../../composables/useStore', () => ({
-	useStore: jest.fn().mockReturnValue({
-		getters: {
-			conversation: jest.fn(token => mockedConversations[token])
-		}
-	}),
-}))
-
 jest.mock('../BrowserStorage', () => ({
 	getItem: jest.fn(key => {
+		const mockedConversations = [
+			{ token: 'TOKEN1', remoteServer: undefined },
+			{ token: 'TOKEN2', remoteServer: undefined },
+			{ token: 'TOKEN3FED1', remoteServer: 'https://nextcloud1.local' },
+			{ token: 'TOKEN4FED1', remoteServer: 'https://nextcloud1.local' },
+			{ token: 'TOKEN5FED2', remoteServer: 'https://nextcloud2.local' },
+			{ token: 'TOKEN6FED2', remoteServer: 'https://nextcloud2.local' },
+		]
+
 		if (key === 'remoteCapabilities') {
 			return JSON.stringify(mockedRemotes)
 		} else if (key === 'cachedConversations') {
@@ -53,12 +44,12 @@ jest.mock('../federationService', () => ({
 describe('CapabilitiesManager', () => {
 	let talkHashStore
 
-	beforeEach(async () => {
+	beforeEach(() => {
 		setActivePinia(createPinia())
 		talkHashStore = useTalkHashStore()
 	})
 
-	afterEach(async () => {
+	afterEach(() => {
 		jest.clearAllMocks()
 	})
 
@@ -119,11 +110,13 @@ describe('CapabilitiesManager', () => {
 	})
 
 	describe('getRemoteCapability', () => {
-		it('should return true for known remoteServer and unknown token capabilities', async () => {
+		it('should return true for known remoteServer and unknown token capabilities', () => {
 			expect(hasTalkFeature('TOKEN4FED1', 'ban-v1')).toBeTruthy()
-			await flushPromises()
-			expect(hasTalkFeature('TOKEN4FED1', 'federation-v1')).toBeTruthy()
-			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(1)
+		})
+		it('should try to regenerate tokenMap for unknown token', () => {
+			hasTalkFeature('TOKEN7FED1', 'ban-v1')
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(1) // retry once
+			expect(BrowserStorage.getItem).toHaveBeenCalledWith('cachedConversations')
 		})
 	})
 

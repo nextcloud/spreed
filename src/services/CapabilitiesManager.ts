@@ -13,9 +13,9 @@ import { useTalkHashStore } from '../stores/talkHash.js'
 import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types'
 
 type Config = Capabilities['spreed']['config']
-type RemoteCapability = Capabilities & Partial<{ hash: string, tokens: string[] }>
+type RemoteCapability = Capabilities & Partial<{ hash: string }>
 type RemoteCapabilities = Record<string, RemoteCapability>
-type TokenMap = Record<string, string|null>
+type TokenMap = Record<string, string|undefined|null>
 
 let remoteTokenMap: TokenMap = generateTokenMap()
 
@@ -89,26 +89,18 @@ export function getTalkConfig(token: string = 'local', key1: keyof Config, key2:
  * @param token token of the conversation
  */
 function getRemoteCapability(token: string): RemoteCapability | null {
-	if (remoteCapabilities[remoteTokenMap[token]]) {
-		return remoteCapabilities[remoteTokenMap[token]]
+	if (remoteTokenMap[token] === undefined) {
+		// Unknown conversation, attempt to get remoteServer from cached conversations
+		remoteTokenMap = generateTokenMap()
 	}
 
-	const cachedConversations = BrowserStorage.getItem('cachedConversations')
-	if (!cachedConversations?.length) {
+	const remoteServer = remoteTokenMap[token]
+	if (!token || token === 'local' || !remoteServer) {
+		// Local or no conversation opened
 		return null
 	}
 
-	const remoteServer = JSON.parse(cachedConversations)?.[token]?.remoteServer
-
-	if (remoteServer && remoteCapabilities[remoteServer]) {
-		console.debug(`Reuse remote capabilities from another conversation (same remote server ${remoteServer})`)
-		remoteCapabilities[remoteServer].tokens = [...new Set((remoteCapabilities[remoteServer].tokens || []).concat(token))]
-		BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
-		remoteTokenMap = generateTokenMap()
-		return remoteCapabilities[remoteServer]
-	}
-
-	return null
+	return remoteCapabilities[remoteServer] ?? null
 }
 
 /**
@@ -136,7 +128,6 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 
 	remoteCapabilities[remoteServer] = { spreed: response.data.ocs.data }
 	remoteCapabilities[remoteServer].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
-	remoteCapabilities[remoteServer].tokens = [...new Set((remoteCapabilities[remoteServer].tokens || []).concat(token))]
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 	patchTokenMap(joinRoomResponse.data.ocs.data)
 
