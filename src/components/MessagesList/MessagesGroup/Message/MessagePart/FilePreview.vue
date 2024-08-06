@@ -508,6 +508,9 @@ export default {
 		},
 
 		internalAbsolutePath() {
+			if (!this.path) {
+				return ''
+			}
 			return this.path.startsWith('/') ? this.path : '/' + this.path
 		},
 
@@ -590,6 +593,11 @@ export default {
 		handleClick(event) {
 			if (this.isUploadEditor) {
 				this.$emit('remove-file', this.id)
+				return
+			}
+
+			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
+				// File is not yet uploaded, so no Viewer available
 				return
 			}
 
@@ -788,7 +796,7 @@ export default {
 		.preview {
 			width: 100%;
 			min-height: unset;
-			height: 100%;
+			height: 100% !important;
 		}
 	}
 }
