@@ -428,7 +428,11 @@ const actions = {
 	 * @param {object|null} data.options The share options
 	 */
 	async shareFiles(context, { token, uploadId, lastIndex, caption, options }) {
-		const performShare = async ([index, shareableFile]) => {
+		const performShare = async (share) => {
+			if (!Array.isArray(share)) {
+				return
+			}
+			const [index, shareableFile] = share
 			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
 
 			const metadata = JSON.stringify(Object.assign({ messageType },
@@ -453,22 +457,7 @@ const actions = {
 		}
 
 		const shares = context.getters.getShareableFiles(uploadId)
-
-		// Check if caption message for share was provided
-		if (caption) {
-			const captionShareIndex = shares.findIndex(([index]) => index === lastIndex)
-
-			// Share all files in parallel, except for last one
-			await Promise.all(shares
-				.filter((_item, index) => index !== captionShareIndex)
-				.map(performShare))
-
-			// Share a last file, where caption is attached
-			await performShare(shares.at(captionShareIndex))
-		} else {
-			// Share all files in parallel
-			await Promise.all(shares.map(performShare))
-		}
+		shares.forEach(share => performShare(share))
 	},
 
 	/**
