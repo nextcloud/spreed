@@ -27,11 +27,11 @@ import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 /* Consider:
- * 48 = 2 * var(--default-line-height) - 2 lines of text
+ * 45 = 2lh - 2 lines of text
  * 8 = 2 * var(--default-grid-baseline) - item padding
- * 8 = 2 * var(--default-grid-baseline) - focus offset
+ * 4 = var(--default-grid-baseline) - item outline (collapsed)
  */
-const CONVERSATION_ITEM_SIZE = 64
+const CONVERSATION_ITEM_SIZE = 61
 
 export default {
 	name: 'ConversationsListVirtual',
