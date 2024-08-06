@@ -369,6 +369,9 @@ export default {
 			if (this.$refs.participantsTab) {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
+
+			// Discard notification if the conversation changes or closed
+			this.notifyUnreadMessages(null)
 		},
 
 		isModeratorOrUser(newValue) {
@@ -391,9 +394,6 @@ export default {
 
 	beforeDestroy() {
 		unsubscribe('spreed:select-active-sidebar-tab', this.handleUpdateActive)
-
-		// Discard current chat notifications
-		this.notifyUnreadMessages(null)
 	},
 
 	methods: {
