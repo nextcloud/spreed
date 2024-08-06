@@ -291,11 +291,11 @@ export default {
 .selected-participants {
 	display: flex;
 	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
 	border-bottom: 1px solid var(--color-background-darker);
-	padding: 4px 0;
+	padding: var(--default-grid-baseline) 0;
 	max-height: 97px;
 	overflow-y: auto;
-	flex: 0 240px;
 	flex: 1 0 auto;
 	align-content: flex-start;
 }
