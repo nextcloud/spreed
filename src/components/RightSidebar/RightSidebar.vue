@@ -412,6 +412,9 @@ export default {
 
 	beforeDestroy() {
 		unsubscribe('spreed:select-active-sidebar-tab', this.handleUpdateActive)
+
+		// Discard current chat notifications
+		this.notifyUnreadMessages(null)
 	},
 
 	methods: {
