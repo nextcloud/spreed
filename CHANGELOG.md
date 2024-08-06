@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-beta.3 – 2024-08-06
+### Fixed
+- Disallow setting message expiration in former one-to-one conversations
+  [#12882](https://github.com/nextcloud/spreed/issues/12882)
+- Show avatar thumbnail for former one-to-one conversations
+  [#12886](https://github.com/nextcloud/spreed/issues/12886)
+- Hide Ban section in "Note to self" conversation settings
+  [#12889](https://github.com/nextcloud/spreed/pull/12889)
+- Disallow banned user to be added to the conversation
+  [#12793](https://github.com/nextcloud/spreed/issues/12793)
+- Disable call button in a federated chat when its settings was changed
+  [#12864](https://github.com/nextcloud/spreed/issues/12864)
+- More UI changes according to design review
+  [#12800](https://github.com/nextcloud/spreed/issues/12800)
+
 ## 20.0.0-beta.2 – 2024-08-01
 ### Fixed
 - fix(calls): Add notifications for federated calls
