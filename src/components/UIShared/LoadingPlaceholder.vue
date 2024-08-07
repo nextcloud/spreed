@@ -122,11 +122,11 @@ export default {
 	.placeholder-item {
 		padding-right: 8px;
 		&__avatar {
-			width: 52px;
-			padding: 18px 10px 0;
+			width: 48px;
+			padding: 20px 8px 0;
 
 			&-circle {
-				height: 32px;
+				height: 32px; // AVATAR.SIZE.SMALL
 				width: 32px;
 				border-radius: 32px;
 			}
