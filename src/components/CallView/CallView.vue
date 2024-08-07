@@ -720,13 +720,6 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/variables';
 
-.call-view {
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	background-color: $color-call-background;
-}
-
 #call-container {
 	width: 100%;
 	height: 100%;
@@ -740,14 +733,8 @@ export default {
 	height: calc(100% - 50px);
 	top: 50px;
 	overflow: hidden;
-	display: -webkit-box;
-	display: -moz-box;
-	display: -ms-flexbox;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-justify-content: space-around;
 	justify-content: space-around;
-	-webkit-align-items: flex-end;
 	align-items: flex-end;
 	flex-direction: column;
 	padding: 0 8px 8px 8px;
@@ -793,102 +780,12 @@ export default {
 	vertical-align: top; /* fix white line below video */
 }
 
-#videos .videoContainer :deep(.avatardiv) {
+#videos :deep(.avatardiv) {
 	box-shadow: 0 0 15px var(--color-box-shadow);
 }
 
-.participants-1 #videos .videoContainer :deep(video),
-.participants-2 #videos .videoContainer :deep(video) {
+#videos :deep(video) {
 	padding: 0;
-}
-
-.videoContainer :deep(.avatar-container .avatardiv) {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.videoContainer.promoted :deep(.avatar-container) {
-	top: 30%;
-}
-
-.videoContainer.promoted :deep(.avatar-container + .nameIndicator) {
-	display: none;
-}
-
-.videoContainer.promoted :deep(.mediaIndicator) {
-	display: none !important;
-}
-
-@media only screen and (max-width: 768px) {
-	.participants-1 .videoView,
-	.participants-2 .videoView {
-		max-height: 35%;
-	}
-}
-
-.participants-1 .videoView :deep(video),
-.participants-2 .videoView :deep(video) {
-	position: absolute;
-	max-height: 100% !important;
-	bottom: 0;
-	border-top-right-radius: 3px;
-	right: 0;
-}
-
-:deep(.nameIndicator) {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	padding: 12px;
-	color: #fff;
-	text-shadow: 3px 3px 10px rgba(0, 0, 0, .5), 3px -3px 10px rgba(0, 0, 0, .5), -3px 3px 10px rgba(0, 0, 0, .5), -3px -3px 10px rgba(0, 0, 0, .5);
-	width: 100%;
-	text-align: center;
-	font-size: 20px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-:deep(.videoView .nameIndicator) {
-	padding: 0;
-	overflow: visible;
-}
-
-.participants-1 .videoView :deep(.nameIndicator),
-.participants-2 .videoView :deep(.nameIndicator) {
-	left: initial;
-	right: 0;
-}
-
-.participants-1 .videoView :deep(.avatar-container),
-.participants-2 .videoView :deep(.avatar-container) {
-	left: initial;
-	right: 0;
-}
-
-/* ellipsize name in 1on1 calls */
-.participants-2 :deep(.videoContainer.promoted + .videoContainer-dummy .nameIndicator) {
-	padding: 12px 35%;
-}
-
-#videos .videoContainer.speaking:not(.videoView) :deep(.nameIndicator),
-#videos .videoContainer.videoView.speaking :deep(.nameIndicator .microphone-icon) {
-	animation: pulse 1s;
-	animation-iteration-count: infinite;
-}
-
-@keyframes pulse {
-	0% {
-		opacity: 1;
-	}
-	50% {
-		opacity: .3;
-	}
-	100% {
-		opacity: 1;
-	}
 }
 
 </style>
