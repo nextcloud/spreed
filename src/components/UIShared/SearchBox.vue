@@ -7,6 +7,7 @@
 	<NcTextField ref="searchConversations"
 		:value="value"
 		:aria-label="placeholderText"
+		:aria-describedby="ariaDescribedby"
 		:placeholder="placeholderText"
 		:show-trailing-button="isFocused"
 		class="search-box"
@@ -61,6 +62,14 @@ export default {
 		listRef: {
 			type: Object,
 			default: null,
+		},
+
+		/**
+		 * Input's aria-describedby attribute
+		 */
+		ariaDescribedby: {
+			type: String,
+			default: undefined,
 		},
 	},
 
