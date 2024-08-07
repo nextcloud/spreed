@@ -1018,11 +1018,6 @@ export default {
 	}
 }
 
-.empty-call-view {
-	position: relative;
-	padding: 16px;
-}
-
 .grid-wrapper {
 	width: 100%;
 	min-width: 0;

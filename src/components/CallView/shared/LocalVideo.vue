@@ -5,7 +5,7 @@
 
 <template>
 	<div ref="videoContainer"
-		class="localVideoContainer videoContainer videoView"
+		class="localVideoContainer"
 		:class="videoContainerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
