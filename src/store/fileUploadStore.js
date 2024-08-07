@@ -349,7 +349,20 @@ const actions = {
 				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
 			} catch (exception) {
 				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-				showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				if (exception.response) {
+					try {
+						const responseText = await exception.response.text()
+						const parser = new DOMParser()
+						const xmlDoc = parser.parseFromString(responseText, 'application/xml')
+						const messageElement = xmlDoc.getElementsByTagName('s:message')[0]
+						if (messageElement) {
+							const errorMessage = messageElement.textContent
+							showError(errorMessage)
+						}
+					} catch (parseError) {
+						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					}
+				}
 				// Mark the upload as failed in the store
 				context.commit('markFileAsFailedUpload', { uploadId, index })
 				const { id } = uploadedFile.temporaryMessage
