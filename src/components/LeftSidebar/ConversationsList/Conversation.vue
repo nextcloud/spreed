@@ -28,7 +28,7 @@
 				close-after-click
 				@click="toggleFavoriteConversation">
 				<template #icon>
-					<IconStar :size="20" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
+					<IconStar :size="16" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
 				</template>
 				{{ labelFavorite }}
 			</NcActionButton>
@@ -50,7 +50,7 @@
 
 			<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
 				<template #icon>
-					<IconCog :size="20" />
+					<IconCog :size="16" />
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
