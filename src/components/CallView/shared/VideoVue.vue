@@ -605,10 +605,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.forced-white {
-	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-}
-
 .not-connected {
 	video,
 	.avatar-container {
@@ -698,10 +694,10 @@ export default {
 
 	color: white;
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-}
 
-.connection-message.below-avatar {
-	top: calc(50% + 80px);
+	&.below-avatar {
+		top: calc(50% + 80px);
+	}
 }
 
 .video-container::after {
