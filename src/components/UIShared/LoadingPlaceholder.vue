@@ -79,9 +79,9 @@ export default {
 	&__avatar {
 		flex-shrink: 0;
 		&-circle {
-			height: var(--default-clickable-area);
-			width: var(--default-clickable-area);
-			border-radius: var(--default-clickable-area);
+			height: 44px; // AVATAR.SIZE.DEFAULT
+			width: 44px;
+			border-radius: 44px;
 		}
 	}
 
@@ -122,11 +122,11 @@ export default {
 	.placeholder-item {
 		padding-right: 8px;
 		&__avatar {
-			width: 52px;
-			padding: 18px 10px 0;
+			width: 48px;
+			padding: 20px 8px 0;
 
 			&-circle {
-				height: 32px;
+				height: 32px; // AVATAR.SIZE.SMALL
 				width: 32px;
 				border-radius: 32px;
 			}
@@ -158,10 +158,10 @@ export default {
 // Participants placeholder ruleset
 .placeholder-list--participants {
 	.placeholder-item {
-		gap: 12px;
-		margin: 4px 0;
-		padding: 0 4px;
-		height: 56px;
+		--padding : calc(var(--default-grid-baseline) * 2);
+		gap: calc(var(--default-grid-baseline) * 2);
+		padding: calc(var(--padding) * 3 / 2) var(--padding) var(--padding);
+		height: 59px;
 		align-items: center;
 
 		&__avatar {
