@@ -307,7 +307,7 @@ export default {
 		width: calc(100% - var(--default-clickable-area) * 2);
 		& .bottom-bar {
 			width: unset;
-			padding: calc(var(--default-grid-baseline) * 2);
+			padding: var(--default-grid-baseline);
 
 			&:hover {
 				background-color: rgba(0, 0, 0, 0.2);

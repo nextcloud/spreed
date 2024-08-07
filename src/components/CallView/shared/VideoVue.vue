@@ -626,8 +626,8 @@ export default {
 	position: absolute;
 
 	&.one-to-one {
-		width: calc(100% - 16px);
-		height: calc(100% - 8px);
+		width: calc(100% - var(--grid-gap) * 2);
+		height: calc(100% - var(--grid-gap));
 	}
 
 	& .videoWrapper {

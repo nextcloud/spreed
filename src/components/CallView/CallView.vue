@@ -725,6 +725,7 @@ export default {
 	height: 100%;
 	background-color: $color-call-background;
 	backdrop-filter: var(--filter-background-blur);
+	--grid-gap: calc(var(--default-grid-baseline) * 2);
 }
 
 #videos {
@@ -737,7 +738,8 @@ export default {
 	justify-content: space-around;
 	align-items: flex-end;
 	flex-direction: column;
-	padding: 0 8px 8px 8px;
+	padding: calc(var(--default-grid-baseline) * 2);
+	padding-block-start: 0;
 }
 
 .video__promoted {
