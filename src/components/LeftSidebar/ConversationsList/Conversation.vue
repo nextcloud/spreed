@@ -33,7 +33,10 @@
 				{{ labelFavorite }}
 			</NcActionButton>
 
-			<NcActionButton key="copy-link" icon="icon-clippy" @click.stop="handleCopyLink">
+			<NcActionButton key="copy-link" @click.stop="handleCopyLink">
+				<template #icon>
+					<IconContentCopy :size="16" />
+				</template>
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 
@@ -82,7 +85,10 @@
 				{{ t('spreed', 'Join conversation') }}
 			</NcActionButton>
 
-			<NcActionButton key="copy-link" icon="icon-clippy" @click.stop="handleCopyLink">
+			<NcActionButton key="copy-link" @click.stop="handleCopyLink">
+				<template #icon>
+					<IconContentCopy :size="16" />
+				</template>
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 		</template>
@@ -113,6 +119,7 @@ import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconEye from 'vue-material-design-icons/Eye.vue'
@@ -145,6 +152,7 @@ export default {
 		NcListItem,
 		IconArrowRight,
 		IconCog,
+		IconContentCopy,
 		IconDelete,
 		IconExitToApp,
 		IconEyeOff,
