@@ -6,9 +6,10 @@
 <template>
 	<NcModal v-if="modal"
 		:container="container"
+		:label-id="dialogHeaderId"
 		@close="closeModal">
 		<div class="media-settings">
-			<h2 class="media-settings__title">
+			<h2 :id="dialogHeaderId" class="media-settings__title">
 				{{ t('spreed', 'Media settings') }}
 			</h2>
 			<!-- Preview -->
@@ -205,6 +206,7 @@ import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
 import { useDevices } from '../../composables/useDevices.js'
+import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { AVATAR, CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -256,6 +258,7 @@ export default {
 		const isInCall = useIsInCall()
 		const guestNameStore = useGuestNameStore()
 		const settingsStore = useSettingsStore()
+		const dialogHeaderId = `media-settings-header-${useId()}`
 
 		const {
 			devices,
@@ -307,6 +310,7 @@ export default {
 			virtualBackground,
 			model: localMediaModel,
 			tabs,
+			dialogHeaderId,
 		}
 	},
 
