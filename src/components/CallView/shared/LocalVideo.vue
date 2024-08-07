@@ -387,8 +387,8 @@ export default {
 
 .video-container-big {
 	position: absolute;
-	width: calc(100% - 16px);
-	height: calc(100% - 8px);
+	width: calc(100% - var(--grid-gap) * 2);
+	height: calc(100% - var(--grid-gap));
 	display: flex;
 	flex-direction: column;
 
