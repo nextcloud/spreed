@@ -28,26 +28,29 @@
 				close-after-click
 				@click="toggleFavoriteConversation">
 				<template #icon>
-					<Star :size="20" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
+					<IconStar :size="16" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
 				</template>
 				{{ labelFavorite }}
 			</NcActionButton>
 
-			<NcActionButton key="copy-link" icon="icon-clippy" @click.stop="handleCopyLink">
+			<NcActionButton key="copy-link" @click.stop="handleCopyLink">
+				<template #icon>
+					<IconContentCopy :size="16" />
+				</template>
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 
 			<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
 				<template #icon>
-					<EyeOutline v-if="item.unreadMessages" :size="16" />
-					<EyeOffOutline v-else :size="16" />
+					<IconEye v-if="item.unreadMessages" :size="16" />
+					<IconEyeOff v-else :size="16" />
 				</template>
 				{{ labelRead }}
 			</NcActionButton>
 
 			<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
 				<template #icon>
-					<Cog :size="20" />
+					<IconCog :size="16" />
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
@@ -57,7 +60,7 @@
 				close-after-click
 				@click="leaveConversation">
 				<template #icon>
-					<ExitToApp :size="16" />
+					<IconExitToApp :size="16" />
 				</template>
 				{{ t('spreed', 'Leave conversation') }}
 			</NcActionButton>
@@ -68,7 +71,7 @@
 				class="critical"
 				@click="isDialogOpen = true">
 				<template #icon>
-					<Delete :size="16" />
+					<IconDelete :size="16" />
 				</template>
 				{{ t('spreed', 'Delete conversation') }}
 			</NcActionButton>
@@ -77,12 +80,15 @@
 		<template v-else-if="item.token" #actions>
 			<NcActionButton key="join-conversation" close-after-click @click="onActionClick">
 				<template #icon>
-					<ArrowRight :size="16" />
+					<IconArrowRight :size="16" />
 				</template>
 				{{ t('spreed', 'Join conversation') }}
 			</NcActionButton>
 
-			<NcActionButton key="copy-link" icon="icon-clippy" @click.stop="handleCopyLink">
+			<NcActionButton key="copy-link" @click.stop="handleCopyLink">
+				<template #icon>
+					<IconContentCopy :size="16" />
+				</template>
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 		</template>
@@ -111,13 +117,14 @@
 import { toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
-import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
-import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
-import Star from 'vue-material-design-icons/Star.vue'
+import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import IconCog from 'vue-material-design-icons/Cog.vue'
+import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
+import IconEye from 'vue-material-design-icons/Eye.vue'
+import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
+import IconStar from 'vue-material-design-icons/Star.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -143,14 +150,15 @@ export default {
 		NcActionButton,
 		NcDialog,
 		NcListItem,
-		// Icons
-		ArrowRight,
-		Cog,
-		Delete,
-		ExitToApp,
-		EyeOffOutline,
-		EyeOutline,
-		Star,
+		IconArrowRight,
+		IconCog,
+		IconContentCopy,
+		IconDelete,
+		IconExitToApp,
+		IconEyeOff,
+		IconEye,
+		IconStar,
+
 	},
 
 	props: {
