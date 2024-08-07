@@ -161,7 +161,7 @@ export default {
 
 		searchBoxPlaceholder() {
 			return this.canAdd
-				? t('spreed', 'Search or add participants')
+				? t('spreed', 'Search or add participants via name or Federated Cloud ID')
 				: t('spreed', 'Search participants')
 		},
 		show() {
