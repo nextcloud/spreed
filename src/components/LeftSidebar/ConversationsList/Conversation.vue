@@ -39,8 +39,8 @@
 
 			<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
 				<template #icon>
-					<IconEyeOutline v-if="item.unreadMessages" :size="16" />
-					<IconEyeOffOutline v-else :size="16" />
+					<IconEye v-if="item.unreadMessages" :size="16" />
+					<IconEyeOff v-else :size="16" />
 				</template>
 				{{ labelRead }}
 			</NcActionButton>
@@ -115,8 +115,8 @@ import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
-import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
-import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
+import IconEye from 'vue-material-design-icons/Eye.vue'
+import IconEyeOff from 'vue-material-design-icons/EyeOff.vue'
 import IconStar from 'vue-material-design-icons/Star.vue'
 
 import { showError } from '@nextcloud/dialogs'
@@ -147,8 +147,8 @@ export default {
 		IconCog,
 		IconDelete,
 		IconExitToApp,
-		IconEyeOffOutline,
-		IconEyeOutline,
+		IconEyeOff,
+		IconEye,
 		IconStar,
 
 	},
