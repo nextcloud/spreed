@@ -345,6 +345,7 @@ OC.L10N.register(
     "Pending" : "Pendiente",
     "Error" : "Error",
     "Blocked" : "Bloqueado",
+    "Active" : "Activo",
     "Expired" : "Expirado",
     "Validate SSL certificate" : "Validar certificado SSL",
     "Shared secret" : "Secreto compartido",
