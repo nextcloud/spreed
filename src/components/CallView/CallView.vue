@@ -731,8 +731,8 @@ export default {
 #videos {
 	position: absolute;
 	width: 100%;
-	height: calc(100% - 50px);
-	top: 50px;
+	height: calc(100% - 51px);
+	top: 51px; // TopBar height
 	overflow: hidden;
 	display: flex;
 	justify-content: space-around;
