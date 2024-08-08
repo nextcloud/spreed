@@ -19,9 +19,9 @@
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<PhoneIcon v-if="isPhoneRoom" :size="20" />
-				<VideoOutlineIcon v-else-if="silentCall" :size="20" />
-				<VideoIcon v-else :size="20" />
+				<PhoneDial v-if="isPhoneRoom" :size="20" />
+				<PhoneOutline v-else-if="silentCall" :size="20" />
+				<PhoneIcon v-else :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ startCallLabel }}
@@ -34,7 +34,7 @@
 			:disabled="loading"
 			@click="leaveCall(true)">
 			<template #icon>
-				<PhoneHangup :size="20" />
+				<PhoneHangup :size="20" /> <!-- here -->
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ endCallLabel }}
@@ -47,7 +47,7 @@
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
-				<VideoOff :size="20" />
+				<PhoneHangup :size="20" />
 			</template>
 			<template v-if="showButtonText" #default>
 				{{ leaveCallLabel }}
@@ -61,7 +61,7 @@
 			:container="container"
 			:type="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
-				<VideoOff v-if="!isBreakoutRoom" :size="20" />
+				<PhoneHangup v-if="!isBreakoutRoom" :size="20" />
 				<ArrowLeft v-else :size="20" />
 			</template>
 			<NcActionButton v-if="isBreakoutRoom"
@@ -73,13 +73,13 @@
 			</NcActionButton>
 			<NcActionButton @click="leaveCall(false)">
 				<template #icon>
-					<VideoOff :size="20" />
+					<PhoneHangup :size="20" />
 				</template>
 				{{ leaveCallLabel }}
 			</NcActionButton>
 			<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
 				<template #icon>
-					<VideoBoxOff :size="20" />
+					<PhoneOff :size="20" />
 				</template>
 				{{ t('spreed', 'End call for everyone') }}
 			</NcActionButton>
@@ -90,11 +90,10 @@
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import PhoneIcon from 'vue-material-design-icons/Phone.vue'
+import PhoneDial from 'vue-material-design-icons/PhoneDial.vue'
 import PhoneHangup from 'vue-material-design-icons/PhoneHangup.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-import VideoOutlineIcon from 'vue-material-design-icons/VideoOutline.vue'
+import PhoneOff from 'vue-material-design-icons/PhoneOff.vue'
+import PhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -130,12 +129,11 @@ export default {
 		NcButton,
 		// Icons
 		ArrowLeft,
+		PhoneDial,
 		PhoneHangup,
 		PhoneIcon,
-		VideoBoxOff,
-		VideoIcon,
-		VideoOff,
-		VideoOutlineIcon,
+		PhoneOff,
+		PhoneOutline,
 	},
 
 	props: {
