@@ -38,6 +38,9 @@
 			:aria-label="t('spreed', 'Federated user')">
 			<WebIcon :size="14" />
 		</span>
+		<NcLoadingIcon v-if="loading"
+			:size="size"
+			class="loading" />
 	</div>
 </template>
 
@@ -47,6 +50,7 @@ import WebIcon from 'vue-material-design-icons/Web.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import { ATTENDEE, AVATAR } from '../../constants.js'
 import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
@@ -59,6 +63,7 @@ export default {
 	components: {
 		NcAvatar,
 		WebIcon,
+		NcLoadingIcon,
 	},
 
 	props: {
@@ -121,6 +126,11 @@ export default {
 		menuContainer: {
 			type: String,
 			default: undefined,
+		},
+
+		loading: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	computed: {
@@ -277,6 +287,11 @@ export default {
 		background-color: var(--color-main-background);
 		border-radius: 50%;
 	}
+}
+
+.loading {
+	position: absolute;
+	top: 0;
 }
 
 </style>
