@@ -143,15 +143,11 @@
 
 <script>
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import MenuIcon from 'vue-material-design-icons/Menu.vue'
-import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
@@ -184,13 +180,10 @@ export default {
 		ConversationIcon,
 		TopBarMediaControls,
 		NcButton,
-		NcCounterBubble,
 		TopBarMenu,
 		ReactionMenu,
 		// Icons
 		AccountMultiple,
-		MenuIcon,
-		MessageText,
 	},
 
 	mixins: [
@@ -215,7 +208,6 @@ export default {
 
 	data: () => {
 		return {
-			unreadNotificationHandle: null,
 			showBreakoutRoomsEditor: false,
 			localCallParticipantModel,
 			localMediaModel,
@@ -225,10 +217,6 @@ export default {
 	computed: {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
-		},
-
-		showOpenSidebarButton() {
-			return !this.$store.getters.getSidebarStatus
 		},
 
 		isOneToOneConversation() {
@@ -249,13 +237,6 @@ export default {
 
 		statusMessage() {
 			return getStatusMessage(this.conversation)
-		},
-
-		unreadMessagesCounter() {
-			return this.conversation.unreadMessages
-		},
-		hasUnreadMentions() {
-			return this.conversation.unreadMention
 		},
 
 		renderedDescription() {
@@ -406,7 +387,9 @@ export default {
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;
-	padding: 8px;
+	padding: calc(2 * var(--default-grid-baseline));
+	// Reserve space for the sidebar toggle button
+	padding-right: calc(2 * var(--default-grid-baseline) + var(--app-sidebar-offset));
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border);
 
