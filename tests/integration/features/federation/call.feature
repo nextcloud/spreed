@@ -314,3 +314,105 @@ Feature: federation/call
     Then using server "LOCAL"
     And user "participant1" has the following notifications
       | app | object_type | object_id | subject |
+
+  Scenario: Recording consent required by admin for federated conversation/users
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 1 |
+    And user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room       | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name  | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room       |
+    And using server "LOCAL"
+    And user "participant1" joins room "room" with 200 (v4)
+    And user "participant1" joins call "room" with 400 (v4)
+      | recordingConsent | 0 |
+    And user "participant1" joins call "room" with 200 (v4)
+      | recordingConsent | 1 |
+    And using server "REMOTE"
+    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    And user "participant2" joins call "LOCAL::room" with 400 (v4)
+      | recordingConsent | 0 |
+    And user "participant2" joins call "LOCAL::room" with 200 (v4)
+      | recordingConsent | 1 |
+
+  Scenario: Cannot enable recording consent during a call for federated conversation/users
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room       | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name  | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room       |
+    And using server "LOCAL"
+    And user "participant1" joins room "room" with 200 (v4)
+    And user "participant1" joins call "room" with 200 (v4)
+    When user "participant1" sets the recording consent to 1 for room "room" with 400 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room | 0                |
+
+  Scenario: Enable recording consent after leaving call for federated conversation/users
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room       | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name  | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room       |
+    And using server "LOCAL"
+    And user "participant1" joins room "room" with 200 (v4)
+    And user "participant1" joins call "room" with 200 (v4)
+    And user "participant1" leaves call "room" with 200 (v4)
+    When user "participant1" sets the recording consent to 1 for room "room" with 200 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room | 1                |
+    And user "participant1" joins call "room" with 400 (v4)
+    And user "participant1" joins call "room" with 200 (v4)
+      | recordingConsent | 1 |
+
+  Scenario: Disable recording consent during a call for federated conversation/users
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room       | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name  | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room       |
+    And using server "LOCAL"
+    And user "participant1" joins room "room" with 200 (v4)
+    And user "participant1" joins call "room" with 200 (v4)
+    When user "participant1" sets the recording consent to 0 for room "room" with 200 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | recordingConsent |
+      | 2    | room | 0                |
+    When user "participant1" leaves call "room" with 200 (v4)
