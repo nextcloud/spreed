@@ -395,6 +395,9 @@ export default {
 		},
 
 		internalAbsolutePath() {
+			if (!this.file.path) {
+				return ''
+			}
 			return this.file.path.startsWith('/') ? this.file.path : '/' + this.file.path
 		},
 
@@ -478,6 +481,11 @@ export default {
 		handleClick(event) {
 			if (this.isUploadEditor) {
 				this.$emit('remove-file', this.file.id)
+				return
+			}
+
+			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
+				// File is not yet uploaded, so no Viewer available
 				return
 			}
 
