@@ -5,19 +5,20 @@
 
 <template>
 	<div class="top-bar__wrapper">
-		<NcButton v-show="isInCall && isHandRaised"
-			v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
-			v-tooltip="raiseHandButtonLabel"
-			:aria-label="raiseHandButtonLabel"
-			type="tertiary"
-			@shortkey="toggleHandRaised"
-			@click.stop="toggleHandRaised">
-			<template #icon>
-				<!-- The following icon is much bigger than all the others
-					so we reduce its size -->
-				<HandBackLeft :size="18" />
-			</template>
-		</NcButton>
+		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
+			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
+				v-tooltip="raiseHandButtonLabel"
+				:aria-label="raiseHandButtonLabel"
+				type="tertiary"
+				@shortkey="toggleHandRaised"
+				@click.stop="toggleHandRaised">
+				<template #icon>
+					<!-- The following icon is much bigger than all the others
+						so we reduce its size -->
+					<HandBackLeft :size="18" />
+				</template>
+			</NcButton>
+		</TransitionExpand>
 
 		<NcActions v-if="!isSidebar"
 			v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
@@ -30,6 +31,7 @@
 			<template v-if="isInCall" #icon>
 				<DotsHorizontal :size="20" />
 			</template>
+
 			<template v-if="showActions && isInCall">
 				<!-- Raise hand -->
 				<NcActionButton close-after-click
@@ -95,6 +97,7 @@
 				</template>
 				{{ t('spreed', 'Go to file') }}
 			</NcActionLink>
+
 			<!-- Call recording -->
 			<template v-if="canModerateRecording">
 				<NcActionButton v-if="!isRecording && !isStartingRecording && isInCall"
@@ -172,6 +175,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
+
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -185,6 +190,7 @@ export default {
 	name: 'TopBarMenu',
 
 	components: {
+		TransitionExpand,
 		NcActionButton,
 		NcActionLink,
 		NcActionSeparator,

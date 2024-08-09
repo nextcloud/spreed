@@ -9,7 +9,7 @@ import type { Component } from 'vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import TransitionExpandDown from './TransitionExpandDown.vue'
+import TransitionExpand from './TransitionExpand.vue'
 
 type TabDefinition = {
 	id: string,
@@ -112,7 +112,10 @@ function handleTabsAfterClosed() {
 			</NcButton>
 		</div>
 
-		<TransitionExpandDown :show="isOpen" @after-enter="handleTabsAfterOpen" @after-leave="handleTabsAfterClosed">
+		<TransitionExpand :show="isOpen"
+			direction="vertical"
+			@after-enter="handleTabsAfterOpen"
+			@after-leave="handleTabsAfterClosed">
 			<div class="tab-panels-container">
 				<div v-for="tab in tabs"
 					:id="getRefId('panel', tab.id)"
@@ -127,7 +130,7 @@ function handleTabsAfterClosed() {
 					<slot :name="`tab-panel:${tab.id}`" />
 				</div>
 			</div>
-		</TransitionExpandDown>
+		</TransitionExpand>
 	</div>
 </template>
 
