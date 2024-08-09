@@ -56,6 +56,20 @@ export type JoinRoomFullResponse = {
 
 // Participants
 export type Participant = components['schemas']['Participant']
+export type ParticipantSearchResult = {
+	id: string,
+	label: string,
+	icon: string,
+	source: string,
+	subline: string,
+	shareWithDisplayNameUnique: string,
+	status: {
+		status: string,
+		message: string | null,
+		icon: string | null,
+		clearAt: number | null,
+	} | '',
+}
 
 // Chats
 export type Mention = RichObject<'server'|'call-type'|'icon-url'>
