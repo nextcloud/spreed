@@ -46,21 +46,14 @@
 			</div>
 		</a>
 
-		<!-- Call time -->
-		<CallTime v-if="isInCall"
-			:start="conversation.callStartTime" />
+		<!-- Additional items, moved to the menu on mobile -->
+		<template v-if="!isMobile && isInCall">
+			<!-- Call time -->
+			<CallTime :start="conversation.callStartTime" />
 
-		<!-- Participants counter -->
-		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
-			:title="participantsInCallAriaLabel"
-			:aria-label="participantsInCallAriaLabel"
-			type="tertiary"
-			@click="openSidebar('participants')">
-			<template #icon>
-				<AccountMultiple :size="20" />
-			</template>
-			{{ participantsInCall }}
-		</NcButton>
+			<!-- Participants counter -->
+			<ParticipantsCounter v-if="!isOneToOneConversation && isModeratorOrUser" :token="token" />
+		</template>
 
 		<!-- Reactions menu -->
 		<ReactionMenu v-if="isInCall && hasReactionSupport"
@@ -92,17 +85,16 @@
 </template>
 
 <script>
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
+import ParticipantsCounter from './ParticipantsCounter.vue'
 import ReactionMenu from './ReactionMenu.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
@@ -111,7 +103,6 @@ import ConversationIcon from '../ConversationIcon.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { CONVERSATION } from '../../constants.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
@@ -128,13 +119,11 @@ export default {
 		BreakoutRoomsEditor,
 		CallButton,
 		CallTime,
+		ParticipantsCounter,
 		ConversationIcon,
 		TopBarMediaControls,
-		NcButton,
 		TopBarMenu,
 		ReactionMenu,
-		// Icons
-		AccountMultiple,
 	},
 
 	mixins: [richEditor],
@@ -158,10 +147,12 @@ export default {
 		useGetParticipants()
 		const iconSize = parseFloat(getComputedStyle(document.documentElement)
 			.getPropertyValue('--default-clickable-area'))
+		const isMobile = useIsMobile()
 		return {
 			localCallParticipantModel,
 			localMediaModel,
 			iconSize,
+			isMobile,
 		}
 	},
 
@@ -235,14 +226,6 @@ export default {
 			} else return false
 		},
 
-		participantsInCall() {
-			return this.$store.getters.participantsInCall(this.token) || ''
-		},
-
-		participantsInCallAriaLabel() {
-			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
-		},
-
 		supportedReactions() {
 			return getTalkConfig(this.token, 'call', 'supported-reactions')
 		},
@@ -278,13 +261,6 @@ export default {
 	methods: {
 		t,
 		n,
-		openSidebar(activeTab) {
-			if (typeof activeTab === 'string') {
-				emit('spreed:select-active-sidebar-tab', activeTab)
-			}
-			this.$store.dispatch('showSidebar')
-			BrowserStorage.setItem('sidebarOpen', 'true')
-		},
 
 		fullScreenChanged() {
 			this.$store.dispatch(

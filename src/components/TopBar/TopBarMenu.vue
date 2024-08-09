@@ -31,6 +31,12 @@
 				<DotsHorizontal :size="20" />
 			</template>
 			<template v-if="showActions && isInCall">
+				<template v-if="isMobile">
+<!--					<CallTime :start="conversation.callStartTime" />-->
+					<ParticipantsCounter v-if="!isOneToOneConversation && isModeratorOrUser" :token="token" in-menu />
+					<NcActionSeparator />
+				</template>
+
 				<!-- Raise hand -->
 				<NcActionButton close-after-click
 					@click="toggleHandRaised">
@@ -178,6 +184,9 @@ import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
+import ParticipantsCounter from './ParticipantsCounter.vue'
+import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
+import CallTime from './CallTime.vue'
 
 const AUTO_LOWER_HAND_THRESHOLD = 3000
 
@@ -185,6 +194,8 @@ export default {
 	name: 'TopBarMenu',
 
 	components: {
+		CallTime,
+		ParticipantsCounter,
 		NcActionButton,
 		NcActionLink,
 		NcActionSeparator,
@@ -245,9 +256,11 @@ export default {
 	emits: ['open-breakout-rooms-editor'],
 
 	setup() {
+		const isMobile = useIsMobile()
 		return {
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
+			isMobile,
 		}
 	},
 
@@ -291,6 +304,10 @@ export default {
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
+		isModeratorOrUser() {
+			return this.$store.getters.isModeratorOrUser
 		},
 
 		container() {
