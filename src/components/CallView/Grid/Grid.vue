@@ -985,6 +985,7 @@ export default {
 
 <style lang="scss" scoped>
 .grid-main-wrapper {
+	--navigation-position: calc(var(--default-grid-baseline) * 2);
 	position: relative;
 	width: 100%;
 }
@@ -1010,17 +1011,12 @@ export default {
 	height: 100%;
 	width: 100%;
 
-	grid-row-gap: 8px;
-	grid-column-gap: 8px;
+	grid-row-gap: var(--grid-gap);
+	grid-column-gap: var(--grid-gap);
 
 	&.stripe {
-		padding: 8px 8px 0 0;
+		padding: var(--grid-gap) var(--grid-gap) 0 0;
 	}
-}
-
-.empty-call-view {
-	position: relative;
-	padding: 16px;
 }
 
 .grid-wrapper {
@@ -1103,32 +1099,32 @@ export default {
 		top: calc(50% - var(--default-clickable-area) / 2);
 
 		&__previous {
-			left: 8px;
+			left: calc(var(--default-grid-baseline) * 2);
 		}
 
 		&__next {
-			right: 8px;
+			right: calc(var(--default-grid-baseline) * 2);
 		}
 	}
 
 	.stripe-wrapper & {
 		position: absolute;
-		top: 16px;
+		top: calc(var(--navigation-position) + var(--grid-gap));
 
 		&__previous {
-			left: 8px;
+			left: var(--navigation-position);
 		}
 
 		&__next {
-			right: 16px;
+			right: calc(var(--navigation-position) + var(--grid-gap));
 		}
 	}
 }
 
 .stripe--collapse {
 	position: absolute !important;
-	top: calc(-1 * var(--default-clickable-area));
-	right: 0;
+	top: calc(-1 * (var(--default-clickable-area) + var(--navigation-position) / 2));
+	right: calc(var(--navigation-position) / 2) ;
 }
 
 .stripe--collapse,

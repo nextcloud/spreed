@@ -5,13 +5,12 @@
 
 <template>
 	<div ref="videoContainer"
-		class="localVideoContainer videoContainer videoView"
+		class="localVideoContainer"
 		:class="videoContainerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
 		@click="$emit('click-video')">
 		<div v-show="localMediaModel.attributes.videoEnabled"
-			:class="videoWrapperClass"
 			class="videoWrapper"
 			:style="videoWrapperStyle">
 			<video id="localVideo"
@@ -20,6 +19,10 @@
 				:class="fitVideo ? 'video--fit' : 'video--fill'"
 				class="video"
 				@playing="updateVideoAspectRatio" />
+			<NcLoadingIcon v-if="isNotConnected"
+				:size="loadingIconSize"
+				class="video-loading"
+				:style="loadingIconStyle" />
 		</div>
 		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground v-if="isGrid || isStripe"
@@ -31,8 +34,11 @@
 				:source="actorType"
 				:size="avatarSize"
 				disable-menu
-				disable-tooltip
-				:class="avatarClass" />
+				disable-tooltip />
+			<NcLoadingIcon v-if="isNotConnected"
+				:size="loadingIconSize"
+				class="video-loading"
+				:style="loadingIconStyle" />
 		</div>
 
 		<div class="bottom-bar">
@@ -54,6 +60,7 @@ import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import VideoBackground from './VideoBackground.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
@@ -71,6 +78,7 @@ export default {
 		AvatarWrapper,
 		NcButton,
 		VideoBackground,
+		NcLoadingIcon,
 	},
 
 	props: {
@@ -194,12 +202,6 @@ export default {
 			)
 		},
 
-		videoWrapperClass() {
-			return {
-				'icon-loading': this.isNotConnected,
-			}
-		},
-
 		avatarSize() {
 			if (this.isStripe || (!this.isBig && !this.isGrid)) {
 				return AVATAR.SIZE.LARGE
@@ -207,12 +209,6 @@ export default {
 				return AVATAR.SIZE.FULL
 			} else {
 				return Math.min(AVATAR.SIZE.FULL, this.$refs.videoContainer.clientHeight / 2, this.$refs.videoContainer.clientWidth / 2)
-			}
-		},
-
-		avatarClass() {
-			return {
-				'icon-loading': this.isNotConnected,
 			}
 		},
 
@@ -230,6 +226,16 @@ export default {
 
 		isSelectable() {
 			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+		},
+
+		loadingIconSize() {
+			return this.isBig ? 128 : 64
+		},
+
+		loadingIconStyle() {
+			return {
+				'--loading-icon-size': this.loadingIconSize + 'px',
+			}
 		},
 	},
 
@@ -387,8 +393,8 @@ export default {
 
 .video-container-big {
 	position: absolute;
-	width: calc(100% - 16px);
-	height: calc(100% - 8px);
+	width: calc(100% - var(--grid-gap) * 2);
+	height: calc(100% - var(--grid-gap));
 	display: flex;
 	flex-direction: column;
 
@@ -407,10 +413,10 @@ export default {
 	width: 100%;
 }
 
-.videoWrapper.icon-loading:after {
-	height: 60px;
-	width: 60px;
-	margin: -32px 0 0 -32px;
+.video-loading {
+	position: absolute;
+	top: calc(50% - var(--loading-icon-size) / 2);
+	right: calc(50% - var(--loading-icon-size) / 2);
 }
 
 .video--fit {
