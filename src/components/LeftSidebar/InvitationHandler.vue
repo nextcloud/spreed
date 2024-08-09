@@ -153,6 +153,8 @@ export default {
 			const conversation = await this.federationStore.acceptShare(id)
 			if (conversation?.token) {
 				this.$store.dispatch('addConversation', conversation)
+				// TODO move cacheConversations to the store action
+				this.$store.dispatch('cacheConversations')
 			}
 			this.checkIfNoMoreInvitations()
 		},
