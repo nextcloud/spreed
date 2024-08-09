@@ -26,6 +26,7 @@ import {
 	getFileNamePrompt,
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
+import { parseUploadError } from '../utils/propfindErrorParse.ts'
 
 const state = {
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
@@ -350,17 +351,9 @@ const actions = {
 			} catch (exception) {
 				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
 				if (exception.response) {
-					try {
-						const responseText = await exception.response.text()
-						const parser = new DOMParser()
-						const xmlDoc = parser.parseFromString(responseText, 'application/xml')
-						const messageElement = xmlDoc.getElementsByTagName('s:message')[0]
-						if (messageElement) {
-							const errorMessage = messageElement.textContent
-							showError(errorMessage)
-						}
-					} catch (parseError) {
-						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					const message = await parseUploadError(exception)
+					if (message) {
+						showError(message)
 					}
 				}
 				// Mark the upload as failed in the store
