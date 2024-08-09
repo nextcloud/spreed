@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use DateTime;
+use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
@@ -106,6 +107,14 @@ class BanService {
 		$ban->setBannedTime($bannedTime);
 		$ban->setInternalNote($internalNote);
 
+		//Remove the banned user from the room
+		try {
+			$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
+			$this->participantService->removeAttendee($room, $bannedParticipant, AAttendeeRemovedEvent::REASON_REMOVED);
+		} catch (ParticipantNotFoundException) {
+			// No failure if the banned actor is not in the room yet/anymore
+		}
+		
 		return $this->banMapper->insert($ban);
 	}
 
