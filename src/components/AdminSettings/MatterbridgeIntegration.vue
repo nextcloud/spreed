@@ -4,11 +4,11 @@
 -->
 
 <template>
-	<section id="matterbridge_settings" class="matterbridge section">
-		<h2>
-			{{ t('spreed', 'Matterbridge integration') }}
-			<small>{{ t('spreed', 'Beta') }}</small>
-		</h2>
+	<NcSettingsSection id="matterbridge_settings"
+		class="matterbridge"
+		:name="t('spreed', 'Matterbridge integration')"
+		doc-url="https://nextcloud-talk.readthedocs.io/en/latest/matterbridge/">
+		<!-- <small>{{ t('spreed', 'Beta') }}</small> -->
 
 		<template v-if="matterbridgeVersion">
 			<p class="settings-hint">
@@ -40,7 +40,7 @@
 				{{ installButtonText }}
 			</NcButton>
 		</template>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -50,6 +50,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 import {
 	enableMatterbridgeApp,
@@ -63,6 +64,7 @@ export default {
 	components: {
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcSettingsSection,
 	},
 
 	data() {

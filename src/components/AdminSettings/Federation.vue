@@ -4,11 +4,11 @@
 -->
 
 <template>
-	<section id="federation_settings" class="federation section">
-		<h2>
-			{{ t('spreed', 'Federation') }}
-			<small>{{ t('spreed', 'Beta') }}</small>
-		</h2>
+	<NcSettingsSection id="federation_settings"
+		class="federation"
+		:name="t('spreed', 'Federation')"
+		doc-url="https://docs.nextcloud.com/server/latest/user_manual/en/talk/advanced_features.html#federated-conversation">
+		<!-- <small>{{ t('spreed', 'Beta') }}</small> -->
 
 		<NcCheckboxRadioSwitch :checked="isFederationEnabled"
 			:disabled="loading"
@@ -76,7 +76,7 @@
 				</NcButton>
 			</div>
 		</template>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -90,6 +90,7 @@ import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 const FEDERATION_ENABLED = loadState('spreed', 'federation_enabled', false)
 const FEDERATION_INCOMING_ENABLED = loadState('spreed', 'federation_incoming_enabled', true)
@@ -104,6 +105,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcSelect,
+		NcSettingsSection,
 	},
 
 	data() {

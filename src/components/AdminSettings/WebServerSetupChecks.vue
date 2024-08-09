@@ -4,11 +4,7 @@
 -->
 
 <template>
-	<div id="web_server_setup_checks" class="section">
-		<h2>
-			{{ t('spreed', 'Web server setup checks') }}
-		</h2>
-
+	<NcSettingsSection id="web_server_setup_checks" :name="t('spreed', 'Web server setup checks')" doc-url="https://nextcloud-talk.readthedocs.io/en/latest/system-requirements/">
 		<NcNoteCard v-if="apacheWarning"
 			:type="apacheWarningType">
 			{{ apacheWarning }}
@@ -31,7 +27,7 @@
 				</NcButton>
 			</li>
 		</ul>
-	</div>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -44,6 +40,7 @@ import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
@@ -61,6 +58,7 @@ export default {
 		AlertCircle,
 		NcButton,
 		NcNoteCard,
+		NcSettingsSection,
 		Check,
 	},
 
