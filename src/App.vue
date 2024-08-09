@@ -4,10 +4,9 @@
 -->
 
 <template>
-	<NcContent v-shortkey.once="disableKeyboardShortcuts ? null : ['ctrl', 'f']"
+	<NcContent v-key-stroke:f.ctrl.stop.prevent="handleAppSearch"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
-		app-name="talk"
-		@shortkey.native="handleAppSearch">
+		app-name="talk">
 		<LeftSidebar v-if="getUserId && !isFullscreen" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
@@ -43,6 +42,7 @@ import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
+import { KeyStroke } from './directives/keyStroke.ts'
 import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
@@ -61,6 +61,10 @@ export default {
 		SettingsDialog,
 		ConversationSettingsDialog,
 		MediaSettings,
+	},
+
+	directives: {
+		KeyStroke,
 	},
 
 	setup() {
@@ -185,10 +189,6 @@ export default {
 		isOneToOne() {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 	},
 

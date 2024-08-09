@@ -15,6 +15,15 @@ declare global {
 
 	let __webpack_nonce__: ReturnType<typeof btoa>
 	let __webpack_public_path__: string
+
+	interface NextcloudOCPInterface extends Nextcloud.Common.OCP {
+		Accessibility: {
+			disableKeyboardShortcuts: () => boolean
+		}
+	}
+	const OC: Nextcloud.Common.OC
+	const OCP: NextcloudOCPInterface
+	const OCA: Record<string, unknown>
 }
 
 export {}
