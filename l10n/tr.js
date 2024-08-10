@@ -927,6 +927,7 @@ OC.L10N.register(
     "Loading …" : "Yükleniyor…",
     "Hide details" : "Ayrıntılar gizlensin",
     "Show details" : "Ayrıntıları görüntüle",
+    "Unban" : "Yasaklamayı kaldır",
     "Date:" : "Tarih:",
     "Note:" : "Not:",
     "Enter a name for this conversation" : "Bu görüşme için bir ad yazın",
