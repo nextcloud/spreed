@@ -188,3 +188,35 @@ Feature: conversation/ban
       | invite   | participant2 |
     And user "participant1" bans user "participant2" from room "one-to-one room" with 400 (v1)
       | error | room |
+
+  Scenario: Invalid banned actor type
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" bans range "participant2" from room "room" with 400 (v1)
+      | error | bannedActor |
+
+  Scenario: Invalid IP address
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" bans ip "participant2" from room "room" with 400 (v1)
+      | error | bannedActor |
+
+  Scenario: Invalid IP address range
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" bans ip "127.0.0.1/64" from room "room" with 400 (v1)
+      | error | bannedActor |
+
+  Scenario: Test valid IP bans
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" bans ip "127.0.0.1" from room "room" with 200 (v1)
+    And user "participant1" bans ip "127.0.0.1/24" from room "room" with 200 (v1)
+    And user "participant1" bans ip "127.0.0.1/32" from room "room" with 200 (v1)
+    And user "participant1" bans ip "::1" from room "room" with 200 (v1)
+    And user "participant1" bans ip "::1/32" from room "room" with 200 (v1)
+    And user "participant1" bans ip "::1/64" from room "room" with 200 (v1)

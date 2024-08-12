@@ -62,9 +62,9 @@ class BanService {
 			} catch (\InvalidArgumentException) {
 				// Not an IP, check if it's a range
 				try {
-					$this->ipFactory->addressFromString($bannedActorId);
+					$this->ipFactory->rangeFromString($bannedActorId);
 				} catch (\InvalidArgumentException) {
-					// Not an IP, see if it's a range
+					// Not an IP range either
 					throw new \InvalidArgumentException('bannedActor');
 				}
 			}
