@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
+use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
@@ -573,6 +574,18 @@ class Config {
 		];
 	}
 
+	public function getSignalingFederatedUserData(): array {
+		/** @var Authenticator $authenticator */
+		$authenticator = \OCP\Server::get(Authenticator::class);
+		if (!$authenticator->isFederationRequest()) {
+			return [];
+		}
+
+		return [
+			'displayname' => $authenticator->getParticipant()->getAttendee()->getDisplayName(),
+		];
+	}
+
 	/**
 	 * @param string|null $userId if given, the id of a user in this instance or
 	 *        a cloud id.
@@ -591,6 +604,10 @@ class Config {
 			$data['userdata'] = $this->getSignalingUserData($user);
 		} elseif (!empty($userId) && $this->cloudIdManager->isValidCloudId($userId)) {
 			$data['sub'] = $userId;
+			$extendedData = $this->getSignalingFederatedUserData();
+			if (!empty($extendedData)) {
+				$data['userdata'] = $extendedData;
+			}
 		}
 
 		$alg = $this->getSignalingTokenAlgorithm();
