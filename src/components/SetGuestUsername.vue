@@ -10,7 +10,7 @@
 
 		<NcButton v-if="!isEditingUsername"
 			@click="handleEditUsername">
-			{{ t('spreed', 'Edit') }}
+			{{ t('spreed', 'Edit display name') }}
 			<template #icon>
 				<Pencil :size="20" />
 			</template>
@@ -27,6 +27,14 @@
 			@trailing-button-click="handleChooseUserName"
 			@keydown.enter="handleChooseUserName"
 			@keydown.esc="handleEditUsername" />
+
+		<div class="login-info">
+			<span> {{ t('spreed', 'Do you already have an account?') }}</span>
+			<NcButton type="secondary"
+				:href="getLoginUrl()">
+				{{ t('spreed', 'Login') }}
+			</NcButton>
+		</div>
 	</div>
 </template>
 
@@ -36,6 +44,7 @@ import escapeHtml from 'escape-html'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
@@ -127,6 +136,13 @@ export default {
 				})
 			}
 		},
+
+		getLoginUrl() {
+			const currentUrl = window.location.pathname
+			const loginBaseUrl = generateUrl('/login')
+			const redirectUrl = encodeURIComponent(currentUrl)
+			return `${loginBaseUrl}?redirect_url=${redirectUrl}`
+		},
 	},
 
 }
@@ -141,6 +157,13 @@ export default {
 		width: 300px;
 		height: var(--default-clickable-area);
 	}
+}
+
+.login-info {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) * 2);
+	padding-top: calc(var(--default-grid-baseline) * 2);
 }
 
 </style>
