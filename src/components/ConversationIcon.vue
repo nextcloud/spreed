@@ -65,7 +65,7 @@ import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { isDarkTheme } from '../utils/isDarkTheme.js'
+import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
@@ -131,6 +131,14 @@ export default {
 			type: Number,
 			default: AVATAR.SIZE.DEFAULT,
 		},
+	},
+
+	setup() {
+		const isDarkTheme = useIsDarkTheme()
+
+		return {
+			isDarkTheme,
+		}
 	},
 
 	computed: {
@@ -209,7 +217,7 @@ export default {
 		},
 
 		themeClass() {
-			return `conversation-icon--${isDarkTheme ? 'dark' : 'bright'}`
+			return `conversation-icon--${this.isDarkTheme ? 'dark' : 'bright'}`
 		},
 
 		isOneToOne() {
@@ -230,7 +238,7 @@ export default {
 				return undefined
 			}
 
-			return getConversationAvatarOcsUrl(this.item.token, isDarkTheme, this.item.avatarVersion)
+			return getConversationAvatarOcsUrl(this.item.token, this.isDarkTheme, this.item.avatarVersion)
 		},
 	},
 

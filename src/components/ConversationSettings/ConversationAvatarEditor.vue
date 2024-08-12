@@ -123,8 +123,8 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
 
+import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
 import { AVATAR } from '../../constants.js'
-import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
 // eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
@@ -173,7 +173,9 @@ export default {
 	emits: ['avatar-edited'],
 
 	setup() {
+		const isDarkTheme = useIsDarkTheme()
 		return {
+			isDarkTheme,
 			AVATAR,
 			validMimeTypes,
 		}
@@ -209,7 +211,7 @@ export default {
 		},
 
 		themeClass() {
-			return `avatar__preview-emoji--${isDarkTheme ? 'dark' : 'bright'}`
+			return `avatar__preview-emoji--${this.isDarkTheme ? 'dark' : 'bright'}`
 		},
 
 		showControls() {
@@ -220,7 +222,7 @@ export default {
 			return [{
 				label: t('spreed', 'Choose'),
 				callback: (nodes) => this.handleFileChoose(nodes),
-				type: 'primary'
+				type: 'primary',
 			}]
 		},
 	},
