@@ -49,7 +49,7 @@ class BanService {
 			throw new \InvalidArgumentException('room');
 		}
 
-		if (!in_array($bannedActorType, ['users', 'guests', 'ip'], true)) {
+		if (!in_array($bannedActorType, [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS, 'ip'], true)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
 
@@ -81,7 +81,7 @@ class BanService {
 
 		/** @var ?string $displayname */
 		$displayname = null;
-		if (in_array($bannedActorType, [Attendee::ACTOR_GUESTS, Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
+		if (in_array($bannedActorType, [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS], true)) {
 			try {
 				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
 				$displayname = $bannedParticipant->getAttendee()->getDisplayName();
