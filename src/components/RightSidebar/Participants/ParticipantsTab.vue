@@ -31,7 +31,7 @@
 			:participants="participants"
 			:loading="!participantsInitialised" />
 
-		<div v-else class="scroller h-100">
+		<div v-else class="participants-tab__search-result h-100">
 			<NcAppNavigationCaption v-if="canAdd" :name="t('spreed', 'Participants')" />
 
 			<ParticipantsList v-if="filteredParticipants.length"
@@ -352,8 +352,9 @@ export default {
   }
 }
 
-.scroller {
+.participants-tab__search-result {
 	overflow-y: auto;
+	margin: 0 calc(-1 * var(--default-grid-baseline));
 }
 
 .known-results {

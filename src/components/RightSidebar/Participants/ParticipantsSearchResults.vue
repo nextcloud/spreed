@@ -256,11 +256,8 @@ export default {
 }
 
 .participants-search-results {
-	padding: 0 2px;
-
 	&__hint {
 		margin: 20px auto 0;
 	}
 }
-
 </style>

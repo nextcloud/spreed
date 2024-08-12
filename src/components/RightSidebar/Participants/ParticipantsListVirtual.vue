@@ -5,6 +5,7 @@
 
 <template>
 	<RecycleScroller ref="scroller"
+		class="participants-list-wrapper"
 		list-tag="ul"
 		item-tag="li"
 		:items="participants"
@@ -64,3 +65,11 @@ export default {
 	},
 }
 </script>
+
+<style scoped lang="scss">
+.participants-list-wrapper {
+	// NcListItem has unneeded permanent padding. Removing it here.
+	// TODO: add no-padding mode in upstream
+	margin: 0 calc(-1 * var(--default-grid-baseline));
+}
+</style>
