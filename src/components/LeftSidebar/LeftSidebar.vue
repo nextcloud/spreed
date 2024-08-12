@@ -13,7 +13,7 @@
 					<SearchBox ref="searchBox"
 						:value.sync="searchText"
 						:is-focused.sync="isFocused"
-						:list="list"
+						:list-ref="scroller"
 						@input="debounceFetchSearchResults"
 						@abort-search="abortSearch" />
 				</div>
@@ -402,7 +402,7 @@ export default {
 	setup() {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
-		const list = ref(null)
+		const scroller = ref(null)
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
@@ -414,7 +414,7 @@ export default {
 			resetNavigation,
 			leftSidebar,
 			searchBox,
-			list,
+			scroller,
 			federationStore,
 			talkHashStore,
 			isMobile,

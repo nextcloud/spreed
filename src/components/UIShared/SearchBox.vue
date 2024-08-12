@@ -58,8 +58,8 @@ export default {
 		/**
 		 * Conversations list reference for handling click trigger
 		 */
-		 list: {
-			type: HTMLElement,
+		listRef: {
+			type: Object,
 			default: null,
 		},
 	},
@@ -143,10 +143,12 @@ export default {
 				})
 				return
 			}
+
 			// Blur triggered by clicking on a conversation item
-			if (this.list?.contains(event.relatedTarget)) {
+			if (this.listRef && this.listRef.$el.contains(event.relatedTarget)) {
 				return
 			}
+
 			 // Blur in other cases
 			this.$emit('blur', event)
 			if (!this.isSearching) {
