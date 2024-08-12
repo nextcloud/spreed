@@ -35,6 +35,16 @@
 					<Check :size="20" />
 				</template>
 			</NcButton>
+
+			<div class="separator" />
+
+			<div class="login-info">
+				<span> {{ t('spreed', 'Do you already have an account?') }}</span>
+				<NcButton type="secondary"
+					:href="getLoginUrl()">
+					{{ t('spreed', 'Login') }}
+				</NcButton>
+			</div>
 		</div>
 	</NcModal>
 </template>
@@ -43,6 +53,7 @@
 import Check from 'vue-material-design-icons/CheckBold.vue'
 
 import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -108,6 +119,13 @@ export default {
 		handleChooseUserName() {
 			this.guestNameStore.submitGuestUsername(this.token, this.guestUserName)
 		},
+
+		getLoginUrl() {
+			const currentUrl = window.location.pathname
+			const loginBaseUrl = generateUrl('/login')
+			const redirectUrl = encodeURIComponent(currentUrl)
+			return `${loginBaseUrl}?redirect_url=${redirectUrl}`
+		},
 	},
 }
 </script>
@@ -136,5 +154,17 @@ export default {
 
 .submit-button {
 	margin: 0 auto;
+}
+
+.login-info {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) * 2);
+	padding-top: calc(var(--default-grid-baseline) * 2);
+}
+
+.separator {
+    margin: calc(var(--default-grid-baseline) * 5) 0 var(--default-grid-baseline);
+    border-top: 1px solid;
 }
 </style>
