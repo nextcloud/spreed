@@ -1005,7 +1005,7 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	height: 100%;
-	padding-left: var(--default-grid-baseline);
+	padding: 0 var(--default-grid-baseline);
 	overflow-y: scroll !important; // reserve a place for scrollbar
 }
 
@@ -1013,7 +1013,6 @@ export default {
 	position: relative;
 	display: flex;
 	padding: calc(var(--default-grid-baseline) * 2);
-	padding-right: var(--default-grid-baseline);
 	overflow-y: scroll !important; // reserve a place for scrollbar
 	align-items: center;
 	border-bottom: 1px solid transparent;
