@@ -20,7 +20,7 @@
 			:alt="name"
 			class="avatar icon">
 		<NcAvatar v-else
-			:key="id"
+			:key="id + (isDarkTheme ? '-dark' : '-light')"
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainerWithFallback"

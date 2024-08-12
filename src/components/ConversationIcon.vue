@@ -31,7 +31,7 @@
 		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
 		<!-- TODO: Check if props update support in NcAvatar is more performant -->
 		<NcAvatar v-else
-			:key="item.token"
+			:key="item.token + (isDarkTheme ? '-dark' : '-light')"
 			:size="size"
 			:user="item.name"
 			:disable-menu="disableMenu"
