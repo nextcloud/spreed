@@ -22,9 +22,3 @@ export function checkIfDarkTheme(el: HTMLElement = document.body): boolean {
 	// There is no theme? Fallback to the light theme
 	return false
 }
-
-/**
- * Was Dark Theme enabled on the page load
- * @type {boolean}
- */
-export const isDarkTheme = checkIfDarkTheme()

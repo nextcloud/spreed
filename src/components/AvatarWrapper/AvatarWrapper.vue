@@ -52,9 +52,9 @@ import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
+import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
 import { ATTENDEE, AVATAR } from '../../constants.js'
 import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
-import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
 export default {
 
@@ -133,6 +133,14 @@ export default {
 			default: false,
 		},
 	},
+
+	setup() {
+		const isDarkTheme = useIsDarkTheme()
+		return {
+			isDarkTheme,
+		}
+	},
+
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
@@ -159,7 +167,7 @@ export default {
 		},
 		avatarClass() {
 			return {
-				'avatar-wrapper--dark': isDarkTheme,
+				'avatar-wrapper--dark': this.isDarkTheme,
 				'avatar-wrapper--offline': this.offline,
 				'avatar-wrapper--condensed': this.condensed,
 				'avatar-wrapper--highlighted': this.highlighted,
@@ -197,7 +205,7 @@ export default {
 			return this.menuContainer ?? this.$store.getters.getMainContainerSelector()
 		},
 		avatarUrl() {
-			return getUserProxyAvatarOcsUrl(this.token, this.id, isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
+			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
 		},
 	},
 
