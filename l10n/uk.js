@@ -902,6 +902,7 @@ OC.L10N.register(
     "An error occurred while performing the search" : "Помилка під час пошуку",
     "You are currently waiting in the lobby" : "Чекаємо на схвалення доступу",
     "The meeting will start soon" : "Зустріч незабаром розпочнеться",
+    "Select a device" : "Вибрати пристрій",
     "No microphone available" : "Мікрофон відсутній",
     "Select microphone" : "Виберіть мікрофон",
     "No camera available" : "Камера відсутня",
