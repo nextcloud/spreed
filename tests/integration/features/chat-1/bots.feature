@@ -1,6 +1,7 @@
 Feature: chat/bots
   Background:
     Given user "participant1" exists
+    Given user "participant2" exists
 
   Scenario: Installing the call summary bot
     Given invoking occ with "talk:bot:list"
@@ -357,3 +358,25 @@ Feature: chat/bots
     Then the command failed with exit code 1
     And the command output contains the text "Bot not found"
 
+  Scenario: Cannot enable bots in a former one-to-one room
+    Given invoking occ with "talk:bot:list"
+    Then the command was successful
+    And the command output is empty
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room" (v4)
+    And user "participant2" is participant of room "room" (v4)
+    When user "participant2" is deleted
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 5    | 1               |
+    And invoking occ with "app:enable call_summary_bot"
+    And the command was successful
+    And invoking occ with "talk:bot:list room-name:room"
+    Then the command was successful
+    And the command output is empty
+    And user "participant1" sets up bot "Call summary" for room "room" with 400 (v1)
+    Given invoking occ with "talk:bot:list room-name:room"
+    And the command was successful
+    And the command output is empty
