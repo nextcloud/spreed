@@ -1548,15 +1548,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @When /^user "([^"]*)" bans (user|group|email|remote|guest) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
-	 *
-	 * @param string $user
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $identifier
-	 * @param int $statusCode
-	 * @param string $apiVersion
 	 */
-	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $internalNote): void {
+	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $internalNote = null): void {
 		if ($actorType === 'guest') {
 			$actorId = self::$sessionNameToActorId[$actorId];
 		} elseif ($actorId === 'stranger') {
@@ -1595,6 +1588,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			self::$userToBanId[self::$identifierToToken[$identifier]] ??= [];
 			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType] ??= [];
 			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId] = $data['id'];
+		} elseif ($internalNote !== null) {
+			$internalNoteData = $internalNote->getRowsHash();
+			if (isset($internalNoteData['error'])) {
+				$data = $this->getDataFromResponse($this->response);
+				Assert::assertSame($internalNoteData['error'], $data['error']);
+			}
 		}
 	}
 

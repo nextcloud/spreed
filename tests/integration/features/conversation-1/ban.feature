@@ -72,6 +72,7 @@ Feature: conversation/ban
         And user "participant1" joins room "room" with 200 (v4)
         And user "participant1" bans user "participant1" from room "room" with 400 (v1)
             | internalNote | BannedP1 |
+            | error | self |
 
     Scenario: Moderator trying to ban moderator
         Given user "participant1" creates room "room" (v4)
@@ -83,6 +84,7 @@ Feature: conversation/ban
         And user "participant1" promotes "participant2" in room "room" with 200 (v4)
         And user "participant1" bans user "participant2" from room "room" with 400 (v1)
             | internalNote | BannedP2 |
+            | error | moderator |
         And user "participant1" demotes "participant2" in room "room" with 200 (v4)
         And user "participant1" bans user "participant2" from room "room" with 200 (v1)
             | internalNote | BannedP2 |
@@ -179,3 +181,10 @@ Feature: conversation/ban
       | actorType  | actorId                     |
       | users      | participant1                |
       | groups     | group1                      |
+
+  Scenario: Can not ban in one-to-one conversations
+    Given user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" bans user "participant2" from room "one-to-one room" with 400 (v1)
+      | error | room |

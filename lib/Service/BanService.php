@@ -44,6 +44,10 @@ class BanService {
 	 * @throws \InvalidArgumentException
 	 */
 	public function createBan(Room $room, string $moderatorActorType, string $moderatorActorId, string $moderatorDisplayname, string $bannedActorType, string $bannedActorId, DateTime $bannedTime, string $internalNote): Ban {
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			throw new \InvalidArgumentException('room');
+		}
+
 		if (!in_array($bannedActorType, ['users', 'guests', 'ip'], true)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
