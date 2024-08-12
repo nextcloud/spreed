@@ -21,6 +21,8 @@ Feature: conversation/ban
           | users              | participant1     | participant1-displayname | users           | participant3  | participant3-displayname | BannedP3     |
         And user "participant2" joins room "room" with 403 (v4)
         And user "participant3" joins room "room" with 403 (v4)
+        And user "participant1" removes "participant2" from room "room" with 404 (v4)
+        And user "participant1" removes "participant3" from room "room" with 404 (v4)
         And user "participant1" unbans user "participant2" from room "room" with 200 (v1)
         And user "participant1" unbans user "participant3" from room "room" with 200 (v1)
         And user "participant2" joins room "room" with 200 (v4)
@@ -110,8 +112,8 @@ Feature: conversation/ban
     And user "participant2" sends message "Message 1" to room "room" with 201
     When user "participant1" bans user "participant2" from room "room" with 200 (v1)
       | internalNote | BannedP2 |
-    And user "participant2" sends message "Message 2" to room "room" with 403
-    And user "participant2" react with "👍" on message "Message 1" to room "room" with 403
+    And user "participant2" sends message "Message 2" to room "room" with 404
+    And user "participant2" react with "👍" on message "Message 1" to room "room" with 404
 
   Scenario: Banning a guest bans their IP as well
     Given user "participant1" creates room "room" (v4)
