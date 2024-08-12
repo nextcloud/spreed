@@ -1988,7 +1988,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "bannedActor" | "internalNote" | "moderator" | "self";
+                                error: "bannedActor" | "internalNote" | "moderator" | "self" | "room";
                             };
                         };
                     };

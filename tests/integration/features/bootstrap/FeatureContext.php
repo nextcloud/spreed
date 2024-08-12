@@ -1547,16 +1547,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" bans (user|group|email|remote|guest) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
-	 *
-	 * @param string $user
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $identifier
-	 * @param int $statusCode
-	 * @param string $apiVersion
+	 * @When /^user "([^"]*)" bans ([^ ]*) "([^"]*)" from room "([^"]*)" with (\d+) \((v1)\)$/
 	 */
-	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $internalNote): void {
+	public function userBansUserFromRoom(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $internalNote = null): void {
 		if ($actorType === 'guest') {
 			$actorId = self::$sessionNameToActorId[$actorId];
 		} elseif ($actorId === 'stranger') {
@@ -1568,7 +1561,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		$actorType .= 's';
+		if ($actorType !== 'ip') {
+			$actorType .= 's';
+		}
 
 		$this->setCurrentUser($user);
 		$body = [
@@ -1588,13 +1583,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'POST', '/apps/spreed/api/' . $apiVersion . '/ban/' . self::$identifierToToken[$identifier], $body
 		);
 
-		$this->assertStatusCode($this->response, $statusCode);
+		$data = $this->getDataFromResponse($this->response);
+		$this->assertStatusCode($this->response, $statusCode, print_r($data, true));
 
 		if ($statusCode === 200) {
-			$data = $this->getDataFromResponse($this->response);
 			self::$userToBanId[self::$identifierToToken[$identifier]] ??= [];
 			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType] ??= [];
 			self::$userToBanId[self::$identifierToToken[$identifier]][$actorType][$actorId] = $data['id'];
+		} elseif ($internalNote !== null) {
+			$internalNoteData = $internalNote->getRowsHash();
+			if (isset($internalNoteData['error'])) {
+				Assert::assertSame($internalNoteData['error'], $data['error']);
+			}
 		}
 	}
 

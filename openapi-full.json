@@ -2177,7 +2177,8 @@
                                                                 "bannedActor",
                                                                 "internalNote",
                                                                 "moderator",
-                                                                "self"
+                                                                "self",
+                                                                "room"
                                                             ]
                                                         }
                                                     }

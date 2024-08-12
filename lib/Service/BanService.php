@@ -44,6 +44,10 @@ class BanService {
 	 * @throws \InvalidArgumentException
 	 */
 	public function createBan(Room $room, string $moderatorActorType, string $moderatorActorId, string $moderatorDisplayname, string $bannedActorType, string $bannedActorId, DateTime $bannedTime, string $internalNote): Ban {
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			throw new \InvalidArgumentException('room');
+		}
+
 		if (!in_array($bannedActorType, ['users', 'guests', 'ip'], true)) {
 			throw new \InvalidArgumentException('bannedActor');
 		}
@@ -58,9 +62,9 @@ class BanService {
 			} catch (\InvalidArgumentException) {
 				// Not an IP, check if it's a range
 				try {
-					$this->ipFactory->addressFromString($bannedActorId);
+					$this->ipFactory->rangeFromString($bannedActorId);
 				} catch (\InvalidArgumentException) {
-					// Not an IP, see if it's a range
+					// Not an IP range either
 					throw new \InvalidArgumentException('bannedActor');
 				}
 			}
