@@ -18,6 +18,7 @@ import App from './App.vue'
 
 import './init.js'
 import router from './router/router.js'
+import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 
 // Leaflet icon patch
@@ -81,7 +82,7 @@ const Sidebar = function() {
 			if (!sidebarShown) {
 				this.state.file = ''
 			}
-		}
+		},
 	)
 }
 
@@ -153,5 +154,6 @@ if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
 }
 OCA.Talk.instance = instance
+OCA.Talk.Settings = SettingsAPI
 
 export default instance
