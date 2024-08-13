@@ -12,7 +12,7 @@
 			class="conversation-icon"
 			:offline="isPeerInactive"
 			:item="conversation"
-			:size="iconSize"
+			:size="AVATAR.SIZE.DEFAULT"
 			:disable-menu="false"
 			show-user-online-status
 			:hide-favorite="false"
@@ -129,7 +129,7 @@ import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
-import { CONVERSATION } from '../../constants.js'
+import { AVATAR, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
@@ -177,12 +177,11 @@ export default {
 
 	setup() {
 		useGetParticipants()
-		const iconSize = parseFloat(getComputedStyle(document.documentElement)
-			.getPropertyValue('--default-clickable-area'))
+
 		return {
+			AVATAR,
 			localCallParticipantModel,
 			localMediaModel,
-			iconSize,
 			chatExtrasStore: useChatExtrasStore(),
 			isMobile: useIsMobile(),
 		}

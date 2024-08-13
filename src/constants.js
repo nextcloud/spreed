@@ -273,7 +273,7 @@ export const AVATAR = {
 	SIZE: {
 		EXTRA_SMALL: 22,
 		SMALL: 32,
-		DEFAULT: 44,
+		DEFAULT: 36,
 		MEDIUM: 64,
 		LARGE: 128,
 		EXTRA_LARGE: 180,
