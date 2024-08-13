@@ -79,9 +79,9 @@ export default {
 	&__avatar {
 		flex-shrink: 0;
 		&-circle {
-			height: 44px; // AVATAR.SIZE.DEFAULT
-			width: 44px;
-			border-radius: 44px;
+			height: 36px; // AVATAR.SIZE.DEFAULT
+			width: 36px;
+			border-radius: 36px;
 		}
 	}
 
