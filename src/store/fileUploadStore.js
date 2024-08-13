@@ -26,6 +26,7 @@ import {
 	getFileNamePrompt,
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
+import { parseUploadError } from '../utils/propfindErrorParse.ts'
 
 const state = {
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
@@ -349,7 +350,14 @@ const actions = {
 				context.commit('markFileAsPendingUpload', { uploadId, index, sharePath: uniquePath })
 			} catch (exception) {
 				console.error(`Error while uploading file "${fileName}":` + exception.message, fileName)
-				showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+				if (exception.response) {
+					const message = await parseUploadError(exception)
+					if (message) {
+						showError(message)
+					} else {
+						showError(t('spreed', 'Error while uploading file "{fileName}"', { fileName }))
+					}
+				}
 				// Mark the upload as failed in the store
 				context.commit('markFileAsFailedUpload', { uploadId, index })
 				const { id } = uploadedFile.temporaryMessage
