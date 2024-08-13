@@ -222,9 +222,10 @@
 				</NcActionButton>
 			</template>
 
+			<NcActionSeparator v-if="canBeModerated && isPhoneActor && showPermissionsOptions" />
+
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
-				<NcActionSeparator />
 				<NcActionButton v-if="hasNonDefaultPermissions"
 					key="reset-permissions"
 					close-after-click
@@ -258,8 +259,9 @@
 					</template>
 					{{ t('spreed', 'Edit permissions') }}
 				</NcActionButton>
-				<NcActionSeparator />
 			</template>
+
+			<NcActionSeparator v-if="showPermissionsOptions && canBeModerated" />
 
 			<!-- Remove -->
 			<NcActionButton v-if="canBeModerated"
