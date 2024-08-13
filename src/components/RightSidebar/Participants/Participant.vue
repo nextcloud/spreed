@@ -1135,6 +1135,7 @@ export default {
 .participant {
 	// Overwrite NcListItem styles
 	:deep(.list-item) {
+		line-height: 1.2;
 		overflow: hidden;
 		outline-offset: -2px;
 		cursor: default;
