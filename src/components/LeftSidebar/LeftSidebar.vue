@@ -1089,7 +1089,9 @@ export default {
 	padding: 0 !important;
 }
 
+// Overwrite NcListItem styles
 :deep(.list-item) {
+	line-height: 1.2;
 	overflow: hidden;
 	outline-offset: -2px;
 }
