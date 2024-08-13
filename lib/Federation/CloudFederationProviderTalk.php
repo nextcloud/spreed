@@ -126,10 +126,11 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
 		if (isset($share->getProtocol()['invitedCloudId'])) {
-			$invitedCloudId = $share->getProtocol()['invitedCloudId'];
+			$localCloudId = $share->getProtocol()['invitedCloudId'];
 		} else {
 			$this->logger->debug('Received a federation invite without invitedCloudId, falling back to shareWith');
-			$invitedCloudId = $this->cloudIdManager->getCloudId($shareWith, null);
+			$cloudId = $this->cloudIdManager->getCloudId($shareWith, null);
+			$localCloudId = $cloudId->getUser() . '@' . $cloudId->getRemote();
 		}
 		$roomType = (int) $roomType;
 		$sharedByDisplayName = $share->getSharedByDisplayName();
@@ -152,25 +153,29 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		if ($remote && $shareSecret && $shareWith && $roomToken && $remoteId && is_string($roomName) && $roomName && $ownerDisplayName) {
-			$shareWith = $this->userManager->get($shareWith);
-			if ($shareWith === null) {
+			$shareWithUser = $this->userManager->get($shareWith);
+			if ($shareWithUser === null) {
 				$this->logger->debug('Received a federation invite for user that could not be found');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
+			} elseif (!str_starts_with($localCloudId, $shareWithUser->getUID() . '@')) {
+				// Fix the user ID as we also return it via the cloud federation api response in Nextcloud 30+
+				$cloudId = $this->cloudIdManager->resolveCloudId($localCloudId);
+				$localCloudId = $shareWithUser->getUID() . '@' . $cloudId->getRemote();
 			}
 
-			if ($this->config->isDisabledForUser($shareWith)) {
+			if ($this->config->isDisabledForUser($shareWithUser)) {
 				$this->logger->debug('Received a federation invite for user that is not allowed to use Talk');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			if (!$this->config->isFederationEnabledForUserId($shareWith)) {
+			if (!$this->config->isFederationEnabledForUserId($shareWithUser)) {
 				$this->logger->debug('Received a federation invite for user that is not allowed to use Talk Federation');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWith, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $invitedCloudId);
+			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
 
-			$this->notifyAboutNewShare($shareWith, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
+			$this->notifyAboutNewShare($shareWithUser, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
 			return (string) $invite->getId();
 		}
 

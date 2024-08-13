@@ -50,6 +50,7 @@ class BackendNotifier {
 	 * Send the invitation to participant to join the federated room
 	 * Sent from Host server to Remote participant server
 	 *
+	 * @return array{displayName: string, cloudId: string}|false
 	 * @throws HintException
 	 * @throws RoomHasNoModeratorException
 	 * @throws Exception
@@ -62,7 +63,7 @@ class BackendNotifier {
 		string $shareType,
 		Room $room,
 		Attendee $roomOwnerAttendee,
-	): bool {
+	): array|bool {
 		$invitedCloudId = $this->cloudIdManager->resolveCloudId($shareWith);
 
 		$roomName = $room->getName();
@@ -80,8 +81,9 @@ class BackendNotifier {
 
 		$remote = $this->prepareRemoteUrl($invitedCloudId->getRemote());
 
+		$shareWithCloudId = $invitedCloudId->getUser() . '@' . $remote;
 		$share = $this->cloudFederationFactory->getCloudFederationShare(
-			$invitedCloudId->getUser() . '@' . $remote,
+			$shareWithCloudId,
 			$roomToken,
 			'',
 			$providerId,
@@ -105,7 +107,15 @@ class BackendNotifier {
 		try {
 			$response = $this->federationProviderManager->sendCloudShare($share);
 			if ($response->getStatusCode() === Http::STATUS_CREATED) {
-				return true;
+				$body = $response->getBody();
+				$data = json_decode((string) $body, true);
+				if (isset($data['recipientUserId']) && $data['recipientUserId'] !== '') {
+					$shareWithCloudId = $data['recipientUserId'] . '@' . $remote;
+				}
+				return [
+					'displayName' => $data['recipientDisplayName'] ?: $shareWithCloudId,
+					'cloudId' => $shareWithCloudId,
+				];
 			}
 
 			$this->logger->warning("Failed sharing $roomToken with $shareWith, received status code {code}\n{body}", [
