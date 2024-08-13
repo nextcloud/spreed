@@ -557,7 +557,14 @@
                         "type": "object",
                         "properties": {
                             "parent": {
-                                "$ref": "#/components/schemas/ChatMessage"
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ChatMessage"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/DeletedChatMessage"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -588,6 +595,25 @@
                     },
                     "userId": {
                         "type": "string"
+                    }
+                }
+            },
+            "DeletedChatMessage": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "deleted"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "deleted": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
                     }
                 }
             },

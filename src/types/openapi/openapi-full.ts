@@ -1930,7 +1930,7 @@ export type components = {
             silent?: boolean;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
-            parent?: components["schemas"]["ChatMessage"];
+            parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         ChatReminder: {
@@ -1940,6 +1940,12 @@ export type components = {
             timestamp: number;
             token: string;
             userId: string;
+        };
+        DeletedChatMessage: {
+            /** Format: int64 */
+            id: number;
+            /** @enum {boolean} */
+            deleted: true;
         };
         FederationInvite: {
             /** Format: int64 */

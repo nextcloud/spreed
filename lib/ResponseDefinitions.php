@@ -125,7 +125,12 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkRoomLastMessage = TalkChatMessage|TalkChatProxyMessage
  *
- * @psalm-type TalkChatMessageWithParent = TalkChatMessage&array{parent?: TalkChatMessage}
+ * @psalm-type TalkDeletedChatMessage = array{
+ *     id: int,
+ *     deleted: true,
+ * }
+ *
+ * @psalm-type TalkChatMessageWithParent = TalkChatMessage&array{parent?: TalkChatMessage|TalkDeletedChatMessage}
  *
  * @psalm-type TalkChatReminder = array{
  *     messageId: int,
