@@ -145,13 +145,19 @@ class SignalingController extends OCSController {
 					$this->federationAuthenticator->getCloudId(),
 					$this->federationAuthenticator->getAccessToken(),
 				);
+				$participant = $this->participantService->getParticipantByActor(
+					$room,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->federationAuthenticator->getCloudId()
+				);
+				$this->federationAuthenticator->authenticated($room, $participant);
 			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 			} else {
 				// FIXME Soft-fail for legacy support in mobile apps
 				$room = null;
 			}
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => $action]);
 			return $response;
