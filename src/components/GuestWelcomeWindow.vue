@@ -7,11 +7,14 @@
 	<NcModal :container="container"
 		:can-close="false"
 		:close-on-click-outside="false"
+		:label-id="dialogHeaderId"
 		size="small">
 		<div class="modal__content">
 			<div class="conversation-information">
 				<ConversationIcon :item="conversation" hide-user-status />
-				<h2>{{ conversationDisplayName }}</h2>
+				<h2 :id="dialogHeaderId">
+					{{ conversationDisplayName }}
+				</h2>
 			</div>
 			<p class="description">
 				{{ conversationDescription }}
@@ -40,6 +43,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import Check from 'vue-material-design-icons/CheckBold.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -50,6 +55,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationIcon from './ConversationIcon.vue'
 
+import { useId } from '../composables/useId.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 export default {
@@ -72,12 +78,13 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
-	},
+		const guestUserName = ref('')
+		const dialogHeaderId = `guest-welcome-header-${useId()}`
 
-	data() {
 		return {
-			guestUserName: '',
+			guestNameStore,
+			guestUserName,
+			dialogHeaderId,
 		}
 	},
 
