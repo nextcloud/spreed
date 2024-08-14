@@ -709,11 +709,11 @@ describe('Participant.vue', () => {
 				await testCanBan()
 			})
 
-			test('allows a moderator to ban a federated user', async () => {
+			test('doesn not allow a moderator to ban a federated user', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 				participant.participantType = PARTICIPANT.TYPE.USER
-				await testCanBan()
+				await testCannotBan()
 			})
 
 			test('allows a moderator to ban a guest', async () => {
