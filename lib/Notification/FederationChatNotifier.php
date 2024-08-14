@@ -32,6 +32,10 @@ class FederationChatNotifier {
 	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, messageData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, messageType: string, systemMessage: string, expirationDatetime: string, message: string, messageParameter: string, creationDatetime: string, metaData: string}, unreadInfo: array{unreadMessages: int, unreadMention: bool, unreadMentionDirect: bool, lastReadMessage: int}} $inboundNotification
 	 */
 	public function handleChatMessage(Room $room, Participant $participant, ProxyCacheMessage $message, array $inboundNotification): void {
+		if (!empty($inboundNotification['messageData']['systemMessage'])) {
+			return;
+		}
+
 		if ($participant->getAttendee()->getActorType() === $inboundNotification['messageData']['actorType']
 			&& $participant->getAttendee()->getActorId() === $inboundNotification['messageData']['actorId']) {
 			return;
