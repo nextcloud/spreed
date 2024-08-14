@@ -371,6 +371,7 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 4px;
+	padding-inline: var(--default-grid-baseline);
 
 	.search-form__input {
 		margin: 0;
