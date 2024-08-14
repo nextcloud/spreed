@@ -12,9 +12,17 @@
 				:value.sync="searchText"
 				:is-focused.sync="isFocused"
 				:placeholder-text="searchBoxPlaceholder"
+				:aria-describedby="showSearchBoxDescription && searchBoxDescriptionId"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
 				@abort-search="abortSearch" />
+			<div v-if="showSearchBoxDescription"
+				:id="searchBoxDescriptionId"
+				:title="searchBoxDescription"
+				class="search-form__description">
+				<IconInformationOutline :size="20" />
+				<span class="hidden-visually">{{ searchBoxDescription }}</span>
+			</div>
 			<DialpadPanel v-if="canAddPhones"
 				:value.sync="searchText"
 				@submit="addParticipants(participantPhoneItem)" />
@@ -55,8 +63,11 @@
 import debounce from 'debounce'
 import { ref, toRefs } from 'vue'
 
+import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
@@ -71,6 +82,7 @@ import SearchBox from '../../UIShared/SearchBox.vue'
 
 import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useGetParticipants } from '../../../composables/useGetParticipants.js'
+import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
 import { ATTENDEE } from '../../../constants.js'
@@ -79,6 +91,8 @@ import { searchPossibleConversations } from '../../../services/conversationsServ
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
+
+const isFederationEnabled = loadState('spreed', 'federation_enabled')
 
 export default {
 	name: 'ParticipantsTab',
@@ -91,6 +105,7 @@ export default {
 		ParticipantsSearchResults,
 		SearchBox,
 		SelectPhoneNumber,
+		IconInformationOutline,
 	},
 
 	props: {
@@ -118,7 +133,12 @@ export default {
 
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, searchBox)
 
+		const searchBoxDescriptionId = `search-box-description-${useId()}`
+		const searchBoxDescription = t('spreed', 'You can search or add participants via name, email, or Federated Cloud ID')
+
 		return {
+			searchBoxDescriptionId,
+			searchBoxDescription,
 			initializeNavigation,
 			resetNavigation,
 			wrapper,
@@ -164,6 +184,11 @@ export default {
 				? t('spreed', 'Search or add participants')
 				: t('spreed', 'Search participants')
 		},
+
+		showSearchBoxDescription() {
+			return isFederationEnabled && this.canAdd
+		},
+
 		show() {
 			return this.$store.getters.getSidebarStatus
 		},
@@ -343,13 +368,26 @@ export default {
 }
 
 .search-form {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
 
-  .search-form__input {
-    margin: 0;
-  }
+	.search-form__input {
+		margin: 0;
+	}
+
+	&__description {
+		width: var(--default-clickable-area);
+		height: var(--default-clickable-area);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&,
+		& > :deep(*) {
+			cursor: help;
+		}
+	}
 }
 
 .scroller {
