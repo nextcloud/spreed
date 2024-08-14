@@ -6,7 +6,10 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { generateUrl, getBaseUrl } from '@nextcloud/router'
+
 import BrowserStorage from '../services/BrowserStorage.js'
+import { getUpcomingEvents } from '../services/conversationsService.js'
 import { EventBus } from '../services/EventBus.js'
 import { getUserAbsence } from '../services/participantsService.js'
 import { parseSpecialSymbols, parseMentions } from '../utils/textParse.ts'
@@ -32,6 +35,7 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	state: () => ({
 		absence: {},
 		parentToReply: {},
+		upcomingEvents: {},
 		chatInput: {},
 		messageIdToEdit: {},
 		chatEditInput: {},
@@ -50,6 +54,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 
 		getMessageIdToEdit: (state) => (token) => {
 			return state.messageIdToEdit[token]
+		},
+
+		getNextEvent: (state) => (token) => {
+			return state.upcomingEvents[token]?.[0]
 		},
 	},
 
@@ -85,6 +93,16 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 					Vue.set(this.absence, token, null)
 					return null
 				}
+				console.error(error)
+			}
+		},
+
+		async getUpcomingEvents(token) {
+			const location = generateUrl('call/{token}', { token }, { baseURL: getBaseUrl() })
+			try {
+				const response = await getUpcomingEvents(location)
+				Vue.set(this.upcomingEvents, token, response.data.ocs.data.events)
+			} catch (error) {
 				console.error(error)
 			}
 		},
