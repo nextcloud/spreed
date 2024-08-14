@@ -28,6 +28,9 @@
 					:title="t('spreed', 'Hide presenter video')"
 					:size="32"
 					@click="$emit('click-presenter')" />
+				<NcLoadingIcon v-if="isLoading"
+					:size="avatarSize"
+					class="video-loading" />
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -47,9 +50,9 @@
 					:name="participantName"
 					:source="participantActorType"
 					:size="avatarSize"
+					:loading="isLoading"
 					disable-menu
-					disable-tooltip
-					:class="avatarClass" />
+					disable-tooltip />
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -82,6 +85,8 @@ import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
@@ -104,6 +109,7 @@ export default {
 		VideoBackground,
 		Screen,
 		VideoBottomBar,
+		NcLoadingIcon,
 		// icons
 		AccountCircle,
 		AccountOff,
@@ -303,7 +309,6 @@ export default {
 
 		videoWrapperClass() {
 			return {
-				'icon-loading': this.isLoading,
 				'presenter-overlay': this.isPresenterOverlay
 			}
 		},
@@ -315,12 +320,6 @@ export default {
 				return AVATAR.SIZE.FULL
 			} else {
 				return Math.min(AVATAR.SIZE.FULL, this.$refs.videoContainer.clientHeight / 2, this.$refs.videoContainer.clientWidth / 2)
-			}
-		},
-
-		avatarClass() {
-			return {
-				'icon-loading': this.isLoading,
 			}
 		},
 
@@ -605,10 +604,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.forced-white {
-	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-}
-
 .not-connected {
 	video,
 	.avatar-container {
@@ -630,8 +625,8 @@ export default {
 	position: absolute;
 
 	&.one-to-one {
-		width: calc(100% - 16px);
-		height: calc(100% - 8px);
+		width: calc(100% - var(--grid-gap) * 2);
+		height: calc(100% - var(--grid-gap));
 	}
 
 	& .videoWrapper {
@@ -670,10 +665,12 @@ export default {
 	border-radius: 50%;
 }
 
-.videoWrapper.icon-loading:after {
-	height: 60px;
-	width: 60px;
-	margin: -32px 0 0 -32px;
+.video-loading {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 100%;
 }
 
 .video--fit {
@@ -698,10 +695,10 @@ export default {
 
 	color: white;
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-}
 
-.connection-message.below-avatar {
-	top: calc(50% + 80px);
+	&.below-avatar {
+		top: calc(50% + 80px);
+	}
 }
 
 .video-container::after {
