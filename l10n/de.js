@@ -1712,7 +1712,7 @@ OC.L10N.register(
     "Location has been posted to {conversation}" : "Der Standort wurde nach {conversation} gepostet",
     "In conversation" : "In einer Unterhaltung",
     "Search in conversation: {conversation}" : "Suche in Unterhaltung: {conversation}",
-    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud-Talk Föderation wurde aktualisiert, bitte lade die Seite neu",
+    "Nextcloud Talk Federation was updated, please reload the page" : "Nextcloud-Talk Federation wurde aktualisiert, bitte lade die Seite neu",
     "Error while sharing file" : "Fehler beim Teilen der Datei",
     "Your requests are throttled at the moment due to brute force protection" : "Deine Anfragen werden derzeit aufgrund des Brute-Force-Schutzes gedrosselt",
     "Error while clearing conversation history" : "Fehler beim Löschen des Unterhaltungsverlaufs",
