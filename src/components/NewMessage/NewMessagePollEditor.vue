@@ -4,70 +4,67 @@
 -->
 
 <template>
-	<NcModal size="small"
+	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
 		:container="container"
-		v-on="$listeners">
-		<div class="poll-editor">
-			<h2>{{ t('spreed', 'Create new poll') }}</h2>
+		v-on="$listeners"
+		@update:open="dismissEditor">
+		<!-- Poll Question -->
+		<p class="poll-editor__caption">
+			{{ t('spreed', 'Question') }}
+		</p>
+		<NcTextField :value.sync="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
 
-			<!-- Poll Question -->
-			<p class="poll-editor__caption">
-				{{ t('spreed', 'Question') }}
-			</p>
-			<NcTextField :value.sync="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
-
-			<!-- Poll options -->
-			<p class="poll-editor__caption">
-				{{ t('spreed', 'Answers') }}
-			</p>
-			<div v-for="(option, index) in pollOptions"
-				:key="index"
-				class="poll-editor__option">
-				<NcTextField ref="pollOption"
-					:value.sync="pollOptions[index]"
-					:label="t('spreed', 'Answer {option}', {option: index + 1})" />
-				<NcButton v-if="pollOptions.length > 2"
-					type="tertiary"
-					:aria-label="t('spreed', 'Delete poll option')"
-					@click="deleteOption(index)">
-					<template #icon>
-						<Close :size="20" />
-					</template>
-				</NcButton>
-			</div>
-
-			<!-- Add options -->
-			<NcButton class="poll-editor__add-more" type="tertiary" @click="addOption">
+		<!-- Poll options -->
+		<p class="poll-editor__caption">
+			{{ t('spreed', 'Answers') }}
+		</p>
+		<div v-for="(option, index) in pollOptions"
+			:key="index"
+			class="poll-editor__option">
+			<NcTextField ref="pollOption"
+				:value.sync="pollOptions[index]"
+				:label="t('spreed', 'Answer {option}', {option: index + 1})" />
+			<NcButton v-if="pollOptions.length > 2"
+				type="tertiary"
+				:aria-label="t('spreed', 'Delete poll option')"
+				@click="deleteOption(index)">
 				<template #icon>
-					<Plus />
+					<Close :size="20" />
 				</template>
-				{{ t('spreed', 'Add answer') }}
 			</NcButton>
-
-			<!-- Poll settings -->
-			<p class="poll-editor__caption">
-				{{ t('spreed', 'Settings') }}
-			</p>
-			<div class="poll-editor__settings">
-				<NcCheckboxRadioSwitch :checked.sync="isPrivate" type="checkbox">
-					{{ t('spreed', 'Private poll') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
-					{{ t('spreed', 'Multiple answers') }}
-				</NcCheckboxRadioSwitch>
-			</div>
-			<div class="poll-editor__actions">
-				<NcButton type="tertiary" @click="dismissEditor">
-					{{ t('spreed', 'Dismiss') }}
-				</NcButton>
-				<!-- create poll button-->
-				<NcButton type="primary" @click="createPoll">
-					{{ t('spreed', 'Create poll') }}
-				</NcButton>
-			</div>
 		</div>
-	</NcModal>
+
+		<!-- Add options -->
+		<NcButton class="poll-editor__add-more" type="tertiary" @click="addOption">
+			<template #icon>
+				<Plus />
+			</template>
+			{{ t('spreed', 'Add answer') }}
+		</NcButton>
+
+		<!-- Poll settings -->
+		<p class="poll-editor__caption">
+			{{ t('spreed', 'Settings') }}
+		</p>
+		<div class="poll-editor__settings">
+			<NcCheckboxRadioSwitch :checked.sync="isPrivate" type="checkbox">
+				{{ t('spreed', 'Private poll') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
+				{{ t('spreed', 'Multiple answers') }}
+			</NcCheckboxRadioSwitch>
+		</div>
+		<template #actions>
+			<NcButton type="tertiary" @click="dismissEditor">
+				{{ t('spreed', 'Dismiss') }}
+			</NcButton>
+			<!-- create poll button-->
+			<NcButton type="primary" @click="createPoll">
+				{{ t('spreed', 'Create poll') }}
+			</NcButton>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -78,7 +75,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import pollService from '../../services/pollService.js'
@@ -89,7 +86,7 @@ export default {
 	components: {
 		NcCheckboxRadioSwitch,
 		NcButton,
-		NcModal,
+		NcDialog,
 		NcTextField,
 		// Icons
 		Close,
@@ -168,11 +165,6 @@ export default {
 <style lang="scss" scoped>
 
 .poll-editor {
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-
 	&__caption {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
@@ -192,12 +184,6 @@ export default {
 		flex-direction: column;
 		gap: 4px;
 		margin-bottom: 8px;
-	}
-
-	&__actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 4px;
 	}
 }
 </style>
