@@ -738,17 +738,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following attendees in room "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" sees the following attendees( with status)? in room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
+	 * @param string $withStatus
 	 * @param string $identifier
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 * @param TableNode $formData
 	 */
-	public function userSeesAttendeesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+	public function userSeesAttendeesInRoom(string $user, string $withStatus, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants?includeStatus=' . ($withStatus === ' with status' ? '1' : '0'));
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($formData instanceof TableNode) {
@@ -820,6 +821,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 				if (isset($expectedKeys['callId'])) {
 					$data['callId'] = (string) $attendee['callId'];
+				}
+				if (isset($expectedKeys['status'], $attendee['status'])) {
+					$data['status'] = (string) $attendee['status'];
 				}
 				if (isset($expectedKeys['sessionIds'])) {
 					$sessionIds = '[';
@@ -897,6 +901,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 				if (isset($attendee['actorType']) && $attendee['actorType'] === 'phones') {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
+				}
+
+				if (isset($attendee['status']) && $attendee['status'] === 'ABSENT') {
+					unset($attendee['status']);
 				}
 				return $attendee;
 			}, $formData->getHash(), $result);
