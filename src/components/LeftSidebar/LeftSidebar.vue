@@ -112,7 +112,7 @@
 				<CallPhoneDialog ref="callPhoneDialog" />
 
 				<!-- New Pending Invitations dialog -->
-				<InvitationHandler v-if="isFederationEnabled" ref="invitationHandler" />
+				<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
 			</div>
 			<NcAppNavigationItem v-if="pendingInvitationsCount"
 				class="invitation-button"
