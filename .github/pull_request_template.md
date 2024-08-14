@@ -1,3 +1,4 @@
+
 ### ☑️ Resolves
 
 * Fix #…
@@ -30,8 +31,12 @@ Screenshot before | Screenshot after
 
 ### 🏁 Checklist
 
-- [ ] 🌏 Tested with Chrome, Firefox and Safari or should not be risky to browser differences
-- [ ] 🖥️ Tested with Desktop client or should not be risky for it 
+- [ ] 🌏 Tested with different browsers / clients:
+  - [ ] Chromium (Chrome / Edge / Opera / Brave)
+  - [ ] Firefox
+  - [ ] Safari
+  - [ ] Talk Desktop
+  - [ ] Not risky to browser differences / client
 - [ ] 🖌️ Design was reviewed, approved or inspired by the design team
 - [ ] ⛑️ Tests are included or not possible
 - [ ] 📗 User documentation in https://github.com/nextcloud/documentation/tree/master/user_manual/talk has been updated or is not required
