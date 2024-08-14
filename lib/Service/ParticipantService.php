@@ -531,11 +531,21 @@ class ParticipantService {
 				$this->attendeeMapper->insert($attendee);
 
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-					$inviteSent = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
-					if (!$inviteSent) {
+					$response = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
+					if (!$response) {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();
 					}
+
+					// Update the display name and the cloud ID based on the server's response
+					if (isset($response['displayName']) && $response['displayName'] !== '') {
+						$attendee->setDisplayName($response['displayName']);
+					}
+					if (isset($response['cloudId']) && $response['cloudId'] !== '') {
+						$attendee->setActorId($response['cloudId']);
+					}
+
+					$this->attendeeMapper->update($attendee);
 
 					if (!$setFederationFlagAlready) {
 						$flag = $room->hasFederatedParticipants() | Room::HAS_FEDERATION_TALKv1;

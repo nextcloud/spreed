@@ -322,9 +322,7 @@ class FederationTest extends TestCase {
 			->willReturn($shareWithUser);
 
 		// Test sending notification expectations
-		$shareWithUser->expects($this->once())
-			->method('getUID')
-			->with()
+		$shareWithUser->method('getUID')
 			->willReturn($shareWithUserID);
 
 		$notification = $this->createMock(INotification::class);

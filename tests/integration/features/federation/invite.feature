@@ -38,7 +38,7 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     Then user "participant2" is participant of the following rooms (v4)
@@ -50,7 +50,7 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
@@ -106,24 +106,24 @@ Feature: federation/invite
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId      | participantType |
       | users           | participant1 | 1               |
-      | federated_users | PARTICIPANT2 | 3               |
+      | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"PARTICIPANT2","name":"PARTICIPANT2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
-    And user "participant1" adds federated_user "participant2" to room "room" with 404 (v4)
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId      | participantType |
       | users           | participant1 | 1               |
-      | federated_users | PARTICIPANT2 | 3               |
+      | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"PARTICIPANT2","name":"PARTICIPANT2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       | localCloudId |
-      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname | PARTICIPANT2@http://localhost:8180 |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname | participant2@http://localhost:8180 |
     Then user "participant2" has the following notifications
       | app    | object_type       | object_id              | subject                                                           | message                                                                     |
       | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname invited you to a federated conversation | @participant1-displayname invited you to join room on http://localhost:8080 |
@@ -144,7 +144,7 @@ Feature: federation/invite
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage           | message                      | messageParameters |
       | room | federated_users | participant2@http://localhost:8180 | federated_user_added | {federated_user} accepted the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"PARTICIPANT2","name":"PARTICIPANT2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     # Remove a remote user after they joined
     When user "participant1" removes remote "participant2" from room "room" with 200 (v4)
@@ -157,7 +157,7 @@ Feature: federation/invite
       | room | actorType     | actorId      | systemMessage           | message                      | messageParameters |
       | room | users         | participant1 | federated_user_removed  | You removed {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
       | room | federated_users | participant2@http://localhost:8180 | federated_user_added | {federated_user} accepted the invitation | {"actor":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
-      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"PARTICIPANT2","name":"PARTICIPANT2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added    | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created    | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
 
   Scenario: Declining an invite
@@ -173,7 +173,7 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And user "participant2" has the following invitations (v1)
       | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
@@ -207,7 +207,7 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
@@ -242,7 +242,7 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     When user "participant1" sees the following attendees in room "room" with 200 (v4)
@@ -251,7 +251,7 @@ Feature: federation/invite
       | federated_users | participant2 | 3               |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType     | actorId      | systemMessage        | message                      | messageParameters |
-      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2@localhost:8180","server":"http:\/\/localhost:8180"}} |
+      | room | users         | participant1 | federated_user_added | You invited {federated_user} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"federated_user":{"type":"user","id":"participant2","name":"participant2-displayname","server":"http:\/\/localhost:8180"}} |
       | room | users         | participant1 | conversation_created | You created the conversation | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
     And force run "OCA\Talk\BackgroundJob\RemoveEmptyRooms" background jobs
     And user "participant2" has the following invitations (v1)
