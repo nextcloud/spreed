@@ -138,9 +138,10 @@ Feature: federation/chat
       | room        | actorType       | actorId                   | actorDisplayName         | message                   | messageParameters | parentMessage             |
       | LOCAL::room | users           | participant2              | participant2-displayname | Message deleted by you    | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname"}}                        | Message deleted by author |
       | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message deleted by author | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","server":"{$LOCAL_URL}"}} |                           |
-    Then user "participant2" is participant of the following rooms (v4)
-      | id          | type | lastMessage |
-      | LOCAL::room | 2    | Message deleted by author |
+    # Disabled due to https://github.com/nextcloud/spreed/issues/12957
+    # Then user "participant2" is participant of the following rooms (v4)
+    # | id          | type | lastMessage |
+    # | LOCAL::room | 2    | Message deleted by author |
 
   Scenario: Last message actor when the same user ID is present
     Given the following "spreed" app config is set
