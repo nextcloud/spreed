@@ -49,9 +49,6 @@
 </template>
 
 <script>
-import Hex from 'crypto-js/enc-hex.js'
-import SHA1 from 'crypto-js/sha1.js'
-
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
@@ -62,7 +59,6 @@ import VideoBackground from './VideoBackground.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../../constants.js'
-import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
@@ -126,11 +122,6 @@ export default {
 
 	emits: ['click-video'],
 
-	setup() {
-		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
-	},
-
 	data() {
 		return {
 			notificationHandle: null,
@@ -185,17 +176,6 @@ export default {
 
 		displayName() {
 			return this.$store.getters.getDisplayName()
-		},
-
-		sessionHash() {
-			return Hex.stringify(SHA1(this.localCallParticipantModel.attributes.peerId))
-		},
-
-		guestName() {
-			return this.guestNameStore.getGuestName(
-				this.$store.getters.getToken(),
-				this.sessionHash,
-			)
 		},
 
 		avatarSize() {
