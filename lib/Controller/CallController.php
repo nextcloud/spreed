@@ -423,8 +423,14 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		if ($all && $this->participant->hasModeratorPermissions()) {
+			$result = $this->roomService->resetActiveSinceInDatabaseOnly($this->room);
+			if (!$result) {
+				// Someone else won the race condition, make sure this user disconnects directly and then return
+				$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
+				return new DataResponse();
+			}
 			$this->participantService->endCallForEveryone($this->room, $this->participant);
-			$this->roomService->resetActiveSince($this->room, $this->participant, true);
+			$this->roomService->resetActiveSinceInModelOnly($this->room);
 		} else {
 			$this->participantService->changeInCall($this->room, $this->participant, Participant::FLAG_DISCONNECTED);
 			if (!$this->participantService->hasActiveSessionsInCall($this->room)) {
