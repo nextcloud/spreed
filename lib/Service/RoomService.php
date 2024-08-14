@@ -836,19 +836,12 @@ class RoomService {
 		return true;
 	}
 
-	public function resetActiveSince(Room $room, ?Participant $participant, bool $alreadyTriggeredCallEndedForEveryone = false): void {
-		$oldActiveSince = $room->getActiveSince();
-		$oldCallFlag = $room->getCallFlag();
-
-		if (!$alreadyTriggeredCallEndedForEveryone) {
-			if ($oldActiveSince === null && $oldCallFlag === Participant::FLAG_DISCONNECTED) {
-				return;
-			}
-
-			$event = new BeforeCallEndedEvent($room, $participant, $oldActiveSince);
-			$this->dispatcher->dispatchTyped($event);
-		}
-
+	/**
+	 * @internal Warning! Use with care, this is only used to make sure we win the race condition for posting the final messages
+	 * when "End call for everyone" is used where we print the chat messages before testing the race condition,
+	 * so that no other participant leaving would trigger a call summary
+	 */
+	public function resetActiveSinceInDatabaseOnly(Room $room): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
@@ -857,14 +850,31 @@ class RoomService {
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->isNotNull('active_since'));
 
-		$result = (bool) $update->executeStatement();
+		return (bool) $update->executeStatement();
+	}
 
+	/**
+	 * @internal Warning! Must only be used after {@see preResetActiveSinceInDatabaseOnly()}
+	 * was called and returned `true`
+	 */
+	public function resetActiveSinceInModelOnly(Room $room): void {
 		$room->resetActiveSince();
 		$room->setCallPermissions(Attendee::PERMISSIONS_DEFAULT);
+	}
 
-		if ($alreadyTriggeredCallEndedForEveryone) {
+	public function resetActiveSince(Room $room, ?Participant $participant): void {
+		$oldActiveSince = $room->getActiveSince();
+		$oldCallFlag = $room->getCallFlag();
+
+		if ($oldActiveSince === null && $oldCallFlag === Participant::FLAG_DISCONNECTED) {
 			return;
 		}
+
+		$event = new BeforeCallEndedEvent($room, $participant, $oldActiveSince);
+		$this->dispatcher->dispatchTyped($event);
+
+		$result = $this->resetActiveSinceInDatabaseOnly($room);
+		$this->resetActiveSinceInModelOnly($room);
 
 		if (!$result) {
 			// Lost the race, someone else updated the database
