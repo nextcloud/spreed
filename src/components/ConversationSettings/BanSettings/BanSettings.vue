@@ -15,14 +15,12 @@
 			{{ t('spreed', 'Manage bans') }}
 		</NcButton>
 
-		<NcModal v-if="modal"
-			container=".conversation-ban__settings"
-			@close="modal = false">
+		<NcDialog :name="t('spreed', 'Banned users')"
+			:open.sync="modal"
+			size="normal"
+			close-on-click-outside
+			container=".conversation-ban__settings">
 			<div class="conversation-ban__content">
-				<h2 class="conversation-ban__title">
-					{{ t('spreed', 'Banned users') }}
-				</h2>
-
 				<ul v-if="banList.length" class="conversation-ban__list">
 					<BannedItem v-for="ban in banList"
 						:key="ban.id"
@@ -41,7 +39,7 @@
 					</template>
 				</NcEmptyContent>
 			</div>
-		</NcModal>
+		</NcDialog>
 	</div>
 </template>
 
@@ -51,9 +49,9 @@ import AccountCancel from 'vue-material-design-icons/AccountCancel.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import BannedItem from './BannedItem.vue'
 
@@ -64,9 +62,9 @@ export default {
 
 	components: {
 		NcButton,
+		NcDialog,
 		NcEmptyContent,
 		NcLoadingIcon,
-		NcModal,
 		BannedItem,
 		// Icons
 		AccountCancel,
@@ -116,11 +114,7 @@ export default {
 <style lang="scss" scoped>
 .conversation-ban {
 	&__content {
-		min-height: 250px;
-	}
-
-	&__title {
-		text-align: center;
+		min-height: 200px;
 	}
 
 	&__list {
