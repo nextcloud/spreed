@@ -7,11 +7,12 @@
 	<NcModal v-if="id"
 		size="small"
 		:container="container"
+		:label-id="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
 			<div class="poll-modal__header">
 				<PollIcon :size="20" />
-				<span role="heading" aria-level="2">
+				<span :id="dialogHeaderId" role="heading" aria-level="2">
 					{{ name }}
 				</span>
 			</div>
@@ -90,6 +91,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
@@ -105,6 +108,7 @@ import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 
 import PollVotersDetails from './PollVotersDetails.vue'
 
+import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
@@ -127,16 +131,17 @@ export default {
 	},
 
 	setup() {
+		const voteToSubmit = ref([])
+		const modalPage = ref('')
+		const loading = ref(false)
+		const dialogHeaderId = `guest-welcome-header-${useId()}`
+
 		return {
 			isInCall: useIsInCall(),
-		}
-	},
-
-	data() {
-		return {
-			voteToSubmit: [],
-			modalPage: '',
-			loading: false,
+			voteToSubmit,
+			modalPage,
+			loading,
+			dialogHeaderId,
 		}
 	},
 
