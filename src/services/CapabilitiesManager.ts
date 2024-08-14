@@ -130,10 +130,25 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
  * Restores capabilities from BrowserStorage
  */
 function restoreRemoteCapabilities(): RemoteCapabilities {
-	const remoteCapabilities = BrowserStorage.getItem('remoteCapabilities')
-	if (!remoteCapabilities?.length) {
+	const storageValue = BrowserStorage.getItem('remoteCapabilities')
+	if (!storageValue) {
 		return {}
 	}
+	const remoteCapabilities = JSON.parse(storageValue) as RemoteCapabilities
 
-	return JSON.parse(remoteCapabilities) as RemoteCapabilities
+	// Migration step for capabilities based on token
+	let hasMigrated = false
+	Object.keys(remoteCapabilities).forEach(key => {
+		const remoteServer = remoteTokenMap[key]
+		if (remoteServer) {
+			remoteCapabilities[remoteServer] = remoteCapabilities[key]
+			delete remoteCapabilities[key]
+			hasMigrated = true
+		}
+	})
+	if (hasMigrated) {
+		BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
+	}
+
+	return remoteCapabilities
 }
