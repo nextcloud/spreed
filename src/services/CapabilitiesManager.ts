@@ -10,13 +10,34 @@ import { t } from '@nextcloud/l10n'
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
-import type { Capabilities, JoinRoomFullResponse } from '../types'
+import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types'
 
 type Config = Capabilities['spreed']['config']
-type RemoteCapabilities = Record<string, Capabilities & Partial<{ hash: string }>>
+type RemoteCapability = Capabilities & Partial<{ hash: string }>
+type RemoteCapabilities = Record<string, RemoteCapability>
+type TokenMap = Record<string, string|undefined|null>
+
+let remoteTokenMap: TokenMap = generateTokenMap()
 
 const localCapabilities: Capabilities = _getCapabilities() as Capabilities
 const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
+
+/**
+ * Generate new token map based on remoteCapabilities and cachedConversation
+ */
+function generateTokenMap() {
+	const tokenMap: TokenMap = {}
+	const storageValue = BrowserStorage.getItem('cachedConversations')
+	if (!storageValue?.length) {
+		return {}
+	}
+	const cachedConversations = JSON.parse(storageValue) as Conversation[]
+	cachedConversations.forEach(conversation => {
+		tokenMap[conversation.token] = conversation.remoteServer || null
+	})
+
+	return tokenMap
+}
 
 /**
  * Check whether the feature is presented (in case of federation - on both servers)
@@ -25,12 +46,13 @@ const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
  */
 export function hasTalkFeature(token: string = 'local', feature: string): boolean {
 	const hasLocalTalkFeature = localCapabilities?.spreed?.features?.includes(feature) ?? false
+	const remoteCapabilities = getRemoteCapability(token)
 	if (localCapabilities?.spreed?.['features-local']?.includes(feature)) {
 		return hasLocalTalkFeature
-	} else if (token === 'local' || !remoteCapabilities[token]) {
+	} else if (token === 'local' || !remoteCapabilities) {
 		return hasLocalTalkFeature
 	} else {
-		return hasLocalTalkFeature && (remoteCapabilities[token]?.spreed?.features?.includes(feature) ?? false)
+		return hasLocalTalkFeature && (remoteCapabilities?.spreed?.features?.includes(feature) ?? false)
 	}
 }
 
@@ -41,14 +63,34 @@ export function hasTalkFeature(token: string = 'local', feature: string): boolea
  * @param key2 second-level key (e.g. 'allowed')
  */
 export function getTalkConfig(token: string = 'local', key1: keyof Config, key2: keyof Config[keyof Config]) {
+	const remoteCapabilities = getRemoteCapability(token)
 	if (localCapabilities?.spreed?.['config-local']?.[key1]?.includes(key2)) {
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
-	} else if (token === 'local' || !remoteCapabilities[token]) {
+	} else if (token === 'local' || !remoteCapabilities) {
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
 	} else {
 		// TODO discuss handling remote config (respect remote only / both / minimal)
-		return remoteCapabilities[token]?.spreed?.config?.[key1]?.[key2]
+		return remoteCapabilities?.spreed?.config?.[key1]?.[key2]
 	}
+}
+
+/**
+ * Returns capability for specified token (if already matches from one of remote servers)
+ * @param token token of the conversation
+ */
+function getRemoteCapability(token: string): RemoteCapability | null {
+	if (remoteTokenMap[token] === undefined) {
+		// Unknown conversation, attempt to get remoteServer from cached conversations
+		remoteTokenMap = generateTokenMap()
+	}
+
+	const remoteServer = remoteTokenMap[token]
+	if (!token || token === 'local' || !remoteServer) {
+		// Local or no conversation opened
+		return null
+	}
+
+	return remoteCapabilities[remoteServer] ?? null
 }
 
 /**
@@ -57,9 +99,10 @@ export function getTalkConfig(token: string = 'local', key1: keyof Config, key2:
  */
 export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullResponse): Promise<void> {
 	const token = joinRoomResponse.data.ocs.data.token
+	const remoteServer = joinRoomResponse.data.ocs.data.remoteServer as string
 
 	// Check if remote capabilities have not changed since last check
-	if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === remoteCapabilities[token]?.hash) {
+	if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === remoteCapabilities[remoteServer]?.hash) {
 		return
 	}
 
@@ -73,8 +116,8 @@ export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullRespon
 		return
 	}
 
-	remoteCapabilities[token] = { spreed: response.data.ocs.data }
-	remoteCapabilities[token].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
+	remoteCapabilities[remoteServer] = { spreed: response.data.ocs.data }
+	remoteCapabilities[remoteServer].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
 	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 
 	// As normal capabilities update, requires a reload to take effect
