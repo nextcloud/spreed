@@ -40,7 +40,7 @@
 		</span>
 		<NcLoadingIcon v-if="loading"
 			:size="size"
-			class="loading" />
+			class="loading-avatar" />
 	</div>
 </template>
 
@@ -289,7 +289,7 @@ export default {
 	}
 }
 
-.loading {
+.loading-avatar {
 	position: absolute;
 	top: 0;
 }
