@@ -4,13 +4,11 @@
 -->
 
 <template>
-	<NcModal size="small"
+	<NcDialog :name="t('spreed', 'Reactions')"
 		:container="container"
-		@close="closeModal">
+		close-on-click-outside
+		@update:open="closeModal">
 		<div class="reactions__modal">
-			<h2>
-				{{ t('spreed', 'Reactions') }}
-			</h2>
 			<template v-if="Object.keys(reactionsOverview).length > 0">
 				<div class="reactions-list__navigation">
 					<NcButton v-for="reaction in reactionsMenu"
@@ -44,7 +42,7 @@
 			</template>
 			<NcLoadingIcon v-else :size="64" />
 		</div>
-	</NcModal>
+	</NcDialog>
 </template>
 
 <script>
@@ -53,8 +51,8 @@ import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
@@ -67,9 +65,9 @@ export default {
 
 	components: {
 		AvatarWrapper,
-		NcModal,
-		NcLoadingIcon,
 		NcButton,
+		NcDialog,
+		NcLoadingIcon,
 		HeartOutlineIcon,
 	},
 
@@ -172,10 +170,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.reactions__modal{
+.reactions__modal {
 	min-height: 450px;
-	padding: 18px;
+	padding-bottom: calc(3 * var(--default-grid-baseline));
 }
+
 .reactions-list__navigation {
 	display: flex;
 	gap: 2px;
@@ -183,6 +182,7 @@ export default {
 
 	:deep(.button-vue) {
 		border-radius: var(--border-radius-large);
+
 		&.active {
 			background-color: var(--color-primary-element-light);
 		}

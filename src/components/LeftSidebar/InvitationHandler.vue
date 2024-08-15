@@ -4,13 +4,12 @@
 -->
 
 <template>
-	<NcModal v-if="modal"
+	<NcDialog :open.sync="modal"
+		:name="t('spreed', 'Pending invitations')"
 		:container="container"
-		@close="closeModal">
+		size="normal"
+		close-on-click-outside>
 		<div class="inbox">
-			<h2 class="inbox__heading">
-				{{ t('spreed', 'Pending invitations') }}
-			</h2>
 			<p class="inbox__disclaimer">
 				{{ t('spreed', 'Join conversations from remote Nextcloud servers') }}
 			</p>
@@ -62,10 +61,12 @@
 				</template>
 			</NcEmptyContent>
 		</div>
-	</NcModal>
+	</NcDialog>
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
@@ -73,9 +74,9 @@ import WebIcon from 'vue-material-design-icons/Web.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
@@ -88,12 +89,12 @@ export default {
 	name: 'InvitationHandler',
 
 	components: {
-		NcEmptyContent,
-		NcRichText,
 		ConversationIcon,
 		NcButton,
+		NcDialog,
+		NcEmptyContent,
 		NcLoadingIcon,
-		NcModal,
+		NcRichText,
 		// Icons
 		CancelIcon,
 		CheckIcon,
@@ -101,15 +102,13 @@ export default {
 	},
 
 	setup() {
+		const modal = ref(false)
+		const isLoading = ref(true)
+
 		return {
 			federationStore: useFederationStore(),
-		}
-	},
-
-	data() {
-		return {
-			modal: false,
-			isLoading: true,
+			modal,
+			isLoading,
 		}
 	},
 
@@ -188,11 +187,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	max-height: 700px;
-	padding: 20px;
-
-	&__heading {
-		margin-bottom: 4px;
-	}
+	padding-bottom: calc(3 * var(--default-grid-baseline));
 
 	&__disclaimer {
 		margin-bottom: 12px;
