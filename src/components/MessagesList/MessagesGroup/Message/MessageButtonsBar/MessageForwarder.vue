@@ -18,29 +18,31 @@
 		<!-- Second step of the flow: confirmation modal that gives the user
 		the possibility to directly route to the conversation to which the
 		message has been forwarded -->
-		<NcModal v-else
+		<NcDialog v-else
+			:name="dialogTitle"
 			:container="container"
-			@close="handleClose">
+			close-on-click-outside
+			@update:open="handleClose">
 			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
 				<template #icon>
 					<Check :size="64" />
 				</template>
-				<template #action>
-					<NcButton type="tertiary" @click="handleClose">
-						{{ t('spreed', 'Dismiss') }}
-					</NcButton>
-					<NcButton type="primary" @click="openConversation">
-						{{ t('spreed', 'Go to conversation') }}
-					</NcButton>
-				</template>
 			</NcEmptyContent>
-		</NcModal>
+			<template #actions>
+				<NcButton type="tertiary" @click="handleClose">
+					{{ t('spreed', 'Dismiss') }}
+				</NcButton>
+				<NcButton type="primary" @click="openConversation">
+					{{ t('spreed', 'Go to conversation') }}
+				</NcButton>
+			</template>
+		</NcDialog>
 	</div>
 </template>
 
 <script>
 
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 
 import Check from 'vue-material-design-icons/Check.vue'
 
@@ -49,8 +51,8 @@ import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import RoomSelector from '../../../../RoomSelector.vue'
 
@@ -58,11 +60,11 @@ export default {
 	name: 'MessageForwarder',
 
 	components: {
-		RoomSelector,
-		NcEmptyContent,
-		NcModal,
-		NcButton,
 		Check,
+		NcButton,
+		NcDialog,
+		NcEmptyContent,
+		RoomSelector,
 	},
 
 	props: {
@@ -79,17 +81,17 @@ export default {
 	emits: ['close'],
 
 	setup() {
-		return {
-			isTalkMainApp: inject('Talk:isMainApp', false)
-		}
-	},
+		const selectedConversationToken = ref(null)
+		const selectedConversationName = ref(null)
+		const showForwardedConfirmation = ref(false)
+		const forwardedMessageID = ref('')
 
-	data() {
 		return {
-			selectedConversationToken: null,
-			selectedConversationName: null,
-			showForwardedConfirmation: false,
-			forwardedMessageID: '',
+			isTalkMainApp: inject('Talk:isMainApp', false),
+			selectedConversationToken,
+			selectedConversationName,
+			showForwardedConfirmation,
+			forwardedMessageID,
 		}
 	},
 
@@ -156,11 +158,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-:deep(.empty-content) {
-	padding: 20px;
-}
-:deep(.empty-content__action) {
-	gap: 10px;
-}
 </style>
