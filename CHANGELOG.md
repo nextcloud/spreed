@@ -5,6 +5,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-rc.1 – 2024-08-15
+### Fixed
+- Show upcoming event information (up to 1 month) in conversation top bar
+  [#12984](https://github.com/nextcloud/spreed/issues/12984)
+
+### Fixed
+- Show user status messages of other local users in a federated conversation
+  [#12982](https://github.com/nextcloud/spreed/issues/12982)
+- Don't trigger notifications for system messages in federated conversations
+  [#12985](https://github.com/nextcloud/spreed/issues/12985)
+- Add a quick option to log-in when visiting a public conversation as a guest
+  [#12988](https://github.com/nextcloud/spreed/issues/12988)
+- Save displayname immediately when inviting a federated account
+  [#12954](https://github.com/nextcloud/spreed/issues/12954)
+- Show error messages when uploading a file failed
+  [#12919](https://github.com/nextcloud/spreed/issues/12919)
+- Add a hint how to add federated accounts
+  [#12916](https://github.com/nextcloud/spreed/issues/12916)
+- Retain order of attachments when uploading multiple
+  [#12904](https://github.com/nextcloud/spreed/issues/12904)
+- Don't allow to enable bots in former one-to-one conversations
+  [#12893](https://github.com/nextcloud/spreed/issues/12893)
+- Hide ban option for federated accounts as they are not supported for now
+  [#12980](https://github.com/nextcloud/spreed/issues/12980)
+- Various design fixes
+
 ## 20.0.0-beta.3 – 2024-08-06
 ### Fixed
 - Disallow setting message expiration in former one-to-one conversations
