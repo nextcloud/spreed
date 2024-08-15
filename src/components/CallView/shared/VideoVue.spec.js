@@ -141,7 +141,7 @@ describe('VideoVue.vue', () => {
 		 * @param {boolean} expected Whether the loading icon is shown
 		 */
 		function assertLoadingIconIsShown(expected) {
-			const loadingIcon = wrapper.find('.icon-loading')
+			const loadingIcon = wrapper.findComponent({ name: 'NcLoadingIcon' })
 			expect(loadingIcon.exists()).toBe(expected)
 		}
 
