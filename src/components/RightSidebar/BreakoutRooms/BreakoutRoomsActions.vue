@@ -91,9 +91,12 @@
 		<!-- Participants editor -->
 		<NcModal v-if="showParticipantsEditor"
 			:container="container"
+			:label-id="dialogHeaderId"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
-				<h2> {{ manageBreakoutRoomsTitle }} </h2>
+				<h2 :id="dialogHeaderId">
+					{{ manageBreakoutRoomsTitle }}
+				</h2>
 				<BreakoutRoomsParticipantsEditor :token="mainToken"
 					:breakout-rooms="breakoutRooms"
 					:is-creating-rooms="false"
@@ -111,6 +114,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Check from 'vue-material-design-icons/Check.vue'
@@ -128,6 +133,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
+import { useId } from '../../../composables/useId.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'
@@ -177,16 +183,16 @@ export default {
 	},
 
 	setup() {
+		const showParticipantsEditor = ref(false)
+		const sendMessageDialogOpened = ref(false)
+		const dialogHeaderId = `breakout-rooms-actions-header-${useId()}`
+
 		return {
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
-		}
-	},
-
-	data() {
-		return {
-			showParticipantsEditor: false,
-			sendMessageDialogOpened: false,
+			showParticipantsEditor,
+			sendMessageDialogOpened,
+			dialogHeaderId,
 		}
 	},
 
