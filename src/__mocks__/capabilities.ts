@@ -79,7 +79,10 @@ export const mockedCapabilities: Capabilities = {
 			'silent-send-state',
 			'chat-read-last',
 			'federation-v1',
+			'federation-v2',
 			'ban-v1',
+			'chat-reference-id',
+			'mention-permissions',
 		],
 		'features-local': [
 			'favorites',
@@ -156,4 +159,9 @@ export const mockedCapabilities: Capabilities = {
 		},
 		version: '20.0.0-dev.0',
 	}
+}
+
+export const mockedRemotes = {
+	'https://nextcloud1.local': { ...mockedCapabilities, hash: 'abc123', tokens: ['TOKEN3FED1'] },
+	'https://nextcloud2.local': { ...mockedCapabilities, hash: 'def123', tokens: ['TOKEN5FED2'] },
 }
