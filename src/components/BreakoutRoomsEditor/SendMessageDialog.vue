@@ -4,32 +4,32 @@
 -->
 
 <template>
-	<NcModal ref="modal"
+	<NcDialog ref="modal"
+		:name="dialogTitle"
 		:container="container"
-		v-on="$listeners">
-		<div class="send-message-dialog">
-			<h2 class="send-message-dialog__title">
-				{{ dialogTitle }}
-			</h2>
-			<NewMessage v-if="modalContainerId"
-				:key="modalContainerId"
-				ref="newMessage"
-				role="region"
-				:token="token"
-				:container="modalContainerId"
-				:aria-label="t('spreed', 'Post message')"
-				:broadcast="broadcast"
-				@sent="handleMessageSent"
-				@failure="handleMessageFailure" />
-		</div>
-	</NcModal>
+		close-on-click-outside
+		size="normal"
+		v-on="$listeners"
+		@update:open="$emit('close')">
+		<NewMessage v-if="modalContainerId"
+			:key="modalContainerId"
+			ref="newMessage"
+			role="region"
+			class="send-message-dialog"
+			:token="token"
+			:container="modalContainerId"
+			:aria-label="t('spreed', 'Post message')"
+			:broadcast="broadcast"
+			@sent="handleMessageSent"
+			@failure="handleMessageFailure" />
+	</NcDialog>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 
 import NewMessage from '../NewMessage/NewMessage.vue'
 
@@ -37,7 +37,7 @@ export default {
 	name: 'SendMessageDialog',
 
 	components: {
-		NcModal,
+		NcDialog,
 		NewMessage,
 	},
 
@@ -91,7 +91,7 @@ export default {
 
 	mounted() {
 		// Postpone render of NewMessage until modal container is mounted
-		this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
+		this.modalContainerId = `#modal-description-${this.$refs.modal.navigationId}`
 		this.$nextTick(() => {
 			this.$refs.newMessage.focusInput()
 		})
@@ -117,10 +117,6 @@ export default {
 
 <style lang="scss" scoped>
 .send-message-dialog {
-	padding: 20px 20px 8px;
-
-	&__title {
-		margin-bottom: 8px;
-	}
+	padding-bottom: calc(3 * var(--default-grid-baseline));
 }
 </style>
