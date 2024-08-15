@@ -330,11 +330,11 @@ export default {
 		},
 
 		sessionHash() {
-			return Hex.stringify(SHA1(this.peerId))
+			return Hex.stringify(SHA1(this.nextcloudSessionId))
 		},
 
 		peerData() {
-			let peerData = this.$store.getters.getPeer(this.$store.getters.getToken(), this.peerId, this.model.attributes.userId)
+			let peerData = this.$store.getters.getPeer(this.$store.getters.getToken(), this.nextcloudSessionId, this.model.attributes.userId)
 			if (!peerData.actorId) {
 				EventBus.emit('refresh-peer-list')
 				peerData = {
@@ -352,7 +352,7 @@ export default {
 			 * via the participant list
 			 */
 			return this.$store.getters.findParticipant(this.$store.getters.getToken(), {
-				sessionId: this.peerId,
+				sessionId: this.nextcloudSessionId,
 			}) || {}
 		},
 
@@ -513,6 +513,10 @@ export default {
 
 		peerId() {
 			return this.model.attributes.peerId
+		},
+
+		nextcloudSessionId() {
+			return this.model.attributes.nextcloudSessionId
 		},
 	},
 

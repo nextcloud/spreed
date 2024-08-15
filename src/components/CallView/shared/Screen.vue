@@ -88,7 +88,7 @@ export default {
 				return null
 			}
 
-			return Hex.stringify(SHA1(this.callParticipantModel.attributes.peerId))
+			return Hex.stringify(SHA1(this.callParticipantModel.attributes.nextcloudSessionId))
 		},
 
 		remoteParticipantName() {
