@@ -4,15 +4,14 @@
 -->
 
 <template>
-	<NcModal v-if="modal"
+	<NcDialog :open="modal"
+		:name="t('spreed', 'Call a phone number')"
 		class="call-phone"
 		:container="container"
-		@close="closeModal">
+		size="normal"
+		close-on-click-outside
+		@update:open="closeModal">
 		<template v-if="!loading">
-			<h2 class="call-phone__header">
-				{{ t('spreed', 'Call a phone number') }}
-			</h2>
-
 			<div class="call-phone__form">
 				<NcTextField ref="textField"
 					class="call-phone__form-input"
@@ -40,7 +39,7 @@
 				<p>{{ t('spreed', 'Creating the conversation …') }}</p>
 			</template>
 		</NcEmptyContent>
-	</NcModal>
+	</NcDialog>
 </template>
 
 <script>
@@ -48,8 +47,8 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import LoadingComponent from '../../LoadingComponent.vue'
@@ -67,8 +66,8 @@ export default {
 	components: {
 		DialpadPanel,
 		LoadingComponent,
+		NcDialog,
 		NcEmptyContent,
-		NcModal,
 		NcTextField,
 		SelectPhoneNumber,
 	},
@@ -191,30 +190,26 @@ export default {
 
 <style lang="scss" scoped>
 .call-phone {
-	&:deep(.modal-wrapper) {
+	:deep(.modal-wrapper) {
 		.modal-container {
 			height: 60%;
 		}
 
-		.modal-container__content {
-			padding: calc(var(--default-grid-baseline) * 5);
+		.dialog__content {
+			padding-bottom: calc(var(--default-grid-baseline) * 3);
 		}
 	}
 
 	&__form {
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		gap: var(--default-grid-baseline);
-
-		&-input {
-			margin: 0;
-		}
 	}
 
-  &__loading {
-    margin: 0 !important;
-	padding: 0 !important;
-    height: 100%;
-  }
+	&__loading {
+		margin: 0 !important;
+		padding: 0 !important;
+		height: 100%;
+	}
 }
 </style>

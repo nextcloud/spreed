@@ -8,12 +8,9 @@
 		<NcAppNavigationCaption :name="t('spreed', 'Phone numbers')" />
 		<Hint v-if="errorHint" :hint="errorHint" />
 		<template v-if="libPhoneNumber">
-			<NcListItem class="new-phone"
-				:name="name"
-				compact
-				@click="selectPhoneNumber">
+			<NcListItem :name="name" @click="selectPhoneNumber">
 				<template #icon>
-					<Phone :size="30" />
+					<Phone :size="AVATAR.SIZE.DEFAULT" />
 				</template>
 				<template #subname>
 					{{ participantPhoneItem.phoneNumber }}
@@ -35,7 +32,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import Hint from './UIShared/Hint.vue'
 
-import { ATTENDEE } from '../constants.js'
+import { ATTENDEE, AVATAR } from '../constants.js'
 
 export default {
 	name: 'SelectPhoneNumber',
@@ -65,6 +62,12 @@ export default {
 	},
 
 	emits: ['select', 'update:participantPhoneItem'],
+
+	setup() {
+		return {
+			AVATAR,
+		}
+	},
 
 	computed: {
 		/**
@@ -114,16 +117,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-.new-phone {
-	margin: 4px 0;
-	padding: 0 4px;
-	height: 56px;
-	border-radius: var(--border-radius-pill);
-
-	:deep(.list-item-content) {
-		padding-left: 20px;
-	}
-}
-</style>

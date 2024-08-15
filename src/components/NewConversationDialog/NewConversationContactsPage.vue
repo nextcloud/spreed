@@ -279,7 +279,7 @@ export default {
 
 	&__form {
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		gap: var(--default-grid-baseline);
 
 		&-input {
