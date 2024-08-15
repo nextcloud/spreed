@@ -15,7 +15,7 @@ use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\FilesMetadata\Model\IFilesMetadata;
 
 class FilesMetadataCache {
-	/** @var array<int, ?array{width: int, height: int}> */
+	/** @var array<int, ?array{width: int, height: int, blurhash?: string}> */
 	protected array $filesSizeData = [];
 
 	public function __construct(
@@ -41,7 +41,7 @@ class FilesMetadataCache {
 	/**
 	 * @param int $fileId
 	 * @return array
-	 * @psalm-return array{width: int, height: int}
+	 * @psalm-return array{width: int, height: int, blurhash?: string}
 	 * @throws FilesMetadataNotFoundException
 	 */
 	public function getMetadataPhotosSizeForFileId(int $fileId): array {
@@ -75,6 +75,12 @@ class FilesMetadataCache {
 					'width' => $sizeMetadata['width'],
 					'height' => $sizeMetadata['height'],
 				];
+
+				// Retrieve Blurhash from metadata (if present)
+				if ($metadata->hasKey('blurhash')) {
+					$dimensions['blurhash'] = $metadata->getString('blurhash');
+				}
+
 				$this->filesSizeData[$fileId] = $dimensions;
 			} else {
 				$this->filesSizeData[$fileId] = null;

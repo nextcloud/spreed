@@ -817,6 +817,10 @@ class SystemMessage implements IEventListener {
 					$data['width'] = (string) $sizeMetadata['width'];
 					$data['height'] = (string) $sizeMetadata['height'];
 				}
+
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
+				}
 			} catch (FilesMetadataNotFoundException) {
 			}
 		}

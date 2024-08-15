@@ -549,6 +549,9 @@
                     },
                     "height": {
                         "type": "string"
+                    },
+                    "blurhash": {
+                        "type": "string"
                     }
                 }
             },
