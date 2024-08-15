@@ -210,6 +210,12 @@ Feature: federation/call
     And user "participant2" has the following notifications
       | app    | object_type | object_id   | subject                          |
       | spreed | call        | LOCAL::room | A group call has started in room |
+    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    When user "participant2" joins call "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    When user "participant1" ends call "room" with 200 (v4)
+    Then using server "REMOTE"
+    And user "participant2" has the following notifications
 
   Scenario: normal call notification for federated user is cleared when joining
     Given user "participant1" creates room "room" (v4)
