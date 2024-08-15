@@ -4,12 +4,11 @@
 -->
 
 <template>
-	<NcModal size="small" :container="container" @close="close">
-		<div class="selector">
-			<!-- Heading, search field -->
-			<h2 class="selector__heading">
-				{{ dialogTitle }}
-			</h2>
+	<NcDialog :name="dialogTitle"
+		:container="container"
+		close-on-click-outside
+		@update:open="close">
+		<template #default>
 			<p v-if="dialogSubtitle" class="selector__subtitle">
 				{{ dialogSubtitle }}
 			</p>
@@ -33,8 +32,9 @@
 					<MessageOutline :size="64" />
 				</template>
 			</NcEmptyContent>
+		</template>
 
-			<!-- Actions -->
+		<template #actions>
 			<NcButton v-if="!loading && availableRooms.length > 0"
 				class="selector__action"
 				type="primary"
@@ -42,8 +42,8 @@
 				@click="onSubmit">
 				{{ t('spreed', 'Select conversation') }}
 			</NcButton>
-		</div>
-	</NcModal>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -55,8 +55,8 @@ import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationsSearchListVirtual from './LeftSidebar/ConversationsList/ConversationsSearchListVirtual.vue'
@@ -71,8 +71,8 @@ export default {
 	components: {
 		ConversationsSearchListVirtual,
 		NcButton,
+		NcDialog,
 		NcEmptyContent,
-		NcModal,
 		NcTextField,
 		// Icons
 		Magnify,
@@ -230,13 +230,14 @@ export default {
 	height: 700px;
 }
 
-.selector {
+:deep(.modal-wrapper .dialog__content) {
 	width: 100%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	padding: 16px;
+}
 
+.selector {
 	&__heading {
 		margin-bottom: 4px;
 	}
