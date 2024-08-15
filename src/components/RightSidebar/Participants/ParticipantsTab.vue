@@ -12,7 +12,7 @@
 				:value.sync="searchText"
 				:is-focused.sync="isFocused"
 				:placeholder-text="searchBoxPlaceholder"
-				:aria-describedby="showSearchBoxDescription && searchBoxDescriptionId"
+				:aria-describedby="showSearchBoxDescription ? searchBoxDescriptionId : undefined"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
 				@abort-search="abortSearch" />
