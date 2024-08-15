@@ -67,7 +67,6 @@ import IconInformationOutline from 'vue-material-design-icons/InformationOutline
 
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
@@ -92,7 +91,7 @@ import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
-const isFederationEnabled = loadState('spreed', 'federation_enabled')
+const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 
 export default {
 	name: 'ParticipantsTab',

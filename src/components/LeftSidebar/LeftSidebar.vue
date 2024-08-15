@@ -353,7 +353,7 @@ import CancelableRequest from '../../utils/cancelableRequest.js'
 import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
-const isFederationEnabled = loadState('spreed', 'federation_enabled')
+const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
@@ -419,7 +419,6 @@ export default {
 			talkHashStore,
 			isMobile,
 			canModerateSipDialOut,
-			isFederationEnabled,
 			canNoteToSelf,
 		}
 	},
