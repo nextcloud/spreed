@@ -939,8 +939,6 @@ OC.L10N.register(
     "iOS app" : "Aplicación pa iOS",
     "The command does not exist" : "El comandu nun esiste",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Prodúxose un error mentanto s'executaba'l comandu. Pidi a l'alministración que compruebe los rexistros.",
-    "{actor} invited {user}" : "{actor} convidó a «{user}»",
-    "You invited {user}" : "Convidesti a «{user}»",
     "{actor} added circle {circle}" : "{actor} amestó'l círculu «{circle}»",
     "You added circle {circle}" : "Amestesti'l círculu «{circle}»",
     "An administrator added circle {circle}" : "L'alministración amestó'l círculu «{circle}»",
@@ -952,13 +950,13 @@ OC.L10N.register(
     "Command" : "Comandu",
     "Script" : "Script",
     "Moderators" : "Moderadores",
+    "Delete Conversation" : "Desaniciar la conversación",
     "Circles" : "Círculos",
     "Users, groups and circles" : "Usuarios, grupos y círculos",
     "Users and circles" : "Usuarioa de círculos",
     "Groups and circles" : "Grupos y círculos",
     "Open sidebar" : "Abrir la barra llateral",
     "Start a conversation" : "Aniciar una conversación",
-    "TURN server" : "Sirividor TURN",
-    "Delete Conversation" : "Desaniciar la conversación"
+    "TURN server" : "Sirividor TURN"
 },
 "nplurals=2; plural=(n != 1);");
