@@ -72,7 +72,7 @@
 					@create-rooms="handleCreateRooms" />
 			</template>
 		</div>
-	</ncmodal>
+	</NcModal>
 </template>
 
 <script>
