@@ -24,7 +24,7 @@
 				role="img"
 				aria-hidden="false"
 				:aria-label="conversationType.label">
-				<component :is="conversationType.icon" :size="14" />
+				<component :is="conversationType.icon" :size="12" />
 			</span>
 		</template>
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
@@ -265,11 +265,14 @@ export default {
 
 	&__type {
 		position: absolute;
-		right: -4px;
-		bottom: -4px;
-		height: 18px;
-		width: 18px;
-		border: 2px solid var(--color-main-background);
+		right: -2px;
+		bottom: -2px;
+		display: flex;
+		align-content: center;
+		justify-content: center;
+		height: clamp(14px, 40%, 18px);
+		width: clamp(14px, 40%, 18px);
+		border: 1px solid var(--color-main-background);
 		background-color: var(--color-main-background);
 		color: var(--color-main-text);
 		border-radius: 50%;
