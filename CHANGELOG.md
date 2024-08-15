@@ -6,7 +6,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 20.0.0-rc.1 – 2024-08-15
-### Fixed
+### Added
 - Show upcoming event information (up to 1 month) in conversation top bar
   [#12984](https://github.com/nextcloud/spreed/issues/12984)
 
