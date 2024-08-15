@@ -61,13 +61,13 @@ Feature: federation/join-leave
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType       | actorId                    | participantType | sessionIds                            |
       | users           | participant1               | 1               | [SESSION,]                            |
-      | federated_users | participant2@{$REMOTE_URL} | 3               | [SESSION#participant2@{$REMOTE_URL},] |
+      | federated_users | participant2@{$REMOTE_URL} | 3               | [SESSION#participant2@{$REMOTE_URL},SESSION#participant2@{$REMOTE_URL},] |
     And using server "REMOTE"
     And user "participant2" is participant of room "LOCAL::room" (v4)
     And user "participant2" sees the following attendees in room "LOCAL::room" with 200 (v4)
       | actorType       | actorId                   | participantType | sessionIds                            |
       | federated_users | participant1@{$LOCAL_URL} | 1               | [SESSION,]                            |
-      | users           | participant2              | 3               | [SESSION#participant2@{$REMOTE_URL},] |
+      | users           | participant2              | 3               | [SESSION#participant2@{$REMOTE_URL},SESSION#participant2@{$REMOTE_URL},] |
 
   Scenario: leave a group room
     Given user "participant1" creates room "room" (v4)

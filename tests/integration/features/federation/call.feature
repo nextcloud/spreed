@@ -45,6 +45,7 @@ Feature: federation/call
       | actorType       | actorId                    | inCall |
       | users           | participant1               | 3      |
       | federated_users | participant2@{$REMOTE_URL} | 7      |
+    And user "participant1" sees 2 peers in call "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" is participant of room "LOCAL::room" (v4)
       | callFlag |
@@ -53,6 +54,7 @@ Feature: federation/call
       | actorType       | actorId                   | inCall |
       | federated_users | participant1@{$LOCAL_URL} | 3      |
       | users           | participant2              | 7      |
+    And user "participant2" sees 2 peers in call "LOCAL::room" with 200 (v4)
 
   Scenario: update call flags
     Given user "participant1" creates room "room" (v4)
@@ -88,6 +90,7 @@ Feature: federation/call
       | actorType       | actorId                    | inCall |
       | users           | participant1               | 0      |
       | federated_users | participant2@{$REMOTE_URL} | 1      |
+    And user "participant1" sees 1 peers in call "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" is participant of room "LOCAL::room" (v4)
       | callFlag |
@@ -96,6 +99,7 @@ Feature: federation/call
       | actorType       | actorId                   | inCall |
       | federated_users | participant1@{$LOCAL_URL} | 0      |
       | users           | participant2              | 1      |
+    And user "participant2" sees 1 peers in call "LOCAL::room" with 200 (v4)
 
   Scenario: leave call
     Given user "participant1" creates room "room" (v4)
@@ -131,6 +135,7 @@ Feature: federation/call
       | actorType       | actorId                    | inCall |
       | users           | participant1               | 0      |
       | federated_users | participant2@{$REMOTE_URL} | 0      |
+    And user "participant1" sees 0 peers in call "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" is participant of room "LOCAL::room" (v4)
       | callFlag |
@@ -139,6 +144,7 @@ Feature: federation/call
       | actorType       | actorId                   | inCall |
       | federated_users | participant1@{$LOCAL_URL} | 0      |
       | users           | participant2              | 0      |
+    And user "participant2" sees 0 peers in call "LOCAL::room" with 200 (v4)
 
   Scenario: Host ends call for everyone
     Given user "participant1" creates room "room" (v4)
@@ -173,6 +179,7 @@ Feature: federation/call
       | actorType       | actorId                    | inCall |
       | users           | participant1               | 0      |
       | federated_users | participant2@{$REMOTE_URL} | 0      |
+    And user "participant1" sees 0 peers in call "room" with 200 (v4)
     And using server "REMOTE"
     And user "participant2" is participant of room "LOCAL::room" (v4)
       | callFlag |
@@ -181,6 +188,7 @@ Feature: federation/call
       | actorType       | actorId                   | inCall |
       | federated_users | participant1@{$LOCAL_URL} | 0      |
       | users           | participant2              | 0      |
+    And user "participant2" sees 0 peers in call "LOCAL::room" with 200 (v4)
 
   Scenario: normal call notification for federated user
     Given user "participant1" creates room "room" (v4)

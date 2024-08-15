@@ -390,7 +390,8 @@ export default {
 			}
 
 			// Fallback to CallController::getPeers() endpoint
-			if (this.peerData.actorType === ATTENDEE.ACTOR_TYPE.USERS) {
+			if (this.peerData.actorType === ATTENDEE.ACTOR_TYPE.USERS
+				|| this.peerData.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
 				return this.peerData.actorId
 			}
 

@@ -12,6 +12,7 @@
 
 ## Get list of connected participants
 
+* Federation capability: `federation-v2`
 * Method: `GET`
 * Endpoint: `/call/{token}`
 
@@ -36,6 +37,7 @@
 
 ## Join a call
 
+* Federation capability: `federation-v2`
 * Method: `POST`
 * Endpoint: `/call/{token}`
 * Data:
@@ -102,6 +104,7 @@
 
 ## Update call flags
 
+* Federation capability: `federation-v2`
 * Method: `PUT`
 * Endpoint: `/call/{token}`
 * Data:
@@ -122,6 +125,7 @@
 
 ## Leave a call (but staying in the conversation for future calls and chat)
 
+* Federation capability: `federation-v2`
 * Method: `DELETE`
 * Endpoint: `/call/{token}`
 * Data:
