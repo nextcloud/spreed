@@ -6,10 +6,13 @@
 <template>
 	<NcModal :container="container"
 		:class="{'modal-mask__participants-step': isEditingParticipants}"
+		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor"
 			:class="{'breakout-rooms-editor__participants-step': isEditingParticipants}">
-			<h2>{{ modalTitle }}</h2>
+			<h2 :id="dialogHeaderId">
+				{{ modalTitle }}
+			</h2>
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
 					<label class="breakout-rooms-editor__caption" for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
@@ -73,6 +76,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -82,6 +87,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
 
+import { useId } from '../../composables/useId.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 
 export default {
@@ -105,18 +111,21 @@ export default {
 	emits: ['close'],
 
 	setup() {
+		const mode = ref('1')
+		const amount = ref(2)
+		const attendeeMap = ref('')
+		const isEditingParticipants = ref(false)
+		const isInvalidAmount = ref(false)
+		const dialogHeaderId = `breakout-rooms-header-${useId()}`
+
 		return {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
-		}
-	},
-
-	data() {
-		return {
-			mode: '1',
-			amount: 2,
-			attendeeMap: '',
-			isEditingParticipants: false,
-			isInvalidAmount: false,
+			mode,
+			amount,
+			attendeeMap,
+			isEditingParticipants,
+			isInvalidAmount,
+			dialogHeaderId,
 		}
 	},
 

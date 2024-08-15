@@ -6,11 +6,12 @@
 <template>
 	<NcModal size="small"
 		:container="container"
+		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="wrapper">
 			<template v-if="!loading">
 				<!-- eslint-disable-next-line vue/no-v-html -->
-				<p class="title" v-html="modalTitle" />
+				<p :id="dialogHeaderId" class="title" v-html="modalTitle" />
 				<form @submit.prevent="handleSubmitPermissions">
 					<NcCheckboxRadioSwitch ref="callStart"
 						:checked.sync="callStart"
@@ -60,6 +61,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
@@ -67,6 +70,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
+import { useId } from '../../composables/useId.ts'
 import { PARTICIPANT } from '../../constants.js'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
@@ -117,22 +121,32 @@ export default {
 			default: false,
 		},
 	},
+
 	emits: ['submit'],
 
-	data() {
+	setup() {
+		const dialogHeaderId = `permissions-editor-${useId()}`
+		// Permission to start a call
+		const callStart = ref(false)
+		// Permission to bypass the lobby
+		const lobbyIgnore = ref(false)
+		// Permission to post messages and reactions
+		const chatMessagesAndReactions = ref(false)
+		// Permission to enable the microphone
+		const publishAudio = ref(false)
+		// Permission to enable the camera
+		const publishVideo = ref(false)
+		// Permission to start a screenshare
+		const publishScreen = ref(false)
+
 		return {
-			// Permission to start a call
-			callStart: false,
-			// Permission to bypass the lobby
-			lobbyIgnore: false,
-			// Permission to post messages and reactions
-			chatMessagesAndReactions: false,
-			// Permission to enable the microphone
-			publishAudio: false,
-			// Permission to enable the camera
-			publishVideo: false,
-			// Permission to start a screenshare
-			publishScreen: false,
+			dialogHeaderId,
+			callStart,
+			lobbyIgnore,
+			chatMessagesAndReactions,
+			publishAudio,
+			publishVideo,
+			publishScreen,
 		}
 	},
 
