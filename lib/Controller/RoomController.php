@@ -861,7 +861,43 @@ class RoomController extends AEnvironmentAwareController {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController::class);
-			return $proxy->getParticipants($this->room, $this->participant);
+			$response = $proxy->getParticipants($this->room, $this->participant);
+			$data = $response->getData();
+
+			if ($this->userId !== null
+				&& $includeStatus
+				&& count($data) < Config::USER_STATUS_INTEGRATION_LIMIT
+				&& $this->appManager->isEnabledForUser('user_status')) {
+				$userIds = array_filter(array_map(static function (array $parsedParticipant): ?string {
+					if ($parsedParticipant['actorType'] === Attendee::ACTOR_USERS) {
+						return $parsedParticipant['actorId'];
+					}
+					return null;
+				}, $data));
+
+				$statuses = $this->statusManager->getUserStatuses($userIds);
+				$data = array_map(static function (array $parsedParticipant) use ($statuses): array {
+					if ($parsedParticipant['actorType'] === Attendee::ACTOR_USERS
+						&& isset($statuses[$parsedParticipant['actorId']])) {
+						$userId = $parsedParticipant['actorId'];
+						if (isset($statuses[$userId])) {
+							$parsedParticipant['status'] = $statuses[$userId]->getStatus();
+							$parsedParticipant['statusIcon'] = $statuses[$userId]->getIcon();
+							$parsedParticipant['statusMessage'] = $statuses[$userId]->getMessage();
+							$parsedParticipant['statusClearAt'] = $statuses[$userId]->getClearAt()?->getTimestamp();
+						} else {
+							$parsedParticipant['status'] = IUserStatus::OFFLINE;
+							$parsedParticipant['statusIcon'] = null;
+							$parsedParticipant['statusMessage'] = null;
+							$parsedParticipant['statusClearAt'] = null;
+						}
+					}
+					return $parsedParticipant;
+				}, $data);
+			}
+
+			$response->setData($data);
+			return $response;
 		}
 
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
@@ -916,7 +952,7 @@ class RoomController extends AEnvironmentAwareController {
 			&& $includeStatus
 			&& count($participants) < Config::USER_STATUS_INTEGRATION_LIMIT
 			&& $this->appManager->isEnabledForUser('user_status')) {
-			$userIds = array_filter(array_map(static function (Participant $participant) {
+			$userIds = array_filter(array_map(static function (Participant $participant): ?string {
 				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 					return $participant->getAttendee()->getActorId();
 				}
