@@ -26,6 +26,20 @@ const fetchConversations = async function(options) {
 }
 
 /**
+ * fetch future events for a given conversation within the next 31 days.
+ *
+ * @param {string} location room's absolute url
+ * @param {object} options options
+ */
+const getUpcomingEvents = async (location) => {
+	return axios.get(generateOcsUrl('/apps/dav/api/v1/events/upcoming'), {
+		params: {
+			location,
+		},
+	})
+}
+
+/**
  * Fetches a conversation from the server.
  *
  * @param {string} token The token of the conversation to be fetched.
@@ -357,6 +371,7 @@ export {
 	fetchConversations,
 	fetchConversation,
 	fetchNoteToSelfConversation,
+	getUpcomingEvents,
 	searchListedConversations,
 	searchPossibleConversations,
 	createOneToOneConversation,

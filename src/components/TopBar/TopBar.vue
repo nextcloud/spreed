@@ -46,6 +46,22 @@
 			</div>
 		</a>
 
+		<a v-if="showUpcomingEvent"
+			class="upcoming-event"
+			:href="nextEvent.calendarAppUrl"
+			:title="t('spreed', 'Open Calendar')"
+			target="_blank">
+			<div class="icon">
+				<CalendarBlank :size="20" />
+			</div>
+			<div class="event-info">
+				<p class="event-info__header">
+					{{ t('spreed', 'Next call') }}
+				</p>
+				<p> {{ eventInfo }} </p>
+			</div>
+		</a>
+
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
 			:start="conversation.callStartTime" />
@@ -93,11 +109,14 @@
 
 <script>
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import CalendarBlank from 'vue-material-design-icons/CalendarBlank.vue'
 
 import { emit } from '@nextcloud/event-bus'
 import { t, n } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
@@ -113,6 +132,7 @@ import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
@@ -135,6 +155,7 @@ export default {
 		ReactionMenu,
 		// Icons
 		AccountMultiple,
+		CalendarBlank,
 	},
 
 	mixins: [richEditor],
@@ -162,6 +183,8 @@ export default {
 			localCallParticipantModel,
 			localMediaModel,
 			iconSize,
+			chatExtrasStore: useChatExtrasStore(),
+			isMobile: useIsMobile(),
 		}
 	},
 
@@ -255,6 +278,30 @@ export default {
 			return {
 				'--original-color-main-text': window.getComputedStyle(document.body).getPropertyValue('--color-main-text'),
 				'--original-color-main-background': window.getComputedStyle(document.body).getPropertyValue('--color-main-background')
+			}
+		},
+
+		nextEvent() {
+			return this.chatExtrasStore.getNextEvent(this.token)
+		},
+
+		eventInfo() {
+			return this.nextEvent ? moment(this.nextEvent.start * 1000).calendar() : null
+		},
+
+		showUpcomingEvent() {
+			return this.nextEvent && !this.isInCall && !this.isSidebar && !this.isMobile
+		},
+	},
+
+	watch: {
+		token: {
+			immediate: true,
+			handler(value) {
+				if (!value || this.isSidebar) {
+					return
+				}
+				this.chatExtrasStore.getUpcomingEvents(value)
 			}
 		},
 	},
@@ -385,4 +432,30 @@ export default {
 	border-color: var(--original-color-main-background) !important;
 	background-color: var(--original-color-main-background) !important;
 }
+
+.icon {
+	display: flex;
+}
+
+.upcoming-event {
+	display: flex;
+	flex-direction: row;
+	gap: calc(var(--default-grid-baseline) * 2);
+	padding: 0 calc(var(--default-grid-baseline) * 2);
+	background-color: rgba(var(--color-info-rgb), 0.1);
+	height: 100%;
+	border-radius: var(--border-radius);
+}
+
+.event-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	line-height: 1.2;
+
+	&__header {
+		font-weight: 500;
+	}
+}
+
 </style>
