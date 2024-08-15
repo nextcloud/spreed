@@ -12,6 +12,7 @@ import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import AvatarWrapper from './AvatarWrapper.vue'
 
+import { AVATAR } from '../../constants.js'
 import storeConfig from '../../store/storeConfig.js'
 
 describe('AvatarWrapper.vue', () => {
@@ -39,7 +40,7 @@ describe('AvatarWrapper.vue', () => {
 
 			const avatar = wrapper.findComponent(NcAvatar)
 			expect(avatar.exists()).toBeTruthy()
-			expect(avatar.props('size')).toBe(44)
+			expect(avatar.props('size')).toBe(AVATAR.SIZE.DEFAULT)
 		})
 
 		test('component does not render NcAvatar for non-users', () => {
@@ -89,7 +90,7 @@ describe('AvatarWrapper.vue', () => {
 			expect(avatar.props('showUserStatus')).toBe(true)
 			expect(avatar.props('showUserStatusCompact')).toBe(false)
 			expect(avatar.props('preloadedUserStatus')).toBe(PRELOADED_USER_STATUS)
-			expect(avatar.props('size')).toBe(44)
+			expect(avatar.props('size')).toBe(AVATAR.SIZE.DEFAULT)
 		})
 	})
 
