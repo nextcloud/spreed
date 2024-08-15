@@ -197,6 +197,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				return $this->shareDeclined((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_SHARE_UNSHARED:
 				return $this->shareUnshared((int) $providerId, $notification);
+			case FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED:
+				return $this->participantModified((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
 				return $this->roomModified((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_MESSAGE_POSTED:
@@ -287,6 +289,42 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 		} catch (ParticipantNotFoundException) {
 			// Never accepted the invite
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param int $remoteAttendeeId
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int, oldValue: string|int|null} $notification
+	 * @return array
+	 * @throws ActionNotSupportedException
+	 * @throws AuthenticationFailedException
+	 * @throws ShareNotFound
+	 */
+	private function participantModified(int $remoteAttendeeId, array $notification): array {
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedConversation()) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		try {
+			$participant = $this->participantService->getParticipant($room, $invite->getUserId());
+		} catch (ParticipantNotFoundException $e) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		if ($notification['changedProperty'] === AParticipantModifiedEvent::PROPERTY_PERMISSIONS) {
+			$this->participantService->updatePermissions($room, $participant, Attendee::PERMISSIONS_MODIFY_SET, $notification['newValue']);
+		} else {
+			$this->logger->debug('Update of participant property "' . $notification['changedProperty'] . '" is not handled and should not be send via federation');
 		}
 
 		return [];

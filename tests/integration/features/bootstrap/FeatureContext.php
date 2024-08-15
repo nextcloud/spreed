@@ -559,6 +559,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['recordingConsent'])) {
 				$data['recordingConsent'] = (int) $room['recordingConsent'];
 			}
+			if (isset($expectedRoom['permissions'])) {
+				$data['permissions'] = $this->mapPermissionsAPIOutput($room['permissions']);
+			}
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
@@ -2004,6 +2007,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} elseif (strpos($participant, 'guest') === 0) {
 			$sessionId = self::$userToSessionId[$participant];
 			$attendeeId = $this->getAttendeeId('guests', sha1($sessionId), $identifier, $statusCode === 200 ? $user : null);
+		} elseif (str_ends_with($participant, '@{$LOCAL_REMOTE_URL}') ||
+				str_ends_with($participant, '@{$REMOTE_URL}')) {
+			$participant = str_replace('{$LOCAL_REMOTE_URL}', rtrim($this->localRemoteServerUrl, '/'), $participant);
+			$participant = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $participant);
+
+			$attendeeId = $this->getAttendeeId('federated_users', $participant, $identifier, $statusCode === 200 ? $user : null);
 		} else {
 			$attendeeId = $this->getAttendeeId('users', $participant, $identifier, $statusCode === 200 ? $user : null);
 		}
