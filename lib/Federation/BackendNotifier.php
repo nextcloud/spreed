@@ -252,6 +252,40 @@ class BackendNotifier {
 	}
 
 	/**
+	 * Send information to remote participants that the participant meta info updated
+	 * Sent from Host server to Remote participant server (only for the affected participant)
+	 */
+	public function sendParticipantModifiedUpdate(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		string $changedProperty,
+		string|int $newValue,
+		string|int|null $oldValue,
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'changedProperty' => $changedProperty,
+				'newValue' => $newValue,
+				'oldValue' => $oldValue,
+			],
+		);
+
+		return $this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
 	 * Send information to remote participants that "active since" was updated
 	 * Sent from Host server to Remote participant server
 	 *
