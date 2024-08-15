@@ -5,8 +5,7 @@
 
 <template>
 	<RecycleScroller ref="scroller"
-		list-tag="ul"
-		item-tag="li"
+		item-tag="ul"
 		:items="participants"
 		:item-size="PARTICIPANT_ITEM_SIZE"
 		key-field="attendeeId">
