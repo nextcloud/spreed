@@ -1147,6 +1147,16 @@ export default {
 		button, button * {
 			cursor: pointer;
 		}
+
+		// FIXME clean up after nextcloud/vue release
+		.avatardiv .avatardiv__user-status {
+			right: -2px !important;
+			bottom: -2px !important;
+			min-height: 14px !important;
+			min-width: 14px !important;
+			line-height: 1 !important;
+			font-size: clamp(var(--font-size-small), 85%, var(--default-font-size)) !important;
+		}
 	}
 
 	&--offline &__user-name {
