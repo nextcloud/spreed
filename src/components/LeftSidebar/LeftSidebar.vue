@@ -180,7 +180,7 @@
 					data-nav-id="conversation_create_new"
 					@click="createConversation(searchText)">
 					<template #icon>
-						<ChatPlus :size="44" />
+						<ChatPlus :size="AVATAR.SIZE.DEFAULT" />
 					</template>
 					<template #subname>
 						{{ t('spreed', 'New group conversation') }}
@@ -336,7 +336,7 @@ import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
-import { ATTENDEE, CONVERSATION } from '../../constants.js'
+import { ATTENDEE, AVATAR, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import {
@@ -410,6 +410,7 @@ export default {
 		const isMobile = useIsMobile()
 
 		return {
+			AVATAR,
 			initializeNavigation,
 			resetNavigation,
 			leftSidebar,
@@ -1087,8 +1088,20 @@ export default {
 	padding: 0 !important;
 }
 
+// Overwrite NcListItem styles
 :deep(.list-item) {
+	line-height: 1.2;
 	overflow: hidden;
 	outline-offset: -2px;
+
+	// FIXME clean up after nextcloud/vue release
+	.avatardiv .avatardiv__user-status {
+		right: -2px !important;
+		bottom: -2px !important;
+		min-height: 14px !important;
+		min-width: 14px !important;
+		line-height: 1 !important;
+		font-size: clamp(var(--font-size-small), 85%, var(--default-font-size)) !important;
+	}
 }
 </style>
