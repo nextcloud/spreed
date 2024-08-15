@@ -290,7 +290,7 @@
 				:name="removeParticipantLabel"
 				:container="container">
 				<p> {{ removeDialogMessage }} </p>
-				<template v-if="supportBanV1 && showPermissionsOptions">
+				<template v-if="showBanOption">
 					<NcCheckboxRadioSwitch :checked.sync="isBanParticipant">
 						{{ t('spreed', 'Also ban from this conversation') }}
 					</NcCheckboxRadioSwitch>
@@ -740,6 +740,12 @@ export default {
 
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
+		},
+
+		showBanOption() {
+			return this.supportBanV1
+				&& this.participant.actorType !== ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+				&& this.showPermissionsOptions
 		},
 
 		showPermissionsOptions() {
