@@ -33,7 +33,6 @@ class RoomController {
 	/**
 	 * @see \OCA\Talk\Controller\RoomController::getParticipants()
 	 *
-	 * @param bool $includeStatus Include the user statuses
 	 * @return DataResponse<Http::STATUS_OK, TalkParticipant[], array{X-Nextcloud-Has-User-Statuses?: bool}>
 	 * @throws CannotReachRemoteException
 	 *
@@ -50,7 +49,6 @@ class RoomController {
 		/** @var TalkParticipant[] $data */
 		$data = $this->proxy->getOCSData($proxy);
 
-		// FIXME post-load status information of now local users
 		/** @var TalkParticipant[] $data */
 		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'displayName');
 		$headers = [];
