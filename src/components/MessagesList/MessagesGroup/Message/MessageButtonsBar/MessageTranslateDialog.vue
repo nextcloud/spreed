@@ -4,12 +4,14 @@
 -->
 
 <template>
-	<NcModal ref="translate-modal"
+	<NcDialog ref="translateDialog"
+		class="translate-dialog"
+		:name="t('spreed', 'Translate message')"
 		size="large"
 		:container="container"
-		@close="$emit('close')">
-		<div v-if="isMounted" class="translate-dialog">
-			<h2> {{ t('spreed', 'Translate message') }} </h2>
+		close-on-click-outside
+		@update:open="$emit('close')">
+		<template v-if="isMounted" #default>
 			<div class="translate-dialog__wrapper">
 				<NcSelect v-model="selectedFrom"
 					class="translate-dialog__select"
@@ -45,21 +47,22 @@
 				:arguments="richParameters"
 				:reference-limit="0" />
 
-			<template v-if="translatedMessage">
-				<NcRichText class="translate-dialog__message translate-dialog__message-translation"
-					:text="translatedMessage"
-					:arguments="richParameters"
-					:reference-limit="0" />
-				<NcButton class="translate-dialog__copy-button"
-					@click="handleCopyTranslation">
-					<template #icon>
-						<ContentCopy />
-					</template>
-					{{ t('spreed', 'Copy translated text') }}
-				</NcButton>
-			</template>
-		</div>
-	</NcModal>
+			<NcRichText v-if="translatedMessage"
+				class="translate-dialog__message translate-dialog__message-translation"
+				:text="translatedMessage"
+				:arguments="richParameters"
+				:reference-limit="0" />
+		</template>
+
+		<template v-if="translatedMessage" #actions>
+			<NcButton @click="handleCopyTranslation">
+				<template #icon>
+					<ContentCopy />
+				</template>
+				{{ t('spreed', 'Copy translated text') }}
+			</NcButton>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -70,8 +73,8 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
@@ -81,13 +84,14 @@ export default {
 	name: 'MessageTranslateDialog',
 
 	components: {
+		NcButton,
+		NcDialog,
+		NcLoadingIcon,
+		NcRichText,
+		NcSelect,
+		// Icons
 		ArrowRight,
 		ContentCopy,
-		NcRichText,
-		NcModal,
-		NcSelect,
-		NcButton,
-		NcLoadingIcon,
 	},
 
 	props: {
@@ -201,7 +205,7 @@ export default {
 
 		this.$nextTick(() => {
 			// FIXME trick to avoid focusTrap() from activating on NcSelect
-			this.isMounted = !!this.$refs['translate-modal'].randId
+			this.isMounted = !!this.$refs.translateDialog.navigationId
 		})
 	},
 
@@ -239,18 +243,19 @@ export default {
 
 <style lang="scss" scoped>
 .translate-dialog {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	min-height: 400px;
-	padding: calc(var(--default-grid-baseline) * 3);
-	background-color: var(--color-main-background);
+	:deep(.dialog__content) {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: calc(var(--default-grid-baseline) * 2);
+		min-height: 300px;
+		padding-bottom: calc(var(--default-grid-baseline) * 3);
+	}
 
 	&__wrapper {
 		display: flex;
 		align-items: center;
 		gap: calc(var(--default-grid-baseline) * 4);
-		padding: calc(var(--default-grid-baseline) * 2);
 	}
 
 	& &__select {
@@ -269,18 +274,12 @@ export default {
 
 		&-source {
 			color: var(--color-text-maxcontrast);
-			margin-bottom: calc(var(--default-grid-baseline) * 2);
 			border: 2px solid var(--color-border);
 		}
 
 		&-translation {
 			border: 2px solid var(--color-primary-element);
 		}
-	}
-
-	& &__copy-button {
-		margin-top: calc(var(--default-grid-baseline) * 2);
-		align-self: end;
 	}
 }
 </style>
