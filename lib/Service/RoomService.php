@@ -15,11 +15,13 @@ use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\BeforeCallEndedEvent;
 use OCA\Talk\Events\BeforeCallStartedEvent;
 use OCA\Talk\Events\BeforeLobbyModifiedEvent;
+use OCA\Talk\Events\BeforePermissionsModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomModifiedEvent;
 use OCA\Talk\Events\CallEndedEvent;
 use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\PermissionsModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
@@ -201,7 +203,7 @@ class RoomService {
 			return false;
 		}
 
-		$event = new BeforeRoomModifiedEvent($room, $property, $newPermissions, $oldPermissions);
+		$event = new BeforePermissionsModifiedEvent($room, $property, $newPermissions, $oldPermissions, $method, $permissions, $resetCustomPermissions);
 		$this->dispatcher->dispatchTyped($event);
 
 		if ($resetCustomPermissions) {
@@ -222,7 +224,7 @@ class RoomService {
 			$room->setCallPermissions($newPermissions);
 		}
 
-		$event = new RoomModifiedEvent($room, $property, $newPermissions, $oldPermissions);
+		$event = new PermissionsModifiedEvent($room, $property, $newPermissions, $oldPermissions, $method, $permissions, $resetCustomPermissions);
 		$this->dispatcher->dispatchTyped($event);
 
 		return true;

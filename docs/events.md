@@ -34,6 +34,12 @@ See the general [Nextcloud Developers - Events](https://docs.nextcloud.com/serve
 * After event: `OCA\Talk\Events\LobbyModifiedEvent`
 * Since: 18.0.0
 
+### Permissions modified
+
+* Before event: `OCA\Talk\Events\BeforePermissionsModifiedEvent`
+* After event: `OCA\Talk\Events\PermissionsModifiedEvent`
+* Since: 20.0.0
+
 ### Call started
 
 * Before event: `OCA\Talk\Events\BeforeCallStartedEvent`
