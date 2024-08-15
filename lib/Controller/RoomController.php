@@ -1672,6 +1672,11 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $sessionId);
 			}
 
+			$session = $participant->getSession();
+			if ($session instanceof Session) {
+				$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
+			}
+
 			// Let the clients know if they need to reload capabilities
 			$capabilities = $this->capabilities->getCapabilities();
 			return new DataResponse([], Http::STATUS_OK, [

@@ -66,12 +66,19 @@ class CallController extends AEnvironmentAwareController {
 	 *
 	 * 200: List of peers in the call returned
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
 	public function getPeersForCall(): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
+			return $proxy->getPeersForCall($this->room, $this->participant);
+		}
+
 		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
 		$result = [];
 		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);

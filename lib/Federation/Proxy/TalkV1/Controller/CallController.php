@@ -20,6 +20,7 @@ use OCP\AppFramework\Http\DataResponse;
 
 /**
  * @psalm-import-type TalkCapabilities from ResponseDefinitions
+ * @psalm-import-type TalkCallPeer from ResponseDefinitions
  * @psalm-import-type TalkParticipant from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
@@ -28,6 +29,38 @@ class CallController {
 		protected ProxyRequest  $proxy,
 		protected UserConverter $userConverter,
 	) {
+	}
+
+	/**
+	 * @see \OCA\Talk\Controller\RoomController::getPeersForCall()
+	 *
+	 * @param Room $room the federated room to get the call peers
+	 * @param Participant $participant the federated user to get the call peers
+	 * @return DataResponse<Http::STATUS_OK, TalkCallPeer[], array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: List of peers in the call returned
+	 */
+	public function getPeersForCall(Room $room, Participant $participant): DataResponse {
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/call/' . $room->getRemoteToken(),
+		);
+
+		/** @var TalkCallPeer[] $data */
+		$data = $this->proxy->getOCSData($proxy);
+
+		/** @var TalkCallPeer[] $data */
+		$data = $this->userConverter->convertAttendees($room, $data, 'actorType', 'actorId', 'displayName');
+
+		$statusCode = $proxy->getStatusCode();
+		if (!in_array($statusCode, [Http::STATUS_OK], true)) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			throw new CannotReachRemoteException();
+		}
+
+		return new DataResponse($data, $statusCode);
 	}
 
 	/**
