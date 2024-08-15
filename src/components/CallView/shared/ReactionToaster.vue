@@ -180,17 +180,17 @@ export default {
 		},
 
 		getParticipantName(model) {
-			const { name, peerId } = model.attributes
+			const { name, nextcloudSessionId } = model.attributes
 			if (name) {
 				return name
 			}
 
-			const participant = this.participants.find(participant => participant.sessionIds.includes(peerId))
+			const participant = this.participants.find(participant => participant.sessionIds.includes(nextcloudSessionId))
 			if (participant?.displayName) {
 				return participant.displayName
 			}
 
-			return this.guestNameStore.getGuestName(this.token, Hex.stringify(SHA1(peerId)))
+			return this.guestNameStore.getGuestName(this.token, Hex.stringify(SHA1(nextcloudSessionId)))
 		},
 
 		getReactionURL(emoji) {
