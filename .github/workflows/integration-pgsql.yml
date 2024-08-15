@@ -51,11 +51,11 @@ jobs:
       matrix:
         test-suite: ['callapi', 'chat-1', 'chat-2', 'command', 'conversation-1', 'conversation-2', 'conversation-3', 'conversation-4', 'conversation-5', 'federation', 'integration', 'sharing-1', 'sharing-2', 'sharing-3', 'sharing-4']
         php-versions: ['8.3']
-        server-versions: ['master']
-        guests-versions: ['master']
-        circles-versions: ['master']
+        server-versions: ['stable30']
+        guests-versions: ['stable30']
+        circles-versions: ['stable30']
         call-summary-bot-versions: ['main']
-        notifications-versions: ['master']
+        notifications-versions: ['stable30']
 
     services:
       postgres:
@@ -123,7 +123,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
-          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
+          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql, sqlite, pdo_sqlite
           coverage: none
           ini-file: development
           # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on

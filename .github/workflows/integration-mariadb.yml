@@ -54,11 +54,11 @@ jobs:
       matrix:
         test-suite: ['callapi', 'chat-1', 'chat-2', 'command', 'conversation-1', 'conversation-2', 'conversation-3', 'conversation-4', 'conversation-5', 'federation', 'integration', 'sharing-1', 'sharing-2', 'sharing-3', 'sharing-4']
         php-versions: ['8.2']
-        server-versions: ['master']
-        guests-versions: ['master']
-        circles-versions: ['master']
+        server-versions: ['stable30']
+        guests-versions: ['stable30']
+        circles-versions: ['stable30']
         call-summary-bot-versions: ['main']
-        notifications-versions: ['master']
+        notifications-versions: ['stable30']
 
     services:
       mariadb:
@@ -120,11 +120,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
-          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, mysql, pdo_mysql
+          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, mysql, pdo_mysql, sqlite, pdo_sqlite
           coverage: none
           ini-file: development
           # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
-          ini-values: apc.enable_cli=on, disable_functions=          
+          ini-values: apc.enable_cli=on, disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -150,7 +150,7 @@ jobs:
           ./occ config:system:set debug --value=true --type=boolean
           ./occ config:system:set hashing_default_password --value=true --type=boolean
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
-          ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"          
+          ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
           ./occ app:enable --force call_summary_bot
           ./occ app:enable --force circles
