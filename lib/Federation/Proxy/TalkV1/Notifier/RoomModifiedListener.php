@@ -11,11 +11,13 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ALobbyModifiedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\APermissionsModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\CallEndedEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\PermissionsModifiedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
@@ -42,6 +44,7 @@ class RoomModifiedListener implements IEventListener {
 				&& !$event instanceof CallEndedEvent
 				&& !$event instanceof CallEndedForEveryoneEvent
 				&& !$event instanceof LobbyModifiedEvent
+				&& !$event instanceof PermissionsModifiedEvent
 				&& !$event instanceof RoomModifiedEvent) {
 			return;
 		}
@@ -49,6 +52,8 @@ class RoomModifiedListener implements IEventListener {
 		if (!in_array($event->getProperty(), [
 			ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE,
 			ARoomModifiedEvent::PROPERTY_AVATAR,
+			ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
+			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
 			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
 			ARoomModifiedEvent::PROPERTY_IN_CALL,
 			ARoomModifiedEvent::PROPERTY_LOBBY,
@@ -70,6 +75,8 @@ class RoomModifiedListener implements IEventListener {
 				$success = $this->notifyCallEnded($cloudId, $participant, $event);
 			} elseif ($event instanceof ALobbyModifiedEvent) {
 				$success = $this->notifyLobbyModified($cloudId, $participant, $event);
+			} elseif ($event instanceof APermissionsModifiedEvent) {
+				$success = $this->notifyPermissionsModified($cloudId, $participant, $event);
 			} else {
 				$success = $this->notifyRoomModified($cloudId, $participant, $event);
 			}
@@ -127,6 +134,21 @@ class RoomModifiedListener implements IEventListener {
 			$event->getOldValue(),
 			$event->getLobbyTimer(),
 			$event->isTimerReached(),
+		);
+	}
+
+	private function notifyPermissionsModified(ICloudId $cloudId, Participant $participant, APermissionsModifiedEvent $event) {
+		return $this->backendNotifier->sendRoomModifiedPermissionsUpdate(
+			$cloudId->getRemote(),
+			$participant->getAttendee()->getId(),
+			$participant->getAttendee()->getAccessToken(),
+			$event->getRoom()->getToken(),
+			$event->getProperty(),
+			$event->getNewValue(),
+			$event->getOldValue(),
+			$event->getMethod(),
+			$event->getPermissions(),
+			$event->resetCustomPermissions(),
 		);
 	}
 

@@ -332,7 +332,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null, callFlag?: int, dateTime?: string, timerReached?: bool, details?: array<AParticipantModifiedEvent::DETAIL_*, bool>} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null, callFlag?: int, dateTime?: string, timerReached?: bool, method?: string, permissions?: int, resetCustomPermissions?: bool, details?: array<AParticipantModifiedEvent::DETAIL_*, bool>} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
@@ -360,6 +360,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			}
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_AVATAR) {
 			$this->roomService->setAvatar($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS) {
+			$this->roomService->setPermissions($room, 'call', $notification['method'], $notification['permissions'], $notification['resetCustomPermissions']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS) {
+			$this->roomService->setPermissions($room, 'default', $notification['method'], $notification['permissions'], $notification['resetCustomPermissions']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_IN_CALL) {

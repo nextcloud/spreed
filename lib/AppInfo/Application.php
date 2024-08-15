@@ -58,6 +58,7 @@ use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\PermissionsModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -272,6 +273,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(CallStartedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(LobbyModifiedEvent::class, TalkV1RoomModifiedListener::class);
+		$context->registerEventListener(PermissionsModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, TalkV1MessageSentListener::class);

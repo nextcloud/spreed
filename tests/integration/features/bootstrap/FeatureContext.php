@@ -2034,6 +2034,41 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" (sets|removes|adds) permissions for all attendees in room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $mode
+	 * @param string $identifier
+	 * @param string $permissionsString
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsRemovesAddsPermissionsForAllAttendeesInRoomTo(string $user, string $method, string $identifier, string $permissionsString, int $statusCode, string $apiVersion): void {
+		$permissions = $this->mapPermissionsTestInput($permissionsString);
+
+		// Convert method from step syntax to what the API expects
+		if ($method === 'sets') {
+			$method = 'set';
+		} elseif ($method === 'removes') {
+			$method = 'remove';
+		} else {
+			$method = 'add';
+		}
+
+		$requestParameters = [
+			['method', $method],
+			['permissions', $permissions],
+		];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/attendees/permissions/all',
+			new TableNode($requestParameters)
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @When /^user "([^"]*)" sets (call|default) permissions for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user

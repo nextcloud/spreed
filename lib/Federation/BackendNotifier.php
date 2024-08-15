@@ -402,6 +402,46 @@ class BackendNotifier {
 	}
 
 	/**
+	 * Send information to remote participants that the room permissions were updated
+	 * Sent from Host server to Remote participant server
+	 */
+	public function sendRoomModifiedPermissionsUpdate(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		string $changedProperty,
+		int $newValue,
+		int $oldValue,
+		string $method,
+		int $permissions,
+		bool $resetCustomPermissions,
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_ROOM_MODIFIED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'changedProperty' => $changedProperty,
+				'newValue' => $newValue,
+				'oldValue' => $oldValue,
+				'method' => $method,
+				'permissions' => $permissions,
+				'resetCustomPermissions' => $resetCustomPermissions,
+			],
+		);
+
+		return $this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
 	 * Send information to remote participants that a message was posted
 	 * Sent from Host server to Remote participant server
 	 *
