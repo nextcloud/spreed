@@ -109,7 +109,7 @@
 				<NewConversationDialog ref="newConversationDialog" :can-moderate-sip-dial-out="canModerateSipDialOut" />
 
 				<!-- New phone (SIP dial-out) dialog -->
-				<CallPhoneDialog ref="callPhoneDialog" />
+				<CallPhoneDialog v-if="canModerateSipDialOut" ref="callPhoneDialog" />
 
 				<!-- New Pending Invitations dialog -->
 				<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
