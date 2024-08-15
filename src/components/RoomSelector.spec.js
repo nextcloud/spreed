@@ -9,6 +9,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 
 import ConversationSearchResult from './LeftSidebar/ConversationsList/ConversationSearchResult.vue'
 import RoomSelector from './RoomSelector.vue'
@@ -110,6 +111,7 @@ describe('RoomSelector', () => {
 			stubs: {
 				ConversationsSearchListVirtual: ConversationsSearchListVirtualStub,
 				ConversationSearchResult,
+				NcDialog,
 			},
 			propsData: props,
 		})
@@ -242,9 +244,9 @@ describe('RoomSelector', () => {
 			const eventHandler = jest.fn()
 			wrapper.vm.$on('close', eventHandler)
 
-			// Act: close modal
-			const modal = wrapper.findComponent({ name: 'NcModal' })
-			await modal.vm.$emit('close')
+			// Act: close dialog
+			const dialog = wrapper.findComponent(NcDialog)
+			await dialog.vm.$emit('update:open')
 
 			// Assert
 			expect(eventHandler).toHaveBeenCalled()
@@ -256,9 +258,9 @@ describe('RoomSelector', () => {
 			const eventHandler = jest.fn()
 			wrapper.vm.$root.$on('close', eventHandler)
 
-			// Act: close modal
-			const modal = wrapper.findComponent({ name: 'NcModal' })
-			await modal.vm.$emit('close')
+			// Act: close dialog
+			const dialog = wrapper.findComponent(NcDialog)
+			await dialog.vm.$emit('update:open')
 
 			// Assert
 			expect(eventHandler).toHaveBeenCalled()
