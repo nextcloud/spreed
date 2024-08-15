@@ -50,6 +50,7 @@ class RoomModifiedListener implements IEventListener {
 			ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE,
 			ARoomModifiedEvent::PROPERTY_AVATAR,
 			ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
+			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
 			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
 			ARoomModifiedEvent::PROPERTY_IN_CALL,
 			ARoomModifiedEvent::PROPERTY_LOBBY,

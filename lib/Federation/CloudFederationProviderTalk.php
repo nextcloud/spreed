@@ -362,6 +362,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->roomService->setAvatar($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_CALL_RECORDING) {
 			$this->roomService->setCallRecording($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS) {
+			$this->roomService->setDefaultPermissions($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_IN_CALL) {
