@@ -30,7 +30,7 @@
 					use-extended-markdown />
 			</div>
 		</div>
-		<SetGuestUsername v-if="currentUserIsGuest" />
+		<SetGuestUsername v-if="currentUserIsGuest" class="guest-info" />
 	</div>
 </template>
 
@@ -137,6 +137,12 @@ export default {
 		text-align: start;
 		@include markdown;
 	}
+}
+
+.guest-info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 </style>
