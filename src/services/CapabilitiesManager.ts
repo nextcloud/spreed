@@ -149,14 +149,20 @@ function restoreRemoteCapabilities(): RemoteCapabilities {
 
 	// Migration step for capabilities based on token
 	let hasMigrated = false
-	Object.keys(remoteCapabilities).forEach(key => {
+	const knownRemoteServers = Object.values(remoteTokenMap).filter(Boolean)
+
+	for (const key of Object.keys(remoteCapabilities)) {
+		if (knownRemoteServers.includes(key)) {
+			continue
+		}
 		const remoteServer = remoteTokenMap[key]
 		if (remoteServer) {
 			remoteCapabilities[remoteServer] = remoteCapabilities[key]
-			delete remoteCapabilities[key]
-			hasMigrated = true
 		}
-	})
+
+		delete remoteCapabilities[key]
+		hasMigrated = true
+	}
 	if (hasMigrated) {
 		BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
 	}
