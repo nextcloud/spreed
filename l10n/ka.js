@@ -1409,6 +1409,7 @@ OC.L10N.register(
     "Number length is too short" : "Number length is too short",
     "Number length is too long" : "Number length is too long",
     "Number is not valid" : "Number is not valid",
+    "Edit display name" : "Edit display name",
     "Save name" : "Save name",
     "Display name: {name}" : "Display name: {name}",
     "Calls are not supported in your browser" : "Calls are not supported in your browser",

@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Number length is too short" : "Długość numeru jest za krótka",
     "Number length is too long" : "Długość numeru jest za długa",
     "Number is not valid" : "Numer jest nieprawidłowy",
+    "Edit display name" : "Edytuj wyświetlaną nazwę",
     "Save name" : "Zapisz nazwę",
     "Display name: {name}" : "Wyświetlana nazwa: {name}",
     "Calls are not supported in your browser" : "Twoja przeglądarka nie obsługuje połączeń",

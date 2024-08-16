@@ -602,6 +602,7 @@ OC.L10N.register(
     "Search conversations or users" : "Tìm kiếm cuộc trò chuyện hoặc người dùng",
     "Select conversation" : "Chọn cuộc trò chuyện",
     "Link to a conversation" : "Liên kết đến một cuộc trò chuyện",
+    "Edit display name" : "Chỉnh sửa tên hiển thị",
     "Calls are not supported in your browser" : "Cuộc gọi không được hỗ trợ trong trình duyệt của bạn",
     "Access to microphone is only possible with HTTPS" : "Chỉ có thể truy cập vào micrô với HTTPS",
     "Access to microphone was denied" : "Quyền truy cập vào micrô đã bị từ chối",

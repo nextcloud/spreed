@@ -486,6 +486,7 @@ OC.L10N.register(
     "Search conversations or users" : "Søg samtaler eller kontakter",
     "Select conversation" : "Vælg samtale",
     "Link to a conversation" : "Link til samtale",
+    "Edit display name" : "Redigér vist navn",
     "Choose devices" : "Vælg enheder",
     "Attachments folder" : "Mappe til vedhæftede filer",
     "Select location for attachments" : "Select location for attachments",

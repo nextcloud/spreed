@@ -1485,6 +1485,7 @@ OC.L10N.register(
     "Number length is too short" : "Dĺžka čísla je príliš krátka",
     "Number length is too long" : "Číslo je príliš dlhé",
     "Number is not valid" : "Číslo nie je platné",
+    "Edit display name" : "Upraviť zobrazované meno",
     "Save name" : "Uložiť meno",
     "Display name: {name}" : "Zobrazované meno: {name}",
     "Calls are not supported in your browser" : "Váš prehliadač nepodporuje hovory",

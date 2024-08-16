@@ -1382,6 +1382,7 @@ OC.L10N.register(
     "Number length is too short" : "Dolžina telefonske številke je prekratka",
     "Number length is too long" : "Dolžina telefonske številke je predolga",
     "Number is not valid" : "Številka ni veljavna",
+    "Edit display name" : "Uredi prikazno ime",
     "Save name" : "Shrani ime",
     "Display name: {name}" : "Prikazano ime: {name}",
     "Calls are not supported in your browser" : "Klici v tem brskalniku niso podprti",
