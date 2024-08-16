@@ -16,7 +16,9 @@
 			<EmptyCallView v-if="showEmptyCallView" :is-sidebar="isSidebar" />
 
 			<div id="videos">
-				<div v-if="!isGrid || !callParticipantModels.length" class="video__promoted" :class="{'full-page': showFullPage}">
+				<div v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
+					class="video__promoted"
+					:class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="selectedVideoPeerId"
@@ -82,7 +84,7 @@
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
-					:is-stripe="!isGrid || !callParticipantModels.length"
+					:is-stripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
@@ -92,6 +94,7 @@
 					:local-call-participant-model="localCallParticipantModel"
 					:shared-datas="sharedDatas"
 					v-bind="$attrs"
+					:dev-mode.sync="devMode"
 					@select-video="handleSelectVideo"
 					@click-local-video="handleClickLocalVideo" />
 
@@ -120,6 +123,7 @@
 
 <script>
 import debounce from 'debounce'
+import { ref } from 'vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -173,10 +177,14 @@ export default {
 	},
 
 	setup() {
+		// For debug and screenshot purposes. Set to true to enable
+		const devMode = ref(false)
+
 		return {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
+			devMode,
 		}
 	},
 
@@ -329,7 +337,7 @@ export default {
 		},
 
 		showEmptyCallView() {
-			return !this.callParticipantModels.length && !this.screenSharingActive
+			return !this.callParticipantModels.length && !this.screenSharingActive && !this.devMode
 		},
 
 		supportedReactions() {

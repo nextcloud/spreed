@@ -239,7 +239,7 @@ export default {
 		},
 	},
 
-	emits: ['select-video', 'click-local-video'],
+	emits: ['select-video', 'click-local-video', 'update:devMode'],
 
 	setup() {
 		return {
@@ -489,7 +489,7 @@ export default {
 		orderedVideos() {
 			// Dynamic ordering is not possible for guests because
 			// participants store is not initialized
-			if (this.isGuestNonModerator) {
+			if (this.isGuestNonModerator || this.devMode) {
 				return this.videos
 			}
 
@@ -539,6 +539,15 @@ export default {
 
 		speakersWithAudioOff() {
 			return this.tempPromotedModels.filter(model => !model.attributes.audioAvailable)
+		},
+
+		devModeEnabled: {
+			get() {
+				return this.devMode
+			},
+			set(value) {
+				this.$emit('update:devMode', value)
+			},
 		},
 	},
 
