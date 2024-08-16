@@ -1412,6 +1412,7 @@ OC.L10N.register(
     "Number length is too short" : "号码太短",
     "Number length is too long" : "号码太长",
     "Number is not valid" : "号码无效",
+    "Edit display name" : "编辑显示名称",
     "Save name" : "保存名称",
     "Display name: {name}" : "显示名称：{name}",
     "Calls are not supported in your browser" : "您的浏览器不支持呼叫",

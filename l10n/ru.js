@@ -1490,6 +1490,7 @@ OC.L10N.register(
     "Number length is too short" : "Длина номера слишком короткая",
     "Number length is too long" : "Длина номера слишком длинная",
     "Number is not valid" : "Номер указан некорректно",
+    "Edit display name" : "Редактировать отображаемое имя",
     "Save name" : "Сохранить имя",
     "Display name: {name}" : "Отображаемое имя: {name}",
     "Calls are not supported in your browser" : "Ваш браузер не поддерживает звонки",

@@ -518,6 +518,7 @@ OC.L10N.register(
     "No shared items" : "No shared items",
     "Select conversation" : "Veldu samtal",
     "Link to a conversation" : "Tengill á samtal",
+    "Edit display name" : "Breyta birtingarnafni",
     "Privacy" : "Gagnaleynd",
     "Performance" : "Afköst",
     "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",

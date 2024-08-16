@@ -1510,6 +1510,7 @@ OC.L10N.register(
     "Number length is too short" : "Tá fad uimhreach ró-ghearr",
     "Number length is too long" : "Tá fad uimhreach ró-fhada",
     "Number is not valid" : "Níl an uimhir bailí",
+    "Edit display name" : "Cuir ainm taispeána in eagar",
     "Save name" : "Sábháil ainm",
     "Display name: {name}" : "Ainm taispeána: {name}",
     "Calls are not supported in your browser" : "Ní thacaítear le glaonna i do bhrabhsálaí",

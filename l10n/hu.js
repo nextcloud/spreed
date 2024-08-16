@@ -1342,6 +1342,7 @@ OC.L10N.register(
     "Link to a conversation" : "Hivatkozás egy beszélgetéshez",
     "No open conversations found" : "Nem található nyitott beszélgetés",
     "Check spelling or use complete words." : "Ellenőrizze a helyesírást, vagy használjon teljes szavakat.",
+    "Edit display name" : "Megjelenítendő név szerkesztése",
     "Save name" : "Név mentése",
     "Display name: {name}" : "Megjelenítendő név: {name}",
     "Calls are not supported in your browser" : "A böngészője nem támogatja a hívásokat",

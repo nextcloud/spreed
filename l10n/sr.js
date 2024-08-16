@@ -1502,6 +1502,7 @@ OC.L10N.register(
     "Number length is too short" : "Дужина броја је сувише кратка",
     "Number length is too long" : "Дужина броја је превише дугачка",
     "Number is not valid" : "Број није исправан",
+    "Edit display name" : "Уреди име за приказ",
     "Save name" : "Сачувај име",
     "Display name: {name}" : "Име за приказ: {name}",
     "Calls are not supported in your browser" : "Ваш прегледач не подржава позиве",
