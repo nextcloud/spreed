@@ -7,7 +7,7 @@
 	<ul :class="'placeholder-list placeholder-list--' + type"
 		:style="{ '--colorPlaceholderLight': colorPlaceholderLight, '--colorPlaceholderDark': colorPlaceholderDark }">
 		<li v-for="(item, index) in placeholderData" :key="index" class="placeholder-item">
-			<div class="placeholder-item__avatar">
+			<div class="placeholder-item__avatar" :style="{ '--avatar-size': item.avatarSize }">
 				<div class="placeholder-item__avatar-circle" />
 			</div>
 			<div class="placeholder-item__content" :style="{'--last-line-width': item.width}">
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { AVATAR } from '../../constants.js'
+
 const bodyStyles = window.getComputedStyle(document.body)
 const colorPlaceholderDark = bodyStyles.getPropertyValue('--color-placeholder-dark')
 const colorPlaceholderLight = bodyStyles.getPropertyValue('--color-placeholder-light')
@@ -55,6 +57,7 @@ export default {
 				data.push({
 					amount: this.type === 'messages' ? 4 : this.type === 'conversations' ? 2 : 1,
 					width: this.type === 'participants' ? '60%' : (Math.floor(Math.random() * 40) + 30) + '%',
+					avatarSize: (this.type === 'messages' ? AVATAR.SIZE.SMALL : AVATAR.SIZE.DEFAULT) + 'px',
 				})
 			}
 			return data
@@ -79,9 +82,9 @@ export default {
 	&__avatar {
 		flex-shrink: 0;
 		&-circle {
-			height: 36px; // AVATAR.SIZE.DEFAULT
-			width: 36px;
-			border-radius: 36px;
+			height: var(--avatar-size);
+			width: var(--avatar-size);
+			border-radius: var(--avatar-size);
 		}
 	}
 
@@ -124,12 +127,6 @@ export default {
 		&__avatar {
 			width: 48px;
 			padding: 20px 8px 0;
-
-			&-circle {
-				height: 32px; // AVATAR.SIZE.SMALL
-				width: 32px;
-				border-radius: 32px;
-			}
 		}
 
 		&__content {
