@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- 在不緊急的情況下傳送聊天訊息而不通知收件者",
     "- Emojis can now be autocompleted by typing a \":\"" : "- 表情符號現在可以透過輸入 \":\" 自動完成",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- 透過輸入 \"/\" 使用新的智慧型挑選器連結各種項目",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- 主持人現在可以建立分組討論室（需要外部訊號伺服器）",
-    "- Calls can now be recorded (requires the external signaling server)" : "- 現在可以紀錄通話了（需要外部訊號伺服器）",
     "- Conversations can now have an avatar or emoji as icon" : "- 對話現在可以用大頭貼或表情符號作為圖示了",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- 視訊通話除了模糊背景以外，現在也可以使用虛擬背景了",
     "- Reactions are now available during calls" : "- 現在可以在通話期間做出反應",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- 字幕允許同時傳送包含檔案的訊息",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- 現在在分享螢幕時可以看到演講者的視訊，通話反應以動畫形式顯示",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- 登入的作者與主持人可以在6小時內編輯訊息",
-    "- Unsent message drafts are now saved in your browser " : "- 未傳送的訊息草稿現在會儲存在您的瀏覽器中",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以透過聯盟方式與其他 Talk 伺服器通訊",
     "_All %n participant_::_All %n participants_" : ["全部 %n 個參與者"],
     "Talk updates ✅" : "Talk 更新 ✅",
@@ -1131,6 +1128,7 @@
     "Error occurred when disabling SIP dial-in" : "停用 SIP 撥入時發生錯誤",
     "Enter your name" : "輸入您的名稱",
     "Submit name and join" : "遞交名稱並加入",
+    "Do you already have an account?" : "您已經有帳號了嗎？",
     "Call a phone number" : "撥打電話號碼",
     "Search participants or phone numbers" : "搜尋參與者或電話號碼",
     "Creating the conversation …" : "正在建立對話……",
@@ -1565,6 +1563,8 @@
     "Recording" : "錄音",
     "Send a reaction" : "傳送反應",
     "React with {reaction}" : "使用 {reaction} 反應",
+    "Open Calendar" : "開啟日曆",
+    "Next call" : "下個通話",
     "_%n participant in call_::_%n participants in call_" : ["通話中有 %n 位參與者"],
     "Show your screen" : "顯示您的螢幕",
     "Stop screensharing" : "停止分享螢幕",
@@ -1790,6 +1790,8 @@
     "Join conversations at any time, anywhere, on any device." : "隨時隨地在任何裝置上加入對話。",
     "Android app" : "Android 應用程式",
     "iOS app" : "iOS 應用程式",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- 主持人現在可以建立分組討論室（需要外部訊號伺服器）",
+    "- Calls can now be recorded (requires the external signaling server)" : "- 現在可以紀錄通話了（需要外部訊號伺服器）",
     "There are currently no commands available." : "目前沒有可用的指令。",
     "The command does not exist" : "該指令不存在",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "執行指令時發生錯誤。請要求管理員檢查紀錄檔。",
@@ -1832,6 +1834,7 @@
     "TURN server" : "TURN 伺服器",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 伺服器用於代理來自防火牆後參與者的流量。",
     "Signaling servers" : "訊號伺服器",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部訊號伺服器。留空以使用內部訊號伺服器。"
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部訊號伺服器。留空以使用內部訊號伺服器。",
+    "- Unsent message drafts are now saved in your browser " : "- 未傳送的訊息草稿現在會儲存在您的瀏覽器中"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

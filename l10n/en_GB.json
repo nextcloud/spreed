@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Send chat messages without notifying the recipients in case it is not urgent",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Emojis can now be autocompleted by typing a \":\"",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Link various items using the new smart-picker by typing a \"/\"",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderators can now create breakout rooms (requires the external signaling server)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Calls can now be recorded (requires the external signaling server)",
     "- Conversations can now have an avatar or emoji as icon" : "- Conversations can now have an avatar or emoji as icon",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Virtual backgrounds are now available in addition to the blurred background in video calls",
     "- Reactions are now available during calls" : "- Reactions are now available during calls",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Captions allow to send a message with a file at the same time",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video of the speaker is now visible while sharing the screen and call reactions are animated",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Messages can now be edited by logged-in authors and moderators for 6 hours",
-    "- Unsent message drafts are now saved in your browser " : "- Unsent message drafts are now saved in your browser ",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers",
     "_All %n participant_::_All %n participants_" : ["All %n participant","All %n participants"],
     "Talk updates ✅" : "Talk updates ✅",
@@ -1131,6 +1128,7 @@
     "Error occurred when disabling SIP dial-in" : "Error occurred when disabling SIP dial-in",
     "Enter your name" : "Enter your name",
     "Submit name and join" : "Submit name and join",
+    "Do you already have an account?" : "Do you already have an account?",
     "Call a phone number" : "Call a phone number",
     "Search participants or phone numbers" : "Search participants or phone numbers",
     "Creating the conversation …" : "Creating the conversation …",
@@ -1565,6 +1563,8 @@
     "Recording" : "Recording",
     "Send a reaction" : "Send a reaction",
     "React with {reaction}" : "React with {reaction}",
+    "Open Calendar" : "Open Calendar",
+    "Next call" : "Next call",
     "_%n participant in call_::_%n participants in call_" : ["%n participant in call","%n participants in call"],
     "Show your screen" : "Show your screen",
     "Stop screensharing" : "Stop screensharing",
@@ -1790,6 +1790,8 @@
     "Join conversations at any time, anywhere, on any device." : "Join conversations at any time, anywhere, on any device.",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderators can now create breakout rooms (requires the external signaling server)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Calls can now be recorded (requires the external signaling server)",
     "There are currently no commands available." : "There are currently no commands available.",
     "The command does not exist" : "The command does not exist",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "An error occurred while running the command. Please ask an administrator to check the logs.",
@@ -1832,6 +1834,7 @@
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "The TURN server is used to proxy the traffic from participants behind a firewall.",
     "Signaling servers" : "Signaling servers",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.",
+    "- Unsent message drafts are now saved in your browser " : "- Unsent message drafts are now saved in your browser "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
