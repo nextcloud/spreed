@@ -1399,6 +1399,7 @@ OC.L10N.register(
     "No open conversations found" : "공개 대화를 찾을 수 없습니다",
     "Either there are no open conversations or you joined all of them." : "공개 대화가 없거나 모두 참가했습니다.",
     "Check spelling or use complete words." : "맞춤법을 확인하거나 완전한 단어를 사용하세요.",
+    "Edit display name" : "표시 이름 수정",
     "Save name" : "이름 저장",
     "Display name: {name}" : "표시되는 이름: {name}",
     "Calls are not supported in your browser" : "이 브라우저가 통화를 지원하지 않습니다.",

@@ -1032,6 +1032,7 @@ OC.L10N.register(
     "Search conversations or users" : "Cerca conversazioni o utenti",
     "Select conversation" : "Seleziona conversazione",
     "Link to a conversation" : "Collega a una conversazione",
+    "Edit display name" : "Modifica nome visualizzato",
     "Calls are not supported in your browser" : "Le chiamate non sono supportate dal tuo browser",
     "Access to microphone is only possible with HTTPS" : "L'accesso a microfono è possibile solo con HTTPS",
     "Access to microphone was denied" : "L'accesso al microfono è stato negato",

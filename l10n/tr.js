@@ -1488,6 +1488,7 @@ OC.L10N.register(
     "Number length is too short" : "Numara çok kısa",
     "Number length is too long" : "Numara çok uzun",
     "Number is not valid" : "Numara geçersiz",
+    "Edit display name" : "Görüntülenecek adı düzenle",
     "Save name" : "Adı kaydet",
     "Display name: {name}" : "Görüntülenecek ad: {name}",
     "Calls are not supported in your browser" : "Tarayıcınız çağrıları desteklemiyor",

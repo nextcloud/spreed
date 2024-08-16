@@ -1411,6 +1411,7 @@ OC.L10N.register(
     "Number length is too short" : "La longitud del número és massa curta",
     "Number length is too long" : "La longitud del número és massa llarga",
     "Number is not valid" : "El número no és vàlid",
+    "Edit display name" : "Edició del nom a mostrar",
     "Save name" : "Desar el nom",
     "Display name: {name}" : "Nom de visualització: {name}",
     "Calls are not supported in your browser" : "Les trucades no són compatibles amb el vostre navegador",

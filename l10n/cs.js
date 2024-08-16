@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Number length is too short" : "Číslo je příliš krátké",
     "Number length is too long" : "Číslo je příliš dlouhé",
     "Number is not valid" : "Číslo není platné",
+    "Edit display name" : "Upravit zobrazovaný název",
     "Save name" : "Uložit název",
     "Display name: {name}" : "Zobrazované jméno: {name}",
     "Calls are not supported in your browser" : "Vámi používaný prohlížeč nepodporuje volání",

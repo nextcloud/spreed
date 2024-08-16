@@ -1487,6 +1487,7 @@ OC.L10N.register(
     "Add groups or teams" : "إضافة مجموعات و فِرَق",
     "Add other sources" : "اضافة مصدر آخر",
     "Participants" : "المشاركون",
+    "You can search or add participants via name, email, or Federated Cloud ID" : "بمكنك البحث عن او اضافة مشاركين بدلالة الاسم أو الايميل أو معرف السحابة الاتحادية",
     "Search or add participants" : "بحث او اضافة مشاركين",
     "An error occurred while adding the participants" : "حدث خطأ اثناء إضافة المشاركين",
     "Chat" : "الدردشة",

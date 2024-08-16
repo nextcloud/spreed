@@ -1510,6 +1510,7 @@ OC.L10N.register(
     "Number length is too short" : "Nummernlänge ist zu kurz",
     "Number length is too long" : "Nummernlänge ist zu lang",
     "Number is not valid" : "Nummer ist nicht gültig",
+    "Edit display name" : "Anzeigename bearbeiten",
     "Save name" : "Namen speichern",
     "Display name: {name}" : "Anzeigename: {name}",
     "Calls are not supported in your browser" : "Anrufe werden von deinem Browser nicht unterstützt",

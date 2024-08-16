@@ -1445,6 +1445,7 @@ OC.L10N.register(
     "Number length is too short" : "番号の長さが短すぎます",
     "Number length is too long" : "番号の長さが長すぎます",
     "Number is not valid" : "番号は有効なものではありません",
+    "Edit display name" : "表示名の編集",
     "Save name" : "名前を保存",
     "Display name: {name}" : "表示名: {name}",
     "Calls are not supported in your browser" : "お使いのブラウザーは通話に対応していません",

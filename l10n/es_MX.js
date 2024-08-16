@@ -457,6 +457,7 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Details" : "Detalles",
     "Projects" : "Proyectos",
+    "Edit display name" : "Editar el nombre para mostrar",
     "Privacy" : "Privacidad",
     "Performance" : "Desempeño",
     "Keyboard shortcuts" : "Atajos del teclado",

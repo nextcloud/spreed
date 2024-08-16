@@ -1014,6 +1014,7 @@ OC.L10N.register(
     "Projects" : "Проєкти",
     "No shared items" : "Немає спільних елементів",
     "Search conversations or users" : "Пошук розмов та учасників",
+    "Edit display name" : "Редагувати ім'я для показу",
     "Access to microphone is only possible with HTTPS" : "Доступ до мікрофона можливий лише за допомогою HTTPS",
     "Access to microphone was denied" : "У доступі до мікрофону було відмовлено",
     "Error while accessing microphone" : "Помилка під час доступу до мікрофона",
