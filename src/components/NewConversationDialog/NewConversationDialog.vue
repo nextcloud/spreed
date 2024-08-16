@@ -10,8 +10,9 @@
 			class="new-group-conversation"
 			:close-on-click-outside="!isFilled"
 			:container="container"
+			:label-id="dialogHeaderPrepId"
 			@close="closeModal">
-			<h2 class="new-group-conversation__header">
+			<h2 :id="dialogHeaderPrepId" class="new-group-conversation__header">
 				{{ t('spreed', 'Create a new group conversation') }}
 			</h2>
 
@@ -69,6 +70,7 @@
 		<!-- Third page : this is the confirmation page-->
 		<NcModal v-if="page === 2"
 			:container="container"
+			:label-id="dialogHeaderResId"
 			@close="closeModal">
 			<NcEmptyContent>
 				<template #icon>
@@ -78,14 +80,8 @@
 				</template>
 
 				<template #description>
-					<p v-if="isLoading">
-						{{ t('spreed', 'Creating the conversation …') }}
-					</p>
-					<p v-else-if="error">
-						{{ t('spreed', 'Error while creating the conversation') }}
-					</p>
-					<p v-else-if="success && isPublic">
-						{{ t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName }) }}
+					<p :id="dialogHeaderResId">
+						{{ creatingConversationDescription }}
 					</p>
 				</template>
 
@@ -115,7 +111,6 @@ import { provide, ref } from 'vue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 
-import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -126,6 +121,7 @@ import NewConversationContactsPage from './NewConversationContactsPage.vue'
 import NewConversationSetupPage from './NewConversationSetupPage.vue'
 import LoadingComponent from '../LoadingComponent.vue'
 
+import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.js'
 import { setConversationPassword } from '../../services/conversationsService.js'
@@ -170,9 +166,14 @@ export default {
 		// Add a visual bulk selection state for Participant component
 		provide('bulkParticipantsSelection', true)
 
+		const dialogHeaderPrepId = `new-conversation-prepare-${useId()}`
+		const dialogHeaderResId = `new-conversation-result-${useId()}`
+
 		return {
 			isInCall,
 			selectedParticipants,
+			dialogHeaderPrepId,
+			dialogHeaderResId,
 		}
 	},
 
@@ -214,6 +215,17 @@ export default {
 			return JSON.stringify(this.newConversation) !== JSON.stringify(NEW_CONVERSATION)
 				|| this.listable !== CONVERSATION.LISTABLE.NONE || this.isAvatarEdited
 		},
+
+		creatingConversationDescription() {
+			if (this.isLoading) {
+				return t('spreed', 'Creating the conversation …')
+			} else if (this.error) {
+				return t('spreed', 'Error while creating the conversation')
+			} else if (this.success && this.isPublic) {
+				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName })
+			}
+			return ''
+		}
 	},
 
 	watch: {
