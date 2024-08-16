@@ -1007,6 +1007,7 @@ export default {
 	height: 100%;
 	padding-left: var(--default-grid-baseline);
 	overflow-y: scroll !important; // reserve a place for scrollbar
+	line-height: 20px;
 }
 
 .new-conversation {
@@ -1090,7 +1091,6 @@ export default {
 
 // Overwrite NcListItem styles
 :deep(.list-item) {
-	line-height: 1.2;
 	overflow: hidden;
 	outline-offset: -2px;
 
