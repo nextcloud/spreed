@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Seol teachtaireachtaí comhrá gan fógra a thabhairt do na faighteoirí ar eagla nach bhfuil sé práinneach",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Seol teachtaireachtaí comhrá gan fógra a thabhairt do na faighteoirí ar eagla nach bhfuil sé práinneach",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Nasc míreanna éagsúla ag baint úsáide as an roghnóir cliste nua trí \"/\" a chlóscríobh",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Is féidir le modhnóirí seomraí ar leithligh a chruthú anois (tá an freastalaí comharthaíochta seachtrach ag teastáil)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Is féidir glaonna a thaifeadadh anois (tá an freastalaí comharthaíochta seachtrach ag teastáil)",
     "- Conversations can now have an avatar or emoji as icon" : "- Is féidir avatar nó emoji a bheith mar dheilbhín anois ag comhráite",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Tá cúlraí fíorúla ar fáil anois chomh maith leis an gcúlra doiléir i bhfísghlaonna",
     "- Reactions are now available during calls" : "- Tá frithghníomhartha ar fáil anois le linn glaonna",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Ceadaíonn fotheidil teachtaireacht a sheoladh le comhad ag an am céanna",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Tá físeán an chainteora le feiceáil anois agus an scáileán á roinnt agus déantar freagairtí glaonna a bheochan",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Is féidir le húdair agus modhnóirí logáilte isteach teachtaireachtaí a chur in eagar anois ar feadh 6 huaire",
-    "- Unsent message drafts are now saved in your browser " : "- Déantar dréachtaí teachtaireachta nár seoladh a shábháil i do bhrabhsálaí anois",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Réamhamhairc: * Is féidir comhrá téacs a dhéanamh anois ar bhealach cónasctha le freastalaithe Talk eile",
     "_All %n participant_::_All %n participants_" : ["Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí"],
     "Talk updates ✅" : "Labhair nuashonruithe ✅",
@@ -1791,6 +1788,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Glac páirt i gcomhráite am ar bith, áit ar bith, ar ghléas ar bith.",
     "Android app" : "Aip Android",
     "iOS app" : "aip iOS",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Is féidir le modhnóirí seomraí ar leithligh a chruthú anois (tá an freastalaí comharthaíochta seachtrach ag teastáil)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Is féidir glaonna a thaifeadadh anois (tá an freastalaí comharthaíochta seachtrach ag teastáil)",
     "There are currently no commands available." : "Níl aon orduithe ar fáil faoi láthair.",
     "The command does not exist" : "Níl an t-ordú ann",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Tharla earráid agus an t-ordú á rith. Iarr ar riarthóir na logaí a sheiceáil le do thoil.",
@@ -1833,6 +1832,7 @@ OC.L10N.register(
     "TURN server" : "TURN freastalaí",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Úsáidtear an freastalaí TURN chun seachfhreastalaí a dhéanamh ar an trácht ó rannpháirtithe taobh thiar de bhalla dóiteáin.",
     "Signaling servers" : "Freastalaithe comharthaíochta",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Is féidir freastalaí comharthaíochta seachtrach a úsáid go roghnach le haghaidh suiteálacha níos mó. Fág folamh chun an freastalaí comharthaíochta inmheánach a úsáid."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Is féidir freastalaí comharthaíochta seachtrach a úsáid go roghnach le haghaidh suiteálacha níos mó. Fág folamh chun an freastalaí comharthaíochta inmheánach a úsáid.",
+    "- Unsent message drafts are now saved in your browser " : "- Déantar dréachtaí teachtaireachta nár seoladh a shábháil i do bhrabhsálaí anois"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

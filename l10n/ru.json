@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Отправлять сообщения чата без уведомления пользователей, если они не являются срочными",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Эмодзи теперь можно заполнять автоматически, набрав «:»",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Свяжите различные элементы, используя новый смарт-выборщик, набрав «/»",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Модераторы теперь могут создавать комнаты обсуждения (требуется внешний сигнальный сервер).",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Звонки теперь можно записывать (требуется внешний сигнальный сервер)",
     "- Conversations can now have an avatar or emoji as icon" : "- Разговоры теперь могут иметь аватар или эмодзи в качестве значка",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- В дополнение к размытому фону в видеозвонках теперь доступны виртуальные фоны",
     "- Reactions are now available during calls" : "- Реакции теперь доступны во время звонков",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Подписи позволяют отправить текстовое сообщение одновременно с файлом",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Видео выступающего теперь отображается при презентации экрана и реакции в звонке анимированы",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Сообщения теперь могут быть отредактированы авторами и модераторамив течение 6 часов",
-    "- Unsent message drafts are now saved in your browser " : "- Неотправленные черновики сообщений теперь сохраняются в вашем браузере",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Превью:* Обмен сообщениями теперь может происходит в федеративных обсуждениях с другими серверами Talk",
     "Talk updates ✅" : "Обновления приложения «Конференции» ✅",
     "Reaction deleted by author" : "Реакция удалена автором",
@@ -1763,6 +1760,8 @@
     "Join conversations at any time, anywhere, on any device." : "Присоединяйтесь к обсуждениям в любое время, в любом месте, с любого устройства.",
     "Android app" : "Android приложение",
     "iOS app" : "iOS приложение",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Модераторы теперь могут создавать комнаты обсуждения (требуется внешний сигнальный сервер).",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Звонки теперь можно записывать (требуется внешний сигнальный сервер)",
     "There are currently no commands available." : "В настоящий момент нет доступных команд.",
     "The command does not exist" : "Команда не существует",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Ошибка во время выполнения команды, попросите администратора проверить файлы журналов Nextcloud.",
@@ -1805,6 +1804,7 @@
     "TURN server" : "Сервер TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потоков данных от участников, находящихся за межсетевым экраном.",
     "Signaling servers" : "Серверы сигнализации",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Для крупных развёртываний может быть использован внешний сервер сигнализации. Для использования встроенного сервера сигнализации оставьте поле пустым."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Для крупных развёртываний может быть использован внешний сервер сигнализации. Для использования встроенного сервера сигнализации оставьте поле пустым.",
+    "- Unsent message drafts are now saved in your browser " : "- Неотправленные черновики сообщений теперь сохраняются в вашем браузере"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

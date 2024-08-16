@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Mogoče je poslati sporočila v klepet brez prikaza obvestila, če sporočilo ni pomembno.",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Izrazne ikone je mogoče izrisovati z vpisom dvopičja »:«.",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Različne predmete je mogoče povezovati z uporabo izbirnika » / «.",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatorji lahko ustvarjajo ločene skupine (zahteva nastavitev zunanjega signalnega strežnika).",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Klice je mogoče posneti (zahteva nastavitev zunanjega signalnega strežnika).",
     "- Conversations can now have an avatar or emoji as icon" : "- Pogovoru je mogoče določiti podobo ali izrazno ikono.",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Ob zamegljenem so na voljo tudi navidezna ozadja v videokonferencah.",
     "- Reactions are now available during calls" : "- Med klicem je mogoče uporabiti grafične odzive.",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Napisi omogočajo pošiljanje sporočila sočasno z datoteko.",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video govorca je zdaj vidno med souporabo zaslona, odzivi slušateljev pa so animirani.",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Sporočila lahko prijavljeni avtorji in moderatorji urejajo še 6 ur po vpisu",
-    "- Unsent message drafts are now saved in your browser " : "- Neposlani osnutki sporočil se shranjujejo v pomnilnik brskalnika",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Predogled:* besedilno klepetanje je mogoče tudi z zveznimi uporabniki z zunanjimi strežniki Talk",
     "_All %n participant_::_All %n participants_" : ["%n udeleženec","%n udeleženca"," %n udeleženci"," %n udeležencev"],
     "Talk updates ✅" : "Posodobitve programa Talk ✅",
@@ -1590,6 +1587,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Pridružite se pogovoru kadarkoli, kjerkoli in s katerekoli naprave.",
     "Android app" : "Odjemalec za Android",
     "iOS app" : "Odjemalec za iOS",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatorji lahko ustvarjajo ločene skupine (zahteva nastavitev zunanjega signalnega strežnika).",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Klice je mogoče posneti (zahteva nastavitev zunanjega signalnega strežnika).",
     "There are currently no commands available." : "Trenutno ni na voljo še nobenega ukaza.",
     "The command does not exist" : "Ukaz ne obstaja.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Prišlo je do napake med izvajanjem ukaza. Stopite v stik s skrbnikom in preverite dnevniške zapise.",
@@ -1632,6 +1631,7 @@ OC.L10N.register(
     "TURN server" : "Strežnik TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Strežnik TURN se uporablja za posredovanje podatkovnega prometa od udeležencev za požarnim zidom.",
     "Signaling servers" : "Signalni strežniki",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Za večje namestitve je priporočljivo uporabiti zunanji signalni strežnik. Prazno polje določa notranjega."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Za večje namestitve je priporočljivo uporabiti zunanji signalni strežnik. Prazno polje določa notranjega.",
+    "- Unsent message drafts are now saved in your browser " : "- Neposlani osnutki sporočil se shranjujejo v pomnilnik brskalnika"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

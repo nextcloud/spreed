@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Posielajte četové správy bez upozornenia príjemcov v prípade, že to nie je naliehavé",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Emotikony môžu byť automaticky doplnené napísaním \":\"",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Prepojte rôzne položky pomocou nového inteligentného vyberania tým, že napíšete \"/\".",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderátori teraz môžu vytvoriť oddelené miestnosti (vyžaduje externý signalizačný server)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Hovory môžu byť teraz zaznamenané (vyžaduje externý signalizačný server)",
     "- Conversations can now have an avatar or emoji as icon" : "- Konverzácie môžu teraz mať ako ikonu avatara alebo emotikon.",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Virtuálne pozadia sú teraz dostupné spolu s rozmazaným pozadím pri videohovoroch.",
     "- Reactions are now available during calls" : "- Reakcie sú teraz dostupné počas hovorov",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Titulky umožňujú súčasne odoslať správu so súborom",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video rečníka je teraz viditeľné pri sprístupňovaní obrazovky a reakcie na hovor sú animované",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Správy teraz môžu upravovať prihlásení autori a moderátori po dobu 6 hodín",
-    "- Unsent message drafts are now saved in your browser " : "- Koncepty neodoslaných správ sú teraz uložené vo vašom prehliadači",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ukážka:* Textové chatovanie je teraz možné vykonávať federatívnym spôsobom s inými servermi Talk",
     "Talk updates ✅" : "Aktualizácie Talk /Rozhovor/ ✅",
     "Reaction deleted by author" : "Reakcia bola vymazaná autorom",
@@ -1759,6 +1756,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Pripojte sa ku konverzáciám kedykoľvek a kdekoľvek na akomkoľvek zariadení.",
     "Android app" : "Android apka",
     "iOS app" : "iOS apka",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderátori teraz môžu vytvoriť oddelené miestnosti (vyžaduje externý signalizačný server)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Hovory môžu byť teraz zaznamenané (vyžaduje externý signalizačný server)",
     "There are currently no commands available." : "Momentálne nie sú k dispozícii žiadne príkazy.",
     "The command does not exist" : "Príkaz neexistuje",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Pri spustení príkazu sa vyskytla chyba. Požiadajte správcu o kontrolu protokolov.",
@@ -1801,6 +1800,7 @@ OC.L10N.register(
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN server sa používa na presmerovanie prenosu dát od účastníkov, ktorí sú za firewallom.",
     "Signaling servers" : "Signalizačné servery",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Pre väčšie inštalácie sa môže použiť externý signalizačný server. Pre použitie interného serveru ponechajte túto kolónku nevyplnenú."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Pre väčšie inštalácie sa môže použiť externý signalizačný server. Pre použitie interného serveru ponechajte túto kolónku nevyplnenú.",
+    "- Unsent message drafts are now saved in your browser " : "- Koncepty neodoslaných správ sú teraz uložené vo vašom prehliadači"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

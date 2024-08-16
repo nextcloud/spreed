@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Enviar mensajes de chat sin notificar a los recipientes en caso de que no sea urgente",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Los emojis pueden ser autocompletados escribiendo \":\"",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Enlace varios ítems utilizando el nuevo selector inteligente escribiendo una \"/\"",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Los moderadores ahora pueden crear salas de grupos (requiere el servidor externo de señalización)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Las llamadas ahora pueden ser grabadas (requiere el servidor externo de señalización)",
     "- Conversations can now have an avatar or emoji as icon" : "- Ahora, las conversaciones pueden tener como icono un avatar o emoji",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Están disponibles ahora los fondos virtuales, además de los fondos borrosos en las llamadas de video",
     "- Reactions are now available during calls" : "- Las reacciones están ahora disponibles durante las llamadas",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Las leyendas permiten enviar un mensaje con un archivo al mismo tiempo",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- El video del orador ahora es visible mientras se comparte la pantalla y las reacciones de la llamada están animadas",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Los mensajes pueden ser editados ahora por los administradores y moderadores con sesión iniciada por 6 horas",
-    "- Unsent message drafts are now saved in your browser " : "- Los borradores de mensajes no enviados están guardados ahora en su navegador",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vista previa:* el chat por texto puede ser hecho ahora de manera federada con otros servidores Talk",
     "Talk updates ✅" : "Actualizaciones de Talk ✅",
     "Reaction deleted by author" : "Reacción borrada por el autor",
@@ -1759,6 +1756,8 @@
     "Join conversations at any time, anywhere, on any device." : "Únase a conversaciones en cualquier momento, en cualquier lugar, en cualquier dispositivo.",
     "Android app" : "App Android",
     "iOS app" : "App iOS",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Los moderadores ahora pueden crear salas de grupos (requiere el servidor externo de señalización)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Las llamadas ahora pueden ser grabadas (requiere el servidor externo de señalización)",
     "There are currently no commands available." : "Actualmente no hay comandos disponibles.",
     "The command does not exist" : "El comando no existe",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Se ha producido un error al ejecutar el comando. Por favor, contacte con el administrador para que compruebe los registros.",
@@ -1801,6 +1800,7 @@
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN es usado como proxy en el tráfico de participantes detrás de un firewall.",
     "Signaling servers" : "Servidores de señalización",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente, se puede usar un servidor de señalización externo para instalaciones más grandes. Déjalo vacío para usar el servidor de señalización interno."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente, se puede usar un servidor de señalización externo para instalaciones más grandes. Déjalo vacío para usar el servidor de señalización interno.",
+    "- Unsent message drafts are now saved in your browser " : "- Los borradores de mensajes no enviados están guardados ahora en su navegador"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

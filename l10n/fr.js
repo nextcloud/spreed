@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Envoi des messages sans notifier les destinataires si ce n'est pas urgent",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Les émojis peuvent maintenant être autocomplétés en tapant un « : »",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Liez divers éléments grâce au sélecteur intelligent en tapant un « / »",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Les modérateurs peuvent désormais créer des salles de sous-groupes (requiert le serveur de signalement externe)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Les appels peuvent maintenant être enregistrés (requiert le serveur de signalement externe)",
     "- Conversations can now have an avatar or emoji as icon" : "- Les conversations peuvent maintenant avoir comme icône un avatar ou un emoji",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- des fonds d'écran virtuels sont maintenant disponibles en plus du fond flouté pour les appels vidéos",
     "- Reactions are now available during calls" : "- Les réactions sont maintenant possible pendant les appels",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Légendes permet d'envoyer un message avec un fichier en même temps",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- La vidéo de l’intervenant est maintenant visible quand le partage d’écran est activé et les réactions sont animées",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Les messages peuvent maintenant être modifiés par les auteurs connectés et les modérateurs pendant 6 heures",
-    "- Unsent message drafts are now saved in your browser " : "- Les brouillons de message non envoyés sont sauvegardés dans votre navigateur",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk.",
     "_All %n participant_::_All %n participants_" : ["Le participant","Les %n participants","Les %n participants"],
     "Talk updates ✅" : "Mises à jour de Talk ✅",
@@ -1790,6 +1787,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Rejoignez des conversations n'importe quand, n'importe où, depuis n'importe quel appareil.",
     "Android app" : "Application Android",
     "iOS app" : "Application iOS",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Les modérateurs peuvent désormais créer des salles de sous-groupes (requiert le serveur de signalement externe)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Les appels peuvent maintenant être enregistrés (requiert le serveur de signalement externe)",
     "There are currently no commands available." : "Aucune commande n'est disponible actuellement.",
     "The command does not exist" : "Cette commande n'existe pas.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Une erreur s'est produite lors de l'exécution de la commande. Veuillez demander à un administrateur de vérifier les logs.",
@@ -1832,6 +1831,7 @@ OC.L10N.register(
     "TURN server" : "Serveur TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Le serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
     "Signaling servers" : "Serveur de signalement",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne.",
+    "- Unsent message drafts are now saved in your browser " : "- Les brouillons de message non envoyés sont sauvegardés dans votre navigateur"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
