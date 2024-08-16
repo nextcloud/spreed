@@ -5,6 +5,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-rc.2 – 2024-08-16
+### Fixed
+- Adjust conversation list density
+  [#13013](https://github.com/nextcloud/spreed/issues/13013)
+
 ## 20.0.0-rc.1 – 2024-08-15
 ### Added
 - Show upcoming event information (up to 1 month) in conversation top bar
