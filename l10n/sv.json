@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Skicka chattmeddelanden utan att notifiera mottagaren förutsatt att det inte är brådskande",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Emojis kan nu autokompletteras om man skriver \".\"",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Länka olika objekt med nya smart-picker genom att skriva ett \"/\"",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatorer kan nu skapa grupprum (kräver en extern kommunikationsserver)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Samtal kan nu spelas in (Kräver en extern kommunikationsserver)",
     "- Conversations can now have an avatar or emoji as icon" : "- Konversationer kan nu ha en avatar eller en emoji som ikon",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Utöver suddig bakgrund finns nu även virtuella bakgrunder tillgängligt i videosamtal",
     "- Reactions are now available during calls" : "- Reaktioner finns nu tillgängligt under samtal",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Bildtexter tillåter att skicka ett meddelande med en fil samtidigt",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video av talare är nu synlig när skärmen delas och samtalsreaktioner är animerade",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Meddelanden kan nu redigeras av inloggade författare och moderatorer i 6 timmar",
-    "- Unsent message drafts are now saved in your browser " : "- Ej skickade meddelandeutkast sparas nu i din webbläsare",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Förhandsgranskning:* Textchatt kan nu göras på ett federerat sätt med andra Talk-servrar",
     "_All %n participant_::_All %n participants_" : ["Alla %n deltagare","Alla %n deltagare"],
     "Talk updates ✅" : "Talk-uppdateringar ✅",
@@ -1126,6 +1123,7 @@
     "Error occurred when disabling SIP dial-in" : "Ett fel uppstod när SIP-inringning skulle inaktiveras",
     "Enter your name" : "Ange ditt namn",
     "Submit name and join" : "Ange namn och gå med",
+    "Do you already have an account?" : "Har du redan ett konto?",
     "Call a phone number" : "Ring ett telefonnummer",
     "Search participants or phone numbers" : "Sök deltagare eller telefonnummer",
     "Creating the conversation …" : "Skapar konversationen ...",
@@ -1560,6 +1558,8 @@
     "Recording" : "Inspelning",
     "Send a reaction" : "Skicka en reaktion",
     "React with {reaction}" : "Reagera med {reaction}",
+    "Open Calendar" : "Öppna kalender",
+    "Next call" : "Nästa samtal",
     "_%n participant in call_::_%n participants in call_" : ["%n deltagare i samtalet","%n deltagare i samtalet"],
     "Show your screen" : "Visa din skärm",
     "Stop screensharing" : "Stoppa skärmdelning",
@@ -1785,6 +1785,8 @@
     "Join conversations at any time, anywhere, on any device." : "Gå med i konversationer när som helst, var som helst, på alla enheter.",
     "Android app" : "Android-app",
     "iOS app" : " iOS-app",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatorer kan nu skapa grupprum (kräver en extern kommunikationsserver)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Samtal kan nu spelas in (Kräver en extern kommunikationsserver)",
     "There are currently no commands available." : "Det finns för närvarande inga kommandon tillgängliga.",
     "The command does not exist" : "Kommandot finns inte",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Ett fel inträffade under körning av kommandot. Be en administratör att kontrollera loggarna.",
@@ -1827,6 +1829,7 @@
     "TURN server" : "TURN-server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
     "Signaling servers" : "Signalservrar",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
+    "- Unsent message drafts are now saved in your browser " : "- Ej skickade meddelandeutkast sparas nu i din webbläsare"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

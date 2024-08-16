@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Acil değilse sohbet iletilerine alıcılara bildirim olmadan gönderin",
     "- Emojis can now be autocompleted by typing a \":\"" : "- \".\" yazarak emojiler otomatik olarak tamamlanabilir",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- \"/\" yazarak yeni akıllı seçici ile çeşitli ögeler bağlanabilir",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Sorumlular çalışma odaları oluşturabilir (dış signaling sunucusu gereklidir)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Çağrılar kaydedilebilir (dış signaling sunucusu gereklidir)",
     "- Conversations can now have an avatar or emoji as icon" : "- Görüşmelerde artık simge olarak bir avatar ya da emoji kullanılabilir",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Görüntülü aramalarda bulanık arka planın yanında artık sanal arka planlar da kullanılabilir",
     "- Reactions are now available during calls" : "- Artık aramalarda tepkiler kullanılabilir",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Alt yazılar aynı anda bir dosyayla birlikte bir ileti göndermeyi sağlar",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Artık ekran paylaşılırken konuşmacının görüntüsü görülebiliyor ve çağrı tepkileri canlandırılıyor",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- İletilerin oturum açmış yazarlar ve sorumlular tarafından ilk 6 saat içinde düzenlenebilmesi sağlandı",
-    "- Unsent message drafts are now saved in your browser " : "- Gönderilmemiş ileti taslaklarının tarayıcınıza kaydedilmesi sağlandı",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ön izleme:* Metin sohbetlerinin diğer Talk sunucularıyla birleşik olarak yapılabilmesi sağlandı",
     "Talk updates ✅" : "Talk güncellemeleri ✅",
     "Reaction deleted by author" : "Tepki yazarı tarafından silindi",
@@ -1762,6 +1759,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Görüşmelere istediğiniz yerden, istediğiniz zamanda, istediğiniz aygıt ile katılabilirsiniz.",
     "Android app" : "Android uygulaması",
     "iOS app" : "iOS uygulaması",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Sorumlular çalışma odaları oluşturabilir (dış signaling sunucusu gereklidir)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Çağrılar kaydedilebilir (dış signaling sunucusu gereklidir)",
     "There are currently no commands available." : "Şu anda kullanılabilecek bir komut yok.",
     "The command does not exist" : "Komut bulunamadı",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Komut yürütülürken bir sorun çıktı. Lütfen BT yöneticinizden günlük kayıtlarına bakmasını isteyin.",
@@ -1804,6 +1803,7 @@ OC.L10N.register(
     "TURN server" : "TURN Sunucusu",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN sunucusu bir güvenlik duvarı arkasındaki katılımcının trafiğini aktarmak için vekil sunucu olarak kullanılır.",
     "Signaling servers" : "Signaling sunucuları",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Büyük kurulumlar için isteğe göre bir dış signaling sunucusu kullanılabilir. İç signaling sunucusunu kullanmak için boş bırakın."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Büyük kurulumlar için isteğe göre bir dış signaling sunucusu kullanılabilir. İç signaling sunucusunu kullanmak için boş bırakın.",
+    "- Unsent message drafts are now saved in your browser " : "- Gönderilmemiş ileti taslaklarının tarayıcınıza kaydedilmesi sağlandı"
 },
 "nplurals=2; plural=(n > 1);");

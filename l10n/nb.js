@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Send chatmeldinger uten å varsle mottakerne i tilfelle det ikke haster",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Emojier kan nå fullføres automatisk ved å skrive en \":\"",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Koble ulike elementer ved hjelp av den nye smartvelgeren ved å skrive en \"/\"",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatorer kan nå opprette grupperom (krever den eksterne signalserveren)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Samtaler kan nå tas opp (krever den eksterne signalserveren)",
     "- Conversations can now have an avatar or emoji as icon" : "- Samtaler kan nå ha en avatar eller emoji som ikon",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Virtuelle bakgrunner er nå tilgjengelige i tillegg til den uskarpe bakgrunnen i videosamtaler",
     "- Reactions are now available during calls" : "- Reaksjoner er nå tilgjengelige under samtaler",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Bildetekster gjør det mulig å sende en melding med en fil samtidig",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video av taleren er nå synlig mens skjermen deles, og anropsreaksjoner er animerte",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Meldinger kan nå redigeres av innloggede forfattere og moderatorer i 6 timer",
-    "- Unsent message drafts are now saved in your browser " : "- Utkast til usendte meldinger lagres nå i nettleseren ",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Forhåndsvisning: * Tekstchatting kan nå gjøres på en samlet måte med andre Talk-servere",
     "_All %n participant_::_All %n participants_" : ["Alle %n deltaker","Alle %n deltakere"],
     "Talk updates ✅" : "Talk oppdateringer ✅",
@@ -1790,6 +1787,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "Bli med i samtaler når som helst, hvor som helst, på hvilken som helst enhet.",
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatorer kan nå opprette grupperom (krever den eksterne signalserveren)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Samtaler kan nå tas opp (krever den eksterne signalserveren)",
     "There are currently no commands available." : "Det er for øyeblikket ingen kommandoer tilgjengelige.",
     "The command does not exist" : "Kommandoen eksisterer ikke",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Det oppstod en feil under kjøring av kommandoen. Be en administrator om å sjekke loggene.",
@@ -1832,6 +1831,7 @@ OC.L10N.register(
     "TURN server" : "TURN-server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-serveren fungerer som mellomserver for trafikk fra deltakere bak en brannmur.",
     "Signaling servers" : "Signalservere",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
+    "- Unsent message drafts are now saved in your browser " : "- Utkast til usendte meldinger lagres nå i nettleseren "
 },
 "nplurals=2; plural=(n != 1);");

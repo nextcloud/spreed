@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "– Envíe mensaxes de parola sen avisar aos destinatarios por se non é urxente",
     "- Emojis can now be autocompleted by typing a \":\"" : "– Agora os «emojis» pódense completar automaticamente escribindo «:»",
     "- Link various items using the new smart-picker by typing a \"/\"" : "– Ligar varios elementos usando o novo selector intelixente escribindo unha «/»",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "– Os moderadores agora poden crear salas parciais (precisa o servidor externo de sinalización)",
-    "- Calls can now be recorded (requires the external signaling server)" : "– Agora pódense gravar as chamadas (precisa o servidor externo de sinalización)",
     "- Conversations can now have an avatar or emoji as icon" : "– Agora as conversas poden ter un avatar ou un «emoji» como icona",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "– Agora están dispoñíbeis fondos virtuais ademais do fondo esvaído nas videochamadas",
     "- Reactions are now available during calls" : "– Agora as reaccións están dispoíbeis durante as chamadas",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "– As lendas permiten enviar unha mensaxe cun ficheiro ao mesmo tempo",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "– Agora é visíbel o vídeo do relator mentres se comparte a pantalla e as reaccións ás chamadas están animadas",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "– Agora os autores e moderadores que teñan accedido poden editar as mensaxes durante 6 horas",
-    "- Unsent message drafts are now saved in your browser " : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "– *Vista previa:* A parola de texto agora pódese facer de xeito federado con outros servidores de Talk",
     "_All %n participant_::_All %n participants_" : ["O único (%n) participante","Os %n participantes"],
     "Talk updates ✅" : "Actualizacións do Talk ✅",
@@ -1790,6 +1787,8 @@
     "Join conversations at any time, anywhere, on any device." : "Únase a conversas en calquera momento, en calquera lugar, con calquera dispositivo.",
     "Android app" : "Aplicación de Android",
     "iOS app" : "Aplicación de iOS",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "– Os moderadores agora poden crear salas parciais (precisa o servidor externo de sinalización)",
+    "- Calls can now be recorded (requires the external signaling server)" : "– Agora pódense gravar as chamadas (precisa o servidor externo de sinalización)",
     "There are currently no commands available." : "Actualmente non hai ordes dispoñíbeis.",
     "The command does not exist" : "Non existe a orde",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Produciuse un erro ao executar a orde. Pídalle a administración desta instancia que verifique os rexistros.",
@@ -1832,6 +1831,7 @@
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN usase como proxy no tráfico de participantes detrás dunha devasa.",
     "Signaling servers" : "Servidores de sinalización",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente pode empregarse un servidor Signaling externo para instalacións maiores. Deixeo baleiro para usar o servidor Signaling interno."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente pode empregarse un servidor Signaling externo para instalacións maiores. Deixeo baleiro para usar o servidor Signaling interno.",
+    "- Unsent message drafts are now saved in your browser " : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
