@@ -405,8 +405,8 @@ export default {
 		justify-content: center;
 		width: 100%;
 		overflow: hidden;
-		// Text is guaranteed to be one line. Make line-height 1.2 to fit top bar
-		line-height: 1.2;
+		// Text is guaranteed to be one line. Make line-height 20px to fit top bar
+		line-height: 20px;
 		&--offline {
 			color: var(--color-text-maxcontrast);
 		}
@@ -450,7 +450,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	line-height: 1.2;
+	line-height: 20px;
 
 	&__header {
 		font-weight: 500;

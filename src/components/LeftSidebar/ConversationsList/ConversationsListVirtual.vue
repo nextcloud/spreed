@@ -24,14 +24,16 @@ import { RecycleScroller } from 'vue-virtual-scroller'
 import Conversation from './Conversation.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 
+import { AVATAR } from '../../../constants.js'
+
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 /* Consider:
- * 36 = 2 * 1.2 * var(--default-font-size) - two lines of text
- * 8 = 2 * var(--default-grid-baseline) - item padding
- * 4 = var(--default-grid-baseline) - item outline (collapsed)
+ * avatar size (and two lines of text)
+ * list-item padding
+ * list-item__wrapper padding
  */
-const CONVERSATION_ITEM_SIZE = 48
+const CONVERSATION_ITEM_SIZE = AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2
 
 export default {
 	name: 'ConversationsListVirtual',

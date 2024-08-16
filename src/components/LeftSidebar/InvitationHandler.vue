@@ -228,14 +228,14 @@ export default {
 			padding-left: 4px;
 
 			&__name {
-				line-height: 1.2;
+				line-height: 20px;
 				font-weight: bold;
 				color: var(--color-main-text);
 			}
 
 			&__subname {
 				// Overwrite NcRichText styles
-				line-height: 1.2 !important;
+				line-height: 20px !important;
 				color: var(--color-text-maxcontrast);
 			}
 		}
