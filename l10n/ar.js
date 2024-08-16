@@ -51,8 +51,6 @@ OC.L10N.register(
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- أرسِل رسائل دردشتك غير المستعجلة دون داعٍ لإزعاج المستلمين بإشعارت فورية",
     "- Emojis can now be autocompleted by typing a \":\"" : "- أصبح الاستكمال الآلي للإيموجي emoji الآن ممكناً؛ و ذلك بكتابة علامة الشارحة \":\"",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- إربط العناصر المتعددة باستعمال اللاقط الذكي الجديد؛ و ذلك بكتابة علامة الشَّرْطَة المائلة \"/\"",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- أصبح بإمكان المنسقين moderators الآن إنشاء غرفٍ جانبيةٍ (يستلزم ذلك خادوماً خارجيّاً للإشارة external signaling server)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- صار بالإمكان الآن تسجيل المكالمات (يستلزم ذلك خادوماً خارجيّاً للإشارة external signaling server)",
     "- Conversations can now have an avatar or emoji as icon" : "- صار بإمكان المحادثات أن تحمل رمزاً تجسيدياً Avatar أو إيموجي emoji كأيقونة",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- الخلفيات الظاهرية Virtual backgrounds أصبحت متاحةً الآن في محادثات الفيديو بالإضافة إلى تضبيب الخلفية blurred background ",
     "- Reactions are now available during calls" : "- الاستجابات Reactions ممكنة  الآن في أثناء المكالمات",
@@ -67,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- تٌمكِّنُك التعليقات Captions من إلحاق رسالة بالملف المرسل في نفس الوقت",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- أصبح فيديو المُتحدِّث مرئيًا الآن أثناء مشاركة الشاشة و يتم كذلك تحريك تفاعلات المكالمات",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- يمكن الآن تعديل الرسائل من قِبَل المؤلفين و المنسقين إلى حد 6 ساعات",
-    "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى",
     "_All %n participant_::_All %n participants_" : ["كل الـ%n مشارك","كل الـ%n مشارك","كل الـ %n مشاركين","كل الـ%n مشاركين","كل الـ%n مشارك","كل الـ%n مشارك"],
     "Talk updates ✅" : "تحديثات التحدث  ✅",
@@ -1511,6 +1508,7 @@ OC.L10N.register(
     "Number length is too short" : "عدد خانات الرقم أقل مما يُفترَض",
     "Number length is too long" : "عدد خانات الرقم أكثر مما يُفتَرض",
     "Number is not valid" : "الرقم غير صحيح",
+    "Edit display name" : "عَدِّل اسم العرض",
     "Save name" : "حفظ الاسم",
     "Display name: {name}" : "الاسم المعروض: {name}",
     "Calls are not supported in your browser" : "المكالمات غير مدعومة في متصفحك",
@@ -1791,6 +1789,8 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز",
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- أصبح بإمكان المنسقين moderators الآن إنشاء غرفٍ جانبيةٍ (يستلزم ذلك خادوماً خارجيّاً للإشارة external signaling server)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- صار بالإمكان الآن تسجيل المكالمات (يستلزم ذلك خادوماً خارجيّاً للإشارة external signaling server)",
     "There are currently no commands available." : "لا يوجد أوامر في الوقت الحالي",
     "The command does not exist" : "الامر غير موجود",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "خطأ اثناء استدعاء الامر، اطلب من المسؤول مراجعة السجلات.",
@@ -1833,6 +1833,7 @@ OC.L10N.register(
     "TURN server" : "خادم TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "يتم استخدام خادم TURN كوسيط لمرور المشاركين خلف جدار الحماية.",
     "Signaling servers" : "خوادم التشوير ",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "يجب استخدام خادم تشوير خارجي اختياري للتركيبات الكبرى. اتركه فارغًا لاستخدام خادم التشوير الداخلي."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "يجب استخدام خادم تشوير خارجي اختياري للتركيبات الكبرى. اتركه فارغًا لاستخدام خادم التشوير الداخلي.",
+    "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

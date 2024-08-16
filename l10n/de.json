@@ -49,8 +49,6 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Chat-Nachrichten senden, ohne die Empfänger zu benachrichtigen, für Fälle die nicht dringend sind",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Emojis können jetzt automatisch vervollständigt werden, indem ein \":\" eingegeben wird",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Verknüpfe verschiedene Artikel mit dem neuen Smart-Picker, indem du ein \"/\" eingibst",
-    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatoren können jetzt Gruppenräume erstellen (erfordert den externen Signalisierungsserver)",
-    "- Calls can now be recorded (requires the external signaling server)" : "- Anrufe können jetzt aufgezeichnet werden (benötigt den externen Signalisierungsserver)",
     "- Conversations can now have an avatar or emoji as icon" : "- Unterhaltungen können nun einen Avatar oder ein Icon haben",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Virtuelle Hintergründe sind nun zusätzlich zum verwischten Hintergrund in Video-Unterhaltungen möglich",
     "- Reactions are now available during calls" : "- Reaktionen sind nun auch in Anrufen möglich",
@@ -65,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Untertitel ermöglichen das gleichzeitige Senden einer Nachricht mit einer Datei",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Das Video des Sprechers ist jetzt beim Teilen des Bildschirms sichtbar und die Anrufreaktionen sind animiert",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Nachrichten können jetzt 6 Stunden lang von angemeldeten Autoren und Moderatoren bearbeitet werden",
-    "- Unsent message drafts are now saved in your browser " : "- Nicht gesendete Nachrichtenentwürfe werden jetzt in deinem Browser gespeichert",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vorschau:* Text-Chats können jetzt im Verbund mit anderen Talk-Servern durchgeführt werden",
     "_All %n participant_::_All %n participants_" : ["Jeder %n Teilnehmer","Alle %n Teilnehmer"],
     "Talk updates ✅" : "Talk Aktualisierungen ✅",
@@ -1788,6 +1785,8 @@
     "Join conversations at any time, anywhere, on any device." : "Nimm an Gesprächen teil, zu jeder Zeit, an jedem Ort und mit jedem Gerät.",
     "Android app" : "Android-App",
     "iOS app" : "iOS-App",
+    "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Moderatoren können jetzt Gruppenräume erstellen (erfordert den externen Signalisierungsserver)",
+    "- Calls can now be recorded (requires the external signaling server)" : "- Anrufe können jetzt aufgezeichnet werden (benötigt den externen Signalisierungsserver)",
     "There are currently no commands available." : "Aktuell stehen keine Befehle zur Verfügung.",
     "The command does not exist" : "Der Befehl existiert nicht",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Es ist ein Fehler beim Ausführen des Befehls aufgetreten. Bitte einen Administrator, die Protokolle zu überprüfen.",
@@ -1830,6 +1829,7 @@
     "TURN server" : "TURN-Server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Der TURN-Server dient als Proxy für die Verbindungen von Teilnehmern hinter einer Firewall.",
     "Signaling servers" : "Signaling-Server",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ein externer Signaling-Server kann optional für größere Installationen verwendet werden. Leer lassen, um den internen Signaling-Server zu verwenden."
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ein externer Signaling-Server kann optional für größere Installationen verwendet werden. Leer lassen, um den internen Signaling-Server zu verwenden.",
+    "- Unsent message drafts are now saved in your browser " : "- Nicht gesendete Nachrichtenentwürfe werden jetzt in deinem Browser gespeichert"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
