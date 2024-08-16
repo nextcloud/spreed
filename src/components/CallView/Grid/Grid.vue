@@ -71,11 +71,8 @@
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
 							</h1>
-							<div v-else
-								class="dev-mode-video--self video"
-								:style="{'background': 'url(' + placeholderImage(8) + ')'}" />
 						</template>
-						<LocalVideo v-if="!isStripe && !isRecording && !screenshotMode"
+						<LocalVideo v-if="!isStripe && !isRecording"
 							ref="localVideo"
 							class="video"
 							is-grid
@@ -83,6 +80,7 @@
 							:token="token"
 							:local-media-model="localMediaModel"
 							:local-call-participant-model="localCallParticipantModel"
+							:screenshot-mode-url="screenshotMode ? placeholderImage(8) : ''"
 							@click-video="handleClickLocalVideo" />
 					</div>
 					<NcButton v-if="hasNextPage && gridWidth > 0"
@@ -96,7 +94,7 @@
 						</template>
 					</NcButton>
 				</div>
-				<LocalVideo v-if="isStripe && !isRecording && !screenshotMode"
+				<LocalVideo v-if="isStripe && !isRecording"
 					ref="localVideo"
 					class="video"
 					:is-stripe="true"
@@ -104,6 +102,7 @@
 					:token="token"
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
+					:screenshot-mode-url="screenshotMode ? placeholderImage(8) : ''"
 					@click-video="handleClickLocalVideo" />
 
 				<template v-if="devMode">
@@ -1001,11 +1000,6 @@ export default {
 	}
 
 	position: relative;
-
-	&--self {
-		background-size: cover !important;
-		border-radius: calc(var(--default-clickable-area) / 2);
-	}
 
 	img {
 		object-fit: cover;
