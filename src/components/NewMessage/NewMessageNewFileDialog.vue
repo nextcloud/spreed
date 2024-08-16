@@ -4,53 +4,50 @@
 -->
 
 <template>
-	<NcModal size="large"
+	<NcDialog :name="t('spreed', 'Create and share a new file')"
+		size="large"
 		:container="container"
 		class="templates-picker"
-		@close="closeModal">
-		<div class="new-text-file">
-			<h2>
-				{{ t('spreed', 'Create and share a new file') }}
-			</h2>
-			<form class="new-text-file__form templates-picker__form"
-				:style="style"
-				@submit.prevent="handleCreateNewFile">
-				<NcTextField id="new-file-form-name"
-					ref="textField"
-					:error="!!newFileError"
-					:helper-text="newFileError"
-					:label="t('spreed', 'Name of the new file')"
-					:placeholder="newFileTitle"
-					:value="newFileTitle"
-					@update:value="updateNewFileTitle" />
+		close-on-click-outside
+		@update:open="closeModal">
+		<form class="templates-picker__form"
+			:style="style"
+			@submit.prevent="handleCreateNewFile">
+			<NcTextField id="new-file-form-name"
+				ref="textField"
+				:error="!!newFileError"
+				:helper-text="newFileError"
+				:label="t('spreed', 'Name of the new file')"
+				:placeholder="newFileTitle"
+				:value="newFileTitle"
+				@update:value="updateNewFileTitle" />
 
-				<ul v-if="templates.length > 1" class="templates-picker__list">
-					<NewMessageTemplatePreview v-for="template in templates"
-						:key="template.fileid"
-						:basename="template.basename"
-						:checked="checked === template.fileid"
-						:fileid="template.fileid"
-						:filename="template.filename"
-						:preview-url="template.previewUrl"
-						:has-preview="template.hasPreview"
-						:mime="template.mime"
-						:ratio="fileTemplate.ratio"
-						@check="onCheck" />
-				</ul>
+			<ul v-if="templates.length > 1" class="templates-picker__list">
+				<NewMessageTemplatePreview v-for="template in templates"
+					:key="template.fileid"
+					:basename="template.basename"
+					:checked="checked === template.fileid"
+					:fileid="template.fileid"
+					:filename="template.filename"
+					:preview-url="template.previewUrl"
+					:has-preview="template.hasPreview"
+					:mime="template.mime"
+					:ratio="fileTemplate.ratio"
+					@check="onCheck" />
+			</ul>
+		</form>
 
-				<div class="new-text-file__buttons">
-					<NcButton type="primary"
-						:disabled="loading"
-						@click="handleCreateNewFile">
-						<template v-if="loading" #icon>
-							<NcLoadingIcon />
-						</template>
-						{{ t('spreed', 'Create file') }}
-					</NcButton>
-				</div>
-			</form>
-		</div>
-	</NcModal>
+		<template #actions>
+			<NcButton type="primary"
+				:disabled="loading"
+				@click="handleCreateNewFile">
+				<template v-if="loading" #icon>
+					<NcLoadingIcon />
+				</template>
+				{{ t('spreed', 'Create file') }}
+			</NcButton>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -58,8 +55,8 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
@@ -72,8 +69,8 @@ export default {
 
 	components: {
 		NcButton,
+		NcDialog,
 		NcLoadingIcon,
-		NcModal,
 		NcTextField,
 		NewMessageTemplatePreview,
 	},
@@ -249,36 +246,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.new-text-file {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	gap: 28px;
-	padding: 20px;
-
-	&__buttons {
-		display: flex;
-		justify-content: end;
-		padding-top: calc(var(--margin) * 2);
-	}
-
+.templates-picker {
 	&__form {
 		width: 100%;
+	}
 
-		.templates-picker__list {
-			margin-top: 20px;
-			display: grid;
-			grid-gap: calc(var(--margin) * 2);
-			grid-auto-columns: 1fr;
-			// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
-			max-width: calc(var(--fullwidth) * 6);
-			grid-template-columns: repeat(auto-fit, var(--fullwidth));
-			// Make sure all rows are the same height
-			grid-auto-rows: 1fr;
-			// Center the columns set
-			justify-content: center;
-		}
+	&__list {
+		margin-top: 20px;
+		display: grid;
+		grid-gap: calc(var(--margin) * 2);
+		grid-auto-columns: 1fr;
+		// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
+		max-width: calc(var(--fullwidth) * 6);
+		grid-template-columns: repeat(auto-fit, var(--fullwidth));
+		// Make sure all rows are the same height
+		grid-auto-rows: 1fr;
+		// Center the columns set
+		justify-content: center;
 	}
 }
 </style>

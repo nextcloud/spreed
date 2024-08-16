@@ -685,7 +685,7 @@ export default {
 		.preview {
 			width: 100%;
 			min-height: unset;
-			height: 100%;
+			height: 100% !important;
 		}
 	}
 }
