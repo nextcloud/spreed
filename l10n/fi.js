@@ -1128,6 +1128,7 @@ OC.L10N.register(
     "Phone numbers" : "Puhelinnumerot",
     "Number length is not valid" : "Numeron pituus on virheellinen",
     "Number is not valid" : "Numero ei ole kelvollinen",
+    "Edit display name" : "Muokkaa näyttönimeä",
     "Save name" : "Tallenna nimi",
     "Display name: {name}" : "Näyttönimi: {name}",
     "Calls are not supported in your browser" : "Selaimesi ei tue puheluja",

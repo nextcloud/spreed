@@ -1239,6 +1239,7 @@ OC.L10N.register(
     "Search conversations or users" : "Buscar conversaciones o usuarios",
     "Select conversation" : "Seleccionar conversación",
     "Link to a conversation" : "Enlace a una conversación",
+    "Edit display name" : "Editar nombre para mostrar",
     "Save name" : "Guardar nombre",
     "Display name: {name}" : "Nombre de visualización: {name}",
     "Calls are not supported in your browser" : "Las llamadas no son compatibles en tu navegador",

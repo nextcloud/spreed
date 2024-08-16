@@ -1321,6 +1321,7 @@ OC.L10N.register(
     "Search conversations or users" : "Bilatu elkarrizketak edo erabiltzaileak",
     "Select conversation" : "Hautatu elkarrizketa",
     "Link to a conversation" : "Esteka elkarrizketara",
+    "Edit display name" : "Editatu erakutsiko den izena",
     "Save name" : "Gorde izena",
     "Calls are not supported in your browser" : "Deiak ez dira onartzen zure nabigatzailean",
     "Access to microphone is only possible with HTTPS" : "Mikrofonoa atzitzeko modu bakarra HTTPS bidez da",

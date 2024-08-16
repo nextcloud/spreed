@@ -858,6 +858,7 @@ OC.L10N.register(
     "Search conversations or users" : "Пребарување на разговори или корисници",
     "Select conversation" : "Избери разговор",
     "Link to a conversation" : "Линк до разговорот",
+    "Edit display name" : "Иреди име",
     "Save name" : "Зачувај име",
     "Calls are not supported in your browser" : "Повици не се поддржани од вашиот прелистувач",
     "Access to microphone is only possible with HTTPS" : "Пристап до микрофонот е возможен само преку безбедноска врска HTTPS",

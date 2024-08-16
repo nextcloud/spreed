@@ -1485,6 +1485,7 @@
     "Number length is too short" : "El número es demasiado corto",
     "Number length is too long" : "El número es demasiado largo",
     "Number is not valid" : "El número no es válido",
+    "Edit display name" : "Editar nombre a mostrar",
     "Save name" : "Guardar nombre",
     "Display name: {name}" : "Nombre mostrado: {name}",
     "Calls are not supported in your browser" : "Tu navegador no admite llamadas",
