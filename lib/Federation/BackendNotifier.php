@@ -69,6 +69,7 @@ class BackendNotifier {
 		$roomName = $room->getName();
 		$roomType = $room->getType();
 		$roomToken = $room->getToken();
+		$roomDefaultPermissions = $room->getDefaultPermissions();
 
 		try {
 			$this->restrictionValidator->isAllowedToInvite($sharedBy, $invitedCloudId);
@@ -101,6 +102,7 @@ class BackendNotifier {
 		$protocol['invitedCloudId'] = $invitedCloudId->getId();
 		$protocol['roomName'] = $roomName;
 		$protocol['roomType'] = $roomType;
+		$protocol['roomDefaultPermissions'] = $roomDefaultPermissions;
 		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;
 		$share->setProtocol($protocol);
 
