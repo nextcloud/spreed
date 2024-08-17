@@ -125,6 +125,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$remoteId = $share->getProviderId();
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
+		$roomCallPermissions = $share->getProtocol()['roomCallPermissions'];
+		$roomDefaultPermissions = $share->getProtocol()['roomDefaultPermissions'];
 		if (isset($share->getProtocol()['invitedCloudId'])) {
 			$localCloudId = $share->getProtocol()['invitedCloudId'];
 		} else {
@@ -173,7 +175,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
+			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int) $remoteId, $roomType, $roomName, $roomCallPermissions, $roomDefaultPermissions, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
 
 			$this->notifyAboutNewShare($shareWithUser, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
 			return (string) $invite->getId();

@@ -256,6 +256,8 @@ class FederationTest extends TestCase {
 		$shareType = 'user';
 		$roomType = Room::TYPE_GROUP;
 		$roomName = 'Room name';
+		$roomCallPermissions = Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_PUBLISH_AUDIO;
+		$roomDefaultPermissions = Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_CHAT;
 
 		$shareWithUser = $this->createMock(IUser::class);
 		$shareWithUserID = '10';
@@ -277,6 +279,8 @@ class FederationTest extends TestCase {
 			'name' => 'nctalk',
 			'roomType' => $roomType,
 			'roomName' => $roomName,
+			'roomCallPermissions' => $roomCallPermissions,
+			'roomDefaultPermissions' => $roomDefaultPermissions,
 			'options' => [
 				'sharedSecret' => $token,
 			],
@@ -288,7 +292,7 @@ class FederationTest extends TestCase {
 		// Test receiving federation expectations
 		$this->federationManager->expects($this->once())
 			->method('addRemoteRoom')
-			->with($shareWithUser, $providerId, $roomType, $roomName, $name, $remote, $token)
+			->with($shareWithUser, $providerId, $roomType, $roomName, $roomCallPermissions, $roomDefaultPermissions, $name, $remote, $token)
 			->willReturn($invite);
 
 		$this->config->method('isFederationEnabled')
