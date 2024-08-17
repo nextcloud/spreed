@@ -203,13 +203,7 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	public function modifyPermissions(int $roomId, string $mode, int $newState): void {
-		$query = $this->db->getQueryBuilder();
-		$query->update($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->notIn('actor_type', $query->createNamedParameter([
-				Attendee::ACTOR_CIRCLES,
-				Attendee::ACTOR_GROUPS,
-			], IQueryBuilder::PARAM_STR_ARRAY)));
+		$query = $this->getModifyPermissionsBaseQuery($roomId);
 
 		if ($mode === Attendee::PERMISSIONS_MODIFY_SET) {
 			if ($newState !== Attendee::PERMISSIONS_DEFAULT) {
@@ -235,6 +229,18 @@ class AttendeeMapper extends QBMapper {
 				}
 			}
 		}
+	}
+
+	protected function getModifyPermissionsBaseQuery(int $roomId): IQueryBuilder {
+		$query = $this->db->getQueryBuilder();
+		$query->update($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->notIn('actor_type', $query->createNamedParameter([
+				Attendee::ACTOR_CIRCLES,
+				Attendee::ACTOR_GROUPS,
+			], IQueryBuilder::PARAM_STR_ARRAY)));
+
+		return $query;
 	}
 
 	protected function addSinglePermission(IQueryBuilder $query, int $permission): void {
