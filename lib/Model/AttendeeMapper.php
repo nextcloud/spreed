@@ -203,12 +203,12 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	public function modifyPermissions(int $roomId, string $mode, int $newState): void {
-		$query = $this->getModifyPermissionsBaseQuery($roomId);
-
 		if ($mode === Attendee::PERMISSIONS_MODIFY_SET) {
 			if ($newState !== Attendee::PERMISSIONS_DEFAULT) {
 				$newState |= Attendee::PERMISSIONS_CUSTOM;
 			}
+
+			$query = $this->getModifyPermissionsBaseQuery($roomId);
 			$query->set('permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
 			$query->executeStatement();
 		} else {
@@ -221,6 +221,8 @@ class AttendeeMapper extends QBMapper {
 				Attendee::PERMISSIONS_LOBBY_IGNORE,
 			] as $permission) {
 				if ($permission & $newState) {
+					$query = $this->getModifyPermissionsBaseQuery($roomId);
+
 					if ($mode === Attendee::PERMISSIONS_MODIFY_ADD) {
 						$this->addSinglePermission($query, $permission);
 					} elseif ($mode === Attendee::PERMISSIONS_MODIFY_REMOVE) {
