@@ -59,11 +59,11 @@
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
-							<div v-for="(video, key) in displayedVideos"
-								:key="video"
+							<div v-for="key in displayedVideos"
+								:key="key"
 								class="dev-mode-video video"
 								:class="{'dev-mode-screenshot': screenshotMode}">
-								<img :src="placeholderImage(key)">
+								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar :has-shadow="false"
 									:model="placeholderModel(key)"
 									:shared-data="placeholderSharedData(key)"
@@ -137,7 +137,6 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -147,6 +146,7 @@ import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
 
@@ -676,75 +676,11 @@ export default {
 			}
 		},
 
-		placeholderImage(i) {
-			return generateFilePath('spreed', 'docs', 'screenshotplaceholders/placeholder-' + i + '.jpeg')
-		},
-
-		placeholderName(i) {
-			switch (i) {
-			case 0:
-				return 'Sandra McKinney'
-			case 1:
-				return 'Chris Wurst'
-			case 2:
-				return 'Edeltraut Bobb'
-			case 3:
-				return 'Arthur Blitz'
-			case 4:
-				return 'Roeland Douma'
-			case 5:
-				return 'Vanessa Steg'
-			case 6:
-				return 'Emily Grant'
-			case 7:
-				return 'Tobias Kaminsky'
-			case 8:
-				return 'Adrian Ada'
-			}
-		},
-
-		placeholderModel(i) {
-			return {
-				attributes: {
-					audioAvailable: i === 1 || i === 2 || i === 4 || i === 5 || i === 6 || i === 7 || i === 8,
-					audioEnabled: i === 8,
-					videoAvailable: true,
-					screen: false,
-					currentVolume: 0.75,
-					volumeThreshold: 0.75,
-					localScreen: false,
-					raisedHand: {
-						state: i === 0 || i === 1 || i === 6,
-					},
-				},
-				forceMute: () => {},
-				on: () => {},
-				off: () => {},
-				getWebRtc: () => {
-					return {
-						connection: {
-							getSendVideoIfAvailable: () => {},
-						},
-					}
-				},
-			}
-		},
-
-		placeholderSharedData() {
-			return {
-				videoEnabled: {
-					isVideoEnabled() {
-						return true
-					},
-				},
-				remoteVideoBlocker: {
-					isVideoEnabled() {
-						return true
-					},
-				},
-				screenVisible: false,
-			}
-		},
+		// Placeholder data for devMode and screenshotMode
+		placeholderImage,
+		placeholderName,
+		placeholderModel,
+		placeholderSharedData,
 
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
@@ -1062,7 +998,7 @@ export default {
 
 .dev-mode-video {
 	&:not(.dev-mode-screenshot) {
-		border: 1px solid #00FF41;
+		outline: 1px solid #00FF41;
 		color: #00FF41;
 	}
 
