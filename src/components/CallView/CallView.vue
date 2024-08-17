@@ -80,6 +80,17 @@
 						:is-one-to-one="isOneToOne"
 						:is-sidebar="isSidebar"
 						@force-promote-video="forcePromotedModel = $event" />
+
+					<div v-else-if="devMode && !isGrid"
+						class="dev-mode-video--promoted">
+						<img :alt="placeholderName(6)" :src="placeholderImage(6)">
+						<VideoBottomBar :has-shadow="false"
+							:model="placeholderModel(6)"
+							:shared-data="placeholderSharedData(6)"
+							:token="token"
+							:participant-name="placeholderName(6)"
+							is-big />
+					</div>
 				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
@@ -135,9 +146,11 @@ import LocalVideo from './shared/LocalVideo.vue'
 import PresenterOverlay from './shared/PresenterOverlay.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
 import Screen from './shared/Screen.vue'
+import VideoBottomBar from './shared/VideoBottomBar.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
 import { SIMULCAST } from '../../constants.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -150,13 +163,14 @@ export default {
 
 	components: {
 		EmptyCallView,
-		ViewerOverlayCallView,
 		Grid,
 		LocalVideo,
 		PresenterOverlay,
 		ReactionToaster,
 		Screen,
+		VideoBottomBar,
 		VideoVue,
+		ViewerOverlayCallView,
 	},
 
 	props: {
@@ -448,6 +462,11 @@ export default {
 
 	methods: {
 		t,
+		// Placeholder data for devMode and screenshotMode
+		placeholderImage,
+		placeholderName,
+		placeholderModel,
+		placeholderSharedData,
 		/**
 		 * Updates data properties that depend on the CallParticipantModels.
 		 *
@@ -759,6 +778,22 @@ export default {
 		// force the promoted remote or local video to cover the whole call view
 		// doesn't affect screen shares, as it's a different MediaStream
 		position: static;
+	}
+
+	.dev-mode-video--promoted {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	.dev-mode-video--promoted img {
+		position: absolute;
+		height: 100%;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	}
 }
 

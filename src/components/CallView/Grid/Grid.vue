@@ -106,19 +106,36 @@
 					:local-call-participant-model="localCallParticipantModel"
 					@click-video="handleClickLocalVideo" />
 
-				<div v-if="devMode && !screenshotMode" class="dev-mode__data">
-					<p>GRID INFO</p>
-					<p>Videos (total): {{ videosCount }}</p>
-					<p>Displayed videos n: {{ displayedVideos.length }}</p>
-					<p>Max per page: ~{{ videosCap }}</p>
-					<p>Grid width: {{ gridWidth }}</p>
-					<p>Grid height: {{ gridHeight }}</p>
-					<p>Min video width: {{ minWidth }} </p>
-					<p>Min video Height: {{ minHeight }} </p>
-					<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
-					<p>Number of pages: {{ numberOfPages }}</p>
-					<p>Current page: {{ currentPage }}</p>
-				</div>
+				<template v-if="devMode">
+					<NcButton type="tertiary"
+						class="dev-mode__toggle"
+						aria-label="Toggle screenshot mode"
+						@click="screenshotMode = !screenshotMode">
+						<template #icon>
+							<ChevronLeft v-if="!screenshotMode" fill-color="#00FF41" :size="20" />
+						</template>
+					</NcButton>
+					<div v-if="!screenshotMode" class="dev-mode__data">
+						<span>GRID INFO</span>
+						<NcButton small @click="disableDevMode">
+							Disable
+						</NcButton>
+						<span>Videos (total):</span><span>{{ videosCount }}</span>
+						<span>Displayed videos:</span><span>{{ displayedVideos.length }}</span>
+						<span>Max per page:</span><span>~{{ videosCap }}</span>
+						<span>Grid width:</span><span>{{ gridWidth }}px</span>
+						<span>Grid height:</span><span>{{ gridHeight }}px</span>
+						<span>Min video width:</span><span>{{ minWidth }}px</span>
+						<span>Min video Height:</span><span>{{ minHeight }}px</span>
+						<span>Grid aspect ratio:</span><span>{{ gridAspectRatio }}</span>
+						<span>Number of pages:</span><span>{{ numberOfPages }}</span>
+						<span>Current page:</span><span>{{ currentPage }}</span>
+						<span>Dummies:</span><input v-model.number="dummies" type="number">
+						<span>Stripe mode:</span><input v-model="devStripe" type="checkbox">
+						<span>Screenshot mode:</span><input v-model="screenshotMode" type="checkbox">
+
+					</div>
+				</template>
 			</div>
 		</TransitionWrapper>
 	</div>
@@ -126,6 +143,7 @@
 
 <script>
 import debounce from 'debounce'
+import { ref } from 'vue'
 
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -175,17 +193,6 @@ export default {
 		devMode: {
 			type: Boolean,
 			default: false,
-		},
-		screenshotMode: {
-			type: Boolean,
-			default: false,
-		},
-		/**
-		 * The number of dummy videos in dev mode
-		 */
-		dummies: {
-			type: Number,
-			default: 8,
 		},
 		/**
 		 * Display the overflow of videos in separate pages;
@@ -242,7 +249,13 @@ export default {
 	emits: ['select-video', 'click-local-video', 'update:devMode'],
 
 	setup() {
+		// The number of dummy videos in dev mode
+		const dummies = ref(4)
+		const screenshotMode = ref(false)
+
 		return {
+			dummies,
+			screenshotMode,
 			videosCap,
 			videosCapEnforced,
 		}
@@ -541,12 +554,12 @@ export default {
 			return this.tempPromotedModels.filter(model => !model.attributes.audioAvailable)
 		},
 
-		devModeEnabled: {
+		devStripe: {
 			get() {
-				return this.devMode
+				return this.isStripe
 			},
 			set(value) {
-				this.$emit('update:devMode', value)
+				this.$store.dispatch('setCallViewMode', { isGrid: !value, clearLast: false })
 			},
 		},
 	},
@@ -675,6 +688,10 @@ export default {
 		placeholderModel,
 		placeholderSharedData,
 
+		disableDevMode() {
+			this.screenshotMode = false
+			this.$emit('update:devMode', false)
+		},
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
 			// TODO: properly handle resizes when not on first page:
@@ -1014,23 +1031,36 @@ export default {
 	opacity: 25%;
 }
 
+.dev-mode__toggle {
+	position: fixed !important;
+	left: 20px;
+	top: calc(2 * var(--header-height));
+}
+
 .dev-mode__data {
 	font-family: monospace;
 	position: fixed;
 	color: #00FF41;
 	left: 20px;
-	bottom: 50%;
-	padding: 20px;
+	top: calc(2 * var(--header-height) + 40px);
+	padding: 5px;
 	background: rgba(0, 0, 0, 0.8);
 	border: 1px solid #00FF41;
-	width: 212px;
-	font-size: 12px;
-	z-index: 999999999999999;
+	display: grid;
+	grid-template-columns: 165px 75px;
+	align-items: center;
+	justify-content: flex-start;
 
-	& p {
+	& span {
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
+	}
+	& input {
+		max-width: 65px;
+		height: 22.5px !important;
+		min-height: unset;
+		margin: 0;
 	}
 }
 
