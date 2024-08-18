@@ -70,7 +70,7 @@ OC.L10N.register(
     "- Unsent message drafts are now saved in your browser" : "- Nicht gesendete Nachrichtenentwürfe werden jetzt in Ihrem Browser gespeichert",
     "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vorschau:* Text-Chats können jetzt im Verbund mit anderen Talk-Servern durchgeführt werden",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Moderatoren können jetzt Konten und Gäste sperren, um zu verhindern, dass sie erneut an einer Unterhaltung teilnehmen",
-    "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Anstehende Anrufe aus verknüpften Kalenderereignissen und Abwesenheitsvertretungen werden jetzt in Konversationen angezeigt",
+    "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Anstehende Anrufe aus verknüpften Kalenderterminen und Abwesenheitsvertretungen werden jetzt in Unterhaltungen angezeigt",
     "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- *Vorschau:* Anrufe können jetzt im Verbund mit anderen Talk-Servern getätigt werden (erfordert das Hochleistungs-Backend)",
     "_All %n participant_::_All %n participants_" : ["Jeder %n Teilnehmer","Alle %n Teilnehmer"],
     "Talk updates ✅" : "Talk Aktualisierungen ✅",
