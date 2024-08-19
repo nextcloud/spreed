@@ -4,8 +4,14 @@
 -->
 
 <template>
-	<NcModal size="large" :container="container" v-on="$listeners">
+	<NcModal size="large"
+		:container="container"
+		:label-id="dialogHeaderId"
+		v-on="$listeners">
 		<div class="shared-items-browser">
+			<h2 :id="dialogHeaderId" class="hidden-visually">
+				{{ sharedItemTitle[activeTab] || sharedItemTitle.default }}
+			</h2>
 			<div class="shared-items-browser__navigation">
 				<template v-for="type in sharedItemsOrder">
 					<NcButton v-if="sharedItems[type]"
@@ -36,6 +42,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import SharedItems from './SharedItems.vue'
 
 import { sharedItemsOrder, sharedItemTitle } from './sharedItemsConstants.js'
+import { useId } from '../../../composables/useId.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 
 export default {
@@ -67,12 +74,13 @@ export default {
 	emits: ['update:active-tab'],
 
 	setup() {
-		const sharedItemsStore = useSharedItemsStore()
+		const dialogHeaderId = `shared-items-browser-${useId()}`
 
 		return {
-			sharedItemsStore,
+			sharedItemsStore: useSharedItemsStore(),
 			sharedItemTitle,
 			sharedItemsOrder,
+			dialogHeaderId,
 		}
 	},
 

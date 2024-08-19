@@ -51,18 +51,18 @@
 							<Message :size="20" />
 						</template>
 					</NcButton>
-					<NcModal v-if="logModal"
+					<NcDialog :open.sync="logModal"
+						:name="t('spreed', 'Log content')"
+						size="normal"
 						container=".matterbridge-settings"
-						@close="closeLogModal">
-						<div class="modal__content">
-							<NcTextArea :value="processLog"
-								class="log-content"
-								:label="t('spreed', 'Log content')"
-								rows="29"
-								readonly
-								resize="vertical" />
-						</div>
-					</NcModal>
+						close-on-click-outside>
+						<NcTextArea :value="processLog"
+							class="log-content"
+							:label="t('spreed', 'Log content')"
+							:rows="29"
+							readonly
+							resize="vertical" />
+					</NcDialog>
 				</div>
 			</div>
 			<ul>
@@ -82,8 +82,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import Message from 'vue-material-design-icons/Message.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
@@ -93,7 +91,7 @@ import { imagePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -109,13 +107,14 @@ import {
 export default {
 	name: 'MatterbridgeSettings',
 	components: {
+		BridgePart,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcDialog,
 		NcSelect,
-		BridgePart,
-		Message,
-		NcModal,
 		NcTextArea,
+		// Icons
+		Message,
 		Plus,
 	},
 
@@ -620,9 +619,6 @@ export default {
 			this.getBridgeProcessState(this.token)
 			this.logModal = true
 		},
-		closeLogModal() {
-			this.logModal = false
-		},
 	},
 }
 </script>
@@ -727,11 +723,7 @@ export default {
 	}
 }
 
-.log-content {
-	width: 590px;
-}
-
-:deep(.modal-container__content) {
-	padding: 5px;
+.log-content :deep(.textarea__input) {
+	height: unset;
 }
 </style>

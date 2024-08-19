@@ -9,12 +9,16 @@
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		:close-on-click-outside="false"
 		:container="container"
+		:label-id="dialogHeaderId"
 		@close="handleDismiss">
 		<div class="upload-editor"
 			@dragover.prevent="handleDragOver"
 			@dragleave.prevent="handleDragLeave"
 			@drop.prevent="handleDropFiles">
 			<template v-if="!isVoiceMessage">
+				<h2 :id="dialogHeaderId" class="hidden-visually">
+					{{ t('spreed', 'Upload from device') }}
+				</h2>
 				<!--native file picker, hidden -->
 				<input id="file-upload"
 					ref="fileUploadInput"
@@ -75,6 +79,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { t } from '@nextcloud/l10n'
@@ -87,6 +93,7 @@ import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/Audio
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
+import { useId } from '../../composables/useId.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 export default {
@@ -102,10 +109,15 @@ export default {
 		TransitionWrapper,
 	},
 
-	data() {
+	setup() {
+		const modalContainerId = ref(null)
+		const isDraggingOver = ref(false)
+		const dialogHeaderId = `new-message-upload-${useId()}`
+
 		return {
-			modalContainerId: null,
-			isDraggingOver: false,
+			modalContainerId,
+			isDraggingOver,
+			dialogHeaderId,
 		}
 	},
 
