@@ -10,7 +10,12 @@
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
 		@click="$emit('click-video')">
-		<div v-show="localMediaModel.attributes.videoEnabled"
+		<img v-if="screenshotModeUrl"
+			class="dev-mode-video--self videoWrapper"
+			alt="dev-mode-video--self"
+			:src="screenshotModeUrl">
+
+		<div v-show="!screenshotModeUrl && localMediaModel.attributes.videoEnabled"
 			class="videoWrapper"
 			:style="videoWrapperStyle">
 			<video id="localVideo"
@@ -23,7 +28,7 @@
 				:size="avatarSize"
 				class="video-loading" />
 		</div>
-		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
+		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
@@ -118,6 +123,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		screenshotModeUrl: {
+			type: String,
+			default: '',
+		}
 	},
 
 	emits: ['click-video'],
@@ -444,5 +453,10 @@ export default {
 			opacity: 1;
 		}
 	}
+}
+
+.dev-mode-video--self {
+	object-fit: cover !important;
+	border-radius: calc(var(--default-clickable-area) / 2);
 }
 </style>
