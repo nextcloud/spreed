@@ -150,6 +150,8 @@ for CONFIG_DIR in $MAIN_SERVER_CONFIG_DIR $REAL_FEDERATED_SERVER_CONFIG_DIR; do
 	${ROOT_DIR}/occ config:system:set ratelimit.protection.enabled --value false --type bool
 	# Allow local remote urls otherwise we can not share
 	${ROOT_DIR}/occ config:system:set allow_local_remote_servers --value true --type bool
+	# Enable debug mode as it is required to enable developer commands
+	${ROOT_DIR}/occ config:system:set debug --value true --type bool
 done
 
 # Restore default config dir to local server in case it is used from the tests
