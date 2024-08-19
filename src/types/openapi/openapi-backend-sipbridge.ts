@@ -242,6 +242,7 @@ export type components = {
             permissions?: string;
             width?: string;
             height?: string;
+            blurhash?: string;
         };
         Room: {
             actorId: string;
