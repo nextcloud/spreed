@@ -12,7 +12,7 @@
 		<div class="modal__content">
 			<div class="conversation-information">
 				<ConversationIcon :item="conversation" hide-user-status />
-				<h2 :id="dialogHeaderId">
+				<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 					{{ conversationDisplayName }}
 				</h2>
 			</div>
