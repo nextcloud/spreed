@@ -786,8 +786,15 @@ body .modal-wrapper * {
 	box-sizing: border-box;
 }
 
-.modal-wrapper h2 {
-	margin-top: 0;
+/* FIXME: Align styles of NcModal header with NcDialog header. Remove if all are migrated */
+.modal-wrapper h2.nc-dialog-alike-header {
+	font-size: 21px;
+	text-align: center;
+	height: fit-content;
+	min-height: var(--default-clickable-area);
+	line-height: var(--default-clickable-area);
+	overflow-wrap: break-word;
+	margin-block: 0 12px;
 }
 </style>
 

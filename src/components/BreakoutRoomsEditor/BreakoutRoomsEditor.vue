@@ -10,7 +10,7 @@
 		v-on="$listeners">
 		<div class="breakout-rooms-editor"
 			:class="{'breakout-rooms-editor__participants-step': isEditingParticipants}">
-			<h2 :id="dialogHeaderId">
+			<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 				{{ modalTitle }}
 			</h2>
 			<template v-if="!isEditingParticipants">
@@ -171,9 +171,8 @@ export default {
 	flex-direction: column;
 	padding: 20px;
 	justify-content: flex-start;
-	align-items: flex-start;
 
-	&__number-input{
+	&__number-input {
 		display: block;
 		margin-bottom: calc(var(--default-grid-baseline)*4);
 	}
@@ -191,11 +190,11 @@ export default {
 
 	&__participants-step {
 		height: 100%;
-
 	}
 
 	&__main {
 		height: 100%;
+		align-self: flex-start;
 	}
 
 	&__buttons {

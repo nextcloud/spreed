@@ -9,7 +9,7 @@
 		:label-id="dialogHeaderId"
 		@close="closeModal">
 		<div class="media-settings">
-			<h2 :id="dialogHeaderId" class="media-settings__title">
+			<h2 :id="dialogHeaderId" class="media-settings__title nc-dialog-alike-header">
 				{{ t('spreed', 'Media settings') }}
 			</h2>
 			<!-- Preview -->
@@ -681,10 +681,6 @@ export default {
 .media-settings {
 	padding: calc(var(--default-grid-baseline) * 5);
 	padding-bottom: 0;
-
-	&__title {
-		text-align: center;
-	}
 
 	&__preview {
 		position: relative;

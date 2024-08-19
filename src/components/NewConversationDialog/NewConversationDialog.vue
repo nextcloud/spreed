@@ -12,7 +12,7 @@
 			:container="container"
 			:label-id="dialogHeaderPrepId"
 			@close="closeModal">
-			<h2 :id="dialogHeaderPrepId" class="new-group-conversation__header">
+			<h2 :id="dialogHeaderPrepId" class="new-group-conversation__header nc-dialog-alike-header">
 				{{ t('spreed', 'Create a new group conversation') }}
 			</h2>
 
@@ -381,8 +381,8 @@ export default {
 .new-group-conversation {
 	&__header {
 		flex-shrink: 0;
-		margin: 0;
-		padding: 10px 20px;
+		padding-top: calc(3 * var(--default-grid-baseline));
+		padding-inline: var(--default-clickable-area);
 	}
 
 	&__main {
