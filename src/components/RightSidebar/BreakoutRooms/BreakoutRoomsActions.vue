@@ -94,7 +94,7 @@
 			:label-id="dialogHeaderId"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
-				<h2 :id="dialogHeaderId">
+				<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 					{{ manageBreakoutRoomsTitle }}
 				</h2>
 				<BreakoutRoomsParticipantsEditor :token="mainToken"
