@@ -18,7 +18,7 @@
 
 		<template v-if="!isBreakoutRoom">
 			<!-- Notifications settings and devices preview screen -->
-			<NcAppSettingsSection v-if="!isNoteToSelf"
+			<NcAppSettingsSection v-if="!isNoteToSelf && !isOneToOneFormer"
 				id="notifications"
 				:name="t('spreed', 'Personal')">
 				<NcCheckboxRadioSwitch v-if="showMediaSettingsToggle"
@@ -36,11 +36,11 @@
 
 			<NcAppSettingsSection id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
-				<ListableSettings v-if="!isNoteToSelf && !isGuest" :token="token" :can-moderate="canFullModerate" />
-				<MentionsSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
+				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
+				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
 				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
-				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
-				<ExpirationSettings :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<ExpirationSettings v-if="!isOneToOneFormer" :token="token" :can-moderate="selfIsOwnerOrModerator" />
 				<BanSettings v-if="supportBanV1 && canFullModerate" :token="token" />
 			</NcAppSettingsSection>
 
@@ -171,6 +171,14 @@ export default {
 
 		isNoteToSelf() {
 			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
+		isOneToOne() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || this.isOneToOneFormer
+		},
+
+		isOneToOneFormer() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		isGuest() {
