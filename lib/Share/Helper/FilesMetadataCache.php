@@ -44,7 +44,7 @@ class FilesMetadataCache {
 	 * @psalm-return array{width: int, height: int, blurhash?: string}
 	 * @throws FilesMetadataNotFoundException
 	 */
-	public function getMetadataPhotosSizeForFileId(int $fileId): array {
+	public function getImageMetadataForFileId(int $fileId): array {
 		if (!array_key_exists($fileId, $this->filesSizeData)) {
 			try {
 				$this->cachePhotosSize($fileId, $this->filesMetadataManager->getMetadata($fileId, true));

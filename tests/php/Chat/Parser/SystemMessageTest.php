@@ -635,7 +635,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getMetadataPhotosSizeForFileId')
+			->method('getImageMetadataForFileId')
 			->with(54)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
@@ -706,7 +706,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 	
 		$this->filesMetadataCache->expects($this->once())
-			->method('getMetadataPhotosSizeForFileId')
+			->method('getImageMetadataForFileId')
 			->with(54)
 			->willReturn([
 				'width' => 1234,
@@ -786,7 +786,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn('absolute-link-owner');
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getMetadataPhotosSizeForFileId');
+			->method('getImageMetadataForFileId');
 
 		$participant = $this->createMock(Participant::class);
 		$attendee = Attendee::fromRow([
@@ -873,7 +873,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(false);
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getMetadataPhotosSizeForFileId');
+			->method('getImageMetadataForFileId');
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
