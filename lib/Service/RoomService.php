@@ -894,12 +894,12 @@ class RoomService {
 			return false;
 		}
 
+		$details = [];
 		if ($room->getActiveSince() instanceof \DateTime) {
 			// Call is already active, just someone upgrading the call flags
 			$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag, $participant);
 			$this->dispatcher->dispatchTyped($event);
 		} else {
-			$details = [];
 			if ($silent) {
 				$details[AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT] = true;
 			}
