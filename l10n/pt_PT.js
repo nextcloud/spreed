@@ -282,6 +282,7 @@ OC.L10N.register(
     "Add to favorites" : "Adicionar aos favoritos",
     "Users" : "Utilizadores",
     "Groups" : "Grupos",
+    "Teams" : "Grupos",
     "Loading" : "A carregar",
     "None" : "Nenhum",
     "Upload" : "Enviar",
