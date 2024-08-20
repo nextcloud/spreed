@@ -138,13 +138,13 @@ class MessageParser {
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
 		} elseif ($actorType === Attendee::ACTOR_GUESTS
 			&& !in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_CHANGELOG], true)) {
-			if (isset($guestNames[$actorId])) {
+			if (isset($this->guestNames[$actorId])) {
 				$displayName = $this->guestNames[$actorId];
 			} else {
 				try {
 					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_GUESTS, $actorId);
 					$displayName = $participant->getAttendee()->getDisplayName();
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 				}
 				$this->guestNames[$actorId] = $displayName;
 			}
