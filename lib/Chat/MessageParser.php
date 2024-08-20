@@ -95,13 +95,13 @@ class MessageParser {
 			&& $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG) {
 			$actorId = Attendee::ACTOR_ID_CHANGELOG;
 		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
-			if (isset($guestNames[$comment->getActorId()])) {
+			if (isset($this->guestNames[$comment->getActorId()])) {
 				$displayName = $this->guestNames[$comment->getActorId()];
 			} else {
 				try {
 					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_GUESTS, $comment->getActorId());
 					$displayName = $participant->getAttendee()->getDisplayName();
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 				}
 				$this->guestNames[$comment->getActorId()] = $displayName;
 			}
