@@ -1316,7 +1316,7 @@ class ParticipantService {
 
 	/**
 	 * @param string[] $actorIds
-	 * @param string[] $usersDirectlyMentioned
+	 * @param string[] $actorsDirectlyMentioned
 	 */
 	public function markUsersAsMentioned(Room $room, string $actorType, array $actorIds, int $messageId, array $actorsDirectlyMentioned): void {
 		$update = $this->connection->getQueryBuilder();
