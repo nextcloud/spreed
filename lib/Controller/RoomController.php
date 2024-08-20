@@ -1704,13 +1704,13 @@ class RoomController extends AEnvironmentAwareController {
 				);
 			}
 
-			if ($sessionId != null) {
+			if ($sessionId !== null) {
 				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $sessionId);
-			}
 
-			$session = $participant->getSession();
-			if ($session instanceof Session) {
-				$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
+				$session = $participant->getSession();
+				if ($session instanceof Session) {
+					$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
+				}
 			}
 
 			// Let the clients know if they need to reload capabilities
