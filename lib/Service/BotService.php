@@ -246,7 +246,7 @@ class BotService {
 		return [
 			'type' => Attendee::ACTOR_GUESTS,
 			'id' => $actorId,
-			'name' => $user->getDisplayName(),
+			'name' => '',
 		];
 	}
 
