@@ -16,11 +16,6 @@
       <code>NullCache</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Chat/MessageParser.php">
-    <UndefinedVariable>
-      <code>$guestNames</code>
-    </UndefinedVariable>
-  </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
     <UndefinedClass>
       <code>\OC_Util</code>
