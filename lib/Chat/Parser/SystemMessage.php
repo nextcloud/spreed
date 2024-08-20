@@ -814,10 +814,14 @@ class SystemMessage implements IEventListener {
 		// If a preview is available, check if we can get the dimensions of the file from the metadata API
 		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
 			try {
-				$sizeMetadata = $this->metadataCache->getMetadataPhotosSizeForFileId($fileId);
+				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
 				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
 					$data['width'] = (string) $sizeMetadata['width'];
 					$data['height'] = (string) $sizeMetadata['height'];
+				}
+
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
 				}
 			} catch (FilesMetadataNotFoundException) {
 			}
