@@ -21,7 +21,7 @@
 -->
 
 <template>
-	<NcAppSidebar v-if="token"
+	<NcAppSidebar v-if="isSidebarAvailable"
 		:open="opened"
 		:name="conversation.displayName"
 		:title="conversation.displayName"
@@ -197,11 +197,14 @@ export default {
 	},
 
 	computed: {
+		isSidebarAvailable() {
+			return this.token && !this.isInLobby
+		},
 		show() {
 			return this.$store.getters.getSidebarStatus
 		},
 		opened() {
-			return !this.isInLobby && this.show
+			return this.isSidebarAvailable && this.show
 		},
 		token() {
 			return this.$store.getters.getToken()
