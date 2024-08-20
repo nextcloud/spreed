@@ -4,6 +4,7 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 
+import { setGuestNickname } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 
 import { setGuestUserName } from '../../services/participantsService.js'
@@ -13,6 +14,10 @@ import { useGuestNameStore } from '../guestName.js'
 
 jest.mock('../../services/participantsService', () => ({
 	setGuestUserName: jest.fn(),
+}))
+jest.mock('@nextcloud/auth', () => ({
+	...jest.requireActual('@nextcloud/auth'),
+	setGuestNickname: jest.fn(),
 }))
 
 describe('guestNameStore', () => {
@@ -160,7 +165,7 @@ describe('guestNameStore', () => {
 
 		// Assert
 		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
-		expect(localStorage.setItem).toHaveBeenCalledWith('nick', newName)
+		expect(setGuestNickname).toHaveBeenCalledWith(newName)
 		expect(store.getGuestName('token-1', 'actor-id1')).toBe('actor 1')
 		expect(vuexStore.getters.getDisplayName()).toBe('actor 1')
 	})
@@ -184,7 +189,7 @@ describe('guestNameStore', () => {
 
 		// Assert
 		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
-		expect(localStorage.removeItem).toHaveBeenCalledWith('nick')
+		expect(setGuestNickname).toHaveBeenCalledWith('Guest')
 	})
 
 	test('resets to previous display name if there is an error in setting the new one', async () => {

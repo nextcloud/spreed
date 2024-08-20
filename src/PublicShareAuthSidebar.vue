@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getCurrentUser } from '@nextcloud/auth'
+import { getCurrentUser, getGuestNickname } from '@nextcloud/auth'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -118,12 +118,13 @@ export default {
 		t,
 
 		async joinConversation() {
-			const guestStoredName = localStorage.getItem('nick')
+			const currentUser = getCurrentUser()
+			const guestNickname = getGuestNickname()
 
-			if (getCurrentUser()) {
-				this.$store.dispatch('setCurrentUser', getCurrentUser())
-			} else if (guestStoredName) {
-				this.$store.dispatch('setDisplayName', guestStoredName)
+			if (currentUser) {
+				this.$store.dispatch('setCurrentUser', currentUser)
+			} else if (guestNickname) {
+				this.$store.dispatch('setDisplayName', guestNickname)
 			} else {
 				subscribe('talk:guest-name:added', this.showGuestMediaSettings)
 			}
@@ -131,8 +132,8 @@ export default {
 			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// Add guest name to the store, only possible after joining the conversation
-			if (guestStoredName) {
-				await setGuestUserName(this.token, guestStoredName)
+			if (guestNickname) {
+				await setGuestUserName(this.token, guestNickname)
 			}
 
 			// Fetching the conversation needs to be done once the user has
@@ -157,7 +158,7 @@ export default {
 				this.fetchCurrentConversationIntervalId = window.setInterval(this.fetchCurrentConversation, 30000)
 			}
 
-			if (getCurrentUser() || guestStoredName) {
+			if (currentUser || guestNickname) {
 				// Joining the call needs to be done once the participant identifier
 				// has been set, which is done once the conversation has been
 				// fetched. MediaSettings are called to set up audio and video devices

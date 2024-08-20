@@ -132,7 +132,6 @@
 						<span>Dummies:</span><input v-model.number="dummies" type="number">
 						<span>Stripe mode:</span><input v-model="devStripe" type="checkbox">
 						<span>Screenshot mode:</span><input v-model="screenshotMode" type="checkbox">
-
 					</div>
 				</template>
 			</div>
