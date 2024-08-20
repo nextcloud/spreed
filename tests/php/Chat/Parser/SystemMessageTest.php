@@ -635,7 +635,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getMetadataPhotosSizeForFileId')
+			->method('getImageMetadataForFileId')
 			->with(54)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
@@ -655,6 +655,83 @@ class SystemMessageTest extends TestCase {
 			'preview-available' => 'yes',
 			'width' => '1234',
 			'height' => '4567',
+		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
+	}
+
+	public function testGetFileFromShareForGuestWithBlurhash(): void {
+		$room = $this->createMock(Room::class);
+		$node = $this->createMock(Node::class);
+		$node->expects($this->once())
+			->method('getId')
+			->willReturn(54);
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('name');
+		$node->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('image/png');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(65530);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
+	
+		$share = $this->createMock(IShare::class);
+		$share->expects($this->once())
+			->method('getNode')
+			->willReturn($node);
+		$share->expects($this->once())
+			->method('getToken')
+			->willReturn('token');
+	
+		$this->shareProvider->expects($this->once())
+			->method('getShareById')
+			->with('23')
+			->willReturn($share);
+	
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files_sharing.sharecontroller.showShare', [
+				'token' => 'token',
+			])
+			->willReturn('absolute-link');
+	
+		$this->previewManager->expects($this->once())
+			->method('isAvailable')
+			->with($node)
+			->willReturn(true);
+	
+		$this->filesMetadataCache->expects($this->once())
+			->method('getImageMetadataForFileId')
+			->with(54)
+			->willReturn([
+				'width' => 1234,
+				'height' => 4567,
+				'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj'
+			]);
+	
+		$participant = $this->createMock(Participant::class);
+	
+		$parser = $this->getParser();
+		
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '54',
+			'name' => 'name',
+			'size' => '65530',
+			'path' => 'name',
+			'link' => 'absolute-link',
+			'etag' => '1872ade88f3013edeb33decd74a4f947',
+			'permissions' => '27',
+			'mimetype' => 'image/png',
+			'preview-available' => 'yes',
+			'width' => '1234',
+			'height' => '4567',
+			'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj',
 		], self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23']));
 	}
 
@@ -709,7 +786,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn('absolute-link-owner');
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getMetadataPhotosSizeForFileId');
+			->method('getImageMetadataForFileId');
 
 		$participant = $this->createMock(Participant::class);
 		$attendee = Attendee::fromRow([
@@ -796,7 +873,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(false);
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getMetadataPhotosSizeForFileId');
+			->method('getImageMetadataForFileId');
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')

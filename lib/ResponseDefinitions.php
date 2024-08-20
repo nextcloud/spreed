@@ -91,6 +91,7 @@ namespace OCA\Talk;
  *     permissions?: string,
  *     width?: string,
  *     height?: string,
+ *     blurhash?: string,
  * }
  *
  * @psalm-type TalkBaseMessage = array{
