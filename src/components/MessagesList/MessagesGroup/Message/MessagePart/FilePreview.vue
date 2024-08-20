@@ -661,12 +661,14 @@ export default {
 	&--row-layout {
 		display: flex;
 		align-items: center;
-		height: 36px;
+		height: 32px;
 		border-radius: var(--border-radius);
 		padding: 2px 4px;
 
 		.image-container {
-			height: 100%;
+			flex-shrink: 0;
+			height: 32px;
+			width: 32px;
 		}
 
 		.name-container {
@@ -674,8 +676,8 @@ export default {
 		}
 
 		.loading {
-			width: 36px;
-			height: 36px;
+			width: 32px;
+			height: 32px;
 		}
 	}
 
