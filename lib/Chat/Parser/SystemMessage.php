@@ -380,7 +380,9 @@ class SystemMessage implements IEventListener {
 				}
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator removed {federated_user}');
-			} elseif ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
+			} elseif (isset($parsedParameters['federated_user']['server'], $parsedParameters['actor']['server'])
+				&& $parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']
+				&& $parsedParameters['federated_user']['server'] === $parsedParameters['actor']['server']) {
 				$parsedMessage = $this->l->t('{federated_user} declined the invitation');
 			}
 		} elseif ($message === 'group_added') {
