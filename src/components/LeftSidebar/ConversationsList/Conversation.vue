@@ -15,6 +15,7 @@
 		:bold="!!item.unreadMessages"
 		:counter-number="item.unreadMessages"
 		:counter-type="counterType"
+		force-menu
 		@click="onClick">
 		<template #icon>
 			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
