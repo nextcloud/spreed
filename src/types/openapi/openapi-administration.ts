@@ -313,7 +313,10 @@ export interface operations {
     };
     "certificate-get-certificate-expiration": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Host to check */
+                host: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -323,14 +326,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Host to check */
-                    host: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Certificate expiration returned */
             200: {

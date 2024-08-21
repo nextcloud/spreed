@@ -392,7 +392,12 @@ export type $defs = Record<string, never>;
 export interface operations {
     "avatar-get-user-proxy-avatar-without-room": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+                /** @description Theme used for background */
+                darkTheme?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -404,19 +409,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Federation CloudID to get the avatar for */
-                    cloudId: string;
-                    /**
-                     * @description Theme used for background
-                     * @default false
-                     */
-                    darkTheme?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description User avatar returned */
             200: {
@@ -431,7 +424,10 @@ export interface operations {
     };
     "avatar-get-user-proxy-avatar-dark-without-room": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -443,14 +439,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Federation CloudID to get the avatar for */
-                    cloudId: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description User avatar returned */
             200: {
@@ -465,7 +454,12 @@ export interface operations {
     };
     "avatar-get-user-proxy-avatar": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+                /** @description Theme used for background */
+                darkTheme?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -478,19 +472,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Federation CloudID to get the avatar for */
-                    cloudId: string;
-                    /**
-                     * @description Theme used for background
-                     * @default false
-                     */
-                    darkTheme?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description User avatar returned */
             200: {
@@ -505,7 +487,10 @@ export interface operations {
     };
     "avatar-get-user-proxy-avatar-dark": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Federation CloudID to get the avatar for */
+                cloudId: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -518,14 +503,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Federation CloudID to get the avatar for */
-                    cloudId: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description User avatar returned */
             200: {
@@ -768,7 +746,10 @@ export interface operations {
     };
     "room-leave-federated-room": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Federated session id to leave with */
+                sessionId: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -780,14 +761,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Federated session id to leave with */
-                    sessionId: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successfully left the room */
             200: {
