@@ -49,7 +49,7 @@
 				:value.sync="sharedSecret"
 				class="form"
 				name="sip-shared-secret"
-				autocomplete="new-password"
+				as-text
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
 				label-outside />
