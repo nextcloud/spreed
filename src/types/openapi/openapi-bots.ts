@@ -315,7 +315,10 @@ export interface operations {
     };
     "bot-delete-reaction": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Reaction to delete */
+                reaction: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -329,14 +332,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Reaction to delete */
-                    reaction: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Reaction deleted successfully */
             200: {

@@ -579,7 +579,7 @@ export interface operations {
                     number: string;
                     /**
                      * @description Additional details to verify the validity of the request
-                     * @default []
+                     * @default {}
                      */
                     options?: {
                         actorId?: string;
@@ -724,7 +724,12 @@ export interface operations {
     };
     "room-rejected-dial-out-request": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate */
+                callId: string;
+                /** @description Additional details to verify the validity of the request */
+                options?: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -735,24 +740,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate */
-                    callId: string;
-                    /**
-                     * @description Additional details to verify the validity of the request
-                     * @default []
-                     */
-                    options?: {
-                        actorId?: string;
-                        actorType?: string;
-                        /** Format: int64 */
-                        attendeeId?: number;
-                    };
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Call ID reset */
             200: {
