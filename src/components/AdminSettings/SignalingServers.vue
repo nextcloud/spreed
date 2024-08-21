@@ -57,7 +57,7 @@
 		<NcPasswordField class="form__textfield additional-top-margin"
 			:value="secret"
 			name="signaling_secret"
-			autocomplete="new-password"
+			as-text
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
