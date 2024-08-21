@@ -539,6 +539,7 @@ export default {
 
 	mounted() {
 		EventBus.on('focus-chat-input', this.focusInput)
+		EventBus.on('append-chat-input', this.handleAppendChatInput)
 		EventBus.on('upload-start', this.handleUploadSideEffects)
 		EventBus.on('upload-discard', this.handleUploadSideEffects)
 		EventBus.on('retry-message', this.handleRetryMessage)
@@ -551,6 +552,7 @@ export default {
 
 	beforeDestroy() {
 		EventBus.off('focus-chat-input', this.focusInput)
+		EventBus.off('append-chat-input', this.handleAppendChatInput)
 		EventBus.off('upload-start', this.handleUploadSideEffects)
 		EventBus.off('upload-discard', this.handleUploadSideEffects)
 		EventBus.off('retry-message', this.handleRetryMessage)
@@ -768,6 +770,18 @@ export default {
 
 		handleOpenTributeMenu() {
 			this.$refs.richContenteditable.showTribute('/')
+		},
+
+		handleAppendChatInput(newTextLine) {
+			let textToAppend = ''
+			if (this.text) {
+				textToAppend += '\n\n'
+			}
+			textToAppend += newTextLine
+			textToAppend += '\n\n'
+
+			console.log('textToAppend', { textToAppend })
+			this.text += textToAppend
 		},
 
 		/**

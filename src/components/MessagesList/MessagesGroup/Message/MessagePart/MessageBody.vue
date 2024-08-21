@@ -42,7 +42,8 @@
 			<Quote v-if="message.parent" :message="message.parent" />
 
 			<!-- Message content / text -->
-			<NcRichText :text="renderedMessage"
+			<NcRichText ref="richTextInstance"
+				:text="renderedMessage"
 				:arguments="richParameters"
 				:class="{'single-emoji': isSingleEmoji}"
 				autolink
@@ -442,6 +443,29 @@ export default {
 			}
 			EventBus.emit('message-height-changed', { heightDiff: height - oldHeight })
 		},
+
+		/**
+		 * @public
+		 */
+		getSelection() {
+			const selection = window.getSelection()
+
+			// Nothing selected
+			if (selection.rangeCount === 0) {
+				return ''
+			}
+
+			const range = selection.getRangeAt(0)
+			const target = range.commonAncestorContainer
+			const richTextElement = this.$refs.richTextInstance.$el
+
+			// Selection is outside of this message
+			if (richTextElement !== target && !richTextElement.contains(target)) {
+				return ''
+			}
+
+			return selection.toString()
+		}
 	},
 }
 </script>
