@@ -70,9 +70,9 @@
 						:edit-message="!!messageToEdit" />
 				</div>
 				<!-- mention editing hint -->
-				<NcNoteCard v-if="showMentionEditHint" type="warning">
-					<p>{{ t('spreed','Adding a mention will only notify users who did not read the message.') }}</p>
-				</NcNoteCard>
+				<NcNoteCard v-if="showMentionEditHint"
+					type="warning"
+					:text="t('spreed','Adding a mention will only notify users who did not read the message.')" />
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
 					:value.sync="text"

@@ -8,11 +8,9 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Lock conversation') }}
 		</h4>
-		<NcNoteCard v-if="hasCall" type="warning">
-			<p>
-				{{ t('spreed', 'This will also terminate the ongoing call.') }}
-			</p>
-		</NcNoteCard>
+		<NcNoteCard v-if="hasCall"
+			type="warning"
+			:text="t('spreed', 'This will also terminate the ongoing call.')" />
 		<div>
 			<NcCheckboxRadioSwitch :checked="isReadOnly"
 				type="switch"
