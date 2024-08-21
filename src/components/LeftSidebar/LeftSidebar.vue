@@ -122,9 +122,7 @@
 					<AccountMultiplePlus :size="20" />
 				</template>
 				<template #counter>
-					<NcCounterBubble type="highlighted">
-						{{ pendingInvitationsCount }}
-					</NcCounterBubble>
+					<NcCounterBubble type="highlighted" :count="pendingInvitationsCount" />
 				</template>
 			</NcAppNavigationItem>
 		</template>
