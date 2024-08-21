@@ -9,11 +9,8 @@
 			{{ t('spreed', 'Edit the default permissions for participants in this conversation. These settings do not affect moderators.') }}
 		</div>
 
-		<NcNoteCard type="warning">
-			<p>
-				{{ t('spreed', 'Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.') }}
-			</p>
-		</NcNoteCard>
+		<NcNoteCard type="warning"
+			:text="t('spreed', 'Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.')" />
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">

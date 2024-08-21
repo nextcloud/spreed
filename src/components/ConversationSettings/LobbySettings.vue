@@ -6,9 +6,9 @@
 <template>
 	<div>
 		<div class="app-settings-subsection">
-			<NcNoteCard v-if="hasCall && !hasLobbyEnabled" type="warning">
-				{{ t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.') }}
-			</NcNoteCard>
+			<NcNoteCard v-if="hasCall && !hasLobbyEnabled"
+				type="warning"
+				:text="t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.')" />
 			<div>
 				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
 					type="switch"

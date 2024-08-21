@@ -10,14 +10,12 @@
 			{{ t('spreed', 'Recording backend') }}
 		</h2>
 
-		<NcNoteCard v-if="!showForm" type="warning">
-			{{ t('spreed', 'Recording backend configuration is only possible with a high-performance backend.') }}
-		</NcNoteCard>
+		<NcNoteCard v-if="!showForm"
+			type="warning"
+			:text="t('spreed', 'Recording backend configuration is only possible with a high-performance backend.')" />
 
 		<template v-else>
-			<NcNoteCard v-if="showUploadLimitWarning" type="warning">
-				{{ uploadLimitWarning }}
-			</NcNoteCard>
+			<NcNoteCard v-if="showUploadLimitWarning" type="warning" :text="uploadLimitWarning" />
 
 			<TransitionWrapper v-if="servers.length"
 				name="fade"
