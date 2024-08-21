@@ -12,22 +12,26 @@ use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\ARoomSyncedEvent;
 use OCA\Talk\Events\BeforeCallEndedEvent;
 use OCA\Talk\Events\BeforeCallStartedEvent;
 use OCA\Talk\Events\BeforeLobbyModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomModifiedEvent;
+use OCA\Talk\Events\BeforeRoomSyncedEvent;
 use OCA\Talk\Events\CallEndedEvent;
 use OCA\Talk\Events\CallStartedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
+use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -42,7 +46,11 @@ use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
+use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type TalkRoom from ResponseDefinitions
+ */
 class RoomService {
 
 	public function __construct(
@@ -55,6 +63,7 @@ class RoomService {
 		protected IHasher $hasher,
 		protected IEventDispatcher $dispatcher,
 		protected IJobList $jobList,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -435,7 +444,8 @@ class RoomService {
 	 * @throws InvalidArgumentException When trying to start
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
-		if (!$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
+		$syncFederatedRoom = $room->getRemoteServer() && $room->getRemoteToken();
+		if (!$syncFederatedRoom && !$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
 			throw new InvalidArgumentException('config');
 		}
 
@@ -997,6 +1007,154 @@ class RoomService {
 		$update->executeStatement();
 
 		$room->setLastActivity($now);
+	}
+
+	/**
+	 * @psalm-param TalkRoom $host
+	 */
+	public function syncPropertiesFromHostRoom(Room $local, array $host): void {
+		$event = new BeforeRoomSyncedEvent($local);
+		$this->dispatcher->dispatchTyped($event);
+
+		/** @var array<array-key, ARoomModifiedEvent::PROPERTY_*> $changed */
+		$changed = [];
+		if (isset($host['type']) && $host['type'] !== $local->getType()) {
+			$success = $this->setType($local, $host['type']);
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync type of ' . $local->getId() . ' to ' . $host['type']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_TYPE;
+			}
+		}
+		if (isset($host['name']) && $host['name'] !== $local->getName()) {
+			$success = $this->setName($local, $host['name'], $local->getName());
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync name of ' . $local->getId() . ' to ' . $host['name']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_NAME;
+			}
+		}
+		if (isset($host['description']) && $host['description'] !== $local->getDescription()) {
+			try {
+				$success = $this->setDescription($local, $host['description']);
+				if (!$success) {
+					$this->logger->error('An error occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description']);
+				} else {
+					$changed[] = ARoomModifiedEvent::PROPERTY_DESCRIPTION;
+				}
+			} catch (\LengthException $e) {
+				$this->logger->error('A \LengthException occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description'], ['exception' => $e]);
+			}
+		}
+		if (isset($host['callRecording']) && $host['callRecording'] !== $local->getCallRecording()) {
+			try {
+				$this->setCallRecording($local, $host['callRecording']);
+				$changed[] = ARoomModifiedEvent::PROPERTY_CALL_RECORDING;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync callRecording of ' . $local->getId() . ' to ' . $host['callRecording'], ['exception' => $e]);
+			}
+		}
+		if (isset($host['defaultPermissions']) && $host['defaultPermissions'] !== $local->getDefaultPermissions()) {
+			$success = $this->setPermissions($local, 'default', Attendee::PERMISSIONS_MODIFY_SET, $host['defaultPermissions'], false);
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS;
+			}
+		}
+		if (isset($host['avatarVersion']) && $host['avatarVersion'] !== $local->getAvatar()) {
+			$hostAvatar = $host['avatarVersion'];
+			if ($hostAvatar) {
+				// Add a fake suffix as we explode by the dot in the AvatarService, but the version doesn't have one.
+				$hostAvatar .= '.fed';
+			}
+			$success = $this->setAvatar($local, $hostAvatar);
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync avatarVersion of ' . $local->getId() . ' to ' . $host['avatarVersion']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_AVATAR;
+			}
+		}
+		if (isset($host['lastActivity']) && $host['lastActivity'] !== 0 && $host['lastActivity'] !== ((int) $local->getLastActivity()?->getTimestamp())) {
+			$lastActivity = $this->timeFactory->getDateTime('@' . $host['lastActivity']);
+			$this->setLastActivity($local, $lastActivity);
+			$changed[] = ARoomSyncedEvent::PROPERTY_LAST_ACTIVITY;
+		}
+		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int) $local->getLobbyTimer(false)?->getTimestamp()))) {
+			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);
+			$success = $this->setLobby($local, $host['lobbyState'], $hostTimer);
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync lobby of ' . $local->getId() . ' to ' . $host['lobbyState'] . ' with timer to ' . $host['lobbyTimer']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_LOBBY;
+			}
+		}
+		if (isset($host['callStartTime'], $host['callFlag'])) {
+			$localCallStartTime = (int) $local->getActiveSince()?->getTimestamp();
+			if ($host['callStartTime'] === 0 && ($host['callStartTime'] !== $localCallStartTime || $host['callFlag'] !== $local->getCallFlag())) {
+				$this->resetActiveSince($local, null);
+				$changed[] = ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE;
+				$changed[] = ARoomModifiedEvent::PROPERTY_IN_CALL;
+			} elseif ($host['callStartTime'] !== 0 && ($host['callStartTime'] !== $localCallStartTime || $host['callFlag'] !== $local->getCallFlag())) {
+				$startDateTime = $this->timeFactory->getDateTime('@' . $host['callStartTime']);
+				$this->setActiveSince($local, null, $startDateTime, $host['callFlag'], true);
+				$changed[] = ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE;
+				$changed[] = ARoomModifiedEvent::PROPERTY_IN_CALL;
+			}
+		}
+		if (isset($host['mentionPermissions']) && $host['mentionPermissions'] !== $local->getMentionPermissions()) {
+			try {
+				$this->setMentionPermissions($local, $host['mentionPermissions']);
+				$changed[] = ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync mentionPermissions of ' . $local->getId() . ' to ' . $host['mentionPermissions'], ['exception' => $e]);
+			}
+		}
+		if (isset($host['messageExpiration']) && $host['messageExpiration'] !== $local->getMessageExpiration()) {
+			try {
+				$this->setMessageExpiration($local, $host['messageExpiration']);
+				$changed[] = ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync messageExpiration of ' . $local->getId() . ' to ' . $host['messageExpiration'], ['exception' => $e]);
+			}
+		}
+		if (isset($host['readOnly']) && $host['readOnly'] !== $local->getReadOnly()) {
+			$success = $this->setReadOnly($local, $host['readOnly']);
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync readOnly of ' . $local->getId() . ' to ' . $host['readOnly']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_READ_ONLY;
+			}
+		}
+		if (isset($host['recordingConsent']) && $host['recordingConsent'] !== $local->getRecordingConsent()) {
+			try {
+				$this->setRecordingConsent($local, $host['recordingConsent'], true);
+				$changed[] = ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync recordingConsent of ' . $local->getId() . ' to ' . $host['recordingConsent'], ['exception' => $e]);
+			}
+		}
+		if (isset($host['sipEnabled']) && $host['sipEnabled'] !== $local->getSIPEnabled()) {
+			$success = $this->setSIPEnabled($local, $host['sipEnabled']);
+			if (!$success) {
+				$this->logger->error('An error occurred while trying to sync sipEnabled of ' . $local->getId() . ' to ' . $host['sipEnabled']);
+			} else {
+				$changed[] = ARoomModifiedEvent::PROPERTY_SIP_ENABLED;
+			}
+		}
+
+		// Ignore for now, so the conversation is not found by other users on this federated participants server
+		// if (isset($host['listable']) && $host['listable'] !== $local->getListable()) {
+		// $success = $this->setListable($local, $host['listable']);
+		// if (!$success) {
+		// $this->logger->error('An error occurred while trying to sync listable of ' . $local->getId() . ' to ' . $host['listable']);
+		// } else {
+		// $changed[] = ARoomModifiedEvent::PROPERTY_LISTABLE;
+		// }
+		// }
+
+		$event = new RoomSyncedEvent($local, $changed);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	public function deleteRoom(Room $room): void {

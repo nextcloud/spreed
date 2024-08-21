@@ -91,7 +91,12 @@ class RoomController {
 
 		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $this->proxy->overwrittenRemoteTalkHash($proxy->getHeader('X-Nextcloud-Talk-Hash'))];
 
-		return new DataResponse([], $statusCode, $headers);
+		/** @var TalkRoom[] $data */
+		$data = $this->proxy->getOCSData($proxy);
+
+		$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'displayName');
+
+		return new DataResponse($data, $statusCode, $headers);
 	}
 
 	/**

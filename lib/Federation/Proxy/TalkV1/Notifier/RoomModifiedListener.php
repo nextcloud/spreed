@@ -49,14 +49,22 @@ class RoomModifiedListener implements IEventListener {
 		if (!in_array($event->getProperty(), [
 			ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE,
 			ARoomModifiedEvent::PROPERTY_AVATAR,
+			ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
 			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
 			ARoomModifiedEvent::PROPERTY_IN_CALL,
 			ARoomModifiedEvent::PROPERTY_LOBBY,
+			ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS,
+			ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION,
 			ARoomModifiedEvent::PROPERTY_NAME,
 			ARoomModifiedEvent::PROPERTY_READ_ONLY,
 			ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT,
+			ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
 			ARoomModifiedEvent::PROPERTY_TYPE,
 		], true)) {
+			return;
+		}
+
+		if ($event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
