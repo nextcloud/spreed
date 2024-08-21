@@ -1635,17 +1635,15 @@
                     }
                 ],
                 "requestBody": {
-                    "required": true,
+                    "required": false,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "type": "object",
-                                "required": [
-                                    "sessionId"
-                                ],
                                 "properties": {
                                     "sessionId": {
                                         "type": "string",
+                                        "nullable": true,
                                         "description": "Federated session id to join with"
                                     }
                                 }
@@ -1715,7 +1713,9 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
                                             }
                                         }
                                     }
