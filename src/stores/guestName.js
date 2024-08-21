@@ -5,6 +5,7 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { setGuestNickname } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
@@ -92,13 +93,8 @@ export const useGuestNameStore = defineStore('guestName', {
 
 				await setGuestUserName(token, name)
 
-				if (name !== '') {
-					localStorage.setItem('nick', name)
-				} else {
-					localStorage.removeItem('nick')
-				}
+				setGuestNickname(name || t('spreed', 'Guest'))
 				emit('talk:guest-name:added')
-
 			} catch (error) {
 				store.dispatch('setDisplayName', previousName)
 				this.addGuestName({
