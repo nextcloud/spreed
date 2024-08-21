@@ -322,6 +322,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			}
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_AVATAR) {
 			$this->roomService->setAvatar($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_CALL_RECORDING) {
+			$this->roomService->setCallRecording($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_IN_CALL) {
@@ -329,6 +331,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_LOBBY) {
 			$dateTime = !empty($notification['dateTime']) ? \DateTime::createFromFormat('U', $notification['dateTime']) : null;
 			$this->roomService->setLobby($room, $notification['newValue'], $dateTime, $notification['timerReached'] ?? false);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS) {
+			$this->roomService->setMentionPermissions($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION) {
+			$this->roomService->setMessageExpiration($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_NAME) {
 			$this->roomService->setName($room, $notification['newValue'], $notification['oldValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_READ_ONLY) {
@@ -336,6 +342,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT) {
 			/** @psalm-suppress InvalidArgument */
 			$this->roomService->setRecordingConsent($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_SIP_ENABLED) {
+			$this->roomService->setSIPEnabled($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_TYPE) {
 			$this->roomService->setType($room, $notification['newValue']);
 		} else {

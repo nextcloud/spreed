@@ -34,6 +34,17 @@ See the general [Nextcloud Developers - Events](https://docs.nextcloud.com/serve
 * After event: `OCA\Talk\Events\LobbyModifiedEvent`
 * Since: 18.0.0
 
+### Federated conversation synced
+
+When multiple properties of a federated conversation are synced, the individual
+"Conversation modified" and "Lobby modified" events are still triggered, but a
+listener could decide to not follow up individual but only after all properties
+where modified.
+
+* Before event: `OCA\Talk\Events\BeforeRoomSyncedEvent`
+* After event: `OCA\Talk\Events\RoomSyncedEvent`
+* Since: 20.0.0
+
 ### Call started
 
 * Before event: `OCA\Talk\Events\BeforeCallStartedEvent`
