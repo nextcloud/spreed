@@ -1713,7 +1713,10 @@ export type $defs = Record<string, never>;
 export interface operations {
     "avatar-get-avatar": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Theme used for background */
+                darkTheme?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -1724,17 +1727,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Theme used for background
-                     * @default false
-                     */
-                    darkTheme?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Room avatar returned */
             200: {
@@ -2835,7 +2828,10 @@ export interface operations {
     };
     "call-leave-call": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description whether to also terminate the call for all participants */
+                all?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -2846,17 +2842,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description whether to also terminate the call for all participants
-                     * @default false
-                     */
-                    all?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Call left successfully */
             200: {
@@ -3044,7 +3030,10 @@ export interface operations {
     };
     "call-leave-federated-call": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Federated session id to leave with */
+                sessionId: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3055,14 +3044,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Federated session id to leave with */
-                    sessionId: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Call left successfully */
             200: {
@@ -3246,7 +3228,26 @@ export interface operations {
     };
     "chat-receive-messages": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Polling for new messages (1) or getting the history of the chat (0) */
+                lookIntoFuture: 0 | 1;
+                /** @description Number of chat messages to receive (100 by default, 200 at most) */
+                limit?: number;
+                /** @description The last known message (serves as offset) */
+                lastKnownMessageId?: number;
+                /** @description The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages) */
+                lastCommonReadId?: number;
+                /** @description Number of seconds to wait for new messages (30 by default, 30 at most) */
+                timeout?: number;
+                /** @description Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0 */
+                setReadMarker?: 0 | 1;
+                /** @description Include the $lastKnownMessageId in the messages when 1 (default 0) */
+                includeLastKnown?: 0 | 1;
+                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
+                noStatusUpdate?: 0 | 1;
+                /** @description Set to 0 when notifications should not be marked as read (default 1) */
+                markNotificationsAsRead?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3257,73 +3258,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Polling for new messages (1) or getting the history of the chat (0)
-                     * @enum {integer}
-                     */
-                    lookIntoFuture: 0 | 1;
-                    /**
-                     * Format: int64
-                     * @description Number of chat messages to receive (100 by default, 200 at most)
-                     * @default 100
-                     */
-                    limit?: number;
-                    /**
-                     * Format: int64
-                     * @description The last known message (serves as offset)
-                     * @default 0
-                     */
-                    lastKnownMessageId?: number;
-                    /**
-                     * Format: int64
-                     * @description The last known common read message
-                     *                                  (so the response is 200 instead of 304 when
-                     *                                  it changes even when there are no messages)
-                     * @default 0
-                     */
-                    lastCommonReadId?: number;
-                    /**
-                     * Format: int64
-                     * @description Number of seconds to wait for new messages (30 by default, 30 at most)
-                     * @default 30
-                     */
-                    timeout?: number;
-                    /**
-                     * Format: int64
-                     * @description Automatically set the last read marker when 1,
-                     *                               if your client does this itself via chat/{token}/read set to 0
-                     * @default 1
-                     * @enum {integer}
-                     */
-                    setReadMarker?: 0 | 1;
-                    /**
-                     * Format: int64
-                     * @description Include the $lastKnownMessageId in the messages when 1 (default 0)
-                     * @default 0
-                     * @enum {integer}
-                     */
-                    includeLastKnown?: 0 | 1;
-                    /**
-                     * Format: int64
-                     * @description When the user status should not be automatically set to online set to 1 (default 0)
-                     * @default 0
-                     * @enum {integer}
-                     */
-                    noStatusUpdate?: 0 | 1;
-                    /**
-                     * Format: int64
-                     * @description Set to 0 when notifications should not be marked as read (default 1)
-                     * @default 1
-                     * @enum {integer}
-                     */
-                    markNotificationsAsRead?: 0 | 1;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Messages returned */
             200: {
@@ -3762,7 +3697,10 @@ export interface operations {
     };
     "chat-get-message-context": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
+                limit?: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -3775,18 +3713,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
-                     * @default 50
-                     */
-                    limit?: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Message context returned */
             200: {
@@ -4048,7 +3975,14 @@ export interface operations {
     };
     "chat-mentions": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Text to search for */
+                search: string;
+                /** @description Maximum number of results */
+                limit?: number;
+                /** @description Include the user statuses */
+                includeStatus?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4059,25 +3993,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Text to search for */
-                    search: string;
-                    /**
-                     * Format: int64
-                     * @description Maximum number of results
-                     * @default 20
-                     */
-                    limit?: number;
-                    /**
-                     * @description Include the user statuses
-                     * @default false
-                     */
-                    includeStatus?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description List of mention suggestions returned */
             200: {
@@ -4097,7 +4013,14 @@ export interface operations {
     };
     "chat-get-objects-shared-in-room": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Type of the objects */
+                objectType: string;
+                /** @description ID of the last known message */
+                lastKnownMessageId?: number;
+                /** @description Maximum number of objects */
+                limit?: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4108,26 +4031,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Type of the objects */
-                    objectType: string;
-                    /**
-                     * Format: int64
-                     * @description ID of the last known message
-                     * @default 0
-                     */
-                    lastKnownMessageId?: number;
-                    /**
-                     * Format: int64
-                     * @description Maximum number of objects
-                     * @default 100
-                     */
-                    limit?: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description List of shared objects messages returned */
             200: {
@@ -4246,7 +4150,10 @@ export interface operations {
     };
     "chat-get-objects-shared-in-room-overview": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Maximum number of objects */
+                limit?: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4257,18 +4164,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Maximum number of objects
-                     * @default 7
-                     */
-                    limit?: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description List of shared objects messages of each type returned */
             200: {
@@ -4976,7 +4872,10 @@ export interface operations {
     };
     "reaction-get-reactions": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Emoji to filter */
+                reaction?: string | null;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -4989,14 +4888,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** @description Emoji to filter */
-                    reaction?: string | null;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Reactions returned */
             200: {
@@ -5118,7 +5010,10 @@ export interface operations {
     };
     "reaction-delete": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Emoji to remove */
+                reaction: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5131,14 +5026,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Emoji to remove */
-                    reaction: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Reaction deleted successfully */
             200: {
@@ -5292,7 +5180,10 @@ export interface operations {
     };
     "recording-notification-dismiss": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Timestamp of the notification to be dismissed */
+                timestamp: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5303,17 +5194,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Timestamp of the notification to be dismissed
-                     */
-                    timestamp: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Notification dismissed successfully */
             200: {
@@ -5411,7 +5292,14 @@ export interface operations {
     };
     "room-get-rooms": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
+                noStatusUpdate?: 0 | 1;
+                /** @description Include the user status */
+                includeStatus?: 0 | 1;
+                /** @description Filter rooms modified after a timestamp */
+                modifiedSince?: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5421,30 +5309,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description When the user status should not be automatically set to online set to 1 (default 0)
-                     * @default 0
-                     * @enum {integer}
-                     */
-                    noStatusUpdate?: 0 | 1;
-                    /**
-                     * @description Include the user status
-                     * @default false
-                     */
-                    includeStatus?: boolean;
-                    /**
-                     * Format: int64
-                     * @description Filter rooms modified after a timestamp
-                     * @default 0
-                     */
-                    modifiedSince?: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Return list of rooms */
             200: {
@@ -5590,7 +5455,10 @@ export interface operations {
     };
     "room-get-listed-rooms": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description search term */
+                searchTerm?: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -5600,17 +5468,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description search term
-                     * @default
-                     */
-                    searchTerm?: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Return list of matching rooms */
             200: {
@@ -6245,7 +6103,10 @@ export interface operations {
     };
     "room-get-participants": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Include the user statuses */
+                includeStatus?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6256,17 +6117,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Include the user statuses
-                     * @default false
-                     */
-                    includeStatus?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Participants returned */
             200: {
@@ -6392,7 +6243,10 @@ export interface operations {
     };
     "room-get-breakout-room-participants": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Include the user statuses */
+                includeStatus?: 0 | 1;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6403,17 +6257,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Include the user statuses
-                     * @default false
-                     */
-                    includeStatus?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Breakout room participants returned */
             200: {
@@ -6523,7 +6367,10 @@ export interface operations {
     };
     "room-remove-attendee-from-room": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID of the attendee */
+                attendeeId: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -6534,17 +6381,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description ID of the attendee
-                     */
-                    attendeeId: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Attendee removed successfully */
             200: {
@@ -7098,7 +6935,10 @@ export interface operations {
     };
     "room-demote-moderator": {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID of the attendee */
+                attendeeId: number;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -7109,17 +6949,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description ID of the attendee
-                     */
-                    attendeeId: number;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Attendee demoted from moderator successfully */
             200: {
@@ -7785,7 +7615,10 @@ export interface operations {
     };
     "signaling-get-settings": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Token of the room */
+                token?: string;
+            };
             header: {
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -7795,17 +7628,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Token of the room
-                     * @default
-                     */
-                    token?: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Signaling settings returned */
             200: {
