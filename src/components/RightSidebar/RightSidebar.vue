@@ -20,11 +20,10 @@
 		<template v-if="isInCall" #toggle-icon>
 			<MessageText :size="20" />
 			<NcCounterBubble v-if="unreadMessagesCounter > 0"
+				:count="unreadMessagesCounter"
 				class="chat-button-unread-messages-counter"
 				:class="{ 'chat-button-unread-messages-counter--highlighted': hasUnreadMentions }"
-				:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
-				{{ unreadMessagesCounter }}
-			</NcCounterBubble>
+				:type="hasUnreadMentions ? 'highlighted' : 'outlined'" />
 		</template>
 		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
