@@ -120,7 +120,7 @@ class Config {
 		}
 
 		$userGroups = $this->groupManager->getUserGroupIds($user);
-		return empty(array_intersect($allowedGroups, $userGroups));
+		return !empty(array_intersect($allowedGroups, $userGroups));
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {
