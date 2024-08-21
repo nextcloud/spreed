@@ -61,8 +61,9 @@ export default {
 			this.modal = false
 		},
 
-		openConversation({ token }) {
-			this.$router.push({ name: 'conversation', params: { token } })
+		openConversation(conversation) {
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.closeModal()
 		},
