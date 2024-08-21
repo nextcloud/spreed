@@ -1331,7 +1331,7 @@
                                     },
                                     "options": {
                                         "type": "object",
-                                        "default": [],
+                                        "default": {},
                                         "description": "Additional details to verify the validity of the request",
                                         "properties": {
                                             "actorId": {
@@ -1685,42 +1685,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "callId"
-                                ],
-                                "properties": {
-                                    "callId": {
-                                        "type": "string",
-                                        "description": "The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate"
-                                    },
-                                    "options": {
-                                        "type": "object",
-                                        "default": [],
-                                        "description": "Additional details to verify the validity of the request",
-                                        "properties": {
-                                            "actorId": {
-                                                "type": "string"
-                                            },
-                                            "actorType": {
-                                                "type": "string"
-                                            },
-                                            "attendeeId": {
-                                                "type": "integer",
-                                                "format": "int64"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -1741,6 +1705,23 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "callId",
+                        "in": "query",
+                        "description": "The call ID provided by the SIP bridge earlier to uniquely identify the call to terminate",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "options",
+                        "in": "query",
+                        "description": "Additional details to verify the validity of the request",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {

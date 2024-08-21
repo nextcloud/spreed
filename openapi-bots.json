@@ -710,25 +710,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "reaction"
-                                ],
-                                "properties": {
-                                    "reaction": {
-                                        "type": "string",
-                                        "description": "Reaction to delete"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -760,6 +741,15 @@
                         "schema": {
                             "type": "integer",
                             "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "reaction",
+                        "in": "query",
+                        "description": "Reaction to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {

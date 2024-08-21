@@ -854,30 +854,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "cloudId"
-                                ],
-                                "properties": {
-                                    "cloudId": {
-                                        "type": "string",
-                                        "description": "Federation CloudID to get the avatar for"
-                                    },
-                                    "darkTheme": {
-                                        "type": "boolean",
-                                        "default": false,
-                                        "description": "Theme used for background"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -902,6 +878,28 @@
                             "enum": [
                                 64,
                                 512
+                            ]
+                        }
+                    },
+                    {
+                        "name": "cloudId",
+                        "in": "query",
+                        "description": "Federation CloudID to get the avatar for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "darkTheme",
+                        "in": "query",
+                        "description": "Theme used for background",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
                             ]
                         }
                     },
@@ -946,25 +944,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "cloudId"
-                                ],
-                                "properties": {
-                                    "cloudId": {
-                                        "type": "string",
-                                        "description": "Federation CloudID to get the avatar for"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -990,6 +969,15 @@
                                 64,
                                 512
                             ]
+                        }
+                    },
+                    {
+                        "name": "cloudId",
+                        "in": "query",
+                        "description": "Federation CloudID to get the avatar for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -1034,30 +1022,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "cloudId"
-                                ],
-                                "properties": {
-                                    "cloudId": {
-                                        "type": "string",
-                                        "description": "Federation CloudID to get the avatar for"
-                                    },
-                                    "darkTheme": {
-                                        "type": "boolean",
-                                        "default": false,
-                                        "description": "Theme used for background"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -1091,6 +1055,28 @@
                             "enum": [
                                 64,
                                 512
+                            ]
+                        }
+                    },
+                    {
+                        "name": "cloudId",
+                        "in": "query",
+                        "description": "Federation CloudID to get the avatar for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "darkTheme",
+                        "in": "query",
+                        "description": "Theme used for background",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
                             ]
                         }
                     },
@@ -1136,25 +1122,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "cloudId"
-                                ],
-                                "properties": {
-                                    "cloudId": {
-                                        "type": "string",
-                                        "description": "Federation CloudID to get the avatar for"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -1189,6 +1156,15 @@
                                 64,
                                 512
                             ]
+                        }
+                    },
+                    {
+                        "name": "cloudId",
+                        "in": "query",
+                        "description": "Federation CloudID to get the avatar for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -1794,25 +1770,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "sessionId"
-                                ],
-                                "properties": {
-                                    "sessionId": {
-                                        "type": "string",
-                                        "description": "Federated session id to leave with"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -1834,6 +1791,15 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "sessionId",
+                        "in": "query",
+                        "description": "Federated session id to leave with",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {

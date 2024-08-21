@@ -431,25 +431,6 @@
                         "basic_auth": []
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "host"
-                                ],
-                                "properties": {
-                                    "host": {
-                                        "type": "string",
-                                        "description": "Host to check"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -461,6 +442,15 @@
                                 "v1"
                             ],
                             "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "host",
+                        "in": "query",
+                        "description": "Host to check",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
