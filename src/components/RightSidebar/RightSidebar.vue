@@ -19,12 +19,7 @@
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
 		<template v-if="isInCall" #toggle-icon>
 			<MessageText :size="20" />
-			<NcCounterBubble v-if="unreadMessagesCounter > 0"
-				class="chat-button-unread-messages-counter"
-				:class="{ 'chat-button-unread-messages-counter--highlighted': hasUnreadMentions }"
-				:type="hasUnreadMentions ? 'highlighted' : 'outlined'">
-				{{ unreadMessagesCounter }}
-			</NcCounterBubble>
+			<span v-if="unreadMessagesCounter > 0" class="chat-button-unread-marker" />
 		</template>
 		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
@@ -118,7 +113,6 @@ import { t } from '@nextcloud/l10n'
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import LobbyStatus from './LobbyStatus.vue'
@@ -141,7 +135,6 @@ export default {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcButton,
-		NcCounterBubble,
 		ParticipantsTab,
 		SetGuestUsername,
 		SharedItemsTab,
@@ -491,15 +484,15 @@ export default {
 	height: 100%;
 }
 
-.chat-button-unread-messages-counter {
+.chat-button-unread-marker {
 	position: absolute;
-	bottom: 2px;
-	right: 2px;
+	top: 4px;
+	right: 4px;
+	width: 8px;
+	height: 8px;
+	border-radius: 8px;
+	background-color: var(--color-primary-element);
 	pointer-events: none;
-
-	&.chat-button-unread-messages-counter--highlighted {
-		color: var(--color-primary-text);
-	}
 }
 </style>
 

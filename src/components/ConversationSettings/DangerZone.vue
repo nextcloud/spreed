@@ -5,9 +5,7 @@
 
 <template>
 	<div>
-		<NcNoteCard type="warning">
-			<p>{{ t('spreed', 'Be careful, these actions cannot be undone.') }}</p>
-		</NcNoteCard>
+		<NcNoteCard type="warning" :text="t('spreed', 'Be careful, these actions cannot be undone.')" />
 		<div class="danger-zone">
 			<div v-if="canLeaveConversation" class="app-settings-subsection">
 				<h4 class="app-settings-section__subtitle">

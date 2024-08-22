@@ -7,9 +7,9 @@
 	<div id="sip-bridge" class="sip-bridge section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<NcNoteCard v-if="!showForm" type="warning">
-			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
-		</NcNoteCard>
+		<NcNoteCard v-if="!showForm"
+			type="warning"
+			:text="t('spreed', 'SIP configuration is only possible with a high-performance backend.')" />
 
 		<template v-else>
 			<NcCheckboxRadioSwitch type="switch"
@@ -17,9 +17,9 @@
 				:disabled="loading || !dialOutSupported">
 				{{ t('spreed', 'Enable SIP Dial-out option') }}
 			</NcCheckboxRadioSwitch>
-			<NcNoteCard v-if="!dialOutSupported" type="warning">
-				{{ t('spreed', 'Signaling server needs to be updated to supported SIP Dial-out feature.') }}
-			</NcNoteCard>
+			<NcNoteCard v-if="!dialOutSupported"
+				type="warning"
+				:text="t('spreed', 'Signaling server needs to be updated to supported SIP Dial-out feature.')" />
 
 			<NcSelect v-model="sipGroups"
 				input-id="sip-group-enabled"
@@ -49,7 +49,7 @@
 				:value.sync="sharedSecret"
 				class="form"
 				name="sip-shared-secret"
-				autocomplete="new-password"
+				as-text
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
 				label-outside />

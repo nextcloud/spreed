@@ -14,6 +14,7 @@
 		:aria-label="participantAriaLabel"
 		:actions-aria-label="participantSettingsAriaLabel"
 		force-display-actions
+		force-menu
 		@click="handleClick"
 		@keydown.enter="handleClick">
 		<!-- Participant's avatar -->

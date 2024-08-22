@@ -31,7 +31,7 @@
 
 		<NcPasswordField ref="turn_secret"
 			name="turn_secret"
-			autocomplete="new-password"
+			as-text
 			placeholder="secret"
 			class="turn-server__textfield"
 			:value="secret"

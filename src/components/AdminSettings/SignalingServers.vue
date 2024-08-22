@@ -13,9 +13,9 @@
 			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
 		</p>
 
-		<NcNoteCard v-if="!isCacheConfigured" type="warning">
-			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
-		</NcNoteCard>
+		<NcNoteCard v-if="!isCacheConfigured"
+			type="warning"
+			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.')" />
 
 		<TransitionWrapper v-if="servers.length"
 			name="fade"
@@ -57,7 +57,7 @@
 		<NcPasswordField class="form__textfield additional-top-margin"
 			:value="secret"
 			name="signaling_secret"
-			autocomplete="new-password"
+			as-text
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
