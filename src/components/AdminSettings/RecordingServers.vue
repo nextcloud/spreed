@@ -96,15 +96,15 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
-import { CALL } from '../../constants.js'
+import { CONFIG } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 
 const recordingConsentCapability = hasTalkFeature('local', 'recording-consent')
 const recordingConsentOptions = [
-	{ value: CALL.RECORDING_CONSENT.OFF, label: t('spreed', 'Disabled for all calls') },
-	{ value: CALL.RECORDING_CONSENT.REQUIRED, label: t('spreed', 'Enabled for all calls') },
-	{ value: CALL.RECORDING_CONSENT.OPTIONAL, label: t('spreed', 'Configurable on conversation level by moderators') },
+	{ value: CONFIG.RECORDING_CONSENT.OFF, label: t('spreed', 'Disabled for all calls') },
+	{ value: CONFIG.RECORDING_CONSENT.REQUIRED, label: t('spreed', 'Enabled for all calls') },
+	{ value: CONFIG.RECORDING_CONSENT.OPTIONAL, label: t('spreed', 'Configurable on conversation level by moderators') },
 ]
 
 export default {
@@ -216,11 +216,11 @@ export default {
 
 		getRecordingConsentDescription(value) {
 			switch (value) {
-			case CALL.RECORDING_CONSENT.OPTIONAL:
+			case CONFIG.RECORDING_CONSENT.OPTIONAL:
 				return t('spreed', 'Moderators will be allowed to enable consent on conversation level. The consent to be recorded will be required for each participant before joining every call in this conversation.')
-			case CALL.RECORDING_CONSENT.REQUIRED:
+			case CONFIG.RECORDING_CONSENT.REQUIRED:
 				return t('spreed', 'The consent to be recorded will be required for each participant before joining every call.')
-			case CALL.RECORDING_CONSENT.OFF:
+			case CONFIG.RECORDING_CONSENT.OFF:
 			default:
 				return t('spreed', 'The consent to be recorded is not required.')
 			}

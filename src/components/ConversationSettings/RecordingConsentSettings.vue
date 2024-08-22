@@ -33,7 +33,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
-import { CALL, CONVERSATION } from '../../constants.js'
+import { CALL, CONFIG, CONVERSATION } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 
 export default {
@@ -58,7 +58,7 @@ export default {
 	data() {
 		return {
 			loading: false,
-			recordingConsentSelected: !!CALL.RECORDING_CONSENT.OFF,
+			recordingConsentSelected: !!CALL.RECORDING_CONSENT.DISABLED,
 		}
 	},
 
@@ -68,7 +68,7 @@ export default {
 		},
 
 		isGlobalConsent() {
-			return getTalkConfig(this.token, 'call', 'recording-consent') === CALL.RECORDING_CONSENT.REQUIRED
+			return getTalkConfig(this.token, 'call', 'recording-consent') === CONFIG.RECORDING_CONSENT.REQUIRED
 		},
 
 		isBreakoutRoomStarted() {
@@ -80,7 +80,7 @@ export default {
 		},
 
 		summaryLabel() {
-			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
+			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
 				? t('spreed', 'Recording consent is required for calls in this conversation')
 				: t('spreed', 'Recording consent is not required for calls in this conversation')
 		},
@@ -97,7 +97,7 @@ export default {
 			try {
 				await this.$store.dispatch('setRecordingConsent', {
 					token: this.token,
-					state: value ? CALL.RECORDING_CONSENT.REQUIRED : CALL.RECORDING_CONSENT.OFF,
+					state: value ? CALL.RECORDING_CONSENT.ENABLED : CALL.RECORDING_CONSENT.DISABLED,
 				})
 				showSuccess(t('spreed', 'Recording consent requirement was updated'))
 			} catch (error) {

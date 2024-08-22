@@ -119,7 +119,7 @@ import NotificationsSettings from './NotificationsSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 
-import { CALL, PARTICIPANT, CONVERSATION } from '../../constants.js'
+import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
@@ -245,11 +245,11 @@ export default {
 		recordingConsentAvailable() {
 			return (getTalkConfig(this.token, 'call', 'recording') || false)
 				&& hasTalkFeature(this.token, 'recording-consent')
-				&& getTalkConfig(this.token, 'call', 'recording-consent') !== CALL.RECORDING_CONSENT.OFF
+				&& getTalkConfig(this.token, 'call', 'recording-consent') !== CONFIG.RECORDING_CONSENT.OFF
 		},
 
 		recordingConsentRequired() {
-			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
+			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
 		}
 	},
 
