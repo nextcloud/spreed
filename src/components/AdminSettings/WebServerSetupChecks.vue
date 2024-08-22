@@ -9,10 +9,7 @@
 			{{ t('spreed', 'Web server setup checks') }}
 		</h2>
 
-		<NcNoteCard v-if="apacheWarning"
-			:type="apacheWarningType">
-			{{ apacheWarning }}
-		</NcNoteCard>
+		<NcNoteCard v-if="apacheWarning" :type="apacheWarningType" :text="apacheWarning" />
 
 		<ul class="web-server-setup-checks">
 			<li class="virtual-background">
