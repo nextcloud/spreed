@@ -23,7 +23,6 @@ describe('FilePreview.vue', () => {
 	let localVue
 	let testStoreConfig
 	let propsData
-	let imageMock
 	let getUserIdMock
 	let oldPixelRatio
 
@@ -38,16 +37,6 @@ describe('FilePreview.vue', () => {
 		getUserIdMock = jest.fn().mockReturnValue('current-user-id')
 		testStoreConfig.modules.actorStore.getters.getUserId = () => getUserIdMock
 		store = new Vuex.Store(testStoreConfig)
-
-		imageMock = {
-			onload: jest.fn(),
-			onerror: jest.fn(),
-			src: null,
-		}
-		jest.spyOn(global, 'Image')
-			.mockImplementation(() => {
-				return imageMock
-			})
 
 		propsData = {
 			token: 'TOKEN',
@@ -84,7 +73,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onload()
+			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
@@ -107,7 +96,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onload()
+			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
@@ -129,7 +118,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onload()
+			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
@@ -145,7 +134,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onload()
+			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
@@ -185,7 +174,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				expect(wrapper.element.tagName).toBe('DIV')
 				expect(wrapper.find('img').attributes('src')).toBe('blob:XYZ')
@@ -206,8 +195,8 @@ describe('FilePreview.vue', () => {
 			})
 
 			expect(wrapper.element.tagName).toBe('A')
-			expect(wrapper.find('img').exists()).toBe(false)
-			expect(wrapper.find('.loading').exists()).toBe(true)
+			const spinner = wrapper.findComponent({ name: 'NcLoadingIcon' })
+			expect(spinner.exists()).toBe(true)
 		})
 
 		test('renders default mime icon on load error', async () => {
@@ -218,7 +207,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onerror()
+			await wrapper.find('img').trigger('error')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = wrapper.find('img').attributes('src')
@@ -235,7 +224,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onload()
+			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = wrapper.find('img').attributes('src')
@@ -259,7 +248,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
@@ -276,7 +265,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
@@ -294,7 +283,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
@@ -311,7 +300,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				expect(wrapper.element.tagName).toBe('A')
 				const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
@@ -370,7 +359,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				await wrapper.find('a').trigger('click')
 
@@ -404,7 +393,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				await wrapper.find('a').trigger('click')
 
@@ -419,7 +408,7 @@ describe('FilePreview.vue', () => {
 					propsData,
 				})
 
-				await imageMock.onload()
+				await wrapper.find('img').trigger('load')
 
 				// no error
 				await wrapper.find('a').trigger('click')
@@ -450,7 +439,7 @@ describe('FilePreview.vue', () => {
 						propsData,
 					})
 
-					await imageMock.onload()
+					await wrapper.find('img').trigger('load')
 
 					const buttonEl = wrapper.findComponent(PlayCircleOutline)
 					expect(buttonEl.exists()).toBe(visible)
@@ -491,7 +480,7 @@ describe('FilePreview.vue', () => {
 						propsData,
 					})
 
-					await imageMock.onerror()
+					await wrapper.find('img').trigger('error')
 
 					const buttonEl = wrapper.findComponent(PlayCircleOutline)
 					expect(buttonEl.exists()).toBe(false)
@@ -524,7 +513,7 @@ describe('FilePreview.vue', () => {
 				propsData,
 			})
 
-			await imageMock.onload()
+			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('DIV')
 			await wrapper.findComponent(NcButton).trigger('click')

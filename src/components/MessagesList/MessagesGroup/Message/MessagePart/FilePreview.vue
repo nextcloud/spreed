@@ -19,33 +19,30 @@
 			class="image-container"
 			:class="{'playable': isPlayable}"
 			:style="imageContainerStyle">
+			<img class="file-preview__image"
+				:class="previewImageClass"
+				:alt="file.name"
+				:src="failed ? defaultIconUrl : previewUrl"
+				@load="onLoad"
+				@error="onError">
 			<template v-if="!isLoading || fallbackLocalUrl">
 				<span v-if="isPlayable && !smallPreview" class="play-video-button">
 					<PlayCircleOutline :size="48"
 						fill-color="#ffffff" />
 				</span>
-				<img v-if="!failed"
-					:class="previewImageClass"
-					class="file-preview__image"
-					:alt="file.name"
-					:src="previewUrl">
-				<img v-else
-					:class="previewImageClass"
-					:alt="file.name"
-					:src="defaultIconUrl">
 				<NcProgressBar v-if="showUploadProgress"
 					class="file-preview__progress"
 					type="circular"
 					:value="uploadProgress" />
 			</template>
-			<template v-else-if="isLoading">
+			<TransitionWrapper v-else-if="isLoading" name="fade">
 				<canvas v-if="file.blurhash"
 					ref="blurCanvas"
 					width="32"
 					height="32"
 					class="preview preview-loading" />
 				<NcLoadingIcon v-else class="preview preview-loading" />
-			</template>
+			</TransitionWrapper>
 		</span>
 
 		<NcButton v-if="isUploadEditor"
@@ -81,6 +78,7 @@ import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
+import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.js'
@@ -101,6 +99,7 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcProgressBar,
+		TransitionWrapper,
 		// Icons
 		Close,
 		PlayCircleOutline,
@@ -480,16 +479,6 @@ export default {
 			imageData.data.set(decode(this.file.blurhash, 32, 32))
 			ctx.putImageData(imageData, 0, 0)
 		}
-
-		const img = new Image()
-		img.onerror = () => {
-			this.isLoading = false
-			this.failed = true
-		}
-		img.onload = () => {
-			this.isLoading = false
-		}
-		img.src = this.previewUrl
 	},
 
 	beforeDestroy() {
@@ -498,6 +487,16 @@ export default {
 
 	methods: {
 		t,
+
+		onLoad() {
+			this.isLoading = false
+		},
+
+		onError() {
+			this.isLoading = false
+			this.failed = true
+		},
+
 		handleClick(event) {
 			if (this.isUploadEditor) {
 				this.$emit('remove-file', this.file.id)
@@ -605,6 +604,7 @@ export default {
 	}
 
 	.preview-loading {
+		position: absolute;
 		border-radius: var(--border-radius);
 		width: 100%;
 		height: 100%;
