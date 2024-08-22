@@ -44,7 +44,7 @@
 					width="32"
 					height="32"
 					class="preview preview-loading" />
-				<span v-else class="preview loading" />
+				<NcLoadingIcon v-else class="preview preview-loading" />
 			</template>
 		</span>
 
@@ -76,6 +76,7 @@ import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
@@ -97,10 +98,12 @@ export default {
 	name: 'FilePreview',
 
 	components: {
+		NcButton,
+		NcLoadingIcon,
 		NcProgressBar,
+		// Icons
 		Close,
 		PlayCircleOutline,
-		NcButton,
 	},
 
 	directives: {
@@ -182,6 +185,7 @@ export default {
 			uploadManager: null,
 		}
 	},
+
 	computed: {
 		shouldShowFileDetail() {
 			if (this.isSharedItems && !this.rowLayout) {
@@ -571,12 +575,6 @@ export default {
 		top: 50%;
 		right: 0;
 		transform: translate(100%, -50%);
-	}
-
-	.loading {
-		display: inline-block;
-		min-width: 32px;
-		background-color: var(--color-background-dark);
 	}
 
 	.mimeicon {
