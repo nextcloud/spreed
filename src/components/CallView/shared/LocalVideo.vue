@@ -25,7 +25,7 @@
 				class="video"
 				@playing="updateVideoAspectRatio" />
 			<NcLoadingIcon v-if="isNotConnected"
-				:size="avatarSize"
+				:size="avatarSize / 2"
 				class="video-loading" />
 		</div>
 		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
