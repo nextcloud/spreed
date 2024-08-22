@@ -352,7 +352,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 | field         | type   | Description                                                                                                                                                                                                                                                                    |
 |---------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `mode`        | string | `default` or `call`, in case of call the permissions will be reset to `0` (default) after the end of a call.                                                                                                                                                                   |
+| `mode`        | string | `default` or `call`, in case of call the permissions will be reset to `0` (default) after the end of a call. (🏁 `call` is no-op since Talk 20)                                                                                                                                |
 | `permissions` | int    | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added. Note that this will reset all custom permissions that have been given to attendees so far. |
 
 * Response:
