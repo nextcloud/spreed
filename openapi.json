@@ -3958,14 +3958,6 @@
                                         "minimum": 0,
                                         "maximum": 15
                                     },
-                                    "forcePermissions": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "nullable": true,
-                                        "description": "In-call permissions",
-                                        "minimum": 0,
-                                        "maximum": 255
-                                    },
                                     "silent": {
                                         "type": "boolean",
                                         "default": false,
@@ -12258,7 +12250,7 @@
                     {
                         "name": "mode",
                         "in": "path",
-                        "description": "Level of the permissions ('call', 'default')",
+                        "description": "Level of the permissions ('call' (removed in Talk 20), 'default')",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -12331,7 +12323,22 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "breakout-room",
+                                                                "mode",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -13388,6 +13395,7 @@
             "put": {
                 "operationId": "room-set-all-attendees-permissions",
                 "summary": "Update the permissions of all attendees",
+                "deprecated": true,
                 "tags": [
                     "room"
                 ],
