@@ -154,3 +154,4 @@
 * `ban-v1` - Whether the API to ban attendees is available
 * `mention-permissions` - Whether non-moderators are allowed to mention `@all`
 * `federation-v2` - Whether federated session ids are used and calls are possible with federation
+* `edit-messages-note-to-self` - Messages in note-to-self conversations can be edited indefinitely
