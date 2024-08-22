@@ -149,3 +149,39 @@ Feature: conversation-2/set-publishing-permissions
       | actorType  | actorId      | permissions | attendeePermissions | participantType |
       | users      | owner        | SJLAVPM     | D                   | 1               |
       | users      | invited user | CLAVPM      | CLAVPM              | 3               |
+
+  Scenario: adding and removing permissions to all attendees do not change default attendee permissions
+    Given user "invited user2" exists
+    And user "owner" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
+    And user "owner" adds user "invited user2" to room "group room" with 200 (v4)
+    And user "owner" sets call permissions for room "group room" to "LPM" with 200 (v4)
+    And user "owner" sets permissions for "invited user2" in room "group room" to "LVP" with 200 (v4)
+    When user "owner" adds permissions for all attendees in room "group room" to "JA" with 200 (v4)
+    And user "owner" removes permissions for all attendees in room "group room" to "SLP" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId       | permissions | attendeePermissions |
+      | users      | owner         | SJLAVPM     | D                   |
+      | users      | invited user  | CJAM        | D                   |
+      | users      | invited user2 | CJAV        | CJAV                |
+    And user "owner" is participant of room "group room" (v4)
+      | callPermissions | defaultPermissions |
+      | CJAM            | D                  |
+
+  Scenario: adding and removing permissions to all attendees customize room permissions if call permissions are not set
+    Given user "owner" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
+    And user "owner" sets default permissions for room "group room" to "LPM" with 200 (v4)
+    When user "owner" adds permissions for all attendees in room "group room" to "JA" with 200 (v4)
+    And user "owner" removes permissions for all attendees in room "group room" to "SLP" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId       | permissions | attendeePermissions |
+      | users      | owner         | SJLAVPM     | D                   |
+      | users      | invited user  | CJAM        | D                   |
+    And user "owner" is participant of room "group room" (v4)
+      | callPermissions | defaultPermissions |
+      | CJAM            | CLPM               |

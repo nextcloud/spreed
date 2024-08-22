@@ -180,6 +180,12 @@ class RoomService {
 		} elseif ($level === 'call') {
 			$property = ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS;
 			$oldPermissions = $room->getCallPermissions();
+
+			if ($oldPermissions === Attendee::PERMISSIONS_DEFAULT
+					&& ($method === Attendee::PERMISSIONS_MODIFY_ADD
+						|| $method === Attendee::PERMISSIONS_MODIFY_REMOVE)) {
+				$oldPermissions = $room->getDefaultPermissions();
+			}
 		} else {
 			return false;
 		}
