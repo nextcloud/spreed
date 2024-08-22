@@ -15,40 +15,39 @@
 		v-bind="filePreviewBinding"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
-		<span v-if="!isLoading || fallbackLocalUrl"
+		<span v-tooltip="previewTooltip"
 			class="image-container"
-			:class="{'playable': isPlayable}">
-			<span v-if="isPlayable && !smallPreview" class="play-video-button">
-				<PlayCircleOutline :size="48"
-					fill-color="#ffffff" />
-			</span>
-			<img v-if="!failed"
-				v-tooltip="previewTooltip"
-				:class="previewImageClass"
-				class="file-preview__image"
-				alt=""
-				:src="previewUrl">
-			<img v-else
-				:class="previewImageClass"
-				alt=""
-				:src="defaultIconUrl">
-			<NcProgressBar v-if="showUploadProgress"
-				class="file-preview__progress"
-				type="circular"
-				:value="uploadProgress" />
+			:class="{'playable': isPlayable}"
+			:style="imageContainerStyle">
+			<template v-if="!isLoading || fallbackLocalUrl">
+				<span v-if="isPlayable && !smallPreview" class="play-video-button">
+					<PlayCircleOutline :size="48"
+						fill-color="#ffffff" />
+				</span>
+				<img v-if="!failed"
+					:class="previewImageClass"
+					class="file-preview__image"
+					:alt="file.name"
+					:src="previewUrl">
+				<img v-else
+					:class="previewImageClass"
+					:alt="file.name"
+					:src="defaultIconUrl">
+				<NcProgressBar v-if="showUploadProgress"
+					class="file-preview__progress"
+					type="circular"
+					:value="uploadProgress" />
+			</template>
+			<template v-else-if="isLoading">
+				<canvas v-if="file.blurhash"
+					ref="blurCanvas"
+					width="32"
+					height="32"
+					class="preview preview-loading" />
+				<span v-else class="preview loading" />
+			</template>
 		</span>
-		<template v-else-if="isLoading">
-			<canvas v-if="file.blurhash"
-				ref="blurCanvas"
-				width="32"
-				height="32"
-				class="preview"
-				:style="imageContainerStyle" />
-			<span v-else
-				v-tooltip="previewTooltip"
-				class="preview loading"
-				:style="imageContainerStyle" />
-		</template>
+
 		<NcButton v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
@@ -590,31 +589,38 @@ export default {
 	}
 
 	.preview {
-		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 384px;
 	}
 
 	.preview-medium {
-		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 192px;
 	}
 
 	.preview-small {
-		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 32px;
 	}
 
-	.image-container {
-		position: relative;
-		display: inline-block;
+	.preview-loading {
+		border-radius: var(--border-radius);
 		width: 100%;
 		height: 100%;
+		background-color: var(--color-background-dark);
+	}
+
+	.image-container {
+		position: relative;
+		display: inline-flex;
+		width: 100%;
+		height: 100%;
+		max-width: 100%;
+		max-height: 100%;
+		border-radius: var(--border-radius);
 
 		&.playable {
 			.preview {
