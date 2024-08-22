@@ -37,10 +37,18 @@
 				type="circular"
 				:value="uploadProgress" />
 		</span>
-		<span v-else-if="isLoading"
-			v-tooltip="previewTooltip"
-			class="preview loading"
-			:style="imageContainerStyle" />
+		<template v-else-if="isLoading">
+			<canvas v-if="file.blurhash"
+				ref="blurCanvas"
+				width="32"
+				height="32"
+				class="preview"
+				:style="imageContainerStyle" />
+			<span v-else
+				v-tooltip="previewTooltip"
+				class="preview loading"
+				:style="imageContainerStyle" />
+		</template>
 		<NcButton v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
@@ -58,6 +66,8 @@
 </template>
 
 <script>
+import { decode } from 'blurhash'
+
 import Close from 'vue-material-design-icons/Close.vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
@@ -459,6 +469,13 @@ export default {
 	mounted() {
 		if (this.isTemporaryUpload && !this.isUploadEditor) {
 			this.uploadManager = getUploader()
+		}
+
+		if (this.file.blurhash && this.file.width && this.file.height) {
+			const ctx = this.$refs.blurCanvas.getContext('2d')
+			const imageData = ctx.createImageData(32, 32)
+			imageData.data.set(decode(this.file.blurhash, 32, 32))
+			ctx.putImageData(imageData, 0, 0)
 		}
 
 		const img = new Image()
