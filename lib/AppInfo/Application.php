@@ -72,6 +72,7 @@ use OCA\Talk\Federation\Proxy\TalkV1\Listener\ResourceTypeRegisterListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\BeforeRoomDeletedListener as TalkV1BeforeRoomDeletedListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\CancelRetryOCMListener as TalkV1CancelRetryOCMListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\MessageSentListener as TalkV1MessageSentListener;
+use OCA\Talk\Federation\Proxy\TalkV1\Notifier\ParticipantModifiedListener as TalkV1ParticipantModifiedListener;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\RoomModifiedListener as TalkV1RoomModifiedListener;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
@@ -268,6 +269,7 @@ class Application extends App implements IBootstrap {
 
 		// Federation listeners
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, TalkV1ParticipantModifiedListener::class);
 		$context->registerEventListener(CallEndedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(CallStartedEvent::class, TalkV1RoomModifiedListener::class);

@@ -69,6 +69,7 @@ class BackendNotifier {
 		$roomName = $room->getName();
 		$roomType = $room->getType();
 		$roomToken = $room->getToken();
+		$roomDefaultPermissions = $room->getDefaultPermissions();
 
 		try {
 			$this->restrictionValidator->isAllowedToInvite($sharedBy, $invitedCloudId);
@@ -101,6 +102,7 @@ class BackendNotifier {
 		$protocol['invitedCloudId'] = $invitedCloudId->getId();
 		$protocol['roomName'] = $roomName;
 		$protocol['roomType'] = $roomType;
+		$protocol['roomDefaultPermissions'] = $roomDefaultPermissions;
 		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;
 		$share->setProtocol($protocol);
 
@@ -236,6 +238,40 @@ class BackendNotifier {
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_ROOM_MODIFIED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string) $localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'changedProperty' => $changedProperty,
+				'newValue' => $newValue,
+				'oldValue' => $oldValue,
+			],
+		);
+
+		return $this->sendUpdateToRemote($remote, $notification);
+	}
+
+	/**
+	 * Send information to remote participants that the participant meta info updated
+	 * Sent from Host server to Remote participant server (only for the affected participant)
+	 */
+	public function sendParticipantModifiedUpdate(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		string $changedProperty,
+		string|int $newValue,
+		string|int|null $oldValue,
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED,
 			FederationManager::TALK_ROOM_RESOURCE,
 			(string) $localAttendeeId,
 			[
