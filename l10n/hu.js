@@ -859,6 +859,7 @@ OC.L10N.register(
     "Hide details" : "Részletek elrejtése",
     "Show details" : "Részletek megjelenítése",
     "Date:" : "Dátum:",
+    "Note:" : "Megjegyzés:",
     "Enter a name for this conversation" : "Adjon meg egy nevet a beszélgetéshez",
     "Edit conversation name" : "Beszélgetés nevének szerkesztése",
     "Edit conversation description" : "Beszélgetés leírásának szerkesztése",
