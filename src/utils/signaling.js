@@ -17,6 +17,7 @@ import {
 
 import CancelableRequest from './cancelableRequest.js'
 import { PARTICIPANT } from '../constants.js'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.js'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
@@ -1082,10 +1083,12 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 	}
 
 	if (!this.settings.helloAuthParams.internal
-			&& (!this.hasFeature('audio-video-permissions')
-				|| !this.hasFeature('federation')
-				|| !this.hasFeature('incall-all')
-				|| !this.hasFeature('switchto'))) {
+		&& ((!this.hasFeature('audio-video-permissions') && hasTalkFeature('local', 'conversation-permissions')) // Talk v13
+			|| !this.hasFeature('incall-all') // Talk v15
+			|| (!this.hasFeature('switchto') && hasTalkFeature('local', 'breakout-rooms-v1')) // Talk v16
+			|| (!this.hasFeature('federation') && hasTalkFeature('local', 'federation-v2')) // Talk v20
+		)
+	) {
 		showError(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.'),
 			{
