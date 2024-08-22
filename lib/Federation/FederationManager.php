@@ -19,6 +19,7 @@ use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
@@ -42,6 +43,7 @@ class FederationManager {
 	public const NOTIFICATION_SHARE_ACCEPTED = 'SHARE_ACCEPTED';
 	public const NOTIFICATION_SHARE_DECLINED = 'SHARE_DECLINED';
 	public const NOTIFICATION_SHARE_UNSHARED = 'SHARE_UNSHARED';
+	public const NOTIFICATION_PARTICIPANT_MODIFIED = 'PARTICIPANT_MODIFIED';
 	public const NOTIFICATION_ROOM_MODIFIED = 'ROOM_MODIFIED';
 	public const NOTIFICATION_MESSAGE_POSTED = 'MESSAGE_POSTED';
 	public const TOKEN_LENGTH = 64;
@@ -49,6 +51,7 @@ class FederationManager {
 	public function __construct(
 		private Manager $manager,
 		private ParticipantService $participantService,
+		private RoomService $roomService,
 		private InvitationMapper $invitationMapper,
 		private BackendNotifier $backendNotifier,
 		private IManager $notificationManager,
@@ -74,6 +77,7 @@ class FederationManager {
 		int $remoteAttendeeId,
 		int $roomType,
 		string $roomName,
+		int $roomDefaultPermissions,
 		string $remoteToken,
 		string $remoteServerUrl,
 		#[SensitiveParameter]
@@ -88,6 +92,13 @@ class FederationManager {
 			$couldHaveInviteWithOtherCasing = true;
 		} catch (RoomNotFoundException) {
 			$room = $this->manager->createRemoteRoom($roomType, $roomName, $remoteToken, $remoteServerUrl);
+		}
+
+		// Only update the room permissions if there are no participants in the
+		// remote room. Otherwise, the room permissions would be up to date
+		// already due to the notifications about room permission changes.
+		if (!$this->participantService->getNumberOfActors($room)) {
+			$this->roomService->setDefaultPermissions($room, $roomDefaultPermissions);
 		}
 
 		if ($couldHaveInviteWithOtherCasing) {

@@ -125,6 +125,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$remoteId = $share->getProviderId();
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
+		$roomDefaultPermissions = $share->getProtocol()['roomDefaultPermissions'] ?? Attendee::PERMISSIONS_DEFAULT;
 		if (isset($share->getProtocol()['invitedCloudId'])) {
 			$localCloudId = $share->getProtocol()['invitedCloudId'];
 		} else {
@@ -173,7 +174,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int) $remoteId, $roomType, $roomName, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
+			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int) $remoteId, $roomType, $roomName, $roomDefaultPermissions, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
 
 			$this->notifyAboutNewShare($shareWithUser, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
 			return (string) $invite->getId();
@@ -197,6 +198,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				return $this->shareDeclined((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_SHARE_UNSHARED:
 				return $this->shareUnshared((int) $providerId, $notification);
+			case FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED:
+				return $this->participantModified((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
 				return $this->roomModified((int) $providerId, $notification);
 			case FederationManager::NOTIFICATION_MESSAGE_POSTED:
@@ -294,6 +297,42 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 	/**
 	 * @param int $remoteAttendeeId
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int, oldValue: string|int|null} $notification
+	 * @return array
+	 * @throws ActionNotSupportedException
+	 * @throws AuthenticationFailedException
+	 * @throws ShareNotFound
+	 */
+	private function participantModified(int $remoteAttendeeId, array $notification): array {
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedConversation()) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		try {
+			$participant = $this->participantService->getParticipant($room, $invite->getUserId());
+		} catch (ParticipantNotFoundException $e) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		if ($notification['changedProperty'] === AParticipantModifiedEvent::PROPERTY_PERMISSIONS) {
+			$this->participantService->updatePermissions($room, $participant, Attendee::PERMISSIONS_MODIFY_SET, $notification['newValue']);
+		} else {
+			$this->logger->debug('Update of participant property "' . $notification['changedProperty'] . '" is not handled and should not be send via federation');
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param int $remoteAttendeeId
 	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, changedProperty: string, newValue: string|int|bool|null, oldValue: string|int|bool|null, callFlag?: int, dateTime?: string, timerReached?: bool, details?: array<AParticipantModifiedEvent::DETAIL_*, bool>} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
@@ -324,6 +363,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->roomService->setAvatar($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_CALL_RECORDING) {
 			$this->roomService->setCallRecording($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS) {
+			$this->roomService->setDefaultPermissions($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_DESCRIPTION) {
 			$this->roomService->setDescription($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_IN_CALL) {
