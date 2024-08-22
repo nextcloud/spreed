@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.11 – 2024-08-22
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(settings): hide secrets in password fields
+  [#12843](https://github.com/nextcloud/spreed/issues/12843)
+- fix(conversation): Fix adding and removing permissions
+  [#13080](https://github.com/nextcloud/spreed/issues/13080)
+- fix(session): Fix generating session id again if duplicated
+  [#12744](https://github.com/nextcloud/spreed/issues/12744)
+
 ## 18.0.10 – 2024-07-11
 ### Fixed
 - fix(sharing): Fix share detection within object stores
