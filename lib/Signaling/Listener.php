@@ -11,6 +11,7 @@ namespace OCA\Talk\Signaling;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AMessageSentEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
@@ -18,6 +19,7 @@ use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BeforeAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
+use OCA\Talk\Events\BeforeRoomSyncedEvent;
 use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
@@ -26,6 +28,7 @@ use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
@@ -44,6 +47,24 @@ use OCP\Server;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
+	public const EXTERNAL_SIGNALING_PROPERTIES = [
+		ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE,
+		ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS,
+		ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
+		ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
+		ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
+		ARoomModifiedEvent::PROPERTY_DESCRIPTION,
+		ARoomModifiedEvent::PROPERTY_LISTABLE,
+		ARoomModifiedEvent::PROPERTY_LOBBY,
+		ARoomModifiedEvent::PROPERTY_NAME,
+		ARoomModifiedEvent::PROPERTY_PASSWORD,
+		ARoomModifiedEvent::PROPERTY_READ_ONLY,
+		ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
+		ARoomModifiedEvent::PROPERTY_TYPE,
+	];
+
+	protected bool $pauseRoomModifiedListener = false;
+
 	public function __construct(
 		protected Config $talkConfig,
 		protected Messages $internalSignaling,
@@ -106,6 +127,8 @@ class Listener implements IEventListener {
 		match (get_class($event)) {
 			RoomModifiedEvent::class,
 			LobbyModifiedEvent::class => $this->notifyRoomModified($event),
+			BeforeRoomSyncedEvent::class => $this->pauseRoomModifiedListener(),
+			RoomSyncedEvent::class => $this->notifyRoomSynced($event),
 			BeforeRoomDeletedEvent::class => $this->notifyBeforeRoomDeleted($event),
 			CallEndedForEveryoneEvent::class => $this->notifyCallEndedForEveryone($event),
 			GuestsCleanedUpEvent::class => $this->notifyGuestsCleanedUp($event),
@@ -121,22 +144,12 @@ class Listener implements IEventListener {
 		};
 	}
 
+	protected function pauseRoomModifiedListener(): void {
+		$this->pauseRoomModifiedListener = true;
+	}
+
 	protected function notifyRoomModified(ARoomModifiedEvent $event): void {
-		if (!in_array($event->getProperty(), [
-			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE,
-			ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS,
-			ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
-			ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
-			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
-			ARoomModifiedEvent::PROPERTY_DESCRIPTION,
-			ARoomModifiedEvent::PROPERTY_LISTABLE,
-			ARoomModifiedEvent::PROPERTY_LOBBY,
-			ARoomModifiedEvent::PROPERTY_NAME,
-			ARoomModifiedEvent::PROPERTY_PASSWORD,
-			ARoomModifiedEvent::PROPERTY_READ_ONLY,
-			ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
-			ARoomModifiedEvent::PROPERTY_TYPE,
-		], true)) {
+		if (!in_array($event->getProperty(), self::EXTERNAL_SIGNALING_PROPERTIES, true)) {
 			return;
 		}
 
@@ -156,12 +169,34 @@ class Listener implements IEventListener {
 		$this->externalSignaling->roomModified($event->getRoom());
 	}
 
-	protected function notifyRoomRecordingModified(ARoomModifiedEvent $event): void {
+	protected function notifyRoomSynced(RoomSyncedEvent $event): void {
+		$this->pauseRoomModifiedListener = false;
+		if (empty(array_intersect($event->getProperties(), self::EXTERNAL_SIGNALING_PROPERTIES))) {
+			return;
+		}
+
+		if (in_array(ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS, $event->getProperties(), true)
+			|| in_array(ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS, $event->getProperties(), true)) {
+			$this->notifyRoomPermissionsModified($event);
+		}
+
+		if (in_array(ARoomModifiedEvent::PROPERTY_CALL_RECORDING, $event->getProperties(), true)) {
+			$this->notifyRoomRecordingModified($event);
+		}
+
+		if (in_array(ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS, $event->getProperties(), true)) {
+			$this->notifyBreakoutRoomStatusModified($event);
+		}
+
+		$this->externalSignaling->roomModified($event->getRoom());
+	}
+
+	protected function notifyRoomRecordingModified(ARoomEvent $event): void {
 		$room = $event->getRoom();
 		$message = [
 			'type' => 'recording',
 			'recording' => [
-				'status' => $event->getNewValue(),
+				'status' => $room->getCallRecording(),
 			],
 		];
 
@@ -243,7 +278,7 @@ class Listener implements IEventListener {
 		$this->externalSignaling->participantsModified($event->getRoom(), $sessionIds);
 	}
 
-	protected function notifyRoomPermissionsModified(ARoomModifiedEvent $event): void {
+	protected function notifyRoomPermissionsModified(ARoomEvent $event): void {
 		$sessionIds = [];
 
 		// Setting the room permissions resets the permissions of all
@@ -327,7 +362,7 @@ class Listener implements IEventListener {
 		}
 	}
 
-	protected function notifyBreakoutRoomStatusModified(ARoomModifiedEvent $event): void {
+	protected function notifyBreakoutRoomStatusModified(ARoomEvent $event): void {
 		$room = $event->getRoom();
 		if ($room->getBreakoutRoomStatus() === BreakoutRoom::STATUS_STARTED) {
 			$this->notifyBreakoutRoomStarted($room);

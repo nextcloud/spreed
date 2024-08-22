@@ -11,6 +11,7 @@ namespace OCA\Talk\Recording;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\ACallEndedEvent;
+use OCA\Talk\Events\ARoomEvent;
 use OCA\Talk\Events\CallEndedEvent;
 use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
@@ -39,6 +40,10 @@ class Listener implements IEventListener {
 	public function handle(Event $event): void {
 		if ($event instanceof AbstractTranscriptionEvent) {
 			$this->handleTranscriptionEvents($event);
+			return;
+		}
+
+		if ($event instanceof ARoomEvent && $event->getRoom()->isFederatedConversation()) {
 			return;
 		}
 
