@@ -41,6 +41,7 @@ use OCA\Talk\Events\BeforeGuestJoinedRoomEvent;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCA\Talk\Events\BeforeRoomSyncedEvent;
 use OCA\Talk\Events\BeforeSessionLeftRoomEvent;
 use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\BotDisabledEvent;
@@ -61,6 +62,7 @@ use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Events\SessionLeftRoomEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
@@ -286,6 +288,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, SignalingListener::class);
 		$context->registerEventListener(GuestsCleanedUpEvent::class, SignalingListener::class);
 		$context->registerEventListener(LobbyModifiedEvent::class, SignalingListener::class);
+		$context->registerEventListener(BeforeRoomSyncedEvent::class, SignalingListener::class);
+		$context->registerEventListener(RoomSyncedEvent::class, SignalingListener::class);
 
 		$context->registerEventListener(ChatMessageSentEvent::class, SignalingListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, SignalingListener::class);

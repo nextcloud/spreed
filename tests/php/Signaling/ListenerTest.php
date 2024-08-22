@@ -117,6 +117,8 @@ class ListenerTest extends TestCase {
 
 	public function testRecordingStatusChanged(): void {
 		$room = $this->createMock(Room::class);
+		$room->method('getCallRecording')
+			->willReturn(Room::RECORDING_VIDEO);
 
 		$event = new RoomModifiedEvent(
 			$room,
@@ -131,7 +133,7 @@ class ListenerTest extends TestCase {
 			->with($room, [
 				'type' => 'recording',
 				'recording' => [
-					'status' => $event->getNewValue(),
+					'status' => Room::RECORDING_VIDEO,
 				],
 			]);
 		$this->listener->handle($event);

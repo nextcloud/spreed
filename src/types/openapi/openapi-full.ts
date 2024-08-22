@@ -8632,11 +8632,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
                 "application/json": {
                     /** @description Federated session id to join with */
-                    sessionId: string;
+                    sessionId?: string | null;
                 };
             };
         };
@@ -8651,7 +8651,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };

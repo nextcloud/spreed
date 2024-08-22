@@ -45,6 +45,7 @@ class RoomServiceTest extends TestCase {
 	protected IHasher&MockObject $hasher;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected IJobList&MockObject $jobList;
+	protected LoggerInterface&MockObject $logger;
 	protected ?RoomService $service = null;
 
 	public function setUp(): void {
@@ -58,6 +59,7 @@ class RoomServiceTest extends TestCase {
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->jobList = $this->createMock(IJobList::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
@@ -67,7 +69,8 @@ class RoomServiceTest extends TestCase {
 			$this->config,
 			$this->hasher,
 			$this->dispatcher,
-			$this->jobList
+			$this->jobList,
+			$this->logger,
 		);
 	}
 
@@ -327,7 +330,8 @@ class RoomServiceTest extends TestCase {
 			$this->config,
 			$this->hasher,
 			$dispatcher,
-			$this->jobList
+			$this->jobList,
+			$this->logger,
 		);
 
 		$room = new Room(

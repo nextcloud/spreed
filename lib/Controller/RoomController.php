@@ -1660,6 +1660,10 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
+			/** @var TalkRoom $data */
+			$data = $response->getData();
+			$this->roomService->syncPropertiesFromHostRoom($room, $data);
+
 			$proxyHeaders = $response->getHeaders();
 			if (isset($proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'])) {
 				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $proxyHeaders['X-Nextcloud-Talk-Proxy-Hash'];
@@ -1675,8 +1679,8 @@ class RoomController extends AEnvironmentAwareController {
 	 * The session id can be null only for requests from Talk < 20.
 	 *
 	 * @param string $token Token of the room
-	 * @param string $sessionId Federated session id to join with
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 * @param ?string $sessionId Federated session id to join with
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
 	 *
 	 * 200: Federated user joined the room
 	 * 404: Room not found
@@ -1711,14 +1715,16 @@ class RoomController extends AEnvironmentAwareController {
 				if ($session instanceof Session) {
 					$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 				}
+			} else {
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
 			}
 
 			// Let the clients know if they need to reload capabilities
 			$capabilities = $this->capabilities->getCapabilities();
-			return new DataResponse([], Http::STATUS_OK, [
+			return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, [
 				'X-Nextcloud-Talk-Hash' => sha1(json_encode($capabilities)),
 			]);
-		} catch (RoomNotFoundException|UnauthorizedException) {
+		} catch (RoomNotFoundException|ParticipantNotFoundException|UnauthorizedException) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => 'talkFederationAccess']);
 			return $response;

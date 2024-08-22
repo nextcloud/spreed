@@ -24,13 +24,13 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_LISTABLE = 'listable';
 	public const PROPERTY_LOBBY = 'lobby';
 	public const PROPERTY_MESSAGE_EXPIRATION = 'messageExpiration';
+	public const PROPERTY_MENTION_PERMISSIONS = 'mentionPermissions';
 	public const PROPERTY_NAME = 'name';
 	public const PROPERTY_PASSWORD = 'password';
 	public const PROPERTY_READ_ONLY = 'readOnly';
 	public const PROPERTY_RECORDING_CONSENT = 'recordingConsent';
 	public const PROPERTY_SIP_ENABLED = 'sipEnabled';
 	public const PROPERTY_TYPE = 'type';
-	public const PROPERTY_MENTION_PERMISSIONS = 'mentionPermissions';
 
 	/**
 	 * @param self::PROPERTY_* $property
