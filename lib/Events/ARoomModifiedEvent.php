@@ -16,6 +16,7 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_AVATAR = 'avatar';
 	public const PROPERTY_BREAKOUT_ROOM_MODE = 'breakoutRoomMode';
 	public const PROPERTY_BREAKOUT_ROOM_STATUS = 'breakoutRoomStatus';
+	/** @deprecated */
 	public const PROPERTY_CALL_PERMISSIONS = 'callPermissions';
 	public const PROPERTY_CALL_RECORDING = 'callRecording';
 	public const PROPERTY_DEFAULT_PERMISSIONS = 'defaultPermissions';

@@ -51,7 +51,6 @@ class Listener implements IEventListener {
 		ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE,
 		ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS,
 		ARoomModifiedEvent::PROPERTY_CALL_RECORDING,
-		ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
 		ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
 		ARoomModifiedEvent::PROPERTY_DESCRIPTION,
 		ARoomModifiedEvent::PROPERTY_LISTABLE,
@@ -114,7 +113,6 @@ class Listener implements IEventListener {
 
 	protected function refreshParticipantListRoomModified(RoomModifiedEvent $event): void {
 		if (!in_array($event->getProperty(), [
-			ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS,
 			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS,
 		], true)) {
 			return;
@@ -153,8 +151,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS
-			|| $event->getProperty() === ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS) {
+		if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS) {
 			$this->notifyRoomPermissionsModified($event);
 			// The room permission itself does not need a signaling message anymore
 			return;
@@ -175,8 +172,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if (in_array(ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS, $event->getProperties(), true)
-			|| in_array(ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS, $event->getProperties(), true)) {
+		if (in_array(ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS, $event->getProperties(), true)) {
 			$this->notifyRoomPermissionsModified($event);
 		}
 
