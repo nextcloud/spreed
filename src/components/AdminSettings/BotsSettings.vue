@@ -4,9 +4,10 @@
 -->
 
 <template>
-	<section id="bots_settings" class="bots-settings section">
-		<h2>{{ t('spreed', 'Bots settings') }}</h2>
-
+	<NcSettingsSection id="bots_settings"
+		class="bots-settings"
+		:name="t('spreed', 'Bots settings')"
+		doc-url="https://nextcloud-talk.readthedocs.io/en/latest/bot-list/">
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<p class="settings-hint" v-html="botsSettingsDescription" />
 
@@ -74,7 +75,7 @@
 			rel="noreferrer nofollow">
 			{{ t('spreed', 'Find more bots') }} ↗
 		</NcButton>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -88,6 +89,7 @@ import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 import { BOT } from '../../constants.js'
 import { getAllBots } from '../../services/botsService.ts'
@@ -99,6 +101,7 @@ export default {
 		NcPopover,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcSettingsSection,
 	},
 
 	data() {

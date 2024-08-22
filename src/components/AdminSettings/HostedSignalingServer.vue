@@ -4,17 +4,12 @@
 -->
 
 <template>
-	<section v-if="showForm"
+	<NcSettingsSection v-if="showForm"
 		id="hosted_signaling_server"
-		class="hosted-signaling section">
-		<h2>
-			{{ t('spreed', 'Hosted high-performance backend') }}
-		</h2>
-
-		<p class="settings-hint">
-			{{ t('spreed', 'Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings.') }}
-		</p>
-
+		class="hosted-signaling"
+		:name="t('spreed', 'Hosted high-performance backend')"
+		:description="t('spreed', 'Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings.')"
+		doc-url="https://www.spreed.eu/nextcloud-talk-high-performance-backend/">
 		<template v-if="!trialAccount.status">
 			<NcTextField :value.sync="hostedHPBNextcloudUrl"
 				class="form__textfield"
@@ -115,7 +110,7 @@
 				{{ t('spreed', 'Delete the signaling server account') }}
 			</NcButton>
 		</template>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -127,6 +122,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { EventBus } from '../../services/EventBus.js'
@@ -138,6 +134,7 @@ export default {
 		NcButton,
 		NcSelect,
 		NcTextField,
+		NcSettingsSection,
 	},
 
 	data() {

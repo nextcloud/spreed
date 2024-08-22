@@ -5,11 +5,10 @@
 -->
 
 <template>
-	<section id="recording_server" class="recording-servers section">
-		<h2>
-			{{ t('spreed', 'Recording backend') }}
-		</h2>
-
+	<NcSettingsSection id="recording_server"
+		class="recording-servers"
+		:name="t('spreed', 'Recording backend')"
+		doc-url="https://github.com/nextcloud/nextcloud-talk-recording/blob/main/docs/installation.md">
 		<NcNoteCard v-if="!showForm" type="warning">
 			{{ t('spreed', 'Recording backend configuration is only possible with a high-performance backend.') }}
 		</NcNoteCard>
@@ -75,7 +74,7 @@
 				</template>
 			</template>
 		</template>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -92,6 +91,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -115,6 +115,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcNoteCard,
 		NcPasswordField,
+		NcSettingsSection,
 		Plus,
 		RecordingServer,
 		TransitionWrapper,

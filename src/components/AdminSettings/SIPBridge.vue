@@ -4,9 +4,7 @@
 -->
 
 <template>
-	<div id="sip-bridge" class="sip-bridge section">
-		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
-
+	<NcSettingsSection id="sip-bridge" class="sip-bridge" :name="t('spreed', 'SIP configuration')">
 		<NcNoteCard v-if="!showForm" type="warning">
 			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
 		</NcNoteCard>
@@ -75,7 +73,7 @@
 				{{ t('spreed', 'Save changes') }}
 			</NcButton>
 		</template>
-	</div>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -92,6 +90,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
 
 import { EventBus } from '../../services/EventBus.js'
@@ -108,6 +107,7 @@ export default {
 		NcSelect,
 		NcTextArea,
 		NcPasswordField,
+		NcSettingsSection,
 	},
 
 	data() {

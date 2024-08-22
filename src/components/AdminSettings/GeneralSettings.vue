@@ -4,9 +4,7 @@
 -->
 
 <template>
-	<section id="general_settings" class="videocalls section">
-		<h2>{{ t('spreed', 'General settings') }}</h2>
-
+	<NcSettingsSection id="general_settings" :name="t('spreed', 'General settings')">
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
 
 		<NcSelect v-model="defaultGroupNotification"
@@ -36,7 +34,7 @@
 			@update:checked="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -45,6 +43,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },
@@ -57,6 +56,7 @@ export default {
 	components: {
 		NcCheckboxRadioSwitch,
 		NcSelect,
+		NcSettingsSection,
 	},
 
 	data() {

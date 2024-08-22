@@ -4,15 +4,10 @@
 -->
 
 <template>
-	<section id="stun_server" class="videocalls section">
-		<h2>
-			{{ t('spreed', 'STUN servers') }}
-		</h2>
-
-		<p class="settings-hint">
-			{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}
-		</p>
-
+	<NcSettingsSection id="stun_server"
+		:name="t('spreed', 'STUN servers')"
+		:description="t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.')"
+		doc-url="https://nextcloud-talk.readthedocs.io/en/latest/TURN/">
 		<TransitionWrapper name="fade"
 			class="stun-servers"
 			tag="ul"
@@ -35,7 +30,7 @@
 			</template>
 			{{ t('spreed', 'Add a new STUN server') }}
 		</NcButton>
-	</section>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -48,6 +43,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
 import StunServer from '../../components/AdminSettings/StunServer.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -60,6 +56,7 @@ export default {
 		StunServer,
 		Plus,
 		TransitionWrapper,
+		NcSettingsSection,
 	},
 
 	data() {
