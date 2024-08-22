@@ -1,6 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.8 – 2024-08-22
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(settings): hide secrets in password fields
+  [#12842](https://github.com/nextcloud/spreed/issues/12842)
+- fix(conversation): Fix adding and removing permissions
+  [#13081](https://github.com/nextcloud/spreed/issues/13081)
+- fix(session): Fix generating session id again if duplicated
+  [#12745](https://github.com/nextcloud/spreed/issues/12745)
+- fix(sidebar): hide sidebar button in lobby
+  [#13070](https://github.com/nextcloud/spreed/issues/13070)
+- fix(call): prevent navigating away when clicking on a quote while being in a call
+  [#12841](https://github.com/nextcloud/spreed/issues/12841)
+- fix(federation): fix system message when removed user has same userId as the moderator
+  [#13054](https://github.com/nextcloud/spreed/issues/13054)
+- fix(federation): correctly check list of allowed groups when federation is limited
+  [#13069](https://github.com/nextcloud/spreed/issues/13069)
+- fix(federation): show lobby in federated conversations
+  [#12789](https://github.com/nextcloud/spreed/issues/12789)
+- fix(federation): don't create system messages inside remote conversations
+  [#12788](https://github.com/nextcloud/spreed/issues/12788)
+- fix(federation): ignore outdated sessions when generating notifications
+  [#12742](https://github.com/nextcloud/spreed/issues/12742)
+
+## 18.0.11 – 2024-08-22
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(settings): hide secrets in password fields
+  [#12843](https://github.com/nextcloud/spreed/issues/12843)
+- fix(conversation): Fix adding and removing permissions
+  [#13080](https://github.com/nextcloud/spreed/issues/13080)
+- fix(session): Fix generating session id again if duplicated
+  [#12744](https://github.com/nextcloud/spreed/issues/12744)
+
 ## 19.0.7 – 2024-07-15
 ### Fixed
 - fix(federation): Fix missing notifications in https-federated conversations (Nextcloud Server 29.0.4 or later - Part 3)
