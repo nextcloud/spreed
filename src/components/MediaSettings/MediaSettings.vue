@@ -208,7 +208,7 @@ import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 import { useDevices } from '../../composables/useDevices.js'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { AVATAR, CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
+import { AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
@@ -417,8 +417,8 @@ export default {
 		},
 
 		isRecordingConsentRequired() {
-			return this.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED
-				|| (this.recordingConsent === CALL.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.REQUIRED)
+			return this.recordingConsent === CONFIG.RECORDING_CONSENT.REQUIRED
+				|| (this.recordingConsent === CONFIG.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED)
 		},
 
 		showRecordingWarning() {
