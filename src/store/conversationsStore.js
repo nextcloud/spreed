@@ -261,6 +261,11 @@ const actions = {
 
 		context.commit('addConversation', conversation)
 
+		if (!conversation.attendeeId) {
+			// Don't add a thumbnail participant if attendeeId is unknown
+			return
+		}
+
 		// Add current user to a new conversation participants
 		let currentUser = {
 			uid: context.getters.getUserId(),

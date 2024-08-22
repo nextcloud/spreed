@@ -229,7 +229,7 @@ export default {
 				return false
 			}
 
-			return !!this.$store.getters.findParticipant(this.token, this.conversation)
+			return !!this.$store.getters.findParticipant(this.token, this.conversation)?.attendeeId
 		},
 
 		isInLobby() {
@@ -624,17 +624,21 @@ export default {
 
 				this.$store.dispatch('setVisualLastReadMessageId', { token, id: this.conversation.lastReadMessage })
 
-				if (this.$store.getters.getFirstKnownMessageId(token) === null) {
-					// Start from message hash or unread marker
-					const startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
-					// First time load, initialize important properties
-					this.$store.dispatch('setFirstKnownMessageId', { token, id: startingMessageId })
-					this.$store.dispatch('setLastKnownMessageId', { token, id: startingMessageId })
-
-					// Get chat messages before last read message and after it
+				if (!this.$store.getters.getFirstKnownMessageId(token)) {
 					try {
+						// Start from message hash or unread marker
+						const startingMessageId = focusMessageId !== null ? focusMessageId : this.conversation.lastReadMessage
+						// First time load, initialize important properties
+						if (!startingMessageId) {
+							throw new Error(`[DEBUG] spreed: context message ID is ${startingMessageId}`)
+						}
+						this.$store.dispatch('setFirstKnownMessageId', { token, id: startingMessageId })
+						this.$store.dispatch('setLastKnownMessageId', { token, id: startingMessageId })
+
+						// Get chat messages before last read message and after it
 						await this.getMessageContext(token, startingMessageId)
 					} catch (exception) {
+						console.debug(exception)
 						// Request was cancelled, stop getting preconditions and restore initial state
 						this.$store.dispatch('setFirstKnownMessageId', { token, id: null })
 						this.$store.dispatch('setLastKnownMessageId', { token, id: null })
