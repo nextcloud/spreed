@@ -5,6 +5,69 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-rc.3 – 2024-08-22
+### Changed
+- Update several dependencies
+- Allow editing "Note to self" messages forever
+  [#13083](https://github.com/nextcloud/spreed/issues/13083)
+  [#13089](https://github.com/nextcloud/spreed/issues/13089)
+- Add blurhash to files so "previews" can be shown while loading
+  [#13058](https://github.com/nextcloud/spreed/issues/13058)
+  [#13075](https://github.com/nextcloud/spreed/issues/13075)
+
+### Fixed
+- fix(federation): Fix propagating permissions, recording consent, permissions and more
+- Don't break when joining an open conversation
+  [#13090](https://github.com/nextcloud/spreed/issues/13090)
+- Fix signaling server check for Desktop Client so that Nextcloud 29 does not need the newest version
+  [#13094](https://github.com/nextcloud/spreed/issues/13094)
+- fix(settings): Hide unused settings in (former) one-to-one conversations
+  [#13046](https://github.com/nextcloud/spreed/issues/13046)
+- fix(sidebar): Fix row-style of attachments
+  [#13044](https://github.com/nextcloud/spreed/issues/13044)
+- fix(federation): fix system message when removed user has same userId as the moderator
+  [#13055](https://github.com/nextcloud/spreed/issues/13055)
+- fix(federation): correctly check list of allowed groups when federation is limited
+  [#13067](https://github.com/nextcloud/spreed/issues/13067)
+
+## 19.0.8 – 2024-08-22
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(settings): hide secrets in password fields
+  [#12842](https://github.com/nextcloud/spreed/issues/12842)
+- fix(conversation): Fix adding and removing permissions
+  [#13081](https://github.com/nextcloud/spreed/issues/13081)
+- fix(session): Fix generating session id again if duplicated
+  [#12745](https://github.com/nextcloud/spreed/issues/12745)
+- fix(sidebar): hide sidebar button in lobby
+  [#13070](https://github.com/nextcloud/spreed/issues/13070)
+- fix(call): prevent navigating away when clicking on a quote while being in a call
+  [#12841](https://github.com/nextcloud/spreed/issues/12841)
+- fix(federation): fix system message when removed user has same userId as the moderator
+  [#13054](https://github.com/nextcloud/spreed/issues/13054)
+- fix(federation): correctly check list of allowed groups when federation is limited
+  [#13069](https://github.com/nextcloud/spreed/issues/13069)
+- fix(federation): show lobby in federated conversations
+  [#12789](https://github.com/nextcloud/spreed/issues/12789)
+- fix(federation): don't create system messages inside remote conversations
+  [#12788](https://github.com/nextcloud/spreed/issues/12788)
+- fix(federation): ignore outdated sessions when generating notifications
+  [#12742](https://github.com/nextcloud/spreed/issues/12742)
+
+## 18.0.11 – 2024-08-22
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(settings): hide secrets in password fields
+  [#12843](https://github.com/nextcloud/spreed/issues/12843)
+- fix(conversation): Fix adding and removing permissions
+  [#13080](https://github.com/nextcloud/spreed/issues/13080)
+- fix(session): Fix generating session id again if duplicated
+  [#12744](https://github.com/nextcloud/spreed/issues/12744)
+
 ## 20.0.0-rc.2 – 2024-08-16
 ### Fixed
 - Adjust conversation list density
