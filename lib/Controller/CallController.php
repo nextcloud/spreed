@@ -116,8 +116,6 @@ class CallController extends AEnvironmentAwareController {
 	 *
 	 * @param int<0, 15>|null $flags In-Call flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*>|null $flags
-	 * @param int<0, 255>|null $forcePermissions In-call permissions
-	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*>|null $forcePermissions
 	 * @param bool $silent Join the call silently
 	 * @param bool $recordingConsent When the user ticked a checkbox and agreed with being recorded
 	 *  (Only needed when the `config => call => recording-consent` capability is set to {@see RecordingService::CONSENT_REQUIRED_YES}
@@ -135,7 +133,7 @@ class CallController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
-	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
+	public function joinCall(?int $flags = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
 		try {
 			$this->validateRecordingConsent($recordingConsent);
 		} catch (\InvalidArgumentException) {
@@ -164,10 +162,6 @@ class CallController extends AEnvironmentAwareController {
 			}
 
 			return $response;
-		}
-
-		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
-			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
 
 		try {

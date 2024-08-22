@@ -253,6 +253,7 @@ Setting custom permissions for a self-joined user will also make them a permanen
 
 ## Set permissions for all attendees
 
+* Deprecated: 🏁 The API is no-op since Talk 20
 * Method: `PUT`
 * Endpoint: `/room/{token}/attendees/permissions/all`
 * Data:

@@ -307,10 +307,16 @@ class Room {
 		$this->defaultPermissions = $defaultPermissions;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function getCallPermissions(): int {
-		return $this->callPermissions;
+		return Attendee::PERMISSIONS_DEFAULT;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function setCallPermissions(int $callPermissions): void {
 		$this->callPermissions = $callPermissions;
 	}
