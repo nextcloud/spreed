@@ -10,7 +10,7 @@ import moment from '@nextcloud/moment'
 
 import { useConversationInfo } from './useConversationInfo.js'
 import { useStore } from './useStore.js'
-import { ATTENDEE } from '../constants.js'
+import { ATTENDEE, CONVERSATION } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGuestNameStore } from '../stores/guestName.js'
 
@@ -57,6 +57,10 @@ export function useMessageInfo(message = ref({})) {
 		if (!hasTalkFeature(message.value.token, 'edit-messages') || !isConversationModifiable.value || isObjectShare.value || message.value.systemMessage
 			|| ((!store.getters.isModerator || isOneToOneConversation.value) && !isCurrentUserOwnMessage.value)) {
 			return false
+		}
+
+		if (hasTalkFeature(message.value.token, 'edit-messages-note-to-self') && conversation.value.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
+			return true
 		}
 
 		return (moment(message.value.timestamp * 1000).add(1, 'd')) > moment()
