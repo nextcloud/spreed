@@ -169,78 +169,60 @@ class RoomService {
 		return rtrim(mb_substr(ltrim($objectName), 0, 64));
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function setPermissions(Room $room, string $level, string $method, int $permissions, bool $resetCustomPermissions): bool {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return false;
-		}
+		if ($level === 'default' && $method === 'set') {
+			try {
+				$this->setDefaultPermissions($room, $permissions);
+				return true;
+			} catch (InvalidArgumentException) {
+				return false;
 
-		if ($room->getType() === Room::TYPE_NOTE_TO_SELF) {
-			return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @throws InvalidArgumentException
+	 */
+	public function setDefaultPermissions(Room $room, int $permissions): void {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE
+			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
+			throw new \InvalidArgumentException('type');
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Do not allow manual changing the permissions in breakout rooms
-			return false;
+			throw new InvalidArgumentException('breakout-room');
 		}
 
-		if ($level === 'default') {
-			$property = ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS;
-			$oldPermissions = $room->getDefaultPermissions();
-		} elseif ($level === 'call') {
-			$property = ARoomModifiedEvent::PROPERTY_CALL_PERMISSIONS;
-			$oldPermissions = $room->getCallPermissions();
-
-			if ($oldPermissions === Attendee::PERMISSIONS_DEFAULT
-					&& ($method === Attendee::PERMISSIONS_MODIFY_ADD
-						|| $method === Attendee::PERMISSIONS_MODIFY_REMOVE)) {
-				$oldPermissions = $room->getDefaultPermissions();
-			}
-		} else {
-			return false;
-		}
-
+		$oldPermissions = $room->getDefaultPermissions();
 		$newPermissions = $permissions;
-		if ($method === Attendee::PERMISSIONS_MODIFY_SET) {
-			if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
-				// Make sure the custom flag is set when not setting to default permissions
-				$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
-			}
-			// If we are setting a fixed set of permissions and apply that to users,
-			// we can also simplify it and reset to default.
-			$resetCustomPermissions = true;
-		} elseif ($method === Attendee::PERMISSIONS_MODIFY_ADD) {
-			$newPermissions = $oldPermissions | $newPermissions;
-		} elseif ($method === Attendee::PERMISSIONS_MODIFY_REMOVE) {
-			$newPermissions = $oldPermissions & ~$newPermissions;
-		} else {
-			return false;
+		if ($newPermissions !== Attendee::PERMISSIONS_DEFAULT) {
+			// Make sure the custom flag is set when not setting to default permissions
+			$newPermissions |= Attendee::PERMISSIONS_CUSTOM;
 		}
 
-		$event = new BeforeRoomModifiedEvent($room, $property, $newPermissions, $oldPermissions);
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS, $newPermissions, $oldPermissions);
 		$this->dispatcher->dispatchTyped($event);
 
-		if ($resetCustomPermissions) {
-			$this->participantService->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
-		} else {
-			$this->participantService->updateAllPermissions($room, $method, $permissions);
-		}
+		// Reset custom user permissions to default
+		$this->participantService->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set($level . '_permissions', $update->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
+			->set('default_permissions', $update->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
-		if ($level === 'default') {
-			$room->setDefaultPermissions($newPermissions);
-		} else {
-			$room->setCallPermissions($newPermissions);
-		}
+		$room->setDefaultPermissions($newPermissions);
 
-		$event = new RoomModifiedEvent($room, $property, $newPermissions, $oldPermissions);
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS, $newPermissions, $oldPermissions);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	public function setSIPEnabled(Room $room, int $newSipEnabled): bool {
@@ -875,7 +857,6 @@ class RoomService {
 	 */
 	public function resetActiveSinceInModelOnly(Room $room): void {
 		$room->resetActiveSince();
-		$room->setCallPermissions(Attendee::PERMISSIONS_DEFAULT);
 	}
 
 	public function resetActiveSince(Room $room, ?Participant $participant): void {
@@ -1055,11 +1036,11 @@ class RoomService {
 			}
 		}
 		if (isset($host['defaultPermissions']) && $host['defaultPermissions'] !== $local->getDefaultPermissions()) {
-			$success = $this->setPermissions($local, 'default', Attendee::PERMISSIONS_MODIFY_SET, $host['defaultPermissions'], false);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions']);
-			} else {
+			try {
+				$this->setDefaultPermissions($local, $host['defaultPermissions']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['avatarVersion']) && $host['avatarVersion'] !== $local->getAvatar()) {

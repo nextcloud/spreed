@@ -983,7 +983,10 @@ export type paths = {
             cookie?: never;
         };
         get?: never;
-        /** Update the permissions of all attendees */
+        /**
+         * Update the permissions of all attendees
+         * @deprecated
+         */
         put: operations["room-set-all-attendees-permissions"];
         post?: never;
         delete?: never;
@@ -3277,11 +3280,6 @@ export interface operations {
                      * @description In-Call flags
                      */
                     flags?: number | null;
-                    /**
-                     * Format: int64
-                     * @description In-call permissions
-                     */
-                    forcePermissions?: number | null;
                     /**
                      * @description Join the call silently
                      * @default false
@@ -6476,7 +6474,7 @@ export interface operations {
             path: {
                 apiVersion: "v4";
                 token: string;
-                /** @description Level of the permissions ('call', 'default') */
+                /** @description Level of the permissions ('call' (removed in Talk 20), 'default') */
                 mode: "call" | "default";
             };
             cookie?: never;
@@ -6516,7 +6514,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "mode" | "type";
+                            };
                         };
                     };
                 };

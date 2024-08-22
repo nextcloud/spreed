@@ -2108,10 +2108,10 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Update the permissions of a room
 	 *
-	 * @param 'call'|'default' $mode Level of the permissions ('call', 'default')
+	 * @param 'call'|'default' $mode Level of the permissions ('call' (removed in Talk 20), 'default')
 	 * @param int<0, 255> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -2119,8 +2119,16 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setPermissions(string $mode, int $permissions): DataResponse {
-		if (!$this->roomService->setPermissions($this->room, $mode, Attendee::PERMISSIONS_MODIFY_SET, $permissions, true)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		if ($mode !== 'default') {
+			return new DataResponse(['error' => 'mode'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$this->roomService->setDefaultPermissions($this->room, $permissions);
+		} catch (\InvalidArgumentException $e) {
+			/** @var 'breakout-room'|'type' $error */
+			$error = $e->getMessage();
+			return new DataResponse(['error' => $error], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -2171,6 +2179,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int<0, 255> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @deprecated Call permissions have been removed
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible

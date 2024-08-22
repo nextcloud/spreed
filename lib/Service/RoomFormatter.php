@@ -215,7 +215,7 @@ class RoomFormatter {
 			'attendeeId' => $attendee->getId(),
 			'permissions' => $currentParticipant->getPermissions(),
 			'attendeePermissions' => $attendee->getPermissions(),
-			'callPermissions' => $room->getCallPermissions(),
+			'callPermissions' => Attendee::PERMISSIONS_DEFAULT,
 			'defaultPermissions' => $room->getDefaultPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
