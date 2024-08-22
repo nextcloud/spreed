@@ -845,13 +845,14 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
 
-		$maxAge = $this->timeFactory->getDateTime();
-		$maxAge->sub(new \DateInterval('P1D'));
-		if ($comment->getCreationDateTime() < $maxAge) {
-			// Message is too old
-			return new DataResponse(['error' => 'age'], Http::STATUS_BAD_REQUEST);
+		if ($this->room->getType() !== Room::TYPE_NOTE_TO_SELF) {
+			$maxAge = $this->timeFactory->getDateTime();
+			$maxAge->sub(new \DateInterval('P1D'));
+			if ($comment->getCreationDateTime() < $maxAge) {
+				// Message is too old
+				return new DataResponse(['error' => 'age'], Http::STATUS_BAD_REQUEST);
+			}
 		}
-
 		try {
 			$systemMessageComment = $this->chatManager->editMessage(
 				$this->room,
