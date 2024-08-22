@@ -29,7 +29,7 @@
 					:size="32"
 					@click="$emit('click-presenter')" />
 				<NcLoadingIcon v-if="isLoading"
-					:size="avatarSize"
+					:size="avatarSize / 2"
 					class="video-loading" />
 			</div>
 		</TransitionWrapper>
