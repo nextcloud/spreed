@@ -4,12 +4,10 @@
 -->
 
 <template>
-	<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
-		v-tooltip="audioButtonTooltip"
+	<NcButton v-tooltip="audioButtonTooltip"
 		:type="type"
 		:aria-label="audioButtonAriaLabel"
 		:class="{ 'no-audio-available': !isAudioAllowed || !model.attributes.audioAvailable }"
-		@shortkey="toggleAudio"
 		@click.stop="toggleAudio">
 		<template #icon>
 			<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
@@ -26,6 +24,7 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
@@ -126,6 +125,11 @@ export default {
 				? t('spreed', 'Mute audio')
 				: t('spreed', 'Unmute audio')
 		},
+	},
+
+	created() {
+		useHotKey('m', this.toggleAudio)
+		useHotKey(' ', this.toggleAudio, { push: true })
 	},
 
 	mounted() {

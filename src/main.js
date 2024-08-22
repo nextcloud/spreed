@@ -6,7 +6,6 @@
 import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import VueShortKey from 'vue-shortkey'
 import Vuex from 'vuex'
 
 import { getRequestToken } from '@nextcloud/auth'
@@ -47,7 +46,6 @@ Vue.prototype.OCA = OCA
 Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
 Vue.use(VueRouter)
-Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 
 const pinia = createPinia()
 
