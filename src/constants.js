@@ -2,6 +2,15 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+export const CONFIG = {
+	RECORDING_CONSENT: {
+		OFF: 0,
+		REQUIRED: 1,
+		OPTIONAL: 2,
+	},
+}
+
 export const SIGNALING = {
 	MODE: {
 		INTERNAL: 'internal',
@@ -32,9 +41,8 @@ export const CALL = {
 		FAILED: 5,
 	},
 	RECORDING_CONSENT: {
-		OFF: 0,
-		REQUIRED: 1,
-		OPTIONAL: 2,
+		DISABLED: 0,
+		ENABLED: 1,
 	},
 }
 
@@ -99,6 +107,7 @@ export const CONVERSATION = {
 	MAX_NAME_LENGTH: 255,
 	MAX_DESCRIPTION_LENGTH: 500,
 }
+
 export const ATTENDEE = {
 	ACTOR_TYPE: {
 		USERS: 'users',
@@ -118,6 +127,7 @@ export const ATTENDEE = {
 
 	CHANGELOG_BOT_ID: 'changelog',
 }
+
 export const PARTICIPANT = {
 	CALL_FLAG: {
 		DISCONNECTED: 0,
