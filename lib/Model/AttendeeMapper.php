@@ -198,18 +198,12 @@ class AttendeeMapper extends QBMapper {
 	}
 
 	public function modifyPermissions(int $roomId, string $mode, int $newState): void {
-		$query = $this->db->getQueryBuilder();
-		$query->update($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->notIn('actor_type', $query->createNamedParameter([
-				Attendee::ACTOR_CIRCLES,
-				Attendee::ACTOR_GROUPS,
-			], IQueryBuilder::PARAM_STR_ARRAY)));
-
 		if ($mode === Attendee::PERMISSIONS_MODIFY_SET) {
 			if ($newState !== Attendee::PERMISSIONS_DEFAULT) {
 				$newState |= Attendee::PERMISSIONS_CUSTOM;
 			}
+
+			$query = $this->getModifyPermissionsBaseQuery($roomId);
 			$query->set('permissions', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT));
 			$query->executeStatement();
 		} else {
@@ -222,6 +216,8 @@ class AttendeeMapper extends QBMapper {
 				Attendee::PERMISSIONS_LOBBY_IGNORE,
 			] as $permission) {
 				if ($permission & $newState) {
+					$query = $this->getModifyPermissionsBaseQuery($roomId);
+
 					if ($mode === Attendee::PERMISSIONS_MODIFY_ADD) {
 						$this->addSinglePermission($query, $permission);
 					} elseif ($mode === Attendee::PERMISSIONS_MODIFY_REMOVE) {
@@ -230,6 +226,18 @@ class AttendeeMapper extends QBMapper {
 				}
 			}
 		}
+	}
+
+	protected function getModifyPermissionsBaseQuery(int $roomId): IQueryBuilder {
+		$query = $this->db->getQueryBuilder();
+		$query->update($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->notIn('actor_type', $query->createNamedParameter([
+				Attendee::ACTOR_CIRCLES,
+				Attendee::ACTOR_GROUPS,
+			], IQueryBuilder::PARAM_STR_ARRAY)));
+
+		return $query;
 	}
 
 	protected function addSinglePermission(IQueryBuilder $query, int $permission): void {
@@ -248,6 +256,12 @@ class AttendeeMapper extends QBMapper {
 					IQueryBuilder::PARAM_INT
 				),
 				$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
+			)
+		);
+		$query->andWhere(
+			$query->expr()->neq(
+				'permissions',
+				$query->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT)
 			)
 		);
 
@@ -272,6 +286,9 @@ class AttendeeMapper extends QBMapper {
 				$query->createNamedParameter($permission, IQueryBuilder::PARAM_INT)
 			)
 		);
+		// Removing permissions does not need to be explicitly prevented when
+		// the attendee has default permissions, as in that case it will not be
+		// possible to remove the permissions anyway.
 
 		$query->executeStatement();
 	}
