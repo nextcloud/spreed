@@ -15,40 +15,36 @@
 		v-bind="filePreviewBinding"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
-		<span v-if="!isLoading || fallbackLocalUrl"
+		<span v-tooltip="previewTooltip"
 			class="image-container"
-			:class="{'playable': isPlayable}">
-			<span v-if="isPlayable && !smallPreview" class="play-video-button">
-				<PlayCircleOutline :size="48"
-					fill-color="#ffffff" />
-			</span>
-			<img v-if="!failed"
-				v-tooltip="previewTooltip"
+			:class="{'playable': isPlayable}"
+			:style="imageContainerStyle">
+			<img class="file-preview__image"
 				:class="previewImageClass"
-				class="file-preview__image"
-				alt=""
-				:src="previewUrl">
-			<img v-else
-				:class="previewImageClass"
-				alt=""
-				:src="defaultIconUrl">
-			<NcProgressBar v-if="showUploadProgress"
-				class="file-preview__progress"
-				type="circular"
-				:value="uploadProgress" />
+				:alt="file.name"
+				:src="failed ? defaultIconUrl : previewUrl"
+				@load="onLoad"
+				@error="onError">
+			<template v-if="!isLoading || fallbackLocalUrl">
+				<span v-if="isPlayable && !smallPreview" class="play-video-button">
+					<PlayCircleOutline :size="48"
+						fill-color="#ffffff" />
+				</span>
+				<NcProgressBar v-if="showUploadProgress"
+					class="file-preview__progress"
+					type="circular"
+					:value="uploadProgress" />
+			</template>
+			<TransitionWrapper v-else-if="isLoading" name="fade">
+				<canvas v-if="file.blurhash"
+					ref="blurCanvas"
+					width="32"
+					height="32"
+					class="preview preview-loading" />
+				<NcLoadingIcon v-else class="preview preview-loading" />
+			</TransitionWrapper>
 		</span>
-		<template v-else-if="isLoading">
-			<canvas v-if="file.blurhash"
-				ref="blurCanvas"
-				width="32"
-				height="32"
-				class="preview"
-				:style="imageContainerStyle" />
-			<span v-else
-				v-tooltip="previewTooltip"
-				class="preview loading"
-				:style="imageContainerStyle" />
-		</template>
+
 		<NcButton v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
@@ -77,10 +73,12 @@ import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
+import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 
 import { useViewer } from '../../../../../composables/useViewer.js'
 import { SHARED_ITEM } from '../../../../../constants.js'
@@ -98,10 +96,13 @@ export default {
 	name: 'FilePreview',
 
 	components: {
+		NcButton,
+		NcLoadingIcon,
 		NcProgressBar,
+		TransitionWrapper,
+		// Icons
 		Close,
 		PlayCircleOutline,
-		NcButton,
 	},
 
 	directives: {
@@ -183,6 +184,7 @@ export default {
 			uploadManager: null,
 		}
 	},
+
 	computed: {
 		shouldShowFileDetail() {
 			if (this.isSharedItems && !this.rowLayout) {
@@ -477,16 +479,6 @@ export default {
 			imageData.data.set(decode(this.file.blurhash, 32, 32))
 			ctx.putImageData(imageData, 0, 0)
 		}
-
-		const img = new Image()
-		img.onerror = () => {
-			this.isLoading = false
-			this.failed = true
-		}
-		img.onload = () => {
-			this.isLoading = false
-		}
-		img.src = this.previewUrl
 	},
 
 	beforeDestroy() {
@@ -495,6 +487,16 @@ export default {
 
 	methods: {
 		t,
+
+		onLoad() {
+			this.isLoading = false
+		},
+
+		onError() {
+			this.isLoading = false
+			this.failed = true
+		},
+
 		handleClick(event) {
 			if (this.isUploadEditor) {
 				this.$emit('remove-file', this.file.id)
@@ -574,12 +576,6 @@ export default {
 		transform: translate(100%, -50%);
 	}
 
-	.loading {
-		display: inline-block;
-		min-width: 32px;
-		background-color: var(--color-background-dark);
-	}
-
 	.mimeicon {
 		min-height: 128px;
 	}
@@ -590,31 +586,39 @@ export default {
 	}
 
 	.preview {
-		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 384px;
 	}
 
 	.preview-medium {
-		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 192px;
 	}
 
 	.preview-small {
-		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 32px;
 	}
 
-	.image-container {
-		position: relative;
-		display: inline-block;
+	.preview-loading {
+		position: absolute;
+		border-radius: var(--border-radius);
 		width: 100%;
 		height: 100%;
+		background-color: var(--color-background-dark);
+	}
+
+	.image-container {
+		position: relative;
+		display: inline-flex;
+		width: 100%;
+		height: 100%;
+		max-width: 100%;
+		max-height: 100%;
+		border-radius: var(--border-radius);
 
 		&.playable {
 			.preview {
