@@ -12,6 +12,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OC\Files\Filesystem;
 use OCA\Talk\Room;
+use OCA\Theming\Service\ThemesService;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
@@ -37,6 +38,7 @@ class AvatarService {
 		private RoomService $roomService,
 		private IAvatarManager $avatarManager,
 		private IEmojiHelper $emojiHelper,
+		private ThemesService $themesService,
 	) {
 	}
 
@@ -317,9 +319,18 @@ class AvatarService {
 	}
 
 	public function getAvatarUrl(Room $room): string {
+		$darkTheme = false;
+		foreach ($this->themesService->getEnabledThemes() as $theme) {
+			if (str_starts_with($theme, 'dark')) {
+				$darkTheme = true;
+				break;
+			}
+		}
+
 		$arguments = [
 			'token' => $room->getToken(),
 			'apiVersion' => 'v1',
+			'darkTheme' => $darkTheme,
 		];
 
 		$avatarVersion = $this->getAvatarVersion($room);

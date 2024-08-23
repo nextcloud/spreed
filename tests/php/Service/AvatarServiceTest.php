@@ -12,6 +12,7 @@ use OC\EmojiHelper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomService;
+use OCA\Theming\Service\ThemesService;
 use OCP\Files\IAppData;
 use OCP\IAvatarManager;
 use OCP\IL10N;
@@ -32,6 +33,7 @@ class AvatarServiceTest extends TestCase {
 	protected RoomService&MockObject $roomService;
 	protected IAvatarManager&MockObject $avatarManager;
 	protected EmojiHelper $emojiHelper;
+	protected ThemesService $themesService;
 	protected ?AvatarService $service = null;
 
 	public function setUp(): void {
@@ -44,6 +46,7 @@ class AvatarServiceTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->avatarManager = $this->createMock(IAvatarManager::class);
 		$this->emojiHelper = Server::get(EmojiHelper::class);
+		$this->themesService = $this->createMock(ThemesService::class);
 		$this->service = new AvatarService(
 			$this->appData,
 			$this->l,
@@ -52,6 +55,7 @@ class AvatarServiceTest extends TestCase {
 			$this->roomService,
 			$this->avatarManager,
 			$this->emojiHelper,
+			$this->themesService,
 		);
 	}
 
@@ -92,5 +96,36 @@ class AvatarServiceTest extends TestCase {
 	 */
 	public function testGetFirstCombinedEmoji(string $roomName, string $avatarEmoji): void {
 		$this->assertSame($avatarEmoji, self::invokePrivate($this->service, 'getFirstCombinedEmoji', [$roomName]));
+	}
+
+	public static function dataGetAvatarUrl(): array {
+		return [
+			[['default', 'light', 'dark'], true],
+			[['default', 'light', 'dark-contrast'], true],
+			[['default', 'light'], false],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetAvatarUrl
+	 */
+	public function testGetAvatarUrl(array $enabledThemes, bool $darkTheme) {
+		$room = $this->createMock(Room::class);
+
+		$this->themesService
+			->method('getEnabledThemes')
+			->willReturn($enabledThemes);
+
+		$this->url
+			->expects($this->once())
+			->method('linkToOCSRouteAbsolute')
+			->with('spreed.Avatar.getAvatar', [
+				'token' => '',
+				'apiVersion' => 'v1',
+				'darkTheme' => $darkTheme,
+				'v' => $this->service->getAvatarVersion($room),
+			])->willReturn('url');
+
+		$this->assertEquals('url', $this->service->getAvatarUrl($room));
 	}
 }
