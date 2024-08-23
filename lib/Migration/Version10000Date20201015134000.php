@@ -191,15 +191,15 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			}
 
 			$insert
-				->setParameter('room_id', (int) $row['room_id'], IQueryBuilder::PARAM_INT)
+				->setParameter('room_id', (int)$row['room_id'], IQueryBuilder::PARAM_INT)
 				->setParameter('actor_type', Attendee::ACTOR_USERS)
 				->setParameter('actor_id', $row['user_id'])
-				->setParameter('participant_type', (int) $row['participant_type'], IQueryBuilder::PARAM_INT)
-				->setParameter('favorite', (bool) $row['favorite'], IQueryBuilder::PARAM_BOOL)
-				->setParameter('notification_level', (int) $row['notification_level'], IQueryBuilder::PARAM_INT)
+				->setParameter('participant_type', (int)$row['participant_type'], IQueryBuilder::PARAM_INT)
+				->setParameter('favorite', (bool)$row['favorite'], IQueryBuilder::PARAM_BOOL)
+				->setParameter('notification_level', (int)$row['notification_level'], IQueryBuilder::PARAM_INT)
 				->setParameter('last_joined_call', $lastJoinedCall, IQueryBuilder::PARAM_INT)
-				->setParameter('last_read_message', (int) $row['last_read_message'], IQueryBuilder::PARAM_INT)
-				->setParameter('last_mention_message', (int) $row['last_mention_message'], IQueryBuilder::PARAM_INT)
+				->setParameter('last_read_message', (int)$row['last_read_message'], IQueryBuilder::PARAM_INT)
+				->setParameter('last_mention_message', (int)$row['last_mention_message'], IQueryBuilder::PARAM_INT)
 			;
 
 			try {

@@ -176,7 +176,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			$insert
 				->setParameter('name', $row['name'])
 				->setParameter('token', $row['token'])
-				->setParameter('type', (int) $row['type'], IQueryBuilder::PARAM_INT)
+				->setParameter('type', (int)$row['type'], IQueryBuilder::PARAM_INT)
 				->setParameter('password', $row['password']);
 			$insert->executeStatement();
 
@@ -218,20 +218,20 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			if (!isset($roomIdMap[(int) $row['roomId']])) {
+			if (!isset($roomIdMap[(int)$row['roomId']])) {
 				continue;
 			}
 
 			$insert
 				->setParameter('userId', $row['userId'])
-				->setParameter('roomId', $roomIdMap[(int) $row['roomId']], IQueryBuilder::PARAM_INT)
-				->setParameter('lastPing', (int) $row['lastPing'], IQueryBuilder::PARAM_INT)
+				->setParameter('roomId', $roomIdMap[(int)$row['roomId']], IQueryBuilder::PARAM_INT)
+				->setParameter('lastPing', (int)$row['lastPing'], IQueryBuilder::PARAM_INT)
 				->setParameter('sessionId', $row['sessionId'])
 			;
 			if ($this->connection->getDatabaseProvider() !== IDBConnection::PLATFORM_POSTGRES) {
-				$insert->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT);
+				$insert->setParameter('participantType', (int)$row['participantType'], IQueryBuilder::PARAM_INT);
 			} else {
-				$insert->setParameter('participantType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);
+				$insert->setParameter('participantType', (int)$row['participanttype'], IQueryBuilder::PARAM_INT);
 			}
 			$insert->executeStatement();
 		}
@@ -264,17 +264,17 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		}
 
 		while ($row = $result->fetch()) {
-			if (!isset($roomIdMap[(int) $row['object_id']])) {
+			if (!isset($roomIdMap[(int)$row['object_id']])) {
 				$delete
-					->setParameter('id', (int) $row['notification_id'])
+					->setParameter('id', (int)$row['notification_id'])
 				;
 				$delete->executeStatement();
 				continue;
 			}
 
 			$update
-				->setParameter('id', (int) $row['notification_id'])
-				->setParameter('newId', $roomIdMap[(int) $row['object_id']])
+				->setParameter('id', (int)$row['notification_id'])
+				->setParameter('newId', $roomIdMap[(int)$row['object_id']])
 			;
 			$update->executeStatement();
 		}
@@ -309,9 +309,9 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		}
 
 		while ($row = $result->fetch()) {
-			if (!isset($roomIdMap[(int) $row['object_id']])) {
+			if (!isset($roomIdMap[(int)$row['object_id']])) {
 				$delete
-					->setParameter('id', (int) $row['activity_id'])
+					->setParameter('id', (int)$row['activity_id'])
 				;
 				$delete->executeStatement();
 				continue;
@@ -321,17 +321,17 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 			if (!isset($params['room'])) {
 				$delete
-					->setParameter('id', (int) $row['activity_id'])
+					->setParameter('id', (int)$row['activity_id'])
 				;
 				$delete->executeStatement();
 				continue;
 			}
 
-			$params['room'] = $roomIdMap[(int) $row['object_id']];
+			$params['room'] = $roomIdMap[(int)$row['object_id']];
 
 			$update
-				->setParameter('id', (int) $row['activity_id'])
-				->setParameter('newId', $roomIdMap[(int) $row['object_id']])
+				->setParameter('id', (int)$row['activity_id'])
+				->setParameter('newId', $roomIdMap[(int)$row['object_id']])
 				->setParameter('subjectParams', json_encode($params))
 			;
 			$update->executeStatement();
@@ -367,18 +367,18 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		while ($row = $result->fetch()) {
 			$params = json_decode($row['subjectparams'], true);
 
-			if (!isset($params['room']) || !isset($roomIdMap[(int) $params['room']])) {
+			if (!isset($params['room']) || !isset($roomIdMap[(int)$params['room']])) {
 				$delete
-					->setParameter('id', (int) $row['mail_id'])
+					->setParameter('id', (int)$row['mail_id'])
 				;
 				$delete->executeStatement();
 				continue;
 			}
 
-			$params['room'] = $roomIdMap[(int) $params['room']];
+			$params['room'] = $roomIdMap[(int)$params['room']];
 
 			$update
-				->setParameter('id', (int) $row['mail_id'])
+				->setParameter('id', (int)$row['mail_id'])
 				->setParameter('subjectParams', json_encode($params))
 			;
 			$update->executeStatement();

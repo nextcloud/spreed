@@ -29,7 +29,7 @@ class Manager {
 	}
 
 	public function getChangelogForUser(string $userId): int {
-		return (int) $this->config->getUserValue($userId, 'spreed', 'changelog', '0');
+		return (int)$this->config->getUserValue($userId, 'spreed', 'changelog', '0');
 	}
 
 	public function userHasNewChangelog(string $userId): bool {
@@ -43,7 +43,7 @@ class Manager {
 		$hasReceivedLog = $this->getChangelogForUser($userId);
 
 		try {
-			$this->config->setUserValue($userId, 'spreed', 'changelog', (string) count($logs), (string) $hasReceivedLog);
+			$this->config->setUserValue($userId, 'spreed', 'changelog', (string)count($logs), (string)$hasReceivedLog);
 		} catch (PreConditionNotMetException $e) {
 			// Parallel request won the race
 			return;

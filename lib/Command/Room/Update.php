@@ -154,7 +154,7 @@ class Update extends Base {
 			}
 
 			if ($messageExpiration !== null) {
-				$this->setMessageExpiration($room, (int) $messageExpiration);
+				$this->setMessageExpiration($room, (int)$messageExpiration);
 			}
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

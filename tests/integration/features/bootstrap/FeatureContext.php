@@ -484,7 +484,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['description'] = $room['description'];
 			}
 			if (isset($expectedRoom['type'])) {
-				$data['type'] = (string) $room['type'];
+				$data['type'] = (string)$room['type'];
 			}
 			if (isset($expectedRoom['remoteServer'])) {
 				$data['remoteServer'] = isset($room['remoteServer']) ? self::translateRemoteServer($room['remoteServer']) : '';
@@ -497,31 +497,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 			}
 			if (isset($expectedRoom['hasPassword'])) {
-				$data['hasPassword'] = (string) $room['hasPassword'];
+				$data['hasPassword'] = (string)$room['hasPassword'];
 			}
 			if (isset($expectedRoom['readOnly'])) {
-				$data['readOnly'] = (string) $room['readOnly'];
+				$data['readOnly'] = (string)$room['readOnly'];
 			}
 			if (isset($expectedRoom['listable'])) {
-				$data['listable'] = (string) $room['listable'];
+				$data['listable'] = (string)$room['listable'];
 			}
 			if (isset($expectedRoom['participantType'])) {
-				$data['participantType'] = (string) $room['participantType'];
+				$data['participantType'] = (string)$room['participantType'];
 			}
 			if (isset($expectedRoom['sipEnabled'])) {
-				$data['sipEnabled'] = (string) $room['sipEnabled'];
+				$data['sipEnabled'] = (string)$room['sipEnabled'];
 			}
 			if (isset($expectedRoom['callFlag'])) {
-				$data['callFlag'] = (int) $room['callFlag'];
+				$data['callFlag'] = (int)$room['callFlag'];
 			}
 			if (isset($expectedRoom['lobbyState'])) {
-				$data['lobbyState'] = (int) $room['lobbyState'];
+				$data['lobbyState'] = (int)$room['lobbyState'];
 			}
 			if (isset($expectedRoom['breakoutRoomMode'])) {
-				$data['breakoutRoomMode'] = (int) $room['breakoutRoomMode'];
+				$data['breakoutRoomMode'] = (int)$room['breakoutRoomMode'];
 			}
 			if (isset($expectedRoom['breakoutRoomStatus'])) {
-				$data['breakoutRoomStatus'] = (int) $room['breakoutRoomStatus'];
+				$data['breakoutRoomStatus'] = (int)$room['breakoutRoomStatus'];
 			}
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
@@ -539,25 +539,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['lastMessageActorId'] = str_replace(rtrim($this->remoteServerUrl, '/'), '{$REMOTE_URL}', $data['lastMessageActorId']);
 			}
 			if (isset($expectedRoom['lastReadMessage'])) {
-				$data['lastReadMessage'] = self::$messageIdToText[(int) $room['lastReadMessage']] ?? (!$room['lastReadMessage'] ? 'ZERO': 'UNKNOWN_MESSAGE');
+				$data['lastReadMessage'] = self::$messageIdToText[(int)$room['lastReadMessage']] ?? (!$room['lastReadMessage'] ? 'ZERO': 'UNKNOWN_MESSAGE');
 			}
 			if (isset($expectedRoom['unreadMessages'])) {
-				$data['unreadMessages'] = (int) $room['unreadMessages'];
+				$data['unreadMessages'] = (int)$room['unreadMessages'];
 			}
 			if (isset($expectedRoom['unreadMention'])) {
-				$data['unreadMention'] = (int) $room['unreadMention'];
+				$data['unreadMention'] = (int)$room['unreadMention'];
 			}
 			if (isset($expectedRoom['unreadMentionDirect'])) {
-				$data['unreadMentionDirect'] = (int) $room['unreadMentionDirect'];
+				$data['unreadMentionDirect'] = (int)$room['unreadMentionDirect'];
 			}
 			if (isset($expectedRoom['messageExpiration'])) {
-				$data['messageExpiration'] = (int) $room['messageExpiration'];
+				$data['messageExpiration'] = (int)$room['messageExpiration'];
 			}
 			if (isset($expectedRoom['callRecording'])) {
-				$data['callRecording'] = (int) $room['callRecording'];
+				$data['callRecording'] = (int)$room['callRecording'];
 			}
 			if (isset($expectedRoom['recordingConsent'])) {
-				$data['recordingConsent'] = (int) $room['recordingConsent'];
+				$data['recordingConsent'] = (int)$room['recordingConsent'];
 			}
 			if (isset($expectedRoom['permissions'])) {
 				$data['permissions'] = $this->mapPermissionsAPIOutput($room['permissions']);
@@ -655,7 +655,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount(count($formData->getHash()), $invites, 'Invite count does not match');
 		$expectedInvites = array_map(static function ($expectedInvite): array {
 			if (isset($expectedInvite['state'])) {
-				$expectedInvite['state'] = (int) $expectedInvite['state'];
+				$expectedInvite['state'] = (int)$expectedInvite['state'];
 			}
 			return $expectedInvite;
 		}, $formData->getHash());
@@ -811,31 +811,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['actorId'] = $attendee['actorId'];
 				}
 				if (isset($expectedKeys['participantType'])) {
-					$data['participantType'] = (string) $attendee['participantType'];
+					$data['participantType'] = (string)$attendee['participantType'];
 				}
 				if (isset($expectedKeys['inCall'])) {
-					$data['inCall'] = (string) $attendee['inCall'];
+					$data['inCall'] = (string)$attendee['inCall'];
 				}
 				if (isset($expectedKeys['attendeePin'])) {
 					$data['attendeePin'] = $attendee['attendeePin'] ? '**PIN**' : '';
 				}
 				if (isset($expectedKeys['permissions'])) {
-					$data['permissions'] = (string) $attendee['permissions'];
+					$data['permissions'] = (string)$attendee['permissions'];
 				}
 				if (isset($expectedKeys['attendeePermissions'])) {
-					$data['attendeePermissions'] = (string) $attendee['attendeePermissions'];
+					$data['attendeePermissions'] = (string)$attendee['attendeePermissions'];
 				}
 				if (isset($expectedKeys['displayName'])) {
-					$data['displayName'] = (string) $attendee['displayName'];
+					$data['displayName'] = (string)$attendee['displayName'];
 				}
 				if (isset($expectedKeys['phoneNumber'])) {
-					$data['phoneNumber'] = (string) $attendee['phoneNumber'];
+					$data['phoneNumber'] = (string)$attendee['phoneNumber'];
 				}
 				if (isset($expectedKeys['callId'])) {
-					$data['callId'] = (string) $attendee['callId'];
+					$data['callId'] = (string)$attendee['callId'];
 				}
 				if (isset($expectedKeys['status'], $attendee['status'])) {
-					$data['status'] = (string) $attendee['status'];
+					$data['status'] = (string)$attendee['status'];
 				}
 				if (isset($expectedKeys['sessionIds'])) {
 					$sessionIds = '[';
@@ -1017,7 +1017,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function mapPermissionsAPIOutput($permissions): string {
-		$permissions = (int) $permissions;
+		$permissions = (int)$permissions;
 
 		$permissionsString = !$permissions ? 'D' : '';
 		foreach (self::$permissionsMap as $char => $int) {
@@ -2214,9 +2214,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($statusCode === 200) {
 			$response = $this->getDataFromResponse($this->response);
-			Assert::assertCount((int) $numPeers, $response);
+			Assert::assertCount((int)$numPeers, $response);
 		} else {
-			Assert::assertEquals((int) $numPeers, 0);
+			Assert::assertEquals((int)$numPeers, 0);
 		}
 	}
 
@@ -2551,7 +2551,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (isset($expected['details'])) {
 			$expected['details'] = json_decode($expected['details'], true);
 		}
-		$expected['numVoters'] = (int) $expected['numVoters'];
+		$expected['numVoters'] = (int)$expected['numVoters'];
 		$expected['options'] = json_decode($expected['options'], true);
 
 		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);
@@ -2586,8 +2586,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			unset($widget['icon_url'], $data[$id]['icon_url']);
 
-			$widget['item_icons_round'] = (bool) $widget['item_icons_round'];
-			$widget['order'] = (int) $widget['order'];
+			$widget['item_icons_round'] = (bool)$widget['item_icons_round'];
+			$widget['order'] = (int)$widget['order'];
 			$widget['widget_url'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['widget_url']);
 			$widget['buttons'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['buttons']);
 			$widget['buttons'] = json_decode($widget['buttons'], true);
@@ -2879,7 +2879,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($formData instanceof TableNode) {
 			$expected = $formData->getRowsHash();
 			$summarized = array_map(function ($type) {
-				return (string) count($type);
+				return (string)count($type);
 			}, $overview);
 			Assert::assertEquals($expected, $summarized);
 		}
@@ -3160,9 +3160,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals($expected, array_map(function ($message, $expected) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
-				'actorType' => (string) $message['actorType'],
-				'actorId' => ($message['actorType'] === 'guests') ? self::$sessionIdToUser[$message['actorId']] : (string) $message['actorId'],
-				'systemMessage' => (string) $message['systemMessage'],
+				'actorType' => (string)$message['actorType'],
+				'actorId' => ($message['actorType'] === 'guests') ? self::$sessionIdToUser[$message['actorId']] : (string)$message['actorId'],
+				'systemMessage' => (string)$message['systemMessage'],
 			];
 
 			if (isset($expected['actorDisplayName'])) {
@@ -3415,7 +3415,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			foreach ($formData->getRowsHash() as $attendee => $roomNumber) {
 				[$type, $id] = explode('::', $attendee);
 				$attendeeId = $this->getAttendeeId($type, $id, $identifier);
-				$mapArray[$attendeeId] = (int) $roomNumber;
+				$mapArray[$attendeeId] = (int)$roomNumber;
 			}
 			$data['attendeeMap'] = json_encode($mapArray, JSON_THROW_ON_ERROR);
 		}
@@ -3455,7 +3455,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			foreach ($formData->getRowsHash() as $attendee => $roomNumber) {
 				[$type, $id] = explode('::', $attendee);
 				$attendeeId = $this->getAttendeeId($type, $id, $identifier);
-				$mapArray[$attendeeId] = (int) $roomNumber;
+				$mapArray[$attendeeId] = (int)$roomNumber;
 			}
 			$data['attendeeMap'] = json_encode($mapArray, JSON_THROW_ON_ERROR);
 		}
@@ -3717,20 +3717,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 			}
 			if (isset($expectedNotification['subject'])) {
-				$data['subject'] = (string) $notification['subject'];
+				$data['subject'] = (string)$notification['subject'];
 			}
 			if (isset($expectedNotification['message'])) {
-				$data['message'] = (string) $notification['message'];
+				$data['message'] = (string)$notification['message'];
 				$result = preg_match('/ROOM\(([^)]+)\)/', $expectedNotification['message'], $matches);
 				if ($result && isset(self::$identifierToToken[$matches[1]])) {
 					$data['message'] = str_replace(self::$identifierToToken[$matches[1]], $matches[0], $data['message']);
 				}
 			}
 			if (isset($expectedNotification['object_type'])) {
-				$data['object_type'] = (string) $notification['object_type'];
+				$data['object_type'] = (string)$notification['object_type'];
 			}
 			if (isset($expectedNotification['app'])) {
-				$data['app'] = (string) $notification['app'];
+				$data['app'] = (string)$notification['app'];
 			}
 
 			return $data;
@@ -4202,7 +4202,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$actual = array_map(function ($reaction, $list) use ($expected): array {
 			$list = array_map(function ($reaction) {
 				unset($reaction['timestamp']);
-				$reaction['actorId'] = ($reaction['actorType'] === 'guests') ? self::$sessionIdToUser[$reaction['actorId']] : (string) $reaction['actorId'];
+				$reaction['actorId'] = ($reaction['actorType'] === 'guests') ? self::$sessionIdToUser[$reaction['actorId']] : (string)$reaction['actorId'];
 				if ($reaction['actorType'] === 'federated_users') {
 					$reaction['actorId'] = str_replace(rtrim($this->localServerUrl, '/'), '{$LOCAL_URL}', $reaction['actorId']);
 					$reaction['actorId'] = str_replace(rtrim($this->localRemoteServerUrl, '/'), '{$LOCAL_REMOTE_URL}', $reaction['actorId']);
@@ -4464,7 +4464,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userStoreRecordingFileInRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$recordingServerSharedSecret = 'the secret';
 		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['secret' => $recordingServerSharedSecret])]]));
-		$validRandom = md5((string) rand());
+		$validRandom = md5((string)rand());
 		$validChecksum = hash_hmac('sha256', $validRandom . self::$identifierToToken[$identifier], $recordingServerSharedSecret);
 		$headers = [
 			'TALK_RECORDING_RANDOM' => $validRandom,
@@ -4665,9 +4665,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		foreach ($list as $job) {
 			if ($useForce === 'force run') {
-				$this->runOcc(['background-job:execute', (string) $job['id'], '--force-execute']);
+				$this->runOcc(['background-job:execute', (string)$job['id'], '--force-execute']);
 			} else {
-				$this->runOcc(['background-job:execute', (string) $job['id']]);
+				$this->runOcc(['background-job:execute', (string)$job['id']]);
 			}
 
 			if ($this->lastStdErr) {

@@ -37,7 +37,7 @@ class Util {
 	 */
 	public function getUsersWithAccessFile(string $fileId): array {
 		if (!isset($this->accessLists[$fileId])) {
-			$nodes = $this->rootFolder->getById((int) $fileId);
+			$nodes = $this->rootFolder->getById((int)$fileId);
 
 			if (empty($nodes)) {
 				return [];
@@ -68,7 +68,7 @@ class Util {
 
 	public function canGuestsAccessFile(string $fileId): bool {
 		if (!isset($this->publicAccessLists[$fileId])) {
-			$nodes = $this->rootFolder->getById((int) $fileId);
+			$nodes = $this->rootFolder->getById((int)$fileId);
 
 			if (empty($nodes)) {
 				return false;
@@ -106,7 +106,7 @@ class Util {
 	 */
 	public function getAnyNodeOfFileAccessibleByUser(string $fileId, string $userId): ?Node {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
-		$nodes = $userFolder->getById((int) $fileId);
+		$nodes = $userFolder->getById((int)$fileId);
 
 		$nodes = array_filter($nodes, static function (Node $node) {
 			return $node->getType() === FileInfo::TYPE_FILE;

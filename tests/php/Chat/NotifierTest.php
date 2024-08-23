@@ -170,7 +170,7 @@ class NotifierTest extends TestCase {
 	public function testNotifyMentionedUsers(string $message, array $alreadyNotifiedUsers, array $notify, array $expectedReturn): void {
 		if (count($notify)) {
 			$this->notificationManager->expects($this->exactly(count($notify)))
-			->method('notify');
+				->method('notify');
 		}
 
 		$room = $this->getRoom();

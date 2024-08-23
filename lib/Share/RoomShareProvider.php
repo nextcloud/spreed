@@ -426,7 +426,7 @@ class RoomShareProvider implements IShareProvider {
 
 		$update->executeStatement();
 
-		return $this->getShareById((int) $share->getId(), $recipient);
+		return $this->getShareById((int)$share->getId(), $recipient);
 	}
 
 	/**
@@ -668,7 +668,7 @@ class RoomShareProvider implements IShareProvider {
 			$id = $data['id'];
 			if ($this->isAccessibleResult($data)) {
 				$share = $this->createShareObject($data);
-				$shares[(int) $share->getId()] = $share;
+				$shares[(int)$share->getId()] = $share;
 			} else {
 				$share = false;
 			}
@@ -1003,8 +1003,8 @@ class RoomShareProvider implements IShareProvider {
 	protected function filterSharesOfUser(array $shares): array {
 		// Room shares when the user has a share exception
 		foreach ($shares as $id => $share) {
-			$type = (int) $share['share_type'];
-			$permissions = (int) $share['permissions'];
+			$type = (int)$share['share_type'];
+			$permissions = (int)$share['permissions'];
 
 			if ($type === self::SHARE_TYPE_USERROOM) {
 				unset($shares[$share['parent']]);

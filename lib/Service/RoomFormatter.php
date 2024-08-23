@@ -393,7 +393,7 @@ class RoomFormatter {
 		}
 
 		if ($room->isFederatedConversation()) {
-			$roomData['attendeeId'] = (int) $attendee->getRemoteId();
+			$roomData['attendeeId'] = (int)$attendee->getRemoteId();
 			$roomData['canLeaveConversation'] = true;
 		}
 

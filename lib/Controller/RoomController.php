@@ -254,11 +254,11 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		/** @var array{X-Nextcloud-Talk-Modified-Before: numeric-string, X-Nextcloud-Talk-Federation-Invites?: numeric-string} $headers */
-		$headers = ['X-Nextcloud-Talk-Modified-Before' => (string) $nextModifiedSince];
+		$headers = ['X-Nextcloud-Talk-Modified-Before' => (string)$nextModifiedSince];
 		if ($this->talkConfig->isFederationEnabledForUserId($user)) {
 			$numInvites = $this->federationManager->getNumberOfPendingInvitationsForUser($user);
 			if ($numInvites !== 0) {
-				$headers['X-Nextcloud-Talk-Federation-Invites'] = (string) $numInvites;
+				$headers['X-Nextcloud-Talk-Federation-Invites'] = (string)$numInvites;
 			}
 		}
 
@@ -1019,7 +1019,7 @@ class RoomController extends AEnvironmentAwareController {
 				// Generate a PIN if the attendee is a user and doesn't have one.
 				$this->participantService->generatePinForParticipant($this->room, $participant);
 
-				$result['attendeePin'] = (string) $participant->getAttendee()->getPin();
+				$result['attendeePin'] = (string)$participant->getAttendee()->getPin();
 			}
 
 			if ($participant->getSession() instanceof Session) {
@@ -1610,7 +1610,7 @@ class RoomController extends AEnvironmentAwareController {
 				'result' => true,
 			];
 		} else {
-			$result = $this->roomService->verifyPassword($room, (string) $this->session->getPasswordForRoom($token));
+			$result = $this->roomService->verifyPassword($room, (string)$this->session->getPasswordForRoom($token));
 		}
 
 		$user = $this->userManager->get($this->userId);
@@ -2282,7 +2282,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Set recording consent requirement for this conversation
 	 *
 	 * @param int $recordingConsent New consent setting for the conversation
-	 *   (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
+	 *                              (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
 	 *

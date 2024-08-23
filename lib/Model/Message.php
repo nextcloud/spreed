@@ -95,7 +95,7 @@ class Message {
 	 */
 
 	public function getMessageId(): int {
-		return $this->comment ? (int) $this->comment->getId() : $this->proxy->getRemoteMessageId();
+		return $this->comment ? (int)$this->comment->getId() : $this->proxy->getRemoteMessageId();
 	}
 
 	public function getExpirationDateTime(): ?\DateTimeInterface {
@@ -194,7 +194,7 @@ class Message {
 		}
 
 		$data = [
-			'id' => (int) $this->getComment()->getId(),
+			'id' => (int)$this->getComment()->getId(),
 			'token' => $this->getRoom()->getToken(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
@@ -205,7 +205,7 @@ class Message {
 			'systemMessage' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? $this->getMessageRaw() : '',
 			'messageType' => $this->getMessageType(),
 			'isReplyable' => $this->isReplyable(),
-			'referenceId' => (string) $this->getComment()->getReferenceId(),
+			'referenceId' => (string)$this->getComment()->getReferenceId(),
 			'reactions' => $reactions,
 			'expirationTimestamp' => $expireDate ? $expireDate->getTimestamp() : 0,
 			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,

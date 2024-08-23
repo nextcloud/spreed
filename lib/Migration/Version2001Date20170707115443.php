@@ -65,9 +65,9 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_rooms')
 			->from('spreedme_rooms');
 		$result = $query->executeQuery();
-		$return = (int) $result->fetch();
+		$return = (int)$result->fetch();
 		$result->closeCursor();
-		$numRooms = (int) $return['num_rooms'];
+		$numRooms = (int)$return['num_rooms'];
 
 		if ($numRooms === 0) {
 			return;
@@ -80,7 +80,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 		$one2oneRooms = [];
 		while ($row = $result->fetch()) {
-			$one2oneRooms[] = (int) $row['id'];
+			$one2oneRooms[] = (int)$row['id'];
 		}
 		$result->closeCursor();
 

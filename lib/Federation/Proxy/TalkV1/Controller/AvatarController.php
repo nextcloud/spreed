@@ -49,7 +49,7 @@ class AvatarController {
 		);
 
 		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
-			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string) $proxy->getBody());
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string)$proxy->getBody());
 			throw new CannotReachRemoteException('Avatar request had unexpected status code');
 		}
 
@@ -83,7 +83,7 @@ class AvatarController {
 
 		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
 			if ($proxy->getStatusCode() !== Http::STATUS_NOT_FOUND) {
-				$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string) $proxy->getBody());
+				$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string)$proxy->getBody());
 			}
 			throw new CannotReachRemoteException('Avatar request had unexpected status code');
 		}

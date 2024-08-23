@@ -115,7 +115,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 
 		$roomType = $share->getProtocol()['roomType'];
-		if (!is_numeric($roomType) || !in_array((int) $roomType, $this->validSharedRoomTypes(), true)) {
+		if (!is_numeric($roomType) || !in_array((int)$roomType, $this->validSharedRoomTypes(), true)) {
 			$this->logger->debug('Received a federation invite for invalid room type');
 			throw new ProviderCouldNotAddShareException('roomType is not a valid number', '', Http::STATUS_BAD_REQUEST);
 		}
@@ -133,7 +133,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$cloudId = $this->cloudIdManager->getCloudId($shareWith, null);
 			$localCloudId = $cloudId->getUser() . '@' . $cloudId->getRemote();
 		}
-		$roomType = (int) $roomType;
+		$roomType = (int)$roomType;
 		$sharedByDisplayName = $share->getSharedByDisplayName();
 		$sharedByFederatedId = $share->getSharedBy();
 		$ownerDisplayName = $share->getOwnerDisplayName();
@@ -174,10 +174,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int) $remoteId, $roomType, $roomName, $roomDefaultPermissions, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
+			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int)$remoteId, $roomType, $roomName, $roomDefaultPermissions, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
 
-			$this->notifyAboutNewShare($shareWithUser, (string) $invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
-			return (string) $invite->getId();
+			$this->notifyAboutNewShare($shareWithUser, (string)$invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
+			return (string)$invite->getId();
 		}
 
 		$this->logger->debug('Received a federation invite with missing request data');
@@ -193,17 +193,17 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		}
 		switch ($notificationType) {
 			case FederationManager::NOTIFICATION_SHARE_ACCEPTED:
-				return $this->shareAccepted((int) $providerId, $notification);
+				return $this->shareAccepted((int)$providerId, $notification);
 			case FederationManager::NOTIFICATION_SHARE_DECLINED:
-				return $this->shareDeclined((int) $providerId, $notification);
+				return $this->shareDeclined((int)$providerId, $notification);
 			case FederationManager::NOTIFICATION_SHARE_UNSHARED:
-				return $this->shareUnshared((int) $providerId, $notification);
+				return $this->shareUnshared((int)$providerId, $notification);
 			case FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED:
-				return $this->participantModified((int) $providerId, $notification);
+				return $this->participantModified((int)$providerId, $notification);
 			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
-				return $this->roomModified((int) $providerId, $notification);
+				return $this->roomModified((int)$providerId, $notification);
 			case FederationManager::NOTIFICATION_MESSAGE_POSTED:
-				return $this->messagePosted((int) $providerId, $notification);
+				return $this->messagePosted((int)$providerId, $notification);
 		}
 
 		throw new BadRequestException([$notificationType]);
@@ -461,7 +461,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 				$lastMessageId = $room->getLastMessageId();
 				if ($notification['messageData']['remoteMessageId'] > $lastMessageId) {
-					$lastMessageId = (int) $notification['messageData']['remoteMessageId'];
+					$lastMessageId = (int)$notification['messageData']['remoteMessageId'];
 				}
 
 				if ($notification['messageData']['systemMessage'] !== 'message_edited'

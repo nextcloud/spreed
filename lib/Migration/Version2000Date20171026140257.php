@@ -40,7 +40,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 		}
 
 		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
-		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', '8');
+		$entropy = (int)$this->config->getAppValue('spreed', 'token_entropy', '8');
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('spreedme_rooms')
@@ -61,7 +61,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 			$token = $this->getNewToken($entropy, $chars);
 
 			$update->setParameter('token', $token)
-				->setParameter('room_id', (int) $row['id'], IQueryBuilder::PARAM_INT)
+				->setParameter('room_id', (int)$row['id'], IQueryBuilder::PARAM_INT)
 				->executeStatement();
 		}
 		$output->finishProgress();

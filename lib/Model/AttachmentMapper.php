@@ -31,13 +31,13 @@ class AttachmentMapper extends QBMapper {
 
 	public function createAttachmentFromRow(array $row): Attachment {
 		return $this->mapRowToEntity([
-			'id' => (int) $row['id'],
-			'room_id' => (int) $row['room_id'],
-			'message_id' => (int) $row['message_id'],
-			'message_time' => (int) $row['message_time'],
-			'object_type' => (string) $row['object_type'],
-			'actor_type' => (string) $row['actor_type'],
-			'actor_id' => (string) $row['actor_id'],
+			'id' => (int)$row['id'],
+			'room_id' => (int)$row['room_id'],
+			'message_id' => (int)$row['message_id'],
+			'message_time' => (int)$row['message_time'],
+			'object_type' => (string)$row['object_type'],
+			'actor_type' => (string)$row['actor_type'],
+			'actor_id' => (string)$row['actor_id'],
 		]);
 	}
 

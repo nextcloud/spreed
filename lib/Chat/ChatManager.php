@@ -109,10 +109,10 @@ class ChatManager {
 	 * Sends a new message to the given chat.
 	 *
 	 * @param bool $shouldSkipLastMessageUpdate If multiple messages will be posted
-	 *             (e.g. when adding multiple users to a room) we can skip the last
-	 *             message and last activity update until the last entry was created
-	 *             and then update with those values.
-	 *             This will replace O(n) with 1 database update.
+	 *                                          (e.g. when adding multiple users to a room) we can skip the last
+	 *                                          message and last activity update until the last entry was created
+	 *                                          and then update with those values.
+	 *                                          This will replace O(n) with 1 database update.
 	 * @throws MessagingNotAllowedException
 	 */
 	public function addSystemMessage(
@@ -133,7 +133,7 @@ class ChatManager {
 			throw $e;
 		}
 
-		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
+		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string)$chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		if ($referenceId !== null) {
@@ -200,10 +200,10 @@ class ChatManager {
 				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $captionComment ?? $comment, $alreadyNotifiedUsers, $silent);
 				if (!empty($alreadyNotifiedUsers)) {
 					$userIds = array_column($alreadyNotifiedUsers, 'id');
-					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $usersDirectlyMentioned);
 				}
 				if (!empty($federatedUsersDirectlyMentioned)) {
-					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int) $comment->getId(), $federatedUsersDirectlyMentioned);
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int)$comment->getId(), $federatedUsersDirectlyMentioned);
 				}
 
 				$this->notifier->notifyOtherParticipant($chat, $comment, [], $silent);
@@ -214,7 +214,7 @@ class ChatManager {
 				// e.g. sharing an item to the chat
 				try {
 					$participant = $this->participantService->getParticipantByActor($chat, $actorType, $actorId);
-					$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
+					$this->participantService->updateLastReadMessage($participant, (int)$comment->getId());
 				} catch (ParticipantNotFoundException) {
 					// Participant not found => No read-marker update needed
 				}
@@ -245,7 +245,7 @@ class ChatManager {
 	 * @return IComment
 	 */
 	public function addChangelogMessage(Room $chat, string $message): IComment {
-		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_CHANGELOG, 'chat', (string) $chat->getId());
+		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_CHANGELOG, 'chat', (string)$chat->getId());
 
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
@@ -294,7 +294,7 @@ class ChatManager {
 			throw $e;
 		}
 
-		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
+		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string)$chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
@@ -340,7 +340,7 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 
 			if ($participant instanceof Participant) {
-				$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
+				$this->participantService->updateLastReadMessage($participant, (int)$comment->getId());
 			}
 
 			// Update last_message
@@ -368,10 +368,10 @@ class ChatManager {
 			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers, $silent, $participant);
 			if (!empty($alreadyNotifiedUsers)) {
 				$userIds = array_column($alreadyNotifiedUsers, 'id');
-				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
+				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $usersDirectlyMentioned);
 			}
 			if (!empty($federatedUsersDirectlyMentioned)) {
-				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int) $comment->getId(), $federatedUsersDirectlyMentioned);
+				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int)$comment->getId(), $federatedUsersDirectlyMentioned);
 			}
 
 			// User was not mentioned, send a normal notification
@@ -460,7 +460,7 @@ class ChatManager {
 					],
 				], JSON_THROW_ON_ERROR),
 				'chat',
-				[(string) $room->getId()],
+				[(string)$room->getId()],
 				'system',
 				0
 			);
@@ -517,7 +517,7 @@ class ChatManager {
 
 		$this->commentsManager->save($comment);
 
-		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
+		$this->attachmentService->deleteAttachmentByMessageId((int)$comment->getId());
 
 		$this->referenceManager->invalidateCache($chat->getToken());
 
@@ -602,10 +602,10 @@ class ChatManager {
 				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $usersToNotifyBefore, silent: false);
 				if (!empty($alreadyNotifiedUsers)) {
 					$userIds = array_column($alreadyNotifiedUsers, 'id');
-					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $addedUsersDirectMentioned);
 				}
 				if (!empty($federatedUsersDirectlyMentionedAfter)) {
-					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentionedAfter, (int) $comment->getId(), $federatedUsersDirectlyMentionedAfter);
+					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentionedAfter, (int)$comment->getId(), $federatedUsersDirectlyMentionedAfter);
 				}
 			}
 		}
@@ -631,7 +631,7 @@ class ChatManager {
 	}
 
 	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
-		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+		$this->commentsManager->deleteCommentsAtObject('chat', (string)$chat->getId());
 
 		$this->shareProvider->deleteInRoom($chat->getToken());
 
@@ -660,7 +660,7 @@ class ChatManager {
 	public function getParentComment(Room $chat, string $parentId): IComment {
 		$comment = $this->commentsManager->get($parentId);
 
-		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string) $chat->getId()) {
+		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string)$chat->getId()) {
 			throw new NotFoundException('Parent not found in the right context');
 		}
 
@@ -680,7 +680,7 @@ class ChatManager {
 
 		$comment = $this->commentsManager->get($messageId);
 
-		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string) $chat->getId()) {
+		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string)$chat->getId()) {
 			throw new NotFoundException('Message not found in the right context');
 		}
 
@@ -688,12 +688,12 @@ class ChatManager {
 	}
 
 	public function getLastReadMessageFromLegacy(Room $chat, IUser $user): int {
-		$marker = $this->commentsManager->getReadMark('chat', (string) $chat->getId(), $user);
+		$marker = $this->commentsManager->getReadMark('chat', (string)$chat->getId(), $user);
 		if ($marker === null) {
 			return 0;
 		}
 
-		return $this->commentsManager->getLastCommentBeforeDate('chat', (string) $chat->getId(), $marker, self::VERB_MESSAGE);
+		return $this->commentsManager->getLastCommentBeforeDate('chat', (string)$chat->getId(), $marker, self::VERB_MESSAGE);
 	}
 
 	public function getUnreadCount(Room $chat, int $lastReadMessage): int {
@@ -705,7 +705,7 @@ class ChatManager {
 		$key = $chat->getId() . '-' . $lastReadMessage;
 		$unreadCount = $this->unreadCountCache->get($key);
 		if ($unreadCount === null) {
-			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string) $chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, 'object_shared']);
+			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, 'object_shared']);
 			$this->unreadCountCache->set($key, $unreadCount, 1800);
 		}
 		return $unreadCount;
@@ -730,11 +730,11 @@ class ChatManager {
 	 * @param int $limit
 	 * @param bool $includeLastKnown
 	 * @return IComment[] the messages found (only the id, actor type and id,
-	 *         creation date and message are relevant), or an empty array if the
-	 *         timeout expired.
+	 *                    creation date and message are relevant), or an empty array if the
+	 *                    timeout expired.
 	 */
 	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown): array {
-		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'desc', $limit, $includeLastKnown);
+		return $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'desc', $limit, $includeLastKnown);
 	}
 
 	/**
@@ -748,7 +748,7 @@ class ChatManager {
 	public function getPreviousMessageWithVerb(Room $chat, int $offset, array $verbs, bool $offsetIsVerbMatch): IComment {
 		$messages = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
 			'chat',
-			(string) $chat->getId(),
+			(string)$chat->getId(),
 			$verbs,
 			$offset,
 			'desc',
@@ -780,8 +780,8 @@ class ChatManager {
 	 * @param bool $includeLastKnown
 	 * @param bool $markNotificationsAsRead (defaults to true)
 	 * @return IComment[] the messages found (only the id, actor type and id,
-	 *         creation date and message are relevant), or an empty array if the
-	 *         timeout expired.
+	 *                    creation date and message are relevant), or an empty array if the
+	 *                    timeout expired.
 	 */
 	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true): array {
 		if ($markNotificationsAsRead && $user instanceof IUser) {
@@ -839,7 +839,7 @@ class ChatManager {
 		}
 
 		// Load data from the database
-		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+		$comments = $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
 
 		if (empty($comments)) {
 			// We only write the cache when there were no new comments,
@@ -865,13 +865,13 @@ class ChatManager {
 	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown): array {
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+		$comments = $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
+			$comments = $this->commentsManager->getForObjectSince('chat', (string)$chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
 		}
 
 		return $comments;
@@ -883,7 +883,7 @@ class ChatManager {
 	 * @param Room $chat
 	 */
 	public function deleteMessages(Room $chat): void {
-		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+		$this->commentsManager->deleteCommentsAtObject('chat', (string)$chat->getId());
 
 		$this->shareProvider->deleteInRoom($chat->getToken());
 

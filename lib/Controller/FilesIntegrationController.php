@@ -77,8 +77,8 @@ class FilesIntegrationController extends OCSController {
 	 *
 	 * @param string $fileId ID of the file
 	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
-	 * 200: Room token returned
-	 * 400: Rooms not allowed for shares
+	 *                                                                                                                                    200: Room token returned
+	 *                                                                                                                                    400: Rooms not allowed for shares
 	 * @throws OCSNotFoundException Share not found
 	 */
 	#[NoAdminRequired]
@@ -143,9 +143,9 @@ class FilesIntegrationController extends OCSController {
 	 *
 	 * @param string $shareToken Token of the file share
 	 * @return DataResponse<Http::STATUS_OK, array{token: string, userId: string, userDisplayName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
-	 * 200: Room token and user info returned
-	 * 400: Rooms not allowed for shares
-	 * 404: Share not found
+	 *                                                                                                                                                                                                    200: Room token and user info returned
+	 *                                                                                                                                                                                                    400: Rooms not allowed for shares
+	 *                                                                                                                                                                                                    404: Share not found
 	 */
 	#[PublicPage]
 	#[UseSession]

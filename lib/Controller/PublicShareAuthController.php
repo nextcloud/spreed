@@ -50,6 +50,7 @@ class PublicShareAuthController extends OCSController {
 	 *
 	 * @param string $shareToken Token of the file share
 	 * @return DataResponse<Http::STATUS_CREATED, array{token: string, name: string, displayName: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 *
 	 * 201: Room created successfully
 	 * 404: Share not found
 	 */

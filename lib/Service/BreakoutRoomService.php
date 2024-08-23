@@ -159,7 +159,7 @@ class BreakoutRoomService {
 					continue;
 				}
 
-				$roomNumber = (int) $cleanedMap[$participant->getAttendee()->getId()];
+				$roomNumber = (int)$cleanedMap[$participant->getAttendee()->getId()];
 
 				$map[$roomNumber] ??= [];
 				$map[$roomNumber][] = $participant;
@@ -233,7 +233,7 @@ class BreakoutRoomService {
 				continue;
 			}
 
-			$roomNumber = (int) $cleanedMap[$participant->getAttendee()->getId()];
+			$roomNumber = (int)$cleanedMap[$participant->getAttendee()->getId()];
 
 			$map[$roomNumber] ??= [];
 			$map[$roomNumber][] = $participant;
@@ -305,7 +305,7 @@ class BreakoutRoomService {
 		for ($i = 1; $i <= $amount; $i++) {
 			$breakoutRoom = $this->roomService->createConversation(
 				$parent->getType(),
-				str_replace('{number}', (string) $i, $label),
+				str_replace('{number}', (string)$i, $label),
 				null,
 				BreakoutRoom::PARENT_OBJECT_TYPE,
 				$parent->getToken()

@@ -150,6 +150,6 @@ class Attendee extends Entity {
 	}
 
 	public function getDisplayName(): string {
-		return (string) $this->displayName;
+		return (string)$this->displayName;
 	}
 }

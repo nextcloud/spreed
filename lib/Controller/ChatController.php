@@ -154,7 +154,7 @@ class ChatController extends AEnvironmentAwareController {
 		if (!$chatMessage->getVisibility()) {
 			$headers = [];
 			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-				$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+				$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 			}
 			return new DataResponse(null, Http::STATUS_CREATED, $headers);
 		}
@@ -166,7 +166,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$headers = [];
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 		}
 		return new DataResponse($data, Http::STATUS_CREATED, $headers);
 	}
@@ -216,7 +216,7 @@ class ChatController extends AEnvironmentAwareController {
 		$parent = $parentMessage = null;
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string) $replyTo);
+				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
 			} catch (NotFoundException $e) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -499,7 +499,7 @@ class ChatController extends AEnvironmentAwareController {
 					// As per "section 10.3.5 of RFC 2616" entity headers shall be
 					// stripped out on 304: https://stackoverflow.com/a/17822709
 					/** @var array{X-Chat-Last-Common-Read?: numeric-string, X-Chat-Last-Given?: numeric-string} $headers */
-					$headers = ['X-Chat-Last-Common-Read' => (string) $newLastCommonRead];
+					$headers = ['X-Chat-Last-Common-Read' => (string)$newLastCommonRead];
 					return new DataResponse([], Http::STATUS_OK, $headers);
 				}
 			}
@@ -512,7 +512,7 @@ class ChatController extends AEnvironmentAwareController {
 		$now = $this->timeFactory->getDateTime();
 		$messages = $commentIdToIndex = $parentIds = [];
 		foreach ($comments as $comment) {
-			$id = (int) $comment->getId();
+			$id = (int)$comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
@@ -579,7 +579,7 @@ class ChatController extends AEnvironmentAwareController {
 					}
 
 					$loadedParents[$parentId] = [
-						'id' => (int) $parentId,
+						'id' => (int)$parentId,
 						'deleted' => true,
 					];
 				} catch (NotFoundException $e) {
@@ -588,7 +588,7 @@ class ChatController extends AEnvironmentAwareController {
 
 			// Message is not visible to the user
 			$messages[$commentKey]['parent'] = [
-				'id' => (int) $parentId,
+				'id' => (int)$parentId,
 				'deleted' => true,
 			];
 		}
@@ -598,7 +598,7 @@ class ChatController extends AEnvironmentAwareController {
 		$headers = [];
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
-			$headers = ['X-Chat-Last-Given' => (string) (int) $newLastKnown->getId()];
+			$headers = ['X-Chat-Last-Given' => (string)(int)$newLastKnown->getId()];
 			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 				/**
 				 * This falsely set the read marker on new messages, although you
@@ -668,9 +668,9 @@ class ChatController extends AEnvironmentAwareController {
 		// Create a map, so we can translate the parent's $messageId to the correct child entries
 		$parentMap = $parentIdsWithReactions = [];
 		foreach ($parentsWithReactions as $entry) {
-			$parentMap[(int) $entry['parent']] ??= [];
-			$parentMap[(int) $entry['parent']][] = (int) $entry['message'];
-			$parentIdsWithReactions[] = (int) $entry['parent'];
+			$parentMap[(int)$entry['parent']] ??= [];
+			$parentMap[(int)$entry['parent']][] = (int)$entry['message'];
+			$parentIdsWithReactions[] = (int)$entry['parent'];
 		}
 
 		// Unique list for the query
@@ -728,7 +728,7 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+			$message = $this->chatManager->getComment($this->room, (string)$messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -766,7 +766,7 @@ class ChatController extends AEnvironmentAwareController {
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);
 
-		$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+		$comment = $this->chatManager->getComment($this->room, (string)$messageId);
 		$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($message);
 
@@ -781,7 +781,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$headers = [];
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 		}
 		return new DataResponse($data, $hasBotOrBridge ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
 	}
@@ -821,7 +821,7 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -873,7 +873,7 @@ class ChatController extends AEnvironmentAwareController {
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);
 
-		$comment = $this->chatManager->getComment($this->room, (string) $messageId);
+		$comment = $this->chatManager->getComment($this->room, (string)$messageId);
 		$parseMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($parseMessage);
 
@@ -888,7 +888,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$headers = [];
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 		}
 		return new DataResponse($data, $hasBotOrBridge ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
 	}
@@ -1051,7 +1051,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$headers = [];
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$headers = ['X-Chat-Last-Common-Read' => (string) $this->chatManager->getLastCommonReadMessage($this->room)];
+			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 		}
 		return new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK, $headers);
 	}
@@ -1087,7 +1087,7 @@ class ChatController extends AEnvironmentAwareController {
 		$headers = $lastCommonRead = [];
 		if ($attendee->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$lastCommonRead[$this->room->getId()] = $this->chatManager->getLastCommonReadMessage($this->room);
-			$headers = ['X-Chat-Last-Common-Read' => (string) $lastCommonRead[$this->room->getId()]];
+			$headers = ['X-Chat-Last-Common-Read' => (string)$lastCommonRead[$this->room->getId()]];
 		}
 
 		return new DataResponse($this->roomFormatter->formatRoom(
@@ -1126,7 +1126,7 @@ class ChatController extends AEnvironmentAwareController {
 					[ChatManager::VERB_MESSAGE],
 					$message->getVerb() === ChatManager::VERB_MESSAGE
 				);
-				$unreadId = (int) $previousMessage->getId();
+				$unreadId = (int)$previousMessage->getId();
 			} catch (NotFoundException $e) {
 				// No chat message found, only system messages.
 				// Marking unread from beginning
@@ -1212,7 +1212,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$headers = [];
 		if (!empty($messages)) {
-			$newLastKnown = (string) (int) min(array_keys($messages));
+			$newLastKnown = (string)(int)min(array_keys($messages));
 			$headers = ['X-Chat-Last-Given' => $newLastKnown];
 		}
 
@@ -1243,7 +1243,7 @@ class ChatController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$messages[(int) $comment->getId()] = $message->toArray($this->getResponseFormat());
+			$messages[(int)$comment->getId()] = $message->toArray($this->getResponseFormat());
 		}
 
 		return $messages;
@@ -1286,7 +1286,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->autoCompleteManager->registerSorter(Sorter::class);
 		$this->autoCompleteManager->runSorters(['talk_chat_participants'], $results, [
 			'itemType' => 'chat',
-			'itemId' => (string) $this->room->getId(),
+			'itemId' => (string)$this->room->getId(),
 			'search' => $search,
 		]);
 

@@ -41,7 +41,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room   $room
+	 * @param Room $room
 	 * @param string $name
 	 *
 	 * @throws InvalidArgumentException
@@ -74,7 +74,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room   $room
+	 * @param Room $room
 	 * @param string $description
 	 *
 	 * @throws InvalidArgumentException
@@ -136,7 +136,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room   $room
+	 * @param Room $room
 	 * @param string $password
 	 *
 	 * @throws InvalidArgumentException
@@ -160,7 +160,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room   $room
+	 * @param Room $room
 	 * @param string $userId
 	 *
 	 * @throws InvalidArgumentException
@@ -196,7 +196,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room     $room
+	 * @param Room $room
 	 * @param string[] $groupIds
 	 *
 	 * @throws InvalidArgumentException
@@ -217,7 +217,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room     $room
+	 * @param Room $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException
@@ -264,7 +264,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room     $room
+	 * @param Room $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException
@@ -287,7 +287,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room     $room
+	 * @param Room $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException
@@ -316,7 +316,7 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room     $room
+	 * @param Room $room
 	 * @param string[] $userIds
 	 *
 	 * @throws InvalidArgumentException

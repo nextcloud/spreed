@@ -136,7 +136,7 @@ class Create extends Base {
 			}
 
 			if ($messageExpiration !== null) {
-				$this->setMessageExpiration($room, (int) $messageExpiration);
+				$this->setMessageExpiration($room, (int)$messageExpiration);
 			}
 		} catch (InvalidArgumentException $e) {
 			$this->roomService->deleteRoom($room);

@@ -156,7 +156,7 @@ class BotController extends AEnvironmentAwareController {
 		$parent = null;
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($room, (string) $replyTo);
+				$parent = $this->chatManager->getParentComment($room, (string)$replyTo);
 			} catch (NotFoundException $e) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -224,7 +224,7 @@ class BotController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ReactionAlreadyExistsException) {
 			return new DataResponse([], Http::STATUS_OK);
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|\Exception) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -273,7 +273,7 @@ class BotController extends AEnvironmentAwareController {
 				$messageId,
 				$reaction
 			);
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\Exception) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
