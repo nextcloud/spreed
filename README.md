@@ -69,6 +69,12 @@ You can enable HMR (Hot module replacement) to avoid page reloads when working o
 
 We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
 
+### 🙈 Ignore code style updates in git blame
+
+```sh
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
+
 ### 🌏 Testing federation locally
 
 When testing federated conversations locally, some additional steps might be needed,
