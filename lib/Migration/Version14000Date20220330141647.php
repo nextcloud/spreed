@@ -118,8 +118,8 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 		$result = $select->executeQuery();
 		while ($row = $result->fetch()) {
 			$attachment = [
-				'room_id' => (int) $row['object_id'],
-				'message_id' => (int) $row['id'],
+				'room_id' => (int)$row['object_id'],
+				'message_id' => (int)$row['id'],
 				'actor_type' => $row['actor_type'],
 				'actor_id' => $row['actor_id'],
 			];
@@ -152,13 +152,13 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 					$attachment['object_type'] = Attachment::TYPE_MEDIA;
 				} else {
 					if ($mimetype === '' && isset($parameters['share'])) {
-						$sharesWithoutMimetype[(int) $parameters['share']] = (int) $row['id'];
+						$sharesWithoutMimetype[(int)$parameters['share']] = (int)$row['id'];
 					}
 					$attachment['object_type'] = Attachment::TYPE_FILE;
 				}
 			}
 
-			$attachments[(int) $row['id']] = $attachment;
+			$attachments[(int)$row['id']] = $attachment;
 		}
 		$result->closeCursor();
 

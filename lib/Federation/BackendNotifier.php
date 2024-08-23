@@ -110,7 +110,7 @@ class BackendNotifier {
 			$response = $this->federationProviderManager->sendCloudShare($share);
 			if ($response->getStatusCode() === Http::STATUS_CREATED) {
 				$body = $response->getBody();
-				$data = json_decode((string) $body, true);
+				$data = json_decode((string)$body, true);
 				if (isset($data['recipientUserId']) && $data['recipientUserId'] !== '') {
 					$shareWithCloudId = $data['recipientUserId'] . '@' . $remote;
 				}
@@ -122,7 +122,7 @@ class BackendNotifier {
 
 			$this->logger->warning("Failed sharing $roomToken with $shareWith, received status code {code}\n{body}", [
 				'code' => $response->getStatusCode(),
-				'body' => (string) $response->getBody(),
+				'body' => (string)$response->getBody(),
 			]);
 
 			return false;
@@ -152,7 +152,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_SHARE_ACCEPTED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $remoteAttendeeId,
+			(string)$remoteAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -181,7 +181,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_SHARE_DECLINED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $remoteAttendeeId,
+			(string)$remoteAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -206,7 +206,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_SHARE_UNSHARED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -239,7 +239,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_ROOM_MODIFIED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -273,7 +273,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -310,7 +310,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_ROOM_MODIFIED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -349,7 +349,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_ROOM_MODIFIED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -387,7 +387,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_ROOM_MODIFIED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -395,7 +395,7 @@ class BackendNotifier {
 				'changedProperty' => $changedProperty,
 				'newValue' => $newValue,
 				'oldValue' => $oldValue,
-				'dateTime' => $dateTime ? (string) $dateTime->getTimestamp() : '',
+				'dateTime' => $dateTime ? (string)$dateTime->getTimestamp() : '',
 				'timerReached' => $timerReached,
 			],
 		);
@@ -425,7 +425,7 @@ class BackendNotifier {
 		$notification->setMessage(
 			FederationManager::NOTIFICATION_MESSAGE_POSTED,
 			FederationManager::TALK_ROOM_RESOURCE,
-			(string) $localAttendeeId,
+			(string)$localAttendeeId,
 			[
 				'remoteServerUrl' => $this->getServerRemoteUrl(),
 				'sharedSecret' => $accessToken,
@@ -446,7 +446,7 @@ class BackendNotifier {
 			}
 
 			if ($response->getStatusCode() === Http::STATUS_BAD_REQUEST) {
-				$ocmBody = json_decode((string) $response->getBody(), true) ?? [];
+				$ocmBody = json_decode((string)$response->getBody(), true) ?? [];
 				if (isset($ocmBody['message']) && $ocmBody['message'] === FederationManager::OCM_RESOURCE_NOT_FOUND) {
 					// Remote exists but tells us the OCM notification can not be received (invalid invite data)
 					// So we stop retrying
@@ -456,7 +456,7 @@ class BackendNotifier {
 
 			$this->logger->warning("Failed to send notification for share from $remote, received status code {code}\n{body}", [
 				'code' => $response->getStatusCode(),
-				'body' => (string) $response->getBody(),
+				'body' => (string)$response->getBody(),
 			]);
 		} catch (OCMProviderException $e) {
 			$this->logger->error("Failed to send notification for share from $remote, received OCMProviderException", ['exception' => $e]);

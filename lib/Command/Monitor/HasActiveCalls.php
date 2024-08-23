@@ -39,7 +39,7 @@ class HasActiveCalls extends Base {
 			->where($query->expr()->isNotNull('active_since'));
 
 		$result = $query->executeQuery();
-		$numCalls = (int) $result->fetchColumn();
+		$numCalls = (int)$result->fetchColumn();
 		$result->closeCursor();
 
 		if ($numCalls === 0) {
@@ -59,7 +59,7 @@ class HasActiveCalls extends Base {
 			->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter(time() - 60)));
 
 		$result = $query->executeQuery();
-		$numParticipants = (int) $result->fetchColumn();
+		$numParticipants = (int)$result->fetchColumn();
 		$result->closeCursor();
 
 

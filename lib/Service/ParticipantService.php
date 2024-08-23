@@ -413,7 +413,7 @@ class ParticipantService {
 
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
-			$lastMessage = (int) $room->getLastMessage()->getId();
+			$lastMessage = (int)$room->getLastMessage()->getId();
 		}
 
 		if ($previousParticipant instanceof Participant) {
@@ -465,7 +465,7 @@ class ParticipantService {
 
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
-			$lastMessage = (int) $room->getLastMessage()->getId();
+			$lastMessage = (int)$room->getLastMessage()->getId();
 		}
 
 		$bannedUserIds = [];
@@ -531,7 +531,7 @@ class ParticipantService {
 				$this->attendeeMapper->insert($attendee);
 
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-					$response = $this->backendNotifier->sendRemoteShare((string) $attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
+					$response = $this->backendNotifier->sendRemoteShare((string)$attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
 					if (!$response) {
 						$this->attendeeMapper->delete($attendee);
 						throw new CannotReachRemoteException();
@@ -794,7 +794,7 @@ class ParticipantService {
 	public function inviteEmailAddress(Room $room, string $email): Participant {
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
-			$lastMessage = (int) $room->getLastMessage()->getId();
+			$lastMessage = (int)$room->getLastMessage()->getId();
 		}
 
 		$attendee = new Attendee();
@@ -1087,7 +1087,7 @@ class ParticipantService {
 		$sessionTableIds = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			$sessionTableIds[] = (int) $row['s_id'];
+			$sessionTableIds[] = (int)$row['s_id'];
 		}
 		$result->closeCursor();
 
@@ -1112,14 +1112,14 @@ class ParticipantService {
 				continue;
 			}
 
-			if ((int) $row['participant_type'] !== Participant::GUEST
-				|| ((int) $row['permissions'] !== Attendee::PERMISSIONS_DEFAULT
-					&& (int) $row['permissions'] !== Attendee::PERMISSIONS_CUSTOM)) {
+			if ((int)$row['participant_type'] !== Participant::GUEST
+				|| ((int)$row['permissions'] !== Attendee::PERMISSIONS_DEFAULT
+					&& (int)$row['permissions'] !== Attendee::PERMISSIONS_CUSTOM)) {
 				// Keep guests with non-default permissions in case they just reconnect
 				continue;
 			}
 
-			$attendeeIds[] = (int) $row['a_id'];
+			$attendeeIds[] = (int)$row['a_id'];
 			$attendees[] = $this->attendeeMapper->createAttendeeFromRow($row);
 		}
 		$result->closeCursor();
@@ -1415,7 +1415,7 @@ class ParticipantService {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return (int) ($row['last_common_read_message'] ?? 0);
+		return (int)($row['last_common_read_message'] ?? 0);
 	}
 
 	/**
@@ -1440,7 +1440,7 @@ class ParticipantService {
 			$query->setParameter('roomIds', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$result = $query->executeQuery();
 			while ($row = $result->fetch()) {
-				$commonReads[(int) $row['room_id']] = (int) $row['last_common_read_message'];
+				$commonReads[(int)$row['room_id']] = (int)$row['last_common_read_message'];
 			}
 			$result->closeCursor();
 		}
@@ -1628,7 +1628,7 @@ class ParticipantService {
 		$participants = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			$room = $rooms[(int) $row['room_id']] ?? null;
+			$room = $rooms[(int)$row['room_id']] ?? null;
 			if ($room === null) {
 				continue;
 			}
@@ -1815,7 +1815,7 @@ class ParticipantService {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return (bool) $row;
+		return (bool)$row;
 	}
 
 	public function cacheParticipant(Room $room, Participant $participant): void {
@@ -1866,7 +1866,7 @@ class ParticipantService {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return (bool) $row;
+		return (bool)$row;
 	}
 
 	protected function generatePin(int $entropy = 7): string {

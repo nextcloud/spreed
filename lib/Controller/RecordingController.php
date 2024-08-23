@@ -69,7 +69,7 @@ class RecordingController extends AEnvironmentAwareController {
 		$url = rtrim($recordingServers[$serverId]['server'], '/');
 		$url = strtolower($url);
 
-		$verifyServer = (bool) $recordingServers[$serverId]['verify'];
+		$verifyServer = (bool)$recordingServers[$serverId]['verify'];
 
 		if ($verifyServer && str_contains($url, 'https://')) {
 			$expiration = $this->certificateService->getCertificateExpirationInDays($url);

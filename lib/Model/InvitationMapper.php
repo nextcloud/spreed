@@ -93,7 +93,7 @@ class InvitationMapper extends QBMapper {
 		}
 
 		$result = $qb->executeQuery();
-		$count = (int) $result->fetchOne();
+		$count = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		return $count;
@@ -128,6 +128,6 @@ class InvitationMapper extends QBMapper {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return (int) ($row['num_invitations'] ?? 0);
+		return (int)($row['num_invitations'] ?? 0);
 	}
 }

@@ -68,14 +68,14 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initGeneralSettings(): void {
-		$this->initialState->provideInitialState('default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', (string) Participant::NOTIFY_MENTION));
-		$this->initialState->provideInitialState('conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
-		$this->initialState->provideInitialState('conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
+		$this->initialState->provideInitialState('default_group_notification', (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_MENTION));
+		$this->initialState->provideInitialState('conversations_files', (int)$this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
+		$this->initialState->provideInitialState('conversations_files_public_shares', (int)$this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
 		$this->initialState->provideInitialState('valid_apache_php_configuration', $this->validApachePHPConfiguration());
 	}
 
 	protected function initAllowedGroups(): void {
-		$this->initialState->provideInitialState('start_calls', (int) $this->serverConfig->getAppValue('spreed', 'start_calls', (string) Room::START_CALL_EVERYONE));
+		$this->initialState->provideInitialState('start_calls', (int)$this->serverConfig->getAppValue('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE));
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds(), 'start_conversations');
 		$this->initialState->provideInitialState('start_conversations', $groups);
@@ -95,7 +95,7 @@ class AdminSettings implements ISettings {
 	protected function initMatterbridge(): void {
 		$error = '';
 		try {
-			$version = (string) $this->bridgeManager->getCurrentVersionFromBinary();
+			$version = (string)$this->bridgeManager->getCurrentVersionFromBinary();
 			if ($version === '') {
 				$error = 'binary';
 			}
@@ -518,8 +518,8 @@ class AdminSettings implements ISettings {
 
 	/**
 	 * @return int whether the form should be rather on the top or bottom of
-	 * the admin section. The forms are arranged in ascending order of the
-	 * priority values. It is required to return a value between 0 and 100.
+	 *             the admin section. The forms are arranged in ascending order of the
+	 *             priority values. It is required to return a value between 0 and 100.
 	 *
 	 * E.g.: 70
 	 */

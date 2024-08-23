@@ -50,11 +50,11 @@ class ReactionManager {
 	 * @throws ReactionOutOfContextException
 	 */
 	public function addReactionMessage(Room $chat, string $actorType, string $actorId, int $messageId, string $reaction): IComment {
-		$parentMessage = $this->getCommentToReact($chat, (string) $messageId);
+		$parentMessage = $this->getCommentToReact($chat, (string)$messageId);
 		try {
 			// Check if the user already reacted with the same reaction
 			$this->commentsManager->getReactionComment(
-				(int) $parentMessage->getId(),
+				(int)$parentMessage->getId(),
 				$actorType,
 				$actorId,
 				$reaction
@@ -67,7 +67,7 @@ class ReactionManager {
 			$actorType,
 			$actorId,
 			'chat',
-			(string) $chat->getId()
+			(string)$chat->getId()
 		);
 		$comment->setParentId($parentMessage->getId());
 		$comment->setMessage($reaction);
@@ -93,7 +93,7 @@ class ReactionManager {
 	 */
 	public function deleteReactionMessage(Room $chat, string $actorType, string $actorId, int $messageId, string $reaction): IComment {
 		// Just to verify that messageId is part of the room and throw error if not.
-		$parentComment = $this->getCommentToReact($chat, (string) $messageId);
+		$parentComment = $this->getCommentToReact($chat, (string)$messageId);
 
 		$comment = $this->commentsManager->getReactionComment(
 			$messageId,
@@ -115,7 +115,7 @@ class ReactionManager {
 			$chat,
 			$actorType,
 			$actorId,
-			json_encode(['message' => 'reaction_revoked', 'parameters' => ['message' => (int) $comment->getId()]]),
+			json_encode(['message' => 'reaction_revoked', 'parameters' => ['message' => (int)$comment->getId()]]),
 			$this->timeFactory->getDateTime(),
 			false,
 			null,
@@ -181,7 +181,7 @@ class ReactionManager {
 		$comment = $this->commentsManager->get($messageId);
 
 		if ($comment->getObjectType() !== 'chat'
-			|| $comment->getObjectId() !== (string) $chat->getId()
+			|| $comment->getObjectId() !== (string)$chat->getId()
 			|| !in_array($comment->getVerb(), [
 				ChatManager::VERB_MESSAGE,
 				ChatManager::VERB_OBJECT_SHARED,

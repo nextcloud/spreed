@@ -68,7 +68,7 @@ class CallController {
 	 *
 	 * @param Room $room the federated room to join the call in
 	 * @param Participant $participant the federated user that will join the
-	 *        call; the participant must have a session
+	 *                                 call; the participant must have a session
 	 * @param int<0, 15> $flags In-Call flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags
 	 * @param bool $silent Join the call silently
@@ -109,7 +109,7 @@ class CallController {
 	 *
 	 * @param Room $room the federated room to update the call flags in
 	 * @param Participant $participant the federated user to update the call
-	 *        flags; the participant must have a session
+	 *                                 flags; the participant must have a session
 	 * @param int<0, 15> $flags New flags
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags New flags
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
@@ -146,7 +146,7 @@ class CallController {
 	 *
 	 * @param Room $room the federated room to leave the call in
 	 * @param Participant $participant the federated user that will leave the
-	 *        call; the participant must have a session
+	 *                                 call; the participant must have a session
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *

@@ -6,8 +6,8 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-/** @var $_ array */
-/** @var $l \OCP\IL10N */
+/** @var array $_ */
+/** @var \OCP\IL10N $l */
 \OCP\Util::addStyle('core', 'publicshareauth');
 \OCP\Util::addScript('core', 'publicshareauth');
 ?>

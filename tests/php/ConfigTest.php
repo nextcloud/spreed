@@ -410,7 +410,7 @@ class ConfigTest extends TestCase {
 		$this->assertEquals($now, $decoded->iat);
 		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
 		$this->assertEquals('user1', $decoded->sub);
-		$this->assertSame(['displayname' => 'Jane Doe'], (array) $decoded->userdata);
+		$this->assertSame(['displayname' => 'Jane Doe'], (array)$decoded->userdata);
 	}
 
 	/**

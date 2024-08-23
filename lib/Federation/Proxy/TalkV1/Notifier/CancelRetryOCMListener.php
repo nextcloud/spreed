@@ -34,7 +34,7 @@ class CancelRetryOCMListener implements IEventListener {
 		}
 
 		$this->retryNotificationMapper->deleteByProviderId(
-			(string) $event->getAttendee()->getId()
+			(string)$event->getAttendee()->getId()
 		);
 	}
 }

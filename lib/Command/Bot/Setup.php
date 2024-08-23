@@ -52,7 +52,7 @@ class Setup extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$botId = (int) $input->getArgument('bot-id');
+		$botId = (int)$input->getArgument('bot-id');
 		$tokens = $input->getArgument('token');
 
 		try {

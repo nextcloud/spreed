@@ -49,12 +49,12 @@ class Calls extends Base {
 		$data = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			$key = (string) $row['token'];
+			$key = (string)$row['token'];
 			if ($input->getOption('output') === Base::OUTPUT_FORMAT_PLAIN) {
 				$key = '"' . $key . '"';
 			}
 
-			$data[$key] = (int) $row['num_attendees'];
+			$data[$key] = (int)$row['num_attendees'];
 		}
 		$result->closeCursor();
 

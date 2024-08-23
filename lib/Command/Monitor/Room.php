@@ -55,7 +55,7 @@ class Room extends Base {
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		$result = $query->executeQuery();
-		$roomId = (int) $result->fetchOne();
+		$roomId = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		if ($roomId === 0) {
@@ -71,7 +71,7 @@ class Room extends Base {
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		$numAttendees = (int) $result->fetchOne();
+		$numAttendees = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		$numSessions = $numSessionsInCall = 0;
@@ -83,7 +83,7 @@ class Room extends Base {
 			->andWhere($query->expr()->gt('s.last_ping', $query->createNamedParameter(time() - 60, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		$numSessions = (int) $result->fetchOne();
+		$numSessions = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		$query = $this->connection->getQueryBuilder();
@@ -95,7 +95,7 @@ class Room extends Base {
 			->andWhere($query->expr()->gt('s.last_ping', $query->createNamedParameter(time() - 60, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		$numSessionsInCall = (int) $result->fetchOne();
+		$numSessionsInCall = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		if ($input->getOption('output') === Base::OUTPUT_FORMAT_PLAIN) {

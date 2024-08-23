@@ -111,7 +111,7 @@ class ApiController extends OCSController {
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		$result = $query->executeQuery();
-		$roomId = (int) $result->fetchOne();
+		$roomId = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		if (!$roomId) {

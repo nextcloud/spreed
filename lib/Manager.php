@@ -150,7 +150,7 @@ class Manager {
 
 		$assignedSignalingServer = $row['assigned_hpb'];
 		if ($assignedSignalingServer !== null) {
-			$assignedSignalingServer = (int) $assignedSignalingServer;
+			$assignedSignalingServer = (int)$assignedSignalingServer;
 		}
 
 		return new Room(
@@ -158,37 +158,37 @@ class Manager {
 			$this->db,
 			$this->dispatcher,
 			$this->timeFactory,
-			(int) $row['r_id'],
-			(int) $row['type'],
-			(int) $row['read_only'],
-			(int) $row['listable'],
-			(int) $row['message_expiration'],
-			(int) $row['lobby_state'],
-			(int) $row['sip_enabled'],
+			(int)$row['r_id'],
+			(int)$row['type'],
+			(int)$row['read_only'],
+			(int)$row['listable'],
+			(int)$row['message_expiration'],
+			(int)$row['lobby_state'],
+			(int)$row['sip_enabled'],
 			$assignedSignalingServer,
-			(string) $row['token'],
-			(string) $row['name'],
-			(string) $row['description'],
-			(string) $row['password'],
-			(string) $row['avatar'],
-			(string) $row['remote_server'],
-			(string) $row['remote_token'],
-			(int) $row['default_permissions'],
-			(int) $row['call_permissions'],
-			(int) $row['call_flag'],
+			(string)$row['token'],
+			(string)$row['name'],
+			(string)$row['description'],
+			(string)$row['password'],
+			(string)$row['avatar'],
+			(string)$row['remote_server'],
+			(string)$row['remote_token'],
+			(int)$row['default_permissions'],
+			(int)$row['call_permissions'],
+			(int)$row['call_flag'],
 			$activeSince,
 			$lastActivity,
-			(int) $row['last_message'],
+			(int)$row['last_message'],
 			$lastMessage,
 			$lobbyTimer,
-			(string) $row['object_type'],
-			(string) $row['object_id'],
-			(int) $row['breakout_room_mode'],
-			(int) $row['breakout_room_status'],
-			(int) $row['call_recording'],
-			(int) $row['recording_consent'],
-			(int) $row['has_federation'],
-			(int) $row['mention_permissions'],
+			(string)$row['object_type'],
+			(string)$row['object_id'],
+			(int)$row['breakout_room_mode'],
+			(int)$row['breakout_room_status'],
+			(int)$row['call_recording'],
+			(int)$row['recording_consent'],
+			(int)$row['has_federation'],
+			(int)$row['mention_permissions'],
 		);
 	}
 
@@ -1219,7 +1219,7 @@ class Manager {
 	 * @return string
 	 */
 	protected function getNewToken(): string {
-		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', '8');
+		$entropy = (int)$this->config->getAppValue('spreed', 'token_entropy', '8');
 		$entropy = max(8, $entropy); // For update cases
 		$digitsOnly = $this->talkConfig->isSIPConfigured();
 		if ($digitsOnly) {
@@ -1250,7 +1250,7 @@ class Manager {
 		}
 
 		$entropy++;
-		$this->config->setAppValue('spreed', 'token_entropy', (string) $entropy);
+		$this->config->setAppValue('spreed', 'token_entropy', (string)$entropy);
 		return $this->generateNewToken($query, $entropy, $digitsOnly);
 	}
 

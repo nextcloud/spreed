@@ -284,7 +284,7 @@ class SignalingController extends OCSController {
 			$url = 'http://' . substr($url, 5);
 		}
 
-		$verifyServer = (bool) $signalingServers[$serverId]['verify'];
+		$verifyServer = (bool)$signalingServers[$serverId]['verify'];
 
 		if ($verifyServer && str_contains($url, 'https://')) {
 			$expiration = $this->certificateService->getCertificateExpirationInDays($url);
@@ -866,7 +866,7 @@ class SignalingController extends OCSController {
 			'room' => [
 				'version' => '1.0',
 				'roomid' => $room->getToken(),
-				'properties' => $room->getPropertiesForSignaling((string) $userId),
+				'properties' => $room->getPropertiesForSignaling((string)$userId),
 				'permissions' => $permissions,
 			],
 		];

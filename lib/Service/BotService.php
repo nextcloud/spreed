@@ -175,7 +175,7 @@ class BotService {
 	/**
 	 * @param BotServer $botServer
 	 * @param array $body
-	 * #param string|null $jsonBody
+	 *                    #param string|null $jsonBody
 	 */
 	protected function sendAsyncRequest(BotServer $botServer, array $body, ?string $jsonBody = null): void {
 		$jsonBody = $jsonBody ?? json_encode($body, JSON_THROW_ON_ERROR);

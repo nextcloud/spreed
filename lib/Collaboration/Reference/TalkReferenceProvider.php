@@ -93,7 +93,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		if ($hashPosition !== false) {
 			$afterHash = substr($urlOfInterest, $hashPosition + 1);
 			if (preg_match('/^message_(\d+)$/', $afterHash, $matches)) {
-				$messageId = (int) $matches[1];
+				$messageId = (int)$matches[1];
 			}
 		}
 
@@ -163,7 +163,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		 * Description is the plain text chat message
 		 */
 		if ($participant && !empty($referenceMatch['message'])) {
-			$messageId = (string) $referenceMatch['message'];
+			$messageId = (string)$referenceMatch['message'];
 			if (!$room->isFederatedConversation()) {
 				try {
 					$comment = $this->chatManager->getComment($room, $messageId);
@@ -174,7 +174,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 				$this->messageParser->parseMessage($message);
 			} else {
 				try {
-					$proxy = $this->proxyCacheMessageMapper->findById($room, (int) $messageId);
+					$proxy = $this->proxyCacheMessageMapper->findById($room, (int)$messageId);
 					if ($proxy->getLocalToken() !== $room->getToken()) {
 						throw new RoomNotFoundException();
 					}

@@ -524,7 +524,7 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'object_shared') {
 			$parsedParameters['object'] = $parameters['metaData'];
-			$parsedParameters['object']['id'] = (string) $parsedParameters['object']['id'];
+			$parsedParameters['object']['id'] = (string)$parsedParameters['object']['id'];
 			$parsedMessage = '{object}';
 
 			if (isset($parsedParameters['object']['type'])
@@ -576,10 +576,10 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('You deleted a reaction');
 			}
 		} elseif ($message === 'message_expiration_enabled') {
-			$weeks = $parameters['seconds'] >= (86400 * 7) ? (int) round($parameters['seconds'] / (86400 * 7)) : 0;
-			$days = $parameters['seconds'] >= 86400 ? (int) round($parameters['seconds'] / 86400) : 0;
-			$hours = $parameters['seconds'] >= 3600 ? (int) round($parameters['seconds'] / 3600) : 0;
-			$minutes = (int) round($parameters['seconds'] / 60);
+			$weeks = $parameters['seconds'] >= (86400 * 7) ? (int)round($parameters['seconds'] / (86400 * 7)) : 0;
+			$days = $parameters['seconds'] >= 86400 ? (int)round($parameters['seconds'] / 86400) : 0;
+			$hours = $parameters['seconds'] >= 3600 ? (int)round($parameters['seconds'] / 3600) : 0;
+			$minutes = (int)round($parameters['seconds'] / 60);
 
 			if ($currentUserIsActor) {
 				if ($weeks > 0) {
@@ -624,7 +624,7 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'poll_closed') {
 			$parsedParameters['poll'] = $parameters['poll'];
-			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];
+			$parsedParameters['poll']['id'] = (string)$parsedParameters['poll']['id'];
 			$parsedMessage = $this->l->t('{actor} ended the poll {poll}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You ended the poll {poll}');
@@ -653,7 +653,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('The recording failed');
 		} elseif ($message === 'poll_voted') {
 			$parsedParameters['poll'] = $parameters['poll'];
-			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];
+			$parsedParameters['poll']['id'] = (string)$parsedParameters['poll']['id'];
 			$parsedMessage = $this->l->t('Someone voted on the poll {poll}');
 			unset($parsedParameters['actor']);
 
@@ -738,7 +738,7 @@ class SystemMessage implements IEventListener {
 	 * @throws ShareNotFound
 	 */
 	protected function getFileFromShare(Room $room, ?Participant $participant, string $shareId): array {
-		$share = $this->shareProvider->getShareById((int) $shareId);
+		$share = $this->shareProvider->getShareById((int)$shareId);
 
 		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
@@ -800,13 +800,13 @@ class SystemMessage implements IEventListener {
 
 		$data = [
 			'type' => 'file',
-			'id' => (string) $fileId,
+			'id' => (string)$fileId,
 			'name' => $name,
-			'size' => (string) $size,
+			'size' => (string)$size,
 			'path' => $path,
 			'link' => $url,
 			'etag' => $node->getEtag(),
-			'permissions' => (string) $node->getPermissions(),
+			'permissions' => (string)$node->getPermissions(),
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
 		];
@@ -816,8 +816,8 @@ class SystemMessage implements IEventListener {
 			try {
 				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
 				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
-					$data['width'] = (string) $sizeMetadata['width'];
-					$data['height'] = (string) $sizeMetadata['height'];
+					$data['width'] = (string)$sizeMetadata['width'];
+					$data['height'] = (string)$sizeMetadata['height'];
 				}
 
 				if (isset($sizeMetadata['blurhash'])) {
@@ -832,7 +832,7 @@ class SystemMessage implements IEventListener {
 
 			$vObject = Reader::read($vCard);
 			if (!empty($vObject->FN)) {
-				$data['contact-name'] = (string) $vObject->FN;
+				$data['contact-name'] = (string)$vObject->FN;
 			}
 
 			$photo = $this->photoCache->getPhotoFromVObject($vObject);
