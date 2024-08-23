@@ -1082,6 +1082,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Une honetan atondoan itxaroten ari zara",
     "The meeting will start soon" : "Bilera laster hasiko da",
     "This meeting is scheduled for {startTime}" : "Bilera hau {startTime}-rako programatuta dago",
+    "Select a device" : "Hautatu gailu bat",
     "No microphone available" : "Ez dago mikrofonorik eskuragarri",
     "Select microphone" : "Hautatu mikrofonoa",
     "No camera available" : "Ez dago kamerarik eskuragarri",
