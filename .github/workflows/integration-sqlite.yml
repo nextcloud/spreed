@@ -137,6 +137,7 @@ jobs:
           ./occ config:system:set hashing_default_password --value=true --type=boolean
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
+          ./occ config:app:set config:app:set core backgroundjobs_mode --value cron
           ./occ app:enable --force ${{ env.APP_NAME }}
           ./occ app:enable --force call_summary_bot
           ./occ app:enable --force circles
