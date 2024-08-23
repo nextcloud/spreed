@@ -5,9 +5,10 @@
 
 <template>
 	<div class="top-bar"
-		:class="{ 'top-bar--sidebar': isSidebar}"
-		:style="topBarStyle"
-		:data-theme-dark="isInCall">
+		:class="{
+			'top-bar--sidebar': isSidebar,
+			'top-bar--in-call': isInCall,
+		}">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -17,96 +18,99 @@
 			show-user-online-status
 			:hide-favorite="false"
 			:hide-call="false" />
-		<!-- conversation header -->
-		<a role="button"
-			class="conversation-header"
-			@click="openConversationSettings">
-			<div class="conversation-header__text"
-				:class="{'conversation-header__text--offline': isPeerInactive}">
-				<p class="title">
-					{{ conversation.displayName }}
-				</p>
-				<p v-if="showUserStatusAsDescription"
-					class="description"
-					:class="{'description__in-chat' : !isInCall }">
-					{{ statusMessage }}
-				</p>
-				<template v-if="conversation.description">
-					<p v-tooltip.bottom="{
-							content: renderedDescription,
-							delay: { show: 500, hide: 500 },
-							autoHide: false,
-							html: true,
-						}"
+
+		<div class="top-bar__wrapper" :data-theme-dark="isInCall">
+			<!-- conversation header -->
+			<a role="button"
+				class="conversation-header"
+				@click="openConversationSettings">
+				<div class="conversation-header__text"
+					:class="{'conversation-header__text--offline': isPeerInactive}">
+					<p class="title">
+						{{ conversation.displayName }}
+					</p>
+					<p v-if="showUserStatusAsDescription"
 						class="description"
 						:class="{'description__in-chat' : !isInCall }">
-						{{ conversation.description }}
+						{{ statusMessage }}
 					</p>
+					<template v-if="conversation.description">
+						<p v-tooltip.bottom="{
+								content: renderedDescription,
+								delay: { show: 500, hide: 500 },
+								autoHide: false,
+								html: true,
+							}"
+							class="description"
+							:class="{'description__in-chat' : !isInCall }">
+							{{ conversation.description }}
+						</p>
+					</template>
+				</div>
+			</a>
+
+			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
+
+			<!-- Upcoming event -->
+			<a v-if="showUpcomingEvent"
+				class="upcoming-event"
+				:href="nextEvent.calendarAppUrl"
+				:title="t('spreed', 'Open Calendar')"
+				target="_blank">
+				<div class="icon">
+					<CalendarBlank :size="20" />
+				</div>
+				<div class="event-info">
+					<p class="event-info__header">
+						{{ t('spreed', 'Next call') }}
+					</p>
+					<p> {{ eventInfo }} </p>
+				</div>
+			</a>
+
+			<!-- Call time -->
+			<CallTime v-if="isInCall"
+				:start="conversation.callStartTime" />
+
+			<!-- Participants counter -->
+			<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
+				:title="participantsInCallAriaLabel"
+				:aria-label="participantsInCallAriaLabel"
+				type="tertiary"
+				@click="openSidebar('participants')">
+				<template #icon>
+					<AccountMultiple :size="20" />
 				</template>
-			</div>
-		</a>
+				{{ participantsInCall }}
+			</NcButton>
 
-		<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
+			<!-- Reactions menu -->
+			<ReactionMenu v-if="isInCall && hasReactionSupport"
+				:token="token"
+				:supported-reactions="supportedReactions"
+				:local-call-participant-model="localCallParticipantModel" />
 
-		<!-- Upcoming event -->
-		<a v-if="showUpcomingEvent"
-			class="upcoming-event"
-			:href="nextEvent.calendarAppUrl"
-			:title="t('spreed', 'Open Calendar')"
-			target="_blank">
-			<div class="icon">
-				<CalendarBlank :size="20" />
-			</div>
-			<div class="event-info">
-				<p class="event-info__header">
-					{{ t('spreed', 'Next call') }}
-				</p>
-				<p> {{ eventInfo }} </p>
-			</div>
-		</a>
+			<!-- Local media controls -->
+			<TopBarMediaControls v-if="isInCall"
+				:token="token"
+				:model="localMediaModel"
+				:is-sidebar="isSidebar"
+				:local-call-participant-model="localCallParticipantModel" />
 
-		<!-- Call time -->
-		<CallTime v-if="isInCall"
-			:start="conversation.callStartTime" />
+			<!-- TopBar menu -->
+			<TopBarMenu :token="token"
+				:show-actions="!isSidebar"
+				:is-sidebar="isSidebar"
+				:model="localMediaModel"
+				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
-		<!-- Participants counter -->
-		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
-			:title="participantsInCallAriaLabel"
-			:aria-label="participantsInCallAriaLabel"
-			type="tertiary"
-			@click="openSidebar('participants')">
-			<template #icon>
-				<AccountMultiple :size="20" />
-			</template>
-			{{ participantsInCall }}
-		</NcButton>
+			<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
 
-		<!-- Reactions menu -->
-		<ReactionMenu v-if="isInCall && hasReactionSupport"
-			:token="token"
-			:supported-reactions="supportedReactions"
-			:local-call-participant-model="localCallParticipantModel" />
-
-		<!-- Local media controls -->
-		<TopBarMediaControls v-if="isInCall"
-			:token="token"
-			:model="localMediaModel"
-			:is-sidebar="isSidebar"
-			:local-call-participant-model="localCallParticipantModel" />
-
-		<!-- TopBar menu -->
-		<TopBarMenu :token="token"
-			:show-actions="!isSidebar"
-			:is-sidebar="isSidebar"
-			:model="localMediaModel"
-			@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
-
-		<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
-
-		<!-- Breakout rooms editor -->
-		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-			:token="token"
-			@close="showBreakoutRoomsEditor = false" />
+			<!-- Breakout rooms editor -->
+			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+				:token="token"
+				@close="showBreakoutRoomsEditor = false" />
+		</div>
 	</div>
 </template>
 
@@ -279,13 +283,6 @@ export default {
 			return this.isInCall && this.supportedReactions?.length > 0
 		},
 
-		topBarStyle() {
-			return {
-				'--original-color-main-text': window.getComputedStyle(document.body).getPropertyValue('--color-main-text'),
-				'--original-color-main-background': window.getComputedStyle(document.body).getPropertyValue('--color-main-background')
-			}
-		},
-
 		nextEvent() {
 			return this.chatExtrasStore.getNextEvent(this.token)
 		},
@@ -365,12 +362,14 @@ export default {
 <style lang="scss" scoped>
 .top-bar {
 	--border-width: 1px;
+
 	display: flex;
 	flex-wrap: wrap;
-	z-index: 10;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
+
+	z-index: 10;
 	min-height: calc(var(--border-width) + 2 * (2 * var(--default-grid-baseline)) + var(--default-clickable-area));
 	padding-block: var(--default-grid-baseline);
 	// Reserve space for the sidebar toggle button
@@ -378,17 +377,17 @@ export default {
 	background-color: var(--color-main-background);
 	border-bottom: var(--border-width) solid var(--color-border);
 
-	.talk-sidebar-callview & {
-		margin-right: var(--default-clickable-area);
-	}
-
-	&[data-theme-dark="true"] {
+	&--in-call {
 		right: 0;
 		border: none;
 		position: absolute;
 		top: 0;
 		left: 0;
 		background-color: transparent;
+	}
+
+	.talk-sidebar-callview & {
+		margin-right: var(--default-clickable-area);
 	}
 
 	&--sidebar {
@@ -398,6 +397,15 @@ export default {
 			margin-left: 0;
 		}
 	}
+}
+
+.top-bar__wrapper {
+	flex: 1 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	align-items: center;
+	justify-content: flex-end;
 }
 
 .conversation-icon {
@@ -440,12 +448,6 @@ export default {
 			color: var(--color-text-maxcontrast);
 		}
 	}
-}
-
-:deep(.conversation-icon__type) {
-	color: var(--original-color-main-text) !important;
-	border-color: var(--original-color-main-background) !important;
-	background-color: var(--original-color-main-background) !important;
 }
 
 .icon {

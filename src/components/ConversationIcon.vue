@@ -62,10 +62,10 @@ import { t } from '@nextcloud/l10n'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
+import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
@@ -226,9 +226,9 @@ export default {
 
 		conversationType() {
 			if (this.item.remoteServer) {
-				return { icon: WebIcon, label: t('spreed', 'Federated conversation') }
+				return { key: 'federated', icon: WebIcon, label: t('spreed', 'Federated conversation') }
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return { icon: LinkVariantIcon, label: t('spreed', 'Public conversation') }
+				return { key: 'public', icon: LinkVariantIcon, label: t('spreed', 'Public conversation') }
 			}
 			return null
 		},
