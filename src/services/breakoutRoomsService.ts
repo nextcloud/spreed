@@ -21,7 +21,7 @@ import type {
 	stopBreakoutRoomsResponse,
 	switchToBreakoutRoomParams,
 	switchToBreakoutRoomResponse,
-} from '../types'
+} from '../types/index.ts'
 
 /**
  * Create breakout rooms for a given conversation

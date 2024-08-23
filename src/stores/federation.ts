@@ -12,7 +12,7 @@ import { getBaseUrl } from '@nextcloud/router'
 
 import { FEDERATION } from '../constants.js'
 import { getShares, acceptShare, rejectShare } from '../services/federationService.ts'
-import type { Conversation, FederationInvite, NotificationInvite } from '../types'
+import type { Conversation, FederationInvite, NotificationInvite } from '../types/index.ts'
 
 type State = {
 	pendingShares: Record<string, FederationInvite & { loading?: 'accept' | 'reject' }>,

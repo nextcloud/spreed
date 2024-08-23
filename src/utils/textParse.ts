@@ -5,7 +5,7 @@
 
 import { getBaseUrl } from '@nextcloud/router'
 
-import type { ChatMessage, Mention } from '../types'
+import type { ChatMessage, Mention } from '../types/index.ts'
 
 /**
  * Parse message text to return proper formatting for mentions

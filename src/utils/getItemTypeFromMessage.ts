@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { SHARED_ITEM } from '../constants.js'
-import type { ChatMessage } from '../types'
+import type { ChatMessage } from '../types/index.ts'
 
 export const getItemTypeFromMessage = function(message: ChatMessage): string {
 	if (message.messageParameters?.object) {

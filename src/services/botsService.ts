@@ -6,7 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import type { Bot, getBotsResponse, getBotsAdminResponse, enableBotResponse, disableBotResponse } from '../types'
+import type { Bot, getBotsResponse, getBotsAdminResponse, enableBotResponse, disableBotResponse } from '../types/index.ts'
 
 /**
  * Get information about available bots for this instance

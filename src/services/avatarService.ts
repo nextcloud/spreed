@@ -10,8 +10,8 @@ import type {
 	deleteAvatarResponse,
 	setEmojiAvatarParams,
 	setEmojiAvatarResponse,
-	setFileAvatarResponse
-} from '../types'
+	setFileAvatarResponse,
+} from '../types/index.ts'
 
 const getConversationAvatarOcsUrl = function(token: string, isDarkTheme: boolean, avatarVersion?: string): string {
 	return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '') + (avatarVersion ? '?v={avatarVersion}' : ''), { token, avatarVersion })

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import type { Capabilities } from '../types'
+import type { Capabilities } from '../types/index.ts'
 
 export const mockedCapabilities: Capabilities = {
 	spreed: {
