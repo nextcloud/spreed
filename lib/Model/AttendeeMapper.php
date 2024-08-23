@@ -158,7 +158,7 @@ class AttendeeMapper extends QBMapper {
 		}
 
 		$result = $query->executeQuery();
-		$count = (int) $result->fetchOne();
+		$count = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		return $count;
@@ -187,7 +187,7 @@ class AttendeeMapper extends QBMapper {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return (int) ($row['num_actors'] ?? 0);
+		return (int)($row['num_actors'] ?? 0);
 	}
 
 	/**
@@ -304,26 +304,26 @@ class AttendeeMapper extends QBMapper {
 			'room_id' => $row['room_id'],
 			'actor_type' => $row['actor_type'],
 			'actor_id' => $row['actor_id'],
-			'display_name' => (string) $row['display_name'],
+			'display_name' => (string)$row['display_name'],
 			'pin' => $row['pin'],
-			'participant_type' => (int) $row['participant_type'],
-			'favorite' => (bool) $row['favorite'],
-			'notification_level' => (int) $row['notification_level'],
-			'notification_calls' => (int) $row['notification_calls'],
-			'last_joined_call' => (int) $row['last_joined_call'],
-			'last_read_message' => (int) $row['last_read_message'],
-			'last_mention_message' => (int) $row['last_mention_message'],
-			'last_mention_direct' => (int) $row['last_mention_direct'],
-			'read_privacy' => (int) $row['read_privacy'],
-			'permissions' => (int) $row['permissions'],
-			'access_token' => (string) $row['access_token'],
-			'remote_id' => (string) $row['remote_id'],
-			'invited_cloud_id' => (string) $row['invited_cloud_id'],
+			'participant_type' => (int)$row['participant_type'],
+			'favorite' => (bool)$row['favorite'],
+			'notification_level' => (int)$row['notification_level'],
+			'notification_calls' => (int)$row['notification_calls'],
+			'last_joined_call' => (int)$row['last_joined_call'],
+			'last_read_message' => (int)$row['last_read_message'],
+			'last_mention_message' => (int)$row['last_mention_message'],
+			'last_mention_direct' => (int)$row['last_mention_direct'],
+			'read_privacy' => (int)$row['read_privacy'],
+			'permissions' => (int)$row['permissions'],
+			'access_token' => (string)$row['access_token'],
+			'remote_id' => (string)$row['remote_id'],
+			'invited_cloud_id' => (string)$row['invited_cloud_id'],
 			'phone_number' => $row['phone_number'],
 			'call_id' => $row['call_id'],
-			'state' => (int) $row['state'],
-			'unread_messages' => (int) $row['unread_messages'],
-			'last_attendee_activity' => (int) $row['last_attendee_activity'],
+			'state' => (int)$row['state'],
+			'unread_messages' => (int)$row['unread_messages'],
+			'last_attendee_activity' => (int)$row['last_attendee_activity'],
 		]);
 	}
 }

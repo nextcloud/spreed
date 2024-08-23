@@ -331,7 +331,7 @@ class HostedSignalingServerService {
 		}
 
 		$body = $response->getBody();
-		$data = (array) json_decode($body, true);
+		$data = (array)json_decode($body, true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);

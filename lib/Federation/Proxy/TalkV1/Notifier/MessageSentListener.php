@@ -77,11 +77,11 @@ class MessageSentListener implements IEventListener {
 		if ($parent instanceof IComment) {
 			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE] = $parent->getActorType();
 			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_ID] = $parent->getActorId();
-			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_MESSAGE_ID] = (int) $parent->getId();
+			$metaData[ProxyCacheMessage::METADATA_REPLY_TO_MESSAGE_ID] = (int)$parent->getId();
 		}
 
 		$messageData = [
-			'remoteMessageId' => (int) $event->getComment()->getId(),
+			'remoteMessageId' => (int)$event->getComment()->getId(),
 			'actorType' => $chatMessage->getActorType(),
 			'actorId' => $chatMessage->getActorId(),
 			'actorDisplayName' => $chatMessage->getActorDisplayName(),

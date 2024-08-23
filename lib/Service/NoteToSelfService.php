@@ -79,7 +79,7 @@ class NoteToSelfService {
 		);
 
 		try {
-			$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string) $room->getId(), (string) $previousValue);
+			$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string)$room->getId(), (string)$previousValue);
 		} catch (PreConditionNotMetException $e) {
 			// This process didn't win the race for creating the conversation, so fetch the other one
 			$this->roomService->deleteRoom($room);
@@ -113,6 +113,6 @@ class NoteToSelfService {
 	}
 
 	protected function getNoteToSelfConversationId(string $userId): int {
-		return (int) $this->config->getUserValue($userId, 'spreed', 'note_to_self', '0');
+		return (int)$this->config->getUserValue($userId, 'spreed', 'note_to_self', '0');
 	}
 }

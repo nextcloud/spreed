@@ -110,7 +110,7 @@ class SearchPlugin implements ISearchPlugin {
 
 		$matches = $exactMatches = [];
 		foreach ($users as $userId => $displayName) {
-			$userId = (string) $userId;
+			$userId = (string)$userId;
 			if ($this->userId !== '' && $this->userId === $userId) {
 				// Do not suggest the current user
 				continue;
@@ -219,7 +219,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			$groupId = (string) $groupId;
+			$groupId = (string)$groupId;
 			if ($searchResult->hasResult($type, $groupId)) {
 				continue;
 			}

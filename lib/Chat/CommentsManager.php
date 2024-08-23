@@ -43,7 +43,7 @@ class CommentsManager extends Manager {
 		$comments = [];
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$comments[(int) $row['id']] = $this->getCommentFromData($row);
+			$comments[(int)$row['id']] = $this->getCommentFromData($row);
 		}
 		$result->closeCursor();
 
@@ -70,8 +70,8 @@ class CommentsManager extends Manager {
 		$reactions = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			$reactions[(int) $row['parent_id']] ??= [];
-			$reactions[(int) $row['parent_id']][] = $row['reaction'];
+			$reactions[(int)$row['parent_id']] ??= [];
+			$reactions[(int)$row['parent_id']][] = $row['reaction'];
 		}
 		$result->closeCursor();
 

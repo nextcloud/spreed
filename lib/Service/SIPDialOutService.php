@@ -56,10 +56,10 @@ class SIPDialOutService {
 				->map(
 					Response::class,
 					Source::json($response)
-					->map([
-						'dialout' => 'dialOut',
-						'dialout.callid' => 'callId',
-					])
+						->map([
+							'dialout' => 'dialOut',
+							'dialout.callid' => 'callId',
+						])
 				);
 		} catch (MappingError $e) {
 			throw new \InvalidArgumentException('Not a valid dial-out response', 0, $e);

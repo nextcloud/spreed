@@ -53,7 +53,7 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 				continue;
 			}
 
-			$update->setParameter('room_id', (int) $row['id'], IQueryBuilder::PARAM_INT)
+			$update->setParameter('room_id', (int)$row['id'], IQueryBuilder::PARAM_INT)
 				->executeStatement();
 		}
 		$output->finishProgress();

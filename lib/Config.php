@@ -65,17 +65,17 @@ class Config {
 	}
 
 	public function getUserReadPrivacy(string $userId): int {
-		return (int) $this->config->getUserValue(
+		return (int)$this->config->getUserValue(
 			$userId,
 			'spreed', 'read_status_privacy',
-			(string) Participant::PRIVACY_PUBLIC);
+			(string)Participant::PRIVACY_PUBLIC);
 	}
 
 	public function getUserTypingPrivacy(string $userId): int {
-		return (int) $this->config->getUserValue(
+		return (int)$this->config->getUserValue(
 			$userId,
 			'spreed', 'typing_privacy',
-			(string) Participant::PRIVACY_PUBLIC);
+			(string)Participant::PRIVACY_PUBLIC);
 
 	}
 
@@ -211,7 +211,7 @@ class Config {
 	 * @return RecordingService::CONSENT_REQUIRED_*
 	 */
 	public function getRecordingConsentConfig(): int {
-		return match ((int) $this->config->getAppValue('spreed', 'recording_consent', (string) RecordingService::CONSENT_REQUIRED_NO)) {
+		return match ((int)$this->config->getAppValue('spreed', 'recording_consent', (string)RecordingService::CONSENT_REQUIRED_NO)) {
 			RecordingService::CONSENT_REQUIRED_YES => RecordingService::CONSENT_REQUIRED_YES,
 			RecordingService::CONSENT_REQUIRED_OPTIONAL => RecordingService::CONSENT_REQUIRED_OPTIONAL,
 			default => RecordingService::CONSENT_REQUIRED_NO,
@@ -260,7 +260,7 @@ class Config {
 		// Admin configured default permissions
 		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
 		if ($configurableDefault !== '') {
-			return (int) $configurableDefault;
+			return (int)$configurableDefault;
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
@@ -588,7 +588,7 @@ class Config {
 
 	/**
 	 * @param string|null $userId if given, the id of a user in this instance or
-	 *        a cloud id.
+	 *                            a cloud id.
 	 * @return string
 	 */
 	private function getSignalingTicketV2(?string $userId): string {
@@ -644,7 +644,7 @@ class Config {
 	}
 
 	public function getGridVideosLimit(): int {
-		return (int) $this->config->getAppValue('spreed', 'grid_videos_limit', '19'); // 5*4 - self
+		return (int)$this->config->getAppValue('spreed', 'grid_videos_limit', '19'); // 5*4 - self
 	}
 
 	public function getGridVideosLimitEnforced(): bool {

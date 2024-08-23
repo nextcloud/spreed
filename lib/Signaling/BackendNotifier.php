@@ -499,7 +499,7 @@ class BackendNotifier {
 			'app' => 'spreed-hpb',
 		]);
 
-		return (string) $response->getBody();
+		return (string)$response->getBody();
 	}
 
 	/**

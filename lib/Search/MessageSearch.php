@@ -159,7 +159,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 				continue;
 			}
 
-			$roomMap[(string) $room->getId()] = $room;
+			$roomMap[(string)$room->getId()] = $room;
 		}
 
 		if (empty($roomMap)) {
@@ -187,7 +187,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			}
 		}
 
-		$offset = (int) $query->getCursor();
+		$offset = (int)$query->getCursor();
 		$comments = $this->chatManager->searchForObjectsWithFilters(
 			$query->getTerm(),
 			array_keys($roomMap),
@@ -223,7 +223,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment, ISearchQuery $query): SearchResultEntry {
 		$participant = $this->participantService->getParticipant($room, $user->getUID(), false);
 
-		$id = (int) $comment->getId();
+		$id = (int)$comment->getId();
 		$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
 		$this->messageParser->parseMessage($message);
 

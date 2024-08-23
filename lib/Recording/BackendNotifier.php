@@ -50,7 +50,7 @@ class BackendNotifier {
 		$client = $this->clientService->newClient();
 		try {
 			$response = $client->post($url, $params);
-		} catch (ServerException | ConnectException $e) {
+		} catch (ServerException|ConnectException $e) {
 			if ($retries > 1) {
 				$this->logger->error('Failed to send message to recording server, ' . $retries . ' retries left!', ['exception' => $e]);
 				$this->doRequest($url, $params, $retries - 1);

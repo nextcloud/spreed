@@ -76,7 +76,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ReactionAlreadyExistsException $e) {
 			$status = Http::STATUS_OK;
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception $e) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
@@ -117,7 +117,7 @@ class ReactionController extends AEnvironmentAwareController {
 				$reaction
 			);
 			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException $e) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -150,8 +150,8 @@ class ReactionController extends AEnvironmentAwareController {
 
 		try {
 			// Verify that messageId is part of the room
-			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException $e) {
+			$this->reactionManager->getCommentToReact($this->getRoom(), (string)$messageId);
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 

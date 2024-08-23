@@ -61,7 +61,7 @@ class SettingsController extends OCSController {
 		$this->config->setUserValue($this->userId, 'spreed', $key, $value);
 
 		if ($key === 'read_status_privacy') {
-			$this->participantService->updateReadPrivacyForActor(Attendee::ACTOR_USERS, $this->userId, (int) $value);
+			$this->participantService->updateReadPrivacyForActor(Attendee::ACTOR_USERS, $this->userId, (int)$value);
 		}
 
 		return new DataResponse();
@@ -95,8 +95,8 @@ class SettingsController extends OCSController {
 		}
 
 		if ($setting === 'typing_privacy' || $setting === 'read_status_privacy') {
-			return (int) $value === Participant::PRIVACY_PUBLIC ||
-				(int) $value === Participant::PRIVACY_PRIVATE;
+			return (int)$value === Participant::PRIVACY_PUBLIC ||
+				(int)$value === Participant::PRIVACY_PRIVATE;
 		}
 		if ($setting === 'play_sounds') {
 			return $value === 'yes' || $value === 'no';

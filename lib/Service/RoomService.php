@@ -349,9 +349,9 @@ class RoomService {
 	/**
 	 * @param Room $room
 	 * @param int $newState Currently it is only allowed to change between
-	 * 						`Webinary::LOBBY_NON_MODERATORS` and `Webinary::LOBBY_NONE`
-	 * 						Also it's not allowed in one-to-one conversations,
-	 * 						file conversations and password request conversations.
+	 *                      `Webinary::LOBBY_NON_MODERATORS` and `Webinary::LOBBY_NONE`
+	 *                      Also it's not allowed in one-to-one conversations,
+	 *                      file conversations and password request conversations.
 	 * @param \DateTime|null $dateTime
 	 * @param bool $timerReached
 	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
@@ -421,7 +421,7 @@ class RoomService {
 	 * @param Room $room
 	 * @param integer $status 0 none|1 video|2 audio
 	 * @param Participant|null $participant the Participant that changed the
-	 *        state, null for the current user
+	 *                                      state, null for the current user
 	 * @throws InvalidArgumentException When the status is invalid, not Room::RECORDING_*
 	 * @throws InvalidArgumentException When trying to start
 	 */
@@ -521,9 +521,9 @@ class RoomService {
 	/**
 	 * @param Room $room
 	 * @param int $newState Currently it is only allowed to change between
-	 * 						`Room::READ_ONLY` and `Room::READ_WRITE`
-	 * 						Also it's only allowed on rooms of type
-	 * 						`Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
+	 *                      `Room::READ_ONLY` and `Room::READ_WRITE`
+	 *                      Also it's only allowed on rooms of type
+	 *                      `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setReadOnly(Room $room, int $newState): bool {
@@ -563,8 +563,8 @@ class RoomService {
 	/**
 	 * @param Room $room
 	 * @param int $newState New listable scope from self::LISTABLE_*
-	 * 						Also it's only allowed on rooms of type
-	 * 						`Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
+	 *                      Also it's only allowed on rooms of type
+	 *                      `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setListable(Room $room, int $newState): bool {
@@ -654,7 +654,7 @@ class RoomService {
 			$update->andWhere($update->expr()->isNull('assigned_hpb'));
 		}
 
-		$updated = (bool) $update->executeStatement();
+		$updated = (bool)$update->executeStatement();
 		if ($updated) {
 			$room->setAssignedSignalingServer($signalingServer);
 		}
@@ -848,7 +848,7 @@ class RoomService {
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->isNotNull('active_since'));
 
-		return (bool) $update->executeStatement();
+		return (bool)$update->executeStatement();
 	}
 
 	/**
@@ -928,7 +928,7 @@ class RoomService {
 			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->isNull('active_since'));
-		$result = (bool) $update->executeStatement();
+		$result = (bool)$update->executeStatement();
 
 		$room->setActiveSince($since, $callFlag);
 
@@ -946,7 +946,7 @@ class RoomService {
 	public function setLastMessage(Room $room, IComment $message): void {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('last_message', $update->createNamedParameter((int) $message->getId()))
+			->set('last_message', $update->createNamedParameter((int)$message->getId()))
 			->set('last_activity', $update->createNamedParameter($message->getCreationDateTime(), 'datetime'))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
@@ -1056,12 +1056,12 @@ class RoomService {
 				$changed[] = ARoomModifiedEvent::PROPERTY_AVATAR;
 			}
 		}
-		if (isset($host['lastActivity']) && $host['lastActivity'] !== 0 && $host['lastActivity'] !== ((int) $local->getLastActivity()?->getTimestamp())) {
+		if (isset($host['lastActivity']) && $host['lastActivity'] !== 0 && $host['lastActivity'] !== ((int)$local->getLastActivity()?->getTimestamp())) {
 			$lastActivity = $this->timeFactory->getDateTime('@' . $host['lastActivity']);
 			$this->setLastActivity($local, $lastActivity);
 			$changed[] = ARoomSyncedEvent::PROPERTY_LAST_ACTIVITY;
 		}
-		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int) $local->getLobbyTimer(false)?->getTimestamp()))) {
+		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer(false)?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);
 			$success = $this->setLobby($local, $host['lobbyState'], $hostTimer);
 			if (!$success) {
@@ -1071,7 +1071,7 @@ class RoomService {
 			}
 		}
 		if (isset($host['callStartTime'], $host['callFlag'])) {
-			$localCallStartTime = (int) $local->getActiveSince()?->getTimestamp();
+			$localCallStartTime = (int)$local->getActiveSince()?->getTimestamp();
 			if ($host['callStartTime'] === 0 && ($host['callStartTime'] !== $localCallStartTime || $host['callFlag'] !== $local->getCallFlag())) {
 				$this->resetActiveSince($local, null);
 				$changed[] = ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE;

@@ -64,7 +64,7 @@ class RoomController {
 	 *
 	 * @param Room $room the federated room to join
 	 * @param Participant $participant the federated user to will join the room;
-	 *        the participant must have a session
+	 *                                 the participant must have a session
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{X-Nextcloud-Talk-Proxy-Hash: string}>
 	 * @throws CannotReachRemoteException
 	 *
@@ -104,7 +104,7 @@ class RoomController {
 	 *
 	 * @param Room $room the federated room to leave
 	 * @param Participant $participant the federated user that will leave the
-	 *        room; the participant must have a session
+	 *                                 room; the participant must have a session
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *

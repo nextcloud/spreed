@@ -29,7 +29,7 @@ class ClearResourceAccessCache implements IRepairStep {
 	}
 
 	public function run(IOutput $output): void {
-		$invalidatedCache = (int) $this->config->getAppValue('spreed', 'project_access_invalidated', '0');
+		$invalidatedCache = (int)$this->config->getAppValue('spreed', 'project_access_invalidated', '0');
 
 		if ($invalidatedCache === self::INVALIDATIONS) {
 			$output->info('Invalidation not required');
@@ -37,6 +37,6 @@ class ClearResourceAccessCache implements IRepairStep {
 		}
 
 		$this->manager->invalidateAccessCacheForProvider($this->provider);
-		$this->config->setAppValue('spreed', 'project_access_invalidated', (string) self::INVALIDATIONS);
+		$this->config->setAppValue('spreed', 'project_access_invalidated', (string)self::INVALIDATIONS);
 	}
 }

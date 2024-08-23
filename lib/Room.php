@@ -156,9 +156,9 @@ class Room {
 
 	/**
 	 * @param int $readOnly Currently it is only allowed to change between
-	 * 						`self::READ_ONLY` and `self::READ_WRITE`
-	 * 						Also it's only allowed on rooms of type
-	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
+	 *                      `self::READ_ONLY` and `self::READ_WRITE`
+	 *                      Also it's only allowed on rooms of type
+	 *                      `self::TYPE_GROUP` and `self::TYPE_PUBLIC`
 	 */
 	public function setReadOnly(int $readOnly): void {
 		$this->readOnly = $readOnly;
@@ -170,8 +170,8 @@ class Room {
 
 	/**
 	 * @param int $newState New listable scope from self::LISTABLE_*
-	 * 						Also it's only allowed on rooms of type
-	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
+	 *                      Also it's only allowed on rooms of type
+	 *                      `self::TYPE_GROUP` and `self::TYPE_PUBLIC`
 	 */
 	public function setListable(int $newState): void {
 		$this->listable = $newState;
@@ -362,7 +362,7 @@ class Room {
 
 	public function setLastMessage(IComment $message): void {
 		$this->lastMessage = $message;
-		$this->lastMessageId = (int) $message->getId();
+		$this->lastMessageId = (int)$message->getId();
 	}
 
 	public function getObjectType(): string {
