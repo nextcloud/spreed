@@ -285,7 +285,16 @@ export default {
 		},
 
 		eventInfo() {
-			return this.nextEvent ? moment(this.nextEvent.start * 1000).calendar() : null
+			if (!this.nextEvent) {
+				return null
+			}
+
+			// If timestamp is in the past, show "now"
+			if (this.nextEvent.start <= moment().unix()) {
+				return t('spreed', 'Now')
+			}
+
+			return moment(this.nextEvent.start * 1000).calendar()
 		},
 
 		showUpcomingEvent() {
