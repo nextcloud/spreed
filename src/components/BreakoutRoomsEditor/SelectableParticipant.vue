@@ -4,13 +4,16 @@
 -->
 
 <template>
-	<label class="selectable-participant">
+	<label class="selectable-participant" :data-nav-id="participantNavigationId">
 		<input v-model="modelProxy"
 			:value="value"
+			:aria-label="participantAriaLabel"
 			type="checkbox"
-			class="selectable-participant__checkbox">
+			class="selectable-participant__checkbox"
+			@keydown.enter="handleEnter">
 		<!-- Participant's avatar -->
 		<AvatarWrapper :id="actorId"
+			token="new"
 			:name="computedName"
 			:source="actorType"
 			disable-menu
@@ -28,7 +31,7 @@
 			</span>
 		</span>
 
-		<IconCheck v-if="isSelectable" class="selectable-participant__check-icon" :size="20" />
+		<IconCheck v-if="isBulkSelection" class="selectable-participant__check-icon" :size="20" />
 	</label>
 </template>
 
@@ -36,6 +39,8 @@
 import { inject } from 'vue'
 
 import IconCheck from 'vue-material-design-icons/Check.vue'
+
+import { t } from '@nextcloud/l10n'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
@@ -73,10 +78,10 @@ export default {
 
 	setup() {
 		// Toggles the bulk selection state of this component
-		const isSelectable = inject('bulkParticipantsSelection', false)
+		const isBulkSelection = inject('bulkParticipantsSelection', false)
 
 		return {
-			isSelectable,
+			isBulkSelection,
 		}
 	},
 
@@ -86,7 +91,7 @@ export default {
 				return this.checked
 			},
 			set(value) {
-				this.isSelectable
+				this.isBulkSelection
 					? this.$emit('update:checked', value)
 					: this.$emit('click-participant', this.participant)
 			},
@@ -101,7 +106,7 @@ export default {
 		},
 
 		actorType() {
-			return this.participant.source || this.participant.actorType
+			return this.participant.actorType || this.participant.source
 		},
 
 		computedName() {
@@ -113,9 +118,30 @@ export default {
 		},
 
 		participantStatus() {
-			return getStatusMessage(this.participant)
+			return this.participant.shareWithDisplayNameUnique
+				?? getStatusMessage(this.participant)
+		},
+
+		participantAriaLabel() {
+			return t('spreed', 'Add participant "{user}"', { user: this.computedName })
+		},
+
+		participantNavigationId() {
+			if (this.participant.actorType && this.participant.actorId) {
+				return this.participant.actorType + '_' + this.participant.actorId
+			} else {
+				return this.participant.source + '_' + this.participant.id
+			}
 		},
 	},
+
+	methods: {
+		t,
+
+		handleEnter(event) {
+			event.target.checked = !event.target.checked
+		},
+	}
 }
 </script>
 
@@ -130,6 +156,10 @@ export default {
 	margin: var(--default-grid-baseline);
 	border-radius: var(--border-radius-element, 32px);
 	line-height: 20px;
+
+	&, & * {
+		cursor: pointer;
+	}
 
 	&:hover,
 	&:focus-within,

@@ -163,7 +163,7 @@ export default {
 		const selectedParticipants = ref([])
 		provide('selectedParticipants', selectedParticipants)
 
-		// Add a visual bulk selection state for Participant component
+		// Add a visual bulk selection state for SelectableParticipant component
 		provide('bulkParticipantsSelection', true)
 
 		const dialogHeaderPrepId = `new-conversation-prepare-${useId()}`

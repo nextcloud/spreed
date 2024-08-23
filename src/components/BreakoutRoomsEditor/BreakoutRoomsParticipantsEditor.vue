@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { provide } from 'vue'
+
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
@@ -144,6 +146,9 @@ export default {
 	emits: ['back', 'close'],
 
 	setup() {
+		// Add a visual bulk selection state for SelectableParticipant component
+		provide('bulkParticipantsSelection', true)
+
 		return {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 		}
