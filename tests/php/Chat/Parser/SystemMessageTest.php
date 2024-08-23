@@ -81,7 +81,7 @@ class SystemMessageTest extends TestCase {
 		$this->l->method('n')
 			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
-				return vsprintf(str_replace('%n', (string) $count, $text), $parameters);
+				return vsprintf(str_replace('%n', (string)$count, $text), $parameters);
 			});
 	}
 

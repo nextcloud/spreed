@@ -31,13 +31,13 @@ class Call extends Base {
 			$parameters = $event->getSubjectParameters();
 
 			try {
-				$room = $this->manager->getRoomForUser((int) $parameters['room'], $this->activityManager->getCurrentUserId());
+				$room = $this->manager->getRoomForUser((int)$parameters['room'], $this->activityManager->getCurrentUserId());
 			} catch (RoomNotFoundException) {
 				$room = null;
 			}
 
 			$result = $this->parseCall($room, $event, $l);
-			$result['subject'] .= ' ' . $this->getDuration($l, (int) $parameters['duration']);
+			$result['subject'] .= ' ' . $this->getDuration($l, (int)$parameters['duration']);
 			// $result['params']['call'] = $roomParameter;
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {

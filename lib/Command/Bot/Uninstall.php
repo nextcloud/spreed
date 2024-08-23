@@ -45,7 +45,7 @@ class Uninstall extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$botId = (int) $input->getArgument('id');
+		$botId = (int)$input->getArgument('id');
 
 		try {
 			if ($botId === 0) {

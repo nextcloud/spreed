@@ -93,7 +93,7 @@ class InjectionMiddleware extends Middleware {
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 
 		$apiVersion = $this->request->getParam('apiVersion');
-		$controller->setAPIVersion((int) substr($apiVersion, 1));
+		$controller->setAPIVersion((int)substr($apiVersion, 1));
 
 		if (!empty($reflectionMethod->getAttributes(AllowWithoutParticipantWhenPendingInvitation::class))) {
 			try {

@@ -91,10 +91,10 @@ class SessionMapper extends QBMapper {
 		return $this->mapRowToEntity([
 			'id' => $row['s_id'],
 			'session_id' => $row['session_id'],
-			'attendee_id' => (int) $row['a_id'],
-			'in_call' => (int) $row['in_call'],
-			'last_ping' => (int) $row['last_ping'],
-			'state' => (int) $row['s_state'],
+			'attendee_id' => (int)$row['a_id'],
+			'in_call' => (int)$row['in_call'],
+			'last_ping' => (int)$row['last_ping'],
+			'state' => (int)$row['s_state'],
 		]);
 	}
 }

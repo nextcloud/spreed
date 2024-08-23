@@ -27,7 +27,7 @@ class AttachmentService {
 		$attachment->setRoomId($room->getId());
 		$attachment->setActorType($comment->getActorType());
 		$attachment->setActorId($comment->getActorId());
-		$attachment->setMessageId((int) $comment->getId());
+		$attachment->setMessageId((int)$comment->getId());
 		$attachment->setMessageTime($comment->getCreationDateTime()->getTimestamp());
 
 		if ($messageType === 'object_shared') {

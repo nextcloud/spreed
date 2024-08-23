@@ -10,7 +10,7 @@ use OCP\IDBConnection;
 use OCP\IUser;
 
 class Manager implements \OCP\Comments\ICommentsManager {
-	/** @var  IDBConnection */
+	/** @var IDBConnection */
 	protected $dbConn;
 
 	protected function normalizeDatabaseData(array $data): array {

@@ -133,7 +133,7 @@ class Notifier implements INotifier {
 
 			try {
 				// Before 3.2.3 the id was passed in notifications
-				$room = $this->manager->getRoomById((int) $objectId);
+				$room = $this->manager->getRoomById((int)$objectId);
 				$this->rooms[$objectId] = $room;
 				return $room;
 			} catch (RoomNotFoundException $e) {
@@ -401,7 +401,7 @@ class Notifier implements INotifier {
 		$subjectParameters = $notification->getSubjectParameters();
 
 		try {
-			$invite = $this->federationManager->getRemoteShareById((int) $notification->getObjectId());
+			$invite = $this->federationManager->getRemoteShareById((int)$notification->getObjectId());
 			if ($invite->getUserId() !== $notification->getUser()) {
 				throw new AlreadyProcessedException();
 			}
@@ -441,7 +441,7 @@ class Notifier implements INotifier {
 		$acceptAction->setParsedLabel($l->t('Accept'));
 		$acceptAction->setLink($this->url->linkToOCSRouteAbsolute(
 			'spreed.Federation.acceptShare',
-			['apiVersion' => 'v1', 'id' => (int) $notification->getObjectId()]
+			['apiVersion' => 'v1', 'id' => (int)$notification->getObjectId()]
 		), IAction::TYPE_POST);
 		$acceptAction->setPrimary(true);
 		$notification->addParsedAction($acceptAction);
@@ -450,7 +450,7 @@ class Notifier implements INotifier {
 		$declineAction->setParsedLabel($l->t('Decline'));
 		$declineAction->setLink($this->url->linkToOCSRouteAbsolute(
 			'spreed.Federation.rejectShare',
-			['apiVersion' => 'v1', 'id' => (int) $notification->getObjectId()]
+			['apiVersion' => 'v1', 'id' => (int)$notification->getObjectId()]
 		), IAction::TYPE_DELETE);
 		$notification->addParsedAction($declineAction);
 
@@ -488,7 +488,7 @@ class Notifier implements INotifier {
 				 * @see Listener::markReactionNotificationsRead()
 				 */
 				&& $notification->getSubject() !== 'reaction'
-				&& ((int) $messageParameters['commentId']) <= $participant->getAttendee()->getLastReadMessage()) {
+				&& ((int)$messageParameters['commentId']) <= $participant->getAttendee()->getLastReadMessage()) {
 				// Mark notifications of messages that are read as processed
 				throw new AlreadyProcessedException();
 			}

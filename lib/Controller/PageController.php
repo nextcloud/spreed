@@ -201,7 +201,7 @@ class PageController extends Controller {
 				}
 
 				if ($requirePassword) {
-					$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
+					$password = $password !== '' ? $password : (string)$this->talkSession->getPasswordForRoom($token);
 
 					$passwordVerification = $this->roomService->verifyPassword($room, $password);
 
@@ -356,7 +356,7 @@ class PageController extends Controller {
 		}
 
 		if ($room->hasPassword()) {
-			$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
+			$password = $password !== '' ? $password : (string)$this->talkSession->getPasswordForRoom($token);
 
 			$passwordVerification = $this->roomService->verifyPassword($room, $password);
 			if ($passwordVerification['result']) {

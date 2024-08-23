@@ -53,7 +53,7 @@ class AgeChatMessages extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$token = $input->getArgument('token');
-		$hours = (int) $input->getOption('hours');
+		$hours = (int)$input->getOption('hours');
 		if ($hours < 1) {
 			$output->writeln('<error>Invalid age: ' . $hours . '</error>');
 			return 1;

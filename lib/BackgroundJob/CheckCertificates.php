@@ -118,7 +118,7 @@ class CheckCertificates extends TimedJob {
 		$signalingServers = $this->talkConfig->getSignalingServers();
 
 		foreach ($signalingServers as $signalingServer) {
-			if ((bool) $signalingServer['verify']) {
+			if ((bool)$signalingServer['verify']) {
 				$this->checkServerCertificate($signalingServer['server']);
 			}
 		}
@@ -126,7 +126,7 @@ class CheckCertificates extends TimedJob {
 		$recordingServers = $this->talkConfig->getRecordingServers();
 
 		foreach ($recordingServers as $recordingServer) {
-			if ((bool) $recordingServer['verify']) {
+			if ((bool)$recordingServer['verify']) {
 				$this->checkServerCertificate($recordingServer['server']);
 			}
 		}

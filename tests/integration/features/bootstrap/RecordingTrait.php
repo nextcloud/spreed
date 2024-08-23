@@ -275,7 +275,7 @@ trait RecordingTrait {
 	private function sendBackendRequestFromRecordingServer(array $data, int $statusCode, string $apiVersion = 'v1') {
 		$body = json_encode($data);
 
-		$random = md5((string) rand());
+		$random = md5((string)rand());
 		$checksum = hash_hmac('sha256', $random . $body, 'the recording secret');
 
 		$headers = [

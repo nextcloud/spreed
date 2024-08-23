@@ -93,7 +93,7 @@ class ChatController {
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)(int)$proxy->getHeader('X-Chat-Last-Common-Read');
 		}
 
 		return new DataResponse(
@@ -134,7 +134,7 @@ class ChatController {
 		if ($lookIntoFuture) {
 			if ($this->proxyCacheMessages instanceof ICache) {
 				for ($i = 0; $i <= $timeout; $i++) {
-					$cacheData = (int) $this->proxyCacheMessages->get($cacheKey);
+					$cacheData = (int)$this->proxyCacheMessages->get($cacheKey);
 					if ($lastKnownMessageId !== $cacheData) {
 						break;
 					}
@@ -169,7 +169,7 @@ class ChatController {
 				0,
 				false,
 				false,
-				(int) ($proxy->getHeader('X-Chat-Last-Given') ?: $lastKnownMessageId),
+				(int)($proxy->getHeader('X-Chat-Last-Given') ?: $lastKnownMessageId),
 			);
 		}
 
@@ -185,14 +185,14 @@ class ChatController {
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)(int)$proxy->getHeader('X-Chat-Last-Common-Read');
 		}
 		if ($proxy->getHeader('X-Chat-Last-Given')) {
-			$headers['X-Chat-Last-Given'] = (string) (int) $proxy->getHeader('X-Chat-Last-Given');
+			$headers['X-Chat-Last-Given'] = (string)(int)$proxy->getHeader('X-Chat-Last-Given');
 			if ($lookIntoFuture && $this->proxyCacheMessages instanceof ICache) {
 				$cacheData = $this->proxyCacheMessages->get($cacheKey);
 				if ($cacheData === null || $cacheData < $headers['X-Chat-Last-Given']) {
-					$this->proxyCacheMessages->set($cacheKey, (int) $headers['X-Chat-Last-Given'], 300);
+					$this->proxyCacheMessages->set($cacheKey, (int)$headers['X-Chat-Last-Given'], 300);
 				}
 			}
 		}
@@ -234,10 +234,10 @@ class ChatController {
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)(int)$proxy->getHeader('X-Chat-Last-Common-Read');
 		}
 		if ($proxy->getHeader('X-Chat-Last-Given')) {
-			$headers['X-Chat-Last-Given'] = (string) (int) $proxy->getHeader('X-Chat-Last-Given');
+			$headers['X-Chat-Last-Given'] = (string)(int)$proxy->getHeader('X-Chat-Last-Given');
 		}
 
 		/** @var TalkChatMessageWithParent[] $data */
@@ -297,7 +297,7 @@ class ChatController {
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)(int)$proxy->getHeader('X-Chat-Last-Common-Read');
 		}
 
 		return new DataResponse(
@@ -348,7 +348,7 @@ class ChatController {
 
 		$headers = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$headers['X-Chat-Last-Common-Read'] = (string) (int) $proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)(int)$proxy->getHeader('X-Chat-Last-Common-Read');
 		}
 
 		return new DataResponse(
@@ -390,8 +390,8 @@ class ChatController {
 
 		$headers = $lastCommonRead = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$lastCommonRead[$room->getId()] = (int) $proxy->getHeader('X-Chat-Last-Common-Read');
-			$headers['X-Chat-Last-Common-Read'] = (string) $lastCommonRead[$room->getId()];
+			$lastCommonRead[$room->getId()] = (int)$proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)$lastCommonRead[$room->getId()];
 		}
 
 		return new DataResponse($this->roomFormatter->formatRoom(
@@ -431,8 +431,8 @@ class ChatController {
 
 		$headers = $lastCommonRead = [];
 		if ($proxy->getHeader('X-Chat-Last-Common-Read')) {
-			$lastCommonRead[$room->getId()] = (int) $proxy->getHeader('X-Chat-Last-Common-Read');
-			$headers['X-Chat-Last-Common-Read'] = (string) $lastCommonRead[$room->getId()];
+			$lastCommonRead[$room->getId()] = (int)$proxy->getHeader('X-Chat-Last-Common-Read');
+			$headers['X-Chat-Last-Common-Read'] = (string)$lastCommonRead[$room->getId()];
 		}
 
 		return new DataResponse($this->roomFormatter->formatRoom(

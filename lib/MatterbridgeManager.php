@@ -161,12 +161,12 @@ class MatterbridgeManager {
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$bridge = [
-				'enabled' => (bool) $row['enabled'],
-				'pid' => (int) $row['pid'],
+				'enabled' => (bool)$row['enabled'],
+				'pid' => (int)$row['pid'],
 				'parts' => json_decode($row['json_values'], true),
 			];
 			try {
-				$room = $this->manager->getRoomById((int) $row['room_id']);
+				$room = $this->manager->getRoomById((int)$row['room_id']);
 			} catch (RoomNotFoundException $e) {
 				continue;
 			}
@@ -519,7 +519,7 @@ class MatterbridgeManager {
 	private function checkBridgeProcess(Room $room, array $bridge, bool $relaunch = true): int {
 		$pid = 0;
 
-		if (isset($bridge['pid']) && (int) $bridge['pid'] !== 0) {
+		if (isset($bridge['pid']) && (int)$bridge['pid'] !== 0) {
 			// config : there is a PID stored
 			$isRunning = $this->isRunning($bridge['pid']);
 			// if bridge running and enabled is false : kill it
@@ -676,7 +676,7 @@ class MatterbridgeManager {
 
 		$cmdResult = $this->runCommand($cmd);
 		if (!is_null($cmdResult) && $cmdResult['return_code'] === 0 && is_numeric($cmdResult['stdout'] ?? 0)) {
-			return (int) $cmdResult['stdout'];
+			return (int)$cmdResult['stdout'];
 		}
 		return 0;
 	}
@@ -696,7 +696,7 @@ class MatterbridgeManager {
 				if (preg_match('/matterbridge/i', $l)) {
 					$items = preg_split('/\s+/', $l);
 					if (count($items) > 1 && is_numeric($items[1])) {
-						$runningPidList[] = (int) $items[1];
+						$runningPidList[] = (int)$items[1];
 					}
 				}
 			}
@@ -724,7 +724,7 @@ class MatterbridgeManager {
 
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
-			$expectedPidList[] = (int) $row['pid'];
+			$expectedPidList[] = (int)$row['pid'];
 		}
 		$result->closeCursor();
 
@@ -765,7 +765,7 @@ class MatterbridgeManager {
 				foreach ($lines as $l) {
 					$items = preg_split('/\s+/', $l);
 					if (count($items) > 1 && is_numeric($items[1])) {
-						$lPid = (int) $items[1];
+						$lPid = (int)$items[1];
 						if ($lPid === $pid) {
 							return true;
 						}
@@ -840,8 +840,8 @@ class MatterbridgeManager {
 		$pid = 0;
 		$jsonValues = '[]';
 		if ($row = $result->fetch()) {
-			$pid = (int) $row['pid'];
-			$enabled = ((int) $row['enabled'] === 1);
+			$pid = (int)$row['pid'];
+			$enabled = ((int)$row['enabled'] === 1);
 			$jsonValues = $row['json_values'];
 		}
 		$result->closeCursor();

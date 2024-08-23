@@ -382,7 +382,7 @@ class Listener implements IEventListener {
 		}
 
 		if (isset($metaData[Message::METADATA_SILENT])) {
-			$silent = (bool) $metaData[Message::METADATA_SILENT];
+			$silent = (bool)$metaData[Message::METADATA_SILENT];
 		} else {
 			$silent = false;
 		}
@@ -454,14 +454,14 @@ class Listener implements IEventListener {
 		// the system message left for the share in the chat.
 		$referenceId = $this->request->getParam('referenceId', null);
 		if ($referenceId !== null) {
-			$referenceId = (string) $referenceId;
+			$referenceId = (string)$referenceId;
 		}
 
 		$parent = null;
 		$replyTo = $parameters['metaData']['replyTo'] ?? null;
 		if ($replyTo !== null) {
 			try {
-				$parentComment = $this->chatManager->getParentComment($room, (string) $replyTo);
+				$parentComment = $this->chatManager->getParentComment($room, (string)$replyTo);
 				$parentMessage = $this->messageParser->createMessage($room, $participant, $parentComment, $this->l);
 				$this->messageParser->parseMessage($parentMessage);
 				if ($parentMessage->isReplyable()) {

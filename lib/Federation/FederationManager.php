@@ -130,7 +130,7 @@ class FederationManager {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp(Application::APP_ID)
 			->setUser($userId)
-			->setObject('remote_talk_share', (string) $shareId);
+			->setObject('remote_talk_share', (string)$shareId);
 		$this->notificationManager->markProcessed($notification);
 	}
 

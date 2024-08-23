@@ -85,7 +85,7 @@ class ChatManagerTest extends TestCase {
 		$this->l->method('n')
 			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
-				return vsprintf(str_replace('%n', (string) $count, $text), $parameters);
+				return vsprintf(str_replace('%n', (string)$count, $text), $parameters);
 			});
 
 		$this->chatManager = $this->getManager();
@@ -149,7 +149,7 @@ class ChatManagerTest extends TestCase {
 	private function newComment($id, string $actorType, string $actorId, \DateTime $creationDateTime, string $message): IComment {
 		$comment = $this->createMock(IComment::class);
 
-		$id = (string) $id;
+		$id = (string)$id;
 
 		$comment->method('getId')->willReturn($id);
 		$comment->method('getActorType')->willReturn($actorType);
@@ -169,7 +169,7 @@ class ChatManagerTest extends TestCase {
 
 		foreach ($data as $key => $value) {
 			if ($key === 'id') {
-				$value = (string) $value;
+				$value = (string)$value;
 			}
 			$comment->method('get' . ucfirst($key))->willReturn($value);
 		}
