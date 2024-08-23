@@ -25,8 +25,8 @@ import type {
 	receiveMessagesParams,
 	receiveMessagesResponse,
 	setReadMarkerParams,
-	setReadMarkerResponse
-} from '../types'
+	setReadMarkerResponse,
+} from '../types/index.ts'
 
 type ReceiveMessagesPayload = Partial<receiveMessagesParams> & { token: string }
 type GetMessageContextPayload = getMessageContextParams & { token: string, messageId: number }

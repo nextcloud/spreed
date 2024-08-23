@@ -31,8 +31,8 @@ import type {
 	broadcastChatMessageParams,
 	configureBreakoutRoomsParams,
 	reorganizeAttendeesParams,
-	switchToBreakoutRoomParams
-} from '../types'
+	switchToBreakoutRoomParams,
+} from '../types/index.ts'
 
 type Payload<T> = T & { token: string }
 type State = {
