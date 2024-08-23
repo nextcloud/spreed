@@ -5,9 +5,11 @@
 
 <template>
 	<ul>
-		<Participant v-for="item in items"
+		<component :is="component"
+			v-for="item in items"
 			:key="generateKey(item)"
 			:participant="item"
+			:checked.sync="selectedParticipants"
 			:show-user-status="showUserStatus"
 			@click-participant="handleClickParticipant" />
 		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
@@ -16,7 +18,10 @@
 
 <script>
 
+import { inject } from 'vue'
+
 import Participant from './Participant.vue'
+import SelectableParticipant from '../../BreakoutRoomsEditor/SelectableParticipant.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 
 export default {
@@ -25,6 +30,7 @@ export default {
 	components: {
 		LoadingPlaceholder,
 		Participant,
+		SelectableParticipant,
 	},
 
 	props: {
@@ -39,11 +45,29 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isSearchResult: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['click'],
 
+	setup(props) {
+		const selectedParticipants = props.isSearchResult
+			? inject('selectedParticipants', [])
+			: undefined
+
+		return {
+			selectedParticipants,
+		}
+	},
+
 	computed: {
+		component() {
+			return this.isSearchResult ? 'SelectableParticipant' : 'Participant'
+		},
+
 		token() {
 			return this.$store.getters.getToken()
 		},

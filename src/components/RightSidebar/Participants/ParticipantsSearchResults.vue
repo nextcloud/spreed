@@ -8,24 +8,28 @@
 		<template v-if="addableUsers.length !== 0">
 			<NcAppNavigationCaption :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
+				is-search-result
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
 			<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
 			<ParticipantsList :items="addableGroups"
+				is-search-result
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
 			<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
 			<ParticipantsList :items="addableEmails"
+				is-search-result
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
 			<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
 			<ParticipantsList :items="addableCircles"
+				is-search-result
 				@click="handleClickParticipant" />
 		</template>
 
@@ -49,6 +53,7 @@
 		<template v-if="addableRemotes.length !== 0">
 			<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
 			<ParticipantsList :items="addableRemotes"
+				is-search-result
 				@click="handleClickParticipant" />
 		</template>
 

@@ -46,7 +46,7 @@
 			:value="searchText"
 			:participant-phone-item.sync="participantPhoneItem"
 			@select="addParticipantPhone" />
-		<ParticipantSearchResults :search-results="searchResults"
+		<ParticipantsSearchResults :search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
 			scrollable
@@ -69,7 +69,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ParticipantSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults.vue'
+import ParticipantsSearchResults from '../RightSidebar/Participants/ParticipantsSearchResults.vue'
 import SelectPhoneNumber from '../SelectPhoneNumber.vue'
 import ContactSelectionBubble from '../UIShared/ContactSelectionBubble.vue'
 import DialpadPanel from '../UIShared/DialpadPanel.vue'
@@ -86,7 +86,7 @@ export default {
 		ContactSelectionBubble,
 		DialpadPanel,
 		NcTextField,
-		ParticipantSearchResults,
+		ParticipantsSearchResults,
 		SelectPhoneNumber,
 		TransitionWrapper,
 		// Icons
