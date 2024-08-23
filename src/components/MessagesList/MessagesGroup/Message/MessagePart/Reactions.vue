@@ -23,7 +23,10 @@
 
 			<div v-if="hasReactionsLoaded" class="reaction-details">
 				<span>{{ getReactionSummary(reaction) }}
-					<a v-if="reactionsCount(reaction) > 3"
+					<span v-if="reactionsCount(reaction) === 4">
+						{{ remainingReactionsLabel(reaction) }}
+					</span>
+					<a v-else-if="reactionsCount(reaction) > 4"
 						class="more-reactions-button"
 						role="button"
 						tabindex="0"
@@ -269,6 +272,10 @@ export default {
 		},
 
 		remainingReactionsLabel(reaction) {
+			const reactionsCount = this.reactionsCount(reaction)
+			if (reactionsCount === 4) {
+				return t('spreed', 'and {participant}', { participant: this.getDisplayNameForReaction(this.detailedReactions[reaction][3]) })
+			}
 			return n('spreed', 'and %n other participant', 'and %n other participants', this.reactionsCount(reaction) - 3)
 		},
 	}
