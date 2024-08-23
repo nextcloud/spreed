@@ -81,6 +81,7 @@ appstore:
 	--exclude=.eslintignore \
 	--exclude=.eslintrc.js \
 	--exclude=.git \
+	--exclude=.git-blame-ignore-revs \
 	--exclude=.gitattributes \
 	--exclude=.github \
 	--exclude=.gitignore \
