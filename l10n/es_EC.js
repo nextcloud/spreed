@@ -1288,6 +1288,7 @@ OC.L10N.register(
     "Recording" : "Grabación",
     "Send a reaction" : "Enviar una reacción",
     "React with {reaction}" : "Reaccionar con {reaction}",
+    "Now" : "Ahora",
     "_%n participant in call_::_%n participants in call_" : ["%n participante en llamada","%n participantes en llamada","%n participantes en llamada"],
     "Show your screen" : "Mostrar tu pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",

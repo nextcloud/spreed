@@ -1450,6 +1450,7 @@ OC.L10N.register(
     "Recording" : "녹음/녹화 중",
     "Send a reaction" : "반응 보내기",
     "React with {reaction}" : "{reaction}(으)로 반응하기",
+    "Now" : "지금",
     "_%n participant in call_::_%n participants in call_" : ["%n명의 참가자가 통화 중"],
     "Show your screen" : "내 화면 보이기",
     "Stop screensharing" : "화면 공유 중지",

@@ -510,6 +510,7 @@ OC.L10N.register(
     "Choose the folder in which attachments should be saved." : "Vælg den mappe, hvori vedhæftede filer skal gemmes.",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
     "Start call" : "Start opkald",
+    "Now" : "Nu",
     "Show your screen" : "Vis din skærm",
     "Stop screensharing" : "Stop skærmdeling",
     "Screensharing options" : "Skærmdeling indstillinger",

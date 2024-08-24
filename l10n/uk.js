@@ -1047,6 +1047,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Ви зможете приєднатися до дзвінка лише після того, як його розпочне модератор.",
     "Cancel recording start" : "Скасувати початок запису",
     "Recording" : "Запис",
+    "Now" : "Зараз",
     "Show your screen" : "Демонстрація екрану",
     "Stop screensharing" : "Припинити демонстрацію екрану",
     "Disable background blur" : "Вимкнути розмиття фону",
