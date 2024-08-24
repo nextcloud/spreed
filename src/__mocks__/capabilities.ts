@@ -83,6 +83,7 @@ export const mockedCapabilities: Capabilities = {
 			'ban-v1',
 			'chat-reference-id',
 			'mention-permissions',
+			'edit-messages-note-to-self',
 		],
 		'features-local': [
 			'favorites',

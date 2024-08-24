@@ -15,7 +15,7 @@ import { useStore } from '../useStore.js'
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(() => ({
 		spreed: {
-			features: ['edit-messages'],
+			features: ['edit-messages', 'edit-messages-note-to-self'],
 			'features-local': [],
 		},
 	}))
@@ -163,6 +163,17 @@ describe('message actions', () => {
 		// the conversation is modifiable (not read-only and user is not a guest or guest moderator)
 		// the message is not a object share (e.g. poll)
 
+		// Act
+		const result = useMessageInfo(message)
+		// Assert
+		expect(result.isCurrentUserOwnMessage.value).toBe(true)
+		expect(result.isEditable.value).toBe(true)
+	})
+
+	test('can edit own message in note to self', () => {
+		// Arrange
+		message.value.timestamp = new Date('2024-04-28 7:20:00').getTime() / 1000
+		conversationProps.type = CONVERSATION.TYPE.NOTE_TO_SELF
 		// Act
 		const result = useMessageInfo(message)
 		// Assert
