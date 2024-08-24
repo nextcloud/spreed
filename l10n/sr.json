@@ -1571,6 +1571,7 @@
     "React with {reaction}" : "Реагуј са {reaction}",
     "Open Calendar" : "Отвори Календар",
     "Next call" : "Наредни позив",
+    "Now" : "Сада",
     "_%n participant in call_::_%n participants in call_" : ["У позиву је %n учесник","У позиву је %n учесника","У позиву је %n учесника"],
     "Show your screen" : "Прикажите екран",
     "Stop screensharing" : "Заустави дељење екрана",

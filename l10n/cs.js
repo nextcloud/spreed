@@ -1487,6 +1487,7 @@ OC.L10N.register(
     "Recording" : "Zaznamenávání",
     "Send a reaction" : "Poslat reakci",
     "React with {reaction}" : "Zareagovat s {reaction}",
+    "Now" : "Nyní",
     "_%n participant in call_::_%n participants in call_" : ["%n účastník v hovoru","%n účastníci v hovoru","%n účastníků v hovoru","%n účastníci v hovoru"],
     "Show your screen" : "Zobrazit vaši obrazovku",
     "Stop screensharing" : "Přestat sdílet obrazovku",

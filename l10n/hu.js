@@ -1393,6 +1393,7 @@ OC.L10N.register(
     "Recording" : "Felvétel",
     "Send a reaction" : "Reakció küldése",
     "React with {reaction}" : "Reagálás ezzel: {reaction}",
+    "Now" : "Most",
     "_%n participant in call_::_%n participants in call_" : ["%n résztvevő a hívásban","%n résztvevő a hívásban"],
     "Show your screen" : "Saját képernyő megosztása",
     "Stop screensharing" : "Képernyőmegosztás befejezése",

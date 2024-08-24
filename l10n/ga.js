@@ -1573,6 +1573,7 @@ OC.L10N.register(
     "React with {reaction}" : "Freagair le {rection}",
     "Open Calendar" : "Oscail Féilire",
     "Next call" : "An chéad ghlao eile",
+    "Now" : "Anois",
     "_%n participant in call_::_%n participants in call_" : ["%n rannpháirtí sa ghlao","%n rannpháirtithe sa ghlao","%n rannpháirtithe sa ghlao","%n rannpháirtithe sa ghlao","%n rannpháirtithe sa ghlao"],
     "Show your screen" : "Taispeáin do scáileán",
     "Stop screensharing" : "Cuir stop le comhroinnt scáileáin",
