@@ -1344,6 +1344,7 @@ OC.L10N.register(
     "Recording" : "ضبط جلسه",
     "Send a reaction" : "Send a reaction",
     "React with {reaction}" : "React with {reaction}",
+    "Now" : "Now",
     "_%n participant in call_::_%n participants in call_" : ["%n participant in call","%n participants in call"],
     "Show your screen" : "Show your screen",
     "Stop screensharing" : "Stop screensharing",

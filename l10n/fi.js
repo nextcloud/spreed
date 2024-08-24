@@ -1173,6 +1173,7 @@ OC.L10N.register(
     "Stop recording" : "Lopeta tallennus",
     "Send a reaction" : "Lähetä reaktio",
     "React with {reaction}" : "Reagoi käyttäen {reaction}",
+    "Now" : "Nyt",
     "_%n participant in call_::_%n participants in call_" : ["%n osallistuja puhelussa","%n osallistujaa puhelussa"],
     "Show your screen" : "Näytä oma näyttösi",
     "Stop screensharing" : "Lopeta näytön jakaminen",
