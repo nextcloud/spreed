@@ -1569,6 +1569,7 @@ OC.L10N.register(
     "React with {reaction}" : "Reagera med {reaction}",
     "Open Calendar" : "Öppna kalender",
     "Next call" : "Nästa samtal",
+    "Now" : "Nu",
     "_%n participant in call_::_%n participants in call_" : ["%n deltagare i samtalet","%n deltagare i samtalet"],
     "Show your screen" : "Visa din skärm",
     "Stop screensharing" : "Stoppa skärmdelning",

@@ -1573,6 +1573,7 @@ OC.L10N.register(
     "React with {reaction}" : "使用 {reaction} 反應",
     "Open Calendar" : "開啟日曆",
     "Next call" : "下個通話",
+    "Now" : "現在",
     "_%n participant in call_::_%n participants in call_" : ["通話中有 %n 位參與者"],
     "Show your screen" : "顯示您的螢幕",
     "Stop screensharing" : "停止分享螢幕",

@@ -1542,6 +1542,7 @@ OC.L10N.register(
     "Recording" : "Запись",
     "Send a reaction" : "Отправить реакцию",
     "React with {reaction}" : "Реагировать {реакцией}",
+    "Now" : "Сейчас",
     "_%n participant in call_::_%n participants in call_" : ["%n участник в вызове","%n участника в вызове","%n участников в вызове","%n участников в вызове"],
     "Show your screen" : "Показать ваш экран",
     "Stop screensharing" : "Прекратить трансляцию экрана",

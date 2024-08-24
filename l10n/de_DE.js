@@ -1573,6 +1573,7 @@ OC.L10N.register(
     "React with {reaction}" : "Reagieren mit {reaction}",
     "Open Calendar" : "Kalender öffnen",
     "Next call" : "Nächster Anruf",
+    "Now" : "Jetzt",
     "_%n participant in call_::_%n participants in call_" : ["%n Anrufteilnehmer","%n Anrufteilnehmer"],
     "Show your screen" : "Ihren Bildschirm übertragen",
     "Stop screensharing" : "Bildschirmübertragung beenden",
