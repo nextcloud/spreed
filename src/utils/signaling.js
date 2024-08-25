@@ -270,7 +270,6 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 			recordingConsent,
 		})
 			.then(function() {
-				console.debug("HERE??????????")
 				this.currentCallToken = token
 				this.currentCallFlags = flags
 				this.currentCallSilent = silent
@@ -280,7 +279,6 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 				this._joinCallSuccess(token)
 			}.bind(this))
 			.catch(function() {
-				console.debug("HERE??????????")
 				reject(new Error())
 				store.commit('connectionFailed', {
 					token,
