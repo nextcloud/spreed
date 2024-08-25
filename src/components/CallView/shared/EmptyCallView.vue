@@ -67,6 +67,10 @@ export default {
 			return this.$store.getters.isConnecting(this.token)
 		},
 
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
@@ -112,6 +116,9 @@ export default {
 		},
 
 		iconClass() {
+			if (this.connectionFailed) {
+				return 'icon-error'
+			}
 			if (this.isConnecting) {
 				return 'icon-loading'
 			} else if (this.isPhoneConversation) {
@@ -122,6 +129,9 @@ export default {
 		},
 
 		title() {
+			if (this.connectionFailed) {
+				return t('spreed', 'Connection Failed')
+			}
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
 			}
@@ -135,6 +145,10 @@ export default {
 		},
 
 		message() {
+			if (this.connectionFailed) {
+				return t('spreed', 'Oops, something went wrong!')
+			}
+
 			if (this.isConnecting) {
 				return ''
 			}
