@@ -867,6 +867,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Anovóse Nextcloud Talk. Tienes de volver cargar la páxina enantes de poder aniciar o xunite a una llamada.",
     "Stop recording" : "Parar la grabación",
     "Send a reaction" : "Unviar una reaición",
+    "Now" : "Agora",
     "_%n participant in call_::_%n participants in call_" : ["%n participante na llamada","%n participantes na llamada"],
     "Show your screen" : "Amosar la to pantalla",
     "Stop screensharing" : "Dexar de compartir la pantalla",

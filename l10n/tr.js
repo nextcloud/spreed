@@ -1304,6 +1304,7 @@ OC.L10N.register(
     "Show all reactions" : "Tüm tepkileri görüntüle",
     "Add more reactions" : "Başka tepkiler ekle",
     "No permission to post reactions in this conversation" : "Bu görüşmeye tepki gönderme izniniz yok",
+    "and {participant}" : "ve {participant}",
     "_and %n other participant_::_and %n other participants_" : ["ve %n diğer katılımcı","ve %n diğer katılımcı"],
     "Reactions" : "Tepkiler",
     "No messages" : "Herhangi bir ileti yok",
