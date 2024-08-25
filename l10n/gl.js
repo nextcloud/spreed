@@ -1304,6 +1304,7 @@ OC.L10N.register(
     "Show all reactions" : "Amosar todas as reaccións",
     "Add more reactions" : "Engadir máis reaccións",
     "No permission to post reactions in this conversation" : "Non ten permiso para publicar reaccións nesta conversa",
+    "and {participant}" : "e {participant}",
     "_and %n other participant_::_and %n other participants_" : ["e outro participante","e outros %n participantes"],
     "Reactions" : "Reaccións",
     "No messages" : "Non hai mensaxes",

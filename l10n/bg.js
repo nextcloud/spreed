@@ -1228,6 +1228,7 @@ OC.L10N.register(
     "Recording" : "Записване",
     "Send a reaction" : "Изпращане на реакция",
     "React with {reaction}" : "Реагирайте с {reaction}",
+    "Now" : "Сега",
     "_%n participant in call_::_%n participants in call_" : ["%n участници в разговора","%n участници в разговора"],
     "Show your screen" : "Покажете екрана си",
     "Stop screensharing" : "Спрете споделянето на екрана",
