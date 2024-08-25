@@ -67,6 +67,8 @@ const state = {
 	},
 	connecting: {
 	},
+	connectionFailed: {
+	},
 	typing: {
 	},
 	speaking: {
@@ -89,6 +91,9 @@ const getters = {
 
 	isConnecting: (state) => (token) => {
 		return !!(state.connecting[token] && Object.keys(state.connecting[token]).length > 0)
+	},
+	connectionFailed: (state) => (token) => {
+		return (state.connectionFailed[token] && Object.keys(state.connectionFailed[token]).length > 0) ?? false
 	},
 	/**
 	 * Gets the participants array.
@@ -309,6 +314,9 @@ const mutations = {
 	},
 
 	setInCall(state, { token, sessionId, flags }) {
+		if (state.connectionFailed[token]) {
+			Vue.delete(state.connectionFailed, token)
+		}
 		if (flags === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
 				Vue.delete(state.inCall[token], sessionId)
@@ -328,6 +336,13 @@ const mutations = {
 			}
 			Vue.set(state.connecting[token], sessionId, flags)
 		}
+	},
+
+	connectionFailed(state, { token }) {
+		if (!state.connectionFailed[token]) {
+			Vue.set(state.connectionFailed, token, {})
+		}
+		Vue.set(state.connectionFailed[token], 'self', 'failed')
 	},
 
 	finishedConnecting(state, { token, sessionId }) {
