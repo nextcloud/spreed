@@ -1223,6 +1223,12 @@ class ParticipantService {
 	 */
 	public function sendCallNotificationForAttendee(Room $room, Participant $currentParticipant, int $targetAttendeeId): void {
 		$attendee = $this->attendeeMapper->getById($targetAttendeeId);
+		if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$target = new Participant($room, $attendee, null);
+			$event = new ParticipantModifiedEvent($room, $target, AParticipantModifiedEvent::PROPERTY_RESEND_CALL, 1);
+			$this->dispatcher->dispatchTyped($event);
+			return;
+		}
 		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
 			throw new \InvalidArgumentException('actor-type');
 		}

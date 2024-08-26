@@ -60,6 +60,7 @@
 ## Send call notification
 
 * Required capability: `send-call-notification`
+* Federation capability: `federation-v2`
 * Method: `POST`
 * Endpoint: `/call/{token}/ring/{attendeeId}`
 * Data:
