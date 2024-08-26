@@ -139,9 +139,8 @@ export default {
 
 <style lang="scss" scoped>
 .modal__content {
-	padding: calc(var(--default-grid-baseline) * 4);
+	padding: calc(var(--default-grid-baseline) * 3);
 	background-color: var(--color-main-background);
-	margin: 0px 12px;
 }
 
 .conversation-information {
@@ -153,6 +152,10 @@ export default {
 
 .description {
 	margin-bottom: 12px;
+	max-height: 8lh;
+	overflow-x: hidden;
+	overflow-y: auto;
+	text-overflow: ellipsis;
 }
 
 .username-form__input {
