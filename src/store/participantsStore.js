@@ -56,6 +56,20 @@ function emitUserStatusUpdated(participant) {
 	}
 }
 
+/**
+ * Get connection failed error message as per error code.
+ *
+ * @param {*} code Error message code
+ *
+ * @return {string} Error message
+ */
+function getConnectionFailedErrorMessage(code) {
+	if (code === 'consent') {
+		return t('spreed', 'Recording consent is required')
+	}
+	return t('spreed', 'Oops, something went wrong!')
+}
+
 const state = {
 	attendees: {
 	},
@@ -93,7 +107,7 @@ const getters = {
 		return !!(state.connecting[token] && Object.keys(state.connecting[token]).length > 0)
 	},
 	connectionFailed: (state) => (token) => {
-		return (state.connectionFailed[token] && Object.keys(state.connectionFailed[token]).length > 0) ?? false
+		return getConnectionFailedErrorMessage(state.connectionFailed[token]?.error)
 	},
 	/**
 	 * Gets the participants array.
@@ -338,11 +352,8 @@ const mutations = {
 		}
 	},
 
-	connectionFailed(state, { token }) {
-		if (!state.connectionFailed[token]) {
-			Vue.set(state.connectionFailed, token, {})
-		}
-		Vue.set(state.connectionFailed[token], 'self', 'failed')
+	connectionFailed(state, { token, payload }) {
+		Vue.set(state.connectionFailed, token, payload ?? 'failed')
 	},
 
 	finishedConnecting(state, { token, sessionId }) {

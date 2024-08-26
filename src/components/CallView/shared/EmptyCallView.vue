@@ -15,6 +15,9 @@
 			<p v-if="message" class="emptycontent-additional">
 				{{ message }}
 			</p>
+			<p v-if="helper" class="emptycontent-additional">
+				{{ helper }}
+			</p>
 			<NcButton v-if="showLink"
 				type="primary"
 				@click.stop="handleCopyLink">
@@ -144,9 +147,16 @@ export default {
 			return t('spreed', 'Waiting for others to join the call …')
 		},
 
+		helper() {
+			if (this.connectionFailed) {
+				return t('spreed', 'Please try to reload the page')
+			}
+			return ''
+		},
+
 		message() {
 			if (this.connectionFailed) {
-				return t('spreed', 'Oops, something went wrong!')
+				return this.connectionFailed
 			}
 
 			if (this.isConnecting) {

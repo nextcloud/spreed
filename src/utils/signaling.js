@@ -278,10 +278,11 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 				resolve()
 				this._joinCallSuccess(token)
 			}.bind(this))
-			.catch(function() {
+			.catch(function(e) {
 				reject(new Error())
 				store.commit('connectionFailed', {
 					token,
+					payload: e.response?.data?.ocs?.data,
 				})
 			})
 	})
