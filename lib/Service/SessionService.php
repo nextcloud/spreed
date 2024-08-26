@@ -12,6 +12,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -23,6 +24,7 @@ class SessionService {
 		protected SessionMapper $sessionMapper,
 		protected IDBConnection $connection,
 		protected ISecureRandom $secureRandom,
+		protected ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -87,6 +89,7 @@ class SessionService {
 		$session = new Session();
 		$session->setAttendeeId($attendee->getId());
 		$session->setInCall(Participant::FLAG_DISCONNECTED);
+		$session->setLastPing($this->timeFactory->getTime());
 
 		if ($forceSessionId !== '') {
 			$session->setSessionId($forceSessionId);

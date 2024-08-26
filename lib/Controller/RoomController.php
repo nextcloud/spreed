@@ -1644,7 +1644,6 @@ class RoomController extends AEnvironmentAwareController {
 		$session = $participant->getSession();
 		if ($session instanceof Session) {
 			$this->session->setSessionForRoom($token, $session->getSessionId());
-			$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
 		}
 
 		if ($room->isFederatedConversation()) {
@@ -1714,11 +1713,6 @@ class RoomController extends AEnvironmentAwareController {
 
 			if ($sessionId !== null) {
 				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId(), $sessionId);
-
-				$session = $participant->getSession();
-				if ($session instanceof Session) {
-					$this->sessionService->updateLastPing($session, $this->timeFactory->getTime());
-				}
 			} else {
 				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->federationAuthenticator->getCloudId());
 			}
