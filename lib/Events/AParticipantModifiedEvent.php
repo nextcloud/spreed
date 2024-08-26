@@ -15,6 +15,7 @@ abstract class AParticipantModifiedEvent extends ARoomEvent {
 	public const PROPERTY_IN_CALL = 'inCall';
 	public const PROPERTY_NAME = 'name';
 	public const PROPERTY_PERMISSIONS = 'permissions';
+	public const PROPERTY_RESEND_CALL = 'resend_call_notification';
 	public const PROPERTY_TYPE = 'type';
 
 	public const DETAIL_IN_CALL_SILENT = 'silent';

@@ -18,13 +18,13 @@ class CallNotificationSendEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected Participant $actor,
+		protected ?Participant $actor,
 		protected Participant $target,
 	) {
 		parent::__construct($room);
 	}
 
-	public function getActor(): Participant {
+	public function getActor(): ?Participant {
 		return $this->actor;
 	}
 

@@ -430,3 +430,65 @@ Feature: federation/call
       | type | name  | recordingConsent |
       | 2    | room | 0                |
     When user "participant1" leaves call "room" with 200 (v4)
+
+  Scenario: Resend call notification for federated user
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" joins room "room" with 200 (v4)
+    When user "participant1" joins call "room" with 200 (v4)
+    Then using server "REMOTE"
+    And user "participant2" has the following notifications
+      | app    | object_type | object_id   | subject                          |
+      | spreed | call        | LOCAL::room | A group call has started in room |
+    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    When user "participant2" joins call "LOCAL::room" with 200 (v4)
+    When user "participant2" leaves call "LOCAL::room" with 200 (v4)
+    And user "participant2" has the following notifications
+    And using server "LOCAL"
+    Then user "participant1" loads attendees attendee ids in room "room" (v4)
+    Then user "participant1" pings federated_user "participant2@REMOTE" to join call "room" with 200 (v4)
+    Then using server "REMOTE"
+    And user "participant2" has the following notifications
+      | app    | object_type | object_id   | subject                          |
+      | spreed | call        | LOCAL::room | A group call has started in room |
+
+  Scenario: Resend call notification as a federated user
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2@REMOTE" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    When user "participant2" joins call "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" has the following notifications
+      | app    | object_type | object_id   | subject                          |
+      | spreed | call        | room        | A group call has started in room |
+    And user "participant1" joins room "room" with 200 (v4)
+    When user "participant1" joins call "room" with 200 (v4)
+    When user "participant1" leaves call "room" with 200 (v4)
+    And user "participant1" has the following notifications
+    Then using server "REMOTE"
+    Then user "participant2" loads attendees attendee ids in room "LOCAL::room" (v4)
+    Then user "participant2" pings federated_user "participant1@LOCAL" to join call "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" has the following notifications
+      | app    | object_type | object_id   | subject                          |
+      | spreed | call        | room        | A group call has started in room |

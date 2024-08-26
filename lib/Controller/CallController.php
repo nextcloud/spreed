@@ -248,11 +248,18 @@ class CallController extends AEnvironmentAwareController {
 	 * 400: Ringing attendee is not possible
 	 * 404: Attendee could not be found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
 	public function ringAttendee(int $attendeeId): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController::class);
+			return $proxy->ringAttendee($this->room, $this->participant, $attendeeId);
+		}
+
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
