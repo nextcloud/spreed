@@ -1304,6 +1304,7 @@ OC.L10N.register(
     "Show all reactions" : "Vis alle reaksjoner",
     "Add more reactions" : "Legg til flere reaksjoner",
     "No permission to post reactions in this conversation" : "Ingen tillatelse til å legge inn reaksjoner i denne samtalen",
+    "and {participant}" : "og {participant}",
     "_and %n other participant_::_and %n other participants_" : ["og %n deltaker til","og %n andre deltakere"],
     "Reactions" : "Reaksjoner",
     "No messages" : "Ingen meldinger",
