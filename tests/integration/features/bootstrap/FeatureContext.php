@@ -144,6 +144,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	public function getAttendeeId(string $type, string $id, string $room, ?string $user = null) {
+		if ($type === 'federated_users') {
+			if (!str_contains($id, '@')) {
+				$id .= '@' . $this->localRemoteServerUrl;
+			} else {
+				$id = str_replace(
+					['LOCAL', 'REMOTE'],
+					[$this->localServerUrl, $this->remoteServerUrl],
+					$id
+				);
+			}
+			$id = rtrim($id, '/');
+		}
+
 		if (!isset(self::$userToAttendeeId[$room][$type][$id])) {
 			if ($user !== null) {
 				$this->userLoadsAttendeeIdsInRoom($user, $room, 'v4');
@@ -2114,7 +2127,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" pings (user|guest) "([^"]*)"( attendeeIdPlusOne)? to join call "([^"]*)" with (\d+) \((v4)\)$/
+	 * @Then /^user "([^"]*)" pings (federated_user|user|guest) "([^"]*)"( attendeeIdPlusOne)? to join call "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
 	 * @param string $actorType
@@ -2126,7 +2139,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userPingsAttendeeInRoomTo(string $user, string $actorType, string $actorId, ?string $offset, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
-		$attendeeId = self::$userToAttendeeId[$identifier][$actorType . 's'][$actorId];
+		$attendeeId = $this->getAttendeeId($actorType . 's', $actorId, $identifier, $user);
 		if ($offset) {
 			$attendeeId++;
 		}
