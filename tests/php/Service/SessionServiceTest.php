@@ -11,6 +11,7 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\SessionService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -22,6 +23,7 @@ use Test\TestCase;
 class SessionServiceTest extends TestCase {
 	protected ?SessionMapper $sessionMapper = null;
 	protected ISecureRandom&MockObject $secureRandom;
+	protected ITimeFactory&MockObject $timeFactory;
 	private ?SessionService $service = null;
 
 	private const RANDOM_254 = '123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef6123456789abcdef7123456789abcdef8123456789abcdef9123456789abcdefa123456789abcdefb123456789abcdefc123456789abcdefd123456789abcdefe123456789abcde';
@@ -33,10 +35,12 @@ class SessionServiceTest extends TestCase {
 
 		$this->sessionMapper = \OCP\Server::get(SessionMapper::class);
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->service = new SessionService(
 			$this->sessionMapper,
 			\OCP\Server::get(IDBConnection::class),
 			$this->secureRandom,
+			$this->timeFactory,
 		);
 	}
 
