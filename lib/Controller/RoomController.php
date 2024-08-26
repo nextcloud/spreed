@@ -982,7 +982,8 @@ class RoomController extends AEnvironmentAwareController {
 				if ($session->getLastPing() <= $maxPingAge) {
 					if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
 						$cleanGuests = true;
-					} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+					} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
+						|| $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 						$this->participantService->leaveRoomAsSession($this->room, $participant);
 					}
 					// Session expired, ignore
@@ -1030,7 +1031,7 @@ class RoomController extends AEnvironmentAwareController {
 
 			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$userId = $participant->getAttendee()->getActorId();
-				if ($result['lastPing'] > 0 && $result['lastPing'] <= $maxPingAge) {
+				if ($participant->getSession() instanceof Session && $participant->getSession()->getLastPing() <= $maxPingAge) {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 
@@ -1075,6 +1076,9 @@ class RoomController extends AEnvironmentAwareController {
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				if ($participant->getSession() instanceof Session && $participant->getSession()->getLastPing() <= $maxPingAge) {
+					$this->participantService->leaveRoomAsSession($this->room, $participant);
+				}
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
