@@ -1300,6 +1300,7 @@ OC.L10N.register(
     "Show all reactions" : "Visa alla reaktioner",
     "Add more reactions" : "Lägg till fler reaktioner",
     "No permission to post reactions in this conversation" : "Ingen behörighet att posta reaktioner i denna konversation",
+    "and {participant}" : "och {participant}",
     "_and %n other participant_::_and %n other participants_" : ["och %n annan deltagare","och %n andra deltagare"],
     "Reactions" : "Reaktioner",
     "No messages" : "Inga meddelanden",
