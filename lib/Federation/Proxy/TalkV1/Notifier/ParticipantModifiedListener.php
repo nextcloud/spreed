@@ -43,6 +43,7 @@ class ParticipantModifiedListener implements IEventListener {
 
 		if (!in_array($event->getProperty(), [
 			AParticipantModifiedEvent::PROPERTY_PERMISSIONS,
+			AParticipantModifiedEvent::PROPERTY_RESEND_CALL,
 		], true)) {
 			return;
 		}

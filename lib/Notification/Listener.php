@@ -57,7 +57,7 @@ class Listener implements IEventListener {
 
 	public function handle(Event $event): void {
 		match (get_class($event)) {
-			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee()),
+			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()?->getAttendee(), $event->getTarget()->getAttendee()),
 			AttendeesAddedEvent::class => $this->generateInvitation($event->getRoom(), $event->getAttendees()),
 			UserJoinedRoomEvent::class => $this->handleUserJoinedRoomEvent($event),
 			BeforeCallStartedEvent::class => $this->checkCallNotifications($event),
@@ -335,7 +335,7 @@ class Listener implements IEventListener {
 	/**
 	 * Forced call notification when ringing a single participant again
 	 */
-	protected function sendCallNotification(Room $room, Attendee $actor, Attendee $target): void {
+	protected function sendCallNotification(Room $room, ?Attendee $actor, Attendee $target): void {
 		try {
 			// Remove previous call notifications
 			$notification = $this->notificationManager->createNotification();
@@ -346,7 +346,7 @@ class Listener implements IEventListener {
 
 			$dateTime = $this->timeFactory->getDateTime();
 			$notification->setSubject('call', [
-				'callee' => $actor->getActorId(),
+				'callee' => $actor?->getActorId(),
 			])
 				->setDateTime($dateTime);
 			$this->notificationManager->notify($notification);

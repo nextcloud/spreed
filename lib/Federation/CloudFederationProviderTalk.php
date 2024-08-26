@@ -17,6 +17,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\CallNotificationSendEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -324,6 +325,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		if ($notification['changedProperty'] === AParticipantModifiedEvent::PROPERTY_PERMISSIONS) {
 			$this->participantService->updatePermissions($room, $participant, Attendee::PERMISSIONS_MODIFY_SET, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === AParticipantModifiedEvent::PROPERTY_RESEND_CALL) {
+			$event = new CallNotificationSendEvent($room, null, $participant);
+			$this->dispatcher->dispatchTyped($event);
 		} else {
 			$this->logger->debug('Update of participant property "' . $notification['changedProperty'] . '" is not handled and should not be send via federation');
 		}
