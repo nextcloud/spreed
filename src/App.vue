@@ -554,6 +554,7 @@ export default {
 				if (event.notification.objectType === 'remote_talk_share') {
 					try {
 						event.cancelAction = true
+						this.federationStore.addInvitationFromNotification(event.notification)
 						const conversation = await this.federationStore.acceptShare(event.notification.objectId)
 						if (conversation.token) {
 							this.$store.dispatch('addConversation', conversation)
@@ -570,7 +571,8 @@ export default {
 				if (event.notification.objectType === 'remote_talk_share') {
 					try {
 						event.cancelAction = true
-						this.federationStore.rejectShare(event.notification.objectId)
+						this.federationStore.addInvitationFromNotification(event.notification)
+						await this.federationStore.rejectShare(event.notification.objectId)
 					} catch (error) {
 						console.error(error)
 					}

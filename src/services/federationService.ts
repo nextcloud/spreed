@@ -40,7 +40,7 @@ const getShares = async function(options?: object): getSharesResponse {
  * @param id invitation id;
  * @param [options] options;
  */
-const acceptShare = async function(id: number, options?: object): acceptShareResponse {
+const acceptShare = async function(id: string | number, options?: object): acceptShareResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }, options), {}, options)
 }
 
@@ -50,7 +50,7 @@ const acceptShare = async function(id: number, options?: object): acceptShareRes
  * @param id invitation id;
  * @param [options] options;
  */
-const rejectShare = async function(id: number, options?: object): rejectShareResponse {
+const rejectShare = async function(id: string | number, options?: object): rejectShareResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/federation/invitation/{id}', { id }, options), options)
 }
 
