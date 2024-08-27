@@ -1304,6 +1304,7 @@ OC.L10N.register(
     "Show all reactions" : "顯示所有反應",
     "Add more reactions" : "新增更多反應",
     "No permission to post reactions in this conversation" : "無權在此對話中張貼反應",
+    "and {participant}" : "與 {participant}",
     "_and %n other participant_::_and %n other participants_" : ["及 %n 位其他參與者"],
     "Reactions" : "反應",
     "No messages" : "沒有訊息",
