@@ -351,9 +351,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} invited {federated_user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You invited {federated_user}');
-				if (isset($parsedParameters['federated_user']['server'], $parsedParameters['actor']['server'])
-					&& $parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']
-					&& $parsedParameters['federated_user']['server'] === $parsedParameters['actor']['server']) {
+				if ($this->isFederatedUserThemselvesActor($parsedParameters['federated_user'], $parsedParameters['actor'])) {
 					$parsedMessage = $this->l->t('You accepted the invitation');
 				}
 			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['federated_user'])) {
@@ -363,9 +361,7 @@ class SystemMessage implements IEventListener {
 				}
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator invited {federated_user}');
-			} elseif (isset($parsedParameters['federated_user']['server'], $parsedParameters['actor']['server'])
-				&& $parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']
-				&& $parsedParameters['federated_user']['server'] === $parsedParameters['actor']['server']) {
+			} elseif ($this->isFederatedUserThemselvesActor($parsedParameters['federated_user'], $parsedParameters['actor'])) {
 				$parsedMessage = $this->l->t('{federated_user} accepted the invitation');
 			}
 		} elseif ($message === 'federated_user_removed') {
@@ -373,6 +369,9 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('{actor} removed {federated_user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You removed {federated_user}');
+				if ($this->isFederatedUserThemselvesActor($parsedParameters['federated_user'], $parsedParameters['actor'])) {
+					$parsedMessage = $this->l->t('You declined the invitation');
+				}
 			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['federated_user'])) {
 				$parsedMessage = $this->l->t('{actor} removed you');
 				if ($cliIsActor) {
@@ -380,9 +379,7 @@ class SystemMessage implements IEventListener {
 				}
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator removed {federated_user}');
-			} elseif (isset($parsedParameters['federated_user']['server'], $parsedParameters['actor']['server'])
-				&& $parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']
-				&& $parsedParameters['federated_user']['server'] === $parsedParameters['actor']['server']) {
+			} elseif ($this->isFederatedUserThemselvesActor($parsedParameters['federated_user'], $parsedParameters['actor'])) {
 				$parsedMessage = $this->l->t('{federated_user} declined the invitation');
 			}
 		} elseif ($message === 'group_added') {
@@ -857,7 +854,13 @@ class SystemMessage implements IEventListener {
 				&& $this->currentFederatedUserDetails['server'] === $parameter['server'];
 		}
 
-		return $currentActorType === Attendee::ACTOR_USERS && $parameter['type'] === 'user' && $currentActorId === $parameter['id'];
+		return $currentActorType === Attendee::ACTOR_USERS && $parameter['type'] === 'user' && $currentActorId === $parameter['id'] && empty($parameter['server']);
+	}
+
+	protected function isFederatedUserThemselvesActor(array $federated, array $actor): bool {
+		return isset($federated['server'], $actor['server'])
+			&& $federated['id'] === $actor['id']
+			&& $federated['server'] === $actor['server'];
 	}
 
 	protected function getActorFromComment(Room $room, IComment $comment): array {
