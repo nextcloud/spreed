@@ -282,6 +282,11 @@ export default {
 		},
 
 		imageContainerStyle() {
+			// Uploaded image in temporary message (use actual image size)
+			if (this.previewType === PREVIEW_TYPE.TEMPORARY && !this.isUploadEditor) {
+				return {}
+			}
+
 			// Fallback for loading mimeicons (preview for audio files is not provided)
 			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/')) {
 				return {
@@ -293,12 +298,9 @@ export default {
 			const widthConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 600)
 			const heightConstraint = this.smallPreview ? 32 : (this.mediumPreview ? 192 : 384)
 
-			// Fallback when no metadata available
+			// Actual size when no metadata available
 			if (!this.file.width || !this.file.height) {
-				return {
-					width: widthConstraint + 'px',
-					height: heightConstraint + 'px',
-				}
+				return {}
 			}
 
 			const sizeMultiplicator = Math.min(
@@ -587,8 +589,8 @@ export default {
 
 	.preview {
 		border-radius: var(--border-radius);
-		max-width: 100%;
-		max-height: 384px;
+		max-width: min(100%, 600px);
+		max-height: min(100%, 384px);
 	}
 
 	.preview-medium {
