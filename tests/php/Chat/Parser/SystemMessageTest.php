@@ -23,6 +23,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\Helper\FilesMetadataCache;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\Files\Folder;
 use OCP\Files\InvalidPathException;
@@ -431,18 +432,52 @@ class SystemMessageTest extends TestCase {
 				'The shared location is malformed',
 				[],
 			],
+			['federated_user_added', ['federated_user' => 'actor@federated.tld'], 'actor',
+				'You invited {federated_user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+			],
+			['federated_user_added', ['federated_user' => 'actor@federated.tld'], 'user',
+				'{actor} invited {federated_user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+			],
+			['federated_user_added', ['federated_user' => 'actor@federated.tld'], 'fed::actor@federated.tld',
+				'{actor} invited you',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+			],
+			['federated_user_added', ['federated_user' => 'actor@federated.tld'], 'fed::actor@federated.tld',
+				'You accepted the invitation',
+				['actor' => ['id' => 'actor', 'type' => 'user', 'server' => 'federated.tld'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+				$federatedActor = true,
+			],
+			['federated_user_removed', ['federated_user' => 'actor@federated.tld'], 'actor',
+				'You removed {federated_user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+			],
+			['federated_user_removed', ['federated_user' => 'actor@federated.tld'], 'user',
+				'{actor} removed {federated_user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+			],
+			['federated_user_removed', ['federated_user' => 'actor@federated.tld'], 'fed::actor@federated.tld',
+				'{actor} removed you',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+			],
+			['federated_user_removed', ['federated_user' => 'actor@federated.tld'], 'fed::actor@federated.tld',
+				'You declined the invitation',
+				['actor' => ['id' => 'actor', 'type' => 'user', 'server' => 'federated.tld'], 'federated_user' => ['type' => 'user', 'id' => 'actor', 'server' => 'federated.tld']],
+				$federatedActor = true,
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider dataParseMessage
 	 */
-	public function testParseMessage(string $message, array $parameters, ?string $recipientId, string $expectedMessage, array $expectedParameters): void {
+	public function testParseMessage(string $message, array $parameters, ?string $recipientId, string $expectedMessage, array $expectedParameters, bool $federatedActor = false): void {
 		/** @var Participant&MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		if ($recipientId === null) {
 			$participant = null;
-		} elseif ($recipientId && strpos($recipientId, 'guest::') !== false) {
+		} elseif ($recipientId && str_starts_with($recipientId, 'guest::')) {
 			$attendee = Attendee::fromRow([
 				'actor_type' => 'guests',
 				'actor_id' => substr($recipientId, strlen('guest::')),
@@ -459,6 +494,25 @@ class SystemMessageTest extends TestCase {
 			$participant->expects($this->any())
 				->method('getSession')
 				->willReturn($session);
+		} elseif ($recipientId && str_starts_with($recipientId, 'fed::')) {
+			$attendee = Attendee::fromRow([
+				'actor_type' => 'federated_users',
+				'actor_id' => substr($recipientId, strlen('fed::')),
+			]);
+			$session = Session::fromRow([
+				'session_id' => substr($recipientId, strlen('fed::')),
+			]);
+			$participant->method('isGuest')
+				->willReturn(false);
+			$participant->method('getAttendee')
+				->willReturn($attendee);
+			$participant->method('getSession')
+				->willReturn($session);
+
+			$this->federationAuthenticator->method('isFederationRequest')
+				->willReturn(true);
+			$this->federationAuthenticator->method('getCloudId')
+				->willReturn(substr($recipientId, strlen('fed::')));
 		} else {
 			$participant->expects($this->atLeastOnce())
 				->method('isGuest')
@@ -478,11 +532,16 @@ class SystemMessageTest extends TestCase {
 
 		/** @var IComment&MockObject $comment */
 		$comment = $this->createMock(IComment::class);
-		if ($recipientId && strpos($recipientId, 'guest::') !== false) {
+		if ($recipientId && str_starts_with($recipientId, 'guest::')) {
 			$comment->method('getActorType')
 				->willReturn('guests');
 			$comment->method('getActorId')
 				->willReturn(substr($recipientId, strlen('guest::')));
+		} elseif ($recipientId && str_starts_with($recipientId, 'fed::')) {
+			$comment->method('getActorType')
+				->willReturn('federated_users');
+			$comment->method('getActorId')
+				->willReturn(substr($recipientId, strlen('fed::')));
 		} else {
 			$comment->method('getActorType')
 				->willReturn('users');
@@ -490,18 +549,42 @@ class SystemMessageTest extends TestCase {
 				->willReturn($recipientId);
 		}
 
+		$this->cloudIdManager->method('resolveCloudId')
+			->willReturnCallback(function (string $id): ICloudId {
+				[$user, $remote] = explode('@', $id);
+				$cloudId = $this->createMock(ICloudId::class);
+				$cloudId->method('getUser')
+					->willReturn($user);
+				$cloudId->method('getRemote')
+					->willReturn($remote);
+				$cloudId->method('getDisplayId')
+					->willReturn($id);
+				return $cloudId;
+			});
+
 		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
-		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getGroup', 'getGuest', 'parseCall', 'getFileFromShare']);
+		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getRemoteUser', 'getGroup', 'getGuest', 'parseCall', 'getFileFromShare']);
 		$parser->expects($this->once())
 			->method('getActorFromComment')
 			->with($room, $comment)
-			->willReturn(['id' => 'actor', 'type' => 'user']);
+			->willReturnCallback(function () use ($federatedActor): array {
+				if ($federatedActor) {
+					return ['id' => 'actor', 'type' => 'user', 'server' => 'federated.tld'];
+				}
+				return ['id' => 'actor', 'type' => 'user'];
+			});
 		$parser->expects($this->any())
 			->method('getUser')
 			->with($parameters['user'] ?? 'user')
 			->willReturn(['id' => $parameters['user'] ?? 'user', 'type' => 'user']);
+		$parser->method('getRemoteUser')
+			->with($room, $parameters['federated_user'] ?? 'federated_user@federation.tld')
+			->willReturnCallback(function (Room $room, string $id): array {
+				[$user, $remote] = explode('@', $id);
+				return ['type' => 'user', 'id' => $user, 'server' => $remote];
+			});
 		$parser->expects($this->any())
 			->method('getGroup')
 			->with($parameters['group'] ?? 'group')
@@ -679,7 +762,7 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getPermissions')
 			->willReturn(27);
-	
+
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
 			->method('getNode')
@@ -687,24 +770,24 @@ class SystemMessageTest extends TestCase {
 		$share->expects($this->once())
 			->method('getToken')
 			->willReturn('token');
-	
+
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
 			->with('23')
 			->willReturn($share);
-	
+
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
 			->with('files_sharing.sharecontroller.showShare', [
 				'token' => 'token',
 			])
 			->willReturn('absolute-link');
-	
+
 		$this->previewManager->expects($this->once())
 			->method('isAvailable')
 			->with($node)
 			->willReturn(true);
-	
+
 		$this->filesMetadataCache->expects($this->once())
 			->method('getImageMetadataForFileId')
 			->with(54)
@@ -713,11 +796,11 @@ class SystemMessageTest extends TestCase {
 				'height' => 4567,
 				'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj'
 			]);
-	
+
 		$participant = $this->createMock(Participant::class);
-	
+
 		$parser = $this->getParser();
-		
+
 		$this->assertSame([
 			'type' => 'file',
 			'id' => '54',
