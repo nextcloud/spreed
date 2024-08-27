@@ -288,7 +288,7 @@ export default {
 			}
 
 			// Fallback for loading mimeicons (preview for audio files is not provided)
-			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/')) {
+			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/') || this.failed) {
 				return {
 					width: this.smallPreview ? '32px' : '128px',
 					height: this.smallPreview ? '32px' : '128px',
