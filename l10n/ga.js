@@ -1304,6 +1304,7 @@ OC.L10N.register(
     "Show all reactions" : "Taispeáin gach imoibriú",
     "Add more reactions" : "Cuir tuilleadh imoibrithe leis",
     "No permission to post reactions in this conversation" : "Níl cead frithghníomhartha a phostáil sa chomhrá seo",
+    "and {participant}" : "agus {participant}",
     "_and %n other participant_::_and %n other participants_" : ["agus %n rannpháirtí eile","agus %n rannpháirtithe eile","agus %n rannpháirtithe eile","agus %n rannpháirtithe eile","agus %n rannpháirtithe eile"],
     "Reactions" : "Imoibrithe",
     "No messages" : "Gan teachtaireachtaí",
