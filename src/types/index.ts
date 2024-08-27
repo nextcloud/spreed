@@ -33,7 +33,7 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 	user: string,
 	datetime: string,
 	objectType: string,
-	objectId: number,
+	objectId: string,
 	subject: string,
 	message: string,
 	link: string,
