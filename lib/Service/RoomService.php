@@ -27,6 +27,7 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -225,27 +226,30 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	public function setSIPEnabled(Room $room, int $newSipEnabled): bool {
+	/**
+	 * @throws SipConfigurationException
+	 */
+	public function setSIPEnabled(Room $room, int $newSipEnabled): void {
 		$oldSipEnabled = $room->getSIPEnabled();
 
 		if ($newSipEnabled === $oldSipEnabled) {
-			return false;
+			return;
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_BREAKOUT_ROOM);
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_TYPE);
 		}
 
 		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED_NO_PIN, Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_VALUE);
 		}
 
 		if (preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_TOKEN);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_SIP_ENABLED, $newSipEnabled, $oldSipEnabled);
@@ -261,8 +265,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_SIP_ENABLED, $newSipEnabled, $oldSipEnabled);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1116,11 +1118,11 @@ class RoomService {
 			}
 		}
 		if (isset($host['sipEnabled']) && $host['sipEnabled'] !== $local->getSIPEnabled()) {
-			$success = $this->setSIPEnabled($local, $host['sipEnabled']);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync sipEnabled of ' . $local->getId() . ' to ' . $host['sipEnabled']);
-			} else {
+			try {
+				$this->setSIPEnabled($local, $host['sipEnabled']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_SIP_ENABLED;
+			} catch (SipConfigurationException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync sipEnabled of ' . $local->getId() . ' to ' . $host['sipEnabled'], ['exception' => $e]);
 			}
 		}
 
