@@ -52,21 +52,21 @@
 						:shared-data="localSharedData"
 						is-big />
 					<!-- Remote or selected screen -->
-					<template v-else-if="showRemoteScreen || showSelectedScreen">
-						<Screen v-if="shownRemoteScreenCallParticipantModel"
-							:key="`screen-${shownRemoteScreenPeerId}`"
-							:token="token"
-							:call-participant-model="shownRemoteScreenCallParticipantModel"
-							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-							is-big />
-						<!-- presenter overlay -->
-						<PresenterOverlay v-if="shouldShowPresenterOverlay"
-							:token="token"
-							:model="shownRemoteScreenCallParticipantModel"
-							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-							:is-collapsed="!showPresenterOverlay"
-							@click="toggleShowPresenterOverlay" />
-					</template>
+					<Screen v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
+						:key="`screen-${shownRemoteScreenPeerId}`"
+						:token="token"
+						:call-participant-model="shownRemoteScreenCallParticipantModel"
+						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+						is-big />
+					<!-- presenter overlay -->
+					<PresenterOverlay v-if="shouldShowPresenterOverlay"
+						:token="token"
+						:model="presenterModel"
+						:shared-data="presenterSharedData"
+						:is-local-presenter="showLocalScreen"
+						:local-media-model="localMediaModel"
+						:is-collapsed="!showPresenterOverlay"
+						@click="toggleShowPresenterOverlay" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue v-else-if="promotedParticipantModel"
 						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
@@ -349,8 +349,19 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
-			return this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+			return (this.showLocalScreen && this.hasLocalVideo)
+			|| ((this.showRemoteScreen || this.showSelectedScreen)
+			&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
 
+		},
+
+		presenterModel() {
+			// Prioritize local screen over remote screen, if both are available (as in DOM order)
+			return this.showLocalScreen ? this.localCallParticipantModel : this.shownRemoteScreenCallParticipantModel
+		},
+
+		presenterSharedData() {
+			return this.showLocalScreen ? this.localSharedData : this.sharedDatas[this.shownRemoteScreenPeerId]
 		},
 
 		presenterVideoBlockerEnabled() {
@@ -734,13 +745,16 @@ export default {
 		},
 
 		isModelWithVideo(callParticipantModel) {
+			if (!callParticipantModel) {
+				return false
+			}
 			return callParticipantModel.attributes.videoAvailable
 				&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
 				&& (typeof callParticipantModel.attributes.stream === 'object')
 		},
 
 		toggleShowPresenterOverlay() {
-			if (!this.presenterVideoBlockerEnabled) {
+			if (!this.showLocalScreen && !this.presenterVideoBlockerEnabled) {
 				this.sharedDatas[this.shownRemoteScreenPeerId].remoteVideoBlocker.setVideoEnabled(true)
 			} else {
 				this.showPresenterOverlay = !this.showPresenterOverlay
