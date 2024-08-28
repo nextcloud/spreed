@@ -144,11 +144,6 @@ export default {
 
 	emits: ['click-video', 'click-presenter'],
 
-	setup() {
-		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
-	},
-
 	data() {
 		return {
 			notificationHandle: null,
