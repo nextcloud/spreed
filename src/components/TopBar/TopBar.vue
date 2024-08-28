@@ -46,6 +46,9 @@
 			</div>
 		</a>
 
+		<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
+
+		<!-- Upcoming event -->
 		<a v-if="showUpcomingEvent"
 			class="upcoming-event"
 			:href="nextEvent.calendarAppUrl"
@@ -123,6 +126,7 @@ import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
 import ReactionMenu from './ReactionMenu.vue'
+import TasksCounter from './TasksCounter.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
@@ -152,6 +156,7 @@ export default {
 		TopBarMediaControls,
 		NcButton,
 		TopBarMenu,
+		TasksCounter,
 		ReactionMenu,
 		// Icons
 		AccountMultiple,
@@ -184,6 +189,7 @@ export default {
 			localMediaModel,
 			chatExtrasStore: useChatExtrasStore(),
 			isMobile: useIsMobile(),
+			CONVERSATION,
 		}
 	},
 
@@ -299,6 +305,7 @@ export default {
 
 		showUpcomingEvent() {
 			return this.nextEvent && !this.isInCall && !this.isSidebar && !this.isMobile
+				&& this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
 		},
 	},
 
