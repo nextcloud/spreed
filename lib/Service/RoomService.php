@@ -28,6 +28,7 @@ use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
@@ -371,21 +372,21 @@ class RoomService {
 	 * @param \DateTime|null $dateTime
 	 * @param bool $timerReached
 	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws LobbyException
 	 */
-	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): bool {
+	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): void {
 		$oldState = $room->getLobbyState(false);
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
+			throw new LobbyException(LobbyException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() !== '' && $room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new LobbyException(LobbyException::REASON_OBJECT);
 		}
 
 		if (!in_array($newState, [Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE], true)) {
-			return false;
+			throw new LobbyException(LobbyException::REASON_VALUE);
 		}
 
 		if ($dispatchEvents) {
@@ -407,8 +408,6 @@ class RoomService {
 			$event = new LobbyModifiedEvent($room, $newState, $oldState, $dateTime, $timerReached);
 			$this->dispatcher->dispatchTyped($event);
 		}
-
-		return true;
 	}
 
 	public function setAvatar(Room $room, string $avatar): bool {
@@ -1079,11 +1078,11 @@ class RoomService {
 		}
 		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer(false)?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);
-			$success = $this->setLobby($local, $host['lobbyState'], $hostTimer);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync lobby of ' . $local->getId() . ' to ' . $host['lobbyState'] . ' with timer to ' . $host['lobbyTimer']);
-			} else {
+			try {
+				$this->setLobby($local, $host['lobbyState'], $hostTimer);
 				$changed[] = ARoomModifiedEvent::PROPERTY_LOBBY;
+			} catch (LobbyException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync lobby of ' . $local->getId() . ' to ' . $host['lobbyState'] . ' with timer to ' . $host['lobbyTimer'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['callStartTime'], $host['callFlag'])) {

@@ -18,6 +18,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
@@ -2195,7 +2196,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @psalm-param Webinary::LOBBY_* $state
 	 * @param int|null $timer Timer when the lobby will be removed
 	 * @psalm-param non-negative-int|null $timer
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'object'|'type'|'value'}, array{}>
 	 *
 	 * 200: Lobby state updated successfully
 	 * 400: Updating lobby state is not possible
@@ -2209,17 +2210,19 @@ class RoomController extends AEnvironmentAwareController {
 				$timerDateTime = $this->timeFactory->getDateTime('@' . $timer);
 				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
 			} catch (\Exception $e) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+				return new DataResponse(['error' => LobbyException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
 			}
 		}
 
 		if ($this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Do not allow manual changing the lobby in breakout rooms
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => LobbyException::REASON_BREAKOUT_ROOM], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$this->roomService->setLobby($this->room, $state, $timerDateTime)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setLobby($this->room, $state, $timerDateTime);
+		} catch (LobbyException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($state === Webinary::LOBBY_NON_MODERATORS) {
