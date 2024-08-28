@@ -105,6 +105,36 @@ class CallController {
 	}
 
 	/**
+	 * @see \OCA\Talk\Controller\RoomController::ringAttendee()
+	 *
+	 * @param int $attendeeId ID of the attendee to ring
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Attendee rang successfully
+	 * 400: Ringing attendee is not possible
+	 * 404: Attendee could not be found
+	 */
+	public function ringAttendee(Room $room, Participant $participant, int $attendeeId): DataResponse {
+		$proxy = $this->proxy->post(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/call/' . $room->getRemoteToken() . '/ring/' . $attendeeId,
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_BAD_REQUEST, Http::STATUS_NOT_FOUND], true)) {
+			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
+			throw new CannotReachRemoteException();
+		}
+
+		/** @var array{error?: string} $data */
+		$data = $this->proxy->getOCSData($proxy);
+
+		return new DataResponse($data, $statusCode);
+	}
+
+	/**
 	 * @see \OCA\Talk\Controller\RoomController::updateFederatedCallFlags()
 	 *
 	 * @param Room $room the federated room to update the call flags in

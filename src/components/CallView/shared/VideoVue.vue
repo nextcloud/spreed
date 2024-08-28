@@ -732,10 +732,10 @@ export default {
 }
 
 .presenter-icon__hide {
-	position: relative;
+	position: absolute;
 	color: white;
-	left: 50%;
-	transform: translate(-50%, calc(var(--default-clickable-area) * -1));
+	left: calc(50% - var(--default-clickable-area) / 2);
+	top: calc(100% - var(--default-grid-baseline) - var(--default-clickable-area));
 	opacity: 0.7;
 	background-color: rgba(0, 0, 0, 0.5);
 	border-radius: 50%;

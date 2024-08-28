@@ -76,8 +76,9 @@ import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, CHAT } from '../../constants.js'
+import { ATTENDEE, CHAT, CONVERSATION } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
+import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
 
 export default {
@@ -119,9 +120,9 @@ export default {
 	emits: ['update:is-chat-scrolled-to-bottom'],
 
 	setup() {
-		const isInCall = useIsInCall()
 		return {
-			isInCall,
+			isInCall: useIsInCall(),
+			chatExtrasStore: useChatExtrasStore(),
 		}
 	},
 
@@ -289,6 +290,12 @@ export default {
 
 				// scroll to bottom if needed
 				this.scrollToBottom({ smooth: true })
+
+				if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
+					this.$nextTick(() => {
+						this.updateTasksCount()
+					})
+				}
 			},
 		},
 	},
@@ -1237,6 +1244,15 @@ export default {
 		onMessageHeightChanged({ heightDiff }) {
 			// scroll down by the height difference
 			this.$refs.scroller.scrollTop += heightDiff
+		},
+
+		updateTasksCount() {
+			if (!this.$refs.scroller) {
+				return
+			}
+			const tasksDoneCount = this.$refs.scroller.querySelectorAll('.checkbox-content__icon--checked')?.length
+			const tasksCount = this.$refs.scroller.querySelectorAll('.task-list-item')?.length
+			this.chatExtrasStore.setTasksCounters({ tasksCount, tasksDoneCount })
 		},
 	},
 }

@@ -610,7 +610,7 @@ export default {
 		},
 
 		canSendCallNotification() {
-			return this.isUserActor
+			return (this.isUserActor || this.isFederatedActor)
 				&& !this.isSelf
 				&& (this.currentParticipant.permissions & PARTICIPANT.PERMISSIONS.CALL_START) !== 0
 				// Can also be undefined, so have to check > than disconnect

@@ -141,7 +141,7 @@
 ### Recording consent required
 * `0` - No recording consent is required to join a call
 * `1` - Recording consent is required
-* `2` - Recording consent can be enabled by moderators on conversation level
+* `2` - Recording consent can be enabled by moderators on conversation level (not allowed on conversation API level, only on config level)
 
 ## Chat
 

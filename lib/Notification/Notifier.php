@@ -999,7 +999,7 @@ class Notifier implements INotifier {
 		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$parameters = $notification->getSubjectParameters();
-			$calleeId = $parameters['callee'];
+			$calleeId = $parameters['callee']; // TODO can be null on federated conversations, so needs to be changed once we have federated 1-1
 			$userDisplayName = $this->userManager->getDisplayName($calleeId);
 			if ($userDisplayName !== null) {
 				if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {

@@ -168,7 +168,7 @@ describe('federationStore', () => {
 		// Assert
 		expect(federationStore.pendingShares).toMatchObject({
 			[invites[0].id]: invites[0],
-			[notifications[1].objectId]: { id: notifications[1].objectId },
+			[notifications[1].objectId]: { id: +notifications[1].objectId },
 		})
 		expect(federationStore.acceptedShares).toMatchObject({ [invites[1].id]: invites[1] })
 		expect(federationStore.pendingSharesCount).toBe(2)

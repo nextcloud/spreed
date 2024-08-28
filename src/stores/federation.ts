@@ -62,7 +62,7 @@ export const useFederationStore = defineStore('federation', {
 			const [remoteServerUrl, remoteToken] = notification.messageRichParameters.roomName.id.split('::')
 			const { id, name } = notification.messageRichParameters.user1
 			const invitation: FederationInvite = {
-				id: notification.objectId,
+				id: +notification.objectId,
 				localToken: '',
 				localCloudId: notification.user + '@' + getBaseUrl().replace('https://', ''),
 				remoteAttendeeId: 0,
@@ -84,7 +84,7 @@ export const useFederationStore = defineStore('federation', {
 		 * @param id invitation id
 		 * @param conversation conversation object
 		 */
-		markInvitationAccepted(id: number, conversation: Conversation) {
+		markInvitationAccepted(id: string | number, conversation: Conversation) {
 			if (!this.pendingShares[id]) {
 				return
 			}
@@ -102,7 +102,7 @@ export const useFederationStore = defineStore('federation', {
 		 *
 		 * @param id invitation id
 		 */
-		async acceptShare(id: number): Promise<Conversation | undefined> {
+		async acceptShare(id: string | number): Promise<Conversation | undefined> {
 			if (!this.pendingShares[id]) {
 				return
 			}
@@ -128,7 +128,7 @@ export const useFederationStore = defineStore('federation', {
 		 *
 		 * @param id invitation id
 		 */
-		async rejectShare(id: number) {
+		async rejectShare(id: string | number) {
 			if (!this.pendingShares[id]) {
 				return
 			}

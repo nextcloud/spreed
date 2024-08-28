@@ -158,7 +158,7 @@ Feature: federation/chat
       | LOCAL::room | room | 2    | LOCAL        | room        |
     Then user "participant1" is participant of the following unordered rooms (v4)
       | id          | name | type | remoteServer | remoteToken | lastMessage |
-      | room        | room | 2    |              |             | {actor} invited you |
+      | room        | room | 2    |              |             | {federated_user} accepted the invitation |
       | LOCAL::room | room | 2    | LOCAL        | room        | {federated_user} accepted the invitation |
     And user "participant1" sends message "Message 1" to room "room" with 201
     Then user "participant1" is participant of the following unordered rooms (v4)
