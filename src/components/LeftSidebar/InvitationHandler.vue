@@ -45,6 +45,7 @@
 							:reference-limit="0" />
 					</div>
 					<NcButton type="tertiary"
+						class="inbox__item-button"
 						:aria-label="t('spreed', 'Decline invitation')"
 						:title="t('spreed', 'Decline invitation')"
 						:disabled="!!item.loading"
@@ -55,6 +56,7 @@
 						</template>
 					</NcButton>
 					<NcButton type="primary"
+						class="inbox__item-button"
 						:aria-label="t('spreed', 'Accept invitation')"
 						:title="t('spreed', 'Accept invitation')"
 						:disabled="!!item.loading"
@@ -250,6 +252,10 @@ export default {
 			&__subname {
 				color: var(--color-text-maxcontrast);
 			}
+		}
+
+		&-button {
+			flex-shrink: 0;
 		}
 	}
 }
