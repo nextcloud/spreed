@@ -73,6 +73,7 @@
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
 			:container="container"
+			:disabled="!isScreensharingAllowed"
 			:open.sync="screenSharingMenuOpen">
 			<template #icon>
 				<MonitorOff :size="20" />
@@ -95,6 +96,7 @@
 			v-tooltip="screenSharingButtonTooltip"
 			type="tertiary"
 			:aria-label="screenSharingButtonAriaLabel"
+			:disabled="!isScreensharingAllowed"
 			@click.stop="toggleScreenSharingMenu">
 			<template #icon>
 				<MonitorShare :size="20" />

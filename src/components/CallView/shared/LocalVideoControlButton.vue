@@ -7,7 +7,8 @@
 	<NcButton v-tooltip="videoButtonTooltip"
 		:type="type"
 		:aria-label="videoButtonAriaLabel"
-		:class="{ 'no-video-available': !isVideoAllowed || !model.attributes.videoAvailable }"
+		:class="{ 'no-video-available': !model.attributes.videoAvailable }"
+		:disabled="!isVideoAllowed"
 		@click.stop="toggleVideo">
 		<template #icon>
 			<VideoIcon v-if="showVideoOn" :size="20" />
