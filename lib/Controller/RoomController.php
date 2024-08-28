@@ -17,6 +17,7 @@ use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
@@ -2110,7 +2111,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param 'call'|'default' $mode Level of the permissions ('call' (removed in Talk 20), 'default')
 	 * @param int<0, 255> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'|'value'}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -2124,10 +2125,8 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			$this->roomService->setDefaultPermissions($this->room, $permissions);
-		} catch (\InvalidArgumentException $e) {
-			/** @var 'breakout-room'|'type' $error */
-			$error = $e->getMessage();
-			return new DataResponse(['error' => $error], Http::STATUS_BAD_REQUEST);
+		} catch (DefaultPermissionsException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
