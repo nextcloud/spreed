@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
@@ -56,7 +57,9 @@ trait TRoomCommand {
 			throw new InvalidArgumentException('Invalid room name.');
 		}
 
-		if (!$this->roomService->setName($room, $name)) {
+		try {
+			$this->roomService->setName($room, $name);
+		} catch (NameException) {
 			throw new InvalidArgumentException('Unable to change room name.');
 		}
 	}

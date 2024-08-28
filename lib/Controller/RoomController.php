@@ -18,6 +18,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -779,7 +780,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Rename a room
 	 *
 	 * @param string $roomName New name
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
@@ -787,17 +788,11 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setName($this->room, $roomName, validateType: true);
+		} catch (NameException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
-
-		$roomName = trim($roomName);
-
-		if ($roomName === '' || mb_strlen($roomName) > 255) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->roomService->setName($this->room, $roomName);
 		return new DataResponse();
 	}
 
