@@ -151,7 +151,7 @@ class BotController extends AEnvironmentAwareController {
 		$room = $this->manager->getRoomByToken($token);
 
 		$actorType = Attendee::ACTOR_BOTS;
-		$actorId = Attendee::ACTOR_BOT_PREFIX . $bot->getBotServer()->getUrlHash();
+		$actorId = Attendee::BOT_ACTOR_PREFIX . $bot->getBotServer()->getUrlHash();
 
 		$parent = null;
 		if ($replyTo !== 0) {
@@ -210,7 +210,7 @@ class BotController extends AEnvironmentAwareController {
 		$room = $this->manager->getRoomByToken($token);
 
 		$actorType = Attendee::ACTOR_BOTS;
-		$actorId = Attendee::ACTOR_BOT_PREFIX . $bot->getBotServer()->getUrlHash();
+		$actorId = Attendee::BOT_ACTOR_PREFIX . $bot->getBotServer()->getUrlHash();
 
 		try {
 			$this->reactionManager->addReactionMessage(
@@ -263,7 +263,7 @@ class BotController extends AEnvironmentAwareController {
 		$room = $this->manager->getRoomByToken($token);
 
 		$actorType = Attendee::ACTOR_BOTS;
-		$actorId = Attendee::ACTOR_BOT_PREFIX . $bot->getBotServer()->getUrlHash();
+		$actorId = Attendee::BOT_ACTOR_PREFIX . $bot->getBotServer()->getUrlHash();
 
 		try {
 			$this->reactionManager->deleteReactionMessage(

@@ -137,7 +137,7 @@ class MessageParser {
 			$displayName = $actorId;
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
 		} elseif ($actorType === Attendee::ACTOR_GUESTS
-			&& !in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_CHANGELOG], true)) {
+			&& !in_array($actorId, [Attendee::CLI_ACTOR_ID, Attendee::CHANGELOG_ACTOR_ID], true)) {
 			if (isset($this->guestNames[$actorId])) {
 				$displayName = $this->guestNames[$actorId];
 			} else {
@@ -151,8 +151,8 @@ class MessageParser {
 		} elseif ($actorType === Attendee::ACTOR_BOTS) {
 			$displayName = $actorId . '-bot';
 			$token = $message->getRoom()->getToken();
-			if (str_starts_with($actorId, Attendee::ACTOR_BOT_PREFIX)) {
-				$urlHash = substr($actorId, strlen(Attendee::ACTOR_BOT_PREFIX));
+			if (str_starts_with($actorId, Attendee::BOT_ACTOR_PREFIX)) {
+				$urlHash = substr($actorId, strlen(Attendee::BOT_ACTOR_PREFIX));
 				$botName = $this->getBotNameByUrlHashForConversation($token, $urlHash);
 				if ($botName) {
 					$displayName = $botName . ' (Bot)';

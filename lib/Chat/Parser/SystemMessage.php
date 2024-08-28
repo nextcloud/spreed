@@ -156,11 +156,11 @@ class SystemMessage implements IEventListener {
 				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		}
 		$cliIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-			'guest/' . Attendee::ACTOR_ID_CLI === $parsedParameters['actor']['id'];
+			'guest/' . Attendee::CLI_ACTOR_ID === $parsedParameters['actor']['id'];
 
 		if ($message === 'conversation_created') {
 			$systemIsActor = $parsedParameters['actor']['type'] === 'guest' &&
-				'guest/' . Attendee::ACTOR_ID_SYSTEM === $parsedParameters['actor']['id'];
+				'guest/' . Attendee::SYSTEM_ACTOR_ID === $parsedParameters['actor']['id'];
 
 			$parsedMessage = $this->l->t('{actor} created the conversation');
 			if ($currentUserIsActor) {
@@ -654,7 +654,7 @@ class SystemMessage implements IEventListener {
 			$parsedMessage = $this->l->t('Someone voted on the poll {poll}');
 			unset($parsedParameters['actor']);
 
-			$chatMessage->setActor(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_SYSTEM, '');
+			$chatMessage->setActor(Attendee::ACTOR_GUESTS, Attendee::SYSTEM_ACTOR_ID, '');
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
@@ -1024,7 +1024,7 @@ class SystemMessage implements IEventListener {
 	}
 
 	protected function getGuestName(Room $room, string $actorType, string $actorId): string {
-		if ($actorId === Attendee::ACTOR_ID_CLI) {
+		if ($actorId === Attendee::CLI_ACTOR_ID) {
 			return $this->l->t('Guest');
 		}
 

@@ -175,6 +175,8 @@ class Capabilities implements IPublicCapability {
 			return [];
 		}
 
+		/** @psalm-var non-empty-string $version */
+		$version = $this->appManager->getAppVersion('spreed');
 		$capabilities = [
 			'features' => self::FEATURES,
 			'features-local' => self::LOCAL_FEATURES,
@@ -211,7 +213,7 @@ class Capabilities implements IPublicCapability {
 					'only-trusted-servers' => true,
 				],
 				'previews' => [
-					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728'),
+					'max-gif-size' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728')),
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
@@ -219,7 +221,7 @@ class Capabilities implements IPublicCapability {
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,
-			'version' => $this->appManager->getAppVersion('spreed'),
+			'version' => $version,
 		];
 
 		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
@@ -246,7 +248,7 @@ class Capabilities implements IPublicCapability {
 		}
 
 		$pubKey = $this->talkConfig->getSignalingTokenPublicKey();
-		if ($pubKey) {
+		if ($pubKey !== '') {
 			$capabilities['config']['signaling']['hello-v2-token-key'] = $pubKey;
 		}
 

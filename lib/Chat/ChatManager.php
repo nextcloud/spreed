@@ -245,7 +245,7 @@ class ChatManager {
 	 * @return IComment
 	 */
 	public function addChangelogMessage(Room $chat, string $message): IComment {
-		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_CHANGELOG, 'chat', (string)$chat->getId());
+		$comment = $this->commentsManager->create(Attendee::ACTOR_GUESTS, Attendee::CHANGELOG_ACTOR_ID, 'chat', (string)$chat->getId());
 
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
@@ -345,8 +345,8 @@ class ChatManager {
 
 			// Update last_message
 			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
-				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
-				|| str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
+				|| $comment->getActorId() === Attendee::CHANGELOG_ACTOR_ID
+				|| str_starts_with($comment->getActorId(), Attendee::BOT_ACTOR_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {

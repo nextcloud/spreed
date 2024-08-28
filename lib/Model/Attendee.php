@@ -60,6 +60,7 @@ use OCP\AppFramework\Db\Entity;
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
+
 	public const ACTOR_GROUPS = 'groups';
 	public const ACTOR_GUESTS = 'guests';
 	public const ACTOR_EMAILS = 'emails';
@@ -70,10 +71,10 @@ class Attendee extends Entity {
 	public const ACTOR_PHONES = 'phones';
 
 	// Special actor IDs
-	public const ACTOR_BOT_PREFIX = 'bot-';
-	public const ACTOR_ID_CLI = 'cli';
-	public const ACTOR_ID_SYSTEM = 'system';
-	public const ACTOR_ID_CHANGELOG = 'changelog';
+	public const BOT_ACTOR_PREFIX = 'bot-';
+	public const CLI_ACTOR_ID = 'cli';
+	public const SYSTEM_ACTOR_ID = 'system';
+	public const CHANGELOG_ACTOR_ID = 'changelog';
 
 	public const PERMISSIONS_DEFAULT = 0;
 	public const PERMISSIONS_CUSTOM = 1;

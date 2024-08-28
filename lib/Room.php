@@ -570,6 +570,9 @@ class Room {
 		return $this->mentionPermissions;
 	}
 
+	/**
+	 * @psalm-param self::MENTION_PERMISSIONS_* $mentionPermissions
+	 */
 	public function setMentionPermissions(int $mentionPermissions): void {
 		$this->mentionPermissions = $mentionPermissions;
 	}
