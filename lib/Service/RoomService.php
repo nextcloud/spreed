@@ -28,6 +28,7 @@ use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -275,7 +276,7 @@ class RoomService {
 
 	/**
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
-	 * @throws InvalidArgumentException When the room has an active call or the value is invalid
+	 * @throws RecordingConsentException When the room has an active call or the value is invalid
 	 */
 	public function setRecordingConsent(Room $room, int $recordingConsent, bool $allowUpdatingBreakoutRooms = false): void {
 		$oldRecordingConsent = $room->getRecordingConsent();
@@ -285,19 +286,19 @@ class RoomService {
 		}
 
 		if (!in_array($recordingConsent, [RecordingService::CONSENT_REQUIRED_NO, RecordingService::CONSENT_REQUIRED_YES], true)) {
-			throw new InvalidArgumentException('value');
+			throw new RecordingConsentException(RecordingConsentException::REASON_VALUE);
 		}
 
 		if ($recordingConsent !== RecordingService::CONSENT_REQUIRED_NO && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
-			throw new InvalidArgumentException('call');
+			throw new RecordingConsentException(RecordingConsentException::REASON_CALL);
 		}
 
 		if (!$allowUpdatingBreakoutRooms && $room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new InvalidArgumentException('breakout-room');
+			throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
 		}
 
 		if ($room->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STOPPED) {
-			throw new InvalidArgumentException('breakout-room');
+			throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, $recordingConsent, $oldRecordingConsent);
@@ -1119,8 +1120,8 @@ class RoomService {
 			try {
 				$this->setRecordingConsent($local, $host['recordingConsent'], true);
 				$changed[] = ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync recordingConsent of ' . $local->getId() . ' to ' . $host['recordingConsent'], ['exception' => $e]);
+			} catch (RecordingConsentException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync recordingConsent of ' . $local->getId() . ' to ' . $host['recordingConsent'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['sipEnabled']) && $host['sipEnabled'] !== $local->getSIPEnabled()) {
