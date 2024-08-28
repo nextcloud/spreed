@@ -155,8 +155,12 @@ export default {
 		},
 
 		message() {
+			if (this.connectionFailed === 'consent') {
+				return t('spreed', 'Recording consent is required')
+			}
+
 			if (this.connectionFailed) {
-				return this.connectionFailed
+				return t('spreed', 'Something went wrong')
 			}
 
 			if (this.isConnecting) {
