@@ -17,6 +17,7 @@ use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\FederationManager;
@@ -2245,7 +2246,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1|2 $state New state
 	 * @psalm-param Webinary::SIP_* $state
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}, array{}>
 	 *
 	 * 200: SIP enabled state updated successfully
 	 * 400: Updating SIP enabled state is not possible
@@ -2269,8 +2270,10 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		if (!$this->roomService->setSIPEnabled($this->room, $state)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setSIPEnabled($this->room, $state);
+		} catch (SipConfigurationException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
