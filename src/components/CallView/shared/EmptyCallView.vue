@@ -133,7 +133,7 @@ export default {
 
 		title() {
 			if (this.connectionFailed) {
-				return t('spreed', 'Connection Failed')
+				return t('spreed', 'Connection failed')
 			}
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
