@@ -282,7 +282,7 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 				reject(new Error())
 				store.commit('connectionFailed', {
 					token,
-					payload: e.response?.data?.ocs?.data,
+					payload: e.response?.data?.ocs?.data?.error,
 				})
 			})
 	})
