@@ -839,10 +839,6 @@ export default {
 	vertical-align: top; /* fix white line below video */
 }
 
-#videos :deep(.avatardiv) {
-	box-shadow: 0 0 15px var(--color-box-shadow);
-}
-
 #videos :deep(video) {
 	padding: 0;
 }
