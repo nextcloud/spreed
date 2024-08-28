@@ -4,6 +4,7 @@
  */
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import MessagesList from './MessagesList.vue'
@@ -23,7 +24,7 @@ describe('MessagesList.vue', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
-
+		setActivePinia(createPinia())
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
 			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
