@@ -39,6 +39,8 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 		chatInput: {},
 		messageIdToEdit: {},
 		chatEditInput: {},
+		tasksCount: 0,
+		tasksDoneCount: 0,
 	}),
 
 	getters: {
@@ -240,5 +242,10 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 			this.removeUserAbsence(token)
 			this.removeChatInput(token)
 		},
+
+		setTasksCounters({ tasksCount, tasksDoneCount }) {
+			this.tasksCount = tasksCount
+			this.tasksDoneCount = tasksDoneCount
+		}
 	},
 })
