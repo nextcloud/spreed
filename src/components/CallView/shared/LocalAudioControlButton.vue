@@ -7,7 +7,8 @@
 	<NcButton v-tooltip="audioButtonTooltip"
 		:type="type"
 		:aria-label="audioButtonAriaLabel"
-		:class="{ 'no-audio-available': !isAudioAllowed || !model.attributes.audioAvailable }"
+		:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
+		:disabled="!isAudioAllowed"
 		@click.stop="toggleAudio">
 		<template #icon>
 			<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
