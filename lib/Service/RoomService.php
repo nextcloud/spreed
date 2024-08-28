@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OC\Memcache\NullCache;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
@@ -26,6 +27,7 @@ use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
+use OCA\Talk\Exceptions\RoomLockedException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -37,10 +39,14 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\Comments\IComment;
+use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
+use OCP\ICacheFactory;
 use OCP\IDBConnection;
+use OCP\IMemcache;
+use OCP\IRequestId;
 use OCP\IUser;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
@@ -52,6 +58,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class RoomService {
+	protected IMemcache $cache;
 
 	public function __construct(
 		protected Manager $manager,
@@ -64,7 +71,46 @@ class RoomService {
 		protected IEventDispatcher $dispatcher,
 		protected IJobList $jobList,
 		protected LoggerInterface $logger,
+		protected IRequestId $requestId,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->cache = $cacheFactory->createLocking('talkroom_');
+	}
+
+	/**
+	 * @throws RoomLockedException
+	 */
+	protected function updateRoomPropertyWithLock(Room $room, string $property, int $value): void {
+		$cacheKey = $this->cache instanceof NullCache ? null : (string)$room->getId();
+		if ($cacheKey !== null) {
+			$this->cache->add($cacheKey, $this->requestId->getId(), 30);
+			$sleeps = 0;
+			while ($this->cache->get($cacheKey) !== $this->requestId->getId()) {
+				if ($sleeps > 30) {
+					throw new RoomLockedException();
+				}
+				usleep(10_000);
+				$sleeps++;
+				$this->cache->add($cacheKey, $this->requestId->getId(), 30);
+			}
+
+			if ($sleeps !== 0) {
+				$room = $this->manager->getRoomById($room->getId());
+			}
+		}
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set($property, $update->createNamedParameter($value, IQueryBuilder::PARAM_INT))
+			->set('properties_version', $update->func()->add('properties_version', $update->expr()->literal(1, IQueryBuilder::PARAM_INT)))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->eq('properties_version', $update->createNamedParameter($room->getPropertiesVersion(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setPropertiesVersion($room->getPropertiesVersion() + 1);
+		if ($cacheKey !== null) {
+			$this->cache->cad($cacheKey, $this->requestId->getId());
+		}
 	}
 
 	/**
@@ -213,11 +259,11 @@ class RoomService {
 		// Reset custom user permissions to default
 		$this->participantService->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_DEFAULT);
 
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('default_permissions', $update->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
+		try {
+			$this->updateRoomPropertyWithLock($room, 'default_permissions', $newPermissions);
+		} catch (RoomLockedException $e) {
+			throw new InvalidArgumentException('locked');
+		}
 
 		$room->setDefaultPermissions($newPermissions);
 
