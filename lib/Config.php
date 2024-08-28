@@ -64,19 +64,30 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	/**
+	 * @return Participant::PRIVACY_*
+	 */
 	public function getUserReadPrivacy(string $userId): int {
-		return (int)$this->config->getUserValue(
+		return match ((int)$this->config->getUserValue(
 			$userId,
 			'spreed', 'read_status_privacy',
-			(string)Participant::PRIVACY_PUBLIC);
+			(string)Participant::PRIVACY_PUBLIC)) {
+			Participant::PRIVACY_PUBLIC => Participant::PRIVACY_PUBLIC,
+			default => Participant::PRIVACY_PRIVATE,
+		};
 	}
 
+	/**
+	 * @return Participant::PRIVACY_*
+	 */
 	public function getUserTypingPrivacy(string $userId): int {
-		return (int)$this->config->getUserValue(
+		return match ((int)$this->config->getUserValue(
 			$userId,
 			'spreed', 'typing_privacy',
-			(string)Participant::PRIVACY_PUBLIC);
-
+			(string)Participant::PRIVACY_PUBLIC)) {
+			Participant::PRIVACY_PUBLIC => Participant::PRIVACY_PUBLIC,
+			default => Participant::PRIVACY_PRIVATE,
+		};
 	}
 
 	/**
@@ -256,11 +267,15 @@ class Config {
 		return empty(array_intersect($allowedGroups, $userGroups));
 	}
 
+	/**
+	 * @return int<0, 255>
+	 * @psalm-return int-mask-of<Attendee::PERMISSIONS_*>
+	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
 		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
 		if ($configurableDefault !== '') {
-			return (int)$configurableDefault;
+			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, (int)$configurableDefault));
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
