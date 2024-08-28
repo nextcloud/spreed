@@ -64,6 +64,9 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	/**
+	 * @return Participant::PRIVACY_*
+	 */
 	public function getUserReadPrivacy(string $userId): int {
 		return (int)$this->config->getUserValue(
 			$userId,
@@ -71,6 +74,9 @@ class Config {
 			(string)Participant::PRIVACY_PUBLIC);
 	}
 
+	/**
+	 * @return Participant::PRIVACY_*
+	 */
 	public function getUserTypingPrivacy(string $userId): int {
 		return (int)$this->config->getUserValue(
 			$userId,

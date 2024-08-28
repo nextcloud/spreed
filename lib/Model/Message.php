@@ -149,6 +149,9 @@ class Message {
 		$this->lastEditTimestamp = $timestamp;
 	}
 
+	/**
+	 * @return Attendee::ACTOR_*
+	 */
 	public function getActorType(): string {
 		return $this->actorType;
 	}

@@ -143,8 +143,8 @@ class ReactionManager {
 			$this->messageParser->parseMessage($message);
 
 			$reactions[$comment->getMessage()][] = [
-				'actorType' => $comment->getActorType(),
-				'actorId' => $comment->getActorId(),
+				'actorType' => $message->getActorType(),
+				'actorId' => $message->getActorId(),
 				'actorDisplayName' => $message->getActorDisplayName(),
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
 			];
