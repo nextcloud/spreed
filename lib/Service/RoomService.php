@@ -28,6 +28,7 @@ use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Manager;
@@ -329,13 +330,21 @@ class RoomService {
 	}
 
 	/**
-	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws NameException
 	 */
-	public function setName(Room $room, string $newName, ?string $oldName = null): bool {
-		$oldName = $oldName !== null ? $oldName : $room->getName();
+	public function setName(Room $room, string $newName, ?string $oldName = null, bool $validateType = false): void {
+		if ($validateType && ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
+			throw new NameException(NameException::REASON_TYPE);
+		}
+
+		$newName = trim($newName);
+		$oldName = $oldName ?? $room->getName();
 		if ($newName === $oldName) {
-			return false;
+			return;
+		}
+
+		if ($newName === '' || mb_strlen($newName) > 255) {
+			throw new NameException(NameException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_NAME, $newName, $oldName);
@@ -351,8 +360,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_NAME, $newName, $oldName);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1017,11 +1024,11 @@ class RoomService {
 			}
 		}
 		if (isset($host['name']) && $host['name'] !== $local->getName()) {
-			$success = $this->setName($local, $host['name'], $local->getName());
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync name of ' . $local->getId() . ' to ' . $host['name']);
-			} else {
+			try {
+				$this->setName($local, $host['name'], $local->getName());
 				$changed[] = ARoomModifiedEvent::PROPERTY_NAME;
+			} catch (NameException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync name of ' . $local->getId() . ' to ' . $host['name'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['description']) && $host['description'] !== $local->getDescription()) {
