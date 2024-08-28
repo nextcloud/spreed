@@ -15,6 +15,9 @@
 			<p v-if="message" class="emptycontent-additional">
 				{{ message }}
 			</p>
+			<p v-if="helper" class="emptycontent-additional">
+				{{ helper }}
+			</p>
 			<NcButton v-if="showLink"
 				type="primary"
 				@click.stop="handleCopyLink">
@@ -67,6 +70,10 @@ export default {
 			return this.$store.getters.isConnecting(this.token)
 		},
 
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
@@ -112,6 +119,9 @@ export default {
 		},
 
 		iconClass() {
+			if (this.connectionFailed) {
+				return 'icon-error'
+			}
 			if (this.isConnecting) {
 				return 'icon-loading'
 			} else if (this.isPhoneConversation) {
@@ -122,6 +132,9 @@ export default {
 		},
 
 		title() {
+			if (this.connectionFailed) {
+				return t('spreed', 'Connection failed')
+			}
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
 			}
@@ -134,7 +147,22 @@ export default {
 			return t('spreed', 'Waiting for others to join the call …')
 		},
 
+		helper() {
+			if (this.connectionFailed) {
+				return t('spreed', 'Please try to reload the page')
+			}
+			return ''
+		},
+
 		message() {
+			if (this.connectionFailed === 'consent') {
+				return t('spreed', 'Recording consent is required')
+			}
+
+			if (this.connectionFailed) {
+				return t('spreed', 'Something went wrong')
+			}
+
 			if (this.isConnecting) {
 				return ''
 			}
