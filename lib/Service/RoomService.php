@@ -27,6 +27,7 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -187,18 +188,23 @@ class RoomService {
 	}
 
 	/**
-	 * @throws InvalidArgumentException
+	 * @throws DefaultPermissionsException
 	 */
 	public function setDefaultPermissions(Room $room, int $permissions): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
-			throw new \InvalidArgumentException('type');
+			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Do not allow manual changing the permissions in breakout rooms
-			throw new InvalidArgumentException('breakout-room');
+			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_BREAKOUT_ROOM);
+		}
+
+		if ($permissions < 0 || $permissions > 255) {
+			// Do not allow manual changing the permissions in breakout rooms
+			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_VALUE);
 		}
 
 		$oldPermissions = $room->getDefaultPermissions();
@@ -1041,8 +1047,8 @@ class RoomService {
 			try {
 				$this->setDefaultPermissions($local, $host['defaultPermissions']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions'], ['exception' => $e]);
+			} catch (DefaultPermissionsException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['avatarVersion']) && $host['avatarVersion'] !== $local->getAvatar()) {
