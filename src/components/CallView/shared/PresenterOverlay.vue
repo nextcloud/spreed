@@ -13,7 +13,17 @@
 		:y="10"
 		@dragging="isDragging = true"
 		@dragstop="isDragging = false">
-		<VideoVue :token="token"
+		<LocalVideo v-if="isLocalPresenter"
+			class="presenter-overlay__video"
+			:token="token"
+			:local-media-model="localMediaModel"
+			:local-call-participant-model="model"
+			is-presenter-overlay
+			un-selectable
+			hide-bottom-bar
+			@click-presenter="$emit('click')" />
+		<VideoVue v-else
+			:token="token"
 			:class="{ 'dragging': isDragging }"
 			class="presenter-overlay__video"
 			:model="model"
@@ -47,6 +57,7 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import LocalVideo from './LocalVideo.vue'
 import VideoVue from './VideoVue.vue'
 
 export default {
@@ -56,6 +67,7 @@ export default {
 		AccountBox,
 		VueDraggableResizable,
 		NcButton,
+		LocalVideo,
 		VideoVue,
 	},
 
@@ -78,6 +90,16 @@ export default {
 		isCollapsed: {
 			type: Boolean,
 			required: true,
+		},
+
+		isLocalPresenter: {
+			type: Boolean,
+			default: false,
+		},
+
+		localMediaModel: {
+			type: Object,
+			default: null,
 		},
 	},
 
