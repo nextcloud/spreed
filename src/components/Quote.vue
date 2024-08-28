@@ -25,9 +25,7 @@ components.
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
-				{{ actorDisplayName }}
-				<span v-if="remoteServer" class="quote__main__author-server">{{ remoteServer }}</span>
-				<span v-if="lastEditor" class="quote__main__author-edit">{{ lastEditor }}</span>
+				<span class="quote__main__author-info">{{ actorInfo }}</span>
 				<div v-if="editMessage" class="quote__main__edit-hint">
 					<PencilIcon :size="20" />
 					{{ t('spreed', '(editing)') }}
@@ -57,7 +55,7 @@ components.
 </template>
 
 <script>
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
@@ -117,14 +115,18 @@ export default {
 			actorDisplayName,
 		} = useMessageInfo(message)
 
+		const actorInfo = computed(() => {
+			return [actorDisplayName.value, remoteServer.value, lastEditor.value]
+				.filter(value => value).join(' ')
+		})
+
 		return {
 			AVATAR,
 			chatExtrasStore,
 			isFileShare,
 			isFileShareWithoutCaption,
-			remoteServer,
-			lastEditor,
 			actorDisplayName,
+			actorInfo,
 		}
 	},
 
@@ -277,8 +279,7 @@ export default {
 			gap: 4px;
 			color: var(--color-text-maxcontrast);
 
-			&-edit,
-			&-server {
+			&-info {
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
