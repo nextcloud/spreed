@@ -14,6 +14,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
+use OCA\Talk\Exceptions\RoomProperty\MessageExpirationException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\PasswordException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
@@ -407,6 +408,10 @@ trait TRoomCommand {
 	}
 
 	protected function setMessageExpiration(Room $room, int $seconds): void {
-		$this->roomService->setMessageExpiration($room, $seconds);
+		try {
+			$this->roomService->setMessageExpiration($room, $seconds);
+		} catch (MessageExpirationException) {
+			throw new InvalidArgumentException('Unable to change message expiration.');
+		}
 	}
 }

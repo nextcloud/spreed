@@ -33,6 +33,7 @@ use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\MessageExpirationException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\PasswordException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
@@ -773,11 +774,19 @@ class RoomService {
 	}
 
 	/**
-	 * @throws InvalidArgumentException When the room is a breakout room or the room is a former one-to-one conversation
+	 * @throws MessageExpirationException When the room is a breakout room or the room is a former one-to-one conversation
 	 */
 	public function setMessageExpiration(Room $room, int $seconds): void {
-		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			throw new InvalidArgumentException('room');
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new MessageExpirationException(MessageExpirationException::REASON_BREAKOUT_ROOM);
+		}
+
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			throw new MessageExpirationException(MessageExpirationException::REASON_TYPE);
+		}
+
+		if ($seconds < 0) {
+			throw new MessageExpirationException(MessageExpirationException::REASON_VALUE);
 		}
 
 		$oldExpiration = $room->getMessageExpiration();
@@ -1110,8 +1119,8 @@ class RoomService {
 			try {
 				$this->setMessageExpiration($local, $host['messageExpiration']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync messageExpiration of ' . $local->getId() . ' to ' . $host['messageExpiration'], ['exception' => $e]);
+			} catch (MessageExpirationException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync messageExpiration of ' . $local->getId() . ' to ' . $host['messageExpiration'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['readOnly']) && $host['readOnly'] !== $local->getReadOnly()) {
