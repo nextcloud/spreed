@@ -27,6 +27,11 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\LobbyException;
+use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
+use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -186,18 +191,23 @@ class RoomService {
 	}
 
 	/**
-	 * @throws InvalidArgumentException
+	 * @throws DefaultPermissionsException
 	 */
 	public function setDefaultPermissions(Room $room, int $permissions): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF) {
-			throw new \InvalidArgumentException('type');
+			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Do not allow manual changing the permissions in breakout rooms
-			throw new InvalidArgumentException('breakout-room');
+			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_BREAKOUT_ROOM);
+		}
+
+		if ($permissions < 0 || $permissions > 255) {
+			// Do not allow manual changing the permissions in breakout rooms
+			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_VALUE);
 		}
 
 		$oldPermissions = $room->getDefaultPermissions();
@@ -225,27 +235,30 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	public function setSIPEnabled(Room $room, int $newSipEnabled): bool {
+	/**
+	 * @throws SipConfigurationException
+	 */
+	public function setSIPEnabled(Room $room, int $newSipEnabled): void {
 		$oldSipEnabled = $room->getSIPEnabled();
 
 		if ($newSipEnabled === $oldSipEnabled) {
-			return false;
+			return;
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_BREAKOUT_ROOM);
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_TYPE);
 		}
 
 		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED_NO_PIN, Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_VALUE);
 		}
 
 		if (preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())) {
-			return false;
+			throw new SipConfigurationException(SipConfigurationException::REASON_TOKEN);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_SIP_ENABLED, $newSipEnabled, $oldSipEnabled);
@@ -261,13 +274,11 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_SIP_ENABLED, $newSipEnabled, $oldSipEnabled);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_* $recordingConsent
-	 * @throws InvalidArgumentException When the room has an active call or the value is invalid
+	 * @throws RecordingConsentException When the room has an active call or the value is invalid
 	 */
 	public function setRecordingConsent(Room $room, int $recordingConsent, bool $allowUpdatingBreakoutRooms = false): void {
 		$oldRecordingConsent = $room->getRecordingConsent();
@@ -277,19 +288,19 @@ class RoomService {
 		}
 
 		if (!in_array($recordingConsent, [RecordingService::CONSENT_REQUIRED_NO, RecordingService::CONSENT_REQUIRED_YES], true)) {
-			throw new InvalidArgumentException('value');
+			throw new RecordingConsentException(RecordingConsentException::REASON_VALUE);
 		}
 
 		if ($recordingConsent !== RecordingService::CONSENT_REQUIRED_NO && $room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
-			throw new InvalidArgumentException('call');
+			throw new RecordingConsentException(RecordingConsentException::REASON_CALL);
 		}
 
 		if (!$allowUpdatingBreakoutRooms && $room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new InvalidArgumentException('breakout-room');
+			throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
 		}
 
 		if ($room->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STOPPED) {
-			throw new InvalidArgumentException('breakout-room');
+			throw new RecordingConsentException(RecordingConsentException::REASON_BREAKOUT_ROOM);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, $recordingConsent, $oldRecordingConsent);
@@ -320,13 +331,21 @@ class RoomService {
 	}
 
 	/**
-	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws NameException
 	 */
-	public function setName(Room $room, string $newName, ?string $oldName = null): bool {
-		$oldName = $oldName !== null ? $oldName : $room->getName();
+	public function setName(Room $room, string $newName, ?string $oldName = null, bool $validateType = false): void {
+		if ($validateType && ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
+			throw new NameException(NameException::REASON_TYPE);
+		}
+
+		$newName = trim($newName);
+		$oldName = $oldName ?? $room->getName();
 		if ($newName === $oldName) {
-			return false;
+			return;
+		}
+
+		if ($newName === '' || mb_strlen($newName) > 255) {
+			throw new NameException(NameException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_NAME, $newName, $oldName);
@@ -342,8 +361,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_NAME, $newName, $oldName);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -355,21 +372,21 @@ class RoomService {
 	 * @param \DateTime|null $dateTime
 	 * @param bool $timerReached
 	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws LobbyException
 	 */
-	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): bool {
+	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): void {
 		$oldState = $room->getLobbyState(false);
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
+			throw new LobbyException(LobbyException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() !== '' && $room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new LobbyException(LobbyException::REASON_OBJECT);
 		}
 
 		if (!in_array($newState, [Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE], true)) {
-			return false;
+			throw new LobbyException(LobbyException::REASON_VALUE);
 		}
 
 		if ($dispatchEvents) {
@@ -391,8 +408,6 @@ class RoomService {
 			$event = new LobbyModifiedEvent($room, $newState, $oldState, $dateTime, $timerReached);
 			$this->dispatcher->dispatchTyped($event);
 		}
-
-		return true;
 	}
 
 	public function setAvatar(Room $room, string $avatar): bool {
@@ -1008,11 +1023,11 @@ class RoomService {
 			}
 		}
 		if (isset($host['name']) && $host['name'] !== $local->getName()) {
-			$success = $this->setName($local, $host['name'], $local->getName());
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync name of ' . $local->getId() . ' to ' . $host['name']);
-			} else {
+			try {
+				$this->setName($local, $host['name'], $local->getName());
 				$changed[] = ARoomModifiedEvent::PROPERTY_NAME;
+			} catch (NameException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync name of ' . $local->getId() . ' to ' . $host['name'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['description']) && $host['description'] !== $local->getDescription()) {
@@ -1039,8 +1054,8 @@ class RoomService {
 			try {
 				$this->setDefaultPermissions($local, $host['defaultPermissions']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions'], ['exception' => $e]);
+			} catch (DefaultPermissionsException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync defaultPermissions of ' . $local->getId() . ' to ' . $host['defaultPermissions'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['avatarVersion']) && $host['avatarVersion'] !== $local->getAvatar()) {
@@ -1063,11 +1078,11 @@ class RoomService {
 		}
 		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer(false)?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);
-			$success = $this->setLobby($local, $host['lobbyState'], $hostTimer);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync lobby of ' . $local->getId() . ' to ' . $host['lobbyState'] . ' with timer to ' . $host['lobbyTimer']);
-			} else {
+			try {
+				$this->setLobby($local, $host['lobbyState'], $hostTimer);
 				$changed[] = ARoomModifiedEvent::PROPERTY_LOBBY;
+			} catch (LobbyException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync lobby of ' . $local->getId() . ' to ' . $host['lobbyState'] . ' with timer to ' . $host['lobbyTimer'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['callStartTime'], $host['callFlag'])) {
@@ -1111,16 +1126,16 @@ class RoomService {
 			try {
 				$this->setRecordingConsent($local, $host['recordingConsent'], true);
 				$changed[] = ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync recordingConsent of ' . $local->getId() . ' to ' . $host['recordingConsent'], ['exception' => $e]);
+			} catch (RecordingConsentException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync recordingConsent of ' . $local->getId() . ' to ' . $host['recordingConsent'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['sipEnabled']) && $host['sipEnabled'] !== $local->getSIPEnabled()) {
-			$success = $this->setSIPEnabled($local, $host['sipEnabled']);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync sipEnabled of ' . $local->getId() . ' to ' . $host['sipEnabled']);
-			} else {
+			try {
+				$this->setSIPEnabled($local, $host['sipEnabled']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_SIP_ENABLED;
+			} catch (SipConfigurationException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync sipEnabled of ' . $local->getId() . ' to ' . $host['sipEnabled'], ['exception' => $e]);
 			}
 		}
 
