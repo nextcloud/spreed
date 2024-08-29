@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
+use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
@@ -621,8 +622,9 @@ class RoomService {
 
 	/**
 	 * @param Room $room
-	 * @param int $newState New mention permissions from self::MENTION_PERMISSIONS_*
-	 * @throws \InvalidArgumentException When the room type, state or breakout rooms where invalid
+	 * @param int $newState New mention permissions from Room::MENTION_PERMISSIONS_*
+	 * @psalm-param Room::MENTION_PERMISSIONS_* $newState
+	 * @throws MentionPermissionsException
 	 */
 	public function setMentionPermissions(Room $room, int $newState): void {
 		$oldState = $room->getMentionPermissions();
@@ -631,15 +633,15 @@ class RoomService {
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			throw new \InvalidArgumentException('type');
+			throw new MentionPermissionsException(MentionPermissionsException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new \InvalidArgumentException('breakout-room');
+			throw new MentionPermissionsException(MentionPermissionsException::REASON_BREAKOUT_ROOM);
 		}
 
 		if (!in_array($newState, [Room::MENTION_PERMISSIONS_EVERYONE, Room::MENTION_PERMISSIONS_MODERATORS], true)) {
-			throw new \InvalidArgumentException('state');
+			throw new MentionPermissionsException(MentionPermissionsException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, $newState, $oldState);
@@ -1100,8 +1102,8 @@ class RoomService {
 			try {
 				$this->setMentionPermissions($local, $host['mentionPermissions']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync mentionPermissions of ' . $local->getId() . ' to ' . $host['mentionPermissions'], ['exception' => $e]);
+			} catch (MentionPermissionsException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync mentionPermissions of ' . $local->getId() . ' to ' . $host['mentionPermissions'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['messageExpiration']) && $host['messageExpiration'] !== $local->getMessageExpiration()) {
