@@ -195,14 +195,15 @@ class SignalingController extends OCSController {
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
 
-		$helloAuthParams20UserId = $isTalkFederation ? $this->federationAuthenticator->getCloudId() : $this->userId;
+		$helloAuthParams20UserId = $isTalkFederation ? null : $this->userId;
+		$helloAuthParams20CloudId = $isTalkFederation ? $this->federationAuthenticator->getCloudId() : null;
 		$helloAuthParams = [
 			'1.0' => [
 				'userid' => $this->userId,
 				'ticket' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
 			],
 			'2.0' => [
-				'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $helloAuthParams20UserId),
+				'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $helloAuthParams20UserId, $helloAuthParams20CloudId),
 			],
 		];
 		$data = [
