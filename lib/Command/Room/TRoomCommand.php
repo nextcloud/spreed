@@ -13,6 +13,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
@@ -101,7 +102,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$this->roomService->setType($room, $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP)) {
+		try {
+			$this->roomService->setType($room, $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP);
+		} catch (TypeException) {
 			throw new InvalidArgumentException('Unable to change room type.');
 		}
 	}

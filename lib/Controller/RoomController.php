@@ -22,6 +22,7 @@ use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\FederationManager;
@@ -1187,8 +1188,10 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
 			$data = [];
-			if ($this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
+			try {
+				$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
 				$data = ['type' => $this->room->getType()];
+			} catch (TypeException) {
 			}
 
 			try {
@@ -1402,7 +1405,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Allowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Allowed guests successfully
 	 * 400: Allowing guests is not possible
@@ -1410,8 +1413,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function makePublic(): DataResponse {
-		if (!$this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
+		} catch (TypeException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -1420,7 +1425,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Disallowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Room unpublished Disallowing guests successfully
 	 * 400: Disallowing guests is not possible
@@ -1428,8 +1433,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function makePrivate(): DataResponse {
-		if (!$this->roomService->setType($this->room, Room::TYPE_GROUP)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setType($this->room, Room::TYPE_GROUP);
+		} catch (TypeException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();

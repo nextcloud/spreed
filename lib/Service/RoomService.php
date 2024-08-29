@@ -33,6 +33,7 @@ use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -471,40 +472,40 @@ class RoomService {
 	 * @param Room $room
 	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
 	 * @param bool $allowSwitchingOneToOne Allows additionally to change the type from `Room::TYPE_ONE_TO_ONE` to `Room::TYPE_ONE_TO_ONE_FORMER`
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws TypeException
 	 */
-	public function setType(Room $room, int $newType, bool $allowSwitchingOneToOne = false): bool {
+	public function setType(Room $room, int $newType, bool $allowSwitchingOneToOne = false): void {
 		$oldType = $room->getType();
 		if ($oldType === $newType) {
-			return true;
+			return;
 		}
 
 		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
-			return false;
+			throw new TypeException(TypeException::REASON_TYPE);
 		}
 
 		if ($oldType === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return false;
+			throw new TypeException(TypeException::REASON_TYPE);
 		}
 
 		if ($oldType === Room::TYPE_NOTE_TO_SELF) {
-			return false;
+			throw new TypeException(TypeException::REASON_TYPE);
 		}
 
 		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
-			return false;
+			throw new TypeException(TypeException::REASON_VALUE);
 		}
 
 		if ($newType === Room::TYPE_ONE_TO_ONE_FORMER && $oldType !== Room::TYPE_ONE_TO_ONE) {
-			return false;
+			throw new TypeException(TypeException::REASON_VALUE);
 		}
 
 		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
-			return false;
+			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
@@ -529,8 +530,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1015,11 +1014,11 @@ class RoomService {
 		/** @var array<array-key, ARoomModifiedEvent::PROPERTY_*> $changed */
 		$changed = [];
 		if (isset($host['type']) && $host['type'] !== $local->getType()) {
-			$success = $this->setType($local, $host['type']);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync type of ' . $local->getId() . ' to ' . $host['type']);
-			} else {
+			try {
+				$this->setType($local, $host['type']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_TYPE;
+			} catch (TypeException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync n type of ' . $local->getId() . ' to ' . $host['type'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['name']) && $host['name'] !== $local->getName()) {
