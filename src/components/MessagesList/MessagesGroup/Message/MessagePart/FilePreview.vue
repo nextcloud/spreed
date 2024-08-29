@@ -590,7 +590,7 @@ export default {
 	.preview {
 		border-radius: var(--border-radius);
 		max-width: min(100%, 600px);
-		max-height: min(100%, 384px);
+		max-height: 384px;
 	}
 
 	.preview-medium {
