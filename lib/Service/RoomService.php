@@ -27,6 +27,8 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomModeException;
+use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomStatusException;
 use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
@@ -805,14 +807,18 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	public function setBreakoutRoomMode(Room $room, int $mode): bool {
+	/**
+	 * @psalm-param BreakoutRoom::MODE_* $mode
+	 * @throws BreakoutRoomModeException
+	 */
+	public function setBreakoutRoomMode(Room $room, int $mode): void {
 		if (!in_array($mode, [
 			BreakoutRoom::MODE_NOT_CONFIGURED,
 			BreakoutRoom::MODE_AUTOMATIC,
 			BreakoutRoom::MODE_MANUAL,
 			BreakoutRoom::MODE_FREE
 		], true)) {
-			return false;
+			throw new BreakoutRoomModeException(BreakoutRoomModeException::REASON_VALUE);
 		}
 
 		$oldMode = $room->getBreakoutRoomMode();
@@ -829,18 +835,20 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE, $mode, $oldMode);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
-	public function setBreakoutRoomStatus(Room $room, int $status): bool {
+	/**
+	 * @psalm-param BreakoutRoom::STATUS_* $status
+	 * @throws BreakoutRoomStatusException
+	 */
+	public function setBreakoutRoomStatus(Room $room, int $status): void {
 		if (!in_array($status, [
 			BreakoutRoom::STATUS_STOPPED,
 			BreakoutRoom::STATUS_STARTED,
 			BreakoutRoom::STATUS_ASSISTANCE_RESET,
 			BreakoutRoom::STATUS_ASSISTANCE_REQUESTED,
 		], true)) {
-			return false;
+			throw new BreakoutRoomStatusException(BreakoutRoomStatusException::REASON_VALUE);
 		}
 
 		$oldStatus = $room->getBreakoutRoomStatus();
@@ -858,8 +866,6 @@ class RoomService {
 		$oldStatus = $room->getBreakoutRoomStatus();
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS, $status, $oldStatus);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
