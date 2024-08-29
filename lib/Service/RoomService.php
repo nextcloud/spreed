@@ -27,6 +27,7 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\AvatarException;
 use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomModeException;
 use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomStatusException;
 use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
@@ -420,9 +421,12 @@ class RoomService {
 		}
 	}
 
-	public function setAvatar(Room $room, string $avatar): bool {
+	/**
+	 * @throws AvatarException
+	 */
+	public function setAvatar(Room $room, string $avatar): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return false;
+			throw new AvatarException(AvatarException::REASON_TYPE);
 		}
 
 		$oldAvatar = $room->getAvatar();
@@ -439,7 +443,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_AVATAR, $avatar, $oldAvatar);
 		$this->dispatcher->dispatchTyped($event);
-		return true;
 	}
 
 	/**
@@ -1079,11 +1082,11 @@ class RoomService {
 				// Add a fake suffix as we explode by the dot in the AvatarService, but the version doesn't have one.
 				$hostAvatar .= '.fed';
 			}
-			$success = $this->setAvatar($local, $hostAvatar);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync avatarVersion of ' . $local->getId() . ' to ' . $host['avatarVersion']);
-			} else {
+			try {
+				$this->setAvatar($local, $hostAvatar);
 				$changed[] = ARoomModifiedEvent::PROPERTY_AVATAR;
+			} catch (AvatarException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync avatarVersion of ' . $local->getId() . ' to ' . $host['avatarVersion'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['lastActivity']) && $host['lastActivity'] !== 0 && $host['lastActivity'] !== ((int)$local->getLastActivity()?->getTimestamp())) {
