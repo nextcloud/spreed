@@ -560,4 +560,29 @@ class BackendNotifier {
 
 		return $server;
 	}
+
+	public function sendReactionNotification(
+		string $remoteServer,
+		int $localAttendeeId,
+		string $accessToken,
+		string $localToken,
+		array $reactionData
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+	
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_REACTION_ADDED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string)$localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'reactionData' => $reactionData,
+			]
+		);
+	
+		return $this->sendUpdateToRemote($remote, $notification);
+	}
 }

@@ -46,6 +46,7 @@ class FederationManager {
 	public const NOTIFICATION_PARTICIPANT_MODIFIED = 'PARTICIPANT_MODIFIED';
 	public const NOTIFICATION_ROOM_MODIFIED = 'ROOM_MODIFIED';
 	public const NOTIFICATION_MESSAGE_POSTED = 'MESSAGE_POSTED';
+	public const NOTIFICATION_REACTION_ADDED = 'talk-reaction-added';
 	public const TOKEN_LENGTH = 64;
 
 	public function __construct(
