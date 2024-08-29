@@ -20,6 +20,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
+use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
@@ -1502,7 +1503,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1 $mentionPermissions New mention permissions
 	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -1512,8 +1513,8 @@ class RoomController extends AEnvironmentAwareController {
 	public function setMentionPermissions(int $mentionPermissions): DataResponse {
 		try {
 			$this->roomService->setMentionPermissions($this->room, $mentionPermissions);
-		} catch (\InvalidArgumentException) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (MentionPermissionsException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
