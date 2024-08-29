@@ -772,6 +772,7 @@ OC.L10N.register(
     "Copy link" : "Копіювати посилання",
     "Connecting …" : "Підключення ...",
     "Waiting for others to join the call …" : "Чекаємо, доки хтось приєднається до виклику...",
+    "Something went wrong" : "От халепа!",
     "You can invite others in the participant tab of the sidebar" : "Ви можете запросити користувачів у вкладці учасники на бічній панелі",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Ви можете запросити користувачів у вкладці учасники на бічній панелі або поділитися цим посиланням, щоб запросити інших!",
     "Share this link to invite others!" : "Поділіться цим посиланням з тими, кого бажаєте запросити!",

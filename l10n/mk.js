@@ -584,6 +584,7 @@ OC.L10N.register(
     "Copy link" : "Копирај линк",
     "Connecting …" : "Поврзување ...",
     "Waiting for others to join the call …" : "Чекање на останатите да се приклучат кон повикот ...",
+    "Something went wrong" : "Нешто не е во ред",
     "You can invite others in the participant tab of the sidebar" : "Можете да поканите други учесници во картичката за учесници во страничната лента",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Можете да поканите други учесници во картичката за учесници во страничната лента или да ја споделите оваа врска за да поканите други учесници!",
     "Share this link to invite others!" : "Споделете ја оваа врска за да поканите други учесници!",

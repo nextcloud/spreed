@@ -680,6 +680,7 @@ OC.L10N.register(
     "Copy link" : "Copia collegamento",
     "Connecting …" : "Connessione in corso…",
     "Waiting for others to join the call …" : "In attesa che altri si uniscano alla chiamata...",
+    "Something went wrong" : "Qualcosa non ha funzionato",
     "You can invite others in the participant tab of the sidebar" : "Puoi invitare altri nella scheda dei partecipanti della barra laterale",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Puoi invitare altri nella scheda dei partecipanti della barra laterale o condividere questo collegamento per invitarli!",
     "Share this link to invite others!" : "Condividi questo collegamento per invitare altri!",

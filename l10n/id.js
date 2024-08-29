@@ -274,6 +274,7 @@ OC.L10N.register(
     "Confirm" : "Konfirmasi",
     "Reset" : "Setel ulang",
     "Copy link" : "Salin tautan",
+    "Something went wrong" : "Ada yang salah",
     "Collapse" : "Tutup",
     "Expand" : "Perluas",
     "Drop your files to upload" : "Lepas berkas Anda untuk mengunggah",
