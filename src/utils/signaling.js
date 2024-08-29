@@ -12,7 +12,6 @@ import {
 import { t } from '@nextcloud/l10n'
 import {
 	generateOcsUrl,
-	generateUrl,
 } from '@nextcloud/router'
 
 import CancelableRequest from './cancelableRequest.js'
@@ -279,18 +278,13 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent, recordingCons
 				resolve()
 				this._joinCallSuccess(token)
 			}.bind(this))
-			.catch(function() {
+			.catch(function(e) {
 				reject(new Error())
-				if (!IS_DESKTOP) {
-					// Server maintenance, lobby kicked in, or room not found.
-					// We first redirect to the conversation again and that
-					// will then show the proper error message to the user.
-					window.location = generateUrl('call/' + token)
-				} else {
-					// TODO: Is it true, reload is equal to generateUrl('call/' + token) here?
-					// Or can we always just reload the page?
-					window.location.reload()
-				}
+				console.error('Connection failed, reason: ', e.response?.data?.ocs?.data?.error)
+				store.commit('connectionFailed', {
+					token,
+					payload: e.response?.data?.ocs?.data?.error,
+				})
 			})
 	})
 }
