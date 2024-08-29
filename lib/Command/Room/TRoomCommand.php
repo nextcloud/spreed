@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
@@ -88,7 +89,7 @@ trait TRoomCommand {
 	protected function setRoomDescription(Room $room, string $description): void {
 		try {
 			$this->roomService->setDescription($room, $description);
-		} catch (\LengthException $e) {
+		} catch (DescriptionException $e) {
 			throw new InvalidArgumentException('Invalid room description.');
 		}
 	}

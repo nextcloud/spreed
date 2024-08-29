@@ -18,6 +18,7 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
@@ -805,7 +806,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Update the description of a room
 	 *
 	 * @param string $description New description
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Description updated successfully
 	 * 400: Updating description is not possible
@@ -813,14 +814,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setDescription(string $description): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
 		try {
 			$this->roomService->setDescription($this->room, $description);
-		} catch (\LengthException $exception) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (DescriptionException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
