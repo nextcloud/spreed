@@ -860,6 +860,7 @@ OC.L10N.register(
     "Calling …" : "接続中...",
     "Waiting for {user} to join the call" : "{user} が通話に参加するのを待っています",
     "Waiting for others to join the call …" : "参加を待っています …",
+    "Something went wrong" : "何かがおかしいです",
     "You can invite others in the participant tab of the sidebar" : "サイドバーの参加者タブで他のユーザーを招待できます",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "サイドバーの参加者タブかこのリンクを共有して他のユーザーを招待できます。",
     "Share this link to invite others!" : "このリンクを共有して他の人を招待します。",
