@@ -81,6 +81,8 @@ import { EventBus } from '../../services/EventBus.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { debugTimer } from '../../utils/debugTimer.ts'
 
+const SCROLL_TOLERANCE = 10
+
 export default {
 	name: 'MessagesList',
 	components: {
@@ -171,6 +173,8 @@ export default {
 			dateSeparatorLabels: {},
 
 			endScrollTimeout: () => {},
+
+			wheelEventProcessed: true,
 		}
 	},
 
@@ -311,6 +315,10 @@ export default {
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
+		// wheel event handling
+		if (this.$refs.scroller) {
+			this.$refs.scroller.addEventListener('wheel', this.handleWheelEvent, { passive: true })
+		}
 
 		/**
 		 * Every 30 seconds we remove expired messages from the store
@@ -329,6 +337,7 @@ export default {
 		EventBus.off('focus-message', this.focusMessage)
 		EventBus.off('route-change', this.onRouteChange)
 		EventBus.off('message-height-changed', this.onMessageHeightChanged)
+		this.$refs.scroller.removeEventListener('wheel', this.handleWheelEvent)
 		this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 		this.destroying = true
 
@@ -877,20 +886,20 @@ export default {
 
 			const { scrollHeight, scrollTop, clientHeight } = this.$refs.scroller
 			const scrollOffset = scrollHeight - scrollTop
-			const tolerance = 10
 
-			// For chats, scrolled to bottom or / and fitted in one screen
-			if (Math.abs(scrollOffset - clientHeight) < tolerance && !this.hasMoreMessagesToLoad) {
-				this.setChatScrolledToBottom(true)
+			// For chats that are scrolled to bottom and not fitted in one screen
+			if (Math.abs(scrollOffset - clientHeight) < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
+				this.setChatScrolledToBottom({ atBottom: true })
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 				this.debounceUpdateReadMarkerPosition()
 				return
 			}
 
-			this.setChatScrolledToBottom(false)
+			this.setChatScrolledToBottom({ atBottom: false })
 
-			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue) {
+			if ((scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue)
+				|| !this.wheelEventProcessed) {
 				if (this.loadingOldMessages || this.stopFetchingOldMessages) {
 					// already loading, don't do it twice
 					return
@@ -899,12 +908,14 @@ export default {
 				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
 
+				this.wheelEventProcessed = true
 				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
 					// scroll to previous position + added height
 					this.$refs.scroller.scrollTo({
 						top: scrollTop + (this.$refs.scroller.scrollHeight - scrollHeight),
 					})
 				}
+				this.setChatScrolledToBottom({ auto: true })
 			}
 
 			this.previousScrollTopValue = this.$refs.scroller.scrollTop
@@ -1077,7 +1088,7 @@ export default {
 				let newTop
 				if (options?.force) {
 					newTop = this.$refs.scroller.scrollHeight
-					this.setChatScrolledToBottom(true)
+					this.setChatScrolledToBottom({ atBottom: true })
 				} else if (!this.isSticky) {
 					// Reading old messages
 					return
@@ -1088,10 +1099,10 @@ export default {
 					// Single new line from the previous author is 35px so scroll half a line (10px)
 					// Single new line from the new author is 75px so scroll half an avatar (40px)
 					newTop = this.$refs.scroller.scrollTop + scrollBy
-					this.setChatScrolledToBottom(false)
+					this.setChatScrolledToBottom({ atBottom: false })
 				} else {
 					newTop = this.$refs.scroller.scrollHeight
-					this.setChatScrolledToBottom(true)
+					this.setChatScrolledToBottom({ atBottom: true })
 				}
 				this.$refs.scroller.scrollTo({
 					top: newTop,
@@ -1139,7 +1150,7 @@ export default {
 
 			if (this.$refs.scroller && this.$refs.scroller.clientHeight === this.$refs.scroller.scrollHeight) {
 				// chat is not scrollable
-				this.setChatScrolledToBottom(true)
+				this.setChatScrolledToBottom({ atBottom: true })
 			}
 
 			if (highlightAnimation) {
@@ -1221,9 +1232,14 @@ export default {
 			}
 		},
 
-		setChatScrolledToBottom(boolean) {
-			this.$emit('update:is-chat-scrolled-to-bottom', boolean)
-			if (boolean) {
+		setChatScrolledToBottom({ atBottom = true, auto = false } = {}) {
+			let isScrolledToBottom = atBottom
+			if (auto) {
+				const scrollOffset = this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop
+				isScrolledToBottom = Math.abs(scrollOffset - this.$refs.scroller.clientHeight) < SCROLL_TOLERANCE
+			}
+			this.$emit('update:is-chat-scrolled-to-bottom', isScrolledToBottom)
+			if (isScrolledToBottom) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocusing the window will remove the stickiness
 				this.debounceUpdateReadMarkerPosition()
@@ -1253,6 +1269,15 @@ export default {
 			const tasksDoneCount = this.$refs.scroller.querySelectorAll('.checkbox-content__icon--checked')?.length
 			const tasksCount = this.$refs.scroller.querySelectorAll('.task-list-item')?.length
 			this.chatExtrasStore.setTasksCounters({ tasksCount, tasksDoneCount })
+		},
+
+		handleWheelEvent(event) {
+			const isScrollable = this.$refs.scroller.scrollHeight > this.$refs.scroller.clientHeight
+			// If messages fit in the viewport and user scrolls up, we need to trigger the loading of older messages
+			if (event.deltaY < 0 && !isScrollable) {
+				this.wheelEventProcessed = false
+				this.debounceHandleScroll()
+			}
 		},
 	},
 }
