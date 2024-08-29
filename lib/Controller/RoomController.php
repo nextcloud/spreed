@@ -22,6 +22,7 @@ use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\MessageExpirationException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\PasswordException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
@@ -2353,7 +2354,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param int $seconds New time
 	 * @psalm-param non-negative-int $seconds
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Message expiration time updated successfully
 	 * 400: Updating message expiration time is not possible
@@ -2361,14 +2362,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setMessageExpiration(int $seconds): DataResponse {
-		if ($seconds < 0) {
-			return new DataResponse(['error' => 'seconds'], Http::STATUS_BAD_REQUEST);
-		}
-
 		try {
 			$this->roomService->setMessageExpiration($this->room, $seconds);
-		} catch (\InvalidArgumentException $exception) {
-			return new DataResponse(['error' => $exception->getMessage()], Http::STATUS_BAD_REQUEST);
+		} catch (MessageExpirationException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
