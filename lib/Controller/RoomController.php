@@ -20,6 +20,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
@@ -1447,7 +1448,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1 $state New read-only state
 	 * @psalm-param Room::READ_* $state
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Read-only state updated successfully
 	 * 400: Updating read-only state is not possible
@@ -1455,8 +1456,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setReadOnly(int $state): DataResponse {
-		if (!$this->roomService->setReadOnly($this->room, $state)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setReadOnly($this->room, $state);
+		} catch (ReadOnlyException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($state === Room::READ_ONLY) {

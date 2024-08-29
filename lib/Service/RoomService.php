@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
@@ -538,23 +539,23 @@ class RoomService {
 	 *                      `Room::READ_ONLY` and `Room::READ_WRITE`
 	 *                      Also it's only allowed on rooms of type
 	 *                      `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws ReadOnlyException
 	 */
-	public function setReadOnly(Room $room, int $newState): bool {
+	public function setReadOnly(Room $room, int $newState): void {
 		$oldState = $room->getReadOnly();
 		if ($newState === $oldState) {
-			return true;
+			return;
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_CHANGELOG], true)) {
 			if ($newState !== Room::READ_ONLY || $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 				// Allowed for the automated conversation of one-to-one chats to read only former
-				return false;
+				throw new ReadOnlyException(ReadOnlyException::REASON_TYPE);
 			}
 		}
 
 		if (!in_array($newState, [Room::READ_ONLY, Room::READ_WRITE], true)) {
-			return false;
+			throw new ReadOnlyException(ReadOnlyException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_READ_ONLY, $newState, $oldState);
@@ -570,8 +571,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_READ_ONLY, $newState, $oldState);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1114,11 +1113,11 @@ class RoomService {
 			}
 		}
 		if (isset($host['readOnly']) && $host['readOnly'] !== $local->getReadOnly()) {
-			$success = $this->setReadOnly($local, $host['readOnly']);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync readOnly of ' . $local->getId() . ' to ' . $host['readOnly']);
-			} else {
+			try {
+				$this->setReadOnly($local, $host['readOnly']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_READ_ONLY;
+			} catch (ReadOnlyException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync readOnly of ' . $local->getId() . ' to ' . $host['readOnly'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['recordingConsent']) && $host['recordingConsent'] !== $local->getRecordingConsent()) {

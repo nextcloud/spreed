@@ -13,6 +13,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -120,7 +121,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$this->roomService->setReadOnly($room, $readOnly ? Room::READ_ONLY : Room::READ_WRITE)) {
+		try {
+			$this->roomService->setReadOnly($room, $readOnly ? Room::READ_ONLY : Room::READ_WRITE);
+		} catch (ReadOnlyException) {
 			throw new InvalidArgumentException('Unable to change room state.');
 		}
 	}
