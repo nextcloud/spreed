@@ -158,7 +158,7 @@ function prepareDocker() {
 	fi
 
 	echo "Installing Nextcloud in the container"
-	docker exec $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd nextcloud && php occ maintenance:install --admin-pass=admin $NEXTCLOUD_LOCAL_CONTAINER_INSTALL_DATABASE_OPTIONS"
+	docker exec $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd /nextcloud && php occ maintenance:install --admin-pass=admin $NEXTCLOUD_LOCAL_CONTAINER_INSTALL_DATABASE_OPTIONS"
 }
 
 # Removes/stops temporal elements created/started by this script.
@@ -257,4 +257,4 @@ prepareDocker
 
 echo "Running tests"
 # --tty is needed to get colourful output.
-docker exec --tty $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd nextcloud/apps/spreed/tests/integration && ./run.sh $SCENARIO_TO_RUN"
+docker exec --tty $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd /nextcloud/apps/spreed/tests/integration && ./run.sh $SCENARIO_TO_RUN"
