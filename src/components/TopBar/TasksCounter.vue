@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { t } from '@nextcloud/l10n'
+import { t, n } from '@nextcloud/l10n'
 
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 
@@ -29,10 +29,7 @@ const tasksSummary = computed(() => {
 		return t('spreed', 'All tasks done!')
 	}
 	// TRANSLATORS number of tasks done of total number of tasks
-	return t('spreed', '{done} of {total} tasks', {
-		done: tasksDoneCount.value,
-		total: tasksCount.value,
-	})
+	return n('spreed', '{done} of %n task', '{done} of %n tasks', tasksCount.value, { done: tasksDoneCount.value })
 })
 
 </script>
