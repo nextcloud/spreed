@@ -29,6 +29,7 @@ use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
@@ -678,19 +679,22 @@ class RoomService {
 	}
 
 	/**
-	 * @return bool True when the change was valid, false otherwise
-	 * @throws \LengthException when the given description is too long
+	 * @throws DescriptionException
 	 */
-	public function setDescription(Room $room, string $description): bool {
+	public function setDescription(Room $room, string $description): void {
 		$description = trim($description);
-
-		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
-			throw new \LengthException('Conversation description is limited to ' . Room::DESCRIPTION_MAXIMUM_LENGTH . ' characters');
-		}
 
 		$oldDescription = $room->getDescription();
 		if ($description === $oldDescription) {
-			return false;
+			return;
+		}
+
+		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
+			throw new DescriptionException(DescriptionException::REASON_VALUE);
+		}
+
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			throw new DescriptionException(DescriptionException::REASON_TYPE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_DESCRIPTION, $description, $oldDescription);
@@ -706,8 +710,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_DESCRIPTION, $description, $oldDescription);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1032,14 +1034,10 @@ class RoomService {
 		}
 		if (isset($host['description']) && $host['description'] !== $local->getDescription()) {
 			try {
-				$success = $this->setDescription($local, $host['description']);
-				if (!$success) {
-					$this->logger->error('An error occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description']);
-				} else {
-					$changed[] = ARoomModifiedEvent::PROPERTY_DESCRIPTION;
-				}
-			} catch (\LengthException $e) {
-				$this->logger->error('A \LengthException occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description'], ['exception' => $e]);
+				$this->setDescription($local, $host['description']);
+				$changed[] = ARoomModifiedEvent::PROPERTY_DESCRIPTION;
+			} catch (DescriptionException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['callRecording']) && $host['callRecording'] !== $local->getCallRecording()) {
