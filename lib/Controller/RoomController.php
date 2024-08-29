@@ -17,6 +17,11 @@ use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\LobbyException;
+use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
+use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\FederationManager;
@@ -776,7 +781,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Rename a room
 	 *
 	 * @param string $roomName New name
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
@@ -784,17 +789,11 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setName($this->room, $roomName, validateType: true);
+		} catch (NameException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
-
-		$roomName = trim($roomName);
-
-		if ($roomName === '' || mb_strlen($roomName) > 255) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->roomService->setName($this->room, $roomName);
 		return new DataResponse();
 	}
 
@@ -2109,7 +2108,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param 'call'|'default' $mode Level of the permissions ('call' (removed in Talk 20), 'default')
 	 * @param int<0, 255> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'|'value'}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -2123,10 +2122,8 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			$this->roomService->setDefaultPermissions($this->room, $permissions);
-		} catch (\InvalidArgumentException $e) {
-			/** @var 'breakout-room'|'type' $error */
-			$error = $e->getMessage();
-			return new DataResponse(['error' => $error], Http::STATUS_BAD_REQUEST);
+		} catch (DefaultPermissionsException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -2199,7 +2196,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @psalm-param Webinary::LOBBY_* $state
 	 * @param int|null $timer Timer when the lobby will be removed
 	 * @psalm-param non-negative-int|null $timer
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'object'|'type'|'value'}, array{}>
 	 *
 	 * 200: Lobby state updated successfully
 	 * 400: Updating lobby state is not possible
@@ -2213,17 +2210,19 @@ class RoomController extends AEnvironmentAwareController {
 				$timerDateTime = $this->timeFactory->getDateTime('@' . $timer);
 				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
 			} catch (\Exception $e) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+				return new DataResponse(['error' => LobbyException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
 			}
 		}
 
 		if ($this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Do not allow manual changing the lobby in breakout rooms
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => LobbyException::REASON_BREAKOUT_ROOM], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$this->roomService->setLobby($this->room, $state, $timerDateTime)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setLobby($this->room, $state, $timerDateTime);
+		} catch (LobbyException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($state === Webinary::LOBBY_NON_MODERATORS) {
@@ -2245,7 +2244,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1|2 $state New state
 	 * @psalm-param Webinary::SIP_* $state
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}, array{}>
 	 *
 	 * 200: SIP enabled state updated successfully
 	 * 400: Updating SIP enabled state is not possible
@@ -2269,8 +2268,10 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		if (!$this->roomService->setSIPEnabled($this->room, $state)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setSIPEnabled($this->room, $state);
+		} catch (SipConfigurationException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -2282,7 +2283,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int $recordingConsent New consent setting for the conversation
 	 *                              (Only {@see RecordingService::CONSENT_REQUIRED_NO} and {@see RecordingService::CONSENT_REQUIRED_YES} are allowed here.)
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'call'|'value'}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, array<empty>, array{}>
 	 *
 	 * 200: Recording consent requirement set successfully
 	 * 400: Setting recording consent requirement is not possible
@@ -2297,8 +2298,8 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			$this->roomService->setRecordingConsent($this->room, $recordingConsent);
-		} catch (\InvalidArgumentException $exception) {
-			return new DataResponse(['error' => $exception->getMessage()], Http::STATUS_BAD_REQUEST);
+		} catch (RecordingConsentException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));

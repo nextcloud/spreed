@@ -6516,7 +6516,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "mode" | "type";
+                                error: "breakout-room" | "mode" | "type" | "value";
                             };
                         };
                     };
@@ -7657,7 +7657,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "object" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -7713,7 +7716,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "token" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -7812,7 +7818,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "breakout-room" | "call" | "value";
                             };
                         };
                     };

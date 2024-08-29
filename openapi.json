@@ -11175,7 +11175,21 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "type",
+                                                                "value"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -12334,7 +12348,8 @@
                                                             "enum": [
                                                                 "breakout-room",
                                                                 "mode",
-                                                                "type"
+                                                                "type",
+                                                                "value"
                                                             ]
                                                         }
                                                     }
@@ -15036,7 +15051,23 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "breakout-room",
+                                                                "object",
+                                                                "type",
+                                                                "value"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15151,34 +15182,6 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Updating SIP enabled state is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
                     "401": {
                         "description": "User not found",
                         "content": {
@@ -15256,6 +15259,50 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Updating SIP enabled state is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "breakout-room",
+                                                                "token",
+                                                                "type",
+                                                                "value"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -15392,7 +15439,12 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "breakout-room",
+                                                                "call",
+                                                                "value"
+                                                            ]
                                                         }
                                                     }
                                                 }
