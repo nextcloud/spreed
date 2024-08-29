@@ -34,6 +34,7 @@ use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\PasswordException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
@@ -714,21 +715,24 @@ class RoomService {
 
 	/**
 	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
-	 * @return bool True when the change was valid, false otherwise
-	 * @throws HintException
+	 * @throws PasswordException
 	 */
-	public function setPassword(Room $room, string $password): bool {
+	public function setPassword(Room $room, string $password): void {
 		if ($room->getType() !== Room::TYPE_PUBLIC) {
-			return false;
+			throw new PasswordException(PasswordException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new PasswordException(PasswordException::REASON_BREAKOUT_ROOM);
 		}
 
 		if ($password !== '') {
 			$event = new ValidatePasswordPolicyEvent($password);
-			$this->dispatcher->dispatchTyped($event);
+			try {
+				$this->dispatcher->dispatchTyped($event);
+			} catch (HintException $e) {
+				throw new PasswordException(PasswordException::REASON_VALUE, $e->getHint());
+			}
 		}
 
 		$hash = $password !== '' ? $this->hasher->hash($password) : '';
@@ -746,8 +750,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PASSWORD, $password);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**

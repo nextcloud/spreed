@@ -23,6 +23,7 @@ use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\PasswordException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
@@ -68,7 +69,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
-use OCP\HintException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -1521,27 +1521,22 @@ class RoomController extends AEnvironmentAwareController {
 	 * Set a password for a room
 	 *
 	 * @param string $password New password
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value', message?: string}, array{}>
 	 *
 	 * 200: Password set successfully
 	 * 400: Setting password is not possible
-	 * 403: Setting password is not allowed
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setPassword(string $password): DataResponse {
-		if ($this->room->getType() !== Room::TYPE_PUBLIC) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
 		try {
-			if (!$this->roomService->setPassword($this->room, $password)) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			$this->roomService->setPassword($this->room, $password);
+		} catch (PasswordException $e) {
+			$data = ['error' => $e->getReason()];
+			if ($e->getHint() !== '') {
+				$data['message'] = $e->getHint();
 			}
-		} catch (HintException $e) {
-			return new DataResponse([
-				'message' => $e->getHint(),
-			], Http::STATUS_BAD_REQUEST);
+			return new DataResponse($data, Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();

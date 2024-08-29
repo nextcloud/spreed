@@ -15,6 +15,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\PasswordException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
@@ -24,7 +25,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
-use OCP\HintException;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -164,11 +164,12 @@ trait TRoomCommand {
 		}
 
 		try {
-			if (!$this->roomService->setPassword($room, $password)) {
-				throw new InvalidArgumentException('Unable to change room password.');
+			$this->roomService->setPassword($room, $password);
+		} catch (PasswordException $e) {
+			if ($e->getReason() === PasswordException::REASON_VALUE) {
+				throw new InvalidArgumentException($e->getHint());
 			}
-		} catch (HintException $e) {
-			throw new InvalidArgumentException($e->getHint());
+			throw new InvalidArgumentException('Unable to change room password.');
 		}
 	}
 

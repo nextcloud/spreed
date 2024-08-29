@@ -908,8 +908,8 @@ Feature: conversation/breakout-rooms
     And user "participant1" allows listing room "Room 1" for "all" with 400 (v4)
     # Can not allow guests
     And user "participant1" makes room "Room 1" public with 400 (v4)
-    # Can not set password - Currently 403 because it's not a public room, once they are supported as breakout rooms we need to check for 400 here.
-    And user "participant1" sets password "Test123!" for room "Room 1" with 403 (v4)
+    # Can not set password
+    And user "participant1" sets password "Test123!" for room "Room 1" with 400 (v4)
     # Can not set message expiration
     And user "participant1" set the message expiration to 3600 of room "Room 1" with 400 (v4)
     # Can enable recording consent
