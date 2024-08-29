@@ -402,6 +402,7 @@ OC.L10N.register(
     "Copy link" : "Afrita tengil",
     "Connecting …" : "Tengist ...",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
+    "Something went wrong" : "Eitthvað fór úrskeiðis",
     "You can invite others in the participant tab of the sidebar" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins eða deilt þessum tengli til að bjóða öðrum!",
     "Share this link to invite others!" : "Deildu þessum tengli til að bjóða öðrum!",

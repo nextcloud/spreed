@@ -502,6 +502,7 @@ OC.L10N.register(
     "Calling …" : "Se apelează ...",
     "Waiting for {user} to join the call" : "Se așteaptă ca {user} să intre în videoconferință",
     "Waiting for others to join the call …" : "Se așteaptă ca alții să intre în videoconferință ...",
+    "Something went wrong" : "A apărut o eroare",
     "You can invite others in the participant tab of the sidebar" : "Puteți invita pe alții din tabul Participanți, în bara laterală",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Puteți invita pe alții din tabul Participanți din bara laterală sau să partajați acest link pentru a invita pe altcineva!",
     "Share this link to invite others!" : "Partajați acest link pentru a invita pe altcineva!",

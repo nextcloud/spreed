@@ -846,6 +846,7 @@ OC.L10N.register(
     "Calling …" : "S'està trucant …",
     "Waiting for {user} to join the call" : "S'està esperant que {user} s'uneixi a la trucada",
     "Waiting for others to join the call …" : "Esperant a la resta per realitzar la trucada …",
+    "Something went wrong" : "Alguna cosa ha anat malament",
     "You can invite others in the participant tab of the sidebar" : "Podeu convidar més gent des de la pestanya Participants al panell lateral",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Podeu convidar a més gent des de la pestanya Participants al panell lateral o compartint aquest enllaç a tercers!",
     "Share this link to invite others!" : "Compartiu aquest enllaç per convidar a més gent!",

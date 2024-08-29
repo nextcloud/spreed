@@ -465,6 +465,7 @@ OC.L10N.register(
     "Copy link" : "Kopijuoti nuorodą",
     "Connecting …" : "Jungiamasi…",
     "Waiting for others to join the call …" : "Laukiama, kol kiti prisijungs prie skambučio…",
+    "Something went wrong" : "Kažkas nutiko",
     "You can invite others in the participant tab of the sidebar" : "Galite pakviesti kitus žmonės šoninėje juostoje, dalyvių kortelėje",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Galite pakviesti kitus žmonės šoninėje juostoje, dalyvių kortelėje arba bendrindami šią nuorodą, skirtą pakviesti kitus asmenis!",
     "Share this link to invite others!" : "Bendrinkite šią nuorodą, norėdami pakviesti kitus!",
