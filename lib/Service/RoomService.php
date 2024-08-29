@@ -27,6 +27,7 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
@@ -437,18 +438,17 @@ class RoomService {
 	 * @param integer $status 0 none|1 video|2 audio
 	 * @param Participant|null $participant the Participant that changed the
 	 *                                      state, null for the current user
-	 * @throws InvalidArgumentException When the status is invalid, not Room::RECORDING_*
-	 * @throws InvalidArgumentException When trying to start
+	 * @throws CallRecordingException
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
 		$syncFederatedRoom = $room->getRemoteServer() && $room->getRemoteToken();
 		if (!$syncFederatedRoom && !$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('config');
+			throw new CallRecordingException(CallRecordingException::REASON_CONFIG);
 		}
 
 		$availableRecordingStatus = [Room::RECORDING_NONE, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING, Room::RECORDING_FAILED];
-		if (!in_array($status, $availableRecordingStatus)) {
-			throw new InvalidArgumentException('status');
+		if (!in_array($status, $availableRecordingStatus, true)) {
+			throw new CallRecordingException(CallRecordingException::REASON_STATUS);
 		}
 
 		$oldStatus = $room->getCallRecording();
@@ -1046,8 +1046,8 @@ class RoomService {
 			try {
 				$this->setCallRecording($local, $host['callRecording']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_CALL_RECORDING;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync callRecording of ' . $local->getId() . ' to ' . $host['callRecording'], ['exception' => $e]);
+			} catch (CallRecordingException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync callRecording of ' . $local->getId() . ' to ' . $host['callRecording'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['defaultPermissions']) && $host['defaultPermissions'] !== $local->getDefaultPermissions()) {
