@@ -814,6 +814,7 @@ OC.L10N.register(
     "Connecting …" : "Csatlakozás…",
     "Waiting for {user} to join the call" : "Várakozás, hogy {user} csatlakozzon a híváshoz",
     "Waiting for others to join the call …" : "Várakozás, hogy mások is csatlakozzanak a híváshoz…",
+    "Something went wrong" : "Valami hiba történt",
     "You can invite others in the participant tab of the sidebar" : "Másokat az oldalsávon található „résztvevők” fülön tud meghívni",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Másokat az oldalsávon található „résztvevők” fülön keresztül vagy a hivatkozás megosztásával tud meghívni!",
     "Share this link to invite others!" : "Mások meghívásához ossza meg ezt a hivatkozást!",

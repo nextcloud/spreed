@@ -801,6 +801,7 @@ OC.L10N.register(
     "Connecting …" : "Connecting …",
     "Waiting for {user} to join the call" : "Waiting for {user} to join the call",
     "Waiting for others to join the call …" : "Waiting for others to join the call …",
+    "Something went wrong" : "Something went wrong",
     "You can invite others in the participant tab of the sidebar" : "شما می‌توانید دیگران را از زبانه اعضا در نوارکناری دعوت کنید",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "You can invite others in the participant tab of the sidebar or share this link to invite others!",
     "Share this link to invite others!" : "این پیوند را به اشتراک بگذارید تا دیگران را دعوت کنید!",
