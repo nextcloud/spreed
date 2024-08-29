@@ -29,6 +29,7 @@ use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
 use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
@@ -578,20 +579,21 @@ class RoomService {
 	 * @param int $newState New listable scope from self::LISTABLE_*
 	 *                      Also it's only allowed on rooms of type
 	 *                      `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
+	 * @psalm-param Room::LISTABLE_* $newState
+	 * @throws ListableException
 	 */
-	public function setListable(Room $room, int $newState): bool {
+	public function setListable(Room $room, int $newState): void {
 		$oldState = $room->getListable();
 		if ($newState === $oldState) {
-			return true;
+			return;
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
+			throw new ListableException(ListableException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new ListableException(ListableException::REASON_BREAKOUT_ROOM);
 		}
 
 		if (!in_array($newState, [
@@ -599,7 +601,7 @@ class RoomService {
 			Room::LISTABLE_USERS,
 			Room::LISTABLE_ALL,
 		], true)) {
-			return false;
+			throw new ListableException(ListableException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_LISTABLE, $newState, $oldState);
@@ -615,8 +617,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_LISTABLE, $newState, $oldState);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
