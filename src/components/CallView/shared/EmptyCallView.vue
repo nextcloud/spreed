@@ -35,6 +35,13 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
+const STATUS_ERRORS = {
+	400: t('spreed', 'Recording consent is required'),
+	403: t('spreed', 'This conversation is read-only'),
+	404: t('spreed', 'Conversation not found or not joined'),
+	412: t('spreed', "Lobby is still active and you're not a moderator"),
+}
+
 export default {
 
 	name: 'EmptyCallView',
@@ -148,18 +155,19 @@ export default {
 		},
 
 		helper() {
-			if (this.connectionFailed) {
-				return t('spreed', 'Please try to reload the page')
-			}
-			return ''
+			return this.connectionFailed ? t('spreed', 'Please try to reload the page') : ''
 		},
 
 		message() {
-			if (this.connectionFailed === 'consent') {
-				return t('spreed', 'Recording consent is required')
-			}
-
 			if (this.connectionFailed) {
+				const statusCode = this.connectionFailed?.meta?.statuscode
+				if (STATUS_ERRORS[statusCode]) {
+					return STATUS_ERRORS[statusCode]
+				}
+				if (this.connectionFailed?.data?.error) {
+					return this.connectionFailed.data.error
+				}
+
 				return t('spreed', 'Something went wrong')
 			}
 
