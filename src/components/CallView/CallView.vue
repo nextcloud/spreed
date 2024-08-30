@@ -105,7 +105,6 @@
 					:local-call-participant-model="localCallParticipantModel"
 					:shared-datas="sharedDatas"
 					v-bind="$attrs"
-					:dev-mode.sync="devMode"
 					@select-video="handleSelectVideo"
 					@click-local-video="handleClickLocalVideo" />
 
@@ -134,7 +133,7 @@
 
 <script>
 import debounce from 'debounce'
-import { ref } from 'vue'
+import { provide, ref } from 'vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -194,6 +193,9 @@ export default {
 	setup() {
 		// For debug and screenshot purposes. Set to true to enable
 		const devMode = ref(false)
+		provide('CallView:devModeEnabled', devMode)
+		const screenshotMode = ref(false)
+		provide('CallView:screenshotModeEnabled', screenshotMode)
 
 		const settingsStore = useSettingsStore()
 		const startWithoutMediaEnabled = settingsStore.startWithoutMedia

@@ -82,7 +82,6 @@
 							:token="token"
 							:local-media-model="localMediaModel"
 							:local-call-participant-model="localCallParticipantModel"
-							:screenshot-mode-url="screenshotMode ? placeholderImage(8) : ''"
 							@click-video="handleClickLocalVideo" />
 					</div>
 					<NcButton v-if="hasNextPage && gridWidth > 0"
@@ -104,7 +103,6 @@
 					:token="token"
 					:local-media-model="localMediaModel"
 					:local-call-participant-model="localCallParticipantModel"
-					:screenshot-mode-url="screenshotMode ? placeholderImage(8) : ''"
 					@click-video="handleClickLocalVideo" />
 
 				<template v-if="devMode">
@@ -144,7 +142,7 @@
 
 <script>
 import debounce from 'debounce'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -188,14 +186,6 @@ export default {
 	},
 
 	props: {
-		/**
-		 * Developer mode: If enabled it allows to debug the grid using dummy
-		 * videos
-		 */
-		devMode: {
-			type: Boolean,
-			default: false,
-		},
 		/**
 		 * Display the overflow of videos in separate pages;
 		 */
@@ -248,14 +238,17 @@ export default {
 		},
 	},
 
-	emits: ['select-video', 'click-local-video', 'update:devMode'],
+	emits: ['select-video', 'click-local-video'],
 
 	setup() {
+		// Developer mode: If enabled it allows to debug the grid using dummy videos
+		const devMode = inject('CallView:devModeEnabled', ref(false))
+		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
 		// The number of dummy videos in dev mode
 		const dummies = ref(4)
-		const screenshotMode = ref(false)
 
 		return {
+			devMode,
 			dummies,
 			screenshotMode,
 			videosCap,
@@ -696,7 +689,7 @@ export default {
 
 		disableDevMode() {
 			this.screenshotMode = false
-			this.$emit('update:devMode', false)
+			this.devMode = false
 		},
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
@@ -1024,7 +1017,7 @@ export default {
 		object-fit: cover;
 		height: 100%;
 		width: 100%;
-		border-radius: calc(var(--default-clickable-area) / 2);
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	}
 
 	.wrapper {
