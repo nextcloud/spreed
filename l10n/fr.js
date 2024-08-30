@@ -1178,7 +1178,7 @@ OC.L10N.register(
     "Groups and teams" : "Groupes et équipes",
     "Other sources" : "Autres sources",
     "An error occurred while performing the search" : "Une erreur est survenue pendant la recherche",
-    "You are currently waiting in the lobby" : "Vous attendez actuellement dans la salle d'attente",
+    "You are currently waiting in the lobby" : "Vous patientez actuellement dans la salle d'attente",
     "The meeting will start soon" : "La réunion va bientôt démarrer",
     "This meeting is scheduled for {startTime}" : "La réunion est planifiée pour {startTime}",
     "Select a device" : "Sélectionner un appareil",
