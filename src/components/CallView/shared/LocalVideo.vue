@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import { inject, ref } from 'vue'
+
 import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
@@ -74,6 +76,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { AVATAR } from '../../../constants.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { placeholderImage } from '../Grid/gridPlaceholders.ts'
 
 export default {
 
@@ -132,10 +135,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		screenshotModeUrl: {
-			type: String,
-			default: '',
-		},
 		isPresenterOverlay: {
 			type: Boolean,
 			default: false,
@@ -143,6 +142,16 @@ export default {
 	},
 
 	emits: ['click-video', 'click-presenter'],
+
+	setup() {
+		const devMode = inject('CallView:devModeEnabled', ref(false))
+		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
+
+		return {
+			devMode,
+			screenshotMode,
+		}
+	},
 
 	data() {
 		return {
@@ -226,6 +235,10 @@ export default {
 
 		isSelectable() {
 			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+		},
+
+		screenshotModeUrl() {
+			return this.screenshotMode ? placeholderImage(8) : ''
 		},
 	},
 
@@ -482,7 +495,11 @@ export default {
 
 .dev-mode-video--self {
 	object-fit: cover !important;
-	border-radius: calc(var(--default-clickable-area) / 2);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+
+	.presenter-overlay & {
+		border-radius: 50%;
+	}
 }
 
 .presenter-icon__hide {
