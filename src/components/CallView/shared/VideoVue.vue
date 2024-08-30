@@ -31,6 +31,11 @@
 				<NcLoadingIcon v-if="isLoading"
 					:size="avatarSize / 2"
 					class="video-loading" />
+
+				<img v-if="screenshotModeUrl && isPresenterOverlay"
+					class="dev-mode-video--presenter"
+					alt="dev-mode-video--presenter"
+					:src="screenshotModeUrl">
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
@@ -79,6 +84,7 @@
 <script>
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
+import { inject, ref } from 'vue'
 
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 import AccountOff from 'vue-material-design-icons/AccountOff.vue'
@@ -98,6 +104,7 @@ import { EventBus } from '../../../services/EventBus.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { placeholderImage } from '../Grid/gridPlaceholders.ts'
 
 export default {
 
@@ -193,8 +200,12 @@ export default {
 	emits: ['click-video', 'click-presenter', 'force-promote-video'],
 
 	setup() {
-		const guestNameStore = useGuestNameStore()
-		return { guestNameStore }
+		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
+
+		return {
+			guestNameStore: useGuestNameStore(),
+			screenshotMode,
+		}
 	},
 
 	data() {
@@ -519,6 +530,10 @@ export default {
 		nextcloudSessionId() {
 			return this.model.attributes.nextcloudSessionId
 		},
+
+		screenshotModeUrl() {
+			return this.screenshotMode ? placeholderImage(6) : ''
+		},
 	},
 
 	watch: {
@@ -666,8 +681,19 @@ export default {
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
-.videoWrapper.presenter-overlay > video {
-	border-radius: 50%;
+.videoWrapper.presenter-overlay {
+	& > video {
+		border-radius: 50%;
+	}
+	& > .dev-mode-video--presenter {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+		border-radius: 50%;
+	}
 }
 
 .video-loading {
