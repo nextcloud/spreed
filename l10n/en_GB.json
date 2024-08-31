@@ -1576,6 +1576,7 @@
     "Send a reaction" : "Send a reaction",
     "React with {reaction}" : "React with {reaction}",
     "All tasks done!" : "All tasks done!",
+    "_{done} of %n task_::_{done} of %n tasks_" : ["{done} of %n task","{done} of %n tasks"],
     "Open Calendar" : "Open Calendar",
     "Next call" : "Next call",
     "Now" : "Now",
