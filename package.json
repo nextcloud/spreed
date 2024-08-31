@@ -38,7 +38,7 @@
     "@nextcloud/paths": "^2.2.1",
     "@nextcloud/router": "^3.0.1",
     "@nextcloud/upload": "^1.4.3",
-    "@nextcloud/vue": "^8.17.0",
+    "@nextcloud/vue": "^8.17.1",
     "@vueuse/components": "^11.0.3",
     "blurhash": "^2.0.5",
     "crypto-js": "^4.2.0",
