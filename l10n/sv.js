@@ -1574,6 +1574,7 @@ OC.L10N.register(
     "Send a reaction" : "Skicka en reaktion",
     "React with {reaction}" : "Reagera med {reaction}",
     "All tasks done!" : "Alla uppgifter är klara!",
+    "_{done} of %n task_::_{done} of %n tasks_" : ["{done} av %n uppgift","{done} av %n uppgifter"],
     "Open Calendar" : "Öppna kalender",
     "Next call" : "Nästa samtal",
     "Now" : "Nu",

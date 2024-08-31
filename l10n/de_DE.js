@@ -1578,6 +1578,7 @@ OC.L10N.register(
     "Send a reaction" : "Reaktion senden",
     "React with {reaction}" : "Reagieren mit {reaction}",
     "All tasks done!" : "Alle Aufgaben erledigt!",
+    "_{done} of %n task_::_{done} of %n tasks_" : ["{done} von %n Aufgabe","{done} von %n Aufgaben"],
     "Open Calendar" : "Kalender öffnen",
     "Next call" : "Nächster Anruf",
     "Now" : "Jetzt",

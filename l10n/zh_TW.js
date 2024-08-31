@@ -1578,6 +1578,7 @@ OC.L10N.register(
     "Send a reaction" : "傳送反應",
     "React with {reaction}" : "使用 {reaction} 反應",
     "All tasks done!" : "所有任務都完成了！",
+    "_{done} of %n task_::_{done} of %n tasks_" : ["{done}/%n 任務"],
     "Open Calendar" : "開啟日曆",
     "Next call" : "下個通話",
     "Now" : "現在",
