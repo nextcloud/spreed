@@ -1576,6 +1576,7 @@
     "Send a reaction" : "Seol imoibriú",
     "React with {reaction}" : "Freagair le {rection}",
     "All tasks done!" : "Gach tasc déanta!",
+    "_{done} of %n task_::_{done} of %n tasks_" : ["{done} de %n tasc","{done}de %n tascanna","{done}de %n tascanna","{done}de %n tascanna","{done}de %n tascanna"],
     "Open Calendar" : "Oscail Féilire",
     "Next call" : "An chéad ghlao eile",
     "Now" : "Anois",
