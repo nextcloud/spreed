@@ -56,7 +56,7 @@ OC.L10N.register(
     "- Conversations can now have an avatar or emoji as icon" : "– Agora as conversas poden ter un avatar ou un «emoji» como icona",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "– Agora están dispoñíbeis fondos virtuais ademais do fondo esvaído nas videochamadas",
     "- Reactions are now available during calls" : "– Agora as reaccións están dispoíbeis durante as chamadas",
-    "- Typing indicators show which users are currently typing a message" : "– Os indicadores de escritura amosan cales son os usuarios que están a escribir unha mensaxe",
+    "- Typing indicators show which users are currently typing a message" : "– Os indicadores de escritura amosan cales son os usuarios que están a escribiren unha mensaxe",
     "- Groups can now be mentioned in chats" : "– Agora pódense mencionar grupos nas parolas",
     "- Call recordings are automatically transcribed if a transcription provider app is registered" : "– As gravacións de chamadas transcríbense automaticamente se se rexistra unha aplicación de provedor de transcrición",
     "- Chat messages can be translated if a translation provider app is registered" : "– As mensaxes da parola pódense traducir se se rexistra unha aplicación de provedor de tradución",
