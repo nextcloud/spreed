@@ -204,7 +204,7 @@ const mutations = {
 		state.fileTemplatesInitialised = true
 	},
 
-	markFileTemplatesInitialisedForGuests(state) {
+	markFileTemplatesInitialised(state) {
 		state.fileTemplatesInitialised = true
 	},
 }
@@ -547,9 +547,15 @@ const actions = {
 	},
 
 	async getFileTemplates({ commit, getters }) {
+		if (getters.fileTemplates.length) {
+			console.debug('Skip file templates setup as already done')
+			commit('markFileTemplatesInitialised')
+			return
+		}
+
 		if (getters.getUserId() === null) {
 			console.debug('Skip file templates setup for participants that are not logged in')
-			commit('markFileTemplatesInitialisedForGuests')
+			commit('markFileTemplatesInitialised')
 			return
 		}
 
