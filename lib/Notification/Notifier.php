@@ -300,7 +300,7 @@ class Notifier implements INotifier {
 				[
 					'call' => [
 						'type' => 'call',
-						'id' => $room->getId(),
+						'id' => (string)$room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
 						'icon-url' => $this->avatarService->getAvatarUrl($room),
@@ -375,16 +375,16 @@ class Notifier implements INotifier {
 				[
 					'call' => [
 						'type' => 'call',
-						'id' => $room->getId(),
+						'id' => (string)$room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
 						'icon-url' => $this->avatarService->getAvatarUrl($room),
 					],
 					'file' => [
 						'type' => 'file',
-						'id' => $file->getId(),
+						'id' => (string)$file->getId(),
 						'name' => $file->getName(),
-						'path' => $path,
+						'path' => (string)$path,
 						'link' => $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $file->getId()]),
 					],
 				]);
@@ -943,7 +943,7 @@ class Notifier implements INotifier {
 						],
 						'call' => [
 							'type' => 'call',
-							'id' => $room->getId(),
+							'id' => (string)$room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 							'icon-url' => $this->avatarService->getAvatarUrl($room),
@@ -969,7 +969,7 @@ class Notifier implements INotifier {
 						],
 						'call' => [
 							'type' => 'call',
-							'id' => $room->getId(),
+							'id' => (string)$room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 							'icon-url' => $this->avatarService->getAvatarUrl($room),
@@ -1021,7 +1021,7 @@ class Notifier implements INotifier {
 							],
 							'call' => [
 								'type' => 'call',
-								'id' => $room->getId(),
+								'id' => (string)$room->getId(),
 								'name' => $roomName,
 								'call-type' => $this->getRoomType($room),
 								'icon-url' => $this->avatarService->getAvatarUrl($room),
@@ -1049,7 +1049,7 @@ class Notifier implements INotifier {
 					$subject, [
 						'call' => [
 							'type' => 'call',
-							'id' => $room->getId(),
+							'id' => (string)$room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 							'icon-url' => $this->avatarService->getAvatarUrl($room),
@@ -1085,7 +1085,7 @@ class Notifier implements INotifier {
 		try {
 			$file = [
 				'type' => 'highlight',
-				'id' => $share->getNodeId(),
+				'id' => (string)$share->getNodeId(),
 				'name' => $share->getNode()->getName(),
 			];
 		} catch (\OCP\Files\NotFoundException $e) {
