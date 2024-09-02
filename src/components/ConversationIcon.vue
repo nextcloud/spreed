@@ -31,7 +31,7 @@
 		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
 		<!-- TODO: Check if props update support in NcAvatar is more performant -->
 		<NcAvatar v-else
-			:key="item.token"
+			:key="item.token + (isDarkTheme ? '-dark' : '-light')"
 			:size="size"
 			:user="item.name"
 			:disable-menu="disableMenu"
@@ -62,10 +62,10 @@ import { t } from '@nextcloud/l10n'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
+import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { isDarkTheme } from '../utils/isDarkTheme.js'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
@@ -131,6 +131,14 @@ export default {
 			type: Number,
 			default: AVATAR.SIZE.DEFAULT,
 		},
+	},
+
+	setup() {
+		const isDarkTheme = useIsDarkTheme()
+
+		return {
+			isDarkTheme,
+		}
 	},
 
 	computed: {
@@ -209,7 +217,7 @@ export default {
 		},
 
 		themeClass() {
-			return `conversation-icon--${isDarkTheme ? 'dark' : 'bright'}`
+			return `conversation-icon--${this.isDarkTheme ? 'dark' : 'bright'}`
 		},
 
 		isOneToOne() {
@@ -218,9 +226,9 @@ export default {
 
 		conversationType() {
 			if (this.item.remoteServer) {
-				return { icon: WebIcon, label: t('spreed', 'Federated conversation') }
+				return { key: 'federated', icon: WebIcon, label: t('spreed', 'Federated conversation') }
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return { icon: LinkVariantIcon, label: t('spreed', 'Public conversation') }
+				return { key: 'public', icon: LinkVariantIcon, label: t('spreed', 'Public conversation') }
 			}
 			return null
 		},
@@ -230,7 +238,7 @@ export default {
 				return undefined
 			}
 
-			return getConversationAvatarOcsUrl(this.item.token, isDarkTheme, this.item.avatarVersion)
+			return getConversationAvatarOcsUrl(this.item.token, this.isDarkTheme, this.item.avatarVersion)
 		},
 	},
 

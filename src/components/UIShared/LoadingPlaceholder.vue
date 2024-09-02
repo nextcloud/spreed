@@ -4,8 +4,7 @@
 -->
 
 <template>
-	<ul :class="'placeholder-list placeholder-list--' + type"
-		:style="{ '--colorPlaceholderLight': colorPlaceholderLight, '--colorPlaceholderDark': colorPlaceholderDark }">
+	<ul :class="'placeholder-list placeholder-list--' + type">
 		<li v-for="(item, index) in placeholderData" :key="index" class="placeholder-item">
 			<div class="placeholder-item__avatar" :style="{ '--avatar-size': item.avatarSize }">
 				<div class="placeholder-item__avatar-circle" />
@@ -20,10 +19,6 @@
 
 <script>
 import { AVATAR } from '../../constants.js'
-
-const bodyStyles = window.getComputedStyle(document.body)
-const colorPlaceholderDark = bodyStyles.getPropertyValue('--color-placeholder-dark')
-const colorPlaceholderLight = bodyStyles.getPropertyValue('--color-placeholder-light')
 
 export default {
 	name: 'LoadingPlaceholder',
@@ -40,13 +35,6 @@ export default {
 			type: Number,
 			default: 5,
 		},
-	},
-
-	setup() {
-		return {
-			colorPlaceholderDark,
-			colorPlaceholderLight,
-		}
 	},
 
 	computed: {
@@ -172,7 +160,7 @@ export default {
 .placeholder-item__content-line,
 .placeholder-item__info {
 	background-size: 200vw;
-	background-image: linear-gradient(90deg, var(--colorPlaceholderDark) 65%, var(--colorPlaceholderLight) 70%, var(--colorPlaceholderDark) 75%);
+	background-image: linear-gradient(90deg, var(--color-placeholder-dark) 65%, var(--color-placeholder-light) 70%, var(--color-placeholder-dark) 75%);
 	animation: loading-animation 3s forwards infinite linear;
 	will-change: background-position;
 }
