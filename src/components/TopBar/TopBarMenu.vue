@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="top-bar__wrapper">
+	<div class="top-bar-menu">
 		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
 			<NcButton v-tooltip="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
@@ -530,7 +530,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar__wrapper {
+.top-bar-menu {
 	display: flex;
 }
 </style>

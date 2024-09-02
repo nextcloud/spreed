@@ -19,7 +19,8 @@
 		<div v-if="userAbsence.replacementUserId" class="absence-reminder__replacement">
 			<!-- TRANSLATORS An acting person during the period of absence of the main contact -->
 			<p>{{ t('spreed','Replacement: ') }}</p>
-			<NcUserBubble class="absence-reminder__replacement__bubble"
+			<NcUserBubble :key="isDarkTheme ? 'dark' : 'light'"
+				class="absence-reminder__replacement__bubble"
 				:title="t('spreed','Open conversation')"
 				:display-name="userAbsence.replacementUserDisplayName"
 				:user="userAbsence.replacementUserId"
@@ -48,6 +49,7 @@ import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
+import { useIsDarkTheme } from '../../composables/useIsDarkTheme.ts'
 import { AVATAR } from '../../constants.js'
 
 export default {
@@ -74,7 +76,11 @@ export default {
 	},
 
 	setup() {
-		return { AVATAR }
+		const isDarkTheme = useIsDarkTheme()
+		return {
+			AVATAR,
+			isDarkTheme,
+		}
 	},
 
 	data() {

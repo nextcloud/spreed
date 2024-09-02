@@ -6,6 +6,7 @@
 <template>
 	<span ref="mention" class="mention">
 		<NcUserBubble v-if="size"
+			:key="isDarkTheme ? 'dark' : 'light'"
 			:display-name="name"
 			:avatar-image="avatarUrl"
 			:user="id"
@@ -19,8 +20,8 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
+import { useIsDarkTheme } from '../../../../../composables/useIsDarkTheme.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
-import { isDarkTheme } from '../../../../../utils/isDarkTheme.js'
 
 export default {
 	name: 'Mention',
@@ -50,6 +51,14 @@ export default {
 			type: String,
 			default: '',
 		},
+	},
+
+	setup() {
+		const isDarkTheme = useIsDarkTheme()
+
+		return {
+			isDarkTheme,
+		}
 	},
 
 	data() {
@@ -101,7 +110,7 @@ export default {
 		avatarUrl() {
 			if (this.isRemoteUser) {
 				return this.token
-					? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, isDarkTheme, 64)
+					? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, this.isDarkTheme, 64)
 					: 'icon-user-forced-white'
 			} else if (this.isGroupMention) {
 				return 'icon-group-forced-white'
@@ -111,7 +120,7 @@ export default {
 				return undefined
 			}
 
-			return getConversationAvatarOcsUrl(this.id, isDarkTheme)
+			return getConversationAvatarOcsUrl(this.id, this.isDarkTheme)
 		},
 	},
 
