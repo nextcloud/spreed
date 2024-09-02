@@ -102,7 +102,7 @@ const getters = {
 		return state.fileTemplatesInitialised
 	},
 
-	getFileTemplates: (state) => () => {
+	fileTemplates: (state) => {
 		return state.fileTemplates
 	},
 }
@@ -199,8 +199,8 @@ const mutations = {
 		Vue.delete(state.uploads, uploadId)
 	},
 
-	storeFilesTemplates(state, { template }) {
-		state.fileTemplates.push(template)
+	storeFilesTemplates(state, templates) {
+		Vue.set(state, 'fileTemplates', templates)
 		state.fileTemplatesInitialised = true
 	},
 
@@ -555,10 +555,7 @@ const actions = {
 
 		try {
 			const response = await getFileTemplates()
-
-			response.data.ocs.data.forEach(template => {
-				commit('storeFilesTemplates', { template })
-			})
+			commit('storeFilesTemplates', response.data.ocs.data)
 		} catch (error) {
 			console.error('An error happened when trying to load the templates', error)
 		}

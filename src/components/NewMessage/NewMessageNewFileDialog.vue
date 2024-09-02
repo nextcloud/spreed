@@ -110,7 +110,7 @@ export default {
 
 	computed: {
 		fileTemplateOptions() {
-			return this.$store.getters.getFileTemplates()
+			return this.$store.getters.fileTemplates
 		},
 
 		fileTemplate() {
