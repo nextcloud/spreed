@@ -67,9 +67,11 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/AvatarService.php">
+    <MissingDependency>
+      <code><![CDATA[\OCP\Image]]></code>
+    </MissingDependency>
     <UndefinedClass>
       <code><![CDATA[Filesystem]]></code>
-      <code><![CDATA[\OC_Image]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Service/RecordingService.php">

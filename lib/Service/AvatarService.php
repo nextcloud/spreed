@@ -62,7 +62,7 @@ class AvatarService {
 
 		$content = file_get_contents($file['tmp_name']);
 		unlink($file['tmp_name']);
-		$image = new \OC_Image();
+		$image = new \OCP\Image();
 		$image->loadFromData($content);
 		$image->readExif($content);
 		$this->setAvatar($room, $image);
@@ -98,7 +98,7 @@ class AvatarService {
 		$this->roomService->setAvatar($room, $avatarName);
 	}
 
-	public function setAvatar(Room $room, \OC_Image $image): void {
+	public function setAvatar(Room $room, \OCP\Image $image): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			throw new InvalidArgumentException($this->l->t('One-to-one rooms always need to show the other users avatar'));
 		}

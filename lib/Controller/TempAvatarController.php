@@ -74,7 +74,7 @@ class TempAvatarController extends OCSController {
 		}
 
 		try {
-			$image = new \OC_Image();
+			$image = new \OCP\Image();
 			$image->loadFromData($content);
 			$image->readExif($content);
 			$image->fixOrientation();
