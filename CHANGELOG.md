@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-rc.4 – 2024-09-03
+### Changed
+- Update several dependencies
+- Add a task counter for to-do lists in "Note to self" messages
+  [#13034](https://github.com/nextcloud/spreed/issues/13034)
+
+### Fixed
+- Fix accepting federation invites from notification
+  [#13146](https://github.com/nextcloud/spreed/issues/13146)
+- Show error when joining a call failed
+  [#13077](https://github.com/nextcloud/spreed/issues/13077)
+- Handle OS theme change without page reload
+  [#10774](https://github.com/nextcloud/spreed/issues/10774)
+- Various design fixes
+
 ## 20.0.0-rc.3 – 2024-08-22
 ### Changed
 - Update several dependencies
