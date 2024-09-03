@@ -40,6 +40,8 @@ describe('MessagesGroup.vue', () => {
 	test('renders grouped messages', () => {
 		useMessageInfoSpy.mockReturnValue({
 			actorDisplayName: computed(() => 'actor one'),
+			remoteServer: computed(() => ''),
+			lastEditor: computed(() => ''),
 		})
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
@@ -131,6 +133,8 @@ describe('MessagesGroup.vue', () => {
 		// Arrange
 		useMessageInfoSpy.mockReturnValue({
 			actorDisplayName: computed(() => 'guest-one-display-name'),
+			remoteServer: computed(() => ''),
+			lastEditor: computed(() => ''),
 		})
 
 		const wrapper = shallowMount(MessagesGroup, {
@@ -196,6 +200,8 @@ describe('MessagesGroup.vue', () => {
 		// Arrange
 		useMessageInfoSpy.mockReturnValue({
 			actorDisplayName: computed(() => 'Deleted user'),
+			remoteServer: computed(() => ''),
+			lastEditor: computed(() => ''),
 	   })
 
 		const wrapper = shallowMount(MessagesGroup, {

@@ -15,11 +15,7 @@
 				disable-tooltip />
 		</div>
 		<ul class="messages">
-			<li class="messages__author" aria-level="4">
-				<span class="messages__author-name">{{ actorDisplayName }}</span>
-				<span v-if="remoteServer" class="messages__author-server">{{ remoteServer }}</span>
-				<span v-if="lastEditor" class="messages__author-edit">{{ lastEditor }}</span>
-			</li>
+			<li class="messages__author" aria-level="4">{{ actorInfo }}</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
 				:message="message"
@@ -86,12 +82,17 @@ export default {
 			lastEditor,
 			actorDisplayName,
 		} = useMessageInfo(firstMessage)
+
+		const actorInfo = computed(() => {
+			return [actorDisplayName.value, remoteServer.value, lastEditor.value]
+				.filter(value => value).join(' ')
+		})
+
 		return {
 			AVATAR,
 			guestNameStore: useGuestNameStore(),
-			remoteServer,
-			lastEditor,
 			actorDisplayName,
+			actorInfo,
 		}
 	},
 
@@ -147,22 +148,13 @@ export default {
 	}
 
 	&__author {
-		display: flex;
-		gap: 4px;
 		max-width: $messages-text-max-width;
 		padding-left: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
-
-		&-name {
-			flex-shrink: 0;
-		}
-
-		&-edit,
-		&-server {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+		flex-shrink: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 </style>
