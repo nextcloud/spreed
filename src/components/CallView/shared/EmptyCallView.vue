@@ -8,8 +8,9 @@
 		:class="{
 			'empty-call-view--sidebar': isSidebar,
 			'empty-call-view--small': isSmall
-		}">
-		<div class="icon" :class="iconClass" />
+		}"
+		data-theme-dark>
+		<component :is="emptyCallViewIcon" :size="isSidebar ? 32 : 64" class="empty-call-view__icon" />
 		<h2>{{ title }}</h2>
 		<template v-if="!isSmall">
 			<p v-if="message" class="emptycontent-additional">
@@ -28,12 +29,25 @@
 </template>
 
 <script>
+import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
+import IconLinkVariant from 'vue-material-design-icons/LinkVariant.vue'
+import IconPhone from 'vue-material-design-icons/Phone.vue'
+
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
+
+const STATUS_ERRORS = {
+	400: t('spreed', 'Recording consent is required'),
+	403: t('spreed', 'This conversation is read-only'),
+	404: t('spreed', 'Conversation not found or not joined'),
+	412: t('spreed', "Lobby is still active and you're not a moderator"),
+}
 
 export default {
 
@@ -41,6 +55,11 @@ export default {
 
 	components: {
 		NcButton,
+		IconAccountMultiple,
+		IconAlertOctagon,
+		IconLinkVariant,
+		IconPhone,
+		NcLoadingIcon,
 	},
 
 	props: {
@@ -118,16 +137,15 @@ export default {
 				|| (this.conversation && this.conversation.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
-		iconClass() {
+		emptyCallViewIcon() {
 			if (this.connectionFailed) {
-				return 'icon-error'
-			}
-			if (this.isConnecting) {
-				return 'icon-loading'
+				return IconAlertOctagon
+			} else if (this.isConnecting) {
+				return NcLoadingIcon
 			} else if (this.isPhoneConversation) {
-				return 'icon-phone'
+				return IconPhone
 			} else {
-				return this.isPublicConversation ? 'icon-public' : 'icon-contacts'
+				return this.isPublicConversation ? IconLinkVariant : IconAccountMultiple
 			}
 		},
 
@@ -148,18 +166,19 @@ export default {
 		},
 
 		helper() {
-			if (this.connectionFailed) {
-				return t('spreed', 'Please try to reload the page')
-			}
-			return ''
+			return this.connectionFailed ? t('spreed', 'Please try to reload the page') : ''
 		},
 
 		message() {
-			if (this.connectionFailed === 'consent') {
-				return t('spreed', 'Recording consent is required')
-			}
-
 			if (this.connectionFailed) {
+				const statusCode = this.connectionFailed?.meta?.statuscode
+				if (STATUS_ERRORS[statusCode]) {
+					return STATUS_ERRORS[statusCode]
+				}
+				if (this.connectionFailed?.data?.error) {
+					return this.connectionFailed.data.error
+				}
+
 				return t('spreed', 'Something went wrong')
 			}
 
@@ -232,8 +251,9 @@ export default {
 		margin: 4px auto;
 	}
 
+	&__icon,
 	h2, p {
-		color: #FFFFFF;
+		color: var(--color-main-text);
 	}
 
 	&--sidebar {
