@@ -339,7 +339,7 @@ const mutations = {
 	},
 
 	connectionFailed(state, { token, payload }) {
-		Vue.set(state.connectionFailed, token, payload ?? 'failed')
+		Vue.set(state.connectionFailed, token, payload)
 	},
 
 	finishedConnecting(state, { token, sessionId }) {
