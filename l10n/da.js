@@ -416,6 +416,7 @@ OC.L10N.register(
     "Other sources" : "Andre kilder",
     "An error occurred while performing the search" : "Der opstod en fejl under søgningen",
     "You are currently waiting in the lobby" : "Du venter nu i lobbyen",
+    "Select a device" : "Vælg en enhed",
     "None" : "Ingen",
     "Devices" : "Enhed",
     "No audio" : "Ingen lyd",
