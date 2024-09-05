@@ -33,8 +33,8 @@
 
 		<template #name>
 			<!-- First line: participant's name and type -->
-			<span ref="userName" class="participant__user" @mouseover="updateUserNameNeedsTitle">
-				<span :title="userNameTitle" class="participant__user-name">{{ computedName }}</span>
+			<span class="participant__user" :title="userNameTitle">
+				<span class="participant__user-name">{{ computedName }}</span>
 				<span v-if="showModeratorLabel" class="participant__user-badge">({{ t('spreed', 'moderator') }})</span>
 				<span v-if="isBridgeBotUser" class="participant__user-badge">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuest" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
@@ -48,11 +48,9 @@
 				{{ shareWithDisplayNameUnique }}
 			</span>
 			<span v-else-if="statusMessage"
-				ref="statusMessage"
 				class="participant__status"
 				:class="{ 'participant__status--highlighted': isParticipantSpeaking }"
-				:title="statusTitle"
-				@mouseover="updateStatusNeedsTitle">
+				:title="statusMessage">
 				{{ statusMessage }}
 			</span>
 		</template>
@@ -448,8 +446,6 @@ export default {
 
 	data() {
 		return {
-			isUserNameTitleVisible: false,
-			isStatusTitleVisible: false,
 			permissionsEditor: false,
 			isRemoveDialogOpen: false,
 			isBanParticipant: false,
@@ -485,9 +481,6 @@ export default {
 		},
 
 		userNameTitle() {
-			if (!this.isUserNameTitleVisible) {
-				return ''
-			}
 			let text = this.computedName
 			if (this.showModeratorLabel) {
 				text += ' (' + t('spreed', 'moderator') + ')'
@@ -554,14 +547,6 @@ export default {
 			}
 
 			return getStatusMessage(this.participant)
-		},
-
-		statusTitle() {
-			if (!this.isStatusTitleVisible) {
-				return false
-			}
-
-			return this.statusMessage
 		},
 
 		/**
@@ -902,19 +887,8 @@ export default {
 
 	methods: {
 		t,
+
 		formattedTime,
-
-		updateUserNameNeedsTitle() {
-			// check if ellipsized
-			const e = this.$refs.userName
-			this.isUserNameTitleVisible = (e && e.offsetWidth < e.scrollWidth)
-		},
-
-		updateStatusNeedsTitle() {
-			// check if ellipsized
-			const e = this.$refs.statusMessage
-			this.isStatusTitleVisible = (e && e.offsetWidth < e.scrollWidth)
-		},
 
 		// Used to allow selecting participants in a search.
 		handleClick() {
