@@ -154,7 +154,7 @@ const getters = {
 		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
 	},
 
-	isMessageListPopulated: (state) => (token) => {
+	isMessagesListPopulated: (state) => (token) => {
 		return !!state.loadedMessages[token]
 	},
 
