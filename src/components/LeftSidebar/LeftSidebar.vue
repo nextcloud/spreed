@@ -1003,17 +1003,15 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	height: 100%;
-	padding-left: var(--default-grid-baseline);
-	overflow-y: scroll !important; // reserve a place for scrollbar
+	padding-inline: var(--default-grid-baseline);
+	overflow-y: auto;
 	line-height: 20px;
 }
 
 .new-conversation {
 	position: relative;
 	display: flex;
-	padding: calc(var(--default-grid-baseline) * 2);
-	padding-right: var(--default-grid-baseline);
-	overflow-y: scroll !important; // reserve a place for scrollbar
+	margin: calc(var(--default-grid-baseline) * 2);
 	align-items: center;
 	border-bottom: 1px solid transparent;
 
@@ -1023,29 +1021,32 @@ export default {
 
 	.filters {
 		position: absolute;
-		top: calc(var(--default-grid-baseline) * 2);
-		right: calc(var(--default-grid-baseline) * 2 + var(--default-clickable-area));
+		top: 0;
+		right: calc(var(--default-grid-baseline) + var(--default-clickable-area));
 	}
 
 	.actions {
 		position: absolute;
-		top: calc(var(--default-grid-baseline) * 2);
-		right: calc(var(--default-grid-baseline) * 1);
+		top: 0;
+		right: 0;
 	}
 }
 
 .invitation-button {
-	padding: 0 10px;
-	overflow-y: scroll; // align total width with list items
-	margin-bottom: 4px;
+	padding-inline: calc(var(--default-grid-baseline) * 2);
+	margin-block: var(--default-grid-baseline);
 
 	:deep(.app-navigation-entry-link) {
-		padding-left: 10px;
+		padding-left: var(--default-grid-baseline);
+	}
+
+	:deep(.app-navigation-entry-icon) {
+		flex: 0 0 40px !important; // AVATAR.SIZE.DEFAULT
 	}
 
 	:deep(.app-navigation-entry__name) {
-		padding-left: 8px;
-		font-weight: bold;
+		padding-left: calc(2 * var(--default-grid-baseline));
+		font-weight: 500;
 	}
 }
 
