@@ -882,6 +882,7 @@ OC.L10N.register(
     "Copy link" : "Kopiera länk",
     "Recording consent is required" : "Samtycke för inspelning krävs",
     "This conversation is read-only" : "Den här konversationen är skrivskyddad",
+    "Conversation not found or not joined" : "Konversationen hittades inte eller gick inte att gå med",
     "Connection failed" : "Anslutningen misslyckades",
     "Connecting …" : "Ansluter…",
     "Calling …" : "Ringer …",
