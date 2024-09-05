@@ -167,7 +167,7 @@ export default {
 		},
 
 		isLoadingChat() {
-			return !this.$store.getters.isMessageListPopulated(this.token)
+			return !this.$store.getters.isMessagesListPopulated(this.token)
 		},
 	},
 
