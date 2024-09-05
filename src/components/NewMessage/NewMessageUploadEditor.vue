@@ -38,17 +38,16 @@
 							:file="file[1].temporaryMessage.messageParameters.file"
 							@remove-file="handleRemoveFileFromSelection" />
 					</template>
-					<div :key="'addMore'"
-						class="add-more">
-						<NcButton :aria-label="addMoreAriaLabel"
-							type="primary"
-							class="add-more__button"
-							@click="clickImportInput">
-							<template #icon>
-								<Plus :size="48" />
-							</template>
-						</NcButton>
-					</div>
+					<NcButton key="add-more"
+						:aria-label="addMoreAriaLabel"
+						type="tertiary"
+						class="add-more-button"
+						size="large"
+						@click="clickImportInput">
+						<template #icon>
+							<Plus :size="48" />
+						</template>
+					</NcButton>
 				</TransitionWrapper>
 			</template>
 			<template v-else>
@@ -67,6 +66,7 @@
 				:key="modalContainerId"
 				ref="newMessage"
 				role="region"
+				class="upload-editor__textfield"
 				upload
 				:token="token"
 				:container="modalContainerId"
@@ -258,7 +258,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 16px;
+	padding: calc(3 * var(--default-grid-baseline));
 
 	&__previews {
 		display: flex;
@@ -271,21 +271,29 @@ export default {
 			border-radius: var(--border-radius-large);
 		}
 	}
+
 	&__actions {
 		display: flex;
 		justify-content: flex-end;
 		gap: 4px;
 		padding: 12px 0;
 	}
-}
 
-.add-more {
-	width: 180px;
-	height: 180px;
-	display: flex;
-	margin: 10px;
-	&__button {
-		margin: auto;
+	&__textfield {
+		padding-block: calc(var(--default-grid-baseline) * 2);
+	}
+
+	.add-more-button {
+		width: 164px !important;
+		height: 176px !important;
+		margin: 10px;
+
+		:deep(.button-vue__icon) {
+			border-radius: var(--border-radius-pill);
+			color: var(--color-primary-element-text);
+			background-color: var(--color-primary-element);
+		}
 	}
 }
+
 </style>
