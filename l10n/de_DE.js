@@ -884,6 +884,7 @@ OC.L10N.register(
     "Copy link" : "Link kopieren",
     "Recording consent is required" : "Zustimmung zur Aufzeichnung ist erforderlich",
     "This conversation is read-only" : "Diese Unterhaltung ist schreibgeschützt",
+    "Conversation not found or not joined" : "Unterhaltung nicht gefunden oder nicht beigetreten",
     "Connection failed" : "Verbindung fehlgeschlagen",
     "Connecting …" : "Verbinde …",
     "Calling …" : "Rufe an…",
