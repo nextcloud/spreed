@@ -884,6 +884,7 @@ OC.L10N.register(
     "Copy link" : "複製連結",
     "Recording consent is required" : "需要同意錄製",
     "This conversation is read-only" : "此對話唯讀",
+    "Conversation not found or not joined" : "找不到或未加入對話",
     "Connection failed" : "連線失敗",
     "Connecting …" : "正在連線……",
     "Calling …" : "正在通話……",

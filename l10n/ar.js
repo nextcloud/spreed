@@ -884,6 +884,7 @@ OC.L10N.register(
     "Copy link" : "انسخ الرابط",
     "Recording consent is required" : "إذن التسجيل لازم",
     "This conversation is read-only" : "هذه المحادثة للقراءة فقط",
+    "Conversation not found or not joined" : "المحادثة غير موجودة أو لم يتم الانضمام إليها",
     "Connection failed" : "تعذّر الاتصال",
     "Connecting …" : "جارٍ الاتصال…",
     "Calling …" : "الاتصال جارٍ ...",
