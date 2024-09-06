@@ -371,7 +371,7 @@ import {
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
-import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.js'
+import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.ts'
 
 export default {
 	name: 'Participant',
