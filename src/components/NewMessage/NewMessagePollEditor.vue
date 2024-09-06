@@ -79,6 +79,7 @@ import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import pollService from '../../services/pollService.js'
+import { usePollsStore } from '../../stores/polls.js'
 
 export default {
 	name: 'NewMessagePollEditor',
@@ -101,6 +102,12 @@ export default {
 	},
 
 	emits: ['close'],
+
+	setup() {
+		return {
+			pollsStore: usePollsStore(),
+		}
+	},
 
 	data() {
 		return {
@@ -148,7 +155,7 @@ export default {
 					this.isPrivate ? 1 : 0,
 					this.isMultipleAnswer ? 0 : 1)
 				// Add the poll immediately to the store
-				this.$store.dispatch('addPoll', {
+				this.pollsStore.addPoll({
 					token: this.token,
 					poll: response.data.ocs.data,
 				})

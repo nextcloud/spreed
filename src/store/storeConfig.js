@@ -10,7 +10,6 @@ import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
 import messagesStore from './messagesStore.js'
 import participantsStore from './participantsStore.js'
-import pollStore from './pollStore.js'
 import sidebarStore from './sidebarStore.js'
 import soundsStore from './soundsStore.js'
 import tokenStore from './tokenStore.js'
@@ -31,7 +30,6 @@ export default {
 		tokenStore,
 		uiModeStore,
 		windowVisibilityStore,
-		pollStore,
 	},
 
 	mutations: {},
