@@ -1052,6 +1052,7 @@ export default {
 	grid-template-columns: 165px 75px;
 	align-items: center;
 	justify-content: flex-start;
+	z-index: 1;
 
 	& span {
 		text-overflow: ellipsis;
