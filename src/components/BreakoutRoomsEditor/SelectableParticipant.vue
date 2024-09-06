@@ -37,7 +37,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.js'
+import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.ts'
 
 export default {
 	name: 'SelectableParticipant',

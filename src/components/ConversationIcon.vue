@@ -66,7 +66,7 @@ import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { getPreloadedUserStatus } from '../utils/userStatus.js'
+import { getPreloadedUserStatus } from '../utils/userStatus.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 

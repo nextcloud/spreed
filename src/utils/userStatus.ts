@@ -5,12 +5,19 @@
  */
 import { t } from '@nextcloud/l10n'
 
+import type {
+	Conversation,
+	Participant,
+	ParticipantSearchResult,
+	ParticipantStatus,
+} from '../types/index.ts'
+
 /**
  * Generate user status object to use as preloaded status with NcAvatar
  *
- * @param {object} userData user data (from conversation, participant, search result)
+ * @param userData user data (from conversation, participant, search result)
  */
-export function getPreloadedUserStatus(userData) {
+export function getPreloadedUserStatus(userData?: Conversation | Participant | ParticipantSearchResult): ParticipantStatus | undefined {
 	if (!userData || typeof userData !== 'object') {
 		return undefined
 	}
@@ -37,10 +44,9 @@ export function getPreloadedUserStatus(userData) {
 /**
  * Generate full status message for user according to its status data
  *
- * @param {object} userData user data
- * @return {string}
+ * @param userData user data
  */
-export function getStatusMessage(userData) {
+export function getStatusMessage(userData?: Conversation | Participant | ParticipantSearchResult | ''): string {
 	if (!userData) {
 		return ''
 	}
@@ -67,10 +73,8 @@ export function getStatusMessage(userData) {
 /**
  * Check if current status is "Do not disturb"
  *
- * @param {object} userData user data
- * @param {string} [userData.status] status of user
- * @return {boolean}
+ * @param userData user data
  */
-export function isDoNotDisturb(userData) {
+export function isDoNotDisturb(userData: Conversation | Participant | ParticipantSearchResult): boolean {
 	return userData?.status === 'dnd'
 }
