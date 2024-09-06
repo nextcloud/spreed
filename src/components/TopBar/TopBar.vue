@@ -302,7 +302,7 @@ export default {
 
 		showUpcomingEvent() {
 			return this.nextEvent && !this.isInCall && !this.isSidebar && !this.isMobile
-				&& this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 		},
 	},
 
