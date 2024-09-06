@@ -15,7 +15,9 @@
 				disable-tooltip />
 		</div>
 		<ul class="messages">
-			<li class="messages__author" aria-level="4">{{ actorInfo }}</li>
+			<li class="messages__author" aria-level="4">
+				{{ actorInfo }}
+			</li>
 			<Message v-for="(message, index) of messages"
 				:key="message.id"
 				:message="message"
