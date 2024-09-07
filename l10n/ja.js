@@ -824,6 +824,7 @@ OC.L10N.register(
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: \".wasm\" と \".tflite\" ファイルがWebブラウザーにより正しく返却されました。",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "PHP と Apache の設定に互換性がないようです。PHP は MPM_PREFORK モジュールでのみ使用可能であり、PHP-FPM は MPM_EVENT モジュールでのみ使用可能であることに注意してください。",
     "Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "exec が無効になっているか、apachectl が期待どおりに動作していないため、PHP と Apache の設定を検出できませんでした。PHP は MPM_PREFORK モジュールでのみ使用可能であり、 PHP-FPM は MPM_EVENT モジュールでのみ使用可能であることに注意してください。",
+    "Federated user" : "フェデレーションユーザー",
     "Number of breakout rooms" : "子会議室数",
     "You can create from 1 to 20 breakout rooms." : "1 から 20 の子会議室を作成することができます。",
     "Assignment method" : "割り当て方法",
