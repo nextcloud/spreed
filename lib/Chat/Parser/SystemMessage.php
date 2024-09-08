@@ -717,7 +717,8 @@ class SystemMessage implements IEventListener {
 		} elseif (!$participant->isGuest()) {
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
-				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
+				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'] &&
+				empty($parsedParameters['actor']['server']);
 		} else {
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
 				$participant->getAttendee()->getActorType() === 'guest' &&
