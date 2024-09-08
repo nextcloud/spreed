@@ -1489,6 +1489,7 @@ OC.L10N.register(
     "_%n minute _::_%n minutes_" : ["Minutu %n","%n minutu"],
     "Conversation link copied to clipboard" : "Elkarrizketaren esteka arbelera kopiatu da",
     "The link could not be copied" : "Ezin izan da esteka kopiatu",
+    "Error while parsing a PROPFIND error" : "Errore bat gertatu da PROPFIND errore bat analizatzean",
     "Lost connection to signaling server. Trying to reconnect." : "Konexioa galdu da seinalizazio zerbitzariarekin. Berriro konektatzen saiatzen.",
     "Lost connection to signaling server. Try to reload the page manually." : "Konexioa galdu da seinalizazio zerbitzariarekin. Saiatu orria eskuz berriro kargatzen.",
     "Establishing signaling connection is taking longer than expected …" : "Seinalizazio konexioa ezartzea espero baino luzeago jotzen ari da...",
