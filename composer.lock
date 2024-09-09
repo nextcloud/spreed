@@ -65,16 +65,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "1.12.0",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "3bc40798a5ff64aee8a28509b73f7f84d5c66ac9"
+                "reference": "4e0bc8b6a9ca4ce5350a8206f7c8d81664806a01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/3bc40798a5ff64aee8a28509b73f7f84d5c66ac9",
-                "reference": "3bc40798a5ff64aee8a28509b73f7f84d5c66ac9",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/4e0bc8b6a9ca4ce5350a8206f7c8d81664806a01",
+                "reference": "4e0bc8b6a9ca4ce5350a8206f7c8d81664806a01",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.12.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/1.13.0"
             },
             "funding": [
                 {
@@ -134,7 +134,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-04T16:42:55+00:00"
+            "time": "2024-09-02T12:57:33+00:00"
         },
         {
             "name": "firebase/php-jwt",
