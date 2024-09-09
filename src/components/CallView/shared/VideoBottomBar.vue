@@ -212,8 +212,8 @@ export default {
 		},
 		audioButtonTooltip() {
 			return this.model.attributes.audioAvailable
-				? t('spreed', 'Mute')
-				: t('spreed', 'Muted')
+				? t('spreed', 'Unmute')
+				: t('spreed', 'Mute')
 		},
 
 		// Video indicator
