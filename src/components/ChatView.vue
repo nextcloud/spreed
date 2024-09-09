@@ -35,6 +35,7 @@
 				<NcButton v-show="!isChatScrolledToBottom && !isLoadingChat"
 					type="secondary"
 					:aria-label="t('spreed', 'Scroll to bottom')"
+					:title="t('spreed', 'Scroll to bottom')"
 					class="scroll-to-bottom__button"
 					@click="smoothScrollToBottom">
 					<template #icon>
