@@ -23,6 +23,7 @@ const state = {
 	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
+	callHasJustEnded: false,
 }
 
 const getters = {
@@ -34,6 +35,7 @@ const getters = {
 	lastIsGrid: (state) => state.lastIsGrid,
 	lastIsStripeOpen: (state) => state.lastIsStripeOpen,
 	presentationStarted: (state) => state.presentationStarted,
+	callHasJustEnded: (state) => state.callHasJustEnded,
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
@@ -106,6 +108,9 @@ const mutations = {
 	},
 	clearBackgroundImageAverageColorCache(state) {
 		state.backgroundImageAverageColorCache = {}
+	},
+	setCallHasJustEnded(state, value) {
+		state.callHasJustEnded = value
 	},
 }
 
@@ -240,6 +245,23 @@ const actions = {
 	isEmptyCallView(context, value) {
 		context.commit('isEmptyCallView', value)
 	},
+
+	setCallHasJustEnded(context, timestamp) {
+		// Check the time difference between the current time and the call end time.
+		// Then, disable the CallButton for the remaining time until 10 seconds after the call ends.
+		const timeDiff = Math.abs(Date.now() / 1000 - timestamp)
+		if (10000 - timeDiff < 0) {
+			return
+		}
+		context.commit('setCallHasJustEnded', true)
+		setTimeout(() => {
+			context.dispatch('resetCallHasJustEnded')
+		}, Math.max(0, 10000 - timeDiff))
+	},
+
+	resetCallHasJustEnded(context) {
+		context.commit('setCallHasJustEnded', false)
+	}
 }
 
 export default { state, mutations, getters, actions }
