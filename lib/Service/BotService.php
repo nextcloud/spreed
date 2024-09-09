@@ -62,7 +62,7 @@ class BotService {
 				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
 				'name' => $event->getBotServer()->getName(),
 			],
-			'object' => [
+			'target' => [
 				'type' => 'Collection',
 				'id' => $event->getRoom()->getToken(),
 				'name' => $event->getRoom()->getName(),
@@ -78,7 +78,7 @@ class BotService {
 				'id' => Attendee::ACTOR_BOTS . '/' . Attendee::ACTOR_BOT_PREFIX . $event->getBotServer()->getUrlHash(),
 				'name' => $event->getBotServer()->getName(),
 			],
-			'object' => [
+			'target' => [
 				'type' => 'Collection',
 				'id' => $event->getRoom()->getToken(),
 				'name' => $event->getRoom()->getName(),
