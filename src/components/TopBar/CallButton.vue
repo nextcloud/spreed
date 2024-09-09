@@ -253,6 +253,7 @@ export default {
 
 		startCallButtonDisabled() {
 			return this.disabled
+				|| this.$store.getters.callHasJustEnded
 				|| (!this.conversation.canStartCall && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
@@ -288,6 +289,10 @@ export default {
 		startCallToolTip() {
 			if (this.isNextcloudTalkHashDirty) {
 				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call.')
+			}
+
+			if (this.$store.getters.callHasJustEnded) {
+				return t('spreed', 'This call has just ended')
 			}
 
 			if (this.callButtonTooltipText) {
@@ -350,6 +355,12 @@ export default {
 		isInLobby() {
 			return this.$store.getters.isInLobby
 		},
+	},
+
+	watch: {
+		token() {
+			this.$store.dispatch('resetCallHasJustEnded')
+		}
 	},
 
 	mounted() {
