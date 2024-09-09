@@ -11,6 +11,7 @@ import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { getUploader } from '@nextcloud/upload'
 
+import { SHARED_ITEM } from '../constants.js'
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
 import {
@@ -239,7 +240,7 @@ const actions = {
 
 			// Get localurl for some image previews
 			let localUrl = ''
-			if (file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpeg') {
+			if (SHARED_ITEM.MEDIA_ALLOWED_PREVIEW.includes(file.type)) {
 				localUrl = URL.createObjectURL(file)
 			} else if (isVoiceMessage) {
 				localUrl = file.localUrl

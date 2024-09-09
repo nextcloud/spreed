@@ -198,6 +198,13 @@ export const SHARED_ITEM = {
 		RECORDING: 'recording',
 		VOICE: 'voice',
 	},
+	MEDIA_ALLOWED_PREVIEW: [
+		'image/gif',
+		'image/jpeg',
+		'image/jpg',
+		'image/png',
+		'image/webp',
+	],
 }
 
 export const WEBINAR = {
