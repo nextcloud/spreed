@@ -212,7 +212,7 @@ export default {
 		},
 		audioButtonTooltip() {
 			return this.model.attributes.audioAvailable
-				? t('spreed', 'Unmute')
+				? t('spreed', 'Muted')
 				: t('spreed', 'Mute')
 		},
 
