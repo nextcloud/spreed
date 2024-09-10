@@ -450,7 +450,7 @@ export default {
 		},
 
 		hasTemporaryImageUrl() {
-			return this.file.mimetype.startsWith('image/') && this.file.localUrl
+			return SHARED_ITEM.MEDIA_ALLOWED_PREVIEW.includes(this.file.mimetype) && this.file.localUrl
 		},
 
 		wrapperTabIndex() {
