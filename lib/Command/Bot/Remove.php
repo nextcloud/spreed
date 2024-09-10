@@ -65,7 +65,7 @@ class Remove extends Base {
 		foreach ($tokens as $token) {
 			try {
 				$room = $this->roomManager->getRoomByToken($token);
-			} catch(RoomNotFoundException) {
+			} catch (RoomNotFoundException) {
 				continue;
 			}
 			$event = new BotDisabledEvent($room, $botServer);
