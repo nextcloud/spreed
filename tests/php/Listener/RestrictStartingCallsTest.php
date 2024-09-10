@@ -18,6 +18,9 @@ use OCP\IConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
+/**
+ * @group DB
+ */
 class RestrictStartingCallsTest extends TestCase {
 	protected IConfig&MockObject $serverConfig;
 	protected ParticipantService&MockObject $participantService;

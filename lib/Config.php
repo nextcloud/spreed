@@ -16,7 +16,6 @@ use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -48,7 +47,6 @@ class Config {
 		private ISecureRandom $secureRandom,
 		private IGroupManager $groupManager,
 		private IUserManager $userManager,
-		private ICloudIdManager $cloudIdManager,
 		private IURLGenerator $urlGenerator,
 		protected ITimeFactory $timeFactory,
 		private IEventDispatcher $dispatcher,
@@ -477,12 +475,11 @@ class Config {
 	 * @param string|null $userId
 	 * @return string
 	 */
-	public function getSignalingTicket(int $version, ?string $userId): string {
+	public function getSignalingTicket(int $version, ?string $userId, ?string $cloudId = null): string {
 		switch ($version) {
-			case self::SIGNALING_TICKET_V1:
-				return $this->getSignalingTicketV1($userId);
 			case self::SIGNALING_TICKET_V2:
-				return $this->getSignalingTicketV2($userId);
+				return $this->getSignalingTicketV2($userId, $cloudId);
+			case self::SIGNALING_TICKET_V1:
 			default:
 				return $this->getSignalingTicketV1($userId);
 		}
@@ -606,19 +603,19 @@ class Config {
 	 *                            a cloud id.
 	 * @return string
 	 */
-	private function getSignalingTicketV2(?string $userId): string {
+	private function getSignalingTicketV2(?string $userId, ?string $cloudId): string {
 		$timestamp = $this->timeFactory->getTime();
 		$data = [
 			'iss' => $this->urlGenerator->getAbsoluteURL(''),
 			'iat' => $timestamp,
 			'exp' => $timestamp + 60,  // Valid for 1 minute.
 		];
-		$user = !empty($userId) ? $this->userManager->get($userId) : null;
+		$user = $userId !== null ? $this->userManager->get($userId) : null;
 		if ($user instanceof IUser) {
 			$data['sub'] = $user->getUID();
 			$data['userdata'] = $this->getSignalingUserData($user);
-		} elseif (!empty($userId) && $this->cloudIdManager->isValidCloudId($userId)) {
-			$data['sub'] = $userId;
+		} elseif ($cloudId !== null && $cloudId !== '') {
+			$data['sub'] = $cloudId;
 			$extendedData = $this->getSignalingFederatedUserData();
 			if (!empty($extendedData)) {
 				$data['userdata'] = $extendedData;

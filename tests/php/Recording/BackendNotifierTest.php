@@ -23,7 +23,6 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -91,11 +90,10 @@ class BackendNotifierTest extends TestCase {
 		$appConfig = $this->createMock(IAppConfig::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$userManager = $this->createMock(IUserManager::class);
-		$cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
-		$this->config = new Config($config, $appConfig, $this->secureRandom, $groupManager, $userManager, $cloudIdManager, $this->urlGenerator, $timeFactory, $dispatcher);
+		$this->config = new Config($config, $appConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
 
 		$this->recreateBackendNotifier();
 
