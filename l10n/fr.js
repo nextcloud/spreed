@@ -913,7 +913,7 @@ OC.L10N.register(
     "You" : "Vous",
     "Show screen" : "Afficher l'écran",
     "Stop following" : "Arrêter de suivre",
-    "Mute" : "Muet",
+    "Mute" : "Mettre en sourdine",
     "Muted" : "Mis en sourdine",
     "Connection could not be established …" : "La connexion n'a pas pu être établie...",
     "Connection was lost and could not be re-established …" : "La connexion a été perdue et n'a pas pu être rétablie...",

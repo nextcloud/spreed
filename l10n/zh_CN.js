@@ -826,6 +826,7 @@ OC.L10N.register(
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "好：web 服务器正确返回了 \".wasm\" 和 \".tflite\" 文件",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "PHP与Apache配置似乎不兼容。请注意，PHP仅能与MPM_PREFORK模块一起使用，PHP-FPM仅能与MPM_EVENT模块一起使用。",
     "Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "无法检测到PHP与Apache配置，因为exec已停用或是 apachectl未按预期运行。请注意，PHP仅能与MPM_PREFORK模块一起使用，PHP-FPM仅能与MPM_EVENT模块一起使用。",
+    "Federated user" : "联合云用户",
     "Number of breakout rooms" : "分组讨论室数量",
     "Assignment method" : "指派方法",
     "Automatically assign participants" : "自动指派参与者",
