@@ -14,22 +14,18 @@ import pollService from '../services/pollService.js'
 export const usePollsStore = defineStore('polls', {
 	state: () => ({
 		polls: {},
-		pollDebounceFunctions: {},
+		debouncedFunctions: {},
 		activePoll: null,
 		pollToastsQueue: {},
 	}),
 
 	getters: {
-		getPoll: (state) => (token, id) => {
-			return state.polls?.[token]?.[id]
+		getPoll: (state) => (token, pollId) => {
+			return state.polls[token]?.[pollId]
 		},
 
-		activePoll: (state) => {
-			return state.activePoll
-		},
-
-		getNewPolls: (state) => {
-			return state.pollToastsQueue
+		isNewPoll: (state) => (pollId) => {
+			return state.pollToastsQueue[pollId] !== undefined
 		},
 	},
 
@@ -44,11 +40,9 @@ export const usePollsStore = defineStore('polls', {
 		async getPollData({ token, pollId }) {
 			try {
 				const response = await pollService.getPollData(token, pollId)
-				const poll = response.data.ocs.data
-				this.addPoll({ token, poll })
-				console.debug('polldata', response)
+				this.addPoll({ token, poll: response.data.ocs.data })
 			} catch (error) {
-				console.debug(error)
+				console.error(error)
 			}
 		},
 
@@ -59,34 +53,44 @@ export const usePollsStore = defineStore('polls', {
 		 *
 		 * @param { object } root0 The arguments passed to the action
 		 * @param { string } root0.token The token of the conversation
-		 * @param { number }root0.pollId The id of the poll
+		 * @param { number } root0.pollId The id of the poll
 		 */
 		debounceGetPollData({ token, pollId }) {
-			// Create debounce function for getting this particular poll data
-			// if it does not exist yet
-			if (!this.pollDebounceFunctions[token]?.[pollId]) {
-				const debounceGetPollDataFunction = debounce(async () => {
-					await this.getPollData({
-						token,
-						pollId,
-					})
-				}, 5000)
-				// Add the debounce function to the state object
-				if (!this.pollDebounceFunctions[token]) {
-					Vue.set(this.pollDebounceFunctions, token, {})
-				}
-				Vue.set(this.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
+			if (!this.debouncedFunctions[token]) {
+				Vue.set(this.debouncedFunctions, token, {})
 			}
-			// Call the debounce function for getting the poll data
-			this.pollDebounceFunctions[token][pollId]()
+			// Create the debounced function for getting poll data if not exist yet
+			if (!this.debouncedFunctions[token]?.[pollId]) {
+				const debouncedFunction = debounce(async () => {
+					await this.getPollData({ token, pollId })
+				}, 5000)
+				Vue.set(this.debouncedFunctions[token], pollId, debouncedFunction)
+			}
+			// Call the debounced function for getting the poll data
+			this.debouncedFunctions[token][pollId]()
 		},
 
-		async submitVote({ token, pollId, vote }) {
-			console.debug('Submitting vote')
+		async createPoll({ token, question, options, resultMode, maxVotes }) {
 			try {
-				const response = await pollService.submitVote(token, pollId, vote)
-				const poll = response.data.ocs.data
-				this.addPoll({ token, poll })
+				const response = await pollService.postNewPoll(
+					token,
+					question,
+					options,
+					resultMode,
+					maxVotes,
+				)
+				this.addPoll({ token, poll: response.data.ocs.data })
+
+				return response.data.ocs.data
+			} catch (error) {
+				console.error(error)
+			}
+		},
+
+		async submitVote({ token, pollId, optionIds }) {
+			try {
+				const response = await pollService.submitVote(token, pollId, optionIds)
+				this.addPoll({ token, poll: response.data.ocs.data })
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while submitting your vote'))
@@ -94,11 +98,9 @@ export const usePollsStore = defineStore('polls', {
 		},
 
 		async endPoll({ token, pollId }) {
-			console.debug('Ending poll')
 			try {
 				const response = await pollService.endPoll(token, pollId)
-				const poll = response.data.ocs.data
-				this.addPoll({ token, poll })
+				this.addPoll({ token, poll: response.data.ocs.data })
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while ending the poll'))
@@ -134,17 +136,16 @@ export const usePollsStore = defineStore('polls', {
 			Vue.set(this.pollToastsQueue, pollId, toast)
 		},
 
-		hidePollToast(id) {
-			if (this.pollToastsQueue[id]) {
-				this.pollToastsQueue[id].hideToast()
-				Vue.delete(this.pollToastsQueue, id)
+		hidePollToast(pollId) {
+			if (this.pollToastsQueue[pollId]) {
+				this.pollToastsQueue[pollId].hideToast()
+				Vue.delete(this.pollToastsQueue, pollId)
 			}
 		},
 
 		hideAllPollToasts() {
-			for (const id in this.pollToastsQueue) {
-				this.pollToastsQueue[id].hideToast()
-				Vue.delete(this.pollToastsQueue, id)
+			for (const pollId in this.pollToastsQueue) {
+				this.hidePollToast(pollId)
 			}
 		},
 	},

@@ -244,7 +244,7 @@ export default {
 				return false
 			}
 
-			return this.isInCall && !!this.pollsStore.getNewPolls[this.message.messageParameters.object.id]
+			return this.isInCall && this.pollsStore.isNewPoll(this.message.messageParameters.object.id)
 		},
 
 		isTemporary() {
