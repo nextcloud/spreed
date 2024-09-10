@@ -4814,7 +4814,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userSetsMentionPermissionsOfTheRoom(string $user, string $identifier, string $mentionPermissions, int $statusCode, string $apiVersion): void {
 		$intMentionPermissions = 0; // all - default
-		if($mentionPermissions === 'moderators') {
+		if ($mentionPermissions === 'moderators') {
 			$intMentionPermissions = 1;
 		}
 

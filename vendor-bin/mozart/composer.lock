@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "01e5cf68b29df453cc5dd7744ce97db1",
+    "content-hash": "d00b5d6649a483005d599b4b96776405",
     "packages": [
         {
             "name": "coenjacobs/mozart",
