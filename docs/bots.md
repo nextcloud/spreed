@@ -109,7 +109,7 @@ The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.
         "id": "bots/bot-a78f46c5c203141b247554e180e1aa3553d282c6",
         "name": "Bot123"
     },
-    "target": {
+    "object": {
         "type": "Collection",
         "id": "n3xtc10ud",
         "name": "world"
@@ -123,8 +123,8 @@ The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | actor.id         | Bot's [actor type](constants.md#actor-types-of-chat-messages) followed by the `/` slash character and a bot's unique sha1 identifier with `bot-` prefix.                                                                                               |
 | actor.name       | The display name of the bot.                                                                                                                                                                                                                                                |
-| target.id        | The token of the conversation in which the bot was added.                                                                                                                                                                                                       |
-| target.name      | The name of the conversation in which the bot was added.                                                                                                                                                                                                        |
+| object.id        | The token of the conversation in which the bot was added.                                                                                                                                                                                                       |
+| object.name      | The name of the conversation in which the bot was added.                                                                                                                                                                                                        |
 
 ## Bot removed from a chat
 
@@ -152,7 +152,7 @@ The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.
         "id": "bots/bot-a78f46c5c203141b247554e180e1aa3553d282c6",
         "name": "Bot123"
     },
-    "target": {
+    "object": {
         "type": "Collection",
         "id": "n3xtc10ud",
         "name": "world"
@@ -166,8 +166,8 @@ The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | actor.id         | Bot's [actor type](constants.md#actor-types-of-chat-messages) followed by the `/` slash character and a bot's unique sha1 identifier with `bot-` prefix.                                                                                               |
 | actor.name       | The display name of the bot.                                                                                                                                                                                                                                                |
-| target.id        | The token of the conversation from which the bot was removed.                                                                                                                                                                                                       |
-| target.name      | The name of the conversation from which the bot was removed.                                                                                                                                                                                                        |
+| object.id        | The token of the conversation from which the bot was removed.                                                                                                                                                                                                       |
+| object.name      | The name of the conversation from which the bot was removed.                                                                                                                                                                                                        |
 
 ## Sending a chat message
 
