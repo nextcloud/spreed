@@ -202,3 +202,21 @@ Feature: chat-2/unread-messages
     Then user "participant2" is participant of room "group room" (v4)
       | unreadMessages |
       | 1              |
+
+  Scenario: marking conversation as unread marks last message as unread considering shared file
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends message "Message 2" to room "group room" with 201
+    And user "participant1" shares "welcome.txt" with room "group room"
+    When user "participant1" marks room "group room" as unread with 200
+    Then user "participant1" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 1              |
+    When user "participant1" sends message "Message 3" to room "group room" with 201
+    And user "participant1" marks room "group room" as unread with 200
+    Then user "participant1" is participant of room "group room" (v4)
+      | unreadMessages |
+      | 1              |
+
