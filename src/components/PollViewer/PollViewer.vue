@@ -308,7 +308,7 @@ export default {
 				await this.pollsStore.submitVote({
 					token: this.token,
 					pollId: this.id,
-					vote: this.voteToSubmit.map(element => +element),
+					optionIds: this.voteToSubmit.map(element => +element),
 				})
 				this.modalPage = 'results'
 			} catch (error) {

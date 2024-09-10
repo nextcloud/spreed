@@ -78,7 +78,6 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import pollService from '../../services/pollService.js'
 import { usePollsStore } from '../../stores/polls.js'
 
 export default {
@@ -147,21 +146,15 @@ export default {
 		},
 
 		async createPoll() {
-			try {
-				const response = await pollService.postNewPoll(
-					this.token,
-					this.pollQuestion,
-					this.pollOptions,
-					this.isPrivate ? 1 : 0,
-					this.isMultipleAnswer ? 0 : 1)
-				// Add the poll immediately to the store
-				this.pollsStore.addPoll({
-					token: this.token,
-					poll: response.data.ocs.data,
-				})
+			const poll = await this.pollsStore.createPoll({
+				token: this.token,
+				question: this.pollQuestion,
+				options: this.pollOptions,
+				resultMode: this.isPrivate ? 1 : 0,
+				maxVotes: this.isMultipleAnswer ? 0 : 1
+			})
+			if (poll) {
 				this.dismissEditor()
-			} catch (error) {
-				console.debug(error)
 			}
 		},
 
