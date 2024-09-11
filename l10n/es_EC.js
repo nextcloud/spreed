@@ -1145,7 +1145,6 @@ OC.L10N.register(
     "{user1} is typing …" : "{user1} está escribiendo …",
     "{user1} and {user2} are typing …" : "{user1} y {user2} están escribiendo …",
     "{user1}, {user2} and {user3} are typing …" : "{user1}, {user2} y {user3} están escribiendo …",
-    "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["{user1}, {user2}, {user3} y %n otro están escribiendo …","{user1}, {user2}, {user3} y %n otros están escribiendo …","{user1}, {user2}, {user3} y %n otros están escribiendo …"],
     "Send" : "Enviar",
     "Add more files" : "Agregar más archivos",
     "Start a call" : "Iniciar una llamada",
