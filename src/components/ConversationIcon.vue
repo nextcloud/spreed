@@ -66,6 +66,7 @@ import { useIsDarkTheme } from '../composables/useIsDarkTheme.ts'
 import { AVATAR, CONVERSATION } from '../constants.js'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { getPreloadedUserStatus } from '../utils/userStatus.js'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
@@ -151,15 +152,11 @@ export default {
 		},
 
 		preloadedUserStatus() {
-			if (!this.hideUserStatus && Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
-				// We preloaded the status
-				return {
-					status: this.item.status || null,
-					message: this.item.statusMessage || null,
-					icon: this.item.statusIcon || null,
-				}
+			if (this.hideUserStatus) {
+				return undefined
 			}
-			return undefined
+
+			return getPreloadedUserStatus(this.item)
 		},
 
 		menuContainer() {
