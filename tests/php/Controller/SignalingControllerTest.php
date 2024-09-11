@@ -30,7 +30,6 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -71,7 +70,6 @@ class SignalingControllerTest extends TestCase {
 	protected SessionService&MockObject $sessionService;
 	protected Messages&MockObject $messages;
 	protected IUserManager&MockObject $userManager;
-	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected IClientService&MockObject $clientService;
 	protected IThrottler&MockObject $throttler;
@@ -103,10 +101,9 @@ class SignalingControllerTest extends TestCase {
 		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $this->cloudIdManager, $urlGenerator, $timeFactory, $this->dispatcher);
+		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
