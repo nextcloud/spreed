@@ -20,7 +20,7 @@ describe('SettingsAPI', () => {
 
 	it('should have registerSection method to register settings sections', () => {
 		const { customSettingsSections } = useCustomSettings()
-		expect(customSettingsSections).toEqual([])
+		expect(customSettingsSections.value).toEqual([])
 		expect(SettingsAPI.registerSection).toBeDefined()
 		SettingsAPI.registerSection({
 			id: 'test',
@@ -32,7 +32,7 @@ describe('SettingsAPI', () => {
 			name: 'Test 2',
 			element: 'test-element-two',
 		})
-		expect(customSettingsSections).toEqual([{
+		expect(customSettingsSections.value).toEqual([{
 			id: 'test',
 			name: 'Test',
 			element: 'test-element',
@@ -45,7 +45,7 @@ describe('SettingsAPI', () => {
 
 	it('should have unregisterSection method to unregister settings sections', () => {
 		const { customSettingsSections } = useCustomSettings()
-		expect(customSettingsSections).toEqual([{
+		expect(customSettingsSections.value).toEqual([{
 			id: 'test',
 			name: 'Test',
 			element: 'test-element',
@@ -56,7 +56,7 @@ describe('SettingsAPI', () => {
 		}])
 		expect(SettingsAPI.unregisterSection).toBeDefined()
 		SettingsAPI.unregisterSection('test')
-		expect(customSettingsSections).toEqual([{
+		expect(customSettingsSections.value).toEqual([{
 			id: 'test2',
 			name: 'Test 2',
 			element: 'test-element-two',
