@@ -15,6 +15,7 @@
 			:source="participant.source || participant.actorType"
 			disable-menu
 			disable-tooltip
+			:preloaded-user-status="preloadedUserStatus"
 			show-user-status />
 
 		<span class="selectable-participant__content">
@@ -36,7 +37,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { getStatusMessage } from '../../utils/userStatus.js'
+import { getPreloadedUserStatus, getStatusMessage } from '../../utils/userStatus.js'
 
 export default {
 	name: 'SelectableParticipant',
@@ -71,6 +72,10 @@ export default {
 			set(value) {
 				this.$emit('update:checked', value)
 			},
+		},
+
+		preloadedUserStatus() {
+			return getPreloadedUserStatus(this.participant)
 		},
 
 		participantStatus() {
