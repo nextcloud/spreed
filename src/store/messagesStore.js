@@ -1181,8 +1181,9 @@ const actions = {
 					})
 				}
 				if (message.systemMessage === 'call_ended_everyone'
+					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 					&& !(message.actorId === context.getters.getActorId()
-					&& message.actorType === context.getters.getActorType())) {
+						&& message.actorType === context.getters.getActorType())) {
 					context.dispatch('setCallHasJustEnded', message.timestamp)
 				}
 			}

@@ -23,7 +23,7 @@ const state = {
 	qualityWarningTooltipDismissed: false,
 	participantRaisedHands: {},
 	backgroundImageAverageColorCache: {},
-	callHasJustEnded: false,
+	callHasJustEnded: null,
 }
 
 const getters = {
@@ -35,7 +35,7 @@ const getters = {
 	lastIsGrid: (state) => state.lastIsGrid,
 	lastIsStripeOpen: (state) => state.lastIsStripeOpen,
 	presentationStarted: (state) => state.presentationStarted,
-	callHasJustEnded: (state) => state.callHasJustEnded,
+	callHasJustEnded: (state) => !!state.callHasJustEnded,
 	selectedVideoPeerId: (state) => {
 		return state.selectedVideoPeerId
 	},
@@ -253,14 +253,16 @@ const actions = {
 		if (10000 - timeDiff < 0) {
 			return
 		}
-		context.commit('setCallHasJustEnded', true)
-		setTimeout(() => {
+		clearTimeout(context.state.callHasJustEnded)
+		const timeoutId = setTimeout(() => {
 			context.dispatch('resetCallHasJustEnded')
 		}, Math.max(0, 10000 - timeDiff))
+		context.commit('setCallHasJustEnded', timeoutId)
 	},
 
 	resetCallHasJustEnded(context) {
-		context.commit('setCallHasJustEnded', false)
+		clearTimeout(context.state.callHasJustEnded)
+		context.commit('setCallHasJustEnded', null)
 	}
 }
 
