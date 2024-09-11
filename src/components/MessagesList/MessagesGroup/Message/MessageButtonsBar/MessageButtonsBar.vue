@@ -107,13 +107,21 @@
 						</template>
 						{{ t('spreed', 'Mark as unread') }}
 					</NcActionButton>
-					<NcActionLink v-if="linkToFile"
-						:href="linkToFile">
+					<NcActionLink v-if="linkToFileShare"
+						:href="linkToFileShare">
 						<template #icon>
 							<File :size="20" />
 						</template>
 						{{ t('spreed', 'Go to file') }}
 					</NcActionLink>
+					<NcActionButton v-if="linkToFileShare"
+						close-after-click
+						@click="toggleShowAsWidget">
+						<template #icon>
+							<Widgets :size="20" />
+						</template>
+						{{ toggleShowAsWidgetLabel }}
+					</NcActionButton>
 					<NcActionButton v-if="canForwardMessage && !isInNoteToSelf"
 						close-after-click
 						@click="forwardToNote">
@@ -272,6 +280,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
+import Widgets from 'vue-material-design-icons/Widgets.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -330,6 +339,7 @@ export default {
 		Reply,
 		Share,
 		Translate,
+		Widgets,
 	},
 
 	directives: {
@@ -371,6 +381,11 @@ export default {
 			required: true,
 		},
 
+		showAsWidget: {
+			type: Boolean,
+			required: false,
+		},
+
 		readInfo: {
 			type: Object,
 			required: true,
@@ -382,7 +397,17 @@ export default {
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply', 'edit'],
+	emits: [
+		'delete',
+		'reply',
+		'edit',
+		'show-translate-dialog',
+		'update:isActionMenuOpen',
+		'update:isEmojiPickerOpen',
+		'update:isReactionsMenuOpen',
+		'update:isForwarderOpen',
+		'update:showAsWidget',
+	],
 
 	setup(props) {
 		const { message } = toRefs(props)
@@ -394,6 +419,7 @@ export default {
 			isCurrentUserOwnMessage,
 			isFileShare,
 			isFileShareWithoutCaption,
+			linkToFileShare,
 			isConversationReadOnly,
 			isConversationModifiable,
 		} = useMessageInfo(message)
@@ -407,6 +433,7 @@ export default {
 			isCurrentUserOwnMessage,
 			isFileShare,
 			isFileShareWithoutCaption,
+			linkToFileShare,
 			isDeleteable,
 			isConversationReadOnly,
 			isConversationModifiable,
@@ -448,13 +475,10 @@ export default {
 				&& this.$store.getters.isActorUser()
 		},
 
-		linkToFile() {
-			if (this.isFileShare) {
-				const firstFileKey = (Object.keys(this.message.messageParameters).find(key => key.startsWith('file')))
-				return this.message.messageParameters?.[firstFileKey]?.link
-			} else {
-				return ''
-			}
+		toggleShowAsWidgetLabel() {
+			return this.showAsWidget
+				? t('spreed', 'Hide widget')
+				: t('spreed', 'Show as widget')
 		},
 
 		isCurrentGuest() {
@@ -647,6 +671,10 @@ export default {
 		openReactionsMenu() {
 			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isReactionsMenuOpen', true)
+		},
+
+		toggleShowAsWidget() {
+			this.$emit('update:showAsWidget', !this.showAsWidget)
 		},
 
 		async forwardToNote() {
