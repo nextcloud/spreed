@@ -253,7 +253,7 @@ export default {
 
 		startCallButtonDisabled() {
 			return this.disabled
-				|| this.$store.getters.callHasJustEnded
+				|| (this.$store.getters.callHasJustEnded && !this.hasCall)
 				|| (!this.conversation.canStartCall && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
