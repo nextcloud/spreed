@@ -169,9 +169,9 @@ class AvatarService {
 	 * - font-weight and fill color are removed as they are not applicable
 	 */
 	private string $svgTemplate = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-		<svg width="512" height="512" version="1.1" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+		<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 			<rect width="100%" height="100%" fill="#{fill}"></rect>
-			<text x="50%" y="330" style="font-size:240px;font-family:{font};text-anchor:middle;">{letter}</text>
+			<text x="50%" y="340" style="font-size:240px;font-family:{font};text-anchor:middle;">{letter}</text>
 		</svg>';
 
 	public function getAvatar(Room $room, ?IUser $user, bool $darkTheme = false): ISimpleFile {
