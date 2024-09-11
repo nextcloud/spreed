@@ -27,11 +27,22 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\AvatarException;
+use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomModeException;
+use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomStatusException;
+use OCA\Talk\Exceptions\RoomProperty\CallRecordingException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
+use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\MessageExpirationException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\PasswordException;
+use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -410,9 +421,12 @@ class RoomService {
 		}
 	}
 
-	public function setAvatar(Room $room, string $avatar): bool {
+	/**
+	 * @throws AvatarException
+	 */
+	public function setAvatar(Room $room, string $avatar): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return false;
+			throw new AvatarException(AvatarException::REASON_TYPE);
 		}
 
 		$oldAvatar = $room->getAvatar();
@@ -429,7 +443,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_AVATAR, $avatar, $oldAvatar);
 		$this->dispatcher->dispatchTyped($event);
-		return true;
 	}
 
 	/**
@@ -437,18 +450,17 @@ class RoomService {
 	 * @param integer $status 0 none|1 video|2 audio
 	 * @param Participant|null $participant the Participant that changed the
 	 *                                      state, null for the current user
-	 * @throws InvalidArgumentException When the status is invalid, not Room::RECORDING_*
-	 * @throws InvalidArgumentException When trying to start
+	 * @throws CallRecordingException
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
 		$syncFederatedRoom = $room->getRemoteServer() && $room->getRemoteToken();
 		if (!$syncFederatedRoom && !$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('config');
+			throw new CallRecordingException(CallRecordingException::REASON_CONFIG);
 		}
 
 		$availableRecordingStatus = [Room::RECORDING_NONE, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING, Room::RECORDING_FAILED];
-		if (!in_array($status, $availableRecordingStatus)) {
-			throw new InvalidArgumentException('status');
+		if (!in_array($status, $availableRecordingStatus, true)) {
+			throw new CallRecordingException(CallRecordingException::REASON_STATUS);
 		}
 
 		$oldStatus = $room->getCallRecording();
@@ -471,40 +483,40 @@ class RoomService {
 	 * @param Room $room
 	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
 	 * @param bool $allowSwitchingOneToOne Allows additionally to change the type from `Room::TYPE_ONE_TO_ONE` to `Room::TYPE_ONE_TO_ONE_FORMER`
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws TypeException
 	 */
-	public function setType(Room $room, int $newType, bool $allowSwitchingOneToOne = false): bool {
+	public function setType(Room $room, int $newType, bool $allowSwitchingOneToOne = false): void {
 		$oldType = $room->getType();
 		if ($oldType === $newType) {
-			return true;
+			return;
 		}
 
 		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
-			return false;
+			throw new TypeException(TypeException::REASON_TYPE);
 		}
 
 		if ($oldType === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return false;
+			throw new TypeException(TypeException::REASON_TYPE);
 		}
 
 		if ($oldType === Room::TYPE_NOTE_TO_SELF) {
-			return false;
+			throw new TypeException(TypeException::REASON_TYPE);
 		}
 
 		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
-			return false;
+			throw new TypeException(TypeException::REASON_VALUE);
 		}
 
 		if ($newType === Room::TYPE_ONE_TO_ONE_FORMER && $oldType !== Room::TYPE_ONE_TO_ONE) {
-			return false;
+			throw new TypeException(TypeException::REASON_VALUE);
 		}
 
 		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
-			return false;
+			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
@@ -529,8 +541,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -539,23 +549,23 @@ class RoomService {
 	 *                      `Room::READ_ONLY` and `Room::READ_WRITE`
 	 *                      Also it's only allowed on rooms of type
 	 *                      `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
+	 * @throws ReadOnlyException
 	 */
-	public function setReadOnly(Room $room, int $newState): bool {
+	public function setReadOnly(Room $room, int $newState): void {
 		$oldState = $room->getReadOnly();
 		if ($newState === $oldState) {
-			return true;
+			return;
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_CHANGELOG], true)) {
 			if ($newState !== Room::READ_ONLY || $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 				// Allowed for the automated conversation of one-to-one chats to read only former
-				return false;
+				throw new ReadOnlyException(ReadOnlyException::REASON_TYPE);
 			}
 		}
 
 		if (!in_array($newState, [Room::READ_ONLY, Room::READ_WRITE], true)) {
-			return false;
+			throw new ReadOnlyException(ReadOnlyException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_READ_ONLY, $newState, $oldState);
@@ -571,8 +581,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_READ_ONLY, $newState, $oldState);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -580,20 +588,21 @@ class RoomService {
 	 * @param int $newState New listable scope from self::LISTABLE_*
 	 *                      Also it's only allowed on rooms of type
 	 *                      `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
+	 * @psalm-param Room::LISTABLE_* $newState
+	 * @throws ListableException
 	 */
-	public function setListable(Room $room, int $newState): bool {
+	public function setListable(Room $room, int $newState): void {
 		$oldState = $room->getListable();
 		if ($newState === $oldState) {
-			return true;
+			return;
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return false;
+			throw new ListableException(ListableException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new ListableException(ListableException::REASON_BREAKOUT_ROOM);
 		}
 
 		if (!in_array($newState, [
@@ -601,7 +610,7 @@ class RoomService {
 			Room::LISTABLE_USERS,
 			Room::LISTABLE_ALL,
 		], true)) {
-			return false;
+			throw new ListableException(ListableException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_LISTABLE, $newState, $oldState);
@@ -617,14 +626,13 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_LISTABLE, $newState, $oldState);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
 	 * @param Room $room
-	 * @param int $newState New mention permissions from self::MENTION_PERMISSIONS_*
-	 * @throws \InvalidArgumentException When the room type, state or breakout rooms where invalid
+	 * @param int $newState New mention permissions from Room::MENTION_PERMISSIONS_*
+	 * @psalm-param Room::MENTION_PERMISSIONS_* $newState
+	 * @throws MentionPermissionsException
 	 */
 	public function setMentionPermissions(Room $room, int $newState): void {
 		$oldState = $room->getMentionPermissions();
@@ -633,15 +641,15 @@ class RoomService {
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			throw new \InvalidArgumentException('type');
+			throw new MentionPermissionsException(MentionPermissionsException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			throw new \InvalidArgumentException('breakout-room');
+			throw new MentionPermissionsException(MentionPermissionsException::REASON_BREAKOUT_ROOM);
 		}
 
 		if (!in_array($newState, [Room::MENTION_PERMISSIONS_EVERYONE, Room::MENTION_PERMISSIONS_MODERATORS], true)) {
-			throw new \InvalidArgumentException('state');
+			throw new MentionPermissionsException(MentionPermissionsException::REASON_VALUE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, $newState, $oldState);
@@ -678,19 +686,22 @@ class RoomService {
 	}
 
 	/**
-	 * @return bool True when the change was valid, false otherwise
-	 * @throws \LengthException when the given description is too long
+	 * @throws DescriptionException
 	 */
-	public function setDescription(Room $room, string $description): bool {
+	public function setDescription(Room $room, string $description): void {
 		$description = trim($description);
-
-		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
-			throw new \LengthException('Conversation description is limited to ' . Room::DESCRIPTION_MAXIMUM_LENGTH . ' characters');
-		}
 
 		$oldDescription = $room->getDescription();
 		if ($description === $oldDescription) {
-			return false;
+			return;
+		}
+
+		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
+			throw new DescriptionException(DescriptionException::REASON_VALUE);
+		}
+
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			throw new DescriptionException(DescriptionException::REASON_TYPE);
 		}
 
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_DESCRIPTION, $description, $oldDescription);
@@ -706,27 +717,28 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_DESCRIPTION, $description, $oldDescription);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
 	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
-	 * @return bool True when the change was valid, false otherwise
-	 * @throws HintException
+	 * @throws PasswordException
 	 */
-	public function setPassword(Room $room, string $password): bool {
+	public function setPassword(Room $room, string $password): void {
 		if ($room->getType() !== Room::TYPE_PUBLIC) {
-			return false;
+			throw new PasswordException(PasswordException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			return false;
+			throw new PasswordException(PasswordException::REASON_BREAKOUT_ROOM);
 		}
 
 		if ($password !== '') {
 			$event = new ValidatePasswordPolicyEvent($password);
-			$this->dispatcher->dispatchTyped($event);
+			try {
+				$this->dispatcher->dispatchTyped($event);
+			} catch (HintException $e) {
+				throw new PasswordException(PasswordException::REASON_VALUE, $e->getHint());
+			}
 		}
 
 		$hash = $password !== '' ? $this->hasher->hash($password) : '';
@@ -744,8 +756,6 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PASSWORD, $password);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -769,11 +779,19 @@ class RoomService {
 	}
 
 	/**
-	 * @throws InvalidArgumentException When the room is a breakout room or the room is a former one-to-one conversation
+	 * @throws MessageExpirationException When the room is a breakout room or the room is a former one-to-one conversation
 	 */
 	public function setMessageExpiration(Room $room, int $seconds): void {
-		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			throw new InvalidArgumentException('room');
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new MessageExpirationException(MessageExpirationException::REASON_BREAKOUT_ROOM);
+		}
+
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			throw new MessageExpirationException(MessageExpirationException::REASON_TYPE);
+		}
+
+		if ($seconds < 0) {
+			throw new MessageExpirationException(MessageExpirationException::REASON_VALUE);
 		}
 
 		$oldExpiration = $room->getMessageExpiration();
@@ -792,14 +810,18 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
-	public function setBreakoutRoomMode(Room $room, int $mode): bool {
+	/**
+	 * @psalm-param BreakoutRoom::MODE_* $mode
+	 * @throws BreakoutRoomModeException
+	 */
+	public function setBreakoutRoomMode(Room $room, int $mode): void {
 		if (!in_array($mode, [
 			BreakoutRoom::MODE_NOT_CONFIGURED,
 			BreakoutRoom::MODE_AUTOMATIC,
 			BreakoutRoom::MODE_MANUAL,
 			BreakoutRoom::MODE_FREE
 		], true)) {
-			return false;
+			throw new BreakoutRoomModeException(BreakoutRoomModeException::REASON_VALUE);
 		}
 
 		$oldMode = $room->getBreakoutRoomMode();
@@ -816,18 +838,20 @@ class RoomService {
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_MODE, $mode, $oldMode);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
-	public function setBreakoutRoomStatus(Room $room, int $status): bool {
+	/**
+	 * @psalm-param BreakoutRoom::STATUS_* $status
+	 * @throws BreakoutRoomStatusException
+	 */
+	public function setBreakoutRoomStatus(Room $room, int $status): void {
 		if (!in_array($status, [
 			BreakoutRoom::STATUS_STOPPED,
 			BreakoutRoom::STATUS_STARTED,
 			BreakoutRoom::STATUS_ASSISTANCE_RESET,
 			BreakoutRoom::STATUS_ASSISTANCE_REQUESTED,
 		], true)) {
-			return false;
+			throw new BreakoutRoomStatusException(BreakoutRoomStatusException::REASON_VALUE);
 		}
 
 		$oldStatus = $room->getBreakoutRoomStatus();
@@ -845,8 +869,6 @@ class RoomService {
 		$oldStatus = $room->getBreakoutRoomStatus();
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_BREAKOUT_ROOM_STATUS, $status, $oldStatus);
 		$this->dispatcher->dispatchTyped($event);
-
-		return true;
 	}
 
 	/**
@@ -1015,11 +1037,11 @@ class RoomService {
 		/** @var array<array-key, ARoomModifiedEvent::PROPERTY_*> $changed */
 		$changed = [];
 		if (isset($host['type']) && $host['type'] !== $local->getType()) {
-			$success = $this->setType($local, $host['type']);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync type of ' . $local->getId() . ' to ' . $host['type']);
-			} else {
+			try {
+				$this->setType($local, $host['type']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_TYPE;
+			} catch (TypeException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync n type of ' . $local->getId() . ' to ' . $host['type'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['name']) && $host['name'] !== $local->getName()) {
@@ -1032,22 +1054,18 @@ class RoomService {
 		}
 		if (isset($host['description']) && $host['description'] !== $local->getDescription()) {
 			try {
-				$success = $this->setDescription($local, $host['description']);
-				if (!$success) {
-					$this->logger->error('An error occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description']);
-				} else {
-					$changed[] = ARoomModifiedEvent::PROPERTY_DESCRIPTION;
-				}
-			} catch (\LengthException $e) {
-				$this->logger->error('A \LengthException occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description'], ['exception' => $e]);
+				$this->setDescription($local, $host['description']);
+				$changed[] = ARoomModifiedEvent::PROPERTY_DESCRIPTION;
+			} catch (DescriptionException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync description of ' . $local->getId() . ' to ' . $host['description'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['callRecording']) && $host['callRecording'] !== $local->getCallRecording()) {
 			try {
 				$this->setCallRecording($local, $host['callRecording']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_CALL_RECORDING;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync callRecording of ' . $local->getId() . ' to ' . $host['callRecording'], ['exception' => $e]);
+			} catch (CallRecordingException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync callRecording of ' . $local->getId() . ' to ' . $host['callRecording'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['defaultPermissions']) && $host['defaultPermissions'] !== $local->getDefaultPermissions()) {
@@ -1064,11 +1082,11 @@ class RoomService {
 				// Add a fake suffix as we explode by the dot in the AvatarService, but the version doesn't have one.
 				$hostAvatar .= '.fed';
 			}
-			$success = $this->setAvatar($local, $hostAvatar);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync avatarVersion of ' . $local->getId() . ' to ' . $host['avatarVersion']);
-			} else {
+			try {
+				$this->setAvatar($local, $hostAvatar);
 				$changed[] = ARoomModifiedEvent::PROPERTY_AVATAR;
+			} catch (AvatarException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync avatarVersion of ' . $local->getId() . ' to ' . $host['avatarVersion'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['lastActivity']) && $host['lastActivity'] !== 0 && $host['lastActivity'] !== ((int)$local->getLastActivity()?->getTimestamp())) {
@@ -1102,24 +1120,24 @@ class RoomService {
 			try {
 				$this->setMentionPermissions($local, $host['mentionPermissions']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync mentionPermissions of ' . $local->getId() . ' to ' . $host['mentionPermissions'], ['exception' => $e]);
+			} catch (MentionPermissionsException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync mentionPermissions of ' . $local->getId() . ' to ' . $host['mentionPermissions'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['messageExpiration']) && $host['messageExpiration'] !== $local->getMessageExpiration()) {
 			try {
 				$this->setMessageExpiration($local, $host['messageExpiration']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION;
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error('An error (' . $e->getMessage() . ') occurred while trying to sync messageExpiration of ' . $local->getId() . ' to ' . $host['messageExpiration'], ['exception' => $e]);
+			} catch (MessageExpirationException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync messageExpiration of ' . $local->getId() . ' to ' . $host['messageExpiration'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['readOnly']) && $host['readOnly'] !== $local->getReadOnly()) {
-			$success = $this->setReadOnly($local, $host['readOnly']);
-			if (!$success) {
-				$this->logger->error('An error occurred while trying to sync readOnly of ' . $local->getId() . ' to ' . $host['readOnly']);
-			} else {
+			try {
+				$this->setReadOnly($local, $host['readOnly']);
 				$changed[] = ARoomModifiedEvent::PROPERTY_READ_ONLY;
+			} catch (ReadOnlyException $e) {
+				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync readOnly of ' . $local->getId() . ' to ' . $host['readOnly'], ['exception' => $e]);
 			}
 		}
 		if (isset($host['recordingConsent']) && $host['recordingConsent'] !== $local->getRecordingConsent()) {

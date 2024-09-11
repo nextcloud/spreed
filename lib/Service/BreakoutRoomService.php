@@ -13,6 +13,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\BreakoutRoomModeException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -115,7 +116,9 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('room');
 		}
 
-		if (!$this->roomService->setBreakoutRoomMode($parent, $mode)) {
+		try {
+			$this->roomService->setBreakoutRoomMode($parent, $mode);
+		} catch (BreakoutRoomModeException) {
 			throw new InvalidArgumentException('mode');
 		}
 
