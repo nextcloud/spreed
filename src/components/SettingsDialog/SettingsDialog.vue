@@ -7,8 +7,16 @@
 	<NcAppSettingsDialog :open.sync="showSettings"
 		:name="t('spreed', 'Talk settings')"
 		:show-navigation="true"
-		first-selected-section="keyboard shortcuts"
 		:container="container">
+		<!-- Custom settings sections registered via OCA.Talk.Settings -->
+		<NcAppSettingsSection v-for="{ id, name, element } in customSettingsSections"
+			:id="id"
+			:key="id"
+			:name="name"
+			class="app-settings-section">
+			<component :is="element" />
+		</NcAppSettingsSection>
+
 		<NcAppSettingsSection id="devices"
 			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
@@ -188,6 +196,7 @@ import MediaDevicesPreview from './MediaDevicesPreview.vue'
 import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
 const isBackgroundBlurred = loadState('spreed', 'force_enable_blur_filter', '')
@@ -207,11 +216,13 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
+		const { customSettingsSections } = useCustomSettings()
 
 		return {
 			settingsStore,
 			supportTypingStatus,
 			isBackgroundBlurred,
+			customSettingsSections,
 		}
 	},
 
