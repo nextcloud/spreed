@@ -580,7 +580,7 @@ class Notifier implements INotifier {
 
 		$richSubjectCall = [
 			'type' => 'call',
-			'id' => $room->getId(),
+			'id' => (string)$room->getId(),
 			'name' => $room->getDisplayName($notification->getUser()),
 			'call-type' => $this->getRoomType($room),
 			'icon-url' => $this->avatarService->getAvatarUrl($room),
