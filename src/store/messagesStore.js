@@ -1180,6 +1180,12 @@ const actions = {
 						lastActivity: message.timestamp,
 					})
 				}
+				if (message.systemMessage === 'call_ended_everyone'
+					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+					&& !(message.actorId === context.getters.getActorId()
+						&& message.actorType === context.getters.getActorType())) {
+					context.dispatch('setCallHasJustEnded', message.timestamp)
+				}
 			}
 
 			// in case we encounter an already read message, reset the counter
