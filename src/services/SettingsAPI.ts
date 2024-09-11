@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { readonly, shallowReactive } from 'vue'
+import { readonly, ref, markRaw } from 'vue'
+import type { Ref } from 'vue'
 
 import { emit } from '@nextcloud/event-bus'
 
@@ -22,14 +23,15 @@ type TalkSettingsSection = {
 	element: string
 }
 
-const customSettingsSections: TalkSettingsSection[] = shallowReactive([])
+// TODO: use shallowReactive instead of ref + markRaw in Vue 3 (see file commit history)
+const customSettingsSections: Ref<TalkSettingsSection[]> = ref([])
 
 /**
  * Register a custom settings section
  * @param section - Settings section
  */
 function registerSection(section: TalkSettingsSection) {
-	customSettingsSections.push(section)
+	customSettingsSections.value.push(markRaw(section))
 }
 
 /**
@@ -37,9 +39,9 @@ function registerSection(section: TalkSettingsSection) {
  * @param id - Section ID
  */
 function unregisterSection(id: string) {
-	const index = customSettingsSections.findIndex((section) => section.id === id)
+	const index = customSettingsSections.value.findIndex((section) => section.id === id)
 	if (index !== -1) {
-		customSettingsSections.splice(index, 1)
+		customSettingsSections.value.splice(index, 1)
 	}
 }
 
