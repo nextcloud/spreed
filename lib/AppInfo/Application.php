@@ -107,6 +107,11 @@ use OCA\Talk\Search\MessageSearch;
 use OCA\Talk\Search\UnifiedSearchCSSLoader;
 use OCA\Talk\Search\UnifiedSearchFilterPlugin;
 use OCA\Talk\Settings\Personal;
+use OCA\Talk\SetupCheck\BackgroundBlurLoading;
+use OCA\Talk\SetupCheck\FederationLockCache;
+use OCA\Talk\SetupCheck\RecommendCache;
+use OCA\Talk\SetupCheck\RecordingBackend;
+use OCA\Talk\SetupCheck\SIPConfiguration;
 use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
@@ -332,6 +337,12 @@ class Application extends App implements IBootstrap {
 		$context->registerTalkBackend(TalkBackend::class);
 
 		$context->registerTeamResourceProvider(TalkTeamResourceProvider::class);
+
+		$context->registerSetupCheck(RecommendCache::class);
+		$context->registerSetupCheck(FederationLockCache::class);
+		$context->registerSetupCheck(RecordingBackend::class);
+		$context->registerSetupCheck(SIPConfiguration::class);
+		$context->registerSetupCheck(BackgroundBlurLoading::class);
 	}
 
 	public function boot(IBootContext $context): void {

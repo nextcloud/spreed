@@ -89,6 +89,7 @@
 		<file name="tests/stubs/oc_core_command_base.php" />
 		<file name="tests/stubs/oc_hooks_emitter.php" />
 		<file name="tests/stubs/oc_http_client_response.php" />
+		<file name="tests/stubs/oc_memcache.php" />
 		<file name="tests/stubs/oca_circles.php" />
 		<file name="tests/stubs/oca_federation_trustedservers.php" />
 		<file name="tests/stubs/oca_files_events.php" />
