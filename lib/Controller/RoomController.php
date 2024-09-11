@@ -18,10 +18,17 @@ use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\DefaultPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\LobbyException;
+use OCA\Talk\Exceptions\RoomProperty\MentionPermissionsException;
+use OCA\Talk\Exceptions\RoomProperty\MessageExpirationException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\PasswordException;
+use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\FederationManager;
@@ -63,7 +70,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
-use OCP\HintException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -801,7 +807,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * Update the description of a room
 	 *
 	 * @param string $description New description
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Description updated successfully
 	 * 400: Updating description is not possible
@@ -809,14 +815,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setDescription(string $description): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
 		try {
 			$this->roomService->setDescription($this->room, $description);
-		} catch (\LengthException $exception) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (DescriptionException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -1187,8 +1189,10 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
 			$data = [];
-			if ($this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
+			try {
+				$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
 				$data = ['type' => $this->room->getType()];
+			} catch (TypeException) {
 			}
 
 			try {
@@ -1402,7 +1406,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Allowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Allowed guests successfully
 	 * 400: Allowing guests is not possible
@@ -1410,8 +1414,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function makePublic(): DataResponse {
-		if (!$this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setType($this->room, Room::TYPE_PUBLIC);
+		} catch (TypeException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -1420,7 +1426,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Disallowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Room unpublished Disallowing guests successfully
 	 * 400: Disallowing guests is not possible
@@ -1428,8 +1434,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function makePrivate(): DataResponse {
-		if (!$this->roomService->setType($this->room, Room::TYPE_GROUP)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setType($this->room, Room::TYPE_GROUP);
+		} catch (TypeException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -1440,7 +1448,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1 $state New read-only state
 	 * @psalm-param Room::READ_* $state
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Read-only state updated successfully
 	 * 400: Updating read-only state is not possible
@@ -1448,8 +1456,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setReadOnly(int $state): DataResponse {
-		if (!$this->roomService->setReadOnly($this->room, $state)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setReadOnly($this->room, $state);
+		} catch (ReadOnlyException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($state === Room::READ_ONLY) {
@@ -1469,7 +1479,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1|2 $scope Scope where the room is listable
 	 * @psalm-param Room::LISTABLE_* $scope
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Made room listable successfully
 	 * 400: Making room listable is not possible
@@ -1477,8 +1487,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setListable(int $scope): DataResponse {
-		if (!$this->roomService->setListable($this->room, $scope)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->setListable($this->room, $scope);
+		} catch (ListableException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -1489,7 +1501,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param 0|1 $mentionPermissions New mention permissions
 	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -1499,8 +1511,8 @@ class RoomController extends AEnvironmentAwareController {
 	public function setMentionPermissions(int $mentionPermissions): DataResponse {
 		try {
 			$this->roomService->setMentionPermissions($this->room, $mentionPermissions);
-		} catch (\InvalidArgumentException) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (MentionPermissionsException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1510,27 +1522,22 @@ class RoomController extends AEnvironmentAwareController {
 	 * Set a password for a room
 	 *
 	 * @param string $password New password
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value', message?: string}, array{}>
 	 *
 	 * 200: Password set successfully
 	 * 400: Setting password is not possible
-	 * 403: Setting password is not allowed
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setPassword(string $password): DataResponse {
-		if ($this->room->getType() !== Room::TYPE_PUBLIC) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
 		try {
-			if (!$this->roomService->setPassword($this->room, $password)) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			$this->roomService->setPassword($this->room, $password);
+		} catch (PasswordException $e) {
+			$data = ['error' => $e->getReason()];
+			if ($e->getHint() !== '') {
+				$data['message'] = $e->getHint();
 			}
-		} catch (HintException $e) {
-			return new DataResponse([
-				'message' => $e->getHint(),
-			], Http::STATUS_BAD_REQUEST);
+			return new DataResponse($data, Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -2347,7 +2354,7 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @param int $seconds New time
 	 * @psalm-param non-negative-int $seconds
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
 	 *
 	 * 200: Message expiration time updated successfully
 	 * 400: Updating message expiration time is not possible
@@ -2355,14 +2362,10 @@ class RoomController extends AEnvironmentAwareController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setMessageExpiration(int $seconds): DataResponse {
-		if ($seconds < 0) {
-			return new DataResponse(['error' => 'seconds'], Http::STATUS_BAD_REQUEST);
-		}
-
 		try {
 			$this->roomService->setMessageExpiration($this->room, $seconds);
-		} catch (\InvalidArgumentException $exception) {
-			return new DataResponse(['error' => $exception->getMessage()], Http::STATUS_BAD_REQUEST);
+		} catch (MessageExpirationException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();

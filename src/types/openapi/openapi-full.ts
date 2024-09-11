@@ -6180,7 +6180,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -6225,7 +6228,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -6277,7 +6283,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "type" | "value";
+                            };
                         };
                     };
                 };
@@ -6333,7 +6342,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "type" | "value";
+                            };
                         };
                     };
                 };
@@ -6389,7 +6401,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
                         };
                     };
                 };
@@ -6442,22 +6457,10 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
                                 message?: string;
                             };
-                        };
-                    };
-                };
-            };
-            /** @description Setting password is not allowed */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
                         };
                     };
                 };
@@ -7890,7 +7893,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error?: string;
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
                             };
                         };
                     };
@@ -7980,7 +7984,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
                         };
                     };
                 };

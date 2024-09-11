@@ -12,7 +12,13 @@ use InvalidArgumentException;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
+use OCA\Talk\Exceptions\RoomProperty\MessageExpirationException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Exceptions\RoomProperty\PasswordException;
+use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
@@ -20,7 +26,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
-use OCP\HintException;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -85,7 +90,7 @@ trait TRoomCommand {
 	protected function setRoomDescription(Room $room, string $description): void {
 		try {
 			$this->roomService->setDescription($room, $description);
-		} catch (\LengthException $e) {
+		} catch (DescriptionException $e) {
 			throw new InvalidArgumentException('Invalid room description.');
 		}
 	}
@@ -101,7 +106,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$this->roomService->setType($room, $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP)) {
+		try {
+			$this->roomService->setType($room, $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP);
+		} catch (TypeException) {
 			throw new InvalidArgumentException('Unable to change room type.');
 		}
 	}
@@ -117,7 +124,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$this->roomService->setReadOnly($room, $readOnly ? Room::READ_ONLY : Room::READ_WRITE)) {
+		try {
+			$this->roomService->setReadOnly($room, $readOnly ? Room::READ_ONLY : Room::READ_WRITE);
+		} catch (ReadOnlyException) {
 			throw new InvalidArgumentException('Unable to change room state.');
 		}
 	}
@@ -133,7 +142,9 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$this->roomService->setListable($room, $listable)) {
+		try {
+			$this->roomService->setListable($room, $listable);
+		} catch (ListableException) {
 			throw new InvalidArgumentException('Unable to change room state.');
 		}
 	}
@@ -154,11 +165,12 @@ trait TRoomCommand {
 		}
 
 		try {
-			if (!$this->roomService->setPassword($room, $password)) {
-				throw new InvalidArgumentException('Unable to change room password.');
+			$this->roomService->setPassword($room, $password);
+		} catch (PasswordException $e) {
+			if ($e->getReason() === PasswordException::REASON_VALUE) {
+				throw new InvalidArgumentException($e->getHint());
 			}
-		} catch (HintException $e) {
-			throw new InvalidArgumentException($e->getHint());
+			throw new InvalidArgumentException('Unable to change room password.');
 		}
 	}
 
@@ -396,6 +408,10 @@ trait TRoomCommand {
 	}
 
 	protected function setMessageExpiration(Room $room, int $seconds): void {
-		$this->roomService->setMessageExpiration($room, $seconds);
+		try {
+			$this->roomService->setMessageExpiration($room, $seconds);
+		} catch (MessageExpirationException) {
+			throw new InvalidArgumentException('Unable to change message expiration.');
+		}
 	}
 }

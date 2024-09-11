@@ -377,6 +377,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$dateTime = !empty($notification['dateTime']) ? \DateTime::createFromFormat('U', $notification['dateTime']) : null;
 			$this->roomService->setLobby($room, $notification['newValue'], $dateTime, $notification['timerReached'] ?? false);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS) {
+			/** @psalm-suppress InvalidArgument */
 			$this->roomService->setMentionPermissions($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION) {
 			$this->roomService->setMessageExpiration($room, $notification['newValue']);
