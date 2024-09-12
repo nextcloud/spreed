@@ -42,7 +42,9 @@ components.
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				{{ getDisplayName }}
-				<div v-if="editMessage" class="quote__main__edit-hint">
+				<span v-if="isFederatedUser" class="quote__main__server">{{ getRemoteServer }}</span>
+				<span v-if="lastEditTimestamp" class="quote__main__edit">{{ getLastEditor }}</span>
+				<div v-if="editMessage" class="quote__main__editing-hint">
 					<PencilIcon :size="20" />
 					{{ t('spreed', '(editing)') }}
 				</div>
@@ -142,6 +144,27 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		lastEditActorId: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorType: {
+			type: String,
+			default: '',
+		},
+
+		lastEditActorDisplayName: {
+			type: String,
+			default: '',
+		},
+
+		lastEditTimestamp: {
+			type: Number,
+			default: 0,
+		},
+
 		/**
 		 * If the quote component is used in the `NewMessage` component we display
 		 * the remove button.
@@ -190,6 +213,32 @@ export default {
 			}
 
 			return displayName
+		},
+
+		isFederatedUser() {
+			return this.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+		},
+
+		getRemoteServer() {
+			return this.isFederatedUser ? '(' + this.actorId.split('@').pop() + ')' : ''
+		},
+
+		getLastEditor() {
+			if (!this.lastEditTimestamp) {
+				return ''
+			} else if (this.lastEditActorId === this.actorId
+				&& this.lastEditActorType === this.actorType) {
+				// TRANSLATORS Edited by the author of the message themselves
+				return t('spreed', '(edited)')
+			} else if (this.lastEditActorId === this.$store.getters.getActorId()
+				&& this.lastEditActorType === this.$store.getters.getActorType()) {
+				return t('spreed', '(edited by you)')
+			} else if (this.lastEditActorId === 'deleted_users'
+						&& this.lastEditActorType === 'deleted_users') {
+				return t('spreed', '(edited by a deleted user)')
+			} else {
+				return t('spreed', '(edited by {moderator})', { moderator: this.lastEditActorDisplayName })
+			}
 		},
 
 		isOwnMessageQuoted() {
@@ -351,7 +400,15 @@ export default {
 				text-align: start;
 			}
 		}
-		&__edit-hint {
+
+		&__edit,
+		&__server {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		&__editing-hint {
 			display: flex;
 			align-items: center;
 			gap: 4px;
