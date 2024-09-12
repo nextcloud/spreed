@@ -99,6 +99,7 @@ appstore:
 	--exclude=README.md \
 	--exclude=.readthedocs.yaml \
 	--exclude=/recording \
+	--exclude=/redocly.yaml \
 	--exclude=/site \
 	--exclude=/src \
 	--exclude=.stylelintignore \
