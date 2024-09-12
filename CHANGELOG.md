@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 19.0.9 – 2024-09-12
+### Fixed
+- fix(federation): Fix federation invites accepting from the notification
+  [#13153](https://github.com/nextcloud/spreed/issues/13153)
+- fix(chat): Fix "You deleted the message" when performed by federated user with same ID
+  [#13250](https://github.com/nextcloud/spreed/issues/13250)
+- fix(files): Keep order of attachments when sharing multiple
+  [#13099](https://github.com/nextcloud/spreed/issues/13099)
+- fix(avatar): Don't overwrite user avatar when selecting a square for a conversation
+  [#13277](https://github.com/nextcloud/spreed/issues/13277)
+
 ## 20.0.0-rc.4 – 2024-09-03
 ### Changed
 - Update several dependencies
