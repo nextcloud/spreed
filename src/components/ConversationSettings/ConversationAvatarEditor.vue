@@ -110,8 +110,6 @@ import Folder from 'vue-material-design-icons/Folder.vue'
 import Palette from 'vue-material-design-icons/Palette.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
-import { getRequestToken } from '@nextcloud/auth'
-import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
 import { t } from '@nextcloud/l10n'
@@ -268,24 +266,15 @@ export default {
 		},
 
 		async handleFileChoose(nodes) {
-			const path = nodes[0]?.path
-			if (!path) {
+			const fileid = nodes[0]?.fileid
+			if (!fileid) {
 				return
 			}
 
-			this.loading = true
 			try {
-				const { data } = await axios.post(generateUrl('/avatar'), { path })
-				if (data.status === 'success') {
-					this.loading = false
-				} else if (data.data === 'notsquare') {
-					const tempAvatar = generateUrl('/avatar/tmp') + '?requesttoken=' + encodeURIComponent(getRequestToken()) + '#' + Math.floor(Math.random() * 1000)
-					this.$refs.cropper.replace(tempAvatar)
-					this.showCropper = true
-				} else {
-					showError(data.data.message)
-					this.cancel()
-				}
+				const tempAvatar = generateUrl(`/core/preview?fileId=${fileid}&x=512&y=512&a=1`)
+				this.$refs.cropper.replace(tempAvatar)
+				this.showCropper = true
 			} catch (e) {
 				showError(t('spreed', 'Error setting conversation picture'))
 				this.cancel()
