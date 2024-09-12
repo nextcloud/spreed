@@ -5,6 +5,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0 – 2024-09-14
+### Added
+- Federated calls
+- Add a task counter for to-do lists in "Note to self" messages
+- Allow editing "Note to self" messages forever
+- Show blurhash while loading attachments
+- Show upcoming event information in conversation
+- Banning users and guests
+- Allow to prevent "@all" mentions for non-moderators
+- Add button to show smart picker
+- Dispatch events when enabling or disabling bots
+- Show user status messages of other local users in a federated conversation
+
+### Changed
+- Requires Nextcloud 30
+- High-performance backend with `federation` support is required (Version 2.0.0 or later)
+- API performance improvements
+- Dynamic order of tiles in a call to prioritize participants with audio or video
+- Automatically lower raised hand when participant speaks
+- Show confirmation dialog when removing a participant
+- Show description when listing open conversations
+- Outline the participant count when trying to mention everyone
+- Show out-of-office replacement in the out-of-office message
+
+### Known issues
+- Federation requires the High-performance backend on both servers
+- Federation requires Talk 20 on both servers
+
 ## 20.0.0-rc.5 – 2024-09-12
 ### Added
 - Add setup checks for server configuration pitfalls
