@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.0-rc.5 – 2024-09-12
+### Added
+- Add setup checks for server configuration pitfalls
+  [#13260](https://github.com/nextcloud/spreed/issues/13260)
+
+### Fixed
+- fix(chat): Fix "You deleted the message" when performed by federated user with same ID
+  [#13251](https://github.com/nextcloud/spreed/issues/13251)
+- fix(chat): Take attachment shares into account when marking a conversation unread
+  [#13253](https://github.com/nextcloud/spreed/issues/13253)
+- fix(calls): Temporarily disable call button after a moderator ended the call for everyone to avoid recalling
+  [#13268](https://github.com/nextcloud/spreed/issues/13268)
+- fix(avatar): Don't overwrite user avatar when selecting a square for a conversation
+  [#13278](https://github.com/nextcloud/spreed/issues/13278)
+
 ## 19.0.9 – 2024-09-12
 ### Fixed
 - fix(federation): Fix federation invites accepting from the notification
