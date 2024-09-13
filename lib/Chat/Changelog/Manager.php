@@ -130,11 +130,11 @@ class Manager {
 			$this->l->t('## New in Talk %s', ['19']) . "\n"
 			. $this->l->t('- Messages can now be edited by logged-in authors and moderators for 6 hours') . "\n"
 			. $this->l->t('- Unsent message drafts are now saved in your browser') . "\n"
-			. $this->l->t('- *Preview:* Text chatting can now be done in a federated way with other Talk servers'),
+			. $this->l->t('- Text chatting can now be done in a federated way with other Talk servers'),
 			$this->l->t('## New in Talk %s', ['20']) . "\n"
 			. $this->l->t('- Moderators can now ban accounts and guests to prevent them from rejoining a conversation') . "\n"
 			. $this->l->t('- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations') . "\n"
-			. $this->l->t('- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)'),
+			. $this->l->t('- Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)'),
 		];
 	}
 }
