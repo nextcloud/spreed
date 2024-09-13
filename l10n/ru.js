@@ -1215,6 +1215,7 @@ OC.L10N.register(
     "Message read by everyone who shares their reading status" : "Сообщение прочитано всеми пользователями, включившими отчёт о прочтении",
     "Message sent" : "Сообщение отправлено",
     "Deleting message" : "Сообщение удаляется",
+    "Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services" : "Сообщение успешно удалено, но настроен бот или Matterbridge, и сообщение может быть уже распространено на другие сервисы",
     "Message deleted successfully" : "Сообщение удалено",
     "Message could not be deleted because it is too old" : "Сообщение не может быть удалено, т.к. оно было отправлено давно",
     "Only normal chat messages can be deleted" : "Возможно удалять только обычные сообщения",

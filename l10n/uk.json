@@ -1094,6 +1094,7 @@
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud знаходиться в режимі технічного обслуговування, будь ласка, перезавантажте сторінку",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Браузер, який ви використовуєте, не повністю підтримується Nextcloud Talk. Будь ласка, використовуйте останню версію Mozilla Firefox, Microsoft Edge, Google Chrome, Opera або Apple Safari.",
     "Conversation link copied to clipboard" : "Посилання на розмову скопійовано в буфер обміну",
+    "Error while parsing a PROPFIND error" : "Помилка під час обробки помилки PROPFIND",
     "Sending signaling message has failed" : "Не вдалося передати повідомлення сигналізації.",
     "Lost connection to signaling server. Trying to reconnect." : "Втрачено зв'язок із сервером сигналізації. Триває спроба відновити зв'язок.",
     "Lost connection to signaling server. Try to reload the page manually." : "Втрачено зв'язок із сервером сигналізації. Спробуйте перезавантажити сторінку вручну.",
