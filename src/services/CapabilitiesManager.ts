@@ -10,7 +10,7 @@ import { t } from '@nextcloud/l10n'
 import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { useTalkHashStore } from '../stores/talkHash.js'
-import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types'
+import type { Capabilities, Conversation, JoinRoomFullResponse } from '../types/index.ts'
 
 type Config = Capabilities['spreed']['config']
 type RemoteCapability = Capabilities & Partial<{ hash: string }>

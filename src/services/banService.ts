@@ -11,7 +11,7 @@ import type {
 	banActorParams,
 	banActorResponse,
 	unbanActorResponse,
-} from '../types'
+} from '../types/index.ts'
 
 /**
  * Get information about configured bans for this conversation
