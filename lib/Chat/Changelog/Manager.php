@@ -32,22 +32,23 @@ class Manager {
 		return (int)$this->config->getUserValue($userId, 'spreed', 'changelog', '0');
 	}
 
-	public function userHasNewChangelog(string $userId): bool {
-		return $this->getChangelogForUser($userId) < count($this->getChangelogs());
-	}
-
 	public function updateChangelog(string $userId): void {
-		$room = $this->roomManager->getChangelogRoom($userId);
-
 		$logs = $this->getChangelogs();
 		$hasReceivedLog = $this->getChangelogForUser($userId);
+		$shouldHaveReceived = count($logs);
+
+		if ($hasReceivedLog === $shouldHaveReceived) {
+			return;
+		}
 
 		try {
-			$this->config->setUserValue($userId, 'spreed', 'changelog', (string)count($logs), (string)$hasReceivedLog);
-		} catch (PreConditionNotMetException $e) {
+			$this->config->setUserValue($userId, 'spreed', 'changelog', (string)$shouldHaveReceived, (string)$hasReceivedLog);
+		} catch (PreConditionNotMetException) {
 			// Parallel request won the race
 			return;
 		}
+
+		$room = $this->roomManager->getChangelogRoom($userId);
 
 		foreach ($logs as $key => $changelog) {
 			if ($key < $hasReceivedLog || $changelog === '') {
