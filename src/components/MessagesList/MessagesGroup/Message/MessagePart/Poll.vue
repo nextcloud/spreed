@@ -39,6 +39,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { POLL } from '../../../../../constants.js'
+import { usePollsStore } from '../../../../../stores/polls.js'
 
 export default {
 	name: 'Poll',
@@ -74,9 +75,15 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			pollsStore: usePollsStore(),
+		}
+	},
+
 	computed: {
 		poll() {
-			return this.$store.getters.getPoll(this.token, this.id)
+			return this.pollsStore.getPoll(this.token, this.id)
 		},
 
 		pollFooterText() {
@@ -96,7 +103,7 @@ export default {
 		t,
 		getPollData() {
 			if (!this.poll) {
-				this.$store.dispatch('getPollData', {
+				this.pollsStore.getPollData({
 					token: this.token,
 					pollId: this.id,
 				})
@@ -104,7 +111,7 @@ export default {
 		},
 
 		openPoll() {
-			this.$store.dispatch('setActivePoll', {
+			this.pollsStore.setActivePoll({
 				token: this.token,
 				pollId: this.id,
 				name: this.name,
