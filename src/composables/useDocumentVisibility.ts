@@ -11,26 +11,26 @@ import type { Ref, DeepReadonly } from 'vue'
  * Composable to check whether the page is visible.
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is visible
  */
-function useWindowVisibilityComposable() {
-	const isWindowVisible = ref<boolean>(!document.hidden)
+function useDocumentVisibilityComposable() {
+	const isDocumentVisible = ref<boolean>(!document.hidden)
 
-	const changeWindowVisibility = () => {
-		isWindowVisible.value = !document.hidden
+	const changeIsDocumentVisible = () => {
+		isDocumentVisible.value = !document.hidden
 	}
 
 	onBeforeMount(() => {
-		document.addEventListener('visibilitychange', changeWindowVisibility)
+		document.addEventListener('visibilitychange', changeIsDocumentVisible)
 	})
 
 	onBeforeUnmount(() => {
-		document.removeEventListener('visibilitychange', changeWindowVisibility)
+		document.removeEventListener('visibilitychange', changeIsDocumentVisible)
 	})
 
-	return readonly(isWindowVisible)
+	return readonly(isDocumentVisible)
 }
 
 /**
  * Shared composable to check whether the page is visible.
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is visible
  */
-export const useWindowVisibility = createSharedComposable(useWindowVisibilityComposable)
+export const useDocumentVisibility = createSharedComposable(useDocumentVisibilityComposable)

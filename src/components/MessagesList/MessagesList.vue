@@ -76,8 +76,8 @@ import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
+import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { useWindowVisibility } from '../../composables/useWindowVisibility.ts'
 import { ATTENDEE, CHAT, CONVERSATION } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
@@ -124,8 +124,8 @@ export default {
 	emits: ['update:is-chat-scrolled-to-bottom'],
 
 	setup(props) {
-		const isWindowVisible = useWindowVisibility()
-		const isChatVisible = computed(() => isWindowVisible.value && props.isVisible)
+		const isDocumentVisible = useDocumentVisibility()
+		const isChatVisible = computed(() => isDocumentVisible.value && props.isVisible)
 		return {
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
