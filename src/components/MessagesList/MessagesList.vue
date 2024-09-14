@@ -59,6 +59,7 @@
 <script>
 import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
+import { computed } from 'vue'
 
 import Message from 'vue-material-design-icons/Message.vue'
 
@@ -76,6 +77,7 @@ import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
+import { useWindowVisibility } from '../../composables/useWindowVisibility.ts'
 import { ATTENDEE, CHAT, CONVERSATION } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
@@ -121,10 +123,13 @@ export default {
 
 	emits: ['update:is-chat-scrolled-to-bottom'],
 
-	setup() {
+	setup(props) {
+		const isWindowVisible = useWindowVisibility()
+		const isChatVisible = computed(() => isWindowVisible.value && props.isVisible)
 		return {
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
+			isChatVisible,
 		}
 	},
 
@@ -177,10 +182,6 @@ export default {
 	},
 
 	computed: {
-		isWindowVisible() {
-			return this.$store.getters.windowIsVisible() && this.isVisible
-		},
-
 		visualLastReadMessageId() {
 			return this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
@@ -262,7 +263,7 @@ export default {
 	},
 
 	watch: {
-		isWindowVisible(visible) {
+		isChatVisible(visible) {
 			if (visible) {
 				this.onWindowFocus()
 			}
@@ -1107,7 +1108,7 @@ export default {
 				} else if (!this.isSticky) {
 					// Reading old messages
 					return
-				} else if (!this.isWindowVisible) {
+				} else if (!this.isChatVisible) {
 					const firstUnreadMessageHeight = this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight
 					const scrollBy = firstUnreadMessageHeight < 40 ? 10 : 40
 					// We jump half a message and stop autoscrolling, so the user can read up

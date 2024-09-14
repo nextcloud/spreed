@@ -41,6 +41,7 @@ import { useActiveSession } from './composables/useActiveSession.js'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
+import { useWindowVisibility } from './composables/useWindowVisibility.ts'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
 import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
@@ -71,6 +72,7 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
+			isWindowVisible: useWindowVisibility(),
 			supportSessionState: useActiveSession(),
 			federationStore: useFederationStore(),
 		}
@@ -88,9 +90,6 @@ export default {
 	},
 
 	computed: {
-		windowIsVisible() {
-			return this.$store.getters.windowIsVisible()
-		},
 		isFullscreen() {
 			return this.$store.getters.isFullscreen()
 		},
@@ -189,7 +188,7 @@ export default {
 
 	watch: {
 		atLeastOneLastMessageIdChanged() {
-			if (this.windowIsVisible) {
+			if (this.isWindowVisible) {
 				return
 			}
 
@@ -220,7 +219,23 @@ export default {
 					toggle?.removeAttribute('data-theme-dark')
 				}
 			}
-		}
+		},
+
+		isWindowVisible(value) {
+			if (value) {
+				// Remove the potential "*" marker for unread chat messages
+				let title = this.getConversationName(this.token)
+				if (window.document.title.indexOf(t('spreed', 'Duplicate session')) === 0) {
+					title = t('spreed', 'Duplicate session')
+				}
+				this.setPageTitle(title, false)
+			} else {
+				// Copy the last message map to the saved version,
+				// this will be our reference to check if any chat got a new
+				// message since the last visit
+				this.savedLastMessageMap = this.lastMessageMap
+			}
+		},
 	},
 
 	beforeCreate() {
@@ -249,7 +264,6 @@ export default {
 		if (!getCurrentUser()) {
 			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
-		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 
 		unsubscribe('notifications:action:execute', this.interceptNotificationActions)
 
@@ -272,7 +286,6 @@ export default {
 		}
 
 		window.addEventListener('resize', this.onResize)
-		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 
 		this.onResize()
 
@@ -623,23 +636,6 @@ export default {
 
 		refreshCurrentConversation() {
 			this.fetchSingleConversation(this.token)
-		},
-
-		changeWindowVisibility() {
-			this.$store.dispatch('setWindowVisibility', !document.hidden)
-			if (this.windowIsVisible) {
-				// Remove the potential "*" marker for unread chat messages
-				let title = this.getConversationName(this.token)
-				if (window.document.title.indexOf(t('spreed', 'Duplicate session')) === 0) {
-					title = t('spreed', 'Duplicate session')
-				}
-				this.setPageTitle(title, false)
-			} else {
-				// Copy the last message map to the saved version,
-				// this will be our reference to check if any chat got a new
-				// message since the last visit
-				this.savedLastMessageMap = this.lastMessageMap
-			}
 		},
 
 		/**
