@@ -7,9 +7,9 @@ import { ref, nextTick, computed, watch, onBeforeUnmount, onMounted } from 'vue'
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
+import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
-import { useWindowVisibility } from './useWindowVisibility.ts'
 import { CONVERSATION } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 
@@ -24,7 +24,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 	const token = computed(() => store.getters.getToken())
 	const conversation = computed(() => store.getters.conversation(token.value))
 	const isInCall = useIsInCall()
-	const isWindowVisible = useWindowVisibility()
+	const isDocumentVisible = useDocumentVisibility()
 	const isOneToOneConversation = computed(() => conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE
 		|| conversation.value?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)
 	let fetchingParticipants = false
@@ -69,7 +69,7 @@ export function useGetParticipants(isActive = ref(true), isTopBar = true) {
 			return
 		}
 
-		if (isWindowVisible.value && (isInCall.value || !conversation.value?.hasCall)) {
+		if (isDocumentVisible.value && (isInCall.value || !conversation.value?.hasCall)) {
 			debounceFastUpdateParticipants()
 		} else {
 			debounceSlowUpdateParticipants()

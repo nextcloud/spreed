@@ -5,9 +5,9 @@
 
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 
+import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
-import { useWindowVisibility } from './useWindowVisibility.ts'
 import { SESSION } from '../constants.js'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
@@ -32,7 +32,7 @@ export function useActiveSession() {
 	}
 
 	const isInCall = useIsInCall()
-	const isWindowVisible = useWindowVisibility()
+	const isDocumentVisible = useDocumentVisibility()
 
 	const inactiveTimer = ref(null)
 	const currentState = ref(SESSION.STATE.ACTIVE)
@@ -42,7 +42,7 @@ export function useActiveSession() {
 		currentState.value = SESSION.STATE.ACTIVE
 	})
 
-	watch(isWindowVisible, (value) => {
+	watch(isDocumentVisible, (value) => {
 		// Change state if tab is hidden or minimized
 		if (value) {
 			setSessionAsActive()
