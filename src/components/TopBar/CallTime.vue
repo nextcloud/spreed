@@ -67,6 +67,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
+import { useWindowVisibility } from '../../composables/useWindowVisibility.ts'
 import { CALL } from '../../constants.js'
 import { formattedTime } from '../../utils/formattedTime.ts'
 
@@ -91,6 +92,12 @@ export default {
 			type: Number,
 			required: true,
 		},
+	},
+
+	setup() {
+		return {
+			isWindowVisible: useWindowVisibility(),
+		}
 	},
 
 	data() {
@@ -198,7 +205,7 @@ export default {
 			this.isCallDurationHintShown = true
 
 			// close the popover after 10 seconds
-			if (this.$store.getters.windowIsVisible()) {
+			if (this.isWindowVisible) {
 				setTimeout(() => {
 					this.showPopover = false
 				}, 10000)
