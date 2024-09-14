@@ -125,6 +125,7 @@ import SetGuestUsername from '../SetGuestUsername.vue'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useSidebarStore } from '../../stores/sidebar.js'
 
 export default {
 	name: 'RightSidebar',
@@ -156,6 +157,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			sidebarStore: useSidebarStore()
+		}
+	},
+
 	data() {
 		return {
 			activeTab: 'participants',
@@ -169,7 +176,7 @@ export default {
 			return this.token && !this.isInLobby
 		},
 		show() {
-			return this.$store.getters.getSidebarStatus
+			return this.sidebarStore.getSidebarStatus
 		},
 		opened() {
 			return this.isSidebarAvailable && this.show
@@ -401,12 +408,12 @@ export default {
 				this.activeTab = 'chat'
 			}
 
-			this.$store.dispatch('showSidebar')
+			this.sidebarStore.showSidebar()
 			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
 
 		handleClose() {
-			this.$store.dispatch('hideSidebar')
+			this.sidebarStore.hideSidebar()
 			BrowserStorage.setItem('sidebarOpen', 'false')
 		},
 

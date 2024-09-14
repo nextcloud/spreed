@@ -89,6 +89,7 @@ import {
 	sharedItemTitle,
 } from './sharedItemsConstants.js'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
+import { useSidebarStore } from '../../../stores/sidebar.js'
 
 export default {
 
@@ -115,9 +116,9 @@ export default {
 	},
 
 	setup() {
-		const sharedItemsStore = useSharedItemsStore()
 		return {
-			sharedItemsStore,
+			sharedItemsStore: useSharedItemsStore(),
+			sidebarStore: useSidebarStore(),
 			sharedItemButtonTitle,
 			sharedItemTitle,
 			sharedItemsOrder,
@@ -160,7 +161,7 @@ export default {
 		},
 
 		isSidebarOpen() {
-			return this.$store.getters.getSidebarStatus
+			return this.sidebarStore.getSidebarStatus
 		},
 
 		sharedItemsIdentifier() {
