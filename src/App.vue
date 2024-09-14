@@ -48,6 +48,7 @@ import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
 import { useFederationStore } from './stores/federation.ts'
+import { useSidebarStore } from './stores/sidebar.js'
 import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -75,6 +76,7 @@ export default {
 			isDocumentVisible: useDocumentVisibility(),
 			supportSessionState: useActiveSession(),
 			federationStore: useFederationStore(),
+			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -198,9 +200,9 @@ export default {
 		token(newValue, oldValue) {
 			// Collapse the sidebar if it's a one to one conversation
 			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || this.isMobile) {
-				this.$store.dispatch('hideSidebar')
+				this.sidebarStore.hideSidebar()
 			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
-				this.$store.dispatch('showSidebar')
+				this.sidebarStore.showSidebar()
 			}
 
 			// Reset recording consent if switch doesn't happen within breakout rooms or main room
@@ -495,9 +497,9 @@ export default {
 		}
 		// Check sidebar status in previous sessions
 		if (BrowserStorage.getItem('sidebarOpen') === 'false') {
-			this.$store.dispatch('hideSidebar')
+			this.sidebarStore.hideSidebar()
 		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
-			this.$store.dispatch('showSidebar')
+			this.sidebarStore.showSidebar()
 		}
 		if (this.$route.name === 'root' && this.isMobile) {
 			await this.$nextTick()
@@ -719,7 +721,7 @@ export default {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
 				this.$store.dispatch('updateToken', '')
-				this.$store.dispatch('hideSidebar')
+				this.sidebarStore.hideSidebar()
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}

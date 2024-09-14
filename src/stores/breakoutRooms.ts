@@ -10,6 +10,7 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
+import { useSidebarStore } from './sidebar.js'
 import {
 	configureBreakoutRooms,
 	deleteBreakoutRooms,
@@ -117,7 +118,8 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				// Open the sidebar and switch to the breakout rooms tab
 				// FIXME upstream https://github.com/nextcloud-libraries/nextcloud-event-bus/pull/734
 				emit('spreed:select-active-sidebar-tab', 'breakout-rooms' as unknown as object)
-				store.dispatch('showSidebar')
+				const sidebarStore = useSidebarStore()
+				sidebarStore.showSidebar()
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while creating breakout rooms'))

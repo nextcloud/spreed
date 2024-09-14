@@ -7,6 +7,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
+import { useSidebarStore } from '../stores/sidebar.js'
 
 /**
  * @callback OpenViewer
@@ -98,6 +99,7 @@ export function useViewer(fileAPI) {
 	const store = useStore()
 	const isInCall = useIsInCall()
 	const isFullscreen = computed(() => store.getters.isFullscreen())
+	const sidebarStore = useSidebarStore()
 
 	watch(isFullscreen, () => {
 		if (isViewerOpen.value) {
@@ -137,7 +139,7 @@ export function useViewer(fileAPI) {
 		}
 
 		// The Viewer expects a file to be set in the sidebar if the sidebar is open
-		if (store.getters.getSidebarStatus) {
+		if (sidebarStore.getSidebarStatus) {
 			OCA.Files.Sidebar.state.file = path
 		}
 
