@@ -439,6 +439,7 @@ export default {
 				this.$store.dispatch('setIsFullscreen', false)
 			} else {
 				this.enableFullscreen()
+				emit('toggle-navigation', { open: false })
 				this.$store.dispatch('setIsFullscreen', true)
 			}
 		},

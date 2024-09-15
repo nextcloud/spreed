@@ -6,7 +6,7 @@
 <template>
 	<NcContent :class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk">
-		<LeftSidebar v-if="getUserId && !isFullscreen" ref="leftSidebar" />
+		<LeftSidebar v-if="getUserId" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
@@ -92,10 +92,6 @@ export default {
 	},
 
 	computed: {
-		isFullscreen() {
-			return this.$store.getters.isFullscreen()
-		},
-
 		getUserId() {
 			return this.$store.getters.getUserId()
 		},
