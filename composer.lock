@@ -258,12 +258,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "f2be8ca227b71a2f9d0b025d231e4eb49d21c61c"
+                "reference": "a26b4e1f75983f359bd835c2529ce37b5599d58f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/f2be8ca227b71a2f9d0b025d231e4eb49d21c61c",
-                "reference": "f2be8ca227b71a2f9d0b025d231e4eb49d21c61c",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/a26b4e1f75983f359bd835c2529ce37b5599d58f",
+                "reference": "a26b4e1f75983f359bd835c2529ce37b5599d58f",
                 "shasum": ""
             },
             "require": {
@@ -292,9 +292,9 @@
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable30"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/v30.0.0"
             },
-            "time": "2024-09-05T00:40:13+00:00"
+            "time": "2024-09-13T00:40:45+00:00"
         },
         {
             "name": "psr/clock",
