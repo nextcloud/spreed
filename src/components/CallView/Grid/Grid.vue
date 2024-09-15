@@ -464,7 +464,7 @@ export default {
 		},
 
 		sidebarStatus() {
-			return this.sidebarStore.getSidebarStatus
+			return this.sidebarStore.show
 		},
 
 		wrapperStyle() {

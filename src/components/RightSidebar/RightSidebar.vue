@@ -176,7 +176,7 @@ export default {
 			return this.token && !this.isInLobby
 		},
 		show() {
-			return this.sidebarStore.getSidebarStatus
+			return this.sidebarStore.show
 		},
 		opened() {
 			return this.isSidebarAvailable && this.show
