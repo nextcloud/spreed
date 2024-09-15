@@ -314,7 +314,6 @@ describe('FilePreview.vue', () => {
 		describe('triggering viewer', () => {
 			let oldViewer
 			let oldFiles
-			let getSidebarStatusMock
 
 			beforeEach(() => {
 				oldViewer = OCA.Viewer
@@ -327,8 +326,6 @@ describe('FilePreview.vue', () => {
 					},
 				}
 
-				getSidebarStatusMock = jest.fn().mockReturnValue(true)
-				testStoreConfig.modules.sidebarStore.getters.getSidebarStatus = getSidebarStatusMock
 				store = new Vuex.Store(testStoreConfig)
 			})
 			afterEach(() => {
