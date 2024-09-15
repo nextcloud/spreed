@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { useDocumentFullscreen } from '../composables/useDocumentFullscreen.ts'
+
 /**
  * This store handles the values that need to be customized depending on the
  * current UI mode of Talk (main UI, embedded in Files sidebar, video
@@ -15,7 +17,8 @@ const state = {
 
 const getters = {
 	getMainContainerSelector: (state, getters, rootState, rootGetters) => () => {
-		return rootGetters.isFullscreen() ? state.mainContainerSelector : 'body'
+		const isFullscreen = useDocumentFullscreen()
+		return isFullscreen.value ? state.mainContainerSelector : 'body'
 	},
 }
 

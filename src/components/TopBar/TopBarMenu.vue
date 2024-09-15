@@ -174,6 +174,11 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
 
+import {
+	useDocumentFullscreen,
+	enableFullscreen,
+	disableFullscreen,
+} from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -251,6 +256,7 @@ export default {
 	setup() {
 		return {
 			isInCall: useIsInCall(),
+			isFullscreen: useDocumentFullscreen(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 		}
 	},
@@ -267,10 +273,6 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		isFullscreen() {
-			return this.$store.getters.isFullscreen()
 		},
 
 		labelFullscreen() {
@@ -435,38 +437,10 @@ export default {
 			}
 
 			if (this.isFullscreen) {
-				this.disableFullscreen()
-				this.$store.dispatch('setIsFullscreen', false)
+				disableFullscreen()
 			} else {
-				this.enableFullscreen()
 				emit('toggle-navigation', { open: false })
-				this.$store.dispatch('setIsFullscreen', true)
-			}
-		},
-
-		enableFullscreen() {
-			const fullscreenElem = document.getElementById('content-vue')
-
-			if (fullscreenElem.requestFullscreen) {
-				fullscreenElem.requestFullscreen()
-			} else if (fullscreenElem.webkitRequestFullscreen) {
-				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
-			} else if (fullscreenElem.mozRequestFullScreen) {
-				fullscreenElem.mozRequestFullScreen()
-			} else if (fullscreenElem.msRequestFullscreen) {
-				fullscreenElem.msRequestFullscreen()
-			}
-		},
-
-		disableFullscreen() {
-			if (document.exitFullscreen) {
-				document.exitFullscreen()
-			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen()
-			} else if (document.mozCancelFullScreen) {
-				document.mozCancelFullScreen()
-			} else if (document.msExitFullscreen) {
-				document.msExitFullscreen()
+				enableFullscreen()
 			}
 		},
 
