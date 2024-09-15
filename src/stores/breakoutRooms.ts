@@ -7,7 +7,6 @@ import { defineStore } from 'pinia'
 import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import { useSidebarStore } from './sidebar.js'
@@ -116,10 +115,8 @@ export const useBreakoutRoomsStore = defineStore('breakoutRooms', {
 				await this.fetchBreakoutRoomsParticipants(token)
 
 				// Open the sidebar and switch to the breakout rooms tab
-				// FIXME upstream https://github.com/nextcloud-libraries/nextcloud-event-bus/pull/734
-				emit('spreed:select-active-sidebar-tab', 'breakout-rooms' as unknown as object)
 				const sidebarStore = useSidebarStore()
-				sidebarStore.showSidebar()
+				sidebarStore.showSidebar({ activeTab: 'breakout-rooms' })
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while creating breakout rooms'))

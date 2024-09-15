@@ -14,8 +14,7 @@
 		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"
 		@update:open="handleUpdateOpen"
 		@update:active="handleUpdateActive"
-		@closed="handleClosed"
-		@close="handleClose">
+		@closed="handleClosed">
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
 		<template v-if="isInCall" #toggle-icon>
 			<MessageText :size="20" />
@@ -402,26 +401,15 @@ export default {
 	methods: {
 		t,
 
-		openSidebar() {
-			// In call by default open on chat
-			if (this.isInCall) {
-				this.activeTab = 'chat'
-			}
-
-			this.sidebarStore.showSidebar()
-			BrowserStorage.setItem('sidebarOpen', 'true')
-		},
-
-		handleClose() {
-			this.sidebarStore.hideSidebar()
-			BrowserStorage.setItem('sidebarOpen', 'false')
-		},
-
 		handleUpdateOpen(open) {
 			if (open) {
-				this.openSidebar()
+				// In call ('Open chat') by default
+				if (this.isInCall) {
+					this.activeTab = 'chat'
+				}
+				this.sidebarStore.showSidebar()
 			} else {
-				this.handleClose()
+				this.sidebarStore.hideSidebar()
 			}
 		},
 
@@ -446,7 +434,7 @@ export default {
 				this.unreadNotificationHandle = showMessage(message, {
 					onClick: () => {
 						this.activeTab = 'chat'
-						this.openSidebar()
+						this.sidebarStore.showSidebar()
 					},
 				})
 			}
