@@ -89,7 +89,7 @@ const Sidebar = function() {
 const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
 	if ('ontransitionend' in sidebarElement) {
 		const resolveOnceSidebarWidthHasChanged = (event) => {
-			if (event.propertyName !== 'min-width' && event.propertyName !== 'width' && event.propertyName !== 'max-width') {
+			if (!['min-width', 'width', 'max-width', 'margin-right'].includes(event.propertyName)) {
 				return
 			}
 
@@ -127,7 +127,7 @@ Sidebar.prototype.open = function(path) {
 	store.commit('showSidebar')
 	this.state.file = path
 
-	const sidebarElement = document.getElementById('app-sidebar')
+	const sidebarElement = document.getElementById('app-sidebar') ?? document.getElementById('app-sidebar-vue')
 
 	// The Viewer adjusts its width to the sidebar width once the sidebar has
 	// been opened. The sidebar opens with an animation, so a delay is needed
