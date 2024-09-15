@@ -303,13 +303,18 @@ export default {
 			return this.nextEvent && !this.isInCall && !this.isSidebar && !this.isMobile
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 		},
+
+		getUserId() {
+			return this.$store.getters.getUserId()
+		},
 	},
 
 	watch: {
 		token: {
 			immediate: true,
 			handler(value) {
-				if (!value || this.isSidebar) {
+				if (!value || this.isSidebar || !this.getUserId) {
+					// Do not fetch upcoming events for guests (401 unauthorzied) or in sidebar
 					return
 				}
 				this.chatExtrasStore.getUpcomingEvents(value)
