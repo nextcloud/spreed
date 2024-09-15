@@ -162,19 +162,6 @@ describe('Participant.vue', () => {
 
 			expect(avatarEl.props('offline')).toBe(true)
 		})
-
-		test('renders avatar from search result', () => {
-			participant.label = 'Name from label'
-			participant.source = 'source-from-search'
-			participant.id = 'id-from-search'
-			const wrapper = mountParticipant(participant, true)
-			const avatarEl = wrapper.findComponent(AvatarWrapper)
-			expect(avatarEl.exists()).toBe(true)
-
-			expect(avatarEl.props('id')).toBe('id-from-search')
-			expect(avatarEl.props('name')).toBe('Name from label')
-			expect(avatarEl.props('source')).toBe('source-from-search')
-		})
 	})
 
 	describe('user name', () => {
@@ -317,14 +304,6 @@ describe('Participant.vue', () => {
 		test('renders video call icon when joined with multiple', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO | PARTICIPANT.CALL_FLAG.WITH_PHONE
 			checkStateIconsRendered(participant, VideoIcon)
-		})
-		test('does not render hand raised icon when searched', () => {
-			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			participant.label = 'searched result'
-			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
-
-			checkStateIconsRendered(participant, null)
-			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
 		})
 	})
 
@@ -786,41 +765,4 @@ describe('Participant.vue', () => {
 			})
 		})
 	})
-
-	describe('as search result', () => {
-		beforeEach(() => {
-			participant.label = 'Alice Search'
-			participant.source = 'users'
-		})
-
-		test('does not show actions for search results', () => {
-			const wrapper = mountParticipant(participant)
-
-			// no actions
-			expect(wrapper.findAllComponents(NcActionButton).exists()).toBe(false)
-		})
-
-		test('triggers event when clicking', async () => {
-			const eventHandler = jest.fn()
-			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('click-participant', eventHandler)
-
-			wrapper.find('a').trigger('click')
-
-			expect(eventHandler).toHaveBeenCalledWith(participant)
-		})
-
-		test('does not trigger click event when not a search result', async () => {
-			const eventHandler = jest.fn()
-			delete participant.label
-			delete participant.source
-			const wrapper = mountParticipant(participant)
-			wrapper.vm.$on('click-participant', eventHandler)
-
-			wrapper.find('a').trigger('click')
-
-			expect(eventHandler).not.toHaveBeenCalledWith(participant)
-		})
-	})
-
 })

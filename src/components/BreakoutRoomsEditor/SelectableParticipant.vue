@@ -4,23 +4,26 @@
 -->
 
 <template>
-	<label class="selectable-participant">
+	<label class="selectable-participant" :data-nav-id="participantNavigationId">
 		<input v-model="modelProxy"
-			:value="participant.attendeeId"
+			:value="value"
+			:aria-label="participantAriaLabel"
 			type="checkbox"
-			class="selectable-participant__checkbox">
+			class="selectable-participant__checkbox"
+			@keydown.enter="handleEnter">
 		<!-- Participant's avatar -->
-		<AvatarWrapper :id="participant.actorId"
-			:name="participant.displayName"
-			:source="participant.source || participant.actorType"
+		<AvatarWrapper :id="actorId"
+			token="new"
+			:name="computedName"
+			:source="actorType"
 			disable-menu
 			disable-tooltip
 			:preloaded-user-status="preloadedUserStatus"
-			show-user-status />
+			:show-user-status="showUserStatus" />
 
 		<span class="selectable-participant__content">
 			<span class="selectable-participant__content-name">
-				{{ participant.displayName }}
+				{{ computedName }}
 			</span>
 			<span v-if="participantStatus"
 				class="selectable-participant__content-subname">
@@ -28,12 +31,16 @@
 			</span>
 		</span>
 
-		<IconCheck class="selectable-participant__check-icon" :size="20" />
+		<IconCheck v-if="isBulkSelection" class="selectable-participant__check-icon" :size="20" />
 	</label>
 </template>
 
 <script>
+import { inject } from 'vue'
+
 import IconCheck from 'vue-material-design-icons/Check.vue'
+
+import { t } from '@nextcloud/l10n'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
@@ -60,9 +67,23 @@ export default {
 			type: Array,
 			required: true,
 		},
+
+		showUserStatus: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
-	emits: ['update:checked'],
+	emits: ['update:checked', 'click-participant'],
+
+	setup() {
+		// Toggles the bulk selection state of this component
+		const isBulkSelection = inject('bulkParticipantsSelection', false)
+
+		return {
+			isBulkSelection,
+		}
+	},
 
 	computed: {
 		modelProxy: {
@@ -70,8 +91,26 @@ export default {
 				return this.checked
 			},
 			set(value) {
-				this.$emit('update:checked', value)
+				this.isBulkSelection
+					? this.$emit('update:checked', value)
+					: this.$emit('click-participant', this.participant)
 			},
+		},
+
+		value() {
+			return this.participant.attendeeId || this.participant
+		},
+
+		actorId() {
+			return this.participant.actorId || this.participant.id
+		},
+
+		actorType() {
+			return this.participant.actorType || this.participant.source
+		},
+
+		computedName() {
+			return this.participant.displayName || this.participant.label
 		},
 
 		preloadedUserStatus() {
@@ -79,9 +118,30 @@ export default {
 		},
 
 		participantStatus() {
-			return getStatusMessage(this.participant)
+			return this.participant.shareWithDisplayNameUnique
+				?? getStatusMessage(this.participant)
+		},
+
+		participantAriaLabel() {
+			return t('spreed', 'Add participant "{user}"', { user: this.computedName })
+		},
+
+		participantNavigationId() {
+			if (this.participant.actorType && this.participant.actorId) {
+				return this.participant.actorType + '_' + this.participant.actorId
+			} else {
+				return this.participant.source + '_' + this.participant.id
+			}
 		},
 	},
+
+	methods: {
+		t,
+
+		handleEnter(event) {
+			event.target.checked = !event.target.checked
+		},
+	}
 }
 </script>
 
@@ -96,6 +156,10 @@ export default {
 	margin: var(--default-grid-baseline);
 	border-radius: var(--border-radius-element, 32px);
 	line-height: 20px;
+
+	&, & * {
+		cursor: pointer;
+	}
 
 	&:hover,
 	&:focus-within,
@@ -129,6 +193,7 @@ export default {
 		top: 0;
 		left: 0;
 		z-index: -1;
+		opacity: 0;
 	}
 
 	&__content {
@@ -149,6 +214,7 @@ export default {
 		display: none;
 		margin-left: auto;
 		width: var(--default-clickable-area);
+		flex-shrink: 0;
 	}
 }
 
