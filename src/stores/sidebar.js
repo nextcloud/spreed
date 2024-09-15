@@ -4,18 +4,31 @@
  */
 import { defineStore } from 'pinia'
 
+import { emit } from '@nextcloud/event-bus'
+
+import BrowserStorage from '../services/BrowserStorage.js'
+
 export const useSidebarStore = defineStore('sidebar', {
 	state: () => ({
-		show: true,
+		show: BrowserStorage.getItem('sidebarOpen') !== 'false',
 	}),
 
 	actions: {
-		showSidebar() {
+		showSidebar({ activeTab, cache = true } = {}) {
 			this.show = true
+			if (activeTab && typeof activeTab === 'string') {
+				emit('spreed:select-active-sidebar-tab', activeTab)
+			}
+			if (cache) {
+				BrowserStorage.setItem('sidebarOpen', 'true')
+			}
 		},
 
-		hideSidebar() {
+		hideSidebar({ cache = true } = {}) {
 			this.show = false
+			if (cache) {
+				BrowserStorage.setItem('sidebarOpen', 'false')
+			}
 		},
 	},
 })

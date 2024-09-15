@@ -340,11 +340,7 @@ export default {
 		t,
 		n,
 		openSidebar(activeTab) {
-			if (typeof activeTab === 'string') {
-				emit('spreed:select-active-sidebar-tab', activeTab)
-			}
-			this.sidebarStore.showSidebar()
-			BrowserStorage.setItem('sidebarOpen', 'true')
+			this.sidebarStore.showSidebar({ activeTab })
 		},
 
 		fullScreenChanged() {
