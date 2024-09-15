@@ -75,7 +75,7 @@ const Sidebar = function() {
 		file: '',
 	}
 	const sidebarStore = useSidebarStore()
-	watch(() => sidebarStore.getSidebarStatus, (sidebarShown) => {
+	watch(() => sidebarStore.show, (sidebarShown) => {
 		if (!sidebarShown) {
 			this.state.file = ''
 		}

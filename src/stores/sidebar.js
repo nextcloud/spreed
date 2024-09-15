@@ -9,12 +9,6 @@ export const useSidebarStore = defineStore('sidebar', {
 		show: true,
 	}),
 
-	getters: {
-		getSidebarStatus: (state) => {
-			return state.show
-		},
-	},
-
 	actions: {
 		showSidebar() {
 			this.show = true

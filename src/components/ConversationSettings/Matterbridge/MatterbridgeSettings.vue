@@ -503,7 +503,7 @@ export default {
 
 	computed: {
 		show() {
-			return this.sidebarStore.getSidebarStatus
+			return this.sidebarStore.show
 		},
 		opened() {
 			return !!this.token && this.show

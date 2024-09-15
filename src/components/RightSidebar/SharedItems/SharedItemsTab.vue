@@ -161,7 +161,7 @@ export default {
 		},
 
 		isSidebarOpen() {
-			return this.sidebarStore.getSidebarStatus
+			return this.sidebarStore.show
 		},
 
 		sharedItemsIdentifier() {
