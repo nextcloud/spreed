@@ -160,6 +160,7 @@ import VideoVue from '../shared/VideoVue.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { useSidebarStore } from '../../../stores/sidebar.js'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
@@ -249,6 +250,7 @@ export default {
 			screenshotMode,
 			videosCap,
 			videosCapEnforced,
+			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -466,7 +468,7 @@ export default {
 		},
 
 		sidebarStatus() {
-			return this.$store.getters.getSidebarStatus
+			return this.sidebarStore.show
 		},
 
 		wrapperStyle() {

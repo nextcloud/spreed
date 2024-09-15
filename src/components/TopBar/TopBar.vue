@@ -141,6 +141,7 @@ import { AVATAR, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
+import { useSidebarStore } from '../../stores/sidebar.js'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
@@ -192,6 +193,7 @@ export default {
 			localCallParticipantModel,
 			localMediaModel,
 			chatExtrasStore: useChatExtrasStore(),
+			sidebarStore: useSidebarStore(),
 			isMobile: useIsMobile(),
 			CONVERSATION,
 		}
@@ -338,11 +340,7 @@ export default {
 		t,
 		n,
 		openSidebar(activeTab) {
-			if (typeof activeTab === 'string') {
-				emit('spreed:select-active-sidebar-tab', activeTab)
-			}
-			this.$store.dispatch('showSidebar')
-			BrowserStorage.setItem('sidebarOpen', 'true')
+			this.sidebarStore.showSidebar({ activeTab })
 		},
 
 		fullScreenChanged() {

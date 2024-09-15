@@ -4,7 +4,7 @@
  */
 
 import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue from 'vue'
+import Vue, { watch } from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
@@ -20,6 +20,7 @@ import './init.js'
 import router from './router/router.js'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
+import { useSidebarStore } from './stores/sidebar.js'
 
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
@@ -73,23 +74,18 @@ const Sidebar = function() {
 	this.state = {
 		file: '',
 	}
-
-	store.watch(
-		(state, getters) => {
-			return getters.getSidebarStatus
-		},
-		(sidebarShown) => {
-			if (!sidebarShown) {
-				this.state.file = ''
-			}
-		},
-	)
+	const sidebarStore = useSidebarStore()
+	watch(() => sidebarStore.show, (sidebarShown) => {
+		if (!sidebarShown) {
+			this.state.file = ''
+		}
+	})
 }
 
 const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
 	if ('ontransitionend' in sidebarElement) {
 		const resolveOnceSidebarWidthHasChanged = (event) => {
-			if (event.propertyName !== 'min-width' && event.propertyName !== 'width' && event.propertyName !== 'max-width') {
+			if (!['min-width', 'width', 'max-width', 'margin-right'].includes(event.propertyName)) {
 				return
 			}
 
@@ -124,10 +120,11 @@ Sidebar.prototype.open = function(path) {
 		return
 	}
 
-	store.commit('showSidebar')
+	const sidebarStore = useSidebarStore()
+	sidebarStore.showSidebar()
 	this.state.file = path
 
-	const sidebarElement = document.getElementById('app-sidebar')
+	const sidebarElement = document.getElementById('app-sidebar') ?? document.getElementById('app-sidebar-vue')
 
 	// The Viewer adjusts its width to the sidebar width once the sidebar has
 	// been opened. The sidebar opens with an animation, so a delay is needed

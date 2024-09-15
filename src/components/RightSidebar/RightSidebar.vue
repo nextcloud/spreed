@@ -14,8 +14,7 @@
 		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"
 		@update:open="handleUpdateOpen"
 		@update:active="handleUpdateActive"
-		@closed="handleClosed"
-		@close="handleClose">
+		@closed="handleClosed">
 		<!-- Use a custom icon when sidebar is used for chat messages during the call -->
 		<template v-if="isInCall" #toggle-icon>
 			<MessageText :size="20" />
@@ -125,6 +124,7 @@ import SetGuestUsername from '../SetGuestUsername.vue'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useSidebarStore } from '../../stores/sidebar.js'
 
 export default {
 	name: 'RightSidebar',
@@ -156,6 +156,12 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			sidebarStore: useSidebarStore()
+		}
+	},
+
 	data() {
 		return {
 			activeTab: 'participants',
@@ -169,7 +175,7 @@ export default {
 			return this.token && !this.isInLobby
 		},
 		show() {
-			return this.$store.getters.getSidebarStatus
+			return this.sidebarStore.show
 		},
 		opened() {
 			return this.isSidebarAvailable && this.show
@@ -395,26 +401,15 @@ export default {
 	methods: {
 		t,
 
-		openSidebar() {
-			// In call by default open on chat
-			if (this.isInCall) {
-				this.activeTab = 'chat'
-			}
-
-			this.$store.dispatch('showSidebar')
-			BrowserStorage.setItem('sidebarOpen', 'true')
-		},
-
-		handleClose() {
-			this.$store.dispatch('hideSidebar')
-			BrowserStorage.setItem('sidebarOpen', 'false')
-		},
-
 		handleUpdateOpen(open) {
 			if (open) {
-				this.openSidebar()
+				// In call ('Open chat') by default
+				if (this.isInCall) {
+					this.activeTab = 'chat'
+				}
+				this.sidebarStore.showSidebar()
 			} else {
-				this.handleClose()
+				this.sidebarStore.hideSidebar()
 			}
 		},
 
@@ -439,7 +434,7 @@ export default {
 				this.unreadNotificationHandle = showMessage(message, {
 					onClick: () => {
 						this.activeTab = 'chat'
-						this.openSidebar()
+						this.sidebarStore.showSidebar()
 					},
 				})
 			}

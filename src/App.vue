@@ -48,6 +48,7 @@ import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
 import { useFederationStore } from './stores/federation.ts'
+import { useSidebarStore } from './stores/sidebar.js'
 import { checkBrowser } from './utils/browserCheck.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
@@ -75,6 +76,7 @@ export default {
 			isDocumentVisible: useDocumentVisibility(),
 			supportSessionState: useActiveSession(),
 			federationStore: useFederationStore(),
+			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -196,11 +198,12 @@ export default {
 		},
 
 		token(newValue, oldValue) {
+			const shouldShowSidebar = BrowserStorage.getItem('sidebarOpen') !== 'false'
 			// Collapse the sidebar if it's a one to one conversation
-			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || this.isMobile) {
-				this.$store.dispatch('hideSidebar')
-			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
-				this.$store.dispatch('showSidebar')
+			if (this.isOneToOne || !shouldShowSidebar || this.isMobile) {
+				this.sidebarStore.hideSidebar({ cache: false })
+			} else if (shouldShowSidebar) {
+				this.sidebarStore.showSidebar({ cache: false })
 			}
 
 			// Reset recording consent if switch doesn't happen within breakout rooms or main room
@@ -493,12 +496,7 @@ export default {
 		if (!IS_DESKTOP) {
 			checkBrowser()
 		}
-		// Check sidebar status in previous sessions
-		if (BrowserStorage.getItem('sidebarOpen') === 'false') {
-			this.$store.dispatch('hideSidebar')
-		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
-			this.$store.dispatch('showSidebar')
-		}
+
 		if (this.$route.name === 'root' && this.isMobile) {
 			await this.$nextTick()
 			emit('toggle-navigation', {
@@ -719,7 +717,6 @@ export default {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
 				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
 				this.$store.dispatch('updateToken', '')
-				this.$store.dispatch('hideSidebar')
 			} finally {
 				this.isRefreshingCurrentConversation = false
 			}

@@ -103,6 +103,7 @@ import {
 	getBridge,
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService.js'
+import { useSidebarStore } from '../../../stores/sidebar.js'
 
 export default {
 	name: 'MatterbridgeSettings',
@@ -120,6 +121,12 @@ export default {
 
 	directives: {
 		Tooltip,
+	},
+
+	setup() {
+		return {
+			sidebarStore: useSidebarStore(),
+		}
 	},
 
 	data() {
@@ -496,7 +503,7 @@ export default {
 
 	computed: {
 		show() {
-			return this.$store.getters.getSidebarStatus
+			return this.sidebarStore.show
 		},
 		opened() {
 			return !!this.token && this.show
