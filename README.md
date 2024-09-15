@@ -59,6 +59,8 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 4. Then activate it through the apps management. 🎉
 5. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`.
 
+Also see our **[step by step guide](https://nextcloud-talk.readthedocs.io/en/latest/development-setup/)** on how to set up a full development environment.
+
 ### 🏎️ Faster frontend developing with HMR
 
 You can enable HMR (Hot module replacement) to avoid page reloads when working on the frontend:

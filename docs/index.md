@@ -21,6 +21,7 @@
 
 ## Developer documentation
 
+* [Developer setup](developer-setup.md)
 * [Bots and webhooks](bots.md)
 * [Constants](constants.md)
 * [Capabilities](capabilities.md)
