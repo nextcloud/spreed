@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.25.0@01a8eb06b9e9cc6cfb6a320bf9fb14331919d505">
+<files psalm-version="5.26.0@4787eaf414e16c661902b94dfe5d882223e5b513">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
@@ -80,11 +80,6 @@
       <code><![CDATA[NoUserException]]></code>
       <code><![CDATA[NoUserException]]></code>
     </UndefinedClass>
-  </file>
-  <file src="lib/SetupCheck/BackgroundBlurLoading.php">
-    <UndefinedTrait>
-      <code><![CDATA[CheckServerResponseTrait]]></code>
-    </UndefinedTrait>
   </file>
   <file src="lib/Share/Listener.php">
     <UndefinedClass>
