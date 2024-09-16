@@ -7,10 +7,6 @@ import { createSharedComposable } from '@vueuse/core'
 import { readonly, ref, onBeforeMount, onBeforeUnmount } from 'vue'
 import type { Ref, DeepReadonly } from 'vue'
 
-interface WebkitElement extends Element {
-	ALLOW_KEYBOARD_INPUT: FullscreenOptions;
-}
-
 /**
  * Composable to check whether the page is displayed at fullscreen
  * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is displayed at fullscreen
@@ -45,7 +41,7 @@ export async function enableFullscreen() {
 	if (element.requestFullscreen) {
 		await element.requestFullscreen()
 	} else if (element.webkitRequestFullscreen) {
-		await element.webkitRequestFullscreen((Element as unknown as WebkitElement).ALLOW_KEYBOARD_INPUT)
+		await element.webkitRequestFullscreen()
 	}
 }
 
