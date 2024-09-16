@@ -21,114 +21,116 @@
 
 <template>
 	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
-		<div class="new-conversation"
-			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
-			<div class="conversations-search"
-				:class="{'conversations-search--expanded': isFocused}">
-				<SearchBox ref="searchBox"
-					:value.sync="searchText"
-					:is-focused.sync="isFocused"
-					:list="list"
-					@input="debounceFetchSearchResults"
-					@abort-search="abortSearch" />
+		<template #search>
+			<div class="new-conversation"
+				:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
+				<div class="conversations-search"
+					:class="{'conversations-search--expanded': isFocused}">
+					<SearchBox ref="searchBox"
+						:value.sync="searchText"
+						:is-focused.sync="isFocused"
+						:list="list"
+						@input="debounceFetchSearchResults"
+						@abort-search="abortSearch" />
+				</div>
+
+				<TransitionWrapper name="radial-reveal">
+					<!-- Filters -->
+					<NcActions v-show="searchText === ''"
+						:primary="isFiltered !== null"
+						class="filters"
+						:class="{'hidden-visually': isFocused}">
+						<template #icon>
+							<FilterIcon :size="15" />
+						</template>
+						<NcActionButton close-after-click
+							:model-value="isFiltered === 'mentions'"
+							@click="handleFilter('mentions')">
+							<template #icon>
+								<AtIcon :size="20" />
+							</template>
+							{{ t('spreed', 'Filter unread mentions') }}
+						</NcActionButton>
+
+						<NcActionButton close-after-click
+							:model-value="isFiltered === 'unread'"
+							@click="handleFilter('unread')">
+							<template #icon>
+								<MessageBadge :size="20" />
+							</template>
+							{{ t('spreed', 'Filter unread messages') }}
+						</NcActionButton>
+
+						<NcActionButton v-if="isFiltered"
+							close-after-click
+							class="filter-actions__clearbutton"
+							@click="handleFilter(null)">
+							<template #icon>
+								<FilterRemoveIcon :size="20" />
+							</template>
+							{{ t('spreed', 'Clear filters') }}
+						</NcActionButton>
+					</NcActions>
+				</TransitionWrapper>
+
+				<!-- Actions -->
+				<TransitionWrapper name="radial-reveal">
+					<NcActions v-show="searchText === ''"
+						class="actions"
+						:class="{'hidden-visually': isFocused}">
+						<template #icon>
+							<ChatPlus :size="20" />
+						</template>
+						<NcActionButton v-if="canStartConversations"
+							close-after-click
+							@click="showModalNewConversation">
+							<template #icon>
+								<Plus :size="20" />
+							</template>
+							{{ t('spreed', 'Create a new conversation') }}
+						</NcActionButton>
+
+						<NcActionButton v-if="canNoteToSelf && !hasNoteToSelf"
+							close-after-click
+							@click="restoreNoteToSelfConversation">
+							<template #icon>
+								<Note :size="20" />
+							</template>
+							{{ t('spreed', 'New personal note') }}
+						</NcActionButton>
+
+						<NcActionButton close-after-click
+							@click="showModalListConversations">
+							<template #icon>
+								<List :size="20" />
+							</template>
+							{{ t('spreed', 'Join open conversations') }}
+						</NcActionButton>
+
+						<NcActionButton v-if="canModerateSipDialOut"
+							close-after-click
+							@click="showModalCallPhoneDialog">
+							<template #icon>
+								<Phone :size="20" />
+							</template>
+							{{ t('spreed', 'Call a phone number') }}
+						</NcActionButton>
+					</NcActions>
+				</TransitionWrapper>
+
+				<!-- All open conversations list -->
+				<OpenConversationsList ref="openConversationsList" />
+
+				<!-- New Conversation dialog -->
+				<NewConversationDialog ref="newConversationDialog" :can-moderate-sip-dial-out="canModerateSipDialOut" />
+
+				<!-- New phone (SIP dial-out) dialog -->
+				<CallPhoneDialog ref="callPhoneDialog" />
+
+				<!-- New Pending Invitations dialog -->
+				<InvitationHandler v-if="isFederationEnabled" ref="invitationHandler" />
 			</div>
-
-			<TransitionWrapper name="radial-reveal">
-				<!-- Filters -->
-				<NcActions v-show="searchText === ''"
-					:primary="isFiltered !== null"
-					class="filters"
-					:class="{'hidden-visually': isFocused}">
-					<template #icon>
-						<FilterIcon :size="15" />
-					</template>
-					<NcActionButton close-after-click
-						:model-value="isFiltered === 'mentions'"
-						@click="handleFilter('mentions')">
-						<template #icon>
-							<AtIcon :size="20" />
-						</template>
-						{{ t('spreed', 'Filter unread mentions') }}
-					</NcActionButton>
-
-					<NcActionButton close-after-click
-						:model-value="isFiltered === 'unread'"
-						@click="handleFilter('unread')">
-						<template #icon>
-							<MessageBadge :size="20" />
-						</template>
-						{{ t('spreed', 'Filter unread messages') }}
-					</NcActionButton>
-
-					<NcActionButton v-if="isFiltered"
-						close-after-click
-						class="filter-actions__clearbutton"
-						@click="handleFilter(null)">
-						<template #icon>
-							<FilterRemoveIcon :size="20" />
-						</template>
-						{{ t('spreed', 'Clear filters') }}
-					</NcActionButton>
-				</NcActions>
-			</TransitionWrapper>
-
-			<!-- Actions -->
-			<TransitionWrapper name="radial-reveal">
-				<NcActions v-show="searchText === ''"
-					class="actions"
-					:class="{'hidden-visually': isFocused}">
-					<template #icon>
-						<ChatPlus :size="20" />
-					</template>
-					<NcActionButton v-if="canStartConversations"
-						close-after-click
-						@click="showModalNewConversation">
-						<template #icon>
-							<Plus :size="20" />
-						</template>
-						{{ t('spreed', 'Create a new conversation') }}
-					</NcActionButton>
-
-					<NcActionButton v-if="canNoteToSelf && !hasNoteToSelf"
-						close-after-click
-						@click="restoreNoteToSelfConversation">
-						<template #icon>
-							<Note :size="20" />
-						</template>
-						{{ t('spreed', 'New personal note') }}
-					</NcActionButton>
-
-					<NcActionButton close-after-click
-						@click="showModalListConversations">
-						<template #icon>
-							<List :size="20" />
-						</template>
-						{{ t('spreed', 'Join open conversations') }}
-					</NcActionButton>
-
-					<NcActionButton v-if="canModerateSipDialOut"
-						close-after-click
-						@click="showModalCallPhoneDialog">
-						<template #icon>
-							<Phone :size="20" />
-						</template>
-						{{ t('spreed', 'Call a phone number') }}
-					</NcActionButton>
-				</NcActions>
-			</TransitionWrapper>
-
-			<!-- All open conversations list -->
-			<OpenConversationsList ref="openConversationsList" />
-
-			<!-- New Conversation dialog -->
-			<NewConversationDialog ref="newConversationDialog" :can-moderate-sip-dial-out="canModerateSipDialOut" />
-
-			<!-- New phone (SIP dial-out) dialog -->
-			<CallPhoneDialog ref="callPhoneDialog" />
-
-			<!-- New Pending Invitations dialog -->
-			<InvitationHandler v-if="isFederationEnabled" ref="invitationHandler" />
-		</div>
+		</template>
 
 		<NcAppNavigationItem v-if="pendingInvitationsCount"
 			class="invitation-button"
