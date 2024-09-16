@@ -327,17 +327,9 @@ export default {
 
 	mounted() {
 		document.body.classList.add('has-topbar')
-		document.addEventListener('fullscreenchange', this.fullScreenChanged, false)
-		document.addEventListener('mozfullscreenchange', this.fullScreenChanged, false)
-		document.addEventListener('MSFullscreenChange', this.fullScreenChanged, false)
-		document.addEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 	},
 
 	beforeDestroy() {
-		document.removeEventListener('fullscreenchange', this.fullScreenChanged, false)
-		document.removeEventListener('mozfullscreenchange', this.fullScreenChanged, false)
-		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
-		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 		document.body.classList.remove('has-topbar')
 	},
 
@@ -346,13 +338,6 @@ export default {
 		n,
 		openSidebar(activeTab) {
 			this.sidebarStore.showSidebar({ activeTab })
-		},
-
-		fullScreenChanged() {
-			this.$store.dispatch(
-				'setIsFullscreen',
-				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
-			)
 		},
 
 		openConversationSettings() {

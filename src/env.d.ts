@@ -3,7 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+type ExitFullscreen = typeof document.exitFullscreen
+type RequestFullscreen = typeof document.documentElement.requestFullscreen
+
 declare global {
+	interface Document {
+		webkitExitFullscreen: ExitFullscreen;
+	}
+
+	interface HTMLElement {
+		webkitRequestFullscreen: RequestFullscreen;
+	}
+
 	// @nextcloud/webpack-vue-config build globals
 	const appName: string
 	const appVersion: string
