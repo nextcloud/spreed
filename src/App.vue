@@ -783,6 +783,19 @@ body .modal-wrapper * {
 	overflow-wrap: break-word;
 	margin-block: 0 12px;
 }
+
+// Styles for the app content at fullscreen mode
+body.talk-in-fullscreen {
+	#header {
+		display: none !important;
+	}
+	#content-vue {
+		margin: 0;
+		height: 100%;
+		width: 100%;
+		border-radius: 0;
+	}
+}
 </style>
 
 <style lang="scss" scoped>
