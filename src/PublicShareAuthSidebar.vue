@@ -211,6 +211,11 @@ export default {
 #talk-sidebar *::after {
 	box-sizing: border-box;
 }
+
+ /* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
+body .modal-wrapper * {
+	box-sizing: border-box;
+}
 </style>
 
 <style lang="scss" scoped>

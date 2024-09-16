@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcDialog ref="modal"
+	<NcDialog ref="dialog"
 		:name="dialogTitle"
 		:container="container"
 		close-on-click-outside
@@ -91,7 +91,7 @@ export default {
 
 	mounted() {
 		// Postpone render of NewMessage until modal container is mounted
-		this.modalContainerId = `#modal-description-${this.$refs.modal.navigationId}`
+		this.modalContainerId = '#' + this.$refs.dialog.$el.querySelector('.modal-container')?.id
 		this.$nextTick(() => {
 			this.$refs.newMessage.focusInput()
 		})

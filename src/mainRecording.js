@@ -52,8 +52,8 @@ Vue.use(VueRouter)
 
 const pinia = createPinia()
 
-TooltipOptions.container = '#call-container'
-store.dispatch('setMainContainerSelector', '#call-container')
+TooltipOptions.container = 'body'
+store.dispatch('setMainContainerSelector', 'body')
 
 window.store = store
 
