@@ -8,10 +8,8 @@
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
 			<TopBar :is-in-call="isInCall" />
-			<TransitionWrapper name="fade">
-				<ChatView v-if="!isInCall" />
-				<CallView v-else :token="token" />
-			</TransitionWrapper>
+			<CallView v-if="isInCall" :token="token" />
+			<ChatView v-else />
 			<PollViewer />
 		</template>
 	</div>
@@ -23,7 +21,6 @@ import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
-import TransitionWrapper from '../components/UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../composables/useIsInCall.js'
 
@@ -35,7 +32,6 @@ export default {
 		LobbyScreen,
 		PollViewer,
 		TopBar,
-		TransitionWrapper,
 	},
 
 	props: {
