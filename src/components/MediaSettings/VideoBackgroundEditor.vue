@@ -62,9 +62,9 @@
 			@change="handleFileInput">
 
 		<FilePickerVue v-if="showFilePicker"
-			:name="t('spreed', 'File to share')"
+			:name="t('spreed', 'Select a file')"
 			:path="relativeBackgroundsFolderPath"
-			container=".background-editor"
+			container=".media-settings"
 			:buttons="filePickerButtons"
 			:multiselect="false"
 			@close="showFilePicker = false" />
@@ -154,7 +154,7 @@ export default {
 
 		filePickerButtons() {
 			return [{
-				label: t('spreed', 'Choose'),
+				label: t('spreed', 'Confirm'),
 				callback: (nodes) => this.handleFileChoose(nodes),
 				type: 'primary'
 			}]
