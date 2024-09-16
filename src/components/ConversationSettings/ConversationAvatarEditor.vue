@@ -34,7 +34,10 @@
 								</template>
 							</NcButton>
 						</NcEmojiPicker>
-						<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor" container="#vue-avatar-section">
+						<NcColorPicker v-if="emojiAvatar"
+							v-model="backgroundColor"
+							advanced-fields
+							container="#vue-avatar-section">
 							<NcButton :title="t('spreed', 'Set background color for conversation picture')"
 								:aria-label="t('spreed', 'Set background color for conversation picture')">
 								<template #icon>
