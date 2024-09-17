@@ -840,22 +840,16 @@ const actions = {
 			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		})
 
-		const actualFlags = await joinCall(token, flags, silent, recordingConsent)
+		try {
+			const actualFlags = await joinCall(token, flags, silent, recordingConsent)
+			const updatedData = {
+				inCall: actualFlags,
+			}
+			commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
+		} catch (e) {
+			console.error(e)
 
-		const updatedData = {
-			inCall: actualFlags,
 		}
-		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
-
-		EventBus.once('signaling-users-in-room', () => {
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
-		})
-
-		setTimeout(() => {
-			// If by accident we never receive a users list, just switch to
-			// "Waiting for others to join the call …" after some seconds.
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
-		}, 10000)
 
 		const callViewStore = useCallViewStore()
 		callViewStore.handleJoinCall(getters.conversation(token))

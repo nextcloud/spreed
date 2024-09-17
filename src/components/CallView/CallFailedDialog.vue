@@ -45,8 +45,8 @@ const message = computed(() => {
 
 		return t('spreed', 'Please try to reload the page')
 	} else {
-        return ''
-    }
+		return ''
+	}
 })
 
 /**
