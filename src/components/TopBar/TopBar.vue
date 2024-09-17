@@ -34,18 +34,22 @@
 						:class="{'description__in-chat' : !isInCall }">
 						{{ statusMessage }}
 					</p>
-					<template v-if="conversation.description">
-						<p v-tooltip.bottom="{
-								content: renderedDescription,
-								delay: { show: 500, hide: 500 },
-								autoHide: false,
-								html: true,
-							}"
-							class="description"
-							:class="{'description__in-chat' : !isInCall }">
-							{{ conversation.description }}
-						</p>
-					</template>
+					<NcPopover v-if="conversation.description"
+						:focus-trap="false"
+						:delay="500"
+						:boundary="boundaryElement"
+						:popper-triggers="['hover']"
+						:triggers="['hover']">
+						<template #trigger="{ attrs }">
+							<p v-bind="attrs"
+								class="description"
+								:class="{'description__in-chat' : !isInCall }">
+								{{ conversation.description }}
+							</p>
+						</template>
+						<!-- eslint-disable-next-line vue/no-v-html -->
+						<div class="description__popover" v-html="renderedDescription" />
+					</NcPopover>
 				</div>
 			</a>
 
@@ -123,6 +127,7 @@ import { t, n } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
@@ -138,7 +143,6 @@ import ConversationIcon from '../ConversationIcon.vue'
 
 import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { AVATAR, CONVERSATION } from '../../constants.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.js'
 import { useSidebarStore } from '../../stores/sidebar.js'
@@ -160,6 +164,7 @@ export default {
 		ConversationIcon,
 		TopBarMediaControls,
 		NcButton,
+		NcPopover,
 		TopBarMenu,
 		TasksCounter,
 		ReactionMenu,
@@ -202,6 +207,7 @@ export default {
 	data: () => {
 		return {
 			showBreakoutRoomsEditor: false,
+			boundaryElement: document.querySelector('.main-view'),
 		}
 	},
 
@@ -436,6 +442,12 @@ export default {
 			color: var(--color-text-maxcontrast);
 		}
 	}
+}
+
+.description__popover {
+	padding: var(--default-grid-baseline);
+	width: fit-content;
+	max-width: 50em;
 }
 
 .icon {
