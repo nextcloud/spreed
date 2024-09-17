@@ -16,9 +16,6 @@
 			<p v-if="message" class="emptycontent-additional">
 				{{ message }}
 			</p>
-			<p v-if="helper" class="emptycontent-additional">
-				{{ helper }}
-			</p>
 			<NcButton v-if="showLink"
 				type="primary"
 				@click.stop="handleCopyLink">
@@ -30,24 +27,15 @@
 
 <script>
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
 import IconLinkVariant from 'vue-material-design-icons/LinkVariant.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue'
 
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
-
-const STATUS_ERRORS = {
-	400: t('spreed', 'Recording consent is required'),
-	403: t('spreed', 'This conversation is read-only'),
-	404: t('spreed', 'Conversation not found or not joined'),
-	412: t('spreed', "Lobby is still active and you're not a moderator"),
-}
 
 export default {
 
@@ -56,10 +44,8 @@ export default {
 	components: {
 		NcButton,
 		IconAccountMultiple,
-		IconAlertOctagon,
 		IconLinkVariant,
 		IconPhone,
-		NcLoadingIcon,
 	},
 
 	props: {
@@ -83,14 +69,6 @@ export default {
 
 		token() {
 			return this.$store.getters.getToken()
-		},
-
-		isConnecting() {
-			return this.$store.getters.isConnecting(this.token)
-		},
-
-		connectionFailed() {
-			return this.$store.getters.connectionFailed(this.token)
 		},
 
 		conversation() {
@@ -138,11 +116,7 @@ export default {
 		},
 
 		emptyCallViewIcon() {
-			if (this.connectionFailed) {
-				return IconAlertOctagon
-			} else if (this.isConnecting) {
-				return NcLoadingIcon
-			} else if (this.isPhoneConversation) {
+			if (this.isPhoneConversation) {
 				return IconPhone
 			} else {
 				return this.isPublicConversation ? IconLinkVariant : IconAccountMultiple
@@ -150,12 +124,6 @@ export default {
 		},
 
 		title() {
-			if (this.connectionFailed) {
-				return t('spreed', 'Connection failed')
-			}
-			if (this.isConnecting) {
-				return t('spreed', 'Connecting …')
-			}
 			if (this.isPhoneConversation) {
 				return t('spreed', 'Calling …')
 			}
@@ -165,27 +133,7 @@ export default {
 			return t('spreed', 'Waiting for others to join the call …')
 		},
 
-		helper() {
-			return this.connectionFailed ? t('spreed', 'Please try to reload the page') : ''
-		},
-
 		message() {
-			if (this.connectionFailed) {
-				const statusCode = this.connectionFailed?.meta?.statuscode
-				if (STATUS_ERRORS[statusCode]) {
-					return STATUS_ERRORS[statusCode]
-				}
-				if (this.connectionFailed?.data?.error) {
-					return this.connectionFailed.data.error
-				}
-
-				return t('spreed', 'Something went wrong')
-			}
-
-			if (this.isConnecting) {
-				return ''
-			}
-
 			if (this.isPasswordRequestConversation || this.isFileConversation) {
 				return ''
 			}

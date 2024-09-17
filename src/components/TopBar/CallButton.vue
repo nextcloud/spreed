@@ -9,11 +9,12 @@
 			id="call_button"
 			:title="startCallTitle"
 			:aria-label="startCallLabel"
-			:disabled="startCallButtonDisabled || loading"
+			:disabled="startCallButtonDisabled || loading || isConnecting"
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<IconPhoneDial v-if="isPhoneRoom" :size="20" />
+				<NcLoadingIcon v-if="isConnecting || loading" />
+				<IconPhoneDial v-else-if="isPhoneRoom" :size="20" />
 				<IconPhoneOutline v-else-if="silentCall" :size="20" />
 				<IconPhone v-else :size="20" />
 			</template>
@@ -21,6 +22,7 @@
 				{{ startCallLabel }}
 			</template>
 		</NcButton>
+
 		<NcButton v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
 			id="call_button"
 			:aria-label="endCallLabel"
@@ -77,6 +79,7 @@
 				{{ t('spreed', 'End call for everyone') }}
 			</NcActionButton>
 		</NcActions>
+		<CallFailedDialog v-if="connectionFailed" :token="token" />
 	</div>
 </template>
 
@@ -96,7 +99,10 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
+
+import CallFailedDialog from '../CallView/CallFailedDialog.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -114,6 +120,7 @@ export default {
 	name: 'CallButton',
 
 	components: {
+		CallFailedDialog,
 		NcActions,
 		NcActionButton,
 		NcButton,
@@ -124,6 +131,7 @@ export default {
 		IconPhoneHangup,
 		IconPhoneOff,
 		IconPhoneOutline,
+		NcLoadingIcon,
 	},
 
 	props: {
@@ -268,6 +276,10 @@ export default {
 				return t('spreed', 'Join call')
 			}
 
+			if (this.isConnecting) {
+				return t('spreed', 'Connecting...')
+			}
+
 			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
 		},
 
@@ -333,6 +345,14 @@ export default {
 
 		isInLobby() {
 			return this.$store.getters.isInLobby
+		},
+
+		isConnecting() {
+			return this.$store.getters.isConnecting(this.token)
+		},
+
+		connectionFailed() {
+			return this.$store.getters.connectionFailed(this.token)
 		},
 	},
 
