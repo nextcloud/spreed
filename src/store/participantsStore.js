@@ -821,10 +821,19 @@ const actions = {
 			return
 		}
 
-		commit('setInCall', {
-			token,
-			sessionId: participantIdentifier.sessionId,
-			flags,
+		// Preparing the event listener for the signaling-join-call event
+		EventBus.once('signaling-join-call', () => {
+			commit('setInCall', {
+				token,
+				sessionId: participantIdentifier.sessionId,
+				flags,
+			})
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+		})
+
+		// Preparing the event listener for the signaling-join-call-failed event
+		EventBus.once('signaling-join-call-failed', () => {
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		})
 
 		const actualFlags = await joinCall(token, flags, silent, recordingConsent)
