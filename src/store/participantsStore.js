@@ -789,10 +789,19 @@ const actions = {
 			return
 		}
 
-		commit('setInCall', {
-			token,
-			sessionId: participantIdentifier.sessionId,
-			flags,
+		// Preparing the event listener for the signaling-join-call event
+		EventBus.once('signaling-join-call', () => {
+			commit('setInCall', {
+				token,
+				sessionId: participantIdentifier.sessionId,
+				flags,
+			})
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+		})
+
+		// Preparing the event listener for the signaling-join-call-failed event
+		EventBus.once('signaling-join-call-failed', () => {
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		})
 
 		const actualFlags = await joinCall(token, flags, silent, recordingConsent)
@@ -801,16 +810,6 @@ const actions = {
 			inCall: actualFlags,
 		}
 		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
-
-		EventBus.once('signaling-users-in-room', () => {
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
-		})
-
-		setTimeout(() => {
-			// If by accident we never receive a users list, just switch to
-			// "Waiting for others to join the call …" after some seconds.
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
-		}, 10000)
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {
