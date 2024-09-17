@@ -808,12 +808,16 @@ const actions = {
 			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		})
 
-		const actualFlags = await joinCall(token, flags, silent, recordingConsent)
+		try {
+			const actualFlags = await joinCall(token, flags, silent, recordingConsent)
+			const updatedData = {
+				inCall: actualFlags,
+			}
+			commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
+		} catch (e) {
+			console.error(e)
 
-		const updatedData = {
-			inCall: actualFlags,
 		}
-		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {
