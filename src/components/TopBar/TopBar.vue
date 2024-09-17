@@ -430,7 +430,7 @@ export default {
 		}
 	}
 	.title {
-		font-weight: bold;
+		font-weight: 500;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
