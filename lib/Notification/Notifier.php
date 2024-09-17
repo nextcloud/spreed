@@ -617,7 +617,7 @@ class Notifier implements INotifier {
 			}
 			$richSubjectParameters['message'] = [
 				'type' => 'highlight',
-				'id' => $message->getMessageId(),
+				'id' => (string)$message->getMessageId(),
 				'name' => $shortenMessage,
 			];
 			if ($notification->getSubject() === 'reminder') {
