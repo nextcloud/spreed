@@ -157,6 +157,7 @@ function startCall(signaling, configuration, silent, recordingConsent) {
 	signaling.joinCall(pendingJoinCallToken, flags, silent, recordingConsent).then(() => {
 		startedCall(flags)
 	}).catch(error => {
+		signalingLeaveCall(pendingJoinCallToken)
 		failedToStartCall(error)
 	})
 }

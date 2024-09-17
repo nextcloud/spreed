@@ -32,11 +32,7 @@ import {
  * @return {number} The actual flags based on the available media
  */
 const joinCall = async function(token, flags, silent, recordingConsent) {
-	try {
-		return await signalingJoinCall(token, flags, silent, recordingConsent)
-	} catch (error) {
-		console.debug('Error while joining call: ', error)
-	}
+	return await signalingJoinCall(token, flags, silent, recordingConsent)
 }
 
 /**
