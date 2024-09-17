@@ -321,25 +321,27 @@ const mutations = {
 			if (state.inCall[token] && state.inCall[token][sessionId]) {
 				Vue.delete(state.inCall[token], sessionId)
 			}
-
-			if (state.connecting[token] && state.connecting[token][sessionId]) {
-				Vue.delete(state.connecting[token], sessionId)
-			}
 		} else {
 			if (!state.inCall[token]) {
 				Vue.set(state.inCall, token, {})
 			}
 			Vue.set(state.inCall[token], sessionId, flags)
-
-			if (!state.connecting[token]) {
-				Vue.set(state.connecting, token, {})
-			}
-			Vue.set(state.connecting[token], sessionId, flags)
 		}
 	},
 
 	connectionFailed(state, { token, payload }) {
 		Vue.set(state.connectionFailed, token, payload)
+	},
+
+	clearConnectionFailed(state, token) {
+		Vue.delete(state.connectionFailed, token)
+	},
+
+	connecting(state, { token, sessionId, flags }) {
+		if (!state.connecting[token]) {
+			Vue.set(state.connecting, token, {})
+		}
+		Vue.set(state.connecting[token], sessionId, flags)
 	},
 
 	finishedConnecting(state, { token, sessionId }) {
@@ -778,6 +780,8 @@ const actions = {
 	},
 
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags, silent, recordingConsent }) {
+		commit('connecting', { token, sessionId: participantIdentifier.sessionId, flags })
+
 		if (!participantIdentifier?.sessionId) {
 			console.error('Trying to join call without sessionId')
 			return
@@ -1128,6 +1132,10 @@ const actions = {
 	setPhoneMute(context, { callid, value }) {
 		context.commit('setPhoneMute', { callid, value })
 	},
+
+	clearConnectionFailed(context, token) {
+		context.commit('clearConnectionFailed', token)
+	}
 }
 
 export default { state, mutations, getters, actions }
