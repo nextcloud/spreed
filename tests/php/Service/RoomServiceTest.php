@@ -309,7 +309,7 @@ class RoomServiceTest extends TestCase {
 			\OC::$server,
 			$this->createMock(LoggerInterface::class)
 		);
-		$dispatcher->addListener(RoomPasswordVerifyEvent::class, static function (RoomPasswordVerifyEvent $event) {
+		$dispatcher->addListener(RoomPasswordVerifyEvent::class, static function (RoomPasswordVerifyEvent $event): void {
 			$password = $event->getPassword();
 
 			if ($password === '1234') {
