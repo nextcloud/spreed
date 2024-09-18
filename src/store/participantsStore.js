@@ -595,8 +595,9 @@ const actions = {
 				showError(t('spreed', 'Error while banning the participant'))
 				throw error
 			}
+		} else {
+			await removeAttendeeFromConversation(token, attendeeId)
 		}
-		await removeAttendeeFromConversation(token, attendeeId)
 		commit('deleteParticipant', { token, attendeeId })
 	},
 
