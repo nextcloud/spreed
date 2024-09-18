@@ -342,7 +342,7 @@ class MatterbridgeManager {
 					$serverUrl = $part['server'];
 				} else {
 					$serverUrl = preg_replace('/\/+$/', '', $this->urlGenerator->getAbsoluteURL(''));
-					$content .= '	SeparateDisplayName = true' ."\n";
+					$content .= '	SeparateDisplayName = true' . "\n";
 					// TODO remove that
 					//$serverUrl = preg_replace('/https:/', 'http:', $serverUrl);
 				}
@@ -553,7 +553,7 @@ class MatterbridgeManager {
 				// config : no PID stored
 				// config : enabled => launch it
 				$pid = $this->launchMatterbridge($room);
-				$this->logger->info('Launch process, PID is '.$pid);
+				$this->logger->info('Launch process, PID is ' . $pid);
 			}
 		} else {
 			$this->logger->info('No PID defined in config AND bridge disabled in config : doing nothing');

@@ -217,7 +217,7 @@ class InjectionMiddleware extends Middleware {
 		bool $moderatorRequired,
 		bool $requireListedWhenNoParticipant = false,
 		bool $requireFederationWhenNotLoggedIn = false,
-		?string $sessionIdParameter = null
+		?string $sessionIdParameter = null,
 	): void {
 		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isFederationRequest()) {
 			throw new ParticipantNotFoundException();

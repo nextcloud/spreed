@@ -167,7 +167,7 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('You created the conversation');
 			} elseif ($systemIsActor) {
 				$parsedMessage = $this->l->t('System created the conversation');
-			}if ($cliIsActor) {
+			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator created the conversation');
 			}
 		} elseif ($message === 'conversation_renamed') {

@@ -478,7 +478,7 @@ class Manager {
 		if ($term !== '') {
 			$query->andWhere(
 				$query->expr()->iLike('name', $query->createNamedParameter(
-					'%' . $this->db->escapeLikeParameter($term). '%'
+					'%' . $this->db->escapeLikeParameter($term) . '%'
 				))
 			);
 		}

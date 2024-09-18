@@ -98,7 +98,7 @@ class CommentsManager extends Manager {
 
 		if ($search !== '') {
 			$query->where($query->expr()->iLike('message', $query->createNamedParameter(
-				'%' . $this->dbConn->escapeLikeParameter($search). '%'
+				'%' . $this->dbConn->escapeLikeParameter($search) . '%'
 			)));
 		}
 

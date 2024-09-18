@@ -130,7 +130,7 @@ class TransferOwnership extends Base {
 		}
 
 		if ($federatedRooms > 0) {
-			$output->writeln('<comment>Could not transfer membership in ' . $federatedRooms. ' federated rooms.</comment>');
+			$output->writeln('<comment>Could not transfer membership in ' . $federatedRooms . ' federated rooms.</comment>');
 		}
 
 		$output->writeln('<info>Added or promoted user ' . $destinationUser->getUID() . ' in ' . $modified . ' rooms.</info>');
