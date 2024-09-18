@@ -16,7 +16,8 @@
 			<ConversationIcon :item="item" :hide-favorite="!item?.attendeeId" :hide-call="!item?.attendeeId" />
 		</template>
 		<template v-if="conversationInformation" #subname>
-			{{ conversationInformation }}
+			<!-- eslint-disable-next-line vue/no-v-html -->
+			<span v-html="conversationInformation" />
 		</template>
 	</NcListItem>
 </template>
