@@ -89,7 +89,7 @@ OC.L10N.register(
     "Join call" : "Pievienoties zvanam",
     "{user} invited you to a group conversation: {call}" : "{user} uzaicināja jūs uz grupas sarunu: {call}",
     "A group call has started in {call}" : "Grupas zvans ir sācies {call}",
-    "Open settings" : "Atveriet iestatījumus",
+    "Open settings" : "Atvērt iestatījumus",
     "error" : "kļūda",
     "Avatar image is not square" : "Avatar attēls nav kvadrāts",
     "Federation" : "Federācija",
