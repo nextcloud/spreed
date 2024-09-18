@@ -222,7 +222,7 @@ class RoomPluginTest extends TestCase {
 		array $roomsForParticipant,
 		array $expectedMatchesExact,
 		array $expectedMatches,
-		bool $expectedHasMoreResults
+		bool $expectedHasMoreResults,
 	) {
 		$rooms = [];
 		foreach ($roomsForParticipant as $roomData) {

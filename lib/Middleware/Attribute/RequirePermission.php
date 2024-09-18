@@ -22,7 +22,7 @@ class RequirePermission {
 	public const START_CALL = 'call-start';
 
 	public function __construct(
-		protected string $permission
+		protected string $permission,
 	) {
 	}
 

@@ -33,7 +33,7 @@ class FixNamespaceInDatabaseTables implements IRepairStep {
 		$query->select('id', 'class')
 			->from('jobs')
 			->where($query->expr()->like('class', $query->createNamedParameter(
-				'%' . $this->connection->escapeLikeParameter('Spreed'). '%'
+				'%' . $this->connection->escapeLikeParameter('Spreed') . '%'
 			)));
 
 		$result = $query->executeQuery();

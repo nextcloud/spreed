@@ -75,7 +75,7 @@ class UpdateDocs extends Base {
 					$command->getUsages()
 				),
 				function ($carry, $usage) {
-					return $carry.'* `'.$usage.'`'."\n";
+					return $carry.'* `' . $usage . '`' . "\n";
 				}
 			);
 		$doc .= $this->describeInputDefinition($command);
@@ -119,7 +119,7 @@ class UpdateDocs extends Base {
 		$description = $argument->getDescription();
 
 		return
-			'| `'.($argument->getName() ?: '<none>') . '` | ' .
+			'| `' . ($argument->getName() ?: '<none>') . '` | ' .
 			($description ? preg_replace('/\s*[\r\n]\s*/', ' ', $description) : '') . ' | ' .
 			($argument->isRequired() ? 'yes' : 'no') . ' | ' .
 			($argument->isArray() ? 'yes' : 'no') . ' | ' .
@@ -127,15 +127,15 @@ class UpdateDocs extends Base {
 	}
 
 	protected function describeInputOption(InputOption $option): string {
-		$name = '--'.$option->getName();
+		$name = '--' . $option->getName();
 		if ($option->getShortcut()) {
-			$name .= '\|-'.str_replace('|', '\|-', $option->getShortcut());
+			$name .= '\|-' . str_replace('|', '\|-', $option->getShortcut());
 		}
 		$description = $option->getDescription();
 
 		return
 			'| `' . $name . '` | ' .
-			($description ? preg_replace('/\s*[\r\n]\s*/', ' ', $description) : '') . ' | '.
+			($description ? preg_replace('/\s*[\r\n]\s*/', ' ', $description) : '') . ' | ' .
 			($option->acceptValue() ? 'yes' : 'no') . ' | ' .
 			($option->isValueRequired() ? 'yes' : 'no') . ' | ' .
 			($option->isArray() ? 'yes' : 'no') . ' | ' .
