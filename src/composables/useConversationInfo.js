@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import escapeHtml from 'escape-html'
 import { computed, ref } from 'vue'
 
 import { t } from '@nextcloud/l10n'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.js'
+import { getMessageIcon } from '../utils/getMessageIcon.ts'
 
 /**
  * Reusable properties for Conversation... items
@@ -55,11 +57,11 @@ export function useConversationInfo({
 		}
 
 		const params = item.value?.lastMessage.messageParameters
-		let subtitle = item.value?.lastMessage.message.trim()
+		let subtitle = (getMessageIcon(item.value?.lastMessage) + ' ' + escapeHtml(item.value?.lastMessage.message)).trim()
 
 		// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 		Object.keys(params).forEach((parameterKey) => {
-			subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
+			subtitle = subtitle.replace('{' + parameterKey + '}', escapeHtml(params[parameterKey].name))
 		})
 
 		return subtitle
