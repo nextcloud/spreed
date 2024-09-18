@@ -47,7 +47,7 @@ class CanUseTalkMiddleware extends Middleware {
 		protected Config $talkConfig,
 		protected IConfig $serverConfig,
 		protected IRequest $request,
-		protected IURLGenerator $url
+		protected IURLGenerator $url,
 	) {
 	}
 

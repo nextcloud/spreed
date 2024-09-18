@@ -42,10 +42,10 @@ class Version19000Date20240709183938 extends SimpleMigrationStep {
 		$query->update($table)
 			->set($column, $query->func()->concat($query->createNamedParameter('https://'), $column))
 			->where($query->expr()->notLike($column, $query->createNamedParameter(
-				$this->connection->escapeLikeParameter('http://'). '%'
+				$this->connection->escapeLikeParameter('http://') . '%'
 			)))
 			->andWhere($query->expr()->notLike($column, $query->createNamedParameter(
-				$this->connection->escapeLikeParameter('https://'). '%'
+				$this->connection->escapeLikeParameter('https://') . '%'
 			)))
 			->andWhere($query->expr()->nonEmptyString($column));
 		$query->executeStatement();
