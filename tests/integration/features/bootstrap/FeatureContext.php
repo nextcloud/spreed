@@ -1778,7 +1778,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userSetsDescriptionForRoomTo(string $user, string $identifier, string $description, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'PUT', '/apps/spreed/api/' .$apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/description',
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/description',
 			new TableNode([['description', $description]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -4239,7 +4239,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userSetTheMessageExpirationToXWithStatusCode(string $user, int $messageExpiration, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expiration', [
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expiration', [
 			'seconds' => $messageExpiration,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -4250,7 +4250,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userSetsTheRecordingConsentToXWithStatusCode(string $user, int $recordingConsent, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('PUT', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/recording-consent', [
+		$this->sendRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/recording-consent', [
 			'recordingConsent' => $recordingConsent,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -4627,7 +4627,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->sendRequest(
 			$action === 'sets up' ? 'POST' : 'DELETE',
-			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . '/' .self::$botNameToId[$botName]
+			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . '/' . self::$botNameToId[$botName]
 		);
 		$this->assertStatusCode($this->response, $status);
 	}

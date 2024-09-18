@@ -176,7 +176,7 @@ class RoomShareProvider implements IShareProvider {
 		string $target,
 		int $permissions,
 		string $token,
-		?\DateTime $expirationDate
+		?\DateTime $expirationDate,
 	): int {
 		$insert = $this->dbConnection->getQueryBuilder();
 		$insert->insert('share')

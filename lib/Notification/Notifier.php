@@ -289,7 +289,7 @@ class Notifier implements INotifier {
 		INotification $notification,
 		Room $room,
 		Participant $participant,
-		IL10N $l
+		IL10N $l,
 	): INotification {
 		$notification
 			->setRichSubject(
@@ -314,7 +314,7 @@ class Notifier implements INotifier {
 		INotification $notification,
 		Room $room,
 		Participant $participant,
-		IL10N $l
+		IL10N $l,
 	): INotification {
 		$parameters = $notification->getSubjectParameters();
 		try {

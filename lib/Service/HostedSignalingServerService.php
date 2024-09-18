@@ -89,7 +89,7 @@ class HostedSignalingServerService {
 					if ($body) {
 						$parsedBody = json_decode($body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
-							$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
+							$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 							$message = $this->l10n->t('Something unexpected happened.');
 							throw new HostedSignalingServerAPIException($message, $status);
@@ -198,7 +198,7 @@ class HostedSignalingServerService {
 		$data = json_decode($body, true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
+			$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -262,7 +262,7 @@ class HostedSignalingServerService {
 					if ($body) {
 						$parsedBody = json_decode($body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
-							$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
+							$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 							$message = $this->l10n->t('Something unexpected happened.');
 							throw new HostedSignalingServerAPIException($message, $status);
@@ -334,7 +334,7 @@ class HostedSignalingServerService {
 		$data = (array)json_decode($body, true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
+			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -416,7 +416,7 @@ class HostedSignalingServerService {
 					if ($body) {
 						$parsedBody = json_decode($body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
-							$this->logger->error('Deleting the hosted signaling server account failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
+							$this->logger->error('Deleting the hosted signaling server account failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
 							$message = $this->l10n->t('Something unexpected happened.');
 							throw new HostedSignalingServerAPIException($message, $status);
