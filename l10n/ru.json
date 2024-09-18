@@ -1464,6 +1464,7 @@
     "Add groups or teams" : "Добавить группы или команды",
     "Add other sources" : "Добавить другие источники",
     "Participants" : "Участники",
+    "You can search or add participants via name, email, or Federated Cloud ID" : "Вы можете искать или добавлять участников по имени, адресу электронной почты или идентификатору Federated Cloud.",
     "Search or add participants" : "Искать и добавить участников",
     "An error occurred while adding the participants" : "Не удалось добавить участников",
     "Chat" : "Чат",
