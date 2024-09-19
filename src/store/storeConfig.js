@@ -12,7 +12,6 @@ import messagesStore from './messagesStore.js'
 import participantsStore from './participantsStore.js'
 import soundsStore from './soundsStore.js'
 import tokenStore from './tokenStore.js'
-import uiModeStore from './uiModeStore.js'
 
 export default {
 	modules: {
@@ -25,7 +24,6 @@ export default {
 		participantsStore,
 		soundsStore,
 		tokenStore,
-		uiModeStore,
 	},
 
 	mutations: {},

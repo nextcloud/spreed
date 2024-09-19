@@ -41,7 +41,6 @@ Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
 
 const pinia = createPinia()
-store.dispatch('setMainContainerSelector', 'body')
 
 /**
  * Wraps all the body contents in its own container.
