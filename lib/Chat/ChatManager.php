@@ -499,6 +499,8 @@ class ChatManager {
 
 		$this->referenceManager->invalidateCache($chat->getToken());
 
+		$this->unreadCountCache->clear($chat->getId() . '-');
+
 		return $this->addSystemMessage(
 			$chat,
 			$participant->getAttendee()->getActorType(),
