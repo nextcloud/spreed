@@ -163,10 +163,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		participants() {
 			return this.$store.getters.participantsList(this.token).filter(participant => {
 				return (participant.participantType === PARTICIPANT.TYPE.USER
