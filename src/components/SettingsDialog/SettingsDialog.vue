@@ -73,7 +73,7 @@
 			:name="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="play_sounds"
-				:checked="playSounds"
+				:checked="shouldPlaySounds"
 				:disabled="playSoundsLoading"
 				type="switch"
 				class="checkbox"
@@ -239,8 +239,8 @@ export default {
 	},
 
 	computed: {
-		playSounds() {
-			return this.soundsStore.playSounds
+		shouldPlaySounds() {
+			return this.soundsStore.shouldPlaySounds
 		},
 
 		attachmentFolder() {
@@ -351,7 +351,7 @@ export default {
 			this.playSoundsLoading = true
 			try {
 				try {
-					await this.soundsStore.setPlaySounds(!this.playSounds)
+					await this.soundsStore.setShouldPlaySounds(!this.shouldPlaySounds)
 				} catch (e) {
 					showError(t('spreed', 'Failed to save sounds setting'))
 				}

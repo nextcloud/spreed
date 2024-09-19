@@ -438,7 +438,7 @@ export default {
 
 		handleClick() {
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
-			this.soundsStore.createAudioObjects()
+			this.soundsStore.initAudioObjects()
 
 			if (this.isMediaSettings || this.isPhoneRoom) {
 				emit('talk:media-settings:hide')
