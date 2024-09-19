@@ -39,7 +39,6 @@
 			:preloaded-user-status="preloadedUserStatus"
 			:show-user-status="!hideUserStatus"
 			:show-user-status-compact="!showUserOnlineStatus"
-			:menu-container="menuContainer"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
 			<VideoIcon :size="20" :fill-color="'#E9322D'" />
@@ -157,12 +156,6 @@ export default {
 			}
 
 			return getPreloadedUserStatus(this.item)
-		},
-
-		menuContainer() {
-			// The store may not be defined in the RoomSelector if used from
-			// the Collaboration menu outside Talk.
-			return this.$store?.getters.getMainContainerSelector()
 		},
 
 		iconClass() {
