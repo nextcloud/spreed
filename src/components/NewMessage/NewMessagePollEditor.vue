@@ -6,7 +6,6 @@
 <template>
 	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
-		:container="container"
 		v-on="$listeners"
 		@update:open="dismissEditor">
 		<!-- Poll Question -->
@@ -118,10 +117,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		isFilled() {
 			return !!this.pollQuestion || this.pollOptions.some(option => option)
 		},

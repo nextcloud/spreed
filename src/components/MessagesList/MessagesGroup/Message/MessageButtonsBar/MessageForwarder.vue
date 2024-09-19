@@ -8,7 +8,6 @@
 		<!-- First step of the flow: selection of the room to which forward the
 		message to -->
 		<RoomSelector v-if="!showForwardedConfirmation"
-			:container="container"
 			show-postable-only
 			:dialog-title="dialogTitle"
 			:dialog-subtitle="dialogSubtitle"
@@ -20,7 +19,6 @@
 		message has been forwarded -->
 		<NcDialog v-else
 			:name="dialogTitle"
-			:container="container"
 			close-on-click-outside
 			@update:open="handleClose">
 			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
@@ -96,10 +94,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		dialogTitle() {
 			return t('spreed', 'Forward message')
 		},

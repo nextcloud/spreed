@@ -6,7 +6,6 @@
 <template>
 	<NcModal v-if="id"
 		size="small"
-		:container="container"
 		:label-id="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
@@ -159,10 +158,6 @@ export default {
 
 		token() {
 			return this.activePoll?.token
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 
 		poll() {

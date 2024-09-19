@@ -7,7 +7,6 @@
 	<NcDialog :open="modal"
 		:name="t('spreed', 'Call a phone number')"
 		class="call-phone"
-		:container="container"
 		size="normal"
 		close-on-click-outside
 		@update:open="closeModal">
@@ -79,12 +78,6 @@ export default {
 			searchText: '',
 			participantPhoneItem: {},
 		}
-	},
-
-	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
 	},
 
 	expose: ['showModal'],
