@@ -188,7 +188,7 @@ class Capabilities implements IPublicCapability {
 					'breakout-rooms' => $this->talkConfig->isBreakoutRoomsEnabled(),
 					'recording' => $this->talkConfig->isRecordingEnabled(),
 					'recording-consent' => $this->talkConfig->recordingConsentRequired(),
-					'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
+					'supported-reactions' => ['❤️', '🎉', '👏', '👋', '👍', '👎', '🔥', '😂', '🤩', '🤔', '😲', '😥'],
 					// 'predefined-backgrounds' => list<string>,
 					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
