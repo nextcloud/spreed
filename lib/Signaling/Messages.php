@@ -35,7 +35,7 @@ class Messages {
 			->where($delete->expr()->in('recipient', $delete->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
 			->orWhere($delete->expr()->in('sender', $delete->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
 
-		$this->atomic(function () use ($delete) {
+		$this->atomic(function () use ($delete): void {
 			$delete->executeStatement();
 		}, $this->db);
 	}
@@ -76,7 +76,7 @@ class Messages {
 			);
 
 		$participants = $this->participantService->getParticipantsForAllSessions($room);
-		$this->atomic(function () use ($participants, $insert) {
+		$this->atomic(function () use ($participants, $insert): void {
 			foreach ($participants as $participant) {
 				$session = $participant->getSession();
 				if ($session instanceof Session) {
@@ -115,7 +115,7 @@ class Messages {
 			->where($delete->expr()->eq('recipient', $delete->createNamedParameter($sessionId)))
 			->andWhere($delete->expr()->lte('timestamp', $delete->createNamedParameter($time)));
 
-		$this->atomic(function () use (&$messages, $query, $delete) {
+		$this->atomic(function () use (&$messages, $query, $delete): void {
 			$result = $query->executeQuery();
 
 			while ($row = $result->fetch()) {
@@ -141,7 +141,7 @@ class Messages {
 		$delete->delete('talk_internalsignaling')
 			->where($delete->expr()->lt('timestamp', $delete->createNamedParameter($time)));
 
-		$this->atomic(function () use ($delete) {
+		$this->atomic(function () use ($delete): void {
 			$delete->executeStatement();
 		}, $this->db);
 	}

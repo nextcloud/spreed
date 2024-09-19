@@ -788,7 +788,7 @@ class SignalingControllerTest extends TestCase {
 	}
 
 	public function testBackendRoomSessionFromEvent(): void {
-		$this->dispatcher->addListener(BeforeSignalingResponseSentEvent::class, static function (BeforeSignalingResponseSentEvent $event) {
+		$this->dispatcher->addListener(BeforeSignalingResponseSentEvent::class, static function (BeforeSignalingResponseSentEvent $event): void {
 			$room = $event->getRoom();
 			$event->setSession([
 				'foo' => 'bar',

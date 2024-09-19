@@ -31,7 +31,7 @@ class RoomPlugin implements ISearchPlugin {
 	 * {@inheritdoc}
 	 */
 	public function search($search, $limit, $offset, ISearchResult $searchResult): bool {
-		if (empty($search)) {
+		if (!is_string($search) || $search === '') {
 			return false;
 		}
 

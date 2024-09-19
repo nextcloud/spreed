@@ -145,7 +145,7 @@ class AdminSettingsTest extends TestCase {
 		];
 		$this->initialState->expects($this->exactly(2))
 			->method('provideInitialState')
-			->willReturnCallback(function () use ($expectedCalls, &$i) {
+			->willReturnCallback(function () use ($expectedCalls, &$i): void {
 				Assert::assertArrayHasKey($i, $expectedCalls);
 				Assert::assertSame($expectedCalls[$i], func_get_args());
 				$i++;

@@ -93,7 +93,7 @@ class SearchPluginTest extends TestCase {
 		$p = $this->createMock(Participant::class);
 		$a = Attendee::fromRow([
 			'actor_type' => $uid ? 'users' : 'guests',
-			'actor_id' => $uid ? $uid : sha1($session),
+			'actor_id' => $uid ?: sha1($session),
 			'display_name' => $displayName,
 		]);
 		$s = Session::fromRow([
@@ -133,16 +133,16 @@ class SearchPluginTest extends TestCase {
 		$plugin->expects($this->once())
 			->method('searchUsers')
 			->with('fo', ['123' => 'OneTwoThree', 'foo' => 'Foo Bar', 'bar' => 'Bar Tender'], $result)
-			->willReturnCallback(function ($search, $users, $result) {
-				array_map(function ($user) {
+			->willReturnCallback(function ($search, $users, $result): void {
+				array_map(function ($user): void {
 					$this->assertIsString($user);
 				}, $users);
 			});
 		$plugin->expects($this->once())
 			->method('searchGuests')
 			->with('fo', $this->anything(), $result)
-			->willReturnCallback(function ($search, $guests, $result) {
-				array_map(function ($guest) {
+			->willReturnCallback(function ($search, $guests, $result): void {
+				array_map(function ($guest): void {
 					$this->assertInstanceOf(Attendee::class, $guest);
 				}, $guests);
 			});

@@ -445,7 +445,7 @@ class NotifierTest extends TestCase {
 	public static function dataGetMentionedUserIds(): array {
 		$return = self::dataGetMentionedUsers();
 		array_walk($return, function (array &$scenario) {
-			array_walk($scenario[1], function (array &$params) {
+			array_walk($scenario[1], function (array &$params): void {
 				$params = $params['id'];
 			});
 			return $scenario;
