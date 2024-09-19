@@ -21,8 +21,7 @@
 		<NcActions v-if="!isSidebar"
 			v-tooltip="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
-			type="tertiary"
-			:container="container">
+			type="tertiary">
 			<!-- Menu icon: white if in call -->
 			<template v-if="isInCall" #icon>
 				<DotsHorizontal :size="20" />
@@ -294,10 +293,6 @@ export default {
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 
 		changeViewText() {

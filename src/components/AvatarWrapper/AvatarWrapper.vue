@@ -23,7 +23,7 @@
 			:key="id + (isDarkTheme ? '-dark' : '-light')"
 			:user="id"
 			:display-name="name"
-			:menu-container="menuContainerWithFallback"
+			:menu-container="menuContainer"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="disableMenu"
 			:show-user-status="showUserStatus"
@@ -200,9 +200,6 @@ export default {
 			}
 			const customName = this.name?.trim() && this.name !== t('spreed', 'Guest') ? this.name : '?'
 			return customName.charAt(0)
-		},
-		menuContainerWithFallback() {
-			return this.menuContainer ?? this.$store.getters.getMainContainerSelector()
 		},
 		avatarUrl() {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)

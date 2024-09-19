@@ -27,7 +27,6 @@
 			</NcButton>
 			<NcActions :force-menu="true"
 				placement="bottom-end"
-				:container="messageContainer"
 				:boundaries-element="boundariesElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
@@ -230,8 +229,7 @@
 				</template>
 			</NcButton>
 
-			<NcEmojiPicker :container="mainContainer"
-				:boundary="boundariesElement"
+			<NcEmojiPicker :boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
@@ -425,14 +423,6 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.message.token)
-		},
-
-		mainContainer() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
-		messageContainer() {
-			return `#message_${this.message.id}`
 		},
 
 		boundariesElement() {

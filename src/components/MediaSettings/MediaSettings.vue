@@ -137,7 +137,7 @@
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
-				<NcActions v-if="showSilentCallOption" :container="container" force-menu>
+				<NcActions v-if="showSilentCallOption" force-menu>
 					<NcActionButton v-if="!silentCall"
 						:name="t('spreed', 'Call without notification')"
 						close-after-click

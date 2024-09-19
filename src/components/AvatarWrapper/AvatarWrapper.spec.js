@@ -21,11 +21,9 @@ describe('AvatarWrapper.vue', () => {
 	const USER_ID = 'user-id'
 	const USER_NAME = 'John Doe'
 	const PRELOADED_USER_STATUS = { status: 'online', message: null, icon: null }
-	const MENU_CONTAINER = '#menu-container'
 
 	beforeEach(() => {
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.uiModeStore.getters.getMainContainerSelector = jest.fn().mockReturnValue(() => MENU_CONTAINER)
 		store = new Vuex.Store(testStoreConfig)
 	})
 
@@ -86,7 +84,6 @@ describe('AvatarWrapper.vue', () => {
 
 			expect(avatar.props('user')).toBe(USER_ID)
 			expect(avatar.props('displayName')).toBe(USER_NAME)
-			expect(avatar.props('menuContainer')).toBe(MENU_CONTAINER)
 			expect(avatar.props('showUserStatus')).toBe(true)
 			expect(avatar.props('showUserStatusCompact')).toBe(false)
 			expect(avatar.props('preloadedUserStatus')).toBe(PRELOADED_USER_STATUS)
