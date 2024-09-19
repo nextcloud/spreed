@@ -13,7 +13,6 @@ final class Response {
 	public function __construct(
 		/** @var non-empty-string */
 		public string $type,
-
 		/** @var DialOut|null */
 		public ?DialOut $dialOut,
 	) {
