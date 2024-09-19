@@ -42,7 +42,7 @@ export default {
 		if (this.$route.name === 'recording') {
 			await this.$store.dispatch('updateToken', this.$route.params.token)
 
-			await this.soundsStore.setPlaySounds(false)
+			await this.soundsStore.setShouldPlaySounds(false)
 		}
 
 		// This should not be strictly needed, as the recording server is

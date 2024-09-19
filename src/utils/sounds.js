@@ -17,22 +17,22 @@ export const Sounds = {
 	_stopWaiting() {
 		console.debug('Stop waiting sound')
 		const soundsStore = useSoundsStore()
-		soundsStore.pauseWaitAudio()
+		soundsStore.pauseAudio('wait')
 		clearInterval(this.backgroundInterval)
 	},
 
 	async playWaiting() {
 		const soundsStore = useSoundsStore()
-		if (!soundsStore.playSounds) {
+		if (!soundsStore.shouldPlaySounds) {
 			return
 		}
 
 		console.debug('Playing waiting sound')
-		soundsStore.playWaitAudio()
+		soundsStore.playAudio('wait')
 
 		this.playedWaiting = 0
 		this.backgroundInterval = setInterval(() => {
-			if (!soundsStore.playSounds) {
+			if (!soundsStore.shouldPlaySounds) {
 				this._stopWaiting()
 				return
 			}
@@ -44,7 +44,7 @@ export const Sounds = {
 			}
 
 			console.debug('Playing waiting sound')
-			soundsStore.playWaitAudio()
+			soundsStore.playAudio('wait')
 			this.playedWaiting++
 
 		}, 15000)
@@ -54,7 +54,7 @@ export const Sounds = {
 		this._stopWaiting()
 
 		const soundsStore = useSoundsStore()
-		if (!soundsStore.playSounds) {
+		if (!soundsStore.shouldPlaySounds) {
 			return
 		}
 
@@ -82,7 +82,7 @@ export const Sounds = {
 		if (playWaitingSound) {
 			await this.playWaiting()
 		} else {
-			soundsStore.playJoinAudio()
+			soundsStore.playAudio('join')
 		}
 	},
 
@@ -90,7 +90,7 @@ export const Sounds = {
 		this._stopWaiting()
 
 		const soundsStore = useSoundsStore()
-		if (!soundsStore.playSounds) {
+		if (!soundsStore.shouldPlaySounds) {
 			return
 		}
 
@@ -114,7 +114,7 @@ export const Sounds = {
 		}
 		this.lastPlayedLeave = currentTime
 
-		soundsStore.playLeaveAudio()
+		soundsStore.playAudio('leave')
 
 		if (playWaitingSound) {
 			this.playWaiting()

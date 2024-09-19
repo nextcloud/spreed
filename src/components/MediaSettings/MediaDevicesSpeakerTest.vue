@@ -69,17 +69,22 @@ export default {
 
 	methods: {
 		t,
+
 		playTestSound() {
 			if (this.isPlayingTestSound) {
-				this.soundsStore.pauseWaitAudio()
+				this.soundsStore.pauseAudio('wait')
 				return
 			}
 			this.isPlayingTestSound = true
-			this.soundsStore.playWaitAudio().then((response) => {
-				response.addEventListener('ended', () => {
+			try {
+				this.soundsStore.playAudio('wait')
+				this.soundsStore.audioObjects.wait.addEventListener('ended', () => {
 					this.isPlayingTestSound = false
-				})
-			})
+				}, { once: true })
+			} catch (error) {
+				console.error(error)
+				this.isPlayingTestSound = false
+			}
 		},
 	},
 }
