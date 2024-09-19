@@ -25,9 +25,7 @@ final class DialOutError {
 	public function __construct(
 		/** @var non-empty-string */
 		public ?string $code,
-
 		public ?string $message = null,
-
 		/** @var ?array{attendeeId: int} */
 		public ?array $details = null,
 	) {
