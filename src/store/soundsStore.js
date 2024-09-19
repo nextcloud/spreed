@@ -236,6 +236,8 @@ const actions = {
 		const waitFilepath = getFullAudioFilepath('LibremPhoneCall')
 		const waitAudio = createAudioObject(waitFilepath)
 		context.commit('setWaitAudioObject', waitAudio)
+
+		context.commit('setAudioObjectsCreated')
 	},
 }
 
