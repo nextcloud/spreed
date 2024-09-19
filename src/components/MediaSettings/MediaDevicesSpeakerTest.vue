@@ -25,6 +25,8 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import { useSoundsStore } from '../../stores/sounds.js'
+
 export default {
 
 	name: 'MediaDevicesSpeakerTest',
@@ -32,6 +34,12 @@ export default {
 	components: {
 		NcButton,
 		VolumeHighIcon,
+	},
+
+	setup() {
+		return {
+			soundsStore: useSoundsStore()
+		}
 	},
 
 	data() {
@@ -63,11 +71,11 @@ export default {
 		t,
 		playTestSound() {
 			if (this.isPlayingTestSound) {
-				this.$store.dispatch('pauseWaitAudio')
+				this.soundsStore.pauseWaitAudio()
 				return
 			}
 			this.isPlayingTestSound = true
-			this.$store.dispatch('playWaitAudio').then((response) => {
+			this.soundsStore.playWaitAudio().then((response) => {
 				response.addEventListener('ended', () => {
 					this.isPlayingTestSound = false
 				})
