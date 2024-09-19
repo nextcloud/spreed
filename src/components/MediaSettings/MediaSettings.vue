@@ -5,7 +5,6 @@
 
 <template>
 	<NcModal v-if="modal"
-		:container="container"
 		:label-id="dialogHeaderId"
 		@close="closeModal">
 		<div class="media-settings">
@@ -137,7 +136,7 @@
 			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
-				<NcActions v-if="showSilentCallOption" :container="container" force-menu>
+				<NcActions v-if="showSilentCallOption" force-menu>
 					<NcActionButton v-if="!silentCall"
 						:name="t('spreed', 'Call without notification')"
 						close-after-click
@@ -331,10 +330,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		displayName() {
 			return this.$store.getters.getDisplayName()
 		},

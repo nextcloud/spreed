@@ -9,7 +9,6 @@
 		<NcModal v-show="page !== 2"
 			class="new-group-conversation"
 			:close-on-click-outside="!isFilled"
-			:container="container"
 			:label-id="dialogHeaderPrepId"
 			@close="closeModal">
 			<h2 :id="dialogHeaderPrepId" class="new-group-conversation__header nc-dialog-alike-header">
@@ -69,7 +68,6 @@
 
 		<!-- Third page : this is the confirmation page-->
 		<NcModal v-if="page === 2"
-			:container="container"
 			:label-id="dialogHeaderResId"
 			@close="closeModal">
 			<NcEmptyContent>
@@ -192,10 +190,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		isPublic() {
 			return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
 		},

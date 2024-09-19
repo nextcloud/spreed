@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcPopover class="poll-voters-details" trigger="hover" :container="container">
+	<NcPopover class="poll-voters-details" trigger="hover">
 		<template #trigger>
 			<NcButton type="tertiary-no-background"
 				:aria-label="t('spreed','Voted participants')"
@@ -69,11 +69,6 @@ export default {
 
 		details: {
 			type: Array,
-			required: true,
-		},
-
-		container: {
-			type: String,
 			required: true,
 		},
 	},

@@ -6,7 +6,6 @@
 <template>
 	<NcModal v-if="id"
 		size="small"
-		:container="container"
 		:label-id="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
@@ -47,7 +46,6 @@
 						class="results__option__details">
 						<PollVotersDetails v-if="poll.details"
 							:token="token"
-							:container="container"
 							:details="getFilteredDetails(index)" />
 						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
 							{{ t('spreed', 'You voted for this option') }}
@@ -74,9 +72,7 @@
 					{{ t('spreed', 'Change your vote') }}
 				</NcButton>
 				<!-- End poll button-->
-				<NcActions v-if="canEndPoll"
-					force-menu
-					:container="container">
+				<NcActions v-if="canEndPoll" force-menu>
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
@@ -162,10 +158,6 @@ export default {
 
 		token() {
 			return this.activePoll?.token
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 
 		poll() {

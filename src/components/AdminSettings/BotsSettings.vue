@@ -48,7 +48,7 @@
 				</div>
 				<div :id="`last_error_bot_${bot.id}`" class="last-error">
 					<NcPopover v-if="bot.last_error_message"
-						:container="`#last_error_bot_${bot.id}`"
+						container="#bots_settings"
 						:focus-trap="false">
 						<template #trigger>
 							<NcButton type="error" :aria-label="bot.last_error_message">

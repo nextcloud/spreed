@@ -58,7 +58,6 @@
 			:aria-label="leaveCallCombinedLabel"
 			:menu-name="showButtonText ? leaveCallCombinedLabel : undefined"
 			force-name
-			:container="container"
 			:type="isScreensharing ? 'tertiary' : 'error'">
 			<template #icon>
 				<IconPhoneHangup v-if="!isBreakoutRoom" :size="20" />
@@ -216,9 +215,6 @@ export default {
 		isNextcloudTalkHashDirty() {
 			return this.talkHashStore.isNextcloudTalkHashDirty
 				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]
-		},
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation

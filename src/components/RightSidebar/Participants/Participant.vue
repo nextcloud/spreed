@@ -276,8 +276,7 @@
 			<!-- Confirmation required to remove participant -->
 			<NcDialog v-if="isRemoveDialogOpen"
 				:open.sync="isRemoveDialogOpen"
-				:name="removeParticipantLabel"
-				:container="container">
+				:name="removeParticipantLabel">
 				<p> {{ removeDialogMessage }} </p>
 				<template v-if="showBanOption">
 					<NcCheckboxRadioSwitch :checked.sync="isBanParticipant">
@@ -434,10 +433,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		participantNavigationId() {
 			return this.participant.actorType + '_' + this.participant.actorId
 		},

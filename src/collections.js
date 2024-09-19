@@ -14,12 +14,7 @@ __webpack_public_path__ = OC.linkTo('spreed', 'js/')
 
 window.OCP.Collaboration.registerType('room', {
 	action: async () => {
-		const conversation = await requestRoomSelection('spreed-room-select', {
-			// Even if it is used from Talk the Collections menu is
-			// independently loaded, so the properties that depend
-			// on the store need to be explicitly injected.
-			container: window.store ? window.store.getters.getMainContainerSelector() : undefined,
-		})
+		const conversation = await requestRoomSelection('spreed-room-select', {})
 		if (!conversation) {
 			throw new Error('User cancelled resource selection')
 		}

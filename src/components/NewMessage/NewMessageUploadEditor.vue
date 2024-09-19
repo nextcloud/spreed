@@ -8,7 +8,6 @@
 		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		:close-on-click-outside="false"
-		:container="container"
 		:label-id="dialogHeaderId"
 		@close="handleDismiss">
 		<div class="upload-editor"
@@ -62,8 +61,7 @@
 					{{ t('spreed', 'Send') }}
 				</NcButton>
 			</div>
-			<NewMessage v-else-if="modalContainerId"
-				:key="modalContainerId"
+			<NewMessage v-else
 				ref="newMessage"
 				role="region"
 				class="upload-editor__textfield"
@@ -142,10 +140,6 @@ export default {
 			return !!this.currentUploadId
 		},
 
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		addMoreAriaLabel() {
 			return t('spreed', 'Add more files')
 		},
@@ -181,10 +175,9 @@ export default {
 		async showModal(show) {
 			if (show) {
 				// Wait for modal content to be rendered
-				await this.getContainerId()
+				await this.$nextTick()
+				this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
 				if (this.supportMediaCaption) {
-					// Wait for NewMessage to be rendered after containerId is set
-					await this.$nextTick()
 					this.$refs.newMessage.focusInput()
 				} else {
 					this.$refs.submitButton.$el.focus()
@@ -195,11 +188,6 @@ export default {
 
 	methods: {
 		t,
-		async getContainerId() {
-			await this.$nextTick()
-			// Postpone render of NewMessage until modal container is mounted
-			this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
-		},
 
 		handleDismiss() {
 			this.$store.dispatch('discardUpload', this.currentUploadId)

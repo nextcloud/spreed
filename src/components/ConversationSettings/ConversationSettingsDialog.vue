@@ -8,8 +8,7 @@
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
-		:show-navigation="true"
-		:container="container">
+		show-navigation>
 		<NcAppSettingsSection id="basic-info"
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo :conversation="conversation"
@@ -161,10 +160,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		canUserEnableSIP() {
 			return this.conversation.canEnableSIP
 		},

@@ -12,8 +12,6 @@ import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 
-import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
-
 import App from './App.vue'
 
 import './init.js'
@@ -50,9 +48,6 @@ Vue.use(Vuex)
 Vue.use(VueRouter)
 
 const pinia = createPinia()
-
-TooltipOptions.container = 'body'
-store.dispatch('setMainContainerSelector', 'body')
 
 const instance = new Vue({
 	el: '#content',

@@ -5,8 +5,6 @@
 
 <template>
 	<NcActions ref="attachmentsMenu"
-		:container="container"
-		:boundaries-element="boundariesElement"
 		:disabled="disabled"
 		:force-menu="true"
 		:aria-label="t('spreed', 'Share files to the conversation')"
@@ -97,16 +95,6 @@ export default {
 	props: {
 		token: {
 			type: String,
-			required: true,
-		},
-
-		container: {
-			type: String,
-			required: true,
-		},
-
-		boundariesElement: {
-			type: Element,
 			required: true,
 		},
 
