@@ -5,7 +5,6 @@
 
 <template>
 	<NcModal v-if="modal"
-		:container="container"
 		:label-id="dialogHeaderId"
 		@close="closeModal">
 		<div class="media-settings">
@@ -331,10 +330,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		displayName() {
 			return this.$store.getters.getDisplayName()
 		},

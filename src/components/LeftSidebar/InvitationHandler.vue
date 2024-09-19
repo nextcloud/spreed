@@ -6,7 +6,6 @@
 <template>
 	<NcDialog :open.sync="modal"
 		:name="t('spreed', 'Pending invitations')"
-		:container="container"
 		size="normal"
 		close-on-click-outside>
 		<div class="inbox">
@@ -115,10 +114,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		invitations() {
 			const invitations = {}
 			for (const id in this.federationStore.pendingShares) {

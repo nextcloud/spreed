@@ -5,7 +5,7 @@
 
 <template>
 	<NcModal size="small"
-		:container="container"
+		:container="nestedContainer"
 		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="wrapper">
@@ -101,7 +101,7 @@ export default {
 
 		nestedContainer: {
 			type: String,
-			default: null,
+			default: undefined,
 		},
 
 		/**
@@ -151,10 +151,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.nestedContainer ?? this.$store.getters.getMainContainerSelector()
-		},
-
 		modalTitle() {
 			if (this.displayName) {
 				return t('spreed', 'In this conversation <strong>{user}</strong> can:', {

@@ -4,8 +4,7 @@
 -->
 
 <template>
-	<NcModal :container="container"
-		:can-close="false"
+	<NcModal :can-close="false"
 		:close-on-click-outside="false"
 		:label-id="dialogHeaderId"
 		size="small">
@@ -100,10 +99,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
