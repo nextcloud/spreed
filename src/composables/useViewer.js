@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref } from 'vue'
 
-import { useDocumentFullscreen } from './useDocumentFullscreen.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 import { useSidebarStore } from '../stores/sidebar.js'
@@ -58,32 +57,6 @@ function generatePermissions(filePermissions) {
 }
 
 /**
- * FIXME Remove this hack once it is possible to set the parent
- * element of the viewer.
- * By default the viewer is a sibling of the fullscreen element, so
- * it is not visible when in fullscreen mode. It is not possible to
- * specify the parent nor to know when the viewer was actually
- * opened, so for the time being it is reparented if needed shortly
- * after calling it.
- *
- * @see https://github.com/nextcloud/viewer/issues/995
- *
- * @param {boolean} isFullscreen - is currently in fullscreen mode
- */
-function reparentViewer(isFullscreen) {
-	const viewerElement = document.getElementById('viewer')
-
-	if (isFullscreen) {
-		// When changed to the fullscreen mode, Viewer should be moved to the talk app
-		document.getElementById('content-vue')?.appendChild(viewerElement)
-	} else {
-		// In normal mode if it was in fullscreen before, move back to body
-		// Otherwise it will be overlapped by web-page's header
-		document.body.appendChild(viewerElement)
-	}
-}
-
-/**
  * Is Viewer currently opened
  *
  * @type {import('vue').Ref<boolean>}
@@ -99,14 +72,7 @@ const isViewerOpen = ref(false)
 export function useViewer(fileAPI) {
 	const store = useStore()
 	const isInCall = useIsInCall()
-	const isFullscreen = useDocumentFullscreen()
 	const sidebarStore = useSidebarStore()
-
-	watch(isFullscreen, () => {
-		if (isViewerOpen.value) {
-			reparentViewer(isFullscreen.value)
-		}
-	})
 
 	/**
 	 * Map object to be used by Viewer
@@ -164,10 +130,6 @@ export function useViewer(fileAPI) {
 		await nextTick()
 
 		isViewerOpen.value = true
-
-		if (isFullscreen.value) {
-			reparentViewer(true)
-		}
 	}
 
 	return {

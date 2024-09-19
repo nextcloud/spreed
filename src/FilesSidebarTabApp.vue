@@ -384,6 +384,24 @@ export default {
 }
 </script>
 
+<style>
+/* FIXME: remove after https://github.com/nextcloud-libraries/nextcloud-vue/pull/4959 is released */
+body .modal-wrapper * {
+	box-sizing: border-box;
+}
+
+/* FIXME: Align styles of NcModal header with NcDialog header. Remove if all are migrated */
+body .modal-wrapper h2.nc-dialog-alike-header {
+	font-size: 21px;
+	text-align: center;
+	height: fit-content;
+	min-height: var(--default-clickable-area);
+	line-height: var(--default-clickable-area);
+	overflow-wrap: break-word;
+	margin-block: 0 12px;
+}
+</style>
+
 <style scoped>
 .talkChatTab {
 	height: 100%;

@@ -16,6 +16,12 @@ function useDocumentFullscreenComposable() {
 
 	const changeIsFullscreen = () => {
 		isFullscreen.value = document.fullscreenElement !== null
+
+		if (isFullscreen.value) {
+			document.body.classList.add('talk-in-fullscreen')
+		} else {
+			document.body.classList.remove('talk-in-fullscreen')
+		}
 	}
 
 	document.addEventListener('fullscreenchange', changeIsFullscreen)
@@ -33,15 +39,10 @@ function useDocumentFullscreenComposable() {
  * Enable a fullscreen with Fullscreen API
  */
 export async function enableFullscreen() {
-	const element = document.getElementById('content-vue')
-	if (!element) {
-		return
-	}
-
-	if (element.requestFullscreen) {
-		await element.requestFullscreen()
-	} else if (element.webkitRequestFullscreen) {
-		await element.webkitRequestFullscreen()
+	if (document.body.requestFullscreen) {
+		await document.body.requestFullscreen()
+	} else if (document.body.webkitRequestFullscreen) {
+		await document.body.webkitRequestFullscreen()
 	}
 }
 

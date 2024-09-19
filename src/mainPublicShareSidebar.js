@@ -42,7 +42,7 @@ Vue.use(Vuex)
 
 const pinia = createPinia()
 
-store.dispatch('setMainContainerSelector', '#talk-sidebar')
+store.dispatch('setMainContainerSelector', 'body')
 
 /**
  *
