@@ -32,7 +32,6 @@ final class DialOut {
 	public function __construct(
 		/** @var non-empty-string|null */
 		public ?string $callId = null,
-
 		public ?DialOutError $error = null,
 	) {
 	}
