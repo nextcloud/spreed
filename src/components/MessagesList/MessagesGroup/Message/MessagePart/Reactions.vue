@@ -52,7 +52,6 @@
 		<!-- More reactions picker -->
 		<NcEmojiPicker v-if="canReact && showControls"
 			:per-line="5"
-			:container="`#message_${id}`"
 			@select="handleReactionClick"
 			@after-show="emitEmojiPickerStatus"
 			@after-hide="emitEmojiPickerStatus">

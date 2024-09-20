@@ -6,14 +6,11 @@
 <template>
 	<NcDialog ref="dialog"
 		:name="dialogTitle"
-		:container="container"
 		close-on-click-outside
 		size="normal"
 		v-on="$listeners"
 		@update:open="$emit('close')">
-		<NewMessage v-if="modalContainerId"
-			:key="modalContainerId"
-			ref="newMessage"
+		<NewMessage ref="newMessage"
 			role="region"
 			class="send-message-dialog"
 			:token="token"
@@ -78,10 +75,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		dialogTitle() {
 			return this.broadcast
 				? t('spreed', 'Send a message to all breakout rooms')

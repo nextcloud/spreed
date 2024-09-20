@@ -533,9 +533,6 @@ export default {
 						? t('spreed', 'not running, check Matterbridge log')
 						: t('spreed', 'not running')
 		},
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
 	},
 
 	beforeMount() {

@@ -103,6 +103,7 @@ class Capabilities implements IPublicCapability {
 		'chat-reference-id',
 		'mention-permissions',
 		'edit-messages-note-to-self',
+		'archived-conversations',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -115,6 +116,7 @@ class Capabilities implements IPublicCapability {
 		'avatar',
 		'remind-me-later',
 		'note-to-self',
+		'archived-conversations',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -188,7 +190,7 @@ class Capabilities implements IPublicCapability {
 					'breakout-rooms' => $this->talkConfig->isBreakoutRoomsEnabled(),
 					'recording' => $this->talkConfig->isRecordingEnabled(),
 					'recording-consent' => $this->talkConfig->recordingConsentRequired(),
-					'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
+					'supported-reactions' => ['❤️', '🎉', '👏', '👋', '👍', '👎', '🔥', '😂', '🤩', '🤔', '😲', '😥'],
 					// 'predefined-backgrounds' => list<string>,
 					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),

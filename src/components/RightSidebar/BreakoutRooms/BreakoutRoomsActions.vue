@@ -66,9 +66,7 @@
 				</template>
 				{{ backToBreakoutRoomLabel }}
 			</NcButton>
-			<NcActions v-if="canModerate"
-				class="right"
-				:container="container">
+			<NcActions v-if="canModerate" class="right">
 				<NcActionButton v-if="canModerate && isInBreakoutRoom"
 					:aria-label="sendMessageLabel"
 					@click="openSendMessageDialog">
@@ -90,7 +88,6 @@
 
 		<!-- Participants editor -->
 		<NcModal v-if="showParticipantsEditor"
-			:container="container"
 			:label-id="dialogHeaderId"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
@@ -216,10 +213,6 @@ export default {
 
 		isInBreakoutRoom() {
 			return this.mainToken !== this.$store.getters.getToken()
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 
 		manageBreakoutRoomsTitle() {

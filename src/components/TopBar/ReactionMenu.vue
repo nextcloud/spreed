@@ -7,7 +7,6 @@
 	<NcActions v-tooltip="t('spreed', 'Send a reaction')"
 		type="tertiary"
 		:aria-label="t('spreed', 'Send a reaction')"
-		:container="container"
 		class="reaction">
 		<template #icon>
 			<EmoticonOutline :size="20" />
@@ -87,10 +86,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		reactionsInSingleRow() {
 			return Math.ceil(this.supportedReactions.length / 2)
 		},

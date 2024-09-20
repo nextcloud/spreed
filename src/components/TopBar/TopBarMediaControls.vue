@@ -72,7 +72,6 @@
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
-			:container="container"
 			:disabled="!isScreensharingAllowed"
 			:open.sync="screenSharingMenuOpen">
 			<template #icon>
@@ -259,10 +258,6 @@ export default {
 			return this.isScreensharing
 				? t('spreed', 'Screensharing options')
 				: t('spreed', 'Enable screensharing')
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 
 		isQualityWarningTooltipDismissed() {

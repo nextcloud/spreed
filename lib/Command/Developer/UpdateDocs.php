@@ -75,7 +75,7 @@ class UpdateDocs extends Base {
 					$command->getUsages()
 				),
 				function ($carry, $usage) {
-					return $carry.'* `' . $usage . '`' . "\n";
+					return $carry . '* `' . $usage . '`' . "\n";
 				}
 			);
 		$doc .= $this->describeInputDefinition($command);

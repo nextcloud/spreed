@@ -278,6 +278,7 @@ namespace OCA\Talk;
  *     unreadMention: bool,
  *     unreadMentionDirect: bool,
  *     unreadMessages: int,
+ *     isArchived: bool,
  * }
  *
  * @psalm-type TalkSignalingSession = array{

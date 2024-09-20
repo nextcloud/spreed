@@ -28,7 +28,6 @@
 					{{ t('spreed', 'Join') }}
 				</NcButton>
 				<NcActions v-if="canModerate"
-					:container="container"
 					:inline="showAssistanceButton ? 1 : 0"
 					:force-menu="!showAssistanceButton">
 					<NcActionButton v-if="showAssistanceButton"
@@ -138,10 +137,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		participantType() {
 			return this.breakoutRoom?.participantType
 		},

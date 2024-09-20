@@ -4829,6 +4829,45 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" (unarchives|archives) room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $action
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userArchivesConversation(string $user, string $identifier, string $action, int $statusCode, string $apiVersion): void {
+		$httpMethod = 'POST';
+
+		if ($action === 'unarchives') {
+			$httpMethod = 'DELETE';
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$httpMethod, '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/archive',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" unarchives room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userUnarchivesConversation(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/archive',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @param string $verb
 	 * @param string $fullUrl
 	 * @param TableNode|array|string|null $body

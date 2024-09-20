@@ -203,7 +203,7 @@ class BotService {
 		$client = $this->clientService->newClient();
 		$promise = $client->postAsync($botServer->getUrl(), $data);
 
-		$promise->then(function (IResponse $response) use ($botServer) {
+		$promise->then(function (IResponse $response) use ($botServer): void {
 			if ($response->getStatusCode() !== Http::STATUS_OK && $response->getStatusCode() !== Http::STATUS_ACCEPTED) {
 				$this->logger->error('Bot responded with unexpected status code (Received: ' . $response->getStatusCode() . '), increasing error count');
 				$botServer->setErrorCount($botServer->getErrorCount() + 1);
@@ -211,7 +211,7 @@ class BotService {
 				$botServer->setLastErrorMessage('UnexpectedStatusCode: ' . $response->getStatusCode());
 				$this->botServerMapper->update($botServer);
 			}
-		}, function (\Exception $exception) use ($botServer) {
+		}, function (\Exception $exception) use ($botServer): void {
 			$this->logger->error('Bot error occurred, increasing error count', ['exception' => $exception]);
 			$botServer->setErrorCount($botServer->getErrorCount() + 1);
 			$botServer->setLastErrorDate($this->timeFactory->now());

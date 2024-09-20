@@ -86,7 +86,7 @@ class ListenerTest extends TestCase {
 		$this->handlers = [];
 
 		$this->eventDispatcher->method('addListener')
-			->will($this->returnCallback(function ($eventName, $handler) {
+			->will($this->returnCallback(function ($eventName, $handler): void {
 				$this->handlers[$eventName] ??= [];
 				$this->handlers[$eventName][] = $handler;
 			}));

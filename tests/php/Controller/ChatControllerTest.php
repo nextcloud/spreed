@@ -410,7 +410,7 @@ class ChatControllerTest extends TestCase {
 		];
 		$this->messageParser->expects($this->exactly(2))
 			->method('parseMessage')
-			->willReturnCallback(function () use ($expectedCalls, &$i) {
+			->willReturnCallback(function () use ($expectedCalls, &$i): void {
 				Assert::assertArrayHasKey($i, $expectedCalls);
 				Assert::assertSame($expectedCalls[$i], func_get_args());
 				$i++;

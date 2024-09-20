@@ -78,7 +78,7 @@ class AttachmentMapper extends QBMapper {
 		$query->delete($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
-		$this->atomic(static function () use ($query) {
+		$this->atomic(static function () use ($query): void {
 			$query->executeStatement();
 		}, $this->db);
 	}

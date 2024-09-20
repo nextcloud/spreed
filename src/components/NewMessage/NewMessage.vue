@@ -23,8 +23,6 @@
 			<!-- Attachments menu -->
 			<NewMessageAttachments v-if="showAttachmentsMenu"
 				:token="token"
-				:container="container"
-				:boundaries-element="containerElement"
 				:disabled="disabled"
 				:can-upload-files="canUploadFiles"
 				:can-share-files="canShareFiles"
@@ -42,7 +40,6 @@
 
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker v-if="!disabled"
-						:container="container"
 						:close-on-select="false"
 						@select="addEmoji">
 						<NcButton :disabled="disabled"
@@ -74,6 +71,7 @@
 					type="warning"
 					:text="t('spreed','Adding a mention will only notify users who did not read the message.')" />
 				<NcRichContenteditable ref="richContenteditable"
+					:key="container"
 					:value.sync="text"
 					:auto-complete="autoComplete"
 					:disabled="disabled"
@@ -120,7 +118,7 @@
 
 			<!-- Send buttons -->
 			<template v-else>
-				<NcActions v-if="!broadcast" :container="container" force-menu>
+				<NcActions v-if="!broadcast" force-menu>
 					<template #icon>
 						<BellOffIcon v-if="silentChat" :size="16" />
 					</template>
@@ -156,13 +154,11 @@
 		<!-- New file creation dialog -->
 		<NewMessageNewFileDialog v-if="showNewFileDialog !== -1"
 			:token="token"
-			:container="container"
 			:show-new-file-dialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
 
 		<FilePickerVue v-if="showFilePicker"
 			:name="t('spreed', 'File to share')"
-			:container="container"
 			:buttons="filePickerButtons"
 			allow-pick-directory
 			@close="showFilePicker = false" />
@@ -251,11 +247,10 @@ export default {
 
 		/**
 		 * Selector for popovers and pickers to be rendered inside container properly.
-		 * Container must be mounted before passing its ID as a prop
 		 */
 		container: {
 			type: String,
-			required: true,
+			default: undefined,
 		},
 
 		/**

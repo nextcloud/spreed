@@ -99,7 +99,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 		$i = 0;
 		$this->config->expects($this->exactly(count($expectedCalls)))
 			->method('setAppValue')
-			->willReturnCallback(function () use ($expectedCalls, &$i) {
+			->willReturnCallback(function () use ($expectedCalls, &$i): void {
 				Assert::assertArrayHasKey($i, $expectedCalls);
 				Assert::assertSame($expectedCalls[$i], func_get_args());
 				$i++;

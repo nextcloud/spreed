@@ -76,9 +76,8 @@ class Notifier {
 			$shouldFlush = $this->notificationManager->defer();
 		}
 
-
 		foreach ($usersToNotify as $mentionedUser) {
-			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat, $mentionedUser['attendee'] ?? null)) {
+			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat, $mentionedUser['attendee'] ?? null, $mentionedUser['reason'])) {
 				if (!$silent) {
 					$notification->setUser($mentionedUser['id']);
 					if (isset($mentionedUser['reason'])) {
@@ -210,7 +209,7 @@ class Notifier {
 			];
 		}
 
-		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment, $chat)) {
+		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment, $chat, null, 'reply')) {
 			return [];
 		}
 
@@ -565,14 +564,8 @@ class Notifier {
 	 * 2. The user must exist
 	 * 3. The user must be a participant of the room
 	 * 4. The user must not be active in the room
-	 *
-	 * @param string $userId
-	 * @param IComment $comment
-	 * @param Room $room
-	 * @param Attendee|null $attendee
-	 * @return bool
 	 */
-	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room, ?Attendee $attendee = null): bool {
+	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room, ?Attendee $attendee, string $reason): bool {
 		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
@@ -588,6 +581,10 @@ class Notifier {
 				$attendee = $participant->getAttendee();
 			} else {
 				$participant = new Participant($room, $attendee, null);
+			}
+
+			if ($reason === 'all' && $attendee->isArchived()) {
+				return false;
 			}
 
 			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
