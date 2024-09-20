@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<audio class="audio-player"
+	<audio ref="audioPlayer"
+		class="audio-player"
 		controls
 		:src="fileURL">
 		{{ t('spreed', 'Your browser does not support playing audio files') }}
@@ -47,6 +48,13 @@ export default {
 			type: String,
 			default: '',
 		},
+		/**
+		 * File ID.
+		 */
+		id: {
+			type: Number,
+			default: 0,
+		},
 	},
 
 	computed: {
@@ -70,6 +78,37 @@ export default {
 				return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
 			}
 		},
+	},
+
+	mounted() {
+		document.addEventListener('audioPlayerEnded', (e) => {
+			if (!this.$refs.audioPlayer) {
+				return
+			}
+
+			const voiceMessages = this.$store.getters.getVoiceMessages()
+
+			const previouslyPlayedVoiceMessage = voiceMessages[e.detail.id]
+			const thisVoiceMessage = voiceMessages[previouslyPlayedVoiceMessage.nextId]
+
+			if (previouslyPlayedVoiceMessage.nextId === this.id && thisVoiceMessage && thisVoiceMessage.since === 0) {
+				this.$refs.audioPlayer.play()
+			}
+		})
+
+		this.$refs.audioPlayer.addEventListener('ended', (e) => {
+			e.target.dispatchEvent(
+				new CustomEvent(
+					'audioPlayerEnded',
+					{
+						bubbles: true,
+						detail: {
+							id: this.id,
+						},
+					}
+				)
+			)
+		})
 	},
 
 	methods: {

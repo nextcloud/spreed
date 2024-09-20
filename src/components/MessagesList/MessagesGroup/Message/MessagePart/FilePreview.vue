@@ -115,6 +115,11 @@ export default {
 			required: true,
 		},
 
+		messageId: {
+			type: Number,
+			default: 0,
+		},
+
 		/**
 		 * File object
 		 */
@@ -245,6 +250,7 @@ export default {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
+					id: Number(this.messageId),
 				}
 			}
 			return {
