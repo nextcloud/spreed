@@ -1544,6 +1544,36 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Archive a conversation
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation was archived
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	public function archiveConversation(): DataResponse {
+		$this->participantService->archiveConversation($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Unarchive a conversation
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation was unarchived
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	public function unarchiveConversation(): DataResponse {
+		$this->participantService->unarchiveConversation($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Join a room
 	 *
 	 * @param string $token Token of the room

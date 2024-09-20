@@ -1222,6 +1222,24 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive a conversation */
+        post: operations["room-archive-conversation"];
+        /** Unarchive a conversation */
+        delete: operations["room-unarchive-conversation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
         parameters: {
             query?: never;
@@ -2175,6 +2193,7 @@ export type components = {
             unreadMentionDirect: boolean;
             /** Format: int64 */
             unreadMessages: number;
+            isArchived: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         SignalingSession: {
@@ -7988,6 +8007,68 @@ export interface operations {
                                 /** @enum {string} */
                                 error: "breakout-room" | "type" | "value";
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-archive-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was archived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-unarchive-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was unarchived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
