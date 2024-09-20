@@ -299,6 +299,26 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Participant $participant
+	 */
+	public function archiveConversation(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setArchived(true);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function unarchiveConversation(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setArchived(false);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
 	 * @param RoomService $roomService
 	 * @param Room $room
 	 * @param IUser $user

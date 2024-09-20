@@ -155,3 +155,6 @@
 * `mention-permissions` - Whether non-moderators are allowed to mention `@all`
 * `federation-v2` - Whether federated session ids are used and calls are possible with federation
 * `edit-messages-note-to-self` - Messages in note-to-self conversations can be edited indefinitely
+
+## 20.1
+* `archived-conversations` (local) - Conversations can be marked as archived which will hide them from the conversation list by default

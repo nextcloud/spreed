@@ -76,6 +76,7 @@ class SelectHelper {
 			->addSelect($alias . 'state')
 			->addSelect($alias . 'unread_messages')
 			->addSelect($alias . 'last_attendee_activity')
+			->addSelect($alias . 'archived')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

@@ -103,6 +103,7 @@ class Capabilities implements IPublicCapability {
 		'chat-reference-id',
 		'mention-permissions',
 		'edit-messages-note-to-self',
+		'archived-conversations',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -115,6 +116,7 @@ class Capabilities implements IPublicCapability {
 		'avatar',
 		'remind-me-later',
 		'note-to-self',
+		'archived-conversations',
 	];
 
 	public const LOCAL_CONFIGS = [
