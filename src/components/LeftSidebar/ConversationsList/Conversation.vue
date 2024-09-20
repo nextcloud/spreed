@@ -57,6 +57,17 @@
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
 
+			<NcActionButton v-if="supportsArchive"
+				key="toggle-archive"
+				close-after-click
+				@click="toggleArchiveConversation">
+				<template #icon>
+					<IconArchive v-if="!item.isArchived" :size="16" />
+					<IconArchiveOff v-else :size="16" />
+				</template>
+				{{ labelArchive }}
+			</NcActionButton>
+
 			<NcActionButton v-if="item.canLeaveConversation"
 				key="leave-conversation"
 				close-after-click
@@ -118,6 +129,8 @@
 import { toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
+import IconArchive from 'vue-material-design-icons/Archive.vue'
+import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
@@ -140,7 +153,10 @@ import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
 import { PARTICIPANT } from '../../../constants.js'
+import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
+
+const supportsArchive = hasTalkFeature('local', 'archived-conversations')
 
 export default {
 	name: 'Conversation',
@@ -151,6 +167,8 @@ export default {
 		NcActionButton,
 		NcDialog,
 		NcListItem,
+		IconArchive,
+		IconArchiveOff,
 		IconArrowRight,
 		IconCog,
 		IconContentCopy,
@@ -159,7 +177,6 @@ export default {
 		IconEyeOff,
 		IconEye,
 		IconStar,
-
 	},
 
 	props: {
@@ -196,6 +213,7 @@ export default {
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
 		return {
+			supportsArchive,
 			counterType,
 			conversationInformation,
 		}
@@ -218,6 +236,12 @@ export default {
 
 		labelFavorite() {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
+		},
+
+		labelArchive() {
+			return this.item.isArchived
+				? t('spreed', 'Unarchive conversation')
+				: t('spreed', 'Archive conversation')
 		},
 
 		dialogMessage() {
@@ -296,6 +320,10 @@ export default {
 
 		async toggleFavoriteConversation() {
 			this.$store.dispatch('toggleFavorite', this.item)
+		},
+
+		async toggleArchiveConversation() {
+			this.$store.dispatch('toggleArchive', this.item)
 		},
 
 		/**
