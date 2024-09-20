@@ -1753,6 +1753,7 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.notification_calls', $query->createNamedParameter(Participant::NOTIFY_CALLS_ON)))
+			->andWhere($query->expr()->eq('a.archived', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($query->expr()->isNull('s.in_call'));
 
 		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
