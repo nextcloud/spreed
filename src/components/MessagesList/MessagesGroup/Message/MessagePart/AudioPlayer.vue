@@ -4,9 +4,11 @@
 -->
 
 <template>
-	<audio class="audio-player"
+	<audio ref="audioPlayer"
+		class="audio-player"
 		controls
-		:src="fileURL">
+		:src="fileURL"
+		@ended="handleEnded">
 		{{ t('spreed', 'Your browser does not support playing audio files') }}
 	</audio>
 </template>
@@ -15,6 +17,8 @@
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
+
+import { EventBus } from '../../../../../services/EventBus.js'
 
 export default {
 	name: 'AudioPlayer',
@@ -47,6 +51,17 @@ export default {
 			type: String,
 			default: '',
 		},
+		/**
+		 * Message ID.
+		 */
+		messageId: {
+			type: Number,
+			default: 0,
+		},
+		nextMessageId: {
+			type: Number,
+			default: 0,
+		},
 	},
 
 	computed: {
@@ -72,8 +87,37 @@ export default {
 		},
 	},
 
+	mounted() {
+		EventBus.on('audio-player-ended', this.autoPlay)
+	},
+
+	beforeDestroy() {
+		EventBus.off('audio-player-ended', this.autoPlay)
+	},
+
 	methods: {
 		t,
+
+		handleEnded() {
+			if (!this.nextMessageId) {
+				return
+			}
+
+			EventBus.emit('audio-player-ended', this.nextMessageId)
+		},
+
+		/**
+		 * Autoplay the audio message as soon as previous one was played
+		 *
+		 * @param {number} messageId Message ID to play.
+		 */
+		autoPlay(messageId) {
+			if (messageId !== this.messageId) {
+				return
+			}
+
+			this.$refs.audioPlayer?.play()
+		},
 	},
 }
 </script>

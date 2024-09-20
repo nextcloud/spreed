@@ -115,6 +115,16 @@ export default {
 			required: true,
 		},
 
+		messageId: {
+			type: [String, Number],
+			default: 0,
+		},
+
+		nextMessageId: {
+			type: [String, Number],
+			default: 0,
+		},
+
 		/**
 		 * File object
 		 */
@@ -245,6 +255,8 @@ export default {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
+					messageId: Number(this.messageId),
+					nextMessageId: Number(this.nextMessageId),
 				}
 			}
 			return {
