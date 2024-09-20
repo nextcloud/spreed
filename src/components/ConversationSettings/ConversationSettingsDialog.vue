@@ -84,6 +84,16 @@
 				id="dangerzone"
 				:name="t('spreed', 'Danger zone')">
 				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
+				<template v-if="supportsArchive">
+					<h4 class="app-settings-section__subtitle">
+						{{ t('spreed', 'Archive conversation') }}
+					</h4>
+					<NcCheckboxRadioSwitch type="switch"
+						:checked="isArchived"
+						@update:checked="toggleArchiveConversation">
+						{{ t('spreed', 'Archive conversation') }}
+					</NcCheckboxRadioSwitch>
+				</template>
 				<DangerZone :conversation="conversation"
 					:can-leave-conversation="canLeaveConversation"
 					:can-delete-conversation="canDeleteConversation" />
@@ -122,6 +132,8 @@ import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
+const supportsArchive = hasTalkFeature('local', 'archived-conversations')
+
 export default {
 	name: 'ConversationSettingsDialog',
 
@@ -149,7 +161,10 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
-		return { settingsStore }
+		return {
+			supportsArchive,
+			settingsStore,
+		}
 	},
 
 	data() {
@@ -199,6 +214,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isArchived() {
+			return this.conversation.isArchived
 		},
 
 		participantType() {
@@ -273,7 +292,11 @@ export default {
 
 		setShowMediaSettings(newValue) {
 			this.settingsStore.setShowMediaSettings(this.token, newValue)
-		}
+		},
+
+		async toggleArchiveConversation() {
+			await this.$store.dispatch('toggleArchive', this.conversation)
+		},
 	},
 }
 </script>

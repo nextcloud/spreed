@@ -33,6 +33,8 @@ import {
 	createOneToOneConversation,
 	addToFavorites,
 	removeFromFavorites,
+	archiveConversation,
+	unarchiveConversation,
 	fetchConversations,
 	fetchConversation,
 	setConversationName,
@@ -67,6 +69,7 @@ const DUMMY_CONVERSATION = {
 	token: '',
 	displayName: '',
 	isFavorite: false,
+	isArchived: false,
 	hasPassword: false,
 	breakoutRoomMode: CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED,
 	breakoutRoomStatus: CONVERSATION.BREAKOUT_ROOM_STATUS.STOPPED,
@@ -525,6 +528,21 @@ const actions = {
 		}
 	},
 
+	async toggleArchive(context, { token, isArchived }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = isArchived
+				? await unarchiveConversation(token)
+				: await archiveConversation(token)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while changing the conversation archived status: ', error)
+		}
+	},
+
 	async toggleLobby({ commit, getters }, { token, enableLobby }) {
 		if (!getters.conversations[token]) {
 			return
@@ -904,7 +922,7 @@ const actions = {
 	async setNotificationLevel({ commit }, { token, notificationLevel }) {
 		try {
 			await setNotificationLevel(token, notificationLevel)
-			commit('setNotificationLevel', { token, notificationLevel })
+			commit('setNotificationLevel', { token, notificationLevel: +notificationLevel })
 		} catch (error) {
 			console.error('Error while setting the notification level: ', error)
 		}
