@@ -1276,7 +1276,7 @@ OC.L10N.register(
     "A reminder was successfully set at {datetime}" : "Un rappel a été placé avec succès le {datetime}",
     "Error occurred when creating a reminder" : "Une erreur est survenue à la création du rappel",
     "The message has been forwarded to {selectedConversationName}" : "Le message a été transmis sur {selectedConversationName}",
-    "Dismiss" : "Abandonner",
+    "Dismiss" : "Rejeter",
     "Go to conversation" : "Aller à la conversation",
     "Choose a conversation to forward the selected message." : "Choisissez une conversation où faire suivre le message sélectionné.",
     "Error while forwarding message" : "Erreur lors de la transmission du message",
