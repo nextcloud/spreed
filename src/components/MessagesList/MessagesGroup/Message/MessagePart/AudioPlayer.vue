@@ -7,7 +7,8 @@
 	<audio ref="audioPlayer"
 		class="audio-player"
 		controls
-		:src="fileURL">
+		:src="fileURL"
+		@ended="handleEnded">
 		{{ t('spreed', 'Your browser does not support playing audio files') }}
 	</audio>
 </template>
@@ -16,6 +17,8 @@
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
+
+import { EventBus } from '../../../../../services/EventBus.js'
 
 export default {
 	name: 'AudioPlayer',
@@ -49,9 +52,9 @@ export default {
 			default: '',
 		},
 		/**
-		 * File ID.
+		 * Message ID.
 		 */
-		id: {
+		messageId: {
 			type: Number,
 			default: 0,
 		},
@@ -81,38 +84,43 @@ export default {
 	},
 
 	mounted() {
-		document.addEventListener('audioPlayerEnded', (e) => {
-			if (!this.$refs.audioPlayer) {
-				return
-			}
+		EventBus.on('audio-player-ended', this.autoPlay)
+	},
 
-			const voiceMessages = this.$store.getters.getVoiceMessages()
-
-			const previouslyPlayedVoiceMessage = voiceMessages[e.detail.id]
-			const thisVoiceMessage = voiceMessages[previouslyPlayedVoiceMessage.nextId]
-
-			if (previouslyPlayedVoiceMessage.nextId === this.id && thisVoiceMessage && thisVoiceMessage.since === 0) {
-				this.$refs.audioPlayer.play()
-			}
-		})
-
-		this.$refs.audioPlayer.addEventListener('ended', (e) => {
-			e.target.dispatchEvent(
-				new CustomEvent(
-					'audioPlayerEnded',
-					{
-						bubbles: true,
-						detail: {
-							id: this.id,
-						},
-					}
-				)
-			)
-		})
+	beforeDestroy() {
+		EventBus.off('audio-player-ended', this.autoPlay)
 	},
 
 	methods: {
 		t,
+
+		handleEnded() {
+			EventBus.emit('audio-player-ended', this.messageId)
+		},
+
+		/**
+		 * Auto-paly the audio if the previous message was played.
+		 *
+		 * @param {number} messageId message ID.
+		 *
+		 * @return {boolean} true if the audio was played, false otherwise
+		 */
+		autoPlay(messageId) {
+			if (!this.$refs.audioPlayer) {
+				return false
+			}
+
+			const voiceMessages = this.$store.getters.getVoiceMessages()
+
+			const previouslyPlayedVoiceMessage = voiceMessages[messageId]
+			const thisVoiceMessage = voiceMessages[previouslyPlayedVoiceMessage.nextId]
+
+			if (previouslyPlayedVoiceMessage.nextId === this.messageId && thisVoiceMessage) {
+				this.$refs.audioPlayer.play()
+			}
+
+			return true
+		},
 	},
 }
 </script>
