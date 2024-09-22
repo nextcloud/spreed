@@ -251,6 +251,7 @@ export default {
 					path: this.file.path,
 					link: this.file.link,
 					messageId: Number(this.messageId),
+					token: this.token,
 				}
 			}
 			return {

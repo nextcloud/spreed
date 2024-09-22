@@ -81,6 +81,25 @@ export default {
 				return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
 			}
 		},
+
+		nextVoiceMessageID() {
+			const voiceMessages = this.$store.getters.getVoiceMessages()
+			const thisVoiceMessage = voiceMessages[this.messageId]
+
+			// Return early if next voice message is not present.
+			if (!thisVoiceMessage || !thisVoiceMessage.nextId) {
+				return null
+			}
+
+			const nextVoiceMessage = voiceMessages[thisVoiceMessage.nextId]
+
+			// Return early if next voice message is not just next to the current one.
+			if (!nextVoiceMessage || nextVoiceMessage.since > 0) {
+				return null
+			}
+
+			return thisVoiceMessage.nextId
+		},
 	},
 
 	mounted() {
@@ -95,30 +114,27 @@ export default {
 		t,
 
 		handleEnded() {
-			EventBus.emit('audio-player-ended', this.messageId)
+			// Return early if next voice message ID not found
+			if (!this.nextVoiceMessageID) {
+				return
+			}
+
+			EventBus.emit('audio-player-ended', this.nextVoiceMessageID)
 		},
 
 		/**
 		 * Auto-paly the audio if the previous message was played.
 		 *
-		 * @param {number} messageId message ID.
+		 * @param {number} messageId Message ID to play.
 		 *
 		 * @return {boolean} true if the audio was played, false otherwise
 		 */
 		autoPlay(messageId) {
-			if (!this.$refs.audioPlayer) {
+			if (!this.$refs.audioPlayer || messageId !== this.messageId) {
 				return false
 			}
 
-			const voiceMessages = this.$store.getters.getVoiceMessages()
-
-			const previouslyPlayedVoiceMessage = voiceMessages[messageId]
-			const thisVoiceMessage = voiceMessages[previouslyPlayedVoiceMessage.nextId]
-
-			if (previouslyPlayedVoiceMessage.nextId === this.messageId && thisVoiceMessage) {
-				this.$refs.audioPlayer.play()
-			}
-
+			this.$refs.audioPlayer.play()
 			return true
 		},
 	},
