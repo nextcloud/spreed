@@ -134,18 +134,6 @@ const state = {
 	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
 	cancelPostNewMessage: {},
-	/**
-	 * Number of messages send after last voice message.
-	 */
-	lastVoiceMessageSince: 0,
-	/**
-	 * Last processed message ID.
-	 */
-	lastProcessedMessageId: 0,
-	/**
-	 * Voice messages.
-	 */
-	voiceMessages: {},
 }
 
 const getters = {
@@ -165,10 +153,6 @@ const getters = {
 		}
 
 		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
-	},
-
-	getVoiceMessages: (state) => () => {
-		return state.voiceMessages
 	},
 
 	isMessagesListPopulated: (state) => (token) => {
@@ -315,42 +299,6 @@ const mutations = {
 		const preparedMessage = !message.parent && storedMessage?.parent
 			? { ...message, parent: storedMessage.parent }
 			: message
-
-		// If this is a voice message, then set this as the last voice message ID.
-		if (message.messageType === 'voice-message') {
-			// Get all the voice messages.
-			const voiceMessages = state.voiceMessages
-
-			// Get last voice message.
-			const lastVoiceMessageKey = Object.keys(voiceMessages)[Object.keys(voiceMessages).length - 2]
-			const lastVoiceMessage = voiceMessages[lastVoiceMessageKey]
-
-			// Get this voice message.
-			const thisVoiceMessage = voiceMessages[message.id] || {}
-
-			// Set this voice message data.
-			thisVoiceMessage.id = message.id
-			thisVoiceMessage.since = state.lastVoiceMessageSince
-			thisVoiceMessage.previousId = lastVoiceMessage?.id || null
-			thisVoiceMessage.nextId = null
-
-			// Set this voice messages new data.
-			voiceMessages[message.id] = thisVoiceMessage
-
-			// Set last voice message next ID.
-			if (lastVoiceMessage) {
-				lastVoiceMessage.nextId = message.id
-				voiceMessages[lastVoiceMessageKey] = lastVoiceMessage
-			}
-
-			// update the state.
-			Vue.set(state.voiceMessages, voiceMessages)
-
-			state.lastVoiceMessageSince = 0
-		} else if (!Object.keys(state.messages[token]).includes(String(message.id))) {
-			state.lastVoiceMessageSince++
-		}
-
 		Vue.set(state.messages[token], message.id, preparedMessage)
 	},
 	/**
@@ -382,37 +330,6 @@ const mutations = {
 		}
 		Vue.set(state.messages[token][id], 'messageType', 'comment_deleted')
 		Vue.set(state.messages[token][id], 'message', placeholder)
-
-		if (state.voiceMessages[id]) {
-			// Get all the voice messages.
-			const voiceMessages = state.voiceMessages
-
-			// Get the voice message to be deleted.
-			const toDeleteVoiceMessage = voiceMessages[id]
-
-			// Get the previous and next voice messages.
-			const previousVoiceMessage = voiceMessages[toDeleteVoiceMessage.previousId]
-			const nextVoiceMessage = voiceMessages[toDeleteVoiceMessage.nextId]
-
-			// Mutate and set the previous message.
-			if (previousVoiceMessage) {
-				previousVoiceMessage.nextId = nextVoiceMessage ? nextVoiceMessage.id : null
-				voiceMessages[previousVoiceMessage.id] = previousVoiceMessage
-			}
-
-			// Mutate and set the next message.
-			if (nextVoiceMessage) {
-				nextVoiceMessage.previousId = previousVoiceMessage ? previousVoiceMessage.id : null
-				nextVoiceMessage.since += toDeleteVoiceMessage.since + 1
-				voiceMessages[nextVoiceMessage.id] = nextVoiceMessage
-			}
-
-			// Delete the voice message.
-			delete voiceMessages[id]
-
-			// update the state.
-			Vue.set(state.voiceMessages, voiceMessages)
-		}
 	},
 	/**
 	 * Adds a temporary message to the store.

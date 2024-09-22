@@ -58,6 +58,10 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 
 	computed: {
@@ -83,22 +87,32 @@ export default {
 		},
 
 		nextVoiceMessageID() {
-			const voiceMessages = this.$store.getters.getVoiceMessages()
-			const thisVoiceMessage = voiceMessages[this.messageId]
+			const messagesList = this.$store.getters.messagesList(this.token)
 
-			// Return early if next voice message is not present.
-			if (!thisVoiceMessage || !thisVoiceMessage.nextId) {
-				return null
+			let maximumAllowedDistance = 0
+			let currentMessageFound = false
+
+			for (const message of messagesList) {
+				// Return null if no voice-message found within the maximum allowed distance.
+				if (maximumAllowedDistance < 0) {
+					return null
+				}
+
+				// If current message is already found and the current iterating message is of type voice-message then return its ID.
+				if (currentMessageFound && message.messageType === 'voice-message') {
+					return message.id
+				} else if (currentMessageFound) {
+					maximumAllowedDistance--
+					continue
+				}
+
+				// If current message is found then set the flag to true.
+				if (message.id === this.messageId) {
+					currentMessageFound = true
+				}
 			}
 
-			const nextVoiceMessage = voiceMessages[thisVoiceMessage.nextId]
-
-			// Return early if next voice message is not just next to the current one.
-			if (!nextVoiceMessage || nextVoiceMessage.since > 0) {
-				return null
-			}
-
-			return thisVoiceMessage.nextId
+			return null
 		},
 	},
 
