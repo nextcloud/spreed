@@ -168,6 +168,11 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		nextMessageId: {
+			type: [String, Number],
+			default: 0,
+		},
 	},
 
 	emits: ['remove-file'],
@@ -251,7 +256,7 @@ export default {
 					path: this.file.path,
 					link: this.file.link,
 					messageId: Number(this.messageId),
-					token: this.token,
+					nextMessageId: Number(this.nextMessageId),
 				}
 			}
 			return {

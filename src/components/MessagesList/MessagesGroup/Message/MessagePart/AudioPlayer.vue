@@ -58,9 +58,9 @@ export default {
 			type: Number,
 			default: 0,
 		},
-		token: {
-			type: String,
-			required: true,
+		nextMessageId: {
+			type: Number,
+			default: 0,
 		},
 	},
 
@@ -85,35 +85,6 @@ export default {
 				return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
 			}
 		},
-
-		nextVoiceMessageID() {
-			const messagesList = this.$store.getters.messagesList(this.token)
-
-			let maximumAllowedDistance = 0
-			let currentMessageFound = false
-
-			for (const message of messagesList) {
-				// Return null if no voice-message found within the maximum allowed distance.
-				if (maximumAllowedDistance < 0) {
-					return null
-				}
-
-				// If current message is already found and the current iterating message is of type voice-message then return its ID.
-				if (currentMessageFound && message.messageType === 'voice-message') {
-					return message.id
-				} else if (currentMessageFound) {
-					maximumAllowedDistance--
-					continue
-				}
-
-				// If current message is found then set the flag to true.
-				if (message.id === this.messageId) {
-					currentMessageFound = true
-				}
-			}
-
-			return null
-		},
 	},
 
 	mounted() {
@@ -128,12 +99,12 @@ export default {
 		t,
 
 		handleEnded() {
-			// Return early if next voice message ID not found
-			if (!this.nextVoiceMessageID) {
+			// Return early if next message ID not found
+			if (!this.nextMessageId) {
 				return
 			}
 
-			EventBus.emit('audio-player-ended', this.nextVoiceMessageID)
+			EventBus.emit('audio-player-ended', this.nextMessageId)
 		},
 
 		/**

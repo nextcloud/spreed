@@ -280,6 +280,7 @@ export default {
 							itemType,
 							referenceId: this.message.referenceId,
 							file: this.message.messageParameters[p],
+							nextMessageId: this.nextMessageId,
 						},
 					}
 				} else if (type === 'deck-card') {
