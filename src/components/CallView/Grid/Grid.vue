@@ -37,6 +37,7 @@
 						:class="{stripe: isStripe}"
 						:style="gridStyle"
 						@mousemove="handleMovement"
+						@wheel="debounceHandleWheelEvent"
 						@keydown="handleMovement">
 						<template v-if="!devMode && (!isLessThanTwoVideos || !isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
@@ -269,6 +270,7 @@ export default {
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
 			debounceMakeGrid: () => {},
+			debounceHandleWheelEvent: () => {},
 			tempPromotedModels: [],
 			unpromoteSpeakerTimer: {},
 			promotedHistoryMask: [],
@@ -623,6 +625,7 @@ export default {
 	// bind event handlers to the `handleResize` method
 	mounted() {
 		this.debounceMakeGrid = debounce(this.makeGrid, 200)
+		this.debounceHandleWheelEvent = debounce(this.handleWheelEvent, 50)
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
@@ -631,6 +634,7 @@ export default {
 	},
 	beforeDestroy() {
 		this.debounceMakeGrid.clear?.()
+		this.debounceHandleWheelEvent.clear?.()
 		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
 
 		window.removeEventListener('resize', this.handleResize)
@@ -822,6 +826,18 @@ export default {
 		// // in `handleClickNext`
 		// this.shrinkGrid(this.displayedVideos.length)
 		// },
+
+		handleWheelEvent(event) {
+			if (this.gridWidth <= 0) {
+				return
+			}
+
+			if (event.deltaY < 0 && this.hasPreviousPage) {
+				this.handleClickPrevious()
+			} else if (event.deltaY > 0 && this.hasNextPage) {
+				this.handleClickNext()
+			}
+		},
 
 		handleClickNext() {
 			this.currentPage++
@@ -1038,6 +1054,7 @@ export default {
 	grid-template-columns: 165px 75px;
 	align-items: center;
 	justify-content: flex-start;
+	z-index: 1;
 
 	& span {
 		text-overflow: ellipsis;
