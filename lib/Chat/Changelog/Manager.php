@@ -32,22 +32,23 @@ class Manager {
 		return (int)$this->config->getUserValue($userId, 'spreed', 'changelog', '0');
 	}
 
-	public function userHasNewChangelog(string $userId): bool {
-		return $this->getChangelogForUser($userId) < count($this->getChangelogs());
-	}
-
 	public function updateChangelog(string $userId): void {
-		$room = $this->roomManager->getChangelogRoom($userId);
-
 		$logs = $this->getChangelogs();
 		$hasReceivedLog = $this->getChangelogForUser($userId);
+		$shouldHaveReceived = count($logs);
+
+		if ($hasReceivedLog === $shouldHaveReceived) {
+			return;
+		}
 
 		try {
-			$this->config->setUserValue($userId, 'spreed', 'changelog', (string)count($logs), (string)$hasReceivedLog);
-		} catch (PreConditionNotMetException $e) {
+			$this->config->setUserValue($userId, 'spreed', 'changelog', (string)$shouldHaveReceived, (string)$hasReceivedLog);
+		} catch (PreConditionNotMetException) {
 			// Parallel request won the race
 			return;
 		}
+
+		$room = $this->roomManager->getChangelogRoom($userId);
 
 		foreach ($logs as $key => $changelog) {
 			if ($key < $hasReceivedLog || $changelog === '') {
@@ -129,11 +130,11 @@ class Manager {
 			$this->l->t('## New in Talk %s', ['19']) . "\n"
 			. $this->l->t('- Messages can now be edited by logged-in authors and moderators for 6 hours') . "\n"
 			. $this->l->t('- Unsent message drafts are now saved in your browser') . "\n"
-			. $this->l->t('- *Preview:* Text chatting can now be done in a federated way with other Talk servers'),
+			. $this->l->t('- Text chatting can now be done in a federated way with other Talk servers'),
 			$this->l->t('## New in Talk %s', ['20']) . "\n"
 			. $this->l->t('- Moderators can now ban accounts and guests to prevent them from rejoining a conversation') . "\n"
 			. $this->l->t('- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations') . "\n"
-			. $this->l->t('- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)'),
+			. $this->l->t('- Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)'),
 		];
 	}
 }
