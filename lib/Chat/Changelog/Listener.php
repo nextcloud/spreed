@@ -32,10 +32,6 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if (!$this->manager->userHasNewChangelog($event->getUserId())) {
-			return;
-		}
-
 		$this->manager->updateChangelog($event->getUserId());
 	}
 }
