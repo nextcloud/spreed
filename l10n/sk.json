@@ -63,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Titulky umožňujú súčasne odoslať správu so súborom",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video rečníka je teraz viditeľné pri sprístupňovaní obrazovky a reakcie na hovor sú animované",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Správy teraz môžu upravovať prihlásení autori a moderátori po dobu 6 hodín",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ukážka:* Textové chatovanie je teraz možné vykonávať federatívnym spôsobom s inými servermi Talk",
     "Talk updates ✅" : "Aktualizácie Talk /Rozhovor/ ✅",
     "Reaction deleted by author" : "Reakcia bola vymazaná autorom",
     "{actor} created the conversation" : "Používateľ {actor} vytvoril rozhovor",
@@ -1799,6 +1798,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN server sa používa na presmerovanie prenosu dát od účastníkov, ktorí sú za firewallom.",
     "Signaling servers" : "Signalizačné servery",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Pre väčšie inštalácie sa môže použiť externý signalizačný server. Pre použitie interného serveru ponechajte túto kolónku nevyplnenú.",
-    "- Unsent message drafts are now saved in your browser " : "- Koncepty neodoslaných správ sú teraz uložené vo vašom prehliadači"
+    "- Unsent message drafts are now saved in your browser " : "- Koncepty neodoslaných správ sú teraz uložené vo vašom prehliadači",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ukážka:* Textové chatovanie je teraz možné vykonávať federatívnym spôsobom s inými servermi Talk"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
