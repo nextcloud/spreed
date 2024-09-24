@@ -68,10 +68,8 @@ OC.L10N.register(
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Видео говорника се сада види док се дели екран и реакције у позиву су анимиране",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Пријављени аутори и модератори сада у року од 6 сати могу да уређују поруке",
     "- Unsent message drafts are now saved in your browser" : "- Нацрти непослатих порука се сада чувају у вашем интернет прегледачу",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Преглед:* текст чет са осталим Talk серверима сада може да се врши на федерисани начин",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Модератори сада могу да забране налоге и госте и да их тако спрече да поново приступе разговору",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Сада се у разговорима приказују предстојећи позови из догађаја повезаних календара и замене ван-канцеларије",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- *Преглед:* позиви сада могу да се обаве на федерисани начин са осталим Talk серверима (потребан је позадински механизам високих перформанси)",
     "_All %n participant_::_All %n participants_" : ["%n учесник","%n учесника","Свих %n учесника"],
     "Talk updates ✅" : "Ажурирања Разговор апликације ✅",
     "Reaction deleted by author" : "Аутор је обрисао реакцију",
@@ -1862,6 +1860,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "„TURN“ сервер се користи да преусмерава саобраћај учесника иза ватробрана (firewall).",
     "Signaling servers" : "Сигнализациони сервери",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер се може опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
-    "- Unsent message drafts are now saved in your browser " : "- Нацрти непослатих порука се сада чувају у вашем интернет прегледачу"
+    "- Unsent message drafts are now saved in your browser " : "- Нацрти непослатих порука се сада чувају у вашем интернет прегледачу",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Преглед:* текст чет са осталим Talk серверима сада може да се врши на федерисани начин"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

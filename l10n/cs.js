@@ -65,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- titulky umožňují poslání zprávy se souborem naráz",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- video řečníka je nyní viditelné v průběhu sdílení obrazovky a reakce v hovoru jsou animované",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Zprávy je nyní možné po dobu 6 hodin upravovat přihlášenými autory a moderátory",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- „Předprodukční“ Textové chatování je nyní možné federovaně s ostatními Talk servery",
     "_All %n participant_::_All %n participants_" : ["Všechen %n účastník","Všichni %n účastníci","Všech %n účastníků","Všichni %n účastníci"],
     "Talk updates ✅" : "Aktualizace Talk ✅",
     "Reaction deleted by author" : "Reakce smazána autorem",
@@ -1727,6 +1726,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN server se používá k přeposílání provozu účastníků za bránou firewall.",
     "Signaling servers" : "Signální servery",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Externí signální server může být použit pro větší instalace. Pro použití interního signálního serveru kolonku nevyplňujte.",
-    "- Unsent message drafts are now saved in your browser " : "- Neodeslané koncepty zpráv jsou nyní webovým prohlížečem ukládány"
+    "- Unsent message drafts are now saved in your browser " : "- Neodeslané koncepty zpráv jsou nyní webovým prohlížečem ukládány",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- „Předprodukční“ Textové chatování je nyní možné federovaně s ostatními Talk servery"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

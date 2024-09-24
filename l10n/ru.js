@@ -66,7 +66,6 @@ OC.L10N.register(
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Видео выступающего теперь отображается при презентации экрана и реакции в звонке анимированы",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Сообщения теперь могут быть отредактированы авторами и модераторамив течение 6 часов",
     "- Unsent message drafts are now saved in your browser" : "- Черновики неотправленных сообщений теперь сохраняются в вашем браузере.",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Превью:* Обмен сообщениями теперь может происходит в федеративных обсуждениях с другими серверами Talk",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Модераторы теперь могут блокировать аккаунты и гостей, чтобы они не могли вернуться к разговору",
     "Talk updates ✅" : "Обновления приложения «Конференции» ✅",
     "Reaction deleted by author" : "Реакция удалена автором",
@@ -1821,6 +1820,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потоков данных от участников, находящихся за межсетевым экраном.",
     "Signaling servers" : "Серверы сигнализации",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Для крупных развёртываний может быть использован внешний сервер сигнализации. Для использования встроенного сервера сигнализации оставьте поле пустым.",
-    "- Unsent message drafts are now saved in your browser " : "- Неотправленные черновики сообщений теперь сохраняются в вашем браузере"
+    "- Unsent message drafts are now saved in your browser " : "- Неотправленные черновики сообщений теперь сохраняются в вашем браузере",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Превью:* Обмен сообщениями теперь может происходит в федеративных обсуждениях с другими серверами Talk"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");
