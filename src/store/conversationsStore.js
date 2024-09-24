@@ -129,6 +129,16 @@ const getters = {
 			})
 	},
 	/**
+	 * List of all archived conversations sorted
+	 *
+	 * @param {object} state state
+	 * @param {object} getters getters
+	 * @return {object[]} sorted conversations list
+	 */
+	archivedConversationsList: (state, getters) => {
+		return getters.conversationsList.filter(conversation => conversation.isArchived)
+	},
+	/**
 	 * Get a conversation providing its token
 	 *
 	 * @param {object} state state object
