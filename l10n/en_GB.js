@@ -68,10 +68,8 @@ OC.L10N.register(
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video of the speaker is now visible while sharing the screen and call reactions are animated",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Messages can now be edited by logged-in authors and moderators for 6 hours",
     "- Unsent message drafts are now saved in your browser" : "- Unsent message drafts are now saved in your browser",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)",
     "_All %n participant_::_All %n participants_" : ["All %n participant","All %n participants"],
     "Talk updates ✅" : "Talk updates ✅",
     "Reaction deleted by author" : "Reaction deleted by author",
@@ -1862,6 +1860,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "The TURN server is used to proxy the traffic from participants behind a firewall.",
     "Signaling servers" : "Signaling servers",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.",
-    "- Unsent message drafts are now saved in your browser " : "- Unsent message drafts are now saved in your browser "
+    "- Unsent message drafts are now saved in your browser " : "- Unsent message drafts are now saved in your browser ",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Preview:* Text chatting can now be done in a federated way with other Talk servers"
 },
 "nplurals=2; plural=(n != 1);");

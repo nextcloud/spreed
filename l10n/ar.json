@@ -66,10 +66,8 @@
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- أصبح فيديو المُتحدِّث مرئيًا الآن أثناء مشاركة الشاشة و يتم كذلك تحريك تفاعلات المكالمات",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- يمكن الآن تعديل الرسائل من قِبَل المؤلفين و المنسقين إلى حد 6 ساعات",
     "- Unsent message drafts are now saved in your browser" : "- مسودات الرسائل غير المرسلة تبقى محفوظة على مستعرض الوب لديك",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- يمكن للمنسقين الآن حظر حسابات أو ضيوف لمنعهم من الانضمام إلى محادثة",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- المكالمات الواردة من أحداث مربوطة على التقويم أو استبدالات لشخص خارج المكتب يمكن الآن عرضها في المحادثات",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- \"معاينة\": يمكن إجراء المكالمات الآن بالطريقة الاتحادية مع خوادم \"المحادثة talk\" الأخرى (يتطلب ذلك واجهة خلفية عالية الأداء)",
     "_All %n participant_::_All %n participants_" : ["كل الـ%n مشارك","كل الـ%n مشارك","كل الـ %n مشاركين","كل الـ%n مشاركين","كل الـ%n مشارك","كل الـ%n مشارك"],
     "Talk updates ✅" : "تحديثات التحدث  ✅",
     "Reaction deleted by author" : "تم حذف تفاعل من قبل الكاتب",
@@ -1860,6 +1858,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "يتم استخدام خادم TURN كوسيط لمرور المشاركين خلف جدار الحماية.",
     "Signaling servers" : "خوادم التشوير ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "يجب استخدام خادم تشوير خارجي اختياري للتركيبات الكبرى. اتركه فارغًا لاستخدام خادم التشوير الداخلي.",
-    "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك"
+    "- Unsent message drafts are now saved in your browser " : "- مسودات الرسائل غير المرسلة يمكن الآن حفظها في مستعرض الوب عندك",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *معاينة Preview:* الدردشة النصية يمكن أن تتم الآن بطريقة اتحادية مع خوادم الدردشة الأخرى"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

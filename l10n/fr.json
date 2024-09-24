@@ -66,10 +66,8 @@
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- La vidéo de l’intervenant est maintenant visible quand le partage d’écran est activé et les réactions sont animées",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Les messages peuvent maintenant être modifiés par les auteurs connectés et les modérateurs pendant 6 heures",
     "- Unsent message drafts are now saved in your browser" : "- Les messages non envoyés sont maintenant sauvegardés dans votre navigateur",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk.",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Les modérateurs peuvent maintenant bannir les comptes et les invités pour éviter qu'ils ne rejoignent à nouveau une conversation",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Les prochaines réunions fixées dans les évènements liés du calendrier et les remplaçants pendant les absences sont maintenant visibles dans les conversations",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- \"Préfiguration\" : Les appels peuvent maintenant être effectuée de manière fédérée avec d'autres serveurs Talk (nécessite un serveur haute-performance)",
     "_All %n participant_::_All %n participants_" : ["Le participant","Les %n participants","Les %n participants"],
     "Talk updates ✅" : "Mises à jour de Talk ✅",
     "Reaction deleted by author" : "Réaction supprimée par son auteur",
@@ -1729,7 +1727,7 @@
     "Deck card has been posted to {conversation}" : "Une carte Deck a été postée dans {conversation}",
     "The recording failed. Please contact your administrator." : "L'enregistrement a échoué. Veuillez contacter votre administrateur.",
     "Location has been posted to {conversation}" : "La localisation a été postée dans {conversation}",
-    "In conversation" : "Dans la conversation",
+    "In conversation" : "Dans une conversation",
     "Search in conversation: {conversation}" : "Rechercher dans la conversation : {conversation}",
     "Nextcloud Talk Federation was updated, please reload the page" : "La fédération Nextcloud Talk a été mise à jour, merci de recharger la page",
     "Error while sharing file" : "Erreur lors du partage du fichier",
@@ -1853,6 +1851,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Le serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
     "Signaling servers" : "Serveur de signalement",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne.",
-    "- Unsent message drafts are now saved in your browser " : "- Les brouillons de message non envoyés sont sauvegardés dans votre navigateur"
+    "- Unsent message drafts are now saved in your browser " : "- Les brouillons de message non envoyés sont sauvegardés dans votre navigateur",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Aperçu :* les discussions textuelles peuvent maintenant être effectuées de manière fédérée avec d'autres serveurs Talk."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

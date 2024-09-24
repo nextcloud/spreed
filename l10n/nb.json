@@ -66,10 +66,8 @@
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video av taleren er nå synlig mens skjermen deles, og anropsreaksjoner er animerte",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Meldinger kan nå redigeres av innloggede forfattere og moderatorer i 6 timer",
     "- Unsent message drafts are now saved in your browser" : "- Utkast til usendte meldinger lagres nå i nettleseren ",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Forhåndsvisning: * Tekstchatting kan nå gjøres på en samlet måte med andre Talk-servere",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Moderatorer kan nå utestenge kontoer og gjester for å hindre dem i å bli med i en samtale igjen",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Kommende anrop fra koblede kalenderhendelser og ikke-tilstedeværende erstatninger vises nå i samtaler",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- * Forhåndsvisning: * Anrop kan nå gjøres på en samlet måte med andre Talk-servere (krever serverdelen med høy ytelse)",
     "_All %n participant_::_All %n participants_" : ["Alle %n deltaker","Alle %n deltakere"],
     "Talk updates ✅" : "Talk oppdateringer ✅",
     "Reaction deleted by author" : "Reaksjon slettet av forfatter",
@@ -1850,6 +1848,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-serveren fungerer som mellomserver for trafikk fra deltakere bak en brannmur.",
     "Signaling servers" : "Signalservere",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
-    "- Unsent message drafts are now saved in your browser " : "- Utkast til usendte meldinger lagres nå i nettleseren "
+    "- Unsent message drafts are now saved in your browser " : "- Utkast til usendte meldinger lagres nå i nettleseren ",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- * Forhåndsvisning: * Tekstchatting kan nå gjøres på en samlet måte med andre Talk-servere"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
