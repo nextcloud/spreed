@@ -136,6 +136,7 @@
 					<template #icon>
 						<AtIcon v-if="isFiltered === 'mentions'" :size="64" />
 						<MessageBadge v-else-if="isFiltered === 'unread'" :size="64" />
+						<IconArchive v-else-if="showArchived" :size="64" />
 						<MessageOutline v-else :size="64" />
 					</template>
 					<template #action>
@@ -277,6 +278,27 @@
 
 		<template #footer>
 			<div class="left-sidebar__settings-button-container">
+				<template v-if="supportsArchive">
+					<NcButton v-if="showArchived"
+						type="tertiary"
+						wide
+						@click="showArchived = false">
+						<template #icon>
+							<IconArrowLeft :size="20" />
+						</template>
+						{{ t('spreed', 'Back to conversations') }}
+					</NcButton>
+					<NcButton v-else-if="archivedConversationsList.length"
+						type="tertiary"
+						wide
+						@click="showArchived = true">
+						<template #icon>
+							<IconArchive :size="20" />
+						</template>
+						{{ t('spreed', 'Archived conversations') }}
+					</NcButton>
+				</template>
+
 				<NcButton type="tertiary" wide @click="showSettings">
 					<template #icon>
 						<Cog :size="20" />
@@ -293,6 +315,8 @@ import debounce from 'debounce'
 import { ref } from 'vue'
 
 import AccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
+import IconArchive from 'vue-material-design-icons/Archive.vue'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import AtIcon from 'vue-material-design-icons/At.vue'
 import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
@@ -348,7 +372,7 @@ import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import { hasUnreadMentions, filterFunction } from '../../utils/conversation.js'
+import { hasUnreadMentions, hasCall, filterFunction } from '../../utils/conversation.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -357,6 +381,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
+const supportsArchive = hasTalkFeature('local', 'archived-conversations')
 
 export default {
 	name: 'LeftSidebar',
@@ -388,6 +413,8 @@ export default {
 		MessageOutline,
 		FilterIcon,
 		FilterRemoveIcon,
+		IconArchive,
+		IconArrowLeft,
 		Phone,
 		Plus,
 		ChatPlus,
@@ -401,6 +428,8 @@ export default {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
 		const scroller = ref(null)
+
+		const showArchived = ref(false)
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
@@ -419,6 +448,8 @@ export default {
 			isMobile,
 			canModerateSipDialOut,
 			canNoteToSelf,
+			supportsArchive,
+			showArchived,
 		}
 	},
 
@@ -491,6 +522,9 @@ export default {
 		},
 
 		emptyContentDescription() {
+			if (this.showArchived) {
+				return t('spreed', 'You have no archived conversations.')
+			}
 			switch (this.isFiltered) {
 			case 'mentions':
 				return t('spreed', 'You have no unread mentions.')
@@ -501,27 +535,27 @@ export default {
 			}
 		},
 
+		archivedConversationsList() {
+			return this.$store.getters.archivedConversationsList
+		},
+
 		filteredConversationsList() {
 			if (this.isFocused) {
 				return this.conversationsList
 			}
-			// applying filters
-			if (this.isFiltered) {
-				let validConversationsCount = 0
-				const filteredConversations = this.conversationsList.filter((conversation) => {
-					const conversationIsValid = filterFunction(this.isFiltered, conversation)
-					if (conversationIsValid) {
-						validConversationsCount++
-					}
-					return conversationIsValid
-						|| conversation.hasCall
-						|| conversation.token === this.token
-				})
-				// return empty if it only includes the current conversation without any flags
-				return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
-			}
 
-			return this.conversationsList
+			let validConversationsCount = 0
+			const filteredConversations = this.conversationsList.filter((conversation) => {
+				const conversationIsValid = filterFunction(this.isFiltered, this.showArchived, conversation)
+				if (conversationIsValid) {
+					validConversationsCount++
+				}
+				return conversationIsValid
+					|| hasCall(conversation)
+					|| conversation.token === this.token
+			})
+			// return empty if it only includes the current conversation without any flags
+			return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
 		},
 
 		isSearching() {
@@ -1076,6 +1110,9 @@ export default {
 }
 
 .left-sidebar__settings-button-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
 	padding: calc(2 * var(--default-grid-baseline));
 }
 
