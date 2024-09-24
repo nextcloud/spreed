@@ -11,18 +11,40 @@
 				<h4 class="app-settings-section__subtitle">
 					{{ t('spreed', 'Leave conversation') }}
 				</h4>
-				<p class="danger-zone__hint">
+				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<NcButton type="warning" @click="leaveConversation">
+				<NcButton type="warning" @click="toggleShowLeaveConversationDialog">
 					{{ t('spreed', 'Leave conversation') }}
 				</NcButton>
+				<NcDialog class="danger-zone__dialog"
+					:open.sync="isLeaveConversationDialogOpen"
+					:name="t('spreed','Leave conversation')"
+					container=".danger-zone">
+					<template #default>
+						<p>{{ leaveConversationDialogMessage }}</p>
+						<p v-if="supportsArchive && !conversation.isArchived">
+							{{ t('spreed', 'You can archive this conversation instead.') }}
+						</p>
+					</template>
+					<template #actions>
+						<NcButton type="tertiary" @click="toggleShowLeaveConversationDialog">
+							{{ t('spreed', 'No') }}
+						</NcButton>
+						<NcButton v-if="supportsArchive && !conversation.isArchived" type="secondary" @click="toggleArchiveConversation">
+							{{ t('spreed', 'Archive conversation') }}
+						</NcButton>
+						<NcButton type="warning" @click="leaveConversation">
+							{{ t('spreed', 'Yes') }}
+						</NcButton>
+					</template>
+				</NcDialog>
 			</div>
 			<div v-if="canDeleteConversation" class="app-settings-subsection">
 				<h4 class="app-settings-section__subtitle">
 					{{ t('spreed', 'Delete conversation') }}
 				</h4>
-				<p class="danger-zone__hint">
+				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
 				<NcButton type="error"
@@ -48,7 +70,7 @@
 				<h4 class="app-settings-section__subtitle">
 					{{ t('spreed', 'Delete chat messages') }}
 				</h4>
-				<p class="danger-zone__hint">
+				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
 				<NcButton type="error"
@@ -76,6 +98,8 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
@@ -83,6 +107,10 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+
+const supportsArchive = hasTalkFeature('local', 'archived-conversations')
 
 export default {
 	name: 'DangerZone',
@@ -109,10 +137,16 @@ export default {
 		},
 	},
 
-	data() {
+	setup() {
+		const isLeaveConversationDialogOpen = ref(false)
+		const isDeleteConversationDialogOpen = ref(false)
+		const isDeleteChatDialogOpen = ref(false)
+
 		return {
-			isDeleteConversationDialogOpen: false,
-			isDeleteChatDialogOpen: false,
+			supportsArchive,
+			isLeaveConversationDialogOpen,
+			isDeleteConversationDialogOpen,
+			isDeleteChatDialogOpen,
 		}
 	},
 
@@ -123,6 +157,13 @@ export default {
 
 		token() {
 			return this.conversation.token
+		},
+
+		leaveConversationDialogMessage() {
+			return t('spreed', 'Do you really want to leave "{displayName}"?', this.conversation, undefined, {
+				escape: false,
+				sanitize: false,
+			})
 		},
 
 		deleteConversationDialogMessage() {
@@ -146,10 +187,23 @@ export default {
 		hideConversationSettings() {
 			emit('hide-conversation-settings')
 		},
+
+		/**
+		 * Deletes the current user from the conversation.
+		 */
+		async toggleArchiveConversation() {
+			this.isLeaveConversationDialogOpen = false
+
+			await this.$store.dispatch('toggleArchive', this.conversation)
+			this.hideConversationSettings()
+		},
+
 		/**
 		 * Deletes the current user from the conversation.
 		 */
 		async leaveConversation() {
+			this.isLeaveConversationDialogOpen = false
+
 			try {
 				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.token })
 				this.hideConversationSettings()
@@ -198,6 +252,10 @@ export default {
 			}
 		},
 
+		toggleShowLeaveConversationDialog() {
+			this.isLeaveConversationDialogOpen = !this.isLeaveConversationDialogOpen
+		},
+
 		toggleShowDeleteConversationDialog() {
 			this.isDeleteConversationDialogOpen = !this.isDeleteConversationDialogOpen
 		},
@@ -215,9 +273,6 @@ h4 {
 }
 
 .danger-zone {
-	&__hint {
-		color: var(--color-text-maxcontrast);
-	}
 	&__dialog {
 		:deep(.modal-container) {
 			padding-block: 4px 8px;
