@@ -66,10 +66,8 @@
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- 現在在分享螢幕時可以看到講者的視訊，通話反應以動畫形式顯示",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- 登入的作者和主持人現在可以在 6 小時內編輯訊息",
     "- Unsent message drafts are now saved in your browser" : "- 未發送的訊息草稿現在保存在您的瀏覽器中",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以與其他 Talk 伺服器以聯合方式完成",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- 主持人現在可以禁止帳戶和訪客，以防止他們重新加入對話",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- 連結的日曆活動和外出替換的即將打來的電話現在顯示在對話中",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- *預覽：*通話現在可以與其他 Talk 伺服器以聯合方式完成（需要高性能後端系統）",
     "_All %n participant_::_All %n participants_" : ["所有 %n 個參與者"],
     "Talk updates ✅" : "Talk 更新 ✅",
     "Reaction deleted by author" : "反應被作者刪除",
@@ -1860,6 +1858,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 伺服器用於代理來自防火牆後參與者的流量。",
     "Signaling servers" : "Signaling 伺服器",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部信令伺服器。留空以使用內部信令伺服器。",
-    "- Unsent message drafts are now saved in your browser " : "- 未發送的訊息草稿現在保存在您的瀏覽器中"
+    "- Unsent message drafts are now saved in your browser " : "- 未發送的訊息草稿現在保存在您的瀏覽器中",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *預覽：*文字聊天現在可以與其他 Talk 伺服器以聯合方式完成"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

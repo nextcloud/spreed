@@ -68,10 +68,8 @@ OC.L10N.register(
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video av talare är nu synlig när skärmen delas och samtalsreaktioner är animerade",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Meddelanden kan nu redigeras av inloggade författare och moderatorer i 6 timmar",
     "- Unsent message drafts are now saved in your browser" : "- Ej skickade meddelandeutkast sparas nu i din webbläsare",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Förhandsgranskning:* Textchatt kan nu göras på ett federerat sätt med andra Talk-servrar",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Moderatorer kan nu blockera konton och gäster för att förhindra att de återansluter till en konversation",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Kommande samtal från länkade kalenderhändelser och frånvarande ersättningar visas nu i konversationer",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- *Förhandsgranskning:* Samtal kan nu göras på ett federerat sätt med andra Talk-servrar (kräver High-performance backend)",
     "_All %n participant_::_All %n participants_" : ["Alla %n deltagare","Alla %n deltagare"],
     "Talk updates ✅" : "Talk-uppdateringar ✅",
     "Reaction deleted by author" : "Svar har tagits bort av författaren",
@@ -1862,6 +1860,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
     "Signaling servers" : "Signalservrar",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
-    "- Unsent message drafts are now saved in your browser " : "- Ej skickade meddelandeutkast sparas nu i din webbläsare"
+    "- Unsent message drafts are now saved in your browser " : "- Ej skickade meddelandeutkast sparas nu i din webbläsare",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Förhandsgranskning:* Textchatt kan nu göras på ett federerat sätt med andra Talk-servrar"
 },
 "nplurals=2; plural=(n != 1);");

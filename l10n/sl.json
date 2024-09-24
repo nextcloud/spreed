@@ -63,7 +63,6 @@
     "- Captions allow to send a message with a file at the same time" : "- Napisi omogočajo pošiljanje sporočila sočasno z datoteko.",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Video govorca je zdaj vidno med souporabo zaslona, odzivi slušateljev pa so animirani.",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Sporočila lahko prijavljeni avtorji in moderatorji urejajo še 6 ur po vpisu",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Predogled:* besedilno klepetanje je mogoče tudi z zveznimi uporabniki z zunanjimi strežniki Talk",
     "_All %n participant_::_All %n participants_" : ["%n udeleženec","%n udeleženca"," %n udeleženci"," %n udeležencev"],
     "Talk updates ✅" : "Posodobitve programa Talk ✅",
     "Reaction deleted by author" : "Avtor izbriše odziv",
@@ -1630,6 +1629,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Strežnik TURN se uporablja za posredovanje podatkovnega prometa od udeležencev za požarnim zidom.",
     "Signaling servers" : "Signalni strežniki",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Za večje namestitve je priporočljivo uporabiti zunanji signalni strežnik. Prazno polje določa notranjega.",
-    "- Unsent message drafts are now saved in your browser " : "- Neposlani osnutki sporočil se shranjujejo v pomnilnik brskalnika"
+    "- Unsent message drafts are now saved in your browser " : "- Neposlani osnutki sporočil se shranjujejo v pomnilnik brskalnika",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Predogled:* besedilno klepetanje je mogoče tudi z zveznimi uporabniki z zunanjimi strežniki Talk"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }

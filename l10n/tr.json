@@ -66,10 +66,8 @@
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- Artık ekran paylaşılırken konuşmacının görüntüsü görülebiliyor ve çağrı tepkileri canlandırılıyor",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- İletilerin oturum açmış yazarlar ve sorumlular tarafından ilk 6 saat içinde düzenlenebilmesi sağlandı",
     "- Unsent message drafts are now saved in your browser" : "- Gönderilmemiş ileti taslaklarının tarayıcınıza kaydedilmesi sağlandı",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ön izleme:* Metin sohbetlerinin diğer Konuş sunucularıyla birleşik olarak yapılabilmesi sağlandı",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Sorumlular artık hesapları ve misafirleri yasaklayarak bir sohbete yeniden katılmalarını önleyebilir",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "- Görüşmelerde bağlantılı takvim etkinliklerinden gelen çağrıların ve ofis dışındayken yedek kişilerin görüntülenmesi sağlandı",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "- *Ön izleme:* Çağrıların diğer Konuş sunucularıyla birleşik olarak yapılabilmesi sağlandı (yüksek başarımlı arka taraf gereklidir)",
     "_All %n participant_::_All %n participants_" : ["Tüm %n katılımcı","Tüm %n katılımcı"],
     "Talk updates ✅" : "Konuş güncellemeleri ✅",
     "Reaction deleted by author" : "Tepki yazarı tarafından silindi",
@@ -1860,6 +1858,7 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN sunucusu bir güvenlik duvarı arkasındaki katılımcının trafiğini aktarmak için vekil sunucu olarak kullanılır.",
     "Signaling servers" : "Signaling sunucuları",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Büyük kurulumlar için isteğe göre bir dış signaling sunucusu kullanılabilir. İç signaling sunucusunu kullanmak için boş bırakın.",
-    "- Unsent message drafts are now saved in your browser " : "- Gönderilmemiş ileti taslaklarının tarayıcınıza kaydedilmesi sağlandı"
+    "- Unsent message drafts are now saved in your browser " : "- Gönderilmemiş ileti taslaklarının tarayıcınıza kaydedilmesi sağlandı",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Ön izleme:* Metin sohbetlerinin diğer Konuş sunucularıyla birleşik olarak yapılabilmesi sağlandı"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

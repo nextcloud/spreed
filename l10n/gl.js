@@ -68,10 +68,8 @@ OC.L10N.register(
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "– Agora é visíbel o vídeo do relator mentres se comparte a pantalla e as reaccións ás chamadas están animadas",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "– Agora os autores e moderadores que teñan accedido poden editar as mensaxes durante 6 horas",
     "- Unsent message drafts are now saved in your browser" : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "– *Vista previa:* A parola de texto agora pódese facer de xeito federado con outros servidores de Talk",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "– Agora os moderadores poden prohibir contas e convidados para evitar que se reincorporen a unha conversa",
     "- Upcoming calls from linked calendar events and out-of-office replacements are now shown in conversations" : "– As próximas chamadas de eventos de calendario vinculados e as substitucións fóra da oficina agora amosanse nas conversas",
-    "- *Preview:* Calls can now be done in a federated way with other Talk servers (requires the High-performance backend)" : "– *Vista previa:* As chamadas agora pódense facer de xeito federado con outros servidores de Talk (precisa dunha infraestrutura de alto rendemento)",
     "_All %n participant_::_All %n participants_" : ["O único (%n) participante","Os %n participantes"],
     "Talk updates ✅" : "Actualizacións do Talk ✅",
     "Reaction deleted by author" : "Reacción eliminada polo autor",
@@ -1862,6 +1860,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN usase como proxy no tráfico de participantes detrás dunha devasa.",
     "Signaling servers" : "Servidores de sinalización",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente pode empregarse un servidor Signaling externo para instalacións maiores. Deixeo baleiro para usar o servidor Signaling interno.",
-    "- Unsent message drafts are now saved in your browser " : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador"
+    "- Unsent message drafts are now saved in your browser " : "– Os borradores de mensaxes sen enviar agora gárdanse no seu navegador",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "– *Vista previa:* A parola de texto agora pódese facer de xeito federado con outros servidores de Talk"
 },
 "nplurals=2; plural=(n != 1);");

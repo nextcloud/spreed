@@ -65,7 +65,6 @@ OC.L10N.register(
     "- Captions allow to send a message with a file at the same time" : "- Las leyendas permiten enviar un mensaje con un archivo al mismo tiempo",
     "- Video of the speaker is now visible while sharing the screen and call reactions are animated" : "- El video del orador ahora es visible mientras se comparte la pantalla y las reacciones de la llamada están animadas",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Los mensajes pueden ser editados ahora por los administradores y moderadores con sesión iniciada por 6 horas",
-    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vista previa:* el chat por texto puede ser hecho ahora de manera federada con otros servidores Talk",
     "Talk updates ✅" : "Actualizaciones de Talk ✅",
     "Reaction deleted by author" : "Reacción borrada por el autor",
     "{actor} created the conversation" : "{actor} creó la conversación",
@@ -1804,6 +1803,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN es usado como proxy en el tráfico de participantes detrás de un firewall.",
     "Signaling servers" : "Servidores de señalización",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente, se puede usar un servidor de señalización externo para instalaciones más grandes. Déjalo vacío para usar el servidor de señalización interno.",
-    "- Unsent message drafts are now saved in your browser " : "- Los borradores de mensajes no enviados están guardados ahora en su navegador"
+    "- Unsent message drafts are now saved in your browser " : "- Los borradores de mensajes no enviados están guardados ahora en su navegador",
+    "- *Preview:* Text chatting can now be done in a federated way with other Talk servers" : "- *Vista previa:* el chat por texto puede ser hecho ahora de manera federada con otros servidores Talk"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
