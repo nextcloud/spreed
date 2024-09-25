@@ -276,6 +276,8 @@ export default {
 						component: FilePreview,
 						props: {
 							token: this.message.token,
+							messageId: this.message.id,
+							nextMessageId: this.nextMessageId,
 							itemType,
 							referenceId: this.message.referenceId,
 							file: this.message.messageParameters[p],
