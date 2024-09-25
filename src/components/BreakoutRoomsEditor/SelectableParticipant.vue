@@ -10,7 +10,7 @@
 			:aria-label="participantAriaLabel"
 			type="checkbox"
 			class="selectable-participant__checkbox"
-			@keydown.enter="handleEnter">
+			@keydown.enter.stop.prevent="handleEnter">
 		<!-- Participant's avatar -->
 		<AvatarWrapper :id="actorId"
 			token="new"
@@ -139,7 +139,11 @@ export default {
 		t,
 
 		handleEnter(event) {
-			event.target.checked = !event.target.checked
+			if (this.isBulkSelection) {
+				event.target.click()
+			} else {
+				this.$emit('click-participant', this.participant)
+			}
 		},
 	}
 }
