@@ -89,6 +89,7 @@ import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesMan
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
+import { useSidebarStore } from '../../../stores/sidebar.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -145,6 +146,7 @@ export default {
 			sortParticipants,
 			isInCall,
 			cancelableGetParticipants,
+			sidebarStore: useSidebarStore(),
 		}
 	},
 
@@ -189,7 +191,7 @@ export default {
 		},
 
 		show() {
-			return this.$store.getters.getSidebarStatus
+			return this.sidebarStore.show
 		},
 		opened() {
 			return !!this.token && this.show

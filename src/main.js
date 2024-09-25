@@ -4,7 +4,7 @@
  */
 
 import { createPinia, PiniaVuePlugin } from 'pinia'
-import Vue from 'vue'
+import Vue, { watch } from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
@@ -20,6 +20,7 @@ import './init.js'
 import router from './router/router.js'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
+import { useSidebarStore } from './stores/sidebar.js'
 
 // Leaflet icon patch
 import 'leaflet/dist/leaflet.css'
@@ -73,17 +74,12 @@ const Sidebar = function() {
 	this.state = {
 		file: '',
 	}
-
-	store.watch(
-		(state, getters) => {
-			return getters.getSidebarStatus
-		},
-		(sidebarShown) => {
-			if (!sidebarShown) {
-				this.state.file = ''
-			}
-		},
-	)
+	const sidebarStore = useSidebarStore()
+	watch(() => sidebarStore.show, (sidebarShown) => {
+		if (!sidebarShown) {
+			this.state.file = ''
+		}
+	})
 }
 
 const waitForSidebarToBeOpen = function(sidebarElement, resolve) {
@@ -124,7 +120,8 @@ Sidebar.prototype.open = function(path) {
 		return
 	}
 
-	store.commit('showSidebar')
+	const sidebarStore = useSidebarStore()
+	sidebarStore.showSidebar()
 	this.state.file = path
 
 	const sidebarElement = document.getElementById('app-sidebar') ?? document.getElementById('app-sidebar-vue')
