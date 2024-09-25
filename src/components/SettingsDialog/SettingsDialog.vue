@@ -6,8 +6,7 @@
 <template>
 	<NcAppSettingsDialog :open.sync="showSettings"
 		:name="t('spreed', 'Talk settings')"
-		:show-navigation="true"
-		:container="container">
+		show-navigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection v-for="{ id, name, element } in customSettingsSections"
 			:id="id"
@@ -237,10 +236,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		playSounds() {
 			return this.$store.getters.playSounds
 		},

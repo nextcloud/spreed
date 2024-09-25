@@ -42,8 +42,6 @@ Vue.use(Vuex)
 
 const pinia = createPinia()
 
-store.dispatch('setMainContainerSelector', 'body')
-
 const newCallView = () => new Vue({
 	store,
 	pinia,

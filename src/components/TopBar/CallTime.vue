@@ -7,8 +7,7 @@
 	<NcPopover class="call-time"
 		:shown.sync="showPopover"
 		:focus-trap="isShowRecordingControls"
-		:triggers="[]"
-		:container="container">
+		:triggers="[]">
 		<template #trigger>
 			<NcButton :disabled="isButtonDisabled"
 				:wide="true"
@@ -110,10 +109,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		/**
 		 * Create date object based on the unix time received from the API
 		 *

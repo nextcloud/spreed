@@ -5,7 +5,6 @@
 
 <template>
 	<NcDialog :name="dialogTitle"
-		:container="container"
 		close-on-click-outside
 		@update:open="close">
 		<template #default>
@@ -80,11 +79,6 @@ export default {
 	},
 
 	props: {
-		container: {
-			type: String,
-			default: undefined,
-		},
-
 		dialogTitle: {
 			type: String,
 			default: t('spreed', 'Link to a conversation'),

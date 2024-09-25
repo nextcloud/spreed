@@ -46,11 +46,8 @@
 		</div>
 
 		<!-- Input field -->
-		<NewMessage v-if="containerId"
-			:key="containerId"
-			role="region"
+		<NewMessage role="region"
 			:token="token"
-			:container="containerId"
 			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />
 
@@ -113,7 +110,6 @@ export default {
 		return {
 			isChatScrolledToBottom: true,
 			isDraggingOver: false,
-			containerId: undefined,
 		}
 	},
 
@@ -163,24 +159,9 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		isLoadingChat() {
 			return !this.$store.getters.isMessagesListPopulated(this.token)
 		},
-	},
-
-	watch: {
-		container(value) {
-			this.containerId = value
-		},
-	},
-
-	mounted() {
-		// Postpone render of NewMessage until application is mounted
-		this.containerId = this.container
 	},
 
 	methods: {

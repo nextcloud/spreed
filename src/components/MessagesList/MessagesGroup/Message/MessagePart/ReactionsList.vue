@@ -5,7 +5,6 @@
 
 <template>
 	<NcDialog :name="t('spreed', 'Reactions')"
-		:container="container"
 		close-on-click-outside
 		@update:open="closeModal">
 		<div class="reactions__modal">
@@ -104,10 +103,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		reactionsOverview() {
 			const mergedReactionsMap = {}
 			const modifiedDetailedReactions = {}

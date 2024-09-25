@@ -12,8 +12,6 @@ import Vuex from 'vuex'
 import { getRequestToken } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 
-import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
-
 import Recording from './Recording.vue'
 
 import router from './router/router.js'
@@ -51,9 +49,6 @@ Vue.use(Vuex)
 Vue.use(VueRouter)
 
 const pinia = createPinia()
-
-TooltipOptions.container = 'body'
-store.dispatch('setMainContainerSelector', 'body')
 
 window.store = store
 

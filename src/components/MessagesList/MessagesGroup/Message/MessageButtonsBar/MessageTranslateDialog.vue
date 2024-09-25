@@ -8,7 +8,6 @@
 		class="translate-dialog"
 		:name="t('spreed', 'Translate message')"
 		size="large"
-		:container="container"
 		close-on-click-outside
 		@update:open="$emit('close')">
 		<template v-if="isMounted" #default>
@@ -119,10 +118,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		userLanguage() {
 			return navigator.language.substring(0, 2)
 		},

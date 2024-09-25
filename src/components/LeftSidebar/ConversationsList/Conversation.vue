@@ -98,8 +98,7 @@
 		<template v-if="isDialogOpen" #extra>
 			<NcDialog :open.sync="isDialogOpen"
 				:name="t('spreed','Delete conversation')"
-				:message="dialogMessage"
-				:container="container">
+				:message="dialogMessage">
 				<template #actions>
 					<NcButton type="tertiary" @click="isDialogOpen = false">
 						{{ t('spreed', 'No') }}
@@ -208,10 +207,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		canFavorite() {
 			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
 		},

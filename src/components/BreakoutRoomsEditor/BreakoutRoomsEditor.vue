@@ -4,8 +4,7 @@
 -->
 
 <template>
-	<NcModal :container="container"
-		:class="{'modal-mask__participants-step': isEditingParticipants}"
+	<NcModal :class="{'modal-mask__participants-step': isEditingParticipants}"
 		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor"
@@ -130,10 +129,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		modalTitle() {
 			return this.isEditingParticipants
 				? t('spreed', 'Assign participants to rooms')

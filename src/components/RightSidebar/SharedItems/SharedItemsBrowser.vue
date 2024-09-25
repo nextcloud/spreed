@@ -5,7 +5,6 @@
 
 <template>
 	<NcModal size="large"
-		:container="container"
 		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="shared-items-browser">
@@ -96,10 +95,6 @@ export default {
 	computed: {
 		scroller() {
 			return this.$refs.scroller
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
 		},
 	},
 

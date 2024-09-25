@@ -6,7 +6,6 @@
 <template>
 	<NcDialog :name="t('spreed', 'Create and share a new file')"
 		size="large"
-		:container="container"
 		class="templates-picker"
 		close-on-click-outside
 		@update:open="closeModal">
@@ -77,11 +76,6 @@ export default {
 
 	props: {
 		token: {
-			type: String,
-			required: true,
-		},
-
-		container: {
 			type: String,
 			required: true,
 		},

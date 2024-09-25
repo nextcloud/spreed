@@ -5,7 +5,6 @@
 
 <template>
 	<RoomSelector v-if="modal"
-		:container="container"
 		list-open-conversations
 		show-postable-only
 		:dialog-title="dialogTitle"
@@ -39,10 +38,6 @@ export default {
 	},
 
 	computed: {
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		dialogTitle() {
 			return t('spreed', 'Join open conversations')
 		},
