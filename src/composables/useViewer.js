@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, nextTick, ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 
+import { useDocumentFullscreen } from './useDocumentFullscreen.ts'
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 import { useSidebarStore } from '../stores/sidebar.js'
@@ -74,7 +75,7 @@ function reparentViewer(isFullscreen) {
 
 	if (isFullscreen) {
 		// When changed to the fullscreen mode, Viewer should be moved to the talk app
-		document.getElementById('content-vue').appendChild(viewerElement)
+		document.getElementById('content-vue')?.appendChild(viewerElement)
 	} else {
 		// In normal mode if it was in fullscreen before, move back to body
 		// Otherwise it will be overlapped by web-page's header
@@ -98,7 +99,7 @@ const isViewerOpen = ref(false)
 export function useViewer(fileAPI) {
 	const store = useStore()
 	const isInCall = useIsInCall()
-	const isFullscreen = computed(() => store.getters.isFullscreen())
+	const isFullscreen = useDocumentFullscreen()
 	const sidebarStore = useSidebarStore()
 
 	watch(isFullscreen, () => {

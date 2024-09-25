@@ -13,7 +13,6 @@ import participantsStore from './participantsStore.js'
 import soundsStore from './soundsStore.js'
 import tokenStore from './tokenStore.js'
 import uiModeStore from './uiModeStore.js'
-import windowVisibilityStore from './windowVisibilityStore.js'
 
 export default {
 	modules: {
@@ -27,7 +26,6 @@ export default {
 		soundsStore,
 		tokenStore,
 		uiModeStore,
-		windowVisibilityStore,
 	},
 
 	mutations: {},
