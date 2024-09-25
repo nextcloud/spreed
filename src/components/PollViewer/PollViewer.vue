@@ -112,6 +112,7 @@ import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
+import { usePollsStore } from '../../stores/polls.js'
 
 export default {
 	name: 'PollViewer',
@@ -138,6 +139,7 @@ export default {
 
 		return {
 			isInCall: useIsInCall(),
+			pollsStore: usePollsStore(),
 			voteToSubmit,
 			modalPage,
 			loading,
@@ -147,7 +149,7 @@ export default {
 
 	computed: {
 		activePoll() {
-			return this.$store.getters.activePoll
+			return this.pollsStore.activePoll
 		},
 
 		name() {
@@ -167,7 +169,7 @@ export default {
 		},
 
 		poll() {
-			return this.$store.getters.getPoll(this.token, this.id)
+			return this.pollsStore.getPoll(this.token, this.id)
 		},
 
 		selfHasVoted() {
@@ -238,12 +240,12 @@ export default {
 		},
 
 		id(value) {
-			this.$store.dispatch('hidePollToast', value)
+			this.pollsStore.hidePollToast(value)
 		},
 
 		isInCall(value) {
 			if (!value) {
-				this.$store.dispatch('hideAllPollToasts')
+				this.pollsStore.hideAllPollToasts()
 			}
 		},
 
@@ -274,7 +276,7 @@ export default {
 		n,
 		getPollData() {
 			if (!this.poll) {
-				this.$store.dispatch('getPollData', {
+				this.pollsStore.getPollData({
 					token: this.token,
 					pollId: this.id,
 				})
@@ -292,21 +294,21 @@ export default {
 				return
 			}
 
-			this.$store.dispatch('addPollToast', { token, message })
+			this.pollsStore.addPollToast({ token, message })
 		},
 
 		dismissModal() {
-			this.$store.dispatch('removeActivePoll')
+			this.pollsStore.removeActivePoll()
 			this.voteToSubmit = []
 		},
 
 		async submitVote() {
 			this.loading = true
 			try {
-				await this.$store.dispatch('submitVote', {
+				await this.pollsStore.submitVote({
 					token: this.token,
 					pollId: this.id,
-					vote: this.voteToSubmit.map(element => +element),
+					optionIds: this.voteToSubmit.map(element => +element),
 				})
 				this.modalPage = 'results'
 			} catch (error) {
@@ -319,7 +321,7 @@ export default {
 		async endPoll() {
 			this.loading = true
 			try {
-				await this.$store.dispatch('endPoll', {
+				await this.pollsStore.endPoll({
 					token: this.token,
 					pollId: this.id,
 				})

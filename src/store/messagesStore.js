@@ -30,6 +30,7 @@ import {
 } from '../services/messagesService.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { usePollsStore } from '../stores/polls.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
@@ -575,7 +576,8 @@ const actions = {
 		}
 
 		if (message.systemMessage === 'poll_voted') {
-			context.dispatch('debounceGetPollData', {
+			const pollsStore = usePollsStore()
+			pollsStore.debounceGetPollData({
 				token,
 				pollId: message.messageParameters.poll.id,
 			})
@@ -584,7 +586,8 @@ const actions = {
 		}
 
 		if (message.systemMessage === 'poll_closed') {
-			context.dispatch('getPollData', {
+			const pollsStore = usePollsStore()
+			pollsStore.getPollData({
 				token,
 				pollId: message.messageParameters.poll.id,
 			})

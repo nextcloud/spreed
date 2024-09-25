@@ -113,7 +113,6 @@ describe('messagesStore', () => {
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastMessage = updateConversationLastMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastReadMessage = updateConversationLastReadMessageMock
 		testStoreConfig.modules.conversationsStore.actions.updateConversationLastActive = updateConversationLastActiveAction
-		testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
 
 		store = new Vuex.Store(testStoreConfig)
 	})

@@ -141,6 +141,7 @@ import CallButton from '../../../../TopBar/CallButton.vue'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { EventBus } from '../../../../../services/EventBus.js'
+import { usePollsStore } from '../../../../../stores/polls.js'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
@@ -199,8 +200,10 @@ export default {
 			isEditable,
 			isFileShare,
 		} = useMessageInfo(message)
+
 		return {
 			isInCall: useIsInCall(),
+			pollsStore: usePollsStore(),
 			isEditable,
 			isFileShare,
 		}
@@ -241,7 +244,7 @@ export default {
 				return false
 			}
 
-			return this.isInCall && !!this.$store.getters.getNewPolls[this.message.messageParameters.object.id]
+			return this.isInCall && this.pollsStore.isNewPoll(this.message.messageParameters.object.id)
 		},
 
 		isTemporary() {
