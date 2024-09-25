@@ -8,7 +8,7 @@ import Vue from 'vue'
 
 import { BOT } from '../constants.js'
 import { disableBotForConversation, enableBotForConversation, getConversationBots } from '../services/botsService.ts'
-import type { Bot } from '../types'
+import type { Bot } from '../types/index.ts'
 
 type State = {
 	bots: Record<string, Record<number, Bot>>

@@ -6,7 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import type { acceptShareResponse, getSharesResponse, rejectShareResponse, getCapabilitiesResponse } from '../types'
+import type { acceptShareResponse, getSharesResponse, rejectShareResponse, getCapabilitiesResponse } from '../types/index.ts'
 
 /**
  * Fetches list of shares for a current user

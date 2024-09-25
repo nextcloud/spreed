@@ -371,7 +371,7 @@ import {
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
-import { getStatusMessage } from '../../../utils/userStatus.js'
+import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.ts'
 
 export default {
 	name: 'Participant',
@@ -826,23 +826,7 @@ export default {
 		},
 
 		preloadedUserStatus() {
-			if (Object.prototype.hasOwnProperty.call(this.participant, 'statusMessage')) {
-				// We preloaded the status when via participants API
-				return {
-					status: this.participant.status || null,
-					message: this.participant.statusMessage || null,
-					icon: this.participant.statusIcon || null,
-				}
-			}
-			if (Object.prototype.hasOwnProperty.call(this.participant, 'status')) {
-				// We preloaded the status when via search API
-				return {
-					status: this.participant.status.status || null,
-					message: this.participant.status.message || null,
-					icon: this.participant.status.icon || null,
-				}
-			}
-			return undefined
+			return getPreloadedUserStatus(this.participant)
 		},
 
 		attendeePermissions() {

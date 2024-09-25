@@ -11,8 +11,8 @@ import type {
 	addReactionResponse,
 	deleteReactionParams,
 	deleteReactionResponse,
-	getReactionsResponse
-} from '../types'
+	getReactionsResponse,
+} from '../types/index.ts'
 
 const addReactionToMessage = async function(token: string, messageId: number, selectedEmoji: addReactionParams['reaction'], options: object): addReactionResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', {
