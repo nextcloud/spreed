@@ -1,136 +1,127 @@
 version: 2
 updates:
+# Composer: Code-Dependencies
 - package-ecosystem: composer
   directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
   schedule:
     interval: weekly
     day: saturday
     time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
+    timezone: Europe/Berlin
+
 - package-ecosystem: composer
-  directory: "/tests/integration"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
-- package-ecosystem: composer
-  directory: "/vendor-bin/csfixer"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
-- package-ecosystem: composer
-  directory: "/vendor-bin/mozart"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
-- package-ecosystem: composer
-  directory: "/vendor-bin/phpunit"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
-- package-ecosystem: composer
-  directory: "/vendor-bin/psalm"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
-  open-pull-requests-limit: 10
-- package-ecosystem: composer
-  directory: "/"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
   target-branch: stable30
-  open-pull-requests-limit: 10
+  directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
   ignore:
-    # ignore all GitHub linguist patch updates
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
 - package-ecosystem: composer
-  directory: "/"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Paris
   target-branch: stable29
-  open-pull-requests-limit: 10
+  directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
   ignore:
-    # ignore all GitHub linguist patch updates
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
 - package-ecosystem: composer
+  target-branch: stable28
   directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+# Composer: Tooling
+- package-ecosystem: composer
+  directories:
+    - "/"
+    - "/tests/integration"
+    - "/vendor-bin/csfixer"
+    - "/vendor-bin/mozart"
+    - "/vendor-bin/phpunit"
+    - "/vendor-bin/psalm"
+  commit-message:
+    prefix: "ci"
+    include: "scope"
+  versioning-strategy: "increase"
   schedule:
     interval: weekly
     day: saturday
     time: "03:00"
-    timezone: Europe/Paris
-  target-branch: stable28
-  open-pull-requests-limit: 10
-  ignore:
-    # ignore all GitHub linguist patch updates
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    timezone: Europe/Berlin
+
+# NPM: Code-Dependencies
 - package-ecosystem: npm
   directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
   schedule:
     interval: weekly
     day: saturday
     time: "03:00"
-    timezone: Europe/Paris
+    timezone: Europe/Berlin
+
+- package-ecosystem: npm
   target-branch: stable30
-  open-pull-requests-limit: 10
-  ignore:
-    # ignore all GitHub linguist patch updates
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
-- package-ecosystem: npm
   directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
   schedule:
     interval: weekly
     day: saturday
     time: "03:00"
-    timezone: Europe/Paris
+    timezone: Europe/Berlin
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+- package-ecosystem: npm
   target-branch: stable29
-  open-pull-requests-limit: 10
-  ignore:
-    # ignore all GitHub linguist patch updates
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
-- package-ecosystem: npm
   directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
   schedule:
     interval: weekly
     day: saturday
     time: "03:00"
-    timezone: Europe/Paris
-  target-branch: stable28
-  open-pull-requests-limit: 10
+    timezone: Europe/Berlin
   ignore:
-    # ignore all GitHub linguist patch updates
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+- package-ecosystem: npm
+  target-branch: stable28
+  directory: "/"
+  commit-message:
+    prefix: "build"
+    include: "scope"
+  versioning-strategy: "increase"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
+  ignore:
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
