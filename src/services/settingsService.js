@@ -63,15 +63,14 @@ const setSIPSettings = async function(sipGroups, sharedSecret, dialInInfo) {
 	})
 }
 
-const setPlaySounds = async function(isGuest, enabled) {
-	const savableValue = enabled ? 'yes' : 'no'
-	if (!isGuest) {
-		return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
+const setPlaySounds = async function(hasUserAccount, value) {
+	if (hasUserAccount) {
+		await axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
 			key: 'play_sounds',
-			value: savableValue,
+			value,
 		})
 	} else {
-		BrowserStorage.setItem('play_sounds', savableValue)
+		BrowserStorage.setItem('play_sounds', value)
 	}
 }
 

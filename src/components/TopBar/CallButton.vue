@@ -112,6 +112,7 @@ import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useSettingsStore } from '../../stores/settings.js'
+import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
 
@@ -197,6 +198,7 @@ export default {
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			talkHashStore: useTalkHashStore(),
 			settingsStore: useSettingsStore(),
+			soundsStore: useSoundsStore(),
 			isMobile: useIsMobile(),
 		}
 	},
@@ -436,7 +438,7 @@ export default {
 
 		handleClick() {
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
-			this.$store.dispatch('createAudioObjects')
+			this.soundsStore.initAudioObjects()
 
 			if (this.isMediaSettings || this.isPhoneRoom) {
 				emit('talk:media-settings:hide')
