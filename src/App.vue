@@ -38,10 +38,10 @@ import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 
 import { useActiveSession } from './composables/useActiveSession.js'
+import { useDocumentVisibility } from './composables/useDocumentVisibility.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.js'
-import { useWindowVisibility } from './composables/useWindowVisibility.ts'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
 import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
@@ -72,7 +72,7 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
-			isWindowVisible: useWindowVisibility(),
+			isDocumentVisible: useDocumentVisibility(),
 			supportSessionState: useActiveSession(),
 			federationStore: useFederationStore(),
 		}
@@ -188,7 +188,7 @@ export default {
 
 	watch: {
 		atLeastOneLastMessageIdChanged() {
-			if (this.isWindowVisible) {
+			if (this.isDocumentVisible) {
 				return
 			}
 
@@ -221,7 +221,7 @@ export default {
 			}
 		},
 
-		isWindowVisible(value) {
+		isDocumentVisible(value) {
 			if (value) {
 				// Remove the potential "*" marker for unread chat messages
 				let title = this.getConversationName(this.token)
