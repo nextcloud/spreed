@@ -103,8 +103,14 @@ class FederationManager {
 
 		if ($couldHaveInviteWithOtherCasing) {
 			try {
-				$this->invitationMapper->getInvitationForUserByLocalRoom($room, $user->getUID(), true);
-				throw new ProviderCouldNotAddShareException('User already invited', '', Http::STATUS_BAD_REQUEST);
+				$invitation = $this->invitationMapper->getInvitationForUserByLocalRoom($room, $user->getUID(), true);
+				$invitation->setAccessToken($sharedSecret);
+				$invitation->setRemoteAttendeeId($remoteAttendeeId);
+				$invitation->setInviterCloudId($inviterCloudId);
+				$invitation->setInviterDisplayName($inviterDisplayName);
+				$this->invitationMapper->update($invitation);
+
+				return $invitation;
 			} catch (DoesNotExistException) {
 				// Not invited with any casing already, so all good.
 			}
