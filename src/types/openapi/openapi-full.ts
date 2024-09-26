@@ -1231,7 +1231,10 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Archive a conversation */
+        /**
+         * Archive a conversation
+         * @description - Turns off call notifications - Reduces chat notifications in group and public rooms when it was "default" resulting in "always"
+         */
         post: operations["room-archive-conversation"];
         /** Unarchive a conversation */
         delete: operations["room-unarchive-conversation"];

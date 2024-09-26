@@ -15948,6 +15948,7 @@
             "post": {
                 "operationId": "room-archive-conversation",
                 "summary": "Archive a conversation",
+                "description": "- Turns off call notifications - Reduces chat notifications in group and public rooms when it was \"default\" resulting in \"always\"",
                 "tags": [
                     "room"
                 ],

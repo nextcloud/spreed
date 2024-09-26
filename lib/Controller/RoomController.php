@@ -1546,6 +1546,9 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Archive a conversation
 	 *
+	 * - Turns off call notifications
+	 * - Reduces chat notifications in group and public rooms when it was "default" resulting in "always"
+	 *
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *
 	 * 200: Conversation was archived
