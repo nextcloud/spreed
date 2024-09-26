@@ -332,6 +332,7 @@ export type components = {
             unreadMentionDirect: boolean;
             /** Format: int64 */
             unreadMessages: number;
+            isArchived: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

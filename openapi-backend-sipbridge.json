@@ -554,7 +554,8 @@
                     "type",
                     "unreadMention",
                     "unreadMentionDirect",
-                    "unreadMessages"
+                    "unreadMessages",
+                    "isArchived"
                 ],
                 "properties": {
                     "actorId": {
@@ -769,6 +770,9 @@
                     "unreadMessages": {
                         "type": "integer",
                         "format": "int64"
+                    },
+                    "isArchived": {
+                        "type": "boolean"
                     }
                 }
             },

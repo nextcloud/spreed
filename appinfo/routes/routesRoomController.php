@@ -111,5 +111,9 @@ return [
 		['name' => 'Room#getCapabilities', 'url' => '/api/{apiVersion}/room/{token}/capabilities', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setMentionPermissions() */
 		['name' => 'Room#setMentionPermissions', 'url' => '/api/{apiVersion}/room/{token}/mention-permissions', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::archiveConversation() */
+		['name' => 'Room#archiveConversation', 'url' => '/api/{apiVersion}/room/{token}/archive', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::unarchiveConversation() */
+		['name' => 'Room#unarchiveConversation', 'url' => '/api/{apiVersion}/room/{token}/archive', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 	],
 ];

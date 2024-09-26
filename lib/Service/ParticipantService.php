@@ -299,6 +299,26 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param Participant $participant
+	 */
+	public function archiveConversation(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setArchived(true);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function unarchiveConversation(Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setArchived(false);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
 	 * @param RoomService $roomService
 	 * @param Room $room
 	 * @param IUser $user
@@ -1733,6 +1753,7 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.notification_calls', $query->createNamedParameter(Participant::NOTIFY_CALLS_ON)))
+			->andWhere($query->expr()->eq('a.archived', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($query->expr()->isNull('s.in_call'));
 
 		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {

@@ -39,6 +39,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setReadPrivacy(int $readPrivacy)
  * @method int getReadPrivacy()
  * @method void setPermissions(int $permissions)
+ * @method void setArchived(bool $archived)
+ * @method bool isArchived()
  * @internal
  * @method int getPermissions()
  * @method void setAccessToken(string $accessToken)
@@ -108,6 +110,7 @@ class Attendee extends Entity {
 	protected bool $favorite = false;
 	protected int $notificationLevel = 0;
 	protected int $notificationCalls = 0;
+	protected bool $archived = false;
 	protected int $lastJoinedCall = 0;
 	protected int $lastReadMessage = 0;
 	protected int $lastMentionMessage = 0;
@@ -131,6 +134,7 @@ class Attendee extends Entity {
 		$this->addType('pin', 'string');
 		$this->addType('participantType', 'int');
 		$this->addType('favorite', 'bool');
+		$this->addType('archived', 'bool');
 		$this->addType('notificationLevel', 'int');
 		$this->addType('notificationCalls', 'int');
 		$this->addType('lastJoinedCall', 'int');
