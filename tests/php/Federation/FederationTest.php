@@ -145,7 +145,7 @@ class FederationTest extends TestCase {
 
 		$providerId = '3';
 		$token = 'abcdefghijklmno';
-		$shareWith = 'test@https://remote.test.local';
+		$shareWith = 'test@remote.test.local';
 		$name = 'abcdefgh';
 		$owner = 'Owner\'s name';
 		$ownerId = 'owner';

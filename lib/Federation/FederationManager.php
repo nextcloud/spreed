@@ -10,10 +10,12 @@ namespace OCA\Talk\Federation;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
@@ -21,8 +23,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Http;
-use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\IUser;
@@ -53,6 +53,7 @@ class FederationManager {
 		private ParticipantService $participantService,
 		private RoomService $roomService,
 		private InvitationMapper $invitationMapper,
+		private AttendeeMapper $attendeeMapper,
 		private BackendNotifier $backendNotifier,
 		private IManager $notificationManager,
 		private ICloudIdManager $cloudIdManager,
@@ -108,6 +109,18 @@ class FederationManager {
 				$invitation->setRemoteAttendeeId($remoteAttendeeId);
 				$invitation->setInviterCloudId($inviterCloudId);
 				$invitation->setInviterDisplayName($inviterDisplayName);
+
+				if ($invitation->getState() === Invitation::STATE_ACCEPTED) {
+					try {
+						$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $user->getUID());
+						$attendee = $participant->getAttendee();
+						$attendee->setAccessToken($sharedSecret);
+						$attendee->setRemoteId((string)$remoteAttendeeId);
+						$this->attendeeMapper->update($attendee);
+					} catch (ParticipantNotFoundException) {
+						$invitation->setState(Invitation::STATE_PENDING);
+					}
+				}
 				$this->invitationMapper->update($invitation);
 
 				return $invitation;

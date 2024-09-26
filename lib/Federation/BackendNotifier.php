@@ -81,6 +81,9 @@ class BackendNotifier {
 		$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
 
 		$remote = $this->prepareRemoteUrl($invitedCloudId->getRemote());
+		if (str_starts_with($remote, 'https://')) {
+			$remote = substr($remote, 8);
+		}
 
 		$shareWithCloudId = $invitedCloudId->getUser() . '@' . $remote;
 		$share = $this->cloudFederationFactory->getCloudFederationShare(
