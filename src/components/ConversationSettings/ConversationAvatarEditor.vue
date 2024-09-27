@@ -48,15 +48,15 @@
 					</template>
 
 					<!-- Set picture as avatar -->
-					<NcButton :title="t('settings', 'Upload conversation picture')"
-						:aria-label="t('settings', 'Upload conversation picture')"
+					<NcButton :title="t('spreed', 'Upload conversation picture')"
+						:aria-label="t('spreed', 'Upload conversation picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
 							<Upload :size="20" />
 						</template>
 					</NcButton>
-					<NcButton :title="t('settings', 'Choose conversation picture from files')"
-						:aria-label="t('settings', 'Choose conversation picture from files')"
+					<NcButton :title="t('spreed', 'Choose conversation picture from files')"
+						:aria-label="t('spreed', 'Choose conversation picture from files')"
 						@click="showFilePicker = true">
 						<template #icon>
 							<Folder :size="20" />
@@ -65,8 +65,8 @@
 
 					<!-- Remove existing avatar -->
 					<NcButton v-if="hasAvatar"
-						:title="t('settings', 'Remove conversation picture')"
-						:aria-label="t('settings', 'Remove conversation picture')"
+						:title="t('spreed', 'Remove conversation picture')"
+						:aria-label="t('spreed', 'Remove conversation picture')"
 						@click="removeAvatar">
 						<template #icon>
 							<Delete :size="20" />
