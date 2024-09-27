@@ -811,6 +811,7 @@ OC.L10N.register(
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "D'acord: el servidor web ha retornat correctament els fitxers \".wasm\" i \".tflite\".",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "Sembla que la configuració de PHP i Apache no és compatible. Tingueu en compte que PHP només es pot utilitzar amb el mòdul MPM_PREFORK i PHP-FPM només es pot utilitzar amb el mòdul MPM_EVENT.",
     "Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "No s'ha pogut detectar la configuració de PHP i Apache perquè exec està desactivat o apachectl no funciona com s'esperava. Tingueu en compte que PHP només es pot utilitzar amb el mòdul MPM_PREFORK i PHP-FPM només es pot utilitzar amb el mòdul MPM_EVENT.",
+    "Federated user" : "Usuari federat",
     "Number of breakout rooms" : "Nombre de sales de treball",
     "Assignment method" : "Mètode d'assignació",
     "Automatically assign participants" : "Assigna participants automàticament",
