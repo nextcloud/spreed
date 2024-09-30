@@ -6,10 +6,7 @@
 <template>
 	<div class="audio-recorder">
 		<NcButton v-if="!isRecording"
-			v-tooltip.auto="{
-				content: startRecordingTooltip,
-				delay: tooltipDelay,
-			}"
+			:title="startRecordingTooltip"
 			:aria-label="startRecordingTooltip"
 			type="tertiary"
 			:disabled="!canStartRecording"
@@ -19,11 +16,8 @@
 			</template>
 		</NcButton>
 		<div v-else class="wrapper">
-			<NcButton v-tooltip.auto="{
-					content: abortRecordingTooltip,
-					delay: tooltipDelay,
-				}"
-				type="error"
+			<NcButton type="error"
+				:title="abortRecordingTooltip"
 				:aria-label="abortRecordingTooltip"
 				@click="abortRecording">
 				<template #icon>
@@ -35,11 +29,8 @@
 				<span class="time">
 					{{ parsedRecordTime }}</span>
 			</div>
-			<NcButton v-tooltip.auto="{
-					content: stopRecordingTooltip,
-					delay: tooltipDelay,
-				}"
-				type="success"
+			<NcButton type="success"
+				:title="stopRecordingTooltip"
 				:aria-label="stopRecordingTooltip"
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
@@ -62,7 +53,6 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
@@ -74,10 +64,6 @@ export default {
 		Close,
 		Check,
 		NcButton,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
@@ -125,10 +111,6 @@ export default {
 			const seconds = this.recordTime.seconds.toString().length === 2 ? this.recordTime.seconds : `0${this.recordTime.seconds}`
 			const minutes = this.recordTime.minutes.toString().length === 2 ? this.recordTime.minutes : `0${this.recordTime.minutes}`
 			return `${minutes}:${seconds}`
-		},
-
-		tooltipDelay() {
-			return { show: 500, hide: 200 }
 		},
 
 		startRecordingTooltip() {

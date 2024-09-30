@@ -53,7 +53,7 @@
 			type="tertiary" />
 
 		<NcButton v-if="isVirtualBackgroundAvailable && isSidebar"
-			v-tooltip="toggleVirtualBackgroundButtonLabel"
+			:title="toggleVirtualBackgroundButtonLabel"
 			type="tertiary"
 			:aria-label="toggleVirtualBackgroundButtonLabel"
 			:class="blurButtonClass"
@@ -66,7 +66,7 @@
 
 		<NcActions v-if="!isSidebar && isScreensharing"
 			id="screensharing-button"
-			v-tooltip="screenSharingButtonTooltip"
+			:title="screenSharingButtonTitle"
 			type="error"
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
@@ -92,7 +92,7 @@
 			</NcActionButton>
 		</NcActions>
 		<NcButton v-else-if="!isSidebar"
-			v-tooltip="screenSharingButtonTooltip"
+			:title="screenSharingButtonTitle"
 			type="tertiary"
 			:aria-label="screenSharingButtonAriaLabel"
 			:disabled="!isScreensharingAllowed"
@@ -122,7 +122,6 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
 import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
@@ -137,9 +136,6 @@ export default {
 
 	name: 'TopBarMediaControls',
 
-	directives: {
-		Tooltip,
-	},
 	components: {
 		LocalAudioControlButton,
 		LocalVideoControlButton,
@@ -232,7 +228,7 @@ export default {
 			return this.model.attributes.localScreen
 		},
 
-		screenSharingButtonTooltip() {
+		screenSharingButtonTitle() {
 			if (!this.isScreensharingAllowed) {
 				return t('spreed', 'You are not allowed to enable screensharing')
 			}

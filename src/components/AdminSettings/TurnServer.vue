@@ -19,11 +19,11 @@
 			@input="updateSchemes" />
 
 		<NcTextField ref="turn_server"
-			v-tooltip.auto="turnServerError"
 			name="turn_server"
 			placeholder="turnserver:port"
 			class="turn-server__textfield"
 			:class="{ error: turnServerError }"
+			:title="turnServerError"
 			:value="server"
 			:disabled="loading"
 			:label="t('spreed', 'TURN server URL')"
@@ -92,16 +92,11 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { isCertificateValid } from '../../services/certificateService.js'
 
 export default {
 	name: 'TurnServer',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		AlertCircle,
