@@ -10,10 +10,14 @@ namespace OCA\Talk\Federation;
 
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Exceptions\RoomHasNoModeratorException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\RetryNotification;
 use OCA\Talk\Model\RetryNotificationMapper;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -494,12 +498,55 @@ class BackendNotifier {
 	}
 
 	protected function retrySendingFailedNotification(RetryNotification $retryNotification): void {
+		$data = json_decode($retryNotification->getNotification(), true, flags: JSON_THROW_ON_ERROR);
+		if ($retryNotification->getNotificationType() === FederationManager::NOTIFICATION_ROOM_MODIFIED) {
+			$localToken = $data['remoteToken'];
+
+			try {
+				$manager = \OCP\Server::get(Manager::class);
+				$room = $manager->getRoomByToken($localToken);
+			} catch (RoomNotFoundException) {
+				// Room was deleted in the meantime
+				return;
+			}
+
+			if ($data['changedProperty'] === ARoomModifiedEvent::PROPERTY_LOBBY) {
+				$dateTime = $room->getLobbyTimer();
+				$data['newValue'] = $room->getLobbyState();
+				$data['dateTime'] = (string)$dateTime?->getTimestamp();
+			} elseif ($data['changedProperty'] === ARoomModifiedEvent::PROPERTY_ACTIVE_SINCE) {
+				if ($room->getActiveSince() === null) {
+					$data['newValue'] = null;
+					$data['callFlag'] = Participant::FLAG_DISCONNECTED;
+				} else {
+					$data['newValue'] = $room->getActiveSince()->getTimestamp();
+					$data['callFlag'] = $room->getCallFlag();
+				}
+			} else {
+				$data['newValue'] = match ($data['changedProperty']) {
+					ARoomModifiedEvent::PROPERTY_AVATAR => $room->getAvatar(),
+					ARoomModifiedEvent::PROPERTY_CALL_RECORDING => $room->getCallRecording(),
+					ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS => $room->getDefaultPermissions(),
+					ARoomModifiedEvent::PROPERTY_DESCRIPTION => $room->getDescription(),
+					ARoomModifiedEvent::PROPERTY_IN_CALL => $room->getCallFlag(),
+					ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS => $room->getMentionPermissions(),
+					ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $room->getMessageExpiration(),
+					ARoomModifiedEvent::PROPERTY_NAME => $room->getName(),
+					ARoomModifiedEvent::PROPERTY_READ_ONLY => $room->getReadOnly(),
+					ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT => $room->getRecordingConsent(),
+					ARoomModifiedEvent::PROPERTY_SIP_ENABLED => $room->getSIPEnabled(),
+					ARoomModifiedEvent::PROPERTY_TYPE => $room->getType(),
+					default => $data['newValue'],
+				};
+			}
+		}
+
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			$retryNotification->getNotificationType(),
 			$retryNotification->getResourceType(),
 			$retryNotification->getProviderId(),
-			json_decode($retryNotification->getNotification(), true, flags: JSON_THROW_ON_ERROR),
+			$data,
 		);
 
 		$success = $this->sendUpdateToRemote($retryNotification->getRemoteServer(), $notification, $retryNotification->getNumAttempts());
