@@ -33,7 +33,7 @@
 				group>
 				<NcButton v-if="showAudioIndicator"
 					key="audioIndicator"
-					v-tooltip="audioButtonTooltip"
+					:title="audioButtonTooltip"
 					:aria-label="audioButtonTooltip"
 					class="audioIndicator"
 					type="tertiary-no-background"
@@ -47,7 +47,7 @@
 
 				<NcButton v-if="showVideoIndicator"
 					key="videoIndicator"
-					v-tooltip="videoButtonTooltip"
+					:title="videoButtonTooltip"
 					:aria-label="videoButtonTooltip"
 					class="videoIndicator"
 					type="tertiary-no-background"
@@ -60,7 +60,7 @@
 
 				<NcButton v-if="showScreenSharingIndicator"
 					key="screenSharingIndicator"
-					v-tooltip="t('spreed', 'Show screen')"
+					:title="t('spreed', 'Show screen')"
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
 					:class="{'screen-visible': sharedData.screenVisible}"
@@ -101,7 +101,6 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
@@ -121,10 +120,6 @@ export default {
 		TransitionWrapper,
 		VideoIcon,
 		VideoOff,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	inheritAttrs: false,

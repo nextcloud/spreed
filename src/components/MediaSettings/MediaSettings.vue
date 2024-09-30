@@ -44,9 +44,9 @@
 				<!-- Audio and video toggles -->
 				<div class="media-settings__toggles">
 					<!-- Audio toggle -->
-					<NcButton v-tooltip="audioButtonTooltip"
-						type="tertiary"
-						:aria-label="audioButtonTooltip"
+					<NcButton type="tertiary"
+						:title="audioButtonTitle"
+						:aria-label="audioButtonTitle"
 						:disabled="!audioPreviewAvailable"
 						@click="toggleAudio">
 						<template #icon>
@@ -59,9 +59,9 @@
 					</NcButton>
 
 					<!-- Video toggle -->
-					<NcButton v-tooltip="videoButtonTooltip"
-						type="tertiary"
-						:aria-label="videoButtonTooltip"
+					<NcButton type="tertiary"
+						:title="videoButtonTitle"
+						:aria-label="videoButtonTitle"
 						:disabled="!videoPreviewAvailable"
 						@click="toggleVideo">
 						<template #icon>
@@ -193,7 +193,6 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
@@ -216,10 +215,6 @@ import { localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {
 	name: 'MediaSettings',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		AvatarWrapper,
@@ -361,14 +356,14 @@ export default {
 			return this.videoPreviewAvailable && this.videoOn
 		},
 
-		audioButtonTooltip() {
+		audioButtonTitle() {
 			if (!this.audioPreviewAvailable) {
 				return t('spreed', 'No audio')
 			}
 			return this.audioOn ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
 		},
 
-		videoButtonTooltip() {
+		videoButtonTitle() {
 			if (!this.videoPreviewAvailable) {
 				return t('spreed', 'No camera')
 			}

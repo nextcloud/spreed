@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcButton v-tooltip="audioButtonTooltip"
+	<NcButton :title="audioButtonTitle"
 		:type="type"
 		:aria-label="audioButtonAriaLabel"
 		:class="{ 'no-audio-available': !model.attributes.audioAvailable }"
@@ -26,7 +26,6 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 
@@ -39,10 +38,6 @@ export default {
 	components: {
 		NcButton,
 		VolumeIndicator,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
@@ -81,39 +76,27 @@ export default {
 			return this.model.attributes.audioAvailable && this.model.attributes.audioEnabled
 		},
 
-		audioButtonTooltip() {
+		audioButtonTitle() {
 			if (!this.isAudioAllowed) {
 				return t('spreed', 'You are not allowed to enable audio')
 			}
 
 			if (!this.model.attributes.audioAvailable) {
-				return {
-					content: t('spreed', 'No audio. Click to select device'),
-					show: false,
-				}
+				return t('spreed', 'No audio. Click to select device')
 			}
 
 			if (this.speakingWhileMutedNotification && !this.screenSharingMenuOpen) {
-				return {
-					content: this.speakingWhileMutedNotification,
-					show: true,
-				}
+				return this.speakingWhileMutedNotification
 			}
 
-			let content = ''
 			if (this.model.attributes.audioEnabled) {
-				content = this.disableKeyboardShortcuts
+				return this.disableKeyboardShortcuts
 					? t('spreed', 'Mute audio')
 					: t('spreed', 'Mute audio (M)')
 			} else {
-				content = this.disableKeyboardShortcuts
+				return this.disableKeyboardShortcuts
 					? t('spreed', 'Unmute audio')
 					: t('spreed', 'Unmute audio (M)')
-			}
-
-			return {
-				content,
-				show: false,
 			}
 		},
 

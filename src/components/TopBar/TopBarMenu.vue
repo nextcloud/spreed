@@ -6,7 +6,7 @@
 <template>
 	<div class="top-bar-menu">
 		<TransitionExpand v-if="isInCall" :show="isHandRaised" direction="horizontal">
-			<NcButton v-tooltip="raiseHandButtonLabel"
+			<NcButton :title="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
 				type="tertiary"
 				@click.stop="toggleHandRaised">
@@ -19,7 +19,7 @@
 		</TransitionExpand>
 
 		<NcActions v-if="!isSidebar"
-			v-tooltip="t('spreed', 'Conversation actions')"
+			:title="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
 			type="tertiary">
 			<!-- Menu icon: white if in call -->
@@ -169,7 +169,6 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import TransitionExpand from '../MediaSettings/TransitionExpand.vue'
 
@@ -213,10 +212,6 @@ export default {
 		RecordCircle,
 		StopIcon,
 		VideoIcon,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
