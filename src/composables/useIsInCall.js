@@ -9,6 +9,7 @@ import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import { useStore } from './useStore.js'
 import { EventBus } from '../services/EventBus.js'
 import SessionStorage from '../services/SessionStorage.js'
+import { useCallViewStore } from '../stores/callView.js'
 
 /**
  * Check whether the user joined the call of the current token in this PHP session or not
@@ -17,6 +18,7 @@ import SessionStorage from '../services/SessionStorage.js'
  */
 export function useIsInCall() {
 	const store = useStore()
+	const callViewStore = useCallViewStore()
 
 	const sessionStorageJoinedConversation = ref(null)
 
@@ -34,7 +36,7 @@ export function useIsInCall() {
 	})
 
 	return computed(() => {
-		if (store.getters.forceCallView) {
+		if (callViewStore.forceCallView) {
 			return true
 		}
 		return sessionStorageJoinedConversation.value === store.getters.getToken() && store.getters.isInCall(store.getters.getToken())
