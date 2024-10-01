@@ -105,6 +105,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
+import { useCallViewStore } from '../../../stores/callView.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
@@ -176,6 +177,12 @@ export default {
 
 	emits: ['bottom-bar-hover'],
 
+	setup() {
+		return {
+			callViewStore: useCallViewStore(),
+		}
+	},
+
 	data() {
 		return {
 			mouseover: false,
@@ -192,7 +199,7 @@ export default {
 			return !this.connectionStateFailedNoRestart && this.model.attributes.raisedHand.state
 		},
 		showStopFollowingButton() {
-			return this.isBig && this.$store.getters.selectedVideoPeerId !== null
+			return this.isBig && this.callViewStore.selectedVideoPeerId !== null
 		},
 
 		// Audio indicator
@@ -280,7 +287,7 @@ export default {
 
 		handleStopFollowing() {
 			this.$store.dispatch('stopPresentation')
-			this.$store.dispatch('selectedVideoPeerId', null)
+			this.callViewStore.setSelectedVideoPeerId(null)
 		},
 	},
 }

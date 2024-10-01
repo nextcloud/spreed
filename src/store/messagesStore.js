@@ -28,6 +28,7 @@ import {
 	postNewMessage,
 	postRichObjectToConversation,
 } from '../services/messagesService.ts'
+import { useCallViewStore } from '../stores/callView.js'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import { usePollsStore } from '../stores/polls.ts'
@@ -1187,7 +1188,8 @@ const actions = {
 					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 					&& !(message.actorId === context.getters.getActorId()
 						&& message.actorType === context.getters.getActorType())) {
-					context.dispatch('setCallHasJustEnded', message.timestamp)
+					const callViewStore = useCallViewStore()
+					callViewStore.setCallHasJustEnded(message.timestamp)
 				}
 			}
 

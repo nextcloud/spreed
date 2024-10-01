@@ -181,6 +181,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
+import { useCallViewStore } from '../../stores/callView.js'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -252,6 +253,7 @@ export default {
 			isInCall: useIsInCall(),
 			isFullscreen: useDocumentFullscreen(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
+			callViewStore: useCallViewStore(),
 		}
 	},
 
@@ -297,7 +299,7 @@ export default {
 		},
 
 		isGrid() {
-			return this.$store.getters.isGrid
+			return this.callViewStore.isGrid
 		},
 
 		isVirtualBackgroundAvailable() {
@@ -365,7 +367,7 @@ export default {
 		},
 
 		showCallLayoutSwitch() {
-			return !this.$store.getters.isEmptyCallView
+			return !this.callViewStore.isEmptyCallView
 		},
 	},
 
@@ -436,7 +438,7 @@ export default {
 
 		changeView() {
 			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid, clearLast: false })
-			this.$store.dispatch('selectedVideoPeerId', null)
+			this.callViewStore.setSelectedVideoPeerId(null)
 		},
 
 		showMediaSettingsDialog() {

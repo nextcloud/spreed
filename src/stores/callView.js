@@ -21,24 +21,13 @@ export const useCallViewStore = defineStore('callView', {
 		presentationStarted: false,
 		selectedVideoPeerId: null,
 		qualityWarningTooltipDismissed: false,
+		callEndedTimeout: null,
 		participantRaisedHands: {},
 		backgroundImageAverageColorCache: {},
-		callHasJustEnded: null,
 	}),
 
 	getters: {
-		forceCallView: (state) => state.forceCallView,
-		isViewerOverlay: (state) => state.isViewerOverlay,
-		isGrid: (state) => state.isGrid,
-		isStripeOpen: (state) => state.isStripeOpen,
-		isEmptyCallView: (state) => state.isEmptyCallView,
-		lastIsGrid: (state) => state.lastIsGrid,
-		lastIsStripeOpen: (state) => state.lastIsStripeOpen,
-		presentationStarted: (state) => state.presentationStarted,
-		callHasJustEnded: (state) => !!state.callHasJustEnded,
-		selectedVideoPeerId: (state) => {
-			return state.selectedVideoPeerId
-		},
+		callHasJustEnded: (state) => !!state.callEndedTimeout,
 		isQualityWarningTooltipDismissed: (state) => state.qualityWarningTooltipDismissed,
 		participantRaisedHandList: (state) => {
 			return state.participantRaisedHands
@@ -60,33 +49,6 @@ export const useCallViewStore = defineStore('callView', {
 
 	actions: {
 		// Mutations
-		setForceCallView(state, value) {
-			state.forceCallView = value
-		},
-		isViewerOverlay(state, value) {
-			state.isViewerOverlay = value
-		},
-		isGrid(state, value) {
-			state.isGrid = value
-		},
-		isStripeOpen(state, value) {
-			state.isStripeOpen = value
-		},
-		isEmptyCallView(state, value) {
-			state.isEmptyCallView = value
-		},
-		lastIsGrid(state, value) {
-			state.lastIsGrid = value
-		},
-		lastIsStripeOpen(state, value) {
-			state.lastIsStripeOpen = value
-		},
-		selectedVideoPeerId(state, value) {
-			state.selectedVideoPeerId = value
-		},
-		presentationStarted(state, value) {
-			state.presentationStarted = value
-		},
 		setQualityWarningTooltipDismissed(state, { qualityWarningTooltipDismissed }) {
 			state.qualityWarningTooltipDismissed = qualityWarningTooltipDismissed
 		},
@@ -109,17 +71,18 @@ export const useCallViewStore = defineStore('callView', {
 		clearBackgroundImageAverageColorCache(state) {
 			state.backgroundImageAverageColorCache = {}
 		},
-		setCallHasJustEnded(state, value) {
-			state.callHasJustEnded = value
-		},
 
 		// Actions
-		setForceCallView(context, value) {
-			context.commit('setForceCallView', value)
+		setForceCallView(value) {
+			this.forceCallView = value
 		},
 
-		selectedVideoPeerId(context, value) {
-			context.commit('selectedVideoPeerId', value)
+		setIsViewerOverlay(value) {
+			this.isViewerOverlay = value
+		},
+
+		setSelectedVideoPeerId(value) {
+			this.selectedVideoPeerId = value
 		},
 
 		joinCall(context, { token }) {
@@ -151,31 +114,25 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * @param {object} context default store context;
 		 * @param {object} data the wrapping object;
-		 * @param {boolean|null} [data.isViewerOverlay=null] true viewer overlay mode;
 		 * @param {boolean|null} [data.isGrid=null] true for enabled grid mode, false for speaker view;
 		 * @param {boolean|null} [data.isStripeOpen=null] true for visible striped mode, false for speaker view;
 		 * @param {boolean} [data.clearLast=true] set false to not reset last temporary remembered state;
 		 */
-		setCallViewMode(context, { isGrid = null, isStripeOpen = null, isViewerOverlay = null, clearLast = true }) {
-			if (isViewerOverlay !== null) {
-				context.commit('isViewerOverlay', isViewerOverlay)
-				return
-			}
-
+		setCallViewMode(context, { isGrid = null, isStripeOpen = null, clearLast = true }) {
 			if (clearLast) {
-				context.commit('lastIsGrid', null)
-				context.commit('lastIsStripeOpen', null)
+				this.lastIsGrid = null
+				this.lastIsStripeOpen = null
 			}
 
 			if (isGrid !== null) {
-				context.commit('lastIsGrid', context.getters.isGrid)
+				this.lastIsGrid = this.isGrid
 				BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', isGrid)
-				context.commit('isGrid', isGrid)
+				this.isGrid = isGrid
 			}
 
 			if (isStripeOpen !== null) {
-				context.commit('lastIsStripeOpen', context.getters.isStripeOpen)
-				context.commit('isStripeOpen', isStripeOpen)
+				this.lastIsStripeOpen = this.isStripeOpen
+				this.isStripeOpen = isStripeOpen
 			}
 		},
 
@@ -198,11 +155,11 @@ export const useCallViewStore = defineStore('callView', {
 		startPresentation(context) {
 			// don't start twice, this would prevent multiple
 			// screen shares to clear the last call view state
-			if (context.getters.presentationStarted) {
+			if (this.presentationStarted) {
 				return
 			}
 
-			context.commit('presentationStarted', true)
+			this.presentationStarted = true
 			// switch off grid mode during presentation and collapse
 			// the stripe to focus on the screen share, but continue remembering
 			// the last state
@@ -222,46 +179,48 @@ export const useCallViewStore = defineStore('callView', {
 		 * @param {object} context default store context;
 		 */
 		stopPresentation(context) {
-			if (!context.getters.presentationStarted) {
+			if (!this.presentationStarted) {
 				return
 			}
-			if (!context.getters.isGrid && !context.getters.isStripeOpen) {
+			if (!this.isGrid && !this.isStripeOpen) {
 				// User didn't pick grid view during presentation
 				// restore previous state
 				context.dispatch('setCallViewMode', {
-					isGrid: context.getters.lastIsGrid,
-					isStripeOpen: context.getters.lastIsStripeOpen,
+					isGrid: this.lastIsGrid,
+					isStripeOpen: this.lastIsStripeOpen,
 					clearLast: false,
 				})
 			}
-			context.commit('presentationStarted', false)
+			this.presentationStarted = false
 		},
 
 		dismissQualityWarningTooltip(context) {
 			context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
 		},
 
-		isEmptyCallView(context, value) {
-			context.commit('isEmptyCallView', value)
+		setIsEmptyCallView(value) {
+			this.isEmptyCallView = value
 		},
 
-		setCallHasJustEnded(context, timestamp) {
-			// Check the time difference between the current time and the call end time.
-			// Then, disable the CallButton for the remaining time until 10 seconds after the call ends.
-			const timeDiff = Math.abs(Date.now() / 1000 - timestamp)
+		/**
+		 * Checks the time difference between the current time and the call end time.
+		 * Then, disable the CallButton for the remaining time until 10 seconds after the call ends.
+		 * @param {number} timestamp timestamp of callEnded message (in seconds)
+		 */
+		setCallHasJustEnded(timestamp) {
+			const timeDiff = Math.abs(Date.now() - timestamp * 1000)
 			if (10000 - timeDiff < 0) {
 				return
 			}
-			clearTimeout(context.state.callHasJustEnded)
-			const timeoutId = setTimeout(() => {
-				context.dispatch('resetCallHasJustEnded')
+			clearTimeout(this.callEndedTimeout)
+			this.callEndedTimeout = setTimeout(() => {
+				this.resetCallHasJustEnded()
 			}, Math.max(0, 10000 - timeDiff))
-			context.commit('setCallHasJustEnded', timeoutId)
 		},
 
-		resetCallHasJustEnded(context) {
-			clearTimeout(context.state.callHasJustEnded)
-			context.commit('setCallHasJustEnded', null)
+		resetCallHasJustEnded() {
+			clearTimeout(this.callEndedTimeout)
+			this.callEndedTimeout = null
 		}
 	},
 })

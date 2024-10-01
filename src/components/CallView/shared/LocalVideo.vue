@@ -74,6 +74,7 @@ import VideoBackground from './VideoBackground.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 
 import { AVATAR } from '../../../constants.js'
+import { useCallViewStore } from '../../../stores/callView.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 import { placeholderImage } from '../Grid/gridPlaceholders.ts'
@@ -150,6 +151,7 @@ export default {
 		return {
 			devMode,
 			screenshotMode,
+			callViewStore: useCallViewStore(),
 		}
 	},
 
@@ -230,11 +232,11 @@ export default {
 		},
 
 		isSelected() {
-			return this.$store.getters.selectedVideoPeerId === 'local'
+			return this.callViewStore.selectedVideoPeerId === 'local'
 		},
 
 		isSelectable() {
-			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.callViewStore.selectedVideoPeerId !== 'local'
 		},
 
 		screenshotModeUrl() {
@@ -336,7 +338,7 @@ export default {
 		},
 
 		handleStopFollowing() {
-			this.$store.dispatch('selectedVideoPeerId', null)
+			this.callViewStore.setSelectedVideoPeerId(null)
 			this.$store.dispatch('stopPresentation')
 		},
 

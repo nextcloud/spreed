@@ -163,6 +163,7 @@ import VideoVue from '../shared/VideoVue.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { useCallViewStore } from '../../../stores/callView.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
 
 // Max number of videos per page. `0`, the default value, means no cap
@@ -253,6 +254,7 @@ export default {
 			screenshotMode,
 			videosCap,
 			videosCapEnforced,
+			callViewStore: useCallViewStore(),
 			sidebarStore: useSidebarStore(),
 		}
 	},
@@ -484,7 +486,7 @@ export default {
 		},
 
 		stripeOpen() {
-			return this.$store.getters.isStripeOpen && !this.isRecording
+			return this.callViewStore.isStripeOpen && !this.isRecording
 		},
 
 		participantsInitialised() {
@@ -878,7 +880,7 @@ export default {
 		},
 
 		isSelected(callParticipantModel) {
-			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
+			return callParticipantModel.attributes.peerId === this.callViewStore.selectedVideoPeerId
 		},
 
 		isModelWithVideo(callParticipantModel) {
