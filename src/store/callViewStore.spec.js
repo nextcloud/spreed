@@ -32,67 +32,6 @@ describe('callViewStore', () => {
 		jest.clearAllMocks()
 	})
 
-	describe('raised hand', () => {
-		test('get whether participants raised hands with single session id', () => {
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-1',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-2',
-				raisedHand: { state: true, timestamp: 2 },
-			})
-
-			expect(store.getters.getParticipantRaisedHand(['session-id-1']))
-				.toStrictEqual({ state: true, timestamp: 1 })
-
-			expect(store.getters.getParticipantRaisedHand(['session-id-2']))
-				.toStrictEqual({ state: true, timestamp: 2 })
-
-			expect(store.getters.getParticipantRaisedHand(['session-id-another']))
-				.toStrictEqual({ state: false, timestamp: null })
-		})
-
-		test('get raised hands after lowering', () => {
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-2',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-2',
-				raisedHand: { state: false, timestamp: 3 },
-			})
-
-			expect(store.getters.getParticipantRaisedHand(['session-id-2']))
-				.toStrictEqual({ state: false, timestamp: null })
-		})
-
-		test('clears raised hands state after leaving call', () => {
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-2',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-			store.dispatch('leaveCall')
-
-			expect(store.getters.getParticipantRaisedHand(['session-id-2']))
-				.toStrictEqual({ state: false, timestamp: null })
-		})
-
-		test('get raised hands with multiple session ids only returns first found', () => {
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-2',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-			store.dispatch('setParticipantHandRaised', {
-				sessionId: 'session-id-3',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-
-			expect(store.getters.getParticipantRaisedHand(['session-id-1', 'session-id-2', 'session-id-3']))
-				.toStrictEqual({ state: true, timestamp: 1 })
-		})
-	})
-
 	describe('call view mode and presentation', () => {
 		test('restores grid state when joining call (true)', () => {
 			localStorage.getItem.mockReturnValueOnce('true')

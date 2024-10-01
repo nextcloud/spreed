@@ -73,6 +73,9 @@ const state = {
 	},
 	speaking: {
 	},
+	// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
+	participantRaisedHands: {
+	},
 	initialised: {
 	},
 	/**
@@ -177,6 +180,19 @@ const getters = {
 		return state.speaking[attendeeId]
 	},
 
+	participantRaisedHandList: (state) => {
+		return state.participantRaisedHands
+	},
+	getParticipantRaisedHand: (state) => (sessionIds) => {
+		for (let i = 0; i < sessionIds.length; i++) {
+			if (state.participantRaisedHands[sessionIds[i]]) {
+				// note: only the raised states are stored, so no need to confirm
+				return state.participantRaisedHands[sessionIds[i]]
+			}
+		}
+
+		return { state: false, timestamp: null }
+	},
 	/**
 	 * Replaces the legacy getParticipant getter. Returns a callback function in which you can
 	 * pass in the token and attendeeId as arguments to get the participant object.
@@ -459,6 +475,21 @@ const mutations = {
 			clearInterval(state.speakingInterval)
 			Vue.set(state, 'speakingInterval', null)
 		}
+	},
+
+	setParticipantHandRaised(state, { sessionId, raisedHand }) {
+		if (!sessionId) {
+			throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
+		}
+		if (raisedHand && raisedHand.state) {
+			Vue.set(state.participantRaisedHands, sessionId, raisedHand)
+		} else {
+			Vue.delete(state.participantRaisedHands, sessionId)
+		}
+	},
+
+	clearParticipantHandRaised(state) {
+		state.participantRaisedHands = {}
 	},
 
 	/**
@@ -831,6 +862,9 @@ const actions = {
 		}
 		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 
+		// clear raised hands as they were specific to the call
+		commit('clearParticipantHandRaised')
+
 		commit('setInCall', {
 			token,
 			sessionId: participantIdentifier.sessionId,
@@ -1097,6 +1131,10 @@ const actions = {
 
 	purgeSpeakingStore(context) {
 		context.commit('purgeSpeakingStore')
+	},
+
+	setParticipantHandRaised(context, { sessionId, raisedHand }) {
+		context.commit('setParticipantHandRaised', { sessionId, raisedHand })
 	},
 
 	processDialOutAnswer(context, { callid }) {

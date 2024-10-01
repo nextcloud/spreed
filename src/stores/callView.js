@@ -4,7 +4,6 @@
  */
 
 import { defineStore } from 'pinia'
-import Vue from 'vue'
 
 import { CONVERSATION } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
@@ -20,58 +19,15 @@ export const useCallViewStore = defineStore('callView', {
 		lastIsStripeOpen: null,
 		presentationStarted: false,
 		selectedVideoPeerId: null,
-		qualityWarningTooltipDismissed: false,
 		callEndedTimeout: null,
-		participantRaisedHands: {},
-		backgroundImageAverageColorCache: {},
 	}),
 
 	getters: {
 		callHasJustEnded: (state) => !!state.callEndedTimeout,
-		isQualityWarningTooltipDismissed: (state) => state.qualityWarningTooltipDismissed,
-		participantRaisedHandList: (state) => {
-			return state.participantRaisedHands
-		},
-		getParticipantRaisedHand: (state) => (sessionIds) => {
-			for (let i = 0; i < sessionIds.length; i++) {
-				if (state.participantRaisedHands[sessionIds[i]]) {
-					// note: only the raised states are stored, so no need to confirm
-					return state.participantRaisedHands[sessionIds[i]]
-				}
-			}
-
-			return { state: false, timestamp: null }
-		},
-		getCachedBackgroundImageAverageColor: (state) => (videoBackgroundId) => {
-			return state.backgroundImageAverageColorCache[videoBackgroundId]
-		},
 	},
 
 	actions: {
 		// Mutations
-		setQualityWarningTooltipDismissed(state, { qualityWarningTooltipDismissed }) {
-			state.qualityWarningTooltipDismissed = qualityWarningTooltipDismissed
-		},
-		setParticipantHandRaised(state, { sessionId, raisedHand }) {
-			if (!sessionId) {
-				throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
-			}
-			if (raisedHand && raisedHand.state) {
-				Vue.set(state.participantRaisedHands, sessionId, raisedHand)
-			} else {
-				Vue.delete(state.participantRaisedHands, sessionId)
-			}
-		},
-		clearParticipantHandRaised(state) {
-			state.participantRaisedHands = {}
-		},
-		setCachedBackgroundImageAverageColor(state, { videoBackgroundId, backgroundImageAverageColor }) {
-			Vue.set(state.backgroundImageAverageColorCache, videoBackgroundId, backgroundImageAverageColor)
-		},
-		clearBackgroundImageAverageColorCache(state) {
-			state.backgroundImageAverageColorCache = {}
-		},
-
 		// Actions
 		setForceCallView(value) {
 			this.forceCallView = value
@@ -97,15 +53,6 @@ export const useCallViewStore = defineStore('callView', {
 				isGrid = (isGrid === 'true')
 			}
 			context.dispatch('setCallViewMode', { isGrid, isStripeOpen: true })
-
-			context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: false })
-		},
-
-		leaveCall(context) {
-			// clear raised hands as they were specific to the call
-			context.commit('clearParticipantHandRaised')
-
-			context.commit('clearBackgroundImageAverageColorCache')
 		},
 
 		/**
@@ -134,14 +81,6 @@ export const useCallViewStore = defineStore('callView', {
 				this.lastIsStripeOpen = this.isStripeOpen
 				this.isStripeOpen = isStripeOpen
 			}
-		},
-
-		setParticipantHandRaised(context, { sessionId, raisedHand }) {
-			context.commit('setParticipantHandRaised', { sessionId, raisedHand })
-		},
-
-		setCachedBackgroundImageAverageColor(context, { videoBackgroundId, backgroundImageAverageColor }) {
-			context.commit('setCachedBackgroundImageAverageColor', { videoBackgroundId, backgroundImageAverageColor })
 		},
 
 		/**
@@ -192,10 +131,6 @@ export const useCallViewStore = defineStore('callView', {
 				})
 			}
 			this.presentationStarted = false
-		},
-
-		dismissQualityWarningTooltip(context) {
-			context.commit('setQualityWarningTooltipDismissed', { qualityWarningTooltipDismissed: true })
 		},
 
 		setIsEmptyCallView(value) {
