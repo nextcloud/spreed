@@ -4,7 +4,8 @@
 -->
 
 <template>
-	<NcListItem :name="computedName"
+	<NcListItem :key="participantNavigationId"
+		:name="computedName"
 		:data-nav-id="participantNavigationId"
 		class="participant"
 		:class="{ 'participant--offline': isOffline }"
