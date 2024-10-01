@@ -73,7 +73,7 @@
 			:name="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<NcCheckboxRadioSwitch id="play_sounds"
-				:checked="playSounds"
+				:checked="shouldPlaySounds"
 				:disabled="playSoundsLoading"
 				type="switch"
 				class="checkbox"
@@ -197,6 +197,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useSettingsStore } from '../../stores/settings.js'
+import { useSoundsStore } from '../../stores/sounds.js'
 
 const isBackgroundBlurred = loadState('spreed', 'force_enable_blur_filter', '')
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
@@ -215,10 +216,12 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
+		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
 
 		return {
 			settingsStore,
+			soundsStore,
 			supportTypingStatus,
 			isBackgroundBlurred,
 			customSettingsSections,
@@ -236,8 +239,8 @@ export default {
 	},
 
 	computed: {
-		playSounds() {
-			return this.$store.getters.playSounds
+		shouldPlaySounds() {
+			return this.soundsStore.shouldPlaySounds
 		},
 
 		attachmentFolder() {
@@ -348,7 +351,7 @@ export default {
 			this.playSoundsLoading = true
 			try {
 				try {
-					await this.$store.dispatch('setPlaySounds', !this.playSounds)
+					await this.soundsStore.setShouldPlaySounds(!this.shouldPlaySounds)
 				} catch (e) {
 					showError(t('spreed', 'Failed to save sounds setting'))
 				}

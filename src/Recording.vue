@@ -11,15 +11,20 @@
 <script>
 import CallView from './components/CallView/CallView.vue'
 
-import {
-	signalingKill,
-} from './utils/webrtc/index.js'
+import { useSoundsStore } from './stores/sounds.js'
+import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
 	name: 'Recording',
 
 	components: {
 		CallView,
+	},
+
+	setup() {
+		return {
+			soundsStore: useSoundsStore()
+		}
 	},
 
 	computed: {
@@ -37,7 +42,7 @@ export default {
 		if (this.$route.name === 'recording') {
 			await this.$store.dispatch('updateToken', this.$route.params.token)
 
-			await this.$store.dispatch('setPlaySounds', false)
+			await this.soundsStore.setShouldPlaySounds(false)
 		}
 
 		// This should not be strictly needed, as the recording server is

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import store from '../store/index.js'
+import { useSoundsStore } from '../stores/sounds.js'
 
 export const Sounds = {
 	BLOCK_SOUND_TIMEOUT: 3000,
@@ -16,21 +16,23 @@ export const Sounds = {
 
 	_stopWaiting() {
 		console.debug('Stop waiting sound')
-		store.dispatch('pauseWaitAudio')
+		const soundsStore = useSoundsStore()
+		soundsStore.pauseAudio('wait')
 		clearInterval(this.backgroundInterval)
 	},
 
 	async playWaiting() {
-		if (!store.getters.playSounds) {
+		const soundsStore = useSoundsStore()
+		if (!soundsStore.shouldPlaySounds) {
 			return
 		}
 
 		console.debug('Playing waiting sound')
-		store.dispatch('playWaitAudio')
+		soundsStore.playAudio('wait')
 
 		this.playedWaiting = 0
 		this.backgroundInterval = setInterval(() => {
-			if (!store.getters.playSounds) {
+			if (!soundsStore.shouldPlaySounds) {
 				this._stopWaiting()
 				return
 			}
@@ -42,7 +44,7 @@ export const Sounds = {
 			}
 
 			console.debug('Playing waiting sound')
-			store.dispatch('playWaitAudio')
+			soundsStore.playAudio('wait')
 			this.playedWaiting++
 
 		}, 15000)
@@ -51,7 +53,8 @@ export const Sounds = {
 	async playJoin(force, playWaitingSound) {
 		this._stopWaiting()
 
-		if (!store.getters.playSounds) {
+		const soundsStore = useSoundsStore()
+		if (!soundsStore.shouldPlaySounds) {
 			return
 		}
 
@@ -79,14 +82,15 @@ export const Sounds = {
 		if (playWaitingSound) {
 			await this.playWaiting()
 		} else {
-			store.dispatch('playJoinAudio')
+			soundsStore.playAudio('join')
 		}
 	},
 
 	async playLeave(force, playWaitingSound) {
 		this._stopWaiting()
 
-		if (!store.getters.playSounds) {
+		const soundsStore = useSoundsStore()
+		if (!soundsStore.shouldPlaySounds) {
 			return
 		}
 
@@ -110,7 +114,7 @@ export const Sounds = {
 		}
 		this.lastPlayedLeave = currentTime
 
-		store.dispatch('playLeaveAudio')
+		soundsStore.playAudio('leave')
 
 		if (playWaitingSound) {
 			this.playWaiting()

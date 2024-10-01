@@ -10,7 +10,6 @@ import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
 import messagesStore from './messagesStore.js'
 import participantsStore from './participantsStore.js'
-import soundsStore from './soundsStore.js'
 import tokenStore from './tokenStore.js'
 
 export default {
@@ -22,7 +21,6 @@ export default {
 		fileUploadStore,
 		messagesStore,
 		participantsStore,
-		soundsStore,
 		tokenStore,
 	},
 
