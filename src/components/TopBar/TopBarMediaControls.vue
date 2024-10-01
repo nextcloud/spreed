@@ -185,6 +185,7 @@ export default {
 			boundaryElement: document.querySelector('.main-view'),
 			mouseover: false,
 			qualityWarningInGracePeriodTimeout: null,
+			isQualityWarningTooltipDismissed: false,
 		}
 	},
 
@@ -254,10 +255,6 @@ export default {
 			return this.isScreensharing
 				? t('spreed', 'Screensharing options')
 				: t('spreed', 'Enable screensharing')
-		},
-
-		isQualityWarningTooltipDismissed() {
-			return this.$store.getters.isQualityWarningTooltipDismissed
 		},
 
 		showQualityWarningTooltip() {
@@ -510,7 +507,7 @@ export default {
 		},
 
 		dismissQualityWarningTooltip() {
-			this.$store.dispatch('dismissQualityWarningTooltip')
+			this.isQualityWarningTooltipDismissed = true
 		},
 	},
 }

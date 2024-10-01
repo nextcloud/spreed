@@ -5,6 +5,7 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
@@ -38,6 +39,7 @@ describe('Participant.vue', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		participant = {
 			displayName: 'Alice',
@@ -271,7 +273,7 @@ describe('Participant.vue', () => {
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: false })
 
 			testStoreConfig = cloneDeep(storeConfig)
-			testStoreConfig.modules.callViewStore.getters.getParticipantRaisedHand = () => getParticipantRaisedHandMock
+			testStoreConfig.modules.participantsStore.getters.getParticipantRaisedHand = () => getParticipantRaisedHandMock
 			store = new Vuex.Store(testStoreConfig)
 		})
 

@@ -607,6 +607,73 @@ describe('participantsStore', () => {
 				},
 			])
 		})
+
+		describe('raised hand', () => {
+			test('get whether participants raised hands with single session id', () => {
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-1',
+					raisedHand: { state: true, timestamp: 1 },
+				})
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-2',
+					raisedHand: { state: true, timestamp: 2 },
+				})
+
+				expect(store.getters.getParticipantRaisedHand(['session-id-1']))
+					.toStrictEqual({ state: true, timestamp: 1 })
+
+				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
+					.toStrictEqual({ state: true, timestamp: 2 })
+
+				expect(store.getters.getParticipantRaisedHand(['session-id-another']))
+					.toStrictEqual({ state: false, timestamp: null })
+			})
+
+			test('get raised hands after lowering', () => {
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-2',
+					raisedHand: { state: true, timestamp: 1 },
+				})
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-2',
+					raisedHand: { state: false, timestamp: 3 },
+				})
+
+				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
+					.toStrictEqual({ state: false, timestamp: null })
+			})
+
+			test('clears raised hands state after leaving call', async () => {
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-2',
+					raisedHand: { state: true, timestamp: 1 },
+				})
+				await store.dispatch('leaveCall', {
+					token: TOKEN,
+					participantIdentifier: {
+						attendeeId: 1,
+						sessionId: 'session-id-1',
+					},
+				})
+
+				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
+					.toStrictEqual({ state: false, timestamp: null })
+			})
+
+			test('get raised hands with multiple session ids only returns first found', () => {
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-2',
+					raisedHand: { state: true, timestamp: 1 },
+				})
+				store.dispatch('setParticipantHandRaised', {
+					sessionId: 'session-id-3',
+					raisedHand: { state: true, timestamp: 1 },
+				})
+
+				expect(store.getters.getParticipantRaisedHand(['session-id-1', 'session-id-2', 'session-id-3']))
+					.toStrictEqual({ state: true, timestamp: 1 })
+			})
+		})
 	})
 
 	test('resends invitations', async () => {
