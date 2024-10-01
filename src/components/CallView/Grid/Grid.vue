@@ -557,7 +557,7 @@ export default {
 				return this.isStripe
 			},
 			set(value) {
-				this.$store.dispatch('setCallViewMode', { isGrid: !value, clearLast: false })
+				this.callViewStore.setCallViewMode({ isGrid: !value, clearLast: false })
 			},
 		},
 	},
@@ -852,7 +852,7 @@ export default {
 		},
 
 		handleClickStripeCollapse() {
-			this.$store.dispatch('setCallViewMode', { isStripeOpen: !this.stripeOpen, clearLast: false })
+			this.callViewStore.setCallViewMode({ isStripeOpen: !this.stripeOpen, clearLast: false })
 		},
 
 		handleMovement() {

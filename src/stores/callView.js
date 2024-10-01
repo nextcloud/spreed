@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 
 import { CONVERSATION } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
+import store from '../store/index.js'
 
 export const useCallViewStore = defineStore('callView', {
 	state: () => ({
@@ -27,8 +28,6 @@ export const useCallViewStore = defineStore('callView', {
 	},
 
 	actions: {
-		// Mutations
-		// Actions
 		setForceCallView(value) {
 			this.forceCallView = value
 		},
@@ -37,35 +36,33 @@ export const useCallViewStore = defineStore('callView', {
 			this.isViewerOverlay = value
 		},
 
+		setIsEmptyCallView(value) {
+			this.isEmptyCallView = value
+		},
+
 		setSelectedVideoPeerId(value) {
 			this.selectedVideoPeerId = value
 		},
 
-		joinCall(context, { token }) {
-			let isGrid = BrowserStorage.getItem('callprefs-' + token + '-isgrid')
-			if (isGrid === null) {
-				const conversationType = context.getters.conversations[token].type
-				// default to grid view for group/public calls, otherwise speaker view
-				isGrid = (conversationType === CONVERSATION.TYPE.GROUP
-					|| conversationType === CONVERSATION.TYPE.PUBLIC)
-			} else {
-				// BrowserStorage.getItem returns a string instead of a boolean
-				isGrid = (isGrid === 'true')
-			}
-			context.dispatch('setCallViewMode', { isGrid, isStripeOpen: true })
+		handleJoinCall({ token }) {
+			const gridPreference = BrowserStorage.getItem(`callprefs-${token}-isgrid`)
+			const isGrid = gridPreference === null
+				// not defined yet, default to grid view for group/public calls, otherwise speaker view
+				? [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(store.getters.conversations[token].type)
+				: gridPreference === 'true'
+			this.setCallViewMode({ isGrid, isStripeOpen: true })
 		},
 
 		/**
 		 * Sets the current call view mode and saves it in preferences.
 		 * If clearLast is false, also remembers it in separate properties.
 		 *
-		 * @param {object} context default store context;
 		 * @param {object} data the wrapping object;
 		 * @param {boolean|null} [data.isGrid=null] true for enabled grid mode, false for speaker view;
 		 * @param {boolean|null} [data.isStripeOpen=null] true for visible striped mode, false for speaker view;
 		 * @param {boolean} [data.clearLast=true] set false to not reset last temporary remembered state;
 		 */
-		setCallViewMode(context, { isGrid = null, isStripeOpen = null, clearLast = true }) {
+		setCallViewMode({ isGrid = null, isStripeOpen = null, clearLast = true }) {
 			if (clearLast) {
 				this.lastIsGrid = null
 				this.lastIsStripeOpen = null
@@ -73,7 +70,7 @@ export const useCallViewStore = defineStore('callView', {
 
 			if (isGrid !== null) {
 				this.lastIsGrid = this.isGrid
-				BrowserStorage.setItem('callprefs-' + context.getters.getToken() + '-isgrid', isGrid)
+				BrowserStorage.setItem(`callprefs-${store.getters.getToken()}-isgrid`, isGrid)
 				this.isGrid = isGrid
 			}
 
@@ -88,53 +85,33 @@ export const useCallViewStore = defineStore('callView', {
 		 *
 		 * Switches off grid mode and closes the stripe.
 		 * Remembers the call view state for after the end of the presentation.
-		 *
-		 * @param {object} context default store context;
 		 */
-		startPresentation(context) {
-			// don't start twice, this would prevent multiple
-			// screen shares to clear the last call view state
+		startPresentation() {
+			// don't start twice, this would prevent multiple screen shares to clear the last call view state
 			if (this.presentationStarted) {
 				return
 			}
-
 			this.presentationStarted = true
-			// switch off grid mode during presentation and collapse
-			// the stripe to focus on the screen share, but continue remembering
-			// the last state
-			context.dispatch('setCallViewMode', {
-				isGrid: false,
-				isStripeOpen: false,
-				clearLast: false,
-			})
+
+			this.setCallViewMode({ isGrid: false, isStripeOpen: false, clearLast: false })
 		},
 
 		/**
 		 * Stops presentation mode.
 		 *
-		 * Restores call view state from before starting the presentation, given
-		 * that the last state was not cleared manually.
-		 *
-		 * @param {object} context default store context;
+		 * Restores call view state from before starting the presentation,
+		 * given that the last state was not cleared manually.
 		 */
-		stopPresentation(context) {
+		stopPresentation() {
 			if (!this.presentationStarted) {
 				return
 			}
-			if (!this.isGrid && !this.isStripeOpen) {
-				// User didn't pick grid view during presentation
-				// restore previous state
-				context.dispatch('setCallViewMode', {
-					isGrid: this.lastIsGrid,
-					isStripeOpen: this.lastIsStripeOpen,
-					clearLast: false,
-				})
-			}
 			this.presentationStarted = false
-		},
 
-		setIsEmptyCallView(value) {
-			this.isEmptyCallView = value
+			if (!this.isGrid && !this.isStripeOpen) {
+				// User didn't pick grid view during presentation, restore previous state
+				this.setCallViewMode({ isGrid: this.lastIsGrid, isStripeOpen: this.lastIsStripeOpen, clearLast: false })
+			}
 		},
 
 		/**
