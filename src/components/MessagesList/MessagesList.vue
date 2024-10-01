@@ -40,7 +40,7 @@
 			:ref="`dateGroup-${token}`"
 			:data-date-timestamp="dateTimestamp"
 			:class="{'has-sticky': dateTimestamp === stickyDate}">
-			<li class="messages-group__date">
+			<li :key="dateSeparatorLabels[dateTimestamp]" class="messages-group__date">
 				<span class="messages-group__date-text" role="heading" aria-level="3">
 					{{ dateSeparatorLabels[dateTimestamp] }}
 				</span>
@@ -366,7 +366,7 @@ export default {
 					}
 
 					if (!this.dateSeparatorLabels[dateTimestamp]) {
-						this.dateSeparatorLabels[dateTimestamp] = this.generateDateSeparator(dateTimestamp)
+						this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
 					}
 
 					if (!groupsByDate[dateTimestamp]) {
@@ -1230,6 +1230,10 @@ export default {
 			// setTimeout is needed here for Safari to correctly remove the unread marker
 			setTimeout(() => {
 				this.refreshReadMarkerPosition()
+				// Regenerate relative date separators
+				Object.keys(this.dateSeparatorLabels).forEach(dateTimestamp => {
+					this.$set(this.dateSeparatorLabels, dateTimestamp, this.generateDateSeparator(dateTimestamp))
+				})
 			}, 2)
 		},
 
