@@ -8,7 +8,8 @@
 		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			type="tertiary-no-background"
-			:aria-label="stripeButtonTooltip"
+			:title="stripeButtonTitle"
+			:aria-label="stripeButtonTitle"
 			@click="handleClickStripeCollapse">
 			<template #icon>
 				<ChevronDown v-if="stripeOpen"
@@ -274,7 +275,7 @@ export default {
 	},
 
 	computed: {
-		stripeButtonTooltip() {
+		stripeButtonTitle() {
 			if (this.stripeOpen) {
 				return t('spreed', 'Collapse stripe')
 			} else {
