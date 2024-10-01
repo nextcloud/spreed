@@ -33,8 +33,8 @@
 				group>
 				<NcButton v-if="showAudioIndicator"
 					key="audioIndicator"
-					:title="audioButtonTooltip"
-					:aria-label="audioButtonTooltip"
+					:title="audioButtonTitle"
+					:aria-label="audioButtonTitle"
 					class="audioIndicator"
 					type="tertiary-no-background"
 					:disabled="isAudioButtonDisabled"
@@ -47,8 +47,8 @@
 
 				<NcButton v-if="showVideoIndicator"
 					key="videoIndicator"
-					:title="videoButtonTooltip"
-					:aria-label="videoButtonTooltip"
+					:title="videoButtonTitle"
+					:aria-label="videoButtonTitle"
 					class="videoIndicator"
 					type="tertiary-no-background"
 					@click.stop="toggleVideo">
@@ -205,7 +205,7 @@ export default {
 		isAudioButtonDisabled() {
 			return !this.model.attributes.audioAvailable || !this.canFullModerate
 		},
-		audioButtonTooltip() {
+		audioButtonTitle() {
 			return this.model.attributes.audioAvailable
 				? t('spreed', 'Mute')
 				: t('spreed', 'Muted')
@@ -221,7 +221,7 @@ export default {
 		isRemoteVideoBlocked() {
 			return this.sharedData.remoteVideoBlocker && !this.sharedData.remoteVideoBlocker.isVideoEnabled()
 		},
-		videoButtonTooltip() {
+		videoButtonTitle() {
 			return this.isRemoteVideoEnabled
 				? t('spreed', 'Disable video')
 				: t('spreed', 'Enable video')

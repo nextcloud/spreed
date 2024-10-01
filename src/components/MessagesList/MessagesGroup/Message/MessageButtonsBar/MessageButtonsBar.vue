@@ -35,13 +35,13 @@
 					<NcActionText>
 						<template #icon>
 							<span v-if="readInfo.showCommonReadIcon"
-								:title="readInfo.commonReadIconTooltip"
-								:aria-label="readInfo.commonReadIconTooltip">
+								:title="readInfo.commonReadIconTitle"
+								:aria-label="readInfo.commonReadIconTitle">
 								<CheckAll :size="16" />
 							</span>
 							<span v-else-if="readInfo.showSentIcon"
-								:title="readInfo.sentIconTooltip"
-								:aria-label="readInfo.sentIconTooltip">
+								:title="readInfo.sentIconTitle"
+								:aria-label="readInfo.sentIconTitle">
 								<Check :size="16" />
 							</span>
 							<ClockOutline v-else :size="16" />

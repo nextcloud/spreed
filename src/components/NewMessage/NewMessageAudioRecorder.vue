@@ -6,8 +6,8 @@
 <template>
 	<div class="audio-recorder">
 		<NcButton v-if="!isRecording"
-			:title="startRecordingTooltip"
-			:aria-label="startRecordingTooltip"
+			:title="startRecordingTitle"
+			:aria-label="startRecordingTitle"
 			type="tertiary"
 			:disabled="!canStartRecording"
 			@click="start">
@@ -17,8 +17,8 @@
 		</NcButton>
 		<div v-else class="wrapper">
 			<NcButton type="error"
-				:title="abortRecordingTooltip"
-				:aria-label="abortRecordingTooltip"
+				:title="abortRecordingTitle"
+				:aria-label="abortRecordingTitle"
 				@click="abortRecording">
 				<template #icon>
 					<Close :size="16" />
@@ -30,8 +30,8 @@
 					{{ parsedRecordTime }}</span>
 			</div>
 			<NcButton type="success"
-				:title="stopRecordingTooltip"
-				:aria-label="stopRecordingTooltip"
+				:title="stopRecordingTitle"
+				:aria-label="stopRecordingTitle"
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
 				<template #icon>
@@ -113,15 +113,15 @@ export default {
 			return `${minutes}:${seconds}`
 		},
 
-		startRecordingTooltip() {
+		startRecordingTitle() {
 			return t('spreed', 'Record voice message')
 		},
 
-		stopRecordingTooltip() {
+		stopRecordingTitle() {
 			return t('spreed', 'End recording and send')
 		},
 
-		abortRecordingTooltip() {
+		abortRecordingTitle() {
 			return t('spreed', 'Dismiss recording')
 		},
 
