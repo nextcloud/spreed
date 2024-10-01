@@ -56,6 +56,11 @@ jest.mock('../services/callsService', () => ({
 jest.mock('../services/conversationsService', () => ({
 	fetchConversation: jest.fn(),
 }))
+jest.mock('../stores/callView', () => ({
+	useCallViewStore: jest.fn(() => ({
+		handleJoinCall: jest.fn(),
+	})),
+}))
 
 jest.mock('@nextcloud/event-bus', () => ({
 	emit: jest.fn(),

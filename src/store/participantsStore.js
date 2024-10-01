@@ -36,6 +36,7 @@ import {
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { useCallViewStore } from '../stores/callView.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
@@ -842,6 +843,9 @@ const actions = {
 			// "Waiting for others to join the call …" after some seconds.
 			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		}, 10000)
+
+		const callViewStore = useCallViewStore()
+		callViewStore.handleJoinCall({ token })
 	},
 
 	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {

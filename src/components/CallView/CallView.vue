@@ -425,19 +425,19 @@ export default {
 		callParticipantModelsWithScreen(newValue, previousValue) {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
-				this.$store.dispatch('startPresentation')
+				this.callViewStore.startPresentation()
 			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen && !this.selectedVideoPeerId) {
 				// last screen share stopped and no selected video, restoring previous state
-				this.$store.dispatch('stopPresentation')
+				this.callViewStore.stopPresentation()
 			}
 		},
 		showLocalScreen(showLocalScreen) {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
-				this.$store.dispatch('startPresentation')
+				this.callViewStore.startPresentation()
 			} else if (this.callParticipantModelsWithScreen.length === 0 && !this.selectedVideoPeerId) {
 				// last screen share stopped and no selected video, restoring previous state
-				this.$store.dispatch('stopPresentation')
+				this.callViewStore.stopPresentation()
 			}
 		},
 		hasLocalVideo(newValue) {
@@ -656,13 +656,13 @@ export default {
 			}
 
 			if (this.callViewStore.presentationStarted) {
-				this.$store.dispatch('setCallViewMode', {
+				this.callViewStore.setCallViewMode({
 					isGrid: false,
 					isStripeOpen: false,
 					clearLast: false,
 				})
 			} else {
-				this.$store.dispatch('startPresentation')
+				this.callViewStore.startPresentation()
 			}
 			this.callViewStore.setSelectedVideoPeerId(null)
 			this.screens.splice(index, 1)
@@ -694,7 +694,7 @@ export default {
 				return
 			}
 			this.callViewStore.setSelectedVideoPeerId(peerId)
-			this.$store.dispatch('startPresentation')
+			this.callViewStore.startPresentation()
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
@@ -703,7 +703,7 @@ export default {
 			}
 			// Deselect possible selected video
 			this.callViewStore.setSelectedVideoPeerId('local')
-			this.$store.dispatch('startPresentation')
+			this.callViewStore.startPresentation()
 		},
 
 		async fetchPeers() {
