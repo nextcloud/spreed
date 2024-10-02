@@ -73,10 +73,10 @@
 
 			<!-- Message delivery status indicators -->
 			<div v-if="message.sendingFailure"
-				:title="sendingErrorIconTooltip"
+				:title="sendingErrorIconTitle"
 				class="message-status sending-failed"
 				:class="{'retry-option': sendingErrorCanRetry}"
-				:aria-label="sendingErrorIconTooltip"
+				:aria-label="sendingErrorIconTitle"
 				tabindex="0"
 				@mouseover="showReloadButton = true"
 				@focus="showReloadButton = true"
@@ -84,7 +84,7 @@
 				@blur="showReloadButton = false">
 				<NcButton v-if="sendingErrorCanRetry && showReloadButton"
 					size="small"
-					:aria-label="sendingErrorIconTooltip"
+					:aria-label="sendingErrorIconTitle"
 					@click="handleRetry">
 					<template #icon>
 						<ReloadIcon :size="16" />
@@ -93,19 +93,19 @@
 				<AlertCircleIcon v-else :size="16" />
 			</div>
 			<div v-else-if="showLoadingIcon"
-				:title="loadingIconTooltip"
+				:title="loadingIconTitle"
 				class="icon-loading-small message-status"
-				:aria-label="loadingIconTooltip" />
+				:aria-label="loadingIconTitle" />
 			<div v-else-if="readInfo.showCommonReadIcon"
-				:title="readInfo.commonReadIconTooltip"
+				:title="readInfo.commonReadIconTitle"
 				class="message-status"
-				:aria-label="readInfo.commonReadIconTooltip">
+				:aria-label="readInfo.commonReadIconTitle">
 				<CheckAllIcon :size="16" />
 			</div>
 			<div v-else-if="readInfo.showSentIcon"
-				:title="readInfo.sentIconTooltip"
+				:title="readInfo.sentIconTitle"
 				class="message-status"
-				:aria-label="readInfo.sentIconTooltip">
+				:aria-label="readInfo.sentIconTitle">
 				<CheckIcon :size="16" />
 			</div>
 		</div>
@@ -289,7 +289,7 @@ export default {
 			return this.isTemporary || this.isDeleting || this.isEditing
 		},
 
-		loadingIconTooltip() {
+		loadingIconTitle() {
 			return t('spreed', 'Sending message')
 		},
 
@@ -297,7 +297,7 @@ export default {
 			return ['timeout', 'other', 'failed-upload'].includes(this.message.sendingFailure)
 		},
 
-		sendingErrorIconTooltip() {
+		sendingErrorIconTitle() {
 			if (this.sendingErrorCanRetry) {
 				return t('spreed', 'Failed to send the message. Click to try again')
 			}

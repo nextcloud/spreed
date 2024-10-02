@@ -7,13 +7,7 @@
 	<div>
 		<NcButton v-if="showStartCallButton"
 			id="call_button"
-			v-tooltip="{
-				placement: 'auto',
-				trigger: 'hover',
-				content: startCallToolTip,
-				autoHide: false,
-				html: true
-			}"
+			:title="startCallTitle"
 			:aria-label="startCallLabel"
 			:disabled="startCallButtonDisabled || loading"
 			:type="startCallButtonType"
@@ -103,7 +97,6 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -118,10 +111,6 @@ import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.js'
 
 export default {
 	name: 'CallButton',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		NcActions,
@@ -284,7 +273,7 @@ export default {
 			return t('spreed', 'End call')
 		},
 
-		startCallToolTip() {
+		startCallTitle() {
 			if (this.isNextcloudTalkHashDirty) {
 				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call.')
 			}
@@ -293,8 +282,8 @@ export default {
 				return t('spreed', 'This call has just ended')
 			}
 
-			if (this.callButtonTooltipText) {
-				return this.callButtonTooltipText
+			if (blockCalls) {
+				return unsupportedWarning
 			}
 
 			if (!this.conversation.canStartCall && !this.hasCall) {
@@ -338,16 +327,6 @@ export default {
 
 		isPhoneRoom() {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE
-		},
-
-		callButtonTooltipText() {
-			if (blockCalls) {
-				return unsupportedWarning
-			} else {
-				// Passing a falsy value into the content of the tooltip
-				// is the only way to disable it conditionally.
-				return false
-			}
 		},
 
 		isInLobby() {

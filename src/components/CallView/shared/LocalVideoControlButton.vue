@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcButton v-tooltip="videoButtonTooltip"
+	<NcButton :title="videoButtonTitle"
 		:type="type"
 		:aria-label="videoButtonAriaLabel"
 		:class="{ 'no-video-available': !model.attributes.videoAvailable }"
@@ -26,7 +26,6 @@ import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { PARTICIPANT } from '../../../constants.js'
 import BrowserStorage from '../../../services/BrowserStorage.js'
@@ -38,10 +37,6 @@ export default {
 		NcButton,
 		VideoIcon,
 		VideoOff,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
@@ -80,7 +75,7 @@ export default {
 			return this.model.attributes.videoAvailable && this.model.attributes.videoEnabled
 		},
 
-		videoButtonTooltip() {
+		videoButtonTitle() {
 			if (!this.isVideoAllowed) {
 				return t('spreed', 'You are not allowed to enable video')
 			}

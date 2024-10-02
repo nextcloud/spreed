@@ -129,7 +129,6 @@ import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import { useIsMobile } from '@nextcloud/vue/dist/Composables/useIsMobile.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
 import CallButton from './CallButton.vue'
@@ -151,10 +150,6 @@ import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/i
 
 export default {
 	name: 'TopBar',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		// Components

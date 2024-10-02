@@ -14,10 +14,10 @@
 		<ul class="web-server-setup-checks">
 			<li class="virtual-background">
 				{{ t('spreed', 'Files required for virtual background can be loaded') }}
-				<NcButton v-tooltip="virtualBackgroundAvailableToolTip"
-					type="tertiary"
+				<NcButton type="tertiary"
 					class="vue-button-inline"
 					:class="{'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false}"
+					:title="virtualBackgroundAvailableTitle"
 					:aria-label="virtualBackgroundAvailableAriaLabel"
 					@click="checkVirtualBackground">
 					<template #icon>
@@ -41,7 +41,6 @@ import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
@@ -49,10 +48,6 @@ import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
 export default {
 	name: 'WebServerSetupChecks',
-
-	directives: {
-		Tooltip,
-	},
 
 	components: {
 		AlertCircle,
@@ -85,7 +80,7 @@ export default {
 			return t('spreed', 'Checking …')
 		},
 
-		virtualBackgroundAvailableToolTip() {
+		virtualBackgroundAvailableTitle() {
 			if (this.virtualBackgroundAvailable === false && !VirtualBackground.isWasmSupported()) {
 				return t('spreed', 'Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check.')
 			}

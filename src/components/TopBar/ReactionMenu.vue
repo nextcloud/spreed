@@ -4,8 +4,8 @@
 -->
 
 <template>
-	<NcActions v-tooltip="t('spreed', 'Send a reaction')"
-		type="tertiary"
+	<NcActions type="tertiary"
+		:title="t('spreed', 'Send a reaction')"
 		:aria-label="t('spreed', 'Send a reaction')"
 		class="reaction">
 		<template #icon>
@@ -36,7 +36,6 @@ import { t } from '@nextcloud/l10n'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionButtonGroup from '@nextcloud/vue/dist/Components/NcActionButtonGroup.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 export default {
 	name: 'ReactionMenu',
@@ -46,10 +45,6 @@ export default {
 		NcActionButton,
 		NcActionButtonGroup,
 		EmoticonOutline,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {

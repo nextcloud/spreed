@@ -33,8 +33,8 @@
 				group>
 				<NcButton v-if="showAudioIndicator"
 					key="audioIndicator"
-					v-tooltip="audioButtonTooltip"
-					:aria-label="audioButtonTooltip"
+					:title="audioButtonTitle"
+					:aria-label="audioButtonTitle"
 					class="audioIndicator"
 					type="tertiary-no-background"
 					:disabled="isAudioButtonDisabled"
@@ -47,8 +47,8 @@
 
 				<NcButton v-if="showVideoIndicator"
 					key="videoIndicator"
-					v-tooltip="videoButtonTooltip"
-					:aria-label="videoButtonTooltip"
+					:title="videoButtonTitle"
+					:aria-label="videoButtonTitle"
 					class="videoIndicator"
 					type="tertiary-no-background"
 					@click.stop="toggleVideo">
@@ -60,7 +60,7 @@
 
 				<NcButton v-if="showScreenSharingIndicator"
 					key="screenSharingIndicator"
-					v-tooltip="t('spreed', 'Show screen')"
+					:title="t('spreed', 'Show screen')"
 					:aria-label="t('spreed', 'Show screen')"
 					class="screenSharingIndicator"
 					:class="{'screen-visible': sharedData.screenVisible}"
@@ -101,7 +101,6 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
@@ -121,10 +120,6 @@ export default {
 		TransitionWrapper,
 		VideoIcon,
 		VideoOff,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	inheritAttrs: false,
@@ -210,7 +205,7 @@ export default {
 		isAudioButtonDisabled() {
 			return !this.model.attributes.audioAvailable || !this.canFullModerate
 		},
-		audioButtonTooltip() {
+		audioButtonTitle() {
 			return this.model.attributes.audioAvailable
 				? t('spreed', 'Mute')
 				: t('spreed', 'Muted')
@@ -226,7 +221,7 @@ export default {
 		isRemoteVideoBlocked() {
 			return this.sharedData.remoteVideoBlocker && !this.sharedData.remoteVideoBlocker.isVideoEnabled()
 		},
-		videoButtonTooltip() {
+		videoButtonTitle() {
 			return this.isRemoteVideoEnabled
 				? t('spreed', 'Disable video')
 				: t('spreed', 'Enable video')

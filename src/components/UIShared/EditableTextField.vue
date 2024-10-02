@@ -40,10 +40,10 @@
 					</template>
 				</NcButton>
 				<div v-if="showCountDown"
-					v-tooltip.auto="countDownWarningText"
 					class="counter"
 					tabindex="0"
-					aria-label="countDownWarningText">
+					:title="countDownWarningText"
+					:aria-label="countDownWarningText">
 					<span>{{ charactersCountDown }}</span>
 				</div>
 			</template>
@@ -71,7 +71,6 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
@@ -84,10 +83,6 @@ export default {
 		NcRichContenteditable,
 		NcRichText,
 		Pencil,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
