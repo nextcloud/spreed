@@ -6,11 +6,8 @@
 <template>
 	<div class="audio-recorder">
 		<NcButton v-if="!isRecording"
-			v-tooltip.auto="{
-				content: startRecordingTooltip,
-				delay: tooltipDelay,
-			}"
-			:aria-label="startRecordingTooltip"
+			:title="startRecordingTitle"
+			:aria-label="startRecordingTitle"
 			type="tertiary"
 			:disabled="!canStartRecording"
 			@click="start">
@@ -19,12 +16,9 @@
 			</template>
 		</NcButton>
 		<div v-else class="wrapper">
-			<NcButton v-tooltip.auto="{
-					content: abortRecordingTooltip,
-					delay: tooltipDelay,
-				}"
-				type="error"
-				:aria-label="abortRecordingTooltip"
+			<NcButton type="error"
+				:title="abortRecordingTitle"
+				:aria-label="abortRecordingTitle"
 				@click="abortRecording">
 				<template #icon>
 					<Close :size="16" />
@@ -35,12 +29,9 @@
 				<span class="time">
 					{{ parsedRecordTime }}</span>
 			</div>
-			<NcButton v-tooltip.auto="{
-					content: stopRecordingTooltip,
-					delay: tooltipDelay,
-				}"
-				type="success"
-				:aria-label="stopRecordingTooltip"
+			<NcButton type="success"
+				:title="stopRecordingTitle"
+				:aria-label="stopRecordingTitle"
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
 				<template #icon>
@@ -62,7 +53,6 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
@@ -74,10 +64,6 @@ export default {
 		Close,
 		Check,
 		NcButton,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
@@ -127,19 +113,15 @@ export default {
 			return `${minutes}:${seconds}`
 		},
 
-		tooltipDelay() {
-			return { show: 500, hide: 200 }
-		},
-
-		startRecordingTooltip() {
+		startRecordingTitle() {
 			return t('spreed', 'Record voice message')
 		},
 
-		stopRecordingTooltip() {
+		stopRecordingTitle() {
 			return t('spreed', 'End recording and send')
 		},
 
-		abortRecordingTooltip() {
+		abortRecordingTitle() {
 			return t('spreed', 'Dismiss recording')
 		},
 

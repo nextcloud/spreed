@@ -15,7 +15,7 @@
 		v-bind="filePreviewBinding"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
-		<span v-tooltip="previewTooltip"
+		<span :title="file.name"
 			class="image-container"
 			:class="{'playable': isPlayable}"
 			:style="imageContainerStyle">
@@ -75,7 +75,6 @@ import { getUploader } from '@nextcloud/upload'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
@@ -103,10 +102,6 @@ export default {
 		// Icons
 		Close,
 		PlayCircleOutline,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	props: {
@@ -213,18 +208,6 @@ export default {
 				return undefined
 			}
 			return this.$store.getters.getLocalUrl(this.referenceId)
-		},
-
-		previewTooltip() {
-			if (this.shouldShowFileDetail) {
-				// no tooltip as the file name is already visible directly
-				return null
-			}
-			return {
-				content: this.file.name,
-				delay: { show: 500 },
-				placement: 'left',
-			}
 		},
 
 		// This is used to decide which outer element type to use

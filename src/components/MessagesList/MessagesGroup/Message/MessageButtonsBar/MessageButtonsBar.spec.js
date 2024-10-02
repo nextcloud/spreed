@@ -81,8 +81,8 @@ describe('MessageButtonsBar.vue', () => {
 			readInfo: {
 				showCommonReadIcon: true,
 				showSentIcon: true,
-				commonReadIconTooltip: '',
-				sentIconTooltip: '',
+				commonReadIconTitle: '',
+				sentIconTitle: '',
 			},
 			isTranslationAvailable: false,
 		}

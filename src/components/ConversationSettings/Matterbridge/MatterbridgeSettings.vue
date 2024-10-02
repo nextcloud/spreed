@@ -43,8 +43,8 @@
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="enabled"
-						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
 						type="tertiary"
+						:title="t('spreed', 'Show Matterbridge log')"
 						:aria-label="t('spreed', 'Show Matterbridge log')"
 						@click="showLogContent">
 						<template #icon>
@@ -94,7 +94,6 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextArea from '@nextcloud/vue/dist/Components/NcTextArea.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import BridgePart from './BridgePart.vue'
 
@@ -117,10 +116,6 @@ export default {
 		// Icons
 		Message,
 		Plus,
-	},
-
-	directives: {
-		Tooltip,
 	},
 
 	setup() {

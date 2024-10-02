@@ -328,9 +328,9 @@ export default {
 		readInfo() {
 			return {
 				showCommonReadIcon: this.showCommonReadIcon,
-				commonReadIconTooltip: t('spreed', 'Message read by everyone who shares their reading status'),
+				commonReadIconTitle: t('spreed', 'Message read by everyone who shares their reading status'),
 				showSentIcon: this.showSentIcon,
-				sentIconTooltip: t('spreed', 'Message sent'),
+				sentIconTitle: t('spreed', 'Message sent'),
 			}
 		},
 
