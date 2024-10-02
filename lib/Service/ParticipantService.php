@@ -1159,7 +1159,7 @@ class ParticipantService {
 		$this->resetCallStateWhenNeeded($room);
 	}
 
-	public function endCallForEveryone(Room $room, Participant $moderator): void {
+	public function endCallForEveryone(Room $room, ?Participant $moderator): void {
 		$oldActiveSince = $room->getActiveSince();
 		$event = new BeforeCallEndedForEveryoneEvent($room, $moderator, $oldActiveSince);
 		$this->dispatcher->dispatchTyped($event);
