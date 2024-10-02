@@ -671,6 +671,8 @@
     "Federation" : "الإتحاد",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "يوصى بشدة بتهيئة \"memcache.locking\" عند تمكين المحادثة الاتحادية.",
     "High-performance backend" : "خلفية أعلى اداء",
+    "Running the High-performance backend \"conversation_cluster\" mode is deprecated and will no longer be supported in the upcoming version. The High-performance backend supports real clustering nowadays which should be used instead." : "وضع \"conversation_cluster\" في الواجهة الخلفية عالية الأداء صار قديمًا ولن يتم دعمه بعد الآن في الإصدارات القادمة. الواجهة الخلفية عالية الأداء تدعم التجميع الحقيقي real-clustering في الوقت الحالي والذي يجب استخدامه بدلاً من ذلك.",
+    "Defining multiple High-performance backends is deprecated and will no longer be supported in the upcoming version. Instead a load-balancer should be set up together with clustered signaling servers and configured in the Talk settings." : "لقد أصبح تحديد العديد من الخوادم الخلفية عالية الأداء غير مستحسن ولن يتم دعمه بعد الآن في الإصدارات القادمة. و بدلاً من ذلك، يجب إعداد موازن التحميل load balancer مع خوادم الإشارات المجمعة وتكوينه في إعدادات تطبيق \"المحادثة\" Talk.",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "يوصى بشدة بتهيئة ذاكرة تخزين مؤقت cache عند تشغيل تطبيق \"المحادثة\" Talk في نكست كلاود بواجهة خلفية عالية الأداء .",
     "Recording backend" : "خلفية التسجيل",
     "Using the recording backend requires a High-performance backend." : "لاستعمال تسجيل المحادثات في الخلفية يلزمك خلفية عالية الأداء.",
