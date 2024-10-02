@@ -21,7 +21,7 @@
 					:class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
-						:key="selectedVideoPeerId"
+						:key="`promoted-${selectedVideoPeerId}`"
 						:token="token"
 						:model="selectedCallParticipantModel"
 						:shared-data="sharedDatas[selectedVideoPeerId]"
@@ -58,18 +58,9 @@
 						:call-participant-model="shownRemoteScreenCallParticipantModel"
 						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
 						is-big />
-					<!-- presenter overlay -->
-					<PresenterOverlay v-if="shouldShowPresenterOverlay"
-						:token="token"
-						:model="presenterModel"
-						:shared-data="presenterSharedData"
-						:is-local-presenter="showLocalScreen"
-						:local-media-model="localMediaModel"
-						:is-collapsed="!showPresenterOverlay"
-						@click="toggleShowPresenterOverlay" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue v-else-if="promotedParticipantModel"
-						:key="promotedParticipantModel.attributes.peerId"
+						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
 						:token="token"
 						:model="promotedParticipantModel"
 						:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
@@ -80,6 +71,15 @@
 						:is-one-to-one="isOneToOne"
 						:is-sidebar="isSidebar"
 						@force-promote-video="forcePromotedModel = $event" />
+					<!-- presenter overlay -->
+					<PresenterOverlay v-if="shouldShowPresenterOverlay"
+						:token="token"
+						:model="presenterModel"
+						:shared-data="presenterSharedData"
+						:is-local-presenter="showLocalScreen"
+						:local-media-model="localMediaModel"
+						:is-collapsed="!showPresenterOverlay"
+						@click="toggleShowPresenterOverlay" />
 
 					<div v-else-if="devMode && !isGrid"
 						class="dev-mode-video--promoted">
