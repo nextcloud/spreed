@@ -671,6 +671,8 @@
     "Federation" : "聯盟",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "強烈建議在啟用聯盟 Talk 時設定「memcache.locking」。",
     "High-performance backend" : "高效能後端",
+    "Running the High-performance backend \"conversation_cluster\" mode is deprecated and will no longer be supported in the upcoming version. The High-performance backend supports real clustering nowadays which should be used instead." : "高效能後端的「conversation_cluster」執行模式已棄用，在即將推出的版本中將不再支援。高效能後端現在支援真正的叢集，應該改用真正的叢集。",
+    "Defining multiple High-performance backends is deprecated and will no longer be supported in the upcoming version. Instead a load-balancer should be set up together with clustered signaling servers and configured in the Talk settings." : "定義多個高效能後端已被淘汰，在即將推出的版本中將不再支援。取而代之的是在 Talk 設定中設定負載平衡器與叢集訊號伺服器。",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "強烈建議在使用高效能後端執行 Nextcloud Talk 時設定記憶體快取。",
     "Recording backend" : "錄製後端",
     "Using the recording backend requires a High-performance backend." : "使用錄製後端需要高效能後端。",
