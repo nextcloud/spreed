@@ -66,7 +66,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
+        php-versions: ['8.4']
         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
 
     name: PostgreSQL PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
@@ -94,6 +94,10 @@ jobs:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
+
+      - name: Patch version check for nightly PHP
+        if: ${{ matrix.php-versions == '8.4' }}
+        run: echo "<?php" > lib/versioncheck.php
 
       - name: Checkout app
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
