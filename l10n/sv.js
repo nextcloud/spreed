@@ -673,6 +673,8 @@ OC.L10N.register(
     "Federation" : "Federation",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Det rekommenderas starkt att konfigurera \"memcache.locking\" när Talk Federation är aktiverat.",
     "High-performance backend" : "High-performance backend",
+    "Running the High-performance backend \"conversation_cluster\" mode is deprecated and will no longer be supported in the upcoming version. The High-performance backend supports real clustering nowadays which should be used instead." : "Att köra med High-performance backend \"conversation_cluster\" läge är utfasat och kommer inte längre att stödjas i den kommande versionen. High-performance backend stöder real clustering nuförtiden som bör användas istället.",
+    "Defining multiple High-performance backends is deprecated and will no longer be supported in the upcoming version. Instead a load-balancer should be set up together with clustered signaling servers and configured in the Talk settings." : "Att definiera flera High-performance backends är föråldrat och kommer inte längre att stödjas i den kommande versionen. Istället bör en lastbalanserare ställas in tillsammans med klustrade signalservrar och konfigureras i Talk-inställningarna.",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Det rekommenderas starkt att konfigurera en minnescache när du kör Nextcloud Talk med en High-performance backend.",
     "Recording backend" : "Recording backend",
     "Using the recording backend requires a High-performance backend." : "För att kunna använda recording backend krävs en High-performance backend.",
