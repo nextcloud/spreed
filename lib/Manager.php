@@ -295,6 +295,28 @@ class Manager {
 	}
 
 	/**
+	 * @return Room[]
+	 */
+	public function getRoomsLongerActiveSince(\DateTime $maxActiveSince): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
+			->where($query->expr()->isNotNull('r.active_since'))
+			->andWhere($query->expr()->lte('r.active_since', $query->createNamedParameter($maxActiveSince, IQueryBuilder::PARAM_DATE)))
+			->orderBy('r.id', 'ASC');
+		$result = $query->executeQuery();
+
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$rooms[] = $this->createRoomObject($row);
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param string $userId
 	 * @param array $sessionIds A list of talk sessions to consider for loading (otherwise no session is loaded)
 	 * @param bool $includeLastMessage
