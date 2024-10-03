@@ -1140,6 +1140,7 @@
     "You are currently waiting in the lobby" : "V tuto chvíli se nacházíte v čekárně",
     "The meeting will start soon" : "Schůzka brzy začne",
     "This meeting is scheduled for {startTime}" : "Tato schůzka je naplánována na {startTime}",
+    "Select a device" : "Vyberte zařízení",
     "No microphone available" : "Není k dispozici žádný mikrofon",
     "Select microphone" : "Vyberte mikrofon",
     "No camera available" : "Není k dispozici žádná kamera",

@@ -671,6 +671,8 @@
     "Federation" : "Cónaidhm",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Moltar go mór \"memcache.locking\" a chumrú nuair atá Talk Federation cumasaithe.",
     "High-performance backend" : "Inneall ardfheidhmíochta",
+    "Running the High-performance backend \"conversation_cluster\" mode is deprecated and will no longer be supported in the upcoming version. The High-performance backend supports real clustering nowadays which should be used instead." : "Ní cheadaítear an modh \"conversation_cluster\" Inneall Ardfheidhmíochta a rith agus ní thacófar leis a thuilleadh sa leagan atá le teacht. Tacaíonn an t-Inneall Ardfheidhmíochta le fíorchnuasaigh sa lá atá inniu ann ar cheart a úsáid ina ionad.",
+    "Defining multiple High-performance backends is deprecated and will no longer be supported in the upcoming version. Instead a load-balancer should be set up together with clustered signaling servers and configured in the Talk settings." : "Ní dhéanfar aon inneall ardfheidhmíochta iolrach a shainiú agus ní thacófar leis a thuilleadh sa leagan atá le teacht. Ina áit sin ba cheart cothromóir ualaigh a shocrú in éineacht le freastalaithe comharthaíochta cnuasaithe agus é a chumrú sna socruithe Plé.",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Moltar go mór taisce cuimhne a chumrú agus Nextcloud Talk á rith le hInneall Ardfheidhmíochta.",
     "Recording backend" : "Inneall taifeadta",
     "Using the recording backend requires a High-performance backend." : "Teastaíonn inneall Ardfheidhmíochta chun an t-inneall taifeadta a úsáid.",
