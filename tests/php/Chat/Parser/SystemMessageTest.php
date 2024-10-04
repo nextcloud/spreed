@@ -1305,7 +1305,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1'], 'guests' => 3, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1} and 3 guests (Duration "duration")',
+					'Call with {user1} and 3 guests ended (Duration "duration")',
 					['user1' => ['data' => 'user1']],
 				],
 			],
@@ -1314,7 +1314,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2'], 'guests' => 0, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1} and {user2} (Duration "duration")',
+					'Call with {user1} and {user2} ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2']],
 				],
 			],
@@ -1323,7 +1323,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2'], 'guests' => 1, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2} and 1 guest (Duration "duration")',
+					'Call with {user1}, {user2} and 1 guest ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2']],
 				],
 			],
@@ -1332,7 +1332,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3'], 'guests' => 0, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2} and {user3} (Duration "duration")',
+					'Call with {user1}, {user2} and {user3} ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3']],
 				],
 			],
@@ -1341,7 +1341,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3'], 'guests' => 22, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3} and 22 guests (Duration "duration")',
+					'Call with {user1}, {user2}, {user3} and 22 guests ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3']],
 				],
 			],
@@ -1350,7 +1350,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 0, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3} and {user4} (Duration "duration")',
+					'Call with {user1}, {user2}, {user3} and {user4} ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
@@ -1359,7 +1359,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests (Duration "duration")',
+					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
@@ -1368,7 +1368,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 0, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration "duration")',
+					'Call with {user1}, {user2}, {user3}, {user4} and {user5} ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4'], 'user5' => ['data' => 'user5']],
 				],
 			],
@@ -1377,7 +1377,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 1, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
+					'Call with {user1}, {user2}, {user3}, {user4} and 2 others ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
@@ -1386,7 +1386,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 0, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
+					'Call with {user1}, {user2}, {user3}, {user4} and 2 others ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
@@ -1395,7 +1395,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 2, 'duration' => 42],
 				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
 				[
-					'Call with {user1}, {user2}, {user3}, {user4} and 4 others (Duration "duration")',
+					'Call with {user1}, {user2}, {user3}, {user4} and 4 others ended (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
@@ -1525,6 +1525,17 @@ class SystemMessageTest extends TestCase {
 				[
 					'{actor} ended the call with {user1}, {user2}, {user3}, {user4} and 3 others (Duration "duration")',
 					['user1' => ['data' => '234'], 'user2' => ['data' => '345'], 'user3' => ['data' => '456'], 'user4' => ['data' => '576']],
+				],
+			],
+
+			// Automatically ended by background job (max_call_duration reached)
+			'max_call_duration cleanup' => [
+				'call_ended_everyone',
+				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
+				['type' => 'guest', 'id' => 'guest/system', 'name' => 'system'],
+				[
+					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests ended (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
 		];

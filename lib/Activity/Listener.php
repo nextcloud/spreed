@@ -82,8 +82,8 @@ class Listener implements IEventListener {
 			$actorId = $actor->getAttendee()->getActorId();
 			$actorType = $actor->getAttendee()->getActorType();
 		} else {
-			$actorId = $userIds[0] ?? 'guests-only';
-			$actorType = $actorId !== 'guests-only' ? Attendee::ACTOR_USERS : Attendee::ACTOR_GUESTS;
+			$actorType = Attendee::ACTOR_GUESTS;
+			$actorId = Attendee::ACTOR_ID_SYSTEM;
 		}
 		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
 			'message' => $message,
