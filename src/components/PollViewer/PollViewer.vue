@@ -108,7 +108,7 @@ import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
-import { usePollsStore } from '../../stores/polls.js'
+import { usePollsStore } from '../../stores/polls.ts'
 
 export default {
 	name: 'PollViewer',

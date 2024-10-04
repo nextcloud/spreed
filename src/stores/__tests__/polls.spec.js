@@ -13,7 +13,7 @@ import {
 	endPoll,
 } from '../../services/pollService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
-import { usePollsStore } from '../polls.js'
+import { usePollsStore } from '../polls.ts'
 
 jest.mock('../../services/pollService', () => ({
 	createPoll: jest.fn(),
