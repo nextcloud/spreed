@@ -1088,13 +1088,14 @@ class SystemMessage implements IEventListener {
 
 
 	protected function parseCall(Room $room, string $message, array $parameters, array $params): array {
+		$actorIsSystem = $params['actor']['type'] === 'guest' && $params['actor']['id'] === 'guest/' . Attendee::ACTOR_ID_SYSTEM;
 		if ($message === 'call_ended_everyone') {
 			if ($params['actor']['type'] === 'user') {
 				$entry = array_keys($parameters['users'], $params['actor']['id'], true);
 				foreach ($entry as $i) {
 					unset($parameters['users'][$i]);
 				}
-			} else {
+			} elseif (!$actorIsSystem) {
 				$parameters['guests']--;
 			}
 		}
@@ -1111,10 +1112,10 @@ class SystemMessage implements IEventListener {
 
 		switch ($numUsers) {
 			case 0:
-				if ($message === 'call_ended') {
+				if ($message === 'call_ended' || $actorIsSystem) {
 					$subject = $this->l->n(
-						'Call with %n guest (Duration {duration})',
-						'Call with %n guests (Duration {duration})',
+						'Call with %n guest ended (Duration {duration})',
+						'Call with %n guests ended (Duration {duration})',
 						$parameters['guests']
 					);
 				} else {
@@ -1126,8 +1127,8 @@ class SystemMessage implements IEventListener {
 				}
 				break;
 			case 1:
-				if ($message === 'call_ended') {
-					$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+				if ($message === 'call_ended' || $actorIsSystem) {
+					$subject = $this->l->t('Call with {user1} and {user2} ended (Duration {duration})');
 				} else {
 					if ($parameters['guests'] === 0) {
 						$subject = $this->l->t('{actor} ended the call with {user1} (Duration {duration})');
@@ -1139,14 +1140,14 @@ class SystemMessage implements IEventListener {
 				break;
 			case 2:
 				if ($parameters['guests'] === 0) {
-					if ($message === 'call_ended') {
-						$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+					if ($message === 'call_ended' || $actorIsSystem) {
+						$subject = $this->l->t('Call with {user1} and {user2} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1} and {user2} (Duration {duration})');
 					}
 				} else {
-					if ($message === 'call_ended') {
-						$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					if ($message === 'call_ended' || $actorIsSystem) {
+						$subject = $this->l->t('Call with {user1}, {user2} and {user3} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1}, {user2} and {user3} (Duration {duration})');
 					}
@@ -1155,14 +1156,14 @@ class SystemMessage implements IEventListener {
 				break;
 			case 3:
 				if ($parameters['guests'] === 0) {
-					if ($message === 'call_ended') {
-						$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					if ($message === 'call_ended' || $actorIsSystem) {
+						$subject = $this->l->t('Call with {user1}, {user2} and {user3} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1}, {user2} and {user3} (Duration {duration})');
 					}
 				} else {
-					if ($message === 'call_ended') {
-						$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					if ($message === 'call_ended' || $actorIsSystem) {
+						$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
 					}
@@ -1171,14 +1172,14 @@ class SystemMessage implements IEventListener {
 				break;
 			case 4:
 				if ($parameters['guests'] === 0) {
-					if ($message === 'call_ended') {
-						$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					if ($message === 'call_ended' || $actorIsSystem) {
+						$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
 					}
 				} else {
-					if ($message === 'call_ended') {
-						$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+					if ($message === 'call_ended' || $actorIsSystem) {
+						$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
 					}
@@ -1187,8 +1188,8 @@ class SystemMessage implements IEventListener {
 				break;
 			case 5:
 			default:
-				if ($message === 'call_ended') {
-					$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+				if ($message === 'call_ended' || $actorIsSystem) {
+					$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} ended (Duration {duration})');
 				} else {
 					$subject = $this->l->t('{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
 				}
