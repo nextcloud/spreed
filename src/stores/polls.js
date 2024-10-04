@@ -9,7 +9,12 @@ import Vue from 'vue'
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
-import pollService from '../services/pollService.js'
+import {
+	createPoll,
+	getPollData,
+	submitVote,
+	endPoll,
+} from '../services/pollService.ts'
 
 export const usePollsStore = defineStore('polls', {
 	state: () => ({
@@ -39,7 +44,7 @@ export const usePollsStore = defineStore('polls', {
 
 		async getPollData({ token, pollId }) {
 			try {
-				const response = await pollService.getPollData(token, pollId)
+				const response = await getPollData(token, pollId)
 				this.addPoll({ token, poll: response.data.ocs.data })
 			} catch (error) {
 				console.error(error)
@@ -72,13 +77,13 @@ export const usePollsStore = defineStore('polls', {
 
 		async createPoll({ token, question, options, resultMode, maxVotes }) {
 			try {
-				const response = await pollService.postNewPoll(
+				const response = await createPoll({
 					token,
 					question,
 					options,
 					resultMode,
 					maxVotes,
-				)
+				})
 				this.addPoll({ token, poll: response.data.ocs.data })
 
 				return response.data.ocs.data
@@ -89,7 +94,7 @@ export const usePollsStore = defineStore('polls', {
 
 		async submitVote({ token, pollId, optionIds }) {
 			try {
-				const response = await pollService.submitVote(token, pollId, optionIds)
+				const response = await submitVote(token, pollId, optionIds)
 				this.addPoll({ token, poll: response.data.ocs.data })
 			} catch (error) {
 				console.error(error)
@@ -99,7 +104,7 @@ export const usePollsStore = defineStore('polls', {
 
 		async endPoll({ token, pollId }) {
 			try {
-				const response = await pollService.endPoll(token, pollId)
+				const response = await endPoll(token, pollId)
 				this.addPoll({ token, poll: response.data.ocs.data })
 			} catch (error) {
 				console.error(error)

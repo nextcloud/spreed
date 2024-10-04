@@ -160,3 +160,13 @@ export type requestAssistanceResponse = ApiResponse<operations['breakout_room-re
 export type resetRequestAssistanceResponse = ApiResponse<operations['breakout_room-reset-request-for-assistance']['responses'][200]['content']['application/json']>
 export type switchToBreakoutRoomParams = operations['breakout_room-switch-breakout-room']['requestBody']['content']['application/json']
 export type switchToBreakoutRoomResponse = ApiResponse<operations['breakout_room-switch-breakout-room']['responses'][200]['content']['application/json']>
+
+// Polls
+export type Poll = components['schemas']['Poll']
+
+export type getPollResponse = ApiResponse<operations['poll-show-poll']['responses'][200]['content']['application/json']>
+export type createPollParams = operations['poll-create-poll']['requestBody']['content']['application/json']
+export type createPollResponse = ApiResponse<operations['poll-create-poll']['responses'][201]['content']['application/json']>
+export type votePollParams = Required<operations['poll-vote-poll']>['requestBody']['content']['application/json']
+export type votePollResponse = ApiResponse<operations['poll-vote-poll']['responses'][200]['content']['application/json']>
+export type closePollResponse = ApiResponse<operations['poll-close-poll']['responses'][200]['content']['application/json']>
