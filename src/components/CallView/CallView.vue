@@ -19,7 +19,7 @@
 				<div v-if="!isGrid || !callParticipantModels.length" class="video__promoted" :class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
-						:key="selectedVideoPeerId"
+						:key="`promoted-${selectedVideoPeerId}`"
 						:token="token"
 						:model="selectedCallParticipantModel"
 						:shared-data="sharedDatas[selectedVideoPeerId]"
@@ -67,7 +67,7 @@
 					</template>
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue v-else-if="promotedParticipantModel"
-						:key="promotedParticipantModel.attributes.peerId"
+						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
 						:token="token"
 						:model="promotedParticipantModel"
 						:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
