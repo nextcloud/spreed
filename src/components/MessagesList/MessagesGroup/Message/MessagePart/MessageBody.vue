@@ -141,7 +141,7 @@ import CallButton from '../../../../TopBar/CallButton.vue'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { EventBus } from '../../../../../services/EventBus.js'
-import { usePollsStore } from '../../../../../stores/polls.js'
+import { usePollsStore } from '../../../../../stores/polls.ts'
 import { parseSpecialSymbols, parseMentions } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
