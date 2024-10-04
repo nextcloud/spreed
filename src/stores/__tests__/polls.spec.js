@@ -124,7 +124,7 @@ describe('pollsStore', () => {
 		createPoll.mockResolvedValue(response)
 
 		// Act
-		await pollsStore.createPoll({ token: TOKEN, ...pollRequest })
+		await pollsStore.createPoll({ token: TOKEN, form: pollRequest })
 
 		// Assert
 		expect(pollsStore.getPoll(TOKEN, poll.id)).toMatchObject(poll)
