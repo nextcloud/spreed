@@ -13,6 +13,18 @@
 			{{ t('spreed', 'Question') }}
 		</p>
 		<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+		<!--native file picker, hidden -->
+		<input id="poll-upload"
+			ref="pollImport"
+			type="file"
+			class="hidden-visually"
+			@change="importPoll">
+		<NcButton class="poll-editor__button"
+			type="secondary"
+			wide
+			@click="triggerImport">
+			{{ t('spreed', 'Import poll from file') }}
+		</NcButton>
 
 		<!-- Poll options -->
 		<p class="poll-editor__caption">
@@ -58,6 +70,12 @@
 			<NcButton type="tertiary" @click="emit('close')">
 				{{ t('spreed', 'Dismiss') }}
 			</NcButton>
+			<NcButton v-if="isFilled"
+				type="secondary"
+				:href="exportPollBlob"
+				:download="exportPollFileName">
+				{{ t('spreed', 'Export') }}
+			</NcButton>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
 			</NcButton>
@@ -92,6 +110,7 @@ const emit = defineEmits<{
 const pollsStore = usePollsStore()
 
 const pollOption = ref(null)
+const pollImport = ref(null)
 
 const pollForm = reactive<createPollParams>({
 	question: '',
@@ -119,6 +138,14 @@ const isMultipleAnswer = computed({
 		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
 	}
 })
+
+const exportPollBlob = computed(() => {
+	const jsonString = JSON.stringify(pollForm, null, 2)
+	const blob = new Blob([jsonString], { type: 'application/json' })
+
+	return URL.createObjectURL(blob)
+})
+const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
 /**
  * Remove a previously added option
@@ -150,6 +177,39 @@ async function createPoll() {
 		emit('close')
 	}
 }
+
+/**
+ * Call native input[type='file'] to import a file
+ */
+function triggerImport() {
+	pollImport.value.click()
+}
+
+/**
+ * Validate imported file and insert data into form fields
+ * @param event import event
+ */
+function importPoll(event: Event) {
+	if (!(event.target as HTMLInputElement).files?.[0]) {
+		return
+	}
+
+	const reader = new FileReader()
+	reader.onload = (e: ProgressEvent) => {
+		try {
+			const jsonObject = JSON.parse((e.target as FileReader).result as string)
+			for (const key of Object.keys(pollForm)) {
+				if (jsonObject[key] !== undefined) {
+					pollForm[key] = jsonObject[key]
+				}
+			}
+		} catch (error) {
+			console.error('Error while parsing JSON:', error)
+		}
+	}
+
+	reader.readAsText((event.target as HTMLInputElement).files[0])
+}
 </script>
 
 <style lang="scss" scoped>
@@ -158,6 +218,10 @@ async function createPoll() {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
 		color: var(--color-primary-element);
+	}
+
+	&__button {
+		margin-block: 8px;
 	}
 
 	&__option {
