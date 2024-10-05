@@ -73,7 +73,7 @@
     "wildemitter": "^1.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.25.7",
     "@babel/preset-env": "^7.25.4",
     "@jest/globals": "^29.7.0",
     "@nextcloud/babel-config": "^1.2.0",
