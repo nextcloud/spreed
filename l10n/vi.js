@@ -344,6 +344,7 @@ OC.L10N.register(
     "Test this server" : "Kiểm tra máy chủ này",
     "TURN servers" : "Máy chủ TURN",
     "OK" : "OK",
+    "Federated user" : "Người dùng được liên kết",
     "Back" : "Quay lại",
     "Cancel" : "Hủy",
     "Confirm" : "Xác nhận",
