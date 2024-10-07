@@ -127,6 +127,7 @@ class Capabilities implements IPublicCapability {
 		'call' => [
 			'predefined-backgrounds',
 			'can-upload-background',
+			'start-without-media',
 		],
 		'chat' => [
 			'read-privacy',
@@ -196,6 +197,7 @@ class Capabilities implements IPublicCapability {
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
 					'can-enable-sip' => false,
+					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,

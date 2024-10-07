@@ -66,6 +66,7 @@ export type components = {
                     "sip-enabled": boolean;
                     "sip-dialout-enabled": boolean;
                     "can-enable-sip": boolean;
+                    "start-without-media": boolean;
                 };
                 chat: {
                     /** Format: int64 */
