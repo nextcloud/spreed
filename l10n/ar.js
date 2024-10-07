@@ -1167,7 +1167,7 @@ OC.L10N.register(
     "Add to favorites" : "أضفه إلى المفضلة",
     "You need to promote a new moderator before you can leave the conversation." : "يجب عليك ترقية مشرف لاحد المشاركين قبل مغادرة المحادثة.",
     "Pending invitations" : "دعوات معلقة",
-    "Join conversations from remote Nextcloud servers" : "الانضمام إلى المحادثة من خوادم قصيّة لنكست كلاود",
+    "Join conversations from remote Nextcloud servers" : "الانضمام إلى المحادثة من خوادم بعيدة لنكست كلاود",
     "From {user} at {remoteServer}" : "من {user} على الخادوم {remoteServer}",
     "Decline invitation" : "رفض الدعوة",
     "Accept invitation" : "قبول الدعوة",
