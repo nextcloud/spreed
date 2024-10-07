@@ -829,6 +829,7 @@ OC.L10N.register(
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: server správně vrátil soubory „.wasm“ a „.tflite“.",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "Zdá se, že nastavení PHP a Apache nejsou slučitelná. Poznamenejme, že PHP je možné použít pouze s modulem MPM_PREFORK a PHP-FPM je možné použít pouze s modulem MPM_EVENT.",
     "Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "Nedaří se zjistit nastavení PHP a Apache, protože je vypnuté spouštění nebo apachectl nefunguje tak, jak by mělo. Poznamenejme, že PHP je možné použít pouze s modulem MPM_PREFORK a PHP-FPM je možné použít pouze s modulem MPM_EVENT.",
+    "Federated user" : "Federovaný uživatel",
     "Number of breakout rooms" : "Počet přestávkových místností",
     "Assignment method" : "Metoda přiřazování",
     "Automatically assign participants" : "Automaticky přiřadit účastníky",
