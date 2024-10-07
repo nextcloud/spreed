@@ -352,6 +352,10 @@ export default {
 			return this.settingsStore.getShowMediaSettings(this.token)
 		},
 
+		blurBackgroundEnabled() {
+			return this.settingsStore.getBlurBackgroundEnabled
+		},
+
 		showVideo() {
 			return this.videoPreviewAvailable && this.videoOn
 		},
@@ -431,16 +435,21 @@ export default {
 				this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 				this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				this.silentCall = !!BrowserStorage.getItem('silentCall_' + this.token)
-
-				// Set virtual background depending on BrowserStorage's settings
-				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-					if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
-						this.blurVirtualBackground()
-					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
-					}
+				// Check main blur background setting
+				if (this.blurBackgroundEnabled) {
+					this.blurVirtualBackground()
+					this.blurBackground()
 				} else {
-					this.clearVirtualBackground()
+					// Set virtual background depending on BrowserStorage's settings
+					if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+						if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+							this.blurVirtualBackground()
+						} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+							this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
+						}
+					} else {
+						this.clearVirtualBackground()
+					}
 				}
 
 				this.initializeDevices()
