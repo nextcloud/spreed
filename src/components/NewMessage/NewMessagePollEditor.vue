@@ -77,7 +77,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import { usePollsStore } from '../../stores/polls.js'
+import { usePollsStore } from '../../stores/polls.ts'
 
 export default {
 	name: 'NewMessagePollEditor',

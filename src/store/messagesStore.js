@@ -30,7 +30,7 @@ import {
 } from '../services/messagesService.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.js'
 import { useGuestNameStore } from '../stores/guestName.js'
-import { usePollsStore } from '../stores/polls.js'
+import { usePollsStore } from '../stores/polls.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
