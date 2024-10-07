@@ -147,7 +147,8 @@
                                     "can-upload-background",
                                     "sip-enabled",
                                     "sip-dialout-enabled",
-                                    "can-enable-sip"
+                                    "can-enable-sip",
+                                    "start-without-media"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -185,6 +186,9 @@
                                         "type": "boolean"
                                     },
                                     "can-enable-sip": {
+                                        "type": "boolean"
+                                    },
+                                    "start-without-media": {
                                         "type": "boolean"
                                     }
                                 }
