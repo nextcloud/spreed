@@ -39,7 +39,8 @@ export const useSettingsStore = defineStore('settings', {
 		readStatusPrivacy: loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE),
 		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
 		showMediaSettings: {},
-		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
+		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),,
+		blurBackgroundEnabled: undefined,
 	}),
 
 	getters: {
@@ -71,6 +72,16 @@ export const useSettingsStore = defineStore('settings', {
 			}
 			}
 		},
+
+		getBlurBackgroundEnabled: (state) => {
+			if (state.blurBackgroundEnabled !== undefined) {
+				return state.blurBackgroundEnabled
+			}
+
+			const storedValue = BrowserStorage.getItem('blurBackgroundEnabled')
+			state.blurBackgroundEnabled = storedValue === 'true'
+			return state.blurBackgroundEnabled
+		}
 	},
 
 	actions: {
@@ -101,6 +112,15 @@ export const useSettingsStore = defineStore('settings', {
 				BrowserStorage.setItem('showMediaSettings_' + token, 'false')
 			}
 			Vue.set(this.showMediaSettings, token, value)
+		},
+
+		setBlurBackgroundEnabled(value) {
+			if (value) {
+				BrowserStorage.setItem('blurBackgroundEnabled', 'true')
+			} else {
+				BrowserStorage.removeItem('blurBackgroundEnabled')
+			}
+			this.blurBackgroundEnabled = value
 		},
 
 		async setStartWithoutMedia(value) {
