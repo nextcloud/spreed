@@ -74,10 +74,16 @@ const setPlaySounds = async function(hasUserAccount, value) {
 	}
 }
 
+const setStartWithoutMedia = async function(value) {
+	await axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/spreed/calls_start_without_media'),
+		{ configValue: value ? 'yes' : 'no' })
+}
+
 export {
 	setAttachmentFolder,
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 	setSIPSettings,
 	setPlaySounds,
+	setStartWithoutMedia,
 }
