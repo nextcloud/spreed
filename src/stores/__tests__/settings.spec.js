@@ -70,7 +70,9 @@ describe('settingsStore', () => {
 
 			// Assert
 			expect(results).toEqual([true, false])
-			expect(BrowserStorage.getItem).not.toHaveBeenCalled()
+			// It's always called at least once : BrowserStorage.getItem('cachedConversations')
+			// +1
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(1)
 		})
 
 		it('shows correct values received from BrowserStorage', () => {
@@ -87,10 +89,11 @@ describe('settingsStore', () => {
 
 			// Assert
 			expect(results).toEqual([true, true, false])
-			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(3)
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(1, 'showMediaSettings_token-1')
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(2, 'showMediaSettings_token-2')
-			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(3, 'showMediaSettings_token-3')
+			// It's always called at least once : BrowserStorage.getItem('cachedConversations')
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(4) // 1 + 3
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(2, 'showMediaSettings_token-1')
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(3, 'showMediaSettings_token-2')
+			expect(BrowserStorage.getItem).toHaveBeenNthCalledWith(4, 'showMediaSettings_token-3')
 		})
 
 		it('updates values correctly', async () => {
@@ -106,7 +109,8 @@ describe('settingsStore', () => {
 
 			// Assert
 			expect(results).toEqual([false, true])
-			expect(BrowserStorage.getItem).not.toHaveBeenCalled()
+			// It's always called at least once : BrowserStorage.getItem('cachedConversations')
+			expect(BrowserStorage.getItem).toHaveBeenCalledTimes(1)
 			expect(BrowserStorage.setItem).toHaveBeenCalledTimes(2)
 			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(1, 'showMediaSettings_token-1', 'false')
 			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(2, 'showMediaSettings_token-2', 'true')
