@@ -384,6 +384,23 @@ class SignalingController extends OCSController {
 						if (!$participant->hasModeratorPermissions(false)) {
 							break;
 						}
+					} elseif ($decodedMessage['type'] === 'offer' || $decodedMessage['type'] === 'answer') {
+						$room = $this->manager->getRoomForSession($this->userId, $message['sessionId']);
+						$participant = $this->participantService->getParticipantBySession($room, $message['sessionId']);
+
+						if (!($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) && $decodedMessage['roomType'] === 'video'
+								&& $this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'audio')) {
+							break;
+						}
+						if (!($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_VIDEO) && $decodedMessage['roomType'] === 'video'
+								&& $this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'video')) {
+							break;
+						}
+						if (!($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) && $decodedMessage['roomType'] === 'screen'
+								&& ($this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'audio')
+									|| $this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'video'))) {
+							break;
+						}
 					}
 
 					$this->messages->addMessage($message['sessionId'], $decodedMessage['to'], json_encode($decodedMessage));
@@ -393,6 +410,84 @@ class SignalingController extends OCSController {
 		}
 
 		return new DataResponse($response);
+	}
+
+	/**
+	 * Returns whether the SDP is trying to publish the given media based on the
+	 * media direction.
+	 *
+	 * The SDP is trying to publish if the related media description contains a
+	 * media direction of either "sendrecv" or "sendonly". If no media direction
+	 * is provided in a media description the media direction in the session
+	 * description is used instead. If that is not provided either then
+	 * "sendrecv" is assumed.
+	 *
+	 * See https://www.rfc-editor.org/rfc/rfc8866.html#name-media-direction-attributes
+	 *
+	 * @param string $sdp the SDP to check
+	 * @param string $media the media to check, either "audio" or "video"
+	 * @return bool true if it is trying to publish, false otherwise
+	 */
+	private function isTryingToPublishMedia(string $sdp, string $media): bool {
+		$lines = preg_split('/\r\n|\n|\r/', $sdp);
+
+		$sessionMediaDirectionIndex = -1;
+		$mediaDirectionIndex = -1;
+		$mediaDescriptionIndex = -1;
+		$matchingMediaDescriptionIndex = -1;
+
+		for ($i = 0; $i < count($lines); $i++) {
+			if (strpos($lines[$i], 'a=sendrecv') === 0
+				|| strpos($lines[$i], 'a=sendonly') === 0
+				|| strpos($lines[$i], 'a=recvonly') === 0
+				|| strpos($lines[$i], 'a=inactive') === 0) {
+				$mediaDirectionIndex = $i;
+
+				if ($mediaDescriptionIndex < 0) {
+					$sessionMediaDirectionIndex = $mediaDirectionIndex;
+				}
+
+				if ($matchingMediaDescriptionIndex >= 0
+					&& $matchingMediaDescriptionIndex >= $mediaDescriptionIndex
+					&& $mediaDirectionIndex > $matchingMediaDescriptionIndex
+					&& (strpos($lines[$mediaDirectionIndex], 'a=sendrecv') === 0
+						|| strpos($lines[$mediaDirectionIndex], 'a=sendonly') === 0)) {
+					return true;
+				}
+			} elseif (strpos($lines[$i], 'm=') === 0) {
+				// No media direction in previous matching media description,
+				// fallback to media direction in the session description or, if
+				// not set, default to "sendrecv".
+				if ($matchingMediaDescriptionIndex >= 0
+					&& $matchingMediaDescriptionIndex >= $mediaDescriptionIndex
+					&& $mediaDirectionIndex < $matchingMediaDescriptionIndex
+					&& ($sessionMediaDirectionIndex < 0
+						|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendrecv') === 0
+						|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendonly') === 0)) {
+					return true;
+				}
+
+				$mediaDescriptionIndex = $i;
+
+				if (strpos($lines[$i], 'm=' . $media) === 0) {
+					$matchingMediaDescriptionIndex = $i;
+				}
+			}
+		}
+
+		// No media direction in last matching media description, fallback to
+		// media direction in the session description or, if not set, default to
+		// "sendrecv".
+		if ($matchingMediaDescriptionIndex >= 0
+			&& $matchingMediaDescriptionIndex >= $mediaDescriptionIndex
+			&& $mediaDirectionIndex < $matchingMediaDescriptionIndex
+			&& ($sessionMediaDirectionIndex < 0
+				|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendrecv') === 0
+				|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendonly') === 0)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
