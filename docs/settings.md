@@ -21,11 +21,16 @@
 
 ## User settings
 
-| Key                   | Capability                         | Default                                         | Valid values                                                                                             |
-|-----------------------|------------------------------------|-------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| `attachment_folder`   | `config => attachments => folder`  | Value of app config `default_attachment_folder` | Path owned by the user to store uploads and received shares. It is created if it does not exist.         |
-| `read_status_privacy` | `config => chat => read-privacy`   | `0`                                             | One of the read-status constants from the [constants list](constants.md#participant-read-status-privacy) |
-| `typing_privacy`      | `config => chat => typing-privacy` | `0`                                             | One of the typing privacy constants from the [constants list](constants.md#participant-typing-privacy)   |
+**Note:** Settings from `calls_start_without_media` onwards can not be set via above API.
+Instead, the server API `POST /ocs/v2.php/apps/provisioning_api/api/v1/config/users/{appId}/{configKey}` needs to be used.
+
+| Key                         | Capability                              | Default                                            | Valid values                                                                                             |
+|-----------------------------|-----------------------------------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `attachment_folder`         | `config => attachments => folder`       | Value of app config `default_attachment_folder`    | Path owned by the user to store uploads and received shares. It is created if it does not exist.         |
+| `read_status_privacy`       | `config => chat => read-privacy`        | `0`                                                | One of the read-status constants from the [constants list](constants.md#participant-read-status-privacy) |
+| `typing_privacy`            | `config => chat => typing-privacy`      | `0`                                                | One of the typing privacy constants from the [constants list](constants.md#participant-typing-privacy)   |
+| `play_sounds`               |                                         | `'yes'`                                            | `'yes'` and `'no'`                                                                                       |
+| `calls_start_without_media` | `config => call => start-without-media` | `''` falling back to app config with the same name | `'yes'` and `'no'`                                                                                       |
 
 ## Set SIP settings
 
@@ -94,6 +99,7 @@ Legend:
 | `changelog`                          | string<br>`yes` or `no`                                          | `yes`      | No   |        | Whether the changelog conversation is updated with new features on major releases                                                                                                                                                                                                |
 | `has_reference_id`                   | string<br>`yes` or `no`                                          | `no`       | Yes  |        | Indicator whether the clients can use the reference value to identify their message, will be automatically set to `yes` when the repair steps are executed                                                                                                                       |
 | `hide_signaling_warning`             | string<br>`yes` or `no`                                          | `no`       | No   | 🖌️    | Flag that allows to suppress the warning that an HPB should be configured                                                                                                                                                                                                        |
+| `calls_start_without_media`          | string<br>`yes` or `no`                                          | `no`       | Yes  |        | Whether participants start with enabled or disabled audio and video by default                                                                                                                                                                                                   |
 | `breakout_rooms`                     | string<br>`yes` or `no`                                          | `yes`      | Yes  |        | Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.)                                                                                                                                              |
 | `call_recording`                     | string<br>`yes` or `no`                                          | `yes`      | Yes  |        | Enable call recording                                                                                                                                                                                                                                                            |
 | `call_recording_transcription`       | string<br>`yes` or `no`                                          | `no`       | No   |        | Whether call recordings should automatically be transcripted when a transcription provider is enabled.                                                                                                                                                                           |

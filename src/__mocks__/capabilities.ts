@@ -112,6 +112,7 @@ export const mockedCapabilities: Capabilities = {
 				'sip-enabled': true,
 				'sip-dialout-enabled': true,
 				'can-enable-sip': true,
+				'start-without-media': false,
 			},
 			chat: {
 				'max-length': 32000,
@@ -143,6 +144,7 @@ export const mockedCapabilities: Capabilities = {
 			call: [
 				'predefined-backgrounds',
 				'can-upload-background',
+				'start-without-media',
 			],
 			chat: [
 				'read-privacy',

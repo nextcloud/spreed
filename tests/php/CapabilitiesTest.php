@@ -119,6 +119,7 @@ class CapabilitiesTest extends TestCase {
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
 						'can-enable-sip' => false,
+						'start-without-media' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -252,6 +253,7 @@ class CapabilitiesTest extends TestCase {
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
 						'can-enable-sip' => false,
+						'start-without-media' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
