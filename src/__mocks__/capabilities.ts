@@ -113,6 +113,7 @@ export const mockedCapabilities: Capabilities = {
 				'sip-dialout-enabled': true,
 				'can-enable-sip': true,
 				'start-without-media': false,
+				'max-duration': 0,
 			},
 			chat: {
 				'max-length': 32000,
