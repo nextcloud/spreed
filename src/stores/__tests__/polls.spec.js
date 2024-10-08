@@ -6,12 +6,17 @@ import flushPromises from 'flush-promises'
 import { setActivePinia, createPinia } from 'pinia'
 
 import { ATTENDEE } from '../../constants.js'
-import pollService from '../../services/pollService.js'
+import {
+	createPoll,
+	getPollData,
+	submitVote,
+	endPoll,
+} from '../../services/pollService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
-import { usePollsStore } from '../polls.js'
+import { usePollsStore } from '../polls.ts'
 
-jest.mock('../../services/pollService.js', () => ({
-	postNewPoll: jest.fn(),
+jest.mock('../../services/pollService', () => ({
+	createPoll: jest.fn(),
 	getPollData: jest.fn(),
 	submitVote: jest.fn(),
 	endPoll: jest.fn(),
@@ -88,7 +93,7 @@ describe('pollsStore', () => {
 	it('receives a poll from server and adds it to the store', async () => {
 		// Arrange
 		const response = generateOCSResponse({ payload: poll })
-		pollService.getPollData.mockResolvedValue(response)
+		getPollData.mockResolvedValue(response)
 
 		// Act
 		await pollsStore.getPollData({ token: TOKEN, pollId: poll.id })
@@ -101,7 +106,7 @@ describe('pollsStore', () => {
 		// Arrange
 		jest.useFakeTimers()
 		const response = generateOCSResponse({ payload: poll })
-		pollService.getPollData.mockResolvedValue(response)
+		getPollData.mockResolvedValue(response)
 
 		// Act
 		pollsStore.debounceGetPollData({ token: TOKEN, pollId: poll.id })
@@ -116,7 +121,7 @@ describe('pollsStore', () => {
 	it('creates a poll and adds it to the store', async () => {
 		// Arrange
 		const response = generateOCSResponse({ payload: poll })
-		pollService.postNewPoll.mockResolvedValue(response)
+		createPoll.mockResolvedValue(response)
 
 		// Act
 		await pollsStore.createPoll({ token: TOKEN, ...pollRequest })
@@ -129,7 +134,7 @@ describe('pollsStore', () => {
 		// Arrange
 		pollsStore.addPoll({ token: TOKEN, poll })
 		const response = generateOCSResponse({ payload: pollWithVote })
-		pollService.submitVote.mockResolvedValue(response)
+		submitVote.mockResolvedValue(response)
 
 		// Act
 		await pollsStore.submitVote({ token: TOKEN, pollId: poll.id, optionIds: [0] })
@@ -142,7 +147,7 @@ describe('pollsStore', () => {
 		// Arrange
 		pollsStore.addPoll({ token: TOKEN, poll: pollWithVote })
 		const response = generateOCSResponse({ payload: pollWithVoteEnded })
-		pollService.endPoll.mockResolvedValue(response)
+		endPoll.mockResolvedValue(response)
 
 		// Act
 		await pollsStore.endPoll({ token: TOKEN, pollId: poll.id })
