@@ -94,6 +94,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -106,6 +107,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import { POLL } from '../../constants.js'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
+import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
 	token: string,
@@ -204,14 +206,13 @@ function importPoll(event: Event) {
 	const reader = new FileReader()
 	reader.onload = (e: ProgressEvent) => {
 		try {
-			const jsonObject = JSON.parse((e.target as FileReader).result as string)
+			const parsedObject = validatePollForm((e.target as FileReader).result as string)
 			for (const key of Object.keys(pollForm)) {
-				if (jsonObject[key] !== undefined) {
-					pollForm[key] = jsonObject[key]
-				}
+				pollForm[key] = parsedObject[key]
 			}
 		} catch (error) {
-			console.error('Error while parsing JSON:', error)
+			showError(t('spreed', 'Error while importing poll'))
+			console.error('Error while importing poll:', error)
 		}
 	}
 
