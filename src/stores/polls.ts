@@ -88,15 +88,9 @@ export const usePollsStore = defineStore('polls', {
 			this.debouncedFunctions[token][pollId]()
 		},
 
-		async createPoll({ token, question, options, resultMode, maxVotes }: createPollPayload) {
+		async createPoll({ token, form }: { token: string, form: createPollParams }) {
 			try {
-				const response = await createPoll({
-					token,
-					question,
-					options,
-					resultMode,
-					maxVotes,
-				})
+				const response = await createPoll({ token, ...form })
 				this.addPoll({ token, poll: response.data.ocs.data })
 
 				return response.data.ocs.data
