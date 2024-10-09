@@ -515,7 +515,7 @@ class SignalingController extends OCSController {
 			$sessionId = $this->session->getSessionForRoom($token);
 			if ($sessionId === null) {
 				// User is not active in this room
-				return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
+				return new DataResponse([['type' => 'usersInRoom', 'data' => [1]]], Http::STATUS_NOT_FOUND);
 			}
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
@@ -527,7 +527,7 @@ class SignalingController extends OCSController {
 			}
 		} catch (RoomNotFoundException) {
 			$this->banIpIfGuestGotBanned($token);
-			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
+			return new DataResponse([['type' => 'usersInRoom', 'data' => [2]]], Http::STATUS_NOT_FOUND);
 		}
 
 		while ($seconds > 0) {
@@ -559,7 +559,7 @@ class SignalingController extends OCSController {
 			$sessionId = $this->session->getSessionForRoom($token);
 			if ($sessionId === null) {
 				// User is not active in this room
-				return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
+				return new DataResponse([['type' => 'usersInRoom', 'data' => [3]]], Http::STATUS_NOT_FOUND);
 			}
 		}
 
@@ -569,7 +569,7 @@ class SignalingController extends OCSController {
 			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
 		} catch (RoomNotFoundException) {
 			$this->banIpIfGuestGotBanned($token);
-			$data[] = ['type' => 'usersInRoom', 'data' => []];
+			$data[] = ['type' => 'usersInRoom', 'data' => [4]];
 
 			// Was the session killed or the complete conversation?
 			try {
