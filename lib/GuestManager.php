@@ -79,7 +79,7 @@ class GuestManager {
 		$event = new BeforeEmailInvitationSentEvent($room, $participant->getAttendee());
 		$this->dispatcher->dispatchTyped($event);
 
-		$link = $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
+		$link = $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken(), 'email' => $email, 'access' => $participant->getAttendee()->getAccessToken()]);
 
 		$message = $this->mailer->createMessage();
 

@@ -1076,6 +1076,8 @@ class RoomController extends AEnvironmentAwareController {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 				if ($participant->getSession() instanceof Session && $participant->getSession()->getLastPing() <= $maxPingAge) {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
@@ -1643,8 +1645,10 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+		$authenticatedEmailGuest = $this->session->getAuthedEmailActorIdForRoom($token);
+
 		$headers = [];
-		if ($room->isFederatedConversation()) {
+		if ($authenticatedEmailGuest !== null || $room->isFederatedConversation()) {
 			// Skip password checking
 			$result = [
 				'result' => true,
@@ -1659,6 +1663,12 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoom($this->roomService, $room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
 			} else {
+				if ($authenticatedEmailGuest !== null && $previousParticipant === null) {
+					try {
+						$previousParticipant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $authenticatedEmailGuest);
+					} catch (ParticipantNotFoundException $e) {
+					}
+				}
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 				$this->session->setGuestActorIdForRoom($room->getToken(), $participant->getAttendee()->getActorId());
 			}

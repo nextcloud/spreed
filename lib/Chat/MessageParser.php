@@ -142,7 +142,7 @@ class MessageParser {
 				$displayName = $this->guestNames[$actorId];
 			} else {
 				try {
-					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_GUESTS, $actorId);
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), str_contains($actorId, '@') ? Attendee::ACTOR_EMAILS : Attendee::ACTOR_GUESTS, $actorId);
 					$displayName = $participant->getAttendee()->getDisplayName();
 				} catch (ParticipantNotFoundException) {
 				}
