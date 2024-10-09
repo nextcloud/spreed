@@ -7,7 +7,7 @@
 	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
 		v-on="$listeners"
-		@update:open="dismissEditor">
+		@update:open="emit('close')">
 		<!-- Poll Question -->
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
@@ -55,7 +55,7 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<template #actions>
-			<NcButton type="tertiary" @click="dismissEditor">
+			<NcButton type="tertiary" @click="emit('close')">
 				{{ t('spreed', 'Dismiss') }}
 			</NcButton>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
@@ -65,8 +65,8 @@
 	</NcDialog>
 </template>
 
-<script>
-import { computed, reactive } from 'vue'
+<script setup lang="ts">
+import { computed, nextTick, reactive, ref } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -80,98 +80,79 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { POLL } from '../../constants.js'
 import { usePollsStore } from '../../stores/polls.ts'
+import type { createPollParams } from '../../types/index.ts'
 
-export default {
-	name: 'NewMessagePollEditor',
+const props = defineProps<{
+	token: string,
+}>()
+const emit = defineEmits<{
+	(event: 'close'): void,
+}>()
 
-	components: {
-		NcCheckboxRadioSwitch,
-		NcButton,
-		NcDialog,
-		NcTextField,
-		// Icons
-		Close,
-		Plus,
+const pollsStore = usePollsStore()
+
+const pollOption = ref(null)
+
+const pollForm = reactive<createPollParams>({
+	question: '',
+	options: ['', ''],
+	resultMode: POLL.MODE.PUBLIC,
+	maxVotes: POLL.ANSWER_TYPE.SINGLE,
+})
+
+const isFilled = computed(() => !!pollForm.question || pollForm.options.some(option => option))
+
+const isPrivate = computed({
+	get() {
+		return pollForm.resultMode === POLL.MODE.HIDDEN
 	},
+	set(value) {
+		pollForm.resultMode = value ? POLL.MODE.HIDDEN : POLL.MODE.PUBLIC
+	}
+})
 
-	props: {
-		token: {
-			type: String,
-			required: true,
-		},
+const isMultipleAnswer = computed({
+	get() {
+		return pollForm.maxVotes === POLL.ANSWER_TYPE.MULTIPLE
 	},
+	set(value) {
+		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
+	}
+})
 
-	emits: ['close'],
+/**
+ * Remove a previously added option
+ * @param index option index
+ */
+function deleteOption(index) {
+	pollForm.options.splice(index, 1)
+}
 
-	setup() {
-		const pollForm = reactive({
-			question: '',
-			options: ['', ''],
-			resultMode: POLL.MODE.PUBLIC,
-			maxVotes: POLL.ANSWER_TYPE.SINGLE,
-		})
-		const isFilled = computed(() => !!pollForm.question || pollForm.options.some(option => option))
+/**
+ * Add an empty option to the form
+ */
+function addOption() {
+	pollForm.options.push('')
+	nextTick(() => {
+		pollOption.value.at(-1).focus()
+	})
+}
 
-		return {
-			pollsStore: usePollsStore(),
-			pollForm,
-			isFilled,
-		}
-	},
-
-	computed: {
-		isPrivate: {
-			get() {
-				return this.pollForm.resultMode === POLL.MODE.HIDDEN
-			},
-			set(value) {
-				this.pollForm.resultMode = value ? POLL.MODE.HIDDEN : POLL.MODE.PUBLIC
-			}
-		},
-		isMultipleAnswer: {
-			get() {
-				return this.pollForm.maxVotes === POLL.ANSWER_TYPE.MULTIPLE
-			},
-			set(value) {
-				this.pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
-			}
-		},
-	},
-
-	methods: {
-		t,
-
-		deleteOption(index) {
-			this.pollForm.options.splice(index, 1)
-		},
-
-		dismissEditor() {
-			this.$emit('close')
-		},
-
-		addOption() {
-			this.pollForm.options.push('')
-			this.$nextTick(() => {
-				this.$refs.pollOption.at(-1).focus()
-			})
-		},
-
-		async createPoll() {
-			const poll = await this.pollsStore.createPoll({
-				token: this.token,
-				form: this.pollForm,
-			})
-			if (poll) {
-				this.dismissEditor()
-			}
-		},
-
-	},
+/**
+ * Post a poll into conversation
+ */
+async function createPoll() {
+	const poll = await pollsStore.createPoll({
+		token: props.token,
+		form: pollForm,
+	})
+	if (poll) {
+		emit('close')
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-
 .poll-editor {
 	&__caption {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
