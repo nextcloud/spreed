@@ -348,6 +348,7 @@ describe('FilePreview.vue', () => {
 					availableHandlers: [{
 						mimes: ['image/png', 'image/jpeg'],
 					}],
+					mimetypes: ['image/png', 'image/jpeg'],
 				}
 
 				const wrapper = shallowMount(FilePreview, {
@@ -423,6 +424,7 @@ describe('FilePreview.vue', () => {
 						availableHandlers: [{
 							mimes: ['video/mp4', 'image/jpeg', 'image/png', 'image/gif'],
 						}],
+						mimetypes: ['video/mp4', 'image/jpeg', 'image/png', 'image/gif'],
 					}
 				})
 
