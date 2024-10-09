@@ -674,7 +674,7 @@ OC.L10N.register(
     "Navigating away from the page will leave the call in {conversation}" : "En quittant cette page, vous quitterez l'appel dans {conversation}",
     "Leave call" : "Quitter l'appel",
     "Stay in call" : "Rester en ligne",
-    "Discuss this file" : "Discuter sur ce fichier",
+    "Discuss this file" : "Discuter de ce fichier",
     "Share this file with others to discuss it" : "Partagez ce fichier avec d'autres personnes pour en discuter",
     "Share this file" : "Partager ce fichier",
     "Join conversation" : "Rejoindre la conversation",
