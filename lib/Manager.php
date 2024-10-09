@@ -37,6 +37,7 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use SensitiveParameter;
 
 class Manager {
 
@@ -746,7 +747,34 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByRemoteAccess(string $token, string $actorType, string $actorId, string $remoteAccess, ?string $sessionId = null): Room {
+	public function getRoomByRemoteAccess(
+		string $token,
+		string $actorType,
+		string $actorId,
+		#[SensitiveParameter]
+		string $remoteAccess,
+		?string $sessionId = null,
+	): Room {
+		return $this->getRoomByAccessToken($token, $actorType, $actorId, $remoteAccess, $sessionId);
+	}
+
+	/**
+	 * @param string $token
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $remoteAccess
+	 * @param ?string $sessionId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomByAccessToken(
+		string $token,
+		string $actorType,
+		string $actorId,
+		#[SensitiveParameter]
+		string $accessToken,
+		?string $sessionId = null,
+	): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -755,7 +783,7 @@ class Manager {
 			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
 				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
 				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
-				$query->expr()->eq('a.access_token', $query->createNamedParameter($remoteAccess)),
+				$query->expr()->eq('a.access_token', $query->createNamedParameter($accessToken)),
 				$query->expr()->eq('a.room_id', 'r.id')
 			))
 			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
@@ -946,7 +974,7 @@ class Manager {
 				throw new RoomNotFoundException();
 			}
 		} else {
-			if ($row['actor_type'] !== Attendee::ACTOR_GUESTS) {
+			if ($row['actor_type'] !== Attendee::ACTOR_GUESTS && $row['actor_type'] !== Attendee::ACTOR_EMAILS) {
 				throw new RoomNotFoundException();
 			}
 		}
