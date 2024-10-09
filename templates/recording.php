@@ -6,5 +6,5 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-script('spreed', 'talk-recording');
+\OCP\Util::addScript('spreed', 'talk-recording');
 style('spreed', 'icons');

@@ -55,6 +55,7 @@ updates:
     - "/vendor-bin/mozart"
     - "/vendor-bin/phpunit"
     - "/vendor-bin/psalm"
+    - "/vendor-bin/rector"
   commit-message:
     prefix: "ci"
     include: "scope"
