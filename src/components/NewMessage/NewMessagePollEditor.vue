@@ -12,19 +12,23 @@
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
 		</p>
-		<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
-		<!--native file picker, hidden -->
-		<input id="poll-upload"
-			ref="pollImport"
-			type="file"
-			class="hidden-visually"
-			@change="importPoll">
-		<NcButton class="poll-editor__button"
-			type="secondary"
-			wide
-			@click="triggerImport">
-			{{ t('spreed', 'Import poll from file') }}
-		</NcButton>
+		<div class="poll-editor__wrapper">
+			<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<!--native file picker, hidden -->
+			<input id="poll-upload"
+				ref="pollImport"
+				type="file"
+				class="hidden-visually"
+				@change="importPoll">
+			<NcActions force-menu>
+				<NcActionButton close-after-click @click="triggerImport">
+					<template #icon>
+						<IconFileUpload :size="20" />
+					</template>
+					{{ t('spreed', 'Import poll from file') }}
+				</NcActionButton>
+			</NcActions>
+		</div>
 
 		<!-- Poll options -->
 		<p class="poll-editor__caption">
@@ -87,10 +91,13 @@
 import { computed, nextTick, reactive, ref } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
@@ -220,8 +227,10 @@ function importPoll(event: Event) {
 		color: var(--color-primary-element);
 	}
 
-	&__button {
-		margin-block: 8px;
+	&__wrapper {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
 	}
 
 	&__option {
