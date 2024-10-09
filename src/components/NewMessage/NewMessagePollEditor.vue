@@ -7,24 +7,24 @@
 	<NcDialog :name="t('spreed', 'Create new poll')"
 		:close-on-click-outside="!isFilled"
 		v-on="$listeners"
-		@update:open="dismissEditor">
+		@update:open="emit('close')">
 		<!-- Poll Question -->
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
 		</p>
-		<NcTextField :value.sync="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+		<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
 
 		<!-- Poll options -->
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Answers') }}
 		</p>
-		<div v-for="(option, index) in pollOptions"
+		<div v-for="(option, index) in pollForm.options"
 			:key="index"
 			class="poll-editor__option">
 			<NcTextField ref="pollOption"
-				:value.sync="pollOptions[index]"
+				:value.sync="pollForm.options[index]"
 				:label="t('spreed', 'Answer {option}', {option: index + 1})" />
-			<NcButton v-if="pollOptions.length > 2"
+			<NcButton v-if="pollForm.options.length > 2"
 				type="tertiary"
 				:aria-label="t('spreed', 'Delete poll option')"
 				@click="deleteOption(index)">
@@ -55,18 +55,19 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<template #actions>
-			<NcButton type="tertiary" @click="dismissEditor">
+			<NcButton type="tertiary" @click="emit('close')">
 				{{ t('spreed', 'Dismiss') }}
 			</NcButton>
-			<!-- create poll button-->
-			<NcButton type="primary" @click="createPoll">
+			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
 			</NcButton>
 		</template>
 	</NcDialog>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, nextTick, reactive, ref } from 'vue'
+
 import Close from 'vue-material-design-icons/Close.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
@@ -77,88 +78,81 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import { POLL } from '../../constants.js'
 import { usePollsStore } from '../../stores/polls.ts'
+import type { createPollParams } from '../../types/index.ts'
 
-export default {
-	name: 'NewMessagePollEditor',
+const props = defineProps<{
+	token: string,
+}>()
+const emit = defineEmits<{
+	(event: 'close'): void,
+}>()
 
-	components: {
-		NcCheckboxRadioSwitch,
-		NcButton,
-		NcDialog,
-		NcTextField,
-		// Icons
-		Close,
-		Plus,
+const pollsStore = usePollsStore()
+
+const pollOption = ref(null)
+
+const pollForm = reactive<createPollParams>({
+	question: '',
+	options: ['', ''],
+	resultMode: POLL.MODE.PUBLIC,
+	maxVotes: POLL.ANSWER_TYPE.SINGLE,
+})
+
+const isFilled = computed(() => !!pollForm.question || pollForm.options.some(option => option))
+
+const isPrivate = computed({
+	get() {
+		return pollForm.resultMode === POLL.MODE.HIDDEN
 	},
+	set(value) {
+		pollForm.resultMode = value ? POLL.MODE.HIDDEN : POLL.MODE.PUBLIC
+	}
+})
 
-	props: {
-		token: {
-			type: String,
-			required: true,
-		},
+const isMultipleAnswer = computed({
+	get() {
+		return pollForm.maxVotes === POLL.ANSWER_TYPE.MULTIPLE
 	},
+	set(value) {
+		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
+	}
+})
 
-	emits: ['close'],
+/**
+ * Remove a previously added option
+ * @param index option index
+ */
+function deleteOption(index) {
+	pollForm.options.splice(index, 1)
+}
 
-	setup() {
-		return {
-			pollsStore: usePollsStore(),
-		}
-	},
+/**
+ * Add an empty option to the form
+ */
+function addOption() {
+	pollForm.options.push('')
+	nextTick(() => {
+		pollOption.value.at(-1).focus()
+	})
+}
 
-	data() {
-		return {
-			isPrivate: false,
-			isMultipleAnswer: false,
-			pollQuestion: '',
-			pollOptions: ['', ''],
-		}
-	},
-
-	computed: {
-		isFilled() {
-			return !!this.pollQuestion || this.pollOptions.some(option => option)
-		},
-	},
-
-	methods: {
-		t,
-		// Remove a previously added option
-		deleteOption(index) {
-			this.pollOptions.splice(index, 1)
-		},
-
-		dismissEditor() {
-			this.$emit('close')
-		},
-
-		addOption() {
-			this.pollOptions.push('')
-			this.$nextTick(() => {
-				this.$refs.pollOption.at(-1).focus()
-			})
-		},
-
-		async createPoll() {
-			const poll = await this.pollsStore.createPoll({
-				token: this.token,
-				question: this.pollQuestion,
-				options: this.pollOptions,
-				resultMode: this.isPrivate ? 1 : 0,
-				maxVotes: this.isMultipleAnswer ? 0 : 1
-			})
-			if (poll) {
-				this.dismissEditor()
-			}
-		},
-
-	},
+/**
+ * Post a poll into conversation
+ */
+async function createPoll() {
+	const poll = await pollsStore.createPoll({
+		token: props.token,
+		form: pollForm,
+	})
+	if (poll) {
+		emit('close')
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-
 .poll-editor {
 	&__caption {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
