@@ -78,7 +78,7 @@
 				type="secondary"
 				:href="exportPollBlob"
 				:download="exportPollFileName">
-				{{ t('spreed', 'Export') }}
+				{{ t('spreed', 'Export poll form') }}
 			</NcButton>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
