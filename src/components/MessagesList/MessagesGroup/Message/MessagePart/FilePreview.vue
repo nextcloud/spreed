@@ -363,18 +363,7 @@ export default {
 		},
 
 		isViewerAvailable() {
-			if (!OCA.Viewer) {
-				return false
-			}
-
-			const availableHandlers = OCA.Viewer.availableHandlers
-			for (let i = 0; i < availableHandlers.length; i++) {
-				if (availableHandlers[i]?.mimes?.includes && availableHandlers[i].mimes.includes(this.file.mimetype)) {
-					return true
-				}
-			}
-
-			return false
+			return OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
 		},
 
 		isVoiceMessage() {
