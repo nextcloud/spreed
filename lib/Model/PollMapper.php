@@ -36,7 +36,8 @@ class PollMapper extends QBMapper {
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('status', $query->createNamedParameter(Poll::STATUS_DRAFT, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->eq('status', $query->createNamedParameter(Poll::STATUS_DRAFT, IQueryBuilder::PARAM_INT)))
+			->orderBy('id', 'ASC');
 
 		return $this->findEntities($query);
 	}
