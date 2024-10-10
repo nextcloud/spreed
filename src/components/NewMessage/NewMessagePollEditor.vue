@@ -8,6 +8,18 @@
 		:close-on-click-outside="!isFilled"
 		v-on="$listeners"
 		@update:open="emit('close')">
+		<!-- Draft imports -->
+		<div v-if="supportPollDrafts && isModerator" class="poll-editor__wrapper">
+			<NcSelect v-model="selectedDraft"
+				class="poll-editor__select"
+				name="poll_drafts_select"
+				label="question"
+				:options="pollDrafts"
+				:input-label="t('spreed', 'Choose poll from drafts:')"
+				:placeholder="t('spreed', 'Select a draft')"
+				:loading="!pollsStore.drafts[props.token]" />
+		</div>
+
 		<!-- Poll Question -->
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
@@ -58,6 +70,9 @@
 			<NcButton type="tertiary" @click="emit('close')">
 				{{ t('spreed', 'Dismiss') }}
 			</NcButton>
+			<NcButton type="secondary" :disabled="!isFilled" @click="createPollDraft">
+				{{ t('spreed', 'Save as draft') }}
+			</NcButton>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
 			</NcButton>
@@ -66,19 +81,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
 
@@ -89,16 +108,20 @@ const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
 
+const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
+
+const store = useStore()
 const pollsStore = usePollsStore()
 
 const pollOption = ref(null)
 
-const pollForm = reactive<createPollParams>({
+const POLL_FORM: createPollParams = {
 	question: '',
 	options: ['', ''],
 	resultMode: POLL.MODE.PUBLIC,
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
-})
+}
+const pollForm = reactive({ ...POLL_FORM })
 
 const isFilled = computed(() => !!pollForm.question || pollForm.options.some(option => option))
 
@@ -119,6 +142,17 @@ const isMultipleAnswer = computed({
 		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
 	}
 })
+
+/**
+ * Receive poll drafts for the current conversation as owner/moderator
+ */
+const isModerator = computed(() => (store.getters as unknown).isModerator)
+if (supportPollDrafts && isModerator.value) {
+	pollsStore.getPollDrafts(props.token)
+}
+const pollDrafts = computed(() => supportPollDrafts ? pollsStore.getDrafts(props.token) : [])
+const selectedDraft = ref(null)
+watch(selectedDraft, (value) => fillPollForm(value !== null ? value : { ...POLL_FORM }))
 
 /**
  * Remove a previously added option
@@ -150,6 +184,29 @@ async function createPoll() {
 		emit('close')
 	}
 }
+
+/**
+ * Insert data into form fields
+ * @param payload data to fill with
+ */
+function fillPollForm(payload: createPollParams) {
+	for (const key of Object.keys(pollForm)) {
+		pollForm[key] = payload[key]
+	}
+}
+
+/**
+ * Saves a poll draft for this conversation
+ */
+async function createPollDraft() {
+	const poll = await pollsStore.createPollDraft({
+		token: props.token,
+		form: pollForm,
+	})
+	if (poll) {
+		showSuccess(t('spreed', 'Poll draft has been saved'))
+	}
+}
 </script>
 
 <style lang="scss" scoped>
@@ -158,6 +215,16 @@ async function createPoll() {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
 		color: var(--color-primary-element);
+	}
+
+	&__wrapper {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
+	}
+
+	&__select {
+		width: 100%;
 	}
 
 	&__option {

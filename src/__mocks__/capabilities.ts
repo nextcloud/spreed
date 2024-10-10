@@ -84,6 +84,7 @@ export const mockedCapabilities: Capabilities = {
 			'chat-reference-id',
 			'mention-permissions',
 			'edit-messages-note-to-self',
+			'talk-polls-drafts',
 		],
 		'features-local': [
 			'favorites',
