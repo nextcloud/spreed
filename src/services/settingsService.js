@@ -75,8 +75,20 @@ const setPlaySounds = async function(hasUserAccount, value) {
 }
 
 const setStartWithoutMedia = async function(value) {
-	await axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/spreed/calls_start_without_media'),
-		{ configValue: value ? 'yes' : 'no' })
+	await setUserConfig('spreed', 'calls_start_without_media', value ? 'yes' : 'no')
+}
+
+/**
+ * Set user config using provisioning API
+ *
+ * @param {string} appId - app id
+ * @param {string} configKey - key of the config to set
+ * @param {string} configValue - value to set
+ */
+const setUserConfig = async function(appId, configKey, configValue) {
+	await axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/{appId}/{configKey}', { appId, configKey }), {
+		configValue,
+	})
 }
 
 export {
@@ -86,4 +98,5 @@ export {
 	setSIPSettings,
 	setPlaySounds,
 	setStartWithoutMedia,
+	setUserConfig,
 }
