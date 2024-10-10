@@ -5,6 +5,71 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.0.1 – 2024-10-10
+### Added
+- feat(call): Add wave and fire call reactions
+  [#13349](https://github.com/nextcloud/spreed/issues/13349)
+
+### Changed
+- Update translations
+- Update dependencies
+- fix(chat): Reduce read-width of chat again
+  [#13421](https://github.com/nextcloud/spreed/issues/13421)
+- fix(signaling): Deprecate using multiple High-performance backends and the fake-clustering mode
+  [#13420](https://github.com/nextcloud/spreed/issues/13420)
+
+### Fixed
+- fix(chat): Fix missing push notifications for chat messages
+  [#13331](https://github.com/nextcloud/spreed/issues/13331)
+- fix(chat): Correctly update "Today"-date separator when the day changes
+  [#13434](https://github.com/nextcloud/spreed/issues/13434)
+- fix(call): Correctly ignore media offers from users without permissions when internal signaling is used
+  [#13495](https://github.com/nextcloud/spreed/issues/13495)
+- fix(chat): Expire message cache when deleting the last message
+  [#13393](https://github.com/nextcloud/spreed/issues/13393)
+- fix(federation): Send the newest conversation properties when retrying OCM notifications
+  [#13424](https://github.com/nextcloud/spreed/issues/13424)
+- fix(avatar): Fix missing translations
+  [#13409](https://github.com/nextcloud/spreed/issues/13409)
+- fix(call): Fix missing call sounds in Safari when tab is moved to the background
+  [#13353](https://github.com/nextcloud/spreed/issues/13353)
+- fix: Fix several popups and menus in fullscreen mode
+  [#13399](https://github.com/nextcloud/spreed/issues/13399)
+
+## 19.0.10 – 2024-10-10
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(performance): Fade out local blur-filter option for Nextcloud wide setting
+  [#13100](https://github.com/nextcloud/spreed/issues/13100)
+- fix(avatar): Fix missing translations
+  [#13410](https://github.com/nextcloud/spreed/issues/13410)
+- fix(chat): Expire message cache when deleting the last message
+  [#13392](https://github.com/nextcloud/spreed/issues/13392)
+- fix(call): Correctly ignore media offers from users without permissions when internal signaling is used
+  [#13494](https://github.com/nextcloud/spreed/issues/13494)
+- fix(call): Fix missing call sounds in Safari when tab is moved to the background
+  [#13352](https://github.com/nextcloud/spreed/issues/13352)
+
+## 18.0.12 – 2024-10-10
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(avatar): Fix missing translations
+  [#13411](https://github.com/nextcloud/spreed/issues/13411)
+- fix(chat): Expire message cache when deleting the last message
+  [#13391](https://github.com/nextcloud/spreed/issues/13391)
+- fix(call): Correctly ignore media offers from users without permissions when internal signaling is used
+  [#13493](https://github.com/nextcloud/spreed/issues/13493)
+- fix(call): Fix missing call sounds in Safari when tab is moved to the background
+  [#13351](https://github.com/nextcloud/spreed/issues/13351)
+- fix(avatar): Don't overwrite user avatar when selecting a square for a conversation
+  [#13287](https://github.com/nextcloud/spreed/issues/13287)
+
 ## 20.0.0 – 2024-09-14
 ### Added
 - Federated calls
