@@ -2407,6 +2407,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($data['maxVotes'] === 'unlimited') {
 			$data['maxVotes'] = 0;
 		}
+		if (isset($data['draft'])) {
+			$data['draft'] = (bool)$data['draft'];
+		}
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -2528,6 +2531,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected['status'] = 0;
 		} elseif ($expected['status'] === 'closed') {
 			$expected['status'] = 1;
+		} elseif ($expected['status'] === 'draft') {
+			$expected['status'] = 2;
 		}
 
 		if (str_ends_with($expected['actorId'], '@{$LOCAL_URL}')) {
