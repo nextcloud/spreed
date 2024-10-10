@@ -29,7 +29,7 @@ class PollService {
 	) {
 	}
 
-	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {
+	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): Poll {
 		$question = trim($question);
 
 		if ($question === '' || strlen($question) > 32_000) {
@@ -78,10 +78,21 @@ class PollService {
 		$poll->setVotes(json_encode([]));
 		$poll->setResultMode($resultMode);
 		$poll->setMaxVotes($maxVotes);
+		if ($draft) {
+			$poll->setStatus(Poll::STATUS_DRAFT);
+		}
 
 		$this->pollMapper->insert($poll);
 
 		return $poll;
+	}
+
+	/**
+	 * @param int $roomId
+	 * @return Poll[]
+	 */
+	public function getDraftsForRoom(int $roomId): array {
+		return $this->pollMapper->getDraftsByRoomId($roomId);
 	}
 
 	/**

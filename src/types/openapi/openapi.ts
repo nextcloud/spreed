@@ -583,6 +583,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all drafted polls
+         * @description Required capability: `talk-polls-drafts`
+         */
+        get: operations["poll-get-all-draft-polls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/{pollId}": {
         parameters: {
             query?: never;
@@ -4595,6 +4615,11 @@ export interface operations {
                      * @description Number of maximum votes per voter
                      */
                     maxVotes: number;
+                    /**
+                     * @description Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
+                     * @default false
+                     */
+                    draft?: boolean;
                 };
             };
         };
@@ -4615,6 +4640,65 @@ export interface operations {
             };
             /** @description Creating poll is not possible */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "poll-get-all-draft-polls": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Poll"][];
+                        };
+                    };
+                };
+            };
+            /** @description User is not a moderator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Poll not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4774,6 +4858,20 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Poll"];
+                        };
+                    };
+                };
+            };
+            /** @description Poll draft was deleted successfully */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };

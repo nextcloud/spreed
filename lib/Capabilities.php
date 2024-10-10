@@ -104,6 +104,7 @@ class Capabilities implements IPublicCapability {
 		'mention-permissions',
 		'edit-messages-note-to-self',
 		'archived-conversations',
+		'talk-polls-drafts',
 	];
 
 	public const LOCAL_FEATURES = [
