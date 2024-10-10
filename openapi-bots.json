@@ -81,7 +81,8 @@
                                     "sip-enabled",
                                     "sip-dialout-enabled",
                                     "can-enable-sip",
-                                    "start-without-media"
+                                    "start-without-media",
+                                    "max-duration"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -123,6 +124,10 @@
                                     },
                                     "start-without-media": {
                                         "type": "boolean"
+                                    },
+                                    "max-duration": {
+                                        "type": "integer",
+                                        "format": "int64"
                                     }
                                 }
                             },

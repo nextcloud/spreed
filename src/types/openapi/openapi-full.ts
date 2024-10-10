@@ -1883,6 +1883,8 @@ export type components = {
                     "sip-dialout-enabled": boolean;
                     "can-enable-sip": boolean;
                     "start-without-media": boolean;
+                    /** Format: int64 */
+                    "max-duration": number;
                 };
                 chat: {
                     /** Format: int64 */

@@ -1534,7 +1534,7 @@ class SystemMessageTest extends TestCase {
 				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
 				['type' => 'guest', 'id' => 'guest/system', 'name' => 'system'],
 				[
-					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests ended (Duration "duration")',
+					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests was ended, as it reached the maximum call duration (Duration "duration")',
 					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
 				],
 			],
