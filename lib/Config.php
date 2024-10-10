@@ -12,6 +12,7 @@ use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\RecordingService;
+use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -661,5 +662,22 @@ class Config {
 
 	public function getGridVideosLimitEnforced(): bool {
 		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+	}
+
+	/**
+	 * User setting falling back to admin defined app config
+	 *
+	 * @param ?string $userId
+	 * @return bool
+	 */
+	public function getCallsStartWithoutMedia(?string $userId): bool {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_MEDIA);
+			if ($userSetting === 'yes' || $userSetting === 'no') {
+				return $userSetting === 'yes';
+			}
+		}
+
+		return $this->appConfig->getAppValueBool('calls_start_without_media');
 	}
 }

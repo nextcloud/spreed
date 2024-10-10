@@ -339,6 +339,7 @@ namespace OCA\Talk;
  *             sip-enabled: bool,
  *             sip-dialout-enabled: bool,
  *             can-enable-sip: bool,
+ *             start-without-media: bool,
  *         },
  *         chat: array{
  *             max-length: int,

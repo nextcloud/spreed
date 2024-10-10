@@ -8,19 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Files_Sharing\SharedStorage;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Participant;
-use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -35,8 +29,8 @@ class SettingsController extends OCSController {
 		protected IRootFolder $rootFolder,
 		protected IConfig $config,
 		protected IGroupManager $groupManager,
-		protected ParticipantService $participantService,
 		protected LoggerInterface $logger,
+		protected BeforePreferenceSetEventListener $preferenceListener,
 		protected ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -54,55 +48,13 @@ class SettingsController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	public function setUserSetting(string $key, $value): DataResponse {
-		if (!$this->validateUserSetting($key, $value)) {
+		if (!$this->preferenceListener->validatePreference($this->userId, $key, $value)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$this->config->setUserValue($this->userId, 'spreed', $key, $value);
 
-		if ($key === 'read_status_privacy') {
-			$this->participantService->updateReadPrivacyForActor(Attendee::ACTOR_USERS, $this->userId, (int)$value);
-		}
-
 		return new DataResponse();
-	}
-
-	/**
-	 * @param string $setting
-	 * @param int|null|string $value
-	 * @return bool
-	 */
-	protected function validateUserSetting(string $setting, $value): bool {
-		if ($setting === 'attachment_folder') {
-			$userFolder = $this->rootFolder->getUserFolder($this->userId);
-			try {
-				$node = $userFolder->get($value);
-				if (!$node instanceof Folder) {
-					throw new NotPermittedException('Node is not a directory');
-				}
-				if ($node->isShared()) {
-					throw new NotPermittedException('Folder is shared');
-				}
-				return !$node->getStorage()->instanceOfStorage(SharedStorage::class);
-			} catch (NotFoundException $e) {
-				$userFolder->newFolder($value);
-				return true;
-			} catch (NotPermittedException $e) {
-			} catch (\Exception $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
-			}
-			return false;
-		}
-
-		if ($setting === 'typing_privacy' || $setting === 'read_status_privacy') {
-			return (int)$value === Participant::PRIVACY_PUBLIC ||
-				(int)$value === Participant::PRIVACY_PRIVATE;
-		}
-		if ($setting === 'play_sounds') {
-			return $value === 'yes' || $value === 'no';
-		}
-
-		return false;
 	}
 
 	/**
