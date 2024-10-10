@@ -37,6 +37,8 @@ class MessageSentListener implements IEventListener {
 		protected MessageParser $messageParser,
 		protected IFactory $l10nFactory,
 		protected ChatManager $chatManager,
+		protected IUserManager $userManager,
+		protected IAppConfig $appConfig,
 	) {
 	}
 
@@ -56,6 +58,14 @@ class MessageSentListener implements IEventListener {
 		$l = $this->l10nFactory->get('spreed', 'en', 'en');
 		$chatMessage = $this->messageParser->createMessage($event->getRoom(), null, $event->getComment(), $l);
 		$this->messageParser->parseMessage($chatMessage);
+
+		$messageType = $chatMessage->getMessageType();
+
+		// Handle reaction events
+		if ($messageType === ChatManager::VERB_REACTION) {
+			$this->createReactionNotification($event->getRoom(), $event->getComment());
+			return;
+		}
 
 		$systemMessage = $chatMessage->getMessageType() === ChatManager::VERB_SYSTEM ? $chatMessage->getMessageRaw() : '';
 		if ($systemMessage !== 'message_edited'
@@ -124,4 +134,84 @@ class MessageSentListener implements IEventListener {
 			}
 		}
 	}
+
+	private function createReactionNotification(Room $chat, IComment $reaction): void {
+		$originalCommentId = $reaction->getObjectId();
+		$originalComment = $this->chatManager->getCommentById($originalCommentId);
+
+		if ($originalComment === null) {
+			return;
+		}
+
+		// Check if the original comment's author should be notified
+		if ($originalComment->getActorType() === Attendee::ACTOR_USERS || $originalComment->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			try {
+				$participant = $this->participantService->getParticipant($chat, $originalComment->getActorId(), false);
+			} catch (ParticipantNotFoundException $e) {
+				return;
+			}
+
+			$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
+				if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
+					$notificationLevel = Participant::NOTIFY_ALWAYS;
+				} else {
+					$notificationLevel = $this->getDefaultGroupNotification();
+				}
+			}
+
+			if ($notificationLevel === Participant::NOTIFY_ALWAYS) {
+				$this->sendReactionNotification(
+					$participant,
+					$chat,
+					$reaction,
+					$originalComment
+				);
+			}
+		}
+	}
+
+	private function sendReactionNotification(
+		Participant $participant,
+		Room $room,
+		IComment $reaction,
+		IComment $originalComment
+	): void {
+		$attendee = $participant->getAttendee();
+		$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
+
+		$notificationData = [
+			'remoteMessageId' => (int)$originalComment->getId(),
+			'reaction' => $reaction->getMessage(),
+			'reactorType' => $reaction->getActorType(),
+			'reactorId' => $reaction->getActorId(),
+			'reactorDisplayName' => $this->getDisplayName($reaction->getActorType(), $reaction->getActorId()),
+			'creationDatetime' => $reaction->getCreationDateTime()->format(\DateTime::ATOM),
+		];
+
+		// Send the notification using BackendNotifier
+		$success = $this->backendNotifier->sendReactionNotification(
+			$cloudId->getRemote(),
+			$attendee->getId(),
+			$attendee->getAccessToken(),
+			$room->getToken(),
+			$notificationData
+		);
+
+		if ($success === null) {
+			$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_LEFT);
+		}
+	}
+
+	private function getDisplayName(string $actorType, string $actorId): string {
+		if ($actorType === Attendee::ACTOR_USERS) {
+			$user = $this->userManager->get($actorId);
+			return $user ? $user->getDisplayName() : $actorId;
+		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
+			$cloudId = $this->cloudIdManager->resolveCloudId($actorId);
+			return $cloudId->getDisplayName() ?? $actorId;
+		}
+		return $actorId;
+	}
+
 }

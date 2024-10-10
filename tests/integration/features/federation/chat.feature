@@ -509,3 +509,44 @@ Feature: federation/chat
       | actorType       | actorId                    | actorDisplayName         | reaction |
       | users           | participant1               | participant1-displayname | 🚀       |
       | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | 🚀       |
+
+  # Scenario: Verifying Notifications for Local Participants
+
+  #   Given the following "spreed" app config is set
+  #     | federation_enabled | yes |
+  #   And user "participant1" creates room "room" (v4)
+  #     | roomType | 2 |
+  #     | roomName | room |
+  #   And user "participant1" adds federated_user "participant3" to room "room" with 200 (v4)
+  #   And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+  #   And user "participant3" has the following invitations (v1)
+  #     | remoteServerUrl | remoteToken | state | inviterCloudId                     | inviterDisplayName       |
+  #     | LOCAL           | room        | 0     | participant1@http://localhost:8080 | participant1-displayname |
+  #   And user "participant3" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+  #     | id          | name | type | remoteServer | remoteToken |
+  #     | LOCAL::room | room | 2   | LOCAL        | room        |
+
+  #   # Enable Notifications for Local User
+  #   And user "participant2" sets notifications to all for room "room" (v4)
+
+  #   #fed user
+  #   #And user "participant3" sets notifications to all for room "room" (v4)
+  #   And user "participant3" sets notifications to all for room "LOCAL::room" (v4)
+
+  #   # Sending a Message
+  #   When user "participant1" sends message "Message 1" to room "room" with 201
+
+  #   And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
+  #     | actorType       | actorId                  | actorDisplayName         | reaction |
+  #     | users           | participant1             | participant1-displayname | 🚀       |
+
+  #   # Verification for Message Notification
+  #   Then user "participant2" has the following notifications
+  #     | app    | object_type | object_id             | subject                                                             | message   |
+  #     | spreed | chat        | room/Message 1        | participant1-displayname sent a message in conversation room        | Message 1 |
+  #     | spreed | room        | room                  | participant1-displayname invited you to a group conversation: room  |           |
+
+  #   Then user "participant3" has the following notifications
+  #     | app    | object_type | object_id             | subject                                                             | message   |
+  #     | spreed | chat        | LOCAL::room/Message 1        | participant1-displayname sent a message in conversation room        | Message 1 |
+  #     #| spreed | room        | LOCAL::room                  | participant1-displayname invited you to a group conversation: room  |           |
