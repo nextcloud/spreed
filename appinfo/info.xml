@@ -45,6 +45,7 @@
 	<category>workflow</category>
 
 	<website>https://github.com/nextcloud/spreed</website>
+	<discussion>https://help.nextcloud.com/tag/talk-app</discussion>
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 	<repository>https://github.com/nextcloud/spreed.git</repository>
 
