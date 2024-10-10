@@ -6,6 +6,8 @@
 import createHark from 'hark'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 
+import { VIRTUAL_BACKGROUND } from '../constants.js'
+import BrowserStorage from '../services/BrowserStorage.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
@@ -105,6 +107,15 @@ export function useDevices(video, initializeOnMounted) {
 		videoTrackToStream.value.addInputTrackSlot('video')
 
 		virtualBackground.value.connectTrackSink('default', videoTrackToStream.value, 'video')
+
+		const blurBackgroundEnabled = BrowserStorage.getItem('blurBackgroundEnabled')
+		if (blurBackgroundEnabled === 'true') {
+			virtualBackground.value.setEnabled(true)
+			virtualBackground.value.setVirtualBackground({
+				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+				blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+			})
+		}
 
 		if (initializeOnMounted) {
 			initializeDevices()
