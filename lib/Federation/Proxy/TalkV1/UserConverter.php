@@ -18,6 +18,7 @@ use OCA\Talk\Service\ParticipantService;
 /**
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  * @psalm-import-type TalkPoll from ResponseDefinitions
+ * @psalm-import-type TalkPollDraft from ResponseDefinitions
  * @psalm-import-type TalkReaction from ResponseDefinitions
  */
 class UserConverter {
@@ -137,9 +138,12 @@ class UserConverter {
 	}
 
 	/**
+	 * @template T of TalkPoll|TalkPollDraft
 	 * @param Room $room
-	 * @param TalkPoll $poll
-	 * @return TalkPoll
+	 * @param TalkPoll|TalkPollDraft $poll
+	 * @psalm-param T $poll
+	 * @return TalkPoll|TalkPollDraft
+	 * @psalm-return T
 	 */
 	public function convertPoll(Room $room, array $poll): array {
 		$poll = $this->convertAttendee($room, $poll, 'actorType', 'actorId', 'actorDisplayName');

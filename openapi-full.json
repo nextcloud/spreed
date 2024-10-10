@@ -847,6 +847,42 @@
                 }
             },
             "Poll": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PollDraft"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "details": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PollVote"
+                                }
+                            },
+                            "numVoters": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "votedSelf": {
+                                "type": "array",
+                                "items": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "votes": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "PollDraft": {
                 "type": "object",
                 "required": [
                     "actorDisplayName",
@@ -869,21 +905,11 @@
                     "actorType": {
                         "type": "string"
                     },
-                    "details": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/PollVote"
-                        }
-                    },
                     "id": {
                         "type": "integer",
                         "format": "int64"
                     },
                     "maxVotes": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "numVoters": {
                         "type": "integer",
                         "format": "int64"
                     },
@@ -903,20 +929,6 @@
                     "status": {
                         "type": "integer",
                         "format": "int64"
-                    },
-                    "votedSelf": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    "votes": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
                     }
                 }
             },
@@ -8909,7 +8921,7 @@
                                                 "data": {
                                                     "type": "array",
                                                     "items": {
-                                                        "$ref": "#/components/schemas/Poll"
+                                                        "$ref": "#/components/schemas/PollDraft"
                                                     }
                                                 }
                                             }
