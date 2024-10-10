@@ -1126,6 +1126,7 @@ OC.L10N.register(
     "Open conversations" : "Otevřít konverzace",
     "Users" : "Uživatelé",
     "Groups" : "Skupiny",
+    "Teams" : "Týmy",
     "No search results" : "Nic nenalezeno",
     "Loading" : "Načítání",
     "Talk settings" : "Nastavení pro Talk",
