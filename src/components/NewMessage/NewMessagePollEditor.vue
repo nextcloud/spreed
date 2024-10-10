@@ -12,7 +12,23 @@
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
 		</p>
-		<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+		<div class="poll-editor__wrapper">
+			<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<!--native file picker, hidden -->
+			<input id="poll-upload"
+				ref="pollImport"
+				type="file"
+				class="hidden-visually"
+				@change="importPoll">
+			<NcActions force-menu>
+				<NcActionButton close-after-click @click="triggerImport">
+					<template #icon>
+						<IconFileUpload :size="20" />
+					</template>
+					{{ t('spreed', 'Import poll from file') }}
+				</NcActionButton>
+			</NcActions>
+		</div>
 
 		<!-- Poll options -->
 		<p class="poll-editor__caption">
@@ -58,6 +74,12 @@
 			<NcButton type="tertiary" @click="emit('close')">
 				{{ t('spreed', 'Dismiss') }}
 			</NcButton>
+			<NcButton v-if="isFilled"
+				type="secondary"
+				:href="exportPollBlob"
+				:download="exportPollFileName">
+				{{ t('spreed', 'Export poll form') }}
+			</NcButton>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
 			</NcButton>
@@ -69,10 +91,14 @@
 import { computed, nextTick, reactive, ref } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
@@ -81,6 +107,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import { POLL } from '../../constants.js'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
+import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
 	token: string,
@@ -92,6 +119,7 @@ const emit = defineEmits<{
 const pollsStore = usePollsStore()
 
 const pollOption = ref(null)
+const pollImport = ref(null)
 
 const pollForm = reactive<createPollParams>({
 	question: '',
@@ -119,6 +147,14 @@ const isMultipleAnswer = computed({
 		pollForm.maxVotes = value ? POLL.ANSWER_TYPE.MULTIPLE : POLL.ANSWER_TYPE.SINGLE
 	}
 })
+
+const exportPollBlob = computed(() => {
+	const jsonString = JSON.stringify(pollForm, null, 2)
+	const blob = new Blob([jsonString], { type: 'application/json' })
+
+	return URL.createObjectURL(blob)
+})
+const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
 /**
  * Remove a previously added option
@@ -150,6 +186,38 @@ async function createPoll() {
 		emit('close')
 	}
 }
+
+/**
+ * Call native input[type='file'] to import a file
+ */
+function triggerImport() {
+	pollImport.value.click()
+}
+
+/**
+ * Validate imported file and insert data into form fields
+ * @param event import event
+ */
+function importPoll(event: Event) {
+	if (!(event.target as HTMLInputElement).files?.[0]) {
+		return
+	}
+
+	const reader = new FileReader()
+	reader.onload = (e: ProgressEvent) => {
+		try {
+			const parsedObject = validatePollForm((e.target as FileReader).result as string)
+			for (const key of Object.keys(pollForm)) {
+				pollForm[key] = parsedObject[key]
+			}
+		} catch (error) {
+			showError(t('spreed', 'Error while importing poll'))
+			console.error('Error while importing poll:', error)
+		}
+	}
+
+	reader.readAsText((event.target as HTMLInputElement).files[0])
+}
 </script>
 
 <style lang="scss" scoped>
@@ -158,6 +226,12 @@ async function createPoll() {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
 		color: var(--color-primary-element);
+	}
+
+	&__wrapper {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
 	}
 
 	&__option {
