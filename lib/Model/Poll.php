@@ -41,6 +41,7 @@ use OCP\AppFramework\Db\Entity;
 class Poll extends Entity {
 	public const STATUS_OPEN = 0;
 	public const STATUS_CLOSED = 1;
+	public const STATUS_DRAFT = 2;
 	public const MODE_PUBLIC = 0;
 	public const MODE_HIDDEN = 1;
 	public const MAX_VOTES_UNLIMITED = 0;

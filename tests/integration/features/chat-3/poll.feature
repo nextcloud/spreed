@@ -805,3 +805,44 @@ Feature: chat-2/poll
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
       | room | users         | participant1 | history_cleared      | You cleared the history of the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+
+  Scenario: Create a public poll without max votes limit
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | draft      | 1 |
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+    Then user "participant1" sees poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | []   |
+      | numVoters  | 0    |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | draft |
+      | votedSelf  | not voted |
+    Then user "participant2" sees poll "What is the question?" in room "room" with 404
+    Then user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 404
+    Then user "participant2" votes for options "[1]" on poll "What is the question?" in room "room" with 404
+    Then user "participant1" closes poll "What is the question?" in room "room" with 202
+    Then user "participant1" sees poll "What is the question?" in room "room" with 404
+    Then user "participant2" sees poll "What is the question?" in room "room" with 404
+    Then user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
+      | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
+    Then user "participant2" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
+      | room | users         | participant1 | user_added           | {actor} added you                | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"user":{"type":"user","id":"participant2","name":"participant2-displayname"}} |
+      | room | users         | participant1 | conversation_created | {actor} created the conversation | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} |
