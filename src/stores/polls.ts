@@ -11,20 +11,25 @@ import { t } from '@nextcloud/l10n'
 
 import {
 	createPoll,
+	createPollDraft,
+	getPollDrafts,
 	getPollData,
 	submitVote,
 	endPoll,
+	deletePollDraft,
 } from '../services/pollService.ts'
 import type {
 	ChatMessage,
 	createPollParams,
-	Poll, votePollParams
+	votePollParams,
+	Poll,
+	PollDraft,
 } from '../types/index.ts'
 
-type createPollPayload = { token: string } & createPollParams
 type submitVotePayload = { token: string, pollId: string } & Pick<votePollParams, 'optionIds'>
 type State = {
 	polls: Record<string, Record<string, Poll>>,
+	drafts: Record<string, Record<string, PollDraft>>,
 	debouncedFunctions: Record<string, Record<string, () => void>>,
 	activePoll: null,
 	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>,
@@ -32,6 +37,7 @@ type State = {
 export const usePollsStore = defineStore('polls', {
 	state: (): State => ({
 		polls: {},
+		drafts: {},
 		debouncedFunctions: {},
 		activePoll: null,
 		pollToastsQueue: {},
@@ -40,6 +46,10 @@ export const usePollsStore = defineStore('polls', {
 	getters: {
 		getPoll: (state) => (token: string, pollId: string): Poll => {
 			return state.polls[token]?.[pollId]
+		},
+
+		getDrafts: (state) => (token: string): PollDraft[] => {
+			return Object.values(Object(state.drafts[token]))
 		},
 
 		isNewPoll: (state) => (pollId: number) => {
@@ -53,6 +63,34 @@ export const usePollsStore = defineStore('polls', {
 				Vue.set(this.polls, token, {})
 			}
 			Vue.set(this.polls[token], poll.id, poll)
+		},
+
+		addPollDraft({ token, draft }: { token: string, draft: PollDraft }) {
+			if (!this.drafts[token]) {
+				Vue.set(this.drafts, token, {})
+			}
+			Vue.set(this.drafts[token], draft.id, draft)
+		},
+
+		async getPollDrafts(token: string) {
+			try {
+				const response = await getPollDrafts(token)
+				if (response.data.ocs.data.length === 0) {
+					Vue.set(this.drafts, token, {})
+					return
+				}
+				for (const draft of response.data.ocs.data) {
+					this.addPollDraft({ token, draft })
+				}
+			} catch (error) {
+				console.error(error)
+			}
+		},
+
+		deleteDraft({ token, pollId }: { token: string, pollId: string }) {
+			if (this.drafts[token]?.[pollId]) {
+				Vue.delete(this.drafts[token], pollId)
+			}
 		},
 
 		async getPollData({ token, pollId }: { token: string, pollId: string }) {
@@ -99,6 +137,16 @@ export const usePollsStore = defineStore('polls', {
 			}
 		},
 
+		async createPollDraft({ token, form }: { token: string, form: createPollParams }) {
+			try {
+				const response = await createPollDraft({ token, ...form })
+				this.addPollDraft({ token, draft: response.data.ocs.data })
+				return response.data.ocs.data
+			} catch (error) {
+				console.error(error)
+			}
+		},
+
 		async submitVote({ token, pollId, optionIds }: submitVotePayload) {
 			try {
 				const response = await submitVote(token, pollId, optionIds)
@@ -116,6 +164,16 @@ export const usePollsStore = defineStore('polls', {
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'An error occurred while ending the poll'))
+			}
+		},
+
+		async deletePollDraft({ token, pollId }: { token: string, pollId: string }) {
+			try {
+				await deletePollDraft(token, pollId)
+				this.deleteDraft({ token, pollId })
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'An error occurred while deleting the poll draft'))
 			}
 		},
 
