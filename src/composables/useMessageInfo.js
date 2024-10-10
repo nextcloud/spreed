@@ -70,6 +70,14 @@ export function useMessageInfo(message = ref({})) {
 
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
+	const linkToFileShare = computed(() => {
+		if (!isFileShare.value) {
+			return ''
+		}
+		const firstFileKey = (Object.keys(message.value.messageParameters).find(key => key.startsWith('file')))
+		return message.value.messageParameters?.[firstFileKey]?.link
+	})
+
 	const isDeleteable = computed(() =>
 		(hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (moment(message.value.timestamp * 1000).add(6, 'h')) > moment())
 		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
@@ -120,9 +128,9 @@ export function useMessageInfo(message = ref({})) {
 		isConversationReadOnly,
 		isFileShareWithoutCaption,
 		isFileShare,
+		linkToFileShare,
 		remoteServer,
 		lastEditor,
 		actorDisplayName,
 	}
-
 }
