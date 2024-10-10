@@ -21,7 +21,7 @@
 -->
 
 <template>
-	<div id="call-container" :class="{ 'blurred': isBackgroundBlurred }">
+	<div id="call-container" :style="callContainerStyle">
 		<ViewerOverlayCallView v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
@@ -136,10 +136,12 @@
 
 <script>
 import debounce from 'debounce'
+import { ref } from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
@@ -156,6 +158,9 @@ import { fetchPeers } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
+
+const serverVersion = loadState('core', 'config', {}).versionstring ?? '29.0.0'
+const serverSupportsBackgroundBlurred = '29.0.4'.localeCompare(serverVersion) < 1
 
 const supportedReactions = getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 
@@ -191,11 +196,16 @@ export default {
 	},
 
 	setup() {
+		const isBackgroundBlurred = ref(serverSupportsBackgroundBlurred
+			? null
+			: BrowserStorage.getItem('background-blurred') !== 'false')
+
 		return {
 			supportedReactions,
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
+			isBackgroundBlurred,
 		}
 	},
 
@@ -210,7 +220,6 @@ export default {
 			localSharedData: {
 				screenVisible: true,
 			},
-			isBackgroundBlurred: true,
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
 		}
@@ -346,6 +355,19 @@ export default {
 		presenterVideoBlockerEnabled() {
 			return this.sharedDatas[this.shownRemoteScreenPeerId]?.remoteVideoBlocker?.isVideoEnabled()
 		},
+
+		/**
+		 * Fallback style for versions before v29.0.4
+		 */
+		callContainerStyle() {
+			if (serverSupportsBackgroundBlurred) {
+				return
+			}
+
+			return {
+				'backdrop-filter': this.isBackgroundBlurred ? 'blur(25px)' : 'none',
+			}
+		}
 	},
 
 	watch: {
@@ -435,7 +457,6 @@ export default {
 		// Ensure that data is properly initialized before mounting the
 		// subviews.
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
-		this.isBackgroundBlurred = BrowserStorage.getItem('background-blurred') !== 'false'
 	},
 
 	mounted() {
@@ -719,6 +740,10 @@ export default {
 			}
 		},
 
+		/**
+		 * Fallback method for versions before v29.0.4
+		 * @param {boolean} value whether background should be blurred
+		 */
 		setBackgroundBlurred(value) {
 			this.isBackgroundBlurred = value
 		},
@@ -755,10 +780,8 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: $color-call-background;
-
-	&.blurred {
-		backdrop-filter: blur(25px);
-	}
+	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
+	backdrop-filter: var(--filter-background-blur);
 }
 
 #videos {
