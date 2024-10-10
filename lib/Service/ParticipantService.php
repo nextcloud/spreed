@@ -821,6 +821,10 @@ class ParticipantService {
 		$attendee->setRoomId($room->getId());
 		$attendee->setActorType(Attendee::ACTOR_EMAILS);
 		$attendee->setActorId($email);
+		$attendee->setAccessToken($this->secureRandom->generate(
+			FederationManager::TOKEN_LENGTH,
+			ISecureRandom::CHAR_HUMAN_READABLE
+		));
 
 		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
 			&& $this->talkConfig->isSIPConfigured()) {
