@@ -375,18 +375,14 @@ export default {
 		},
 
 		isViewerAvailable() {
-			if (!OCA.Viewer) {
+			if (!OCA.Viewer || !OCA.Viewer.availableHandlers?.length) {
 				return false
 			}
 
-			const availableHandlers = OCA.Viewer.availableHandlers
-			for (let i = 0; i < availableHandlers.length; i++) {
-				if (availableHandlers[i]?.mimes?.includes && availableHandlers[i].mimes.includes(this.file.mimetype)) {
-					return true
-				}
-			}
-
-			return false
+			return OCA.Viewer.availableHandlers.some(handler => {
+				return handler.mimes?.includes?.(this.file.mimetype)
+					|| handler.mimes?.includes?.(handler?.mimesAliases?.[this.file.mimetype])
+			})
 		},
 
 		isVoiceMessage() {
