@@ -35,6 +35,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkPoll from ResponseDefinitions
+ * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */
 class PollController extends AEnvironmentAwareController {
 
@@ -134,7 +135,7 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * Required capability: `talk-polls-drafts`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<TalkPoll>, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkPollDraft>, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Poll returned
 	 * 403: User is not a moderator
@@ -153,7 +154,7 @@ class PollController extends AEnvironmentAwareController {
 		$polls = $this->pollService->getDraftsForRoom($this->room->getId());
 		$data = [];
 		foreach ($polls as $poll) {
-			$data[] = $this->renderPoll($poll);
+			$data[] = $poll->renderAsDraft();
 		}
 
 		return new DataResponse($data);
@@ -346,7 +347,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @throws JsonException
 	 */
 	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
-		$data = $poll->asArray();
+		$data = $poll->renderAsPoll();
 
 		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
 

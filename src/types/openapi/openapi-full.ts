@@ -2053,27 +2053,29 @@ export type components = {
             phoneNumber?: string | null;
             callId?: string | null;
         };
-        Poll: {
+        Poll: components["schemas"]["PollDraft"] & {
+            details?: components["schemas"]["PollVote"][];
+            /** Format: int64 */
+            numVoters?: number;
+            votedSelf?: number[];
+            votes?: {
+                [key: string]: number;
+            };
+        };
+        PollDraft: {
             actorDisplayName: string;
             actorId: string;
             actorType: string;
-            details?: components["schemas"]["PollVote"][];
             /** Format: int64 */
             id: number;
             /** Format: int64 */
             maxVotes: number;
-            /** Format: int64 */
-            numVoters?: number;
             options: string[];
             question: string;
             /** Format: int64 */
             resultMode: number;
             /** Format: int64 */
             status: number;
-            votedSelf?: number[];
-            votes?: {
-                [key: string]: number;
-            };
         };
         PollVote: {
             actorDisplayName: string;
@@ -5195,7 +5197,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Poll"][];
+                            data: components["schemas"]["PollDraft"][];
                         };
                     };
                 };

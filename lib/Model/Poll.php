@@ -37,6 +37,7 @@ use OCP\AppFramework\Db\Entity;
  * @method int getMaxVotes()
  *
  * @psalm-import-type TalkPoll from ResponseDefinitions
+ * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */
 class Poll extends Entity {
 	public const STATUS_OPEN = 0;
@@ -75,25 +76,32 @@ class Poll extends Entity {
 	/**
 	 * @return TalkPoll
 	 */
-	public function asArray(): array {
+	public function renderAsPoll(): array {
+		$data = $this->renderAsDraft();
 		$votes = json_decode($this->getVotes(), true, 512, JSON_THROW_ON_ERROR);
 
 		// Because PHP is turning arrays with sequent numeric keys "{"0":x,"1":y,"2":z}" into "[x,y,z]"
 		// when json_encode() is used we have to prefix the keys with a string,
 		// to prevent breaking in the mobile apps.
-		$prefixedVotes = [];
+		$data['votes'] = [];
 		foreach ($votes as $option => $count) {
-			$prefixedVotes['option-' . $option] = $count;
+			$data['votes']['option-' . $option] = $count;
 		}
+		$data['numVoters'] = $this->getNumVoters();
 
+		return $data;
+	}
+
+	/**
+	 * @return TalkPollDraft
+	 */
+	public function renderAsDraft(): array {
 		return [
 			'id' => $this->getId(),
 			// The room id is not needed on the API level but only internally for optimising database queries
 			// 'roomId' => $this->getRoomId(),
 			'question' => $this->getQuestion(),
 			'options' => json_decode($this->getOptions(), true, 512, JSON_THROW_ON_ERROR),
-			'votes' => $prefixedVotes,
-			'numVoters' => $this->getNumVoters(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
 			'actorDisplayName' => $this->getDisplayName(),

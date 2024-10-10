@@ -2429,6 +2429,47 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" gets poll drafts for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function getPollDrafts(string $user, string $identifier, string $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/drafts');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+		$data = array_map(static function (array $poll): array {
+			$result = preg_match('/POLL_ID\(([^)]+)\)/', $poll['id'], $matches);
+			if ($result) {
+				$poll['id'] = self::$questionToPollId[$matches[1]];
+			}
+			$poll['resultMode'] = match($poll['resultMode']) {
+				'public' => 0,
+				'hidden' => 1,
+			};
+			$poll['status'] = match($poll['status']) {
+				'open' => 0,
+				'closed' => 1,
+				'draft' => 2,
+			};
+			$poll['maxVotes'] = (int)$poll['maxVotes'];
+			$poll['options'] = json_decode($poll['options'], true, flags: JSON_THROW_ON_ERROR);
+			return $poll;
+		}, $formData->getColumnsHash());
+
+		Assert::assertCount(count($data), $response);
+		Assert::assertSame($data, $response);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

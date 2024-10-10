@@ -20,6 +20,7 @@ use OCP\AppFramework\Http\DataResponse;
 
 /**
  * @psalm-import-type TalkPoll from ResponseDefinitions
+ * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */
 class PollController {
 	public function __construct(
@@ -29,7 +30,7 @@ class PollController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, list<TalkPoll>, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkPollDraft>, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Polls returned
@@ -49,7 +50,7 @@ class PollController {
 			return new DataResponse([], $status);
 		}
 
-		/** @var list<TalkPoll> $list */
+		/** @var list<TalkPollDraft> $list */
 		$list = $this->proxy->getOCSData($proxy);
 
 		$data = [];
