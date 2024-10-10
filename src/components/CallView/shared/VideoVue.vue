@@ -101,6 +101,7 @@ import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { ATTENDEE, AVATAR } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'
+import { useCallViewStore } from '../../../stores/callView.js'
 import { useGuestNameStore } from '../../../stores/guestName.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
@@ -203,6 +204,7 @@ export default {
 		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
 
 		return {
+			callViewStore: useCallViewStore(),
 			guestNameStore: useGuestNameStore(),
 			screenshotMode,
 		}
@@ -449,7 +451,7 @@ export default {
 		},
 
 		hasSelectedVideo() {
-			return this.$store.getters.selectedVideoPeerId !== null
+			return this.callViewStore.selectedVideoPeerId !== null
 		},
 
 		hasSharedScreen() {
@@ -504,7 +506,7 @@ export default {
 			if (this.isStripe) {
 				if (this.showVideo || this.showSharedScreen) {
 					return false
-				} else if (this.$store.getters.selectedVideoPeerId !== null) {
+				} else if (this.hasSelectedVideo) {
 					return this.isSelected
 				} else {
 					return this.isPromoted

@@ -104,6 +104,7 @@ import { callSIPDialOut } from '../../services/callsService.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
+import { useCallViewStore } from '../../stores/callView.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
@@ -185,6 +186,7 @@ export default {
 		return {
 			isInCall: useIsInCall(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
+			callViewStore: useCallViewStore(),
 			talkHashStore: useTalkHashStore(),
 			settingsStore: useSettingsStore(),
 			soundsStore: useSoundsStore(),
@@ -240,7 +242,7 @@ export default {
 
 		startCallButtonDisabled() {
 			return this.disabled
-				|| (this.$store.getters.callHasJustEnded && !this.hasCall)
+				|| (this.callViewStore.callHasJustEnded && !this.hasCall)
 				|| (!this.conversation.canStartCall && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
@@ -278,7 +280,7 @@ export default {
 				return t('spreed', 'Nextcloud Talk was updated, you need to reload the page before you can start or join a call.')
 			}
 
-			if (this.$store.getters.callHasJustEnded) {
+			if (this.callViewStore.callHasJustEnded) {
 				return t('spreed', 'This call has just ended')
 			}
 
@@ -336,7 +338,7 @@ export default {
 
 	watch: {
 		token() {
-			this.$store.dispatch('resetCallHasJustEnded')
+			this.callViewStore.resetCallHasJustEnded()
 		}
 	},
 
@@ -400,7 +402,7 @@ export default {
 			}
 
 			// Remove selected participant
-			this.$store.dispatch('selectedVideoPeerId', null)
+			this.callViewStore.setSelectedVideoPeerId(null)
 			this.loading = true
 
 			// Open navigation

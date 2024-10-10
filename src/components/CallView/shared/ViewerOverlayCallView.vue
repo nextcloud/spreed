@@ -117,6 +117,7 @@ import Screen from './Screen.vue'
 import VideoVue from './VideoVue.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
+import { useCallViewStore } from '../../../stores/callView.js'
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 
 export default {
@@ -181,6 +182,12 @@ export default {
 		}
 	},
 
+	setup() {
+		return {
+			callViewStore: useCallViewStore(),
+		}
+	},
+
 	data() {
 		return {
 			isCollapsed: false,
@@ -222,7 +229,7 @@ export default {
 			if (OCA.Viewer) {
 				OCA.Viewer.close()
 			}
-			this.$store.dispatch('setCallViewMode', { isViewerOverlay: false })
+			this.callViewStore.setIsViewerOverlay(false)
 		},
 
 		updatePosition() {

@@ -47,6 +47,7 @@ import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import { leaveConversationSync } from './services/participantsService.js'
+import { useCallViewStore } from './stores/callView.js'
 import { useFederationStore } from './stores/federation.ts'
 import { useSidebarStore } from './stores/sidebar.js'
 import { checkBrowser } from './utils/browserCheck.js'
@@ -76,6 +77,7 @@ export default {
 			isDocumentVisible: useDocumentVisibility(),
 			supportSessionState: useActiveSession(),
 			federationStore: useFederationStore(),
+			callViewStore: useCallViewStore(),
 			sidebarStore: useSidebarStore(),
 		}
 	},
@@ -302,7 +304,7 @@ export default {
 
 		EventBus.on('switch-to-conversation', (params) => {
 			if (this.isInCall) {
-				this.$store.dispatch('setForceCallView', true)
+				this.callViewStore.setForceCallView(true)
 
 				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)
 				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + this.token)
@@ -365,7 +367,7 @@ export default {
 						recordingConsent: this.recordingConsentGiven,
 					})
 
-					this.$store.dispatch('setForceCallView', false)
+					this.callViewStore.setForceCallView(false)
 				})
 			}
 
