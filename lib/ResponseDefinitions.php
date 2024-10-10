@@ -197,18 +197,21 @@ namespace OCA\Talk;
  *     optionId: int,
  *  }
  *
- * @psalm-type TalkPoll = array{
+ * @psalm-type TalkPollDraft = array{
  *     actorDisplayName: string,
  *     actorId: string,
  *     actorType: string,
- *     details?: TalkPollVote[],
  *     id: int,
  *     maxVotes: int,
- *     numVoters?: int,
  *     options: string[],
  *     question: string,
  *     resultMode: int,
  *     status: int,
+ * }
+ *
+ * @psalm-type TalkPoll = TalkPollDraft&array{
+ *     details?: TalkPollVote[],
+ *     numVoters?: int,
  *     votedSelf?: int[],
  *     votes?: array<string, int>,
  * }

@@ -20,12 +20,45 @@ use OCP\AppFramework\Http\DataResponse;
 
 /**
  * @psalm-import-type TalkPoll from ResponseDefinitions
+ * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */
 class PollController {
 	public function __construct(
 		protected ProxyRequest  $proxy,
 		protected UserConverter $userConverter,
 	) {
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK, list<TalkPollDraft>, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Polls returned
+	 * 404: Polls not found
+	 *
+	 * @see \OCA\Talk\Controller\PollController::showPoll()
+	 */
+	public function getDraftsForRoom(Room $room, Participant $participant): DataResponse {
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/poll/' . $room->getRemoteToken() . '/drafts',
+		);
+
+		$status = $proxy->getStatusCode();
+		if ($status === Http::STATUS_NOT_FOUND || $status === Http::STATUS_FORBIDDEN) {
+			return new DataResponse([], $status);
+		}
+
+		/** @var list<TalkPollDraft> $list */
+		$list = $this->proxy->getOCSData($proxy);
+
+		$data = [];
+		foreach ($list as $poll) {
+			$data[] = $this->userConverter->convertPoll($room, $poll);
+		}
+
+		return new DataResponse($data);
 	}
 
 	/**
@@ -101,7 +134,7 @@ class PollController {
 	 *
 	 * @see \OCA\Talk\Controller\PollController::createPoll()
 	 */
-	public function createPoll(Room $room, Participant $participant, string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+	public function createPoll(Room $room, Participant $participant, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): DataResponse {
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
@@ -111,6 +144,7 @@ class PollController {
 				'options' => $options,
 				'resultMode' => $resultMode,
 				'maxVotes' => $maxVotes,
+				'draft' => $draft,
 			],
 		);
 

@@ -14,6 +14,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
@@ -34,6 +35,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkPoll from ResponseDefinitions
+ * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */
 class PollController extends AEnvironmentAwareController {
 
@@ -58,6 +60,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @param 0|1 $resultMode Mode how the results will be shown
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
+	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
 	 * @return DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
 	 * 201: Poll created successfully
@@ -69,15 +72,19 @@ class PollController extends AEnvironmentAwareController {
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
-	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes, bool $draft = false): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
-			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes);
+			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft);
 		}
 
 		if ($this->room->getType() !== Room::TYPE_GROUP
 			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($draft === true && !$this->participant->hasModeratorPermissions()) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -91,33 +98,66 @@ class PollController extends AEnvironmentAwareController {
 				$question,
 				$options,
 				$resultMode,
-				$maxVotes
+				$maxVotes,
+				$draft,
 			);
 		} catch (\Exception $e) {
 			$this->logger->error('Error creating poll', ['exception' => $e]);
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$message = json_encode([
-			'message' => 'object_shared',
-			'parameters' => [
-				'objectType' => 'talk-poll',
-				'objectId' => $poll->getId(),
-				'metaData' => [
-					'type' => 'talk-poll',
-					'id' => $poll->getId(),
-					'name' => $question,
-				]
-			],
-		], JSON_THROW_ON_ERROR);
+		if (!$draft) {
+			$message = json_encode([
+				'message' => 'object_shared',
+				'parameters' => [
+					'objectType' => 'talk-poll',
+					'objectId' => $poll->getId(),
+					'metaData' => [
+						'type' => 'talk-poll',
+						'id' => $poll->getId(),
+						'name' => $question,
+					]
+				],
+			], JSON_THROW_ON_ERROR);
 
-		try {
-			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
-		} catch (\Exception $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			try {
+				$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+			} catch (\Exception $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			}
 		}
 
-		return new DataResponse($this->renderPoll($poll, []), Http::STATUS_CREATED);
+		return new DataResponse($this->renderPoll($poll), Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Get all drafted polls
+	 *
+	 * Required capability: `talk-polls-drafts`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, list<TalkPollDraft>, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, list<empty>, array{}>
+	 *
+	 * 200: Poll returned
+	 * 403: User is not a moderator
+	 * 404: Poll not found
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	public function getAllDraftPolls(): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
+			return $proxy->getDraftsForRoom($this->room, $this->participant);
+		}
+
+		$polls = $this->pollService->getDraftsForRoom($this->room->getId());
+		$data = [];
+		foreach ($polls as $poll) {
+			$data[] = $poll->renderAsDraft();
+		}
+
+		return new DataResponse($data);
 	}
 
 	/**
@@ -143,7 +183,11 @@ class PollController extends AEnvironmentAwareController {
 
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($poll->getStatus() === Poll::STATUS_DRAFT && !$this->participant->hasModeratorPermissions()) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -181,7 +225,11 @@ class PollController extends AEnvironmentAwareController {
 
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
-		} catch (\Exception $e) {
+		} catch (DoesNotExistException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -222,9 +270,10 @@ class PollController extends AEnvironmentAwareController {
 	 *
 	 * @param int $pollId ID of the poll
 	 * @psalm-param non-negative-int $pollId
-	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPoll, array{}>|DataResponse<Http::STATUS_ACCEPTED|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_INTERNAL_SERVER_ERROR, array<empty>, array{}>
 	 *
 	 * 200: Poll closed successfully
+	 * 202: Poll draft was deleted successfully
 	 * 400: Poll already closed
 	 * 403: Missing permissions to close poll
 	 * 404: Poll not found
@@ -242,8 +291,13 @@ class PollController extends AEnvironmentAwareController {
 
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
-		} catch (\Exception $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
+			$this->pollService->deleteByPollId($poll->getId());
+			return new DataResponse([], Http::STATUS_ACCEPTED);
 		}
 
 		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
@@ -293,7 +347,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @throws JsonException
 	 */
 	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
-		$data = $poll->asArray();
+		$data = $poll->renderAsPoll();
 
 		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
 
