@@ -84,6 +84,18 @@
 				id="dangerzone"
 				:name="t('spreed', 'Danger zone')">
 				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
+				<h4 class="app-settings-section__subtitle">
+					{{ t('spreed', 'Archive conversation') }}
+				</h4>
+				<NcCheckboxRadioSwitch v-if="supportsArchive"
+					type="switch"
+					:checked="isArchived"
+					@update:checked="toggleArchiveConversation">
+					{{ t('spreed', 'Archive conversation') }}
+				</NcCheckboxRadioSwitch>
+				<p class="app-settings-section__hint">
+					{{ t('spreed', 'Archived conversations are hidden from the conversation list by default. They will still be shown, if you have been mentioned directly, when you search for the conversation name or filter your conversation list for archived conversations.') }}
+				</p>
 				<DangerZone :conversation="conversation"
 					:can-leave-conversation="canLeaveConversation"
 					:can-delete-conversation="canDeleteConversation" />
@@ -122,6 +134,8 @@ import { CALL, CONFIG, PARTICIPANT, CONVERSATION } from '../../constants.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.js'
 
+const supportsArchive = hasTalkFeature('local', 'archived-conversations')
+
 export default {
 	name: 'ConversationSettingsDialog',
 
@@ -149,7 +163,10 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
-		return { settingsStore }
+		return {
+			supportsArchive,
+			settingsStore,
+		}
 	},
 
 	data() {
@@ -199,6 +216,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isArchived() {
+			return this.conversation.isArchived
 		},
 
 		participantType() {
@@ -273,7 +294,11 @@ export default {
 
 		setShowMediaSettings(newValue) {
 			this.settingsStore.setShowMediaSettings(this.token, newValue)
-		}
+		},
+
+		async toggleArchiveConversation() {
+			await this.$store.dispatch('toggleArchive', this.conversation)
+		},
 	},
 }
 </script>

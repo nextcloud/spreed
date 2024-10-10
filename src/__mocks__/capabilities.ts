@@ -84,6 +84,7 @@ export const mockedCapabilities: Capabilities = {
 			'chat-reference-id',
 			'mention-permissions',
 			'edit-messages-note-to-self',
+			'archived-conversations',
 		],
 		'features-local': [
 			'favorites',
@@ -95,6 +96,7 @@ export const mockedCapabilities: Capabilities = {
 			'avatar',
 			'remind-me-later',
 			'note-to-self',
+			'archived-conversations',
 		],
 		config: {
 			attachments: {

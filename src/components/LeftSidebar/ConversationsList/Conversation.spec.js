@@ -12,7 +12,6 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import Conversation from './Conversation.vue'
@@ -66,6 +65,7 @@ describe('Conversation.vue', () => {
 			type: CONVERSATION.TYPE.GROUP,
 			displayName: 'conversation one',
 			isFavorite: false,
+			isArchived: false,
 			lastMessage: {
 				actorId: 'user-id-alice',
 				actorDisplayName: 'Alice Wonderland',
@@ -357,17 +357,63 @@ describe('Conversation.vue', () => {
 			return findNcActionButton(el, actionName)
 		}
 
+		/**
+		 * @param {string} actionName The name of the action to shallow
+		 * @param {number} buttonsAmount The amount of buttons to be shown in dialog
+		 */
+		async function shallowMountAndOpenDialog(actionName, buttonsAmount) {
+			const wrapper = shallowMount(Conversation, {
+				localVue,
+				store,
+				mocks: {
+					$router,
+				},
+				stubs: {
+					NcActionButton,
+					NcButton,
+				},
+				propsData: {
+					isSearchResult: false,
+					item,
+				},
+			})
+			const el = wrapper.findComponent({ name: 'NcListItem' })
+
+			const action = findNcActionButton(el, actionName)
+			expect(action.exists()).toBeTruthy()
+
+			// Act 1 : click on the button from the menu
+			await action.find('button').trigger('click')
+
+			// Assert 1
+			const dialog = wrapper.findComponent({ name: 'NcDialog' })
+			expect(dialog.exists).toBeTruthy()
+			const buttons = dialog.findAllComponents({ name: 'NcButton' })
+			expect(buttons.exists()).toBeTruthy()
+			expect(buttons).toHaveLength(buttonsAmount)
+
+			return buttons
+		}
+
 		describe('leaving conversation', () => {
-			test('leaves conversation', async () => {
-				const actionHandler = jest.fn()
-				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
+			let actionHandler
+
+			beforeEach(() => {
 				leaveConversation.mockResolvedValue()
-				const action = shallowMountAndGetAction('Leave conversation')
-				expect(action.exists()).toBe(true)
+				actionHandler = jest.fn().mockResolvedValueOnce()
+				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
+				testStoreConfig.modules.conversationsStore.actions.toggleArchive = actionHandler
+				store = new Vuex.Store(testStoreConfig)
+			})
 
-				await action.find('button').trigger('click')
-				await flushPromises()
+			test('leaves conversation when confirmed', async () => {
+				// Arrange
+				const buttons = await shallowMountAndOpenDialog('Leave conversation', 3)
 
+				// Act: click on the 'confirm' button
+				await buttons.at(2).find('button').trigger('click')
+
+				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 			})
 
@@ -379,68 +425,66 @@ describe('Conversation.vue', () => {
 			})
 
 			test('errors with notification when a new moderator is required before leaving', async () => {
-				const actionHandler = jest.fn().mockRejectedValueOnce({
-					response: {
-						status: 400,
-					},
-				})
+				// Arrange
+				actionHandler = jest.fn().mockRejectedValueOnce({ response: { status: 400 } })
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
+				store = new Vuex.Store(testStoreConfig)
 
-				const action = shallowMountAndGetAction('Leave conversation')
-				expect(action.exists()).toBe(true)
+				const buttons = await shallowMountAndOpenDialog('Leave conversation', 3)
 
-				action.find('button').trigger('click')
+				// Act: click on the 'confirm' button
+				await buttons.at(2).find('button').trigger('click')
 				await flushPromises()
 
+				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				expect(showError).toHaveBeenCalledWith(expect.stringContaining('promote'))
+			})
+
+			test('does not leave conversation when not confirmed', async () => {
+				// Arrange
+				const buttons = await shallowMountAndOpenDialog('Leave conversation', 3)
+
+				// Act: click on the 'decline' button
+				await buttons.at(1).find('button').trigger('click')
+
+				// Assert
+				expect(actionHandler).not.toHaveBeenCalled()
+			})
+
+			test('archives conversation when selected', async () => {
+				// Arrange
+				const buttons = await shallowMountAndOpenDialog('Leave conversation', 3)
+
+				// Act: click on the 'archive' button
+				await buttons.at(0).find('button').trigger('click')
+
+				// Assert
+				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), item)
 			})
 		})
 
 		describe('deleting conversation', () => {
-			test('deletes conversation when confirmed', async () => {
-				// Arrange
-				const actionHandler = jest.fn().mockResolvedValueOnce()
-				const updateTokenAction = jest.fn()
+			let actionHandler
+			let updateTokenAction
+
+			beforeEach(() => {
+				actionHandler = jest.fn().mockResolvedValueOnce()
+				updateTokenAction = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
 				testStoreConfig.modules.tokenStore.getters.getToken = jest.fn().mockReturnValue(() => 'another-token')
 				testStoreConfig.modules.tokenStore.actions.updateToken = updateTokenAction
+				store = new Vuex.Store(testStoreConfig)
+			})
 
-				const wrapper = shallowMount(Conversation, {
-					localVue,
-					store: new Vuex.Store(testStoreConfig),
-					mocks: {
-						$router,
-					},
-					stubs: {
-						NcActionButton,
-						NcDialog,
-						NcButton,
-					},
-					propsData: {
-						isSearchResult: false,
-						item,
-					},
-				})
-				const el = wrapper.findComponent({ name: 'NcListItem' })
+			test('deletes conversation when confirmed', async () => {
+				// Arrange
+				const buttons = await shallowMountAndOpenDialog('Delete conversation', 2)
 
-				const action = findNcActionButton(el, 'Delete conversation')
-				expect(action.exists()).toBe(true)
-
-				// Act 1 : click on the button from the menu
-				await action.find('button').trigger('click')
-
-				// Assert 1
-				const dialog = wrapper.findComponent({ name: 'NcDialog' })
-				expect(dialog.exists).toBeTruthy()
-				const buttons = dialog.findAllComponents({ name: 'NcButton' })
-				expect(buttons.exists()).toBeTruthy()
-				expect(buttons).toHaveLength(2)
-
-				// Act 2 : click on the confirm button
+				// Act: click on the 'confirm' button
 				await buttons.at(1).find('button').trigger('click')
 
-				// Assert 2
+				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				expect($router.push).not.toHaveBeenCalled()
 				expect(updateTokenAction).not.toHaveBeenCalled()
@@ -448,47 +492,12 @@ describe('Conversation.vue', () => {
 
 			test('does not delete conversation when not confirmed', async () => {
 				// Arrange
-				const actionHandler = jest.fn().mockResolvedValueOnce()
-				const updateTokenAction = jest.fn()
-				testStoreConfig.modules.conversationsStore.actions.deleteConversationFromServer = actionHandler
-				testStoreConfig.modules.tokenStore.getters.getToken = jest.fn().mockReturnValue(() => 'another-token')
-				testStoreConfig.modules.tokenStore.actions.updateToken = updateTokenAction
+				const buttons = await shallowMountAndOpenDialog('Delete conversation', 2)
 
-				const wrapper = shallowMount(Conversation, {
-					localVue,
-					store: new Vuex.Store(testStoreConfig),
-					mocks: {
-						$router,
-					},
-					stubs: {
-						NcActionButton,
-						NcDialog,
-						NcButton,
-					},
-					propsData: {
-						isSearchResult: false,
-						item,
-					},
-				})
-				const el = wrapper.findComponent({ name: 'NcListItem' })
-
-				const action = findNcActionButton(el, 'Delete conversation')
-				expect(action.exists()).toBe(true)
-
-				// Act 1 : click on the button from the menu
-				await action.find('button').trigger('click')
-
-				// Assert 1
-				const dialog = wrapper.findComponent({ name: 'NcDialog' })
-				expect(dialog.exists).toBeTruthy()
-				const buttons = dialog.findAllComponents({ name: 'NcButton' })
-				expect(buttons.exists()).toBeTruthy()
-				expect(buttons).toHaveLength(2)
-
-				// Act 2 : click on the confirm button
+				// Act: click on the 'decline' button
 				await buttons.at(0).find('button').trigger('click')
 
-				// Assert 2
+				// Assert
 				expect(actionHandler).not.toHaveBeenCalled()
 				expect($router.push).not.toHaveBeenCalled()
 				expect(updateTokenAction).not.toHaveBeenCalled()

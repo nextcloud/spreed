@@ -220,6 +220,24 @@ const removeFromFavorites = async function(token) {
 }
 
 /**
+ * Add a conversation to the archive
+ *
+ * @param {string} token The token of the conversation to be archived
+ */
+const archiveConversation = async function(token) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/archive', { token }))
+}
+
+/**
+ * Restore a conversation from the archive
+ *
+ * @param {string} token The token of the conversation to be removed from archive
+ */
+const unarchiveConversation = async function(token) {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/archive', { token }))
+}
+
+/**
  * Set notification level
  *
  * @param {string} token The token of the conversation to change the notification level
@@ -380,6 +398,8 @@ export {
 	deleteConversation,
 	addToFavorites,
 	removeFromFavorites,
+	archiveConversation,
+	unarchiveConversation,
 	setNotificationLevel,
 	setNotificationCalls,
 	makeConversationPublic,
