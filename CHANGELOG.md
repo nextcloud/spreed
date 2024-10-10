@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 18.0.12 – 2024-10-10
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(avatar): Fix missing translations
+  [#13411](https://github.com/nextcloud/spreed/issues/13411)
+- fix(chat): Expire message cache when deleting the last message
+  [#13391](https://github.com/nextcloud/spreed/issues/13391)
+- fix(call): Correctly ignore media offers from users without permissions when internal signaling is used
+  [#13493](https://github.com/nextcloud/spreed/issues/13493)
+- fix(call): Fix missing call sounds in Safari when tab is moved to the background
+  [#13351](https://github.com/nextcloud/spreed/issues/13351)
+- fix(avatar): Don't overwrite user avatar when selecting a square for a conversation
+  [#13287](https://github.com/nextcloud/spreed/issues/13287)
+
 ## 18.0.11 – 2024-08-22
 ### Changed
 - Update several dependencies
