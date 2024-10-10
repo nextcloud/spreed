@@ -29,6 +29,7 @@ import { useHotKey } from '@nextcloud/vue/dist/Composables/useHotKey.js'
 
 import { PARTICIPANT } from '../../../constants.js'
 import BrowserStorage from '../../../services/BrowserStorage.js'
+import { useSettingsStore } from '../../../stores/settings.js'
 
 export default {
 	name: 'LocalVideoControlButton',
@@ -64,6 +65,12 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		return {
+			storeSettings: useSettingsStore(),
+		}
 	},
 
 	computed: {
@@ -116,6 +123,10 @@ export default {
 
 			return t('spreed', 'Enable video. Your connection will be briefly interrupted when enabling the video for the first time')
 		},
+
+		startWithoutMediaEnabled() {
+			return this.storeSettings.startWithoutMedia
+		},
 	},
 
 	created() {
@@ -124,6 +135,9 @@ export default {
 
 	mounted() {
 		subscribe('local-video-control-button:toggle-video', this.updateDeviceState)
+		if (this.startWithoutMediaEnabled) {
+			this.model.disableVideo()
+		}
 	},
 
 	beforeDestroy() {
