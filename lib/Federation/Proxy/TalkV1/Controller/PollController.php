@@ -126,7 +126,7 @@ class PollController {
 
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 201: Poll created successfully
@@ -148,14 +148,18 @@ class PollController {
 			],
 		);
 
-		if ($proxy->getStatusCode() === Http::STATUS_BAD_REQUEST) {
+		$status = $proxy->getStatusCode();
+		if ($status === Http::STATUS_BAD_REQUEST) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		/** @var TalkPoll $data */
-		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_CREATED]);
+		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_CREATED]);
 		$data = $this->userConverter->convertPoll($room, $data);
 
+		if ($status === Http::STATUS_OK) {
+			return new DataResponse($data);
+		}
 		return new DataResponse($data, Http::STATUS_CREATED);
 	}
 

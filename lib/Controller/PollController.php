@@ -61,8 +61,9 @@ class PollController extends AEnvironmentAwareController {
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
+	 * 200: Draft created successfully
 	 * 201: Poll created successfully
 	 * 400: Creating poll is not possible
 	 */
@@ -106,25 +107,27 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$draft) {
-			$message = json_encode([
-				'message' => 'object_shared',
-				'parameters' => [
-					'objectType' => 'talk-poll',
-					'objectId' => $poll->getId(),
-					'metaData' => [
-						'type' => 'talk-poll',
-						'id' => $poll->getId(),
-						'name' => $question,
-					]
-				],
-			], JSON_THROW_ON_ERROR);
+		if ($draft) {
+			return new DataResponse($poll->renderAsDraft());
+		}
 
-			try {
-				$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
-			} catch (\Exception $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
-			}
+		$message = json_encode([
+			'message' => 'object_shared',
+			'parameters' => [
+				'objectType' => 'talk-poll',
+				'objectId' => $poll->getId(),
+				'metaData' => [
+					'type' => 'talk-poll',
+					'id' => $poll->getId(),
+					'name' => $question,
+				]
+			],
+		], JSON_THROW_ON_ERROR);
+
+		try {
+			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+		} catch (\Exception $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
 		return new DataResponse($this->renderPoll($poll), Http::STATUS_CREATED);

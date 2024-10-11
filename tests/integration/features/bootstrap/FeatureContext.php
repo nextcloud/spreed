@@ -2418,7 +2418,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode !== '201') {
+		if ($statusCode !== '200' && $statusCode !== '201') {
 			return;
 		}
 

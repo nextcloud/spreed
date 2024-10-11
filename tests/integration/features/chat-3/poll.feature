@@ -811,13 +811,13 @@ Feature: chat-2/poll
       | roomType | 2 |
       | roomName | room |
     When user "participant1" adds user "participant2" to room "room" with 200 (v4)
-    When user "participant1" creates a poll in room "room" with 201
+    When user "participant1" creates a poll in room "room" with 200
       | question   | What is the question? |
       | options    | ["You","me"] |
       | resultMode | public |
       | maxVotes   | unlimited |
       | draft      | 1 |
-    When user "participant1" creates a poll in room "room" with 201
+    When user "participant1" creates a poll in room "room" with 200
       | question   | Shall we draft 2 questions? |
       | options    | ["Yes","No"] |
       | resultMode | hidden |
