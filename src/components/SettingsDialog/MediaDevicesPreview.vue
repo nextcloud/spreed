@@ -39,6 +39,11 @@
 			:device-id="videoInputId"
 			@refresh="updateDevices"
 			@update:deviceId="handleVideoInputIdChange" />
+		<NcCheckboxRadioSwitch type="switch"
+			:checked="blurBackgroundEnabled"
+			@update:checked="setBlurBackgroundEnabled">
+			{{ t('spreed', 'Enable blur background by default for all conversations.') }}
+		</NcCheckboxRadioSwitch>
 		<div class="preview preview-video">
 			<div v-if="!videoPreviewAvailable"
 				class="preview-not-available">
@@ -75,10 +80,14 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
 import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
 import { useDevices } from '../../composables/useDevices.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import { useSettingsStore } from '../../stores/settings.js'
 
 export default {
 
@@ -88,6 +97,7 @@ export default {
 		AlertCircle,
 		MediaDevicesSelector,
 		MicrophoneOff,
+		NcCheckboxRadioSwitch,
 		VideoOff,
 		VolumeIndicator,
 	},
@@ -108,6 +118,7 @@ export default {
 			audioStreamError,
 			videoStream,
 			videoStreamError,
+			virtualBackground,
 		} = useDevices(video, true)
 
 		return {
@@ -125,6 +136,8 @@ export default {
 			audioStreamError,
 			videoStream,
 			videoStreamError,
+			virtualBackground,
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -180,6 +193,10 @@ export default {
 
 			return t('spreed', 'Error while accessing camera')
 		},
+
+		blurBackgroundEnabled() {
+			return this.settingsStore.getBlurBackgroundEnabled
+		}
 	},
 
 	methods: {
@@ -193,6 +210,19 @@ export default {
 		handleVideoInputIdChange(videoInputId) {
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
+		},
+
+		setBlurBackgroundEnabled(value) {
+			this.settingsStore.setBlurBackgroundEnabled(value)
+			if (value) {
+				this.virtualBackground.setEnabled(true)
+				this.virtualBackground.setVirtualBackground({
+					backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+					blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+				})
+			} else {
+				this.virtualBackground.setEnabled(false)
+			}
 		},
 	},
 }
