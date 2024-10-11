@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 
 use JsonException;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\PollPropertyException;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -61,7 +62,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
 	 *
 	 * 200: Draft created successfully
 	 * 201: Poll created successfully
@@ -82,11 +83,11 @@ class PollController extends AEnvironmentAwareController {
 
 		if ($this->room->getType() !== Room::TYPE_GROUP
 			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => PollPropertyException::REASON_ROOM], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($draft === true && !$this->participant->hasModeratorPermissions()) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => PollPropertyException::REASON_DRAFT], Http::STATUS_BAD_REQUEST);
 		}
 
 		$attendee = $this->participant->getAttendee();
@@ -102,9 +103,9 @@ class PollController extends AEnvironmentAwareController {
 				$maxVotes,
 				$draft,
 			);
-		} catch (\Exception $e) {
+		} catch (PollPropertyException $e) {
 			$this->logger->error('Error creating poll', ['exception' => $e]);
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($draft) {
