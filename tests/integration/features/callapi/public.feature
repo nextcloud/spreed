@@ -89,12 +89,17 @@ Feature: callapi/public
     Then user "participant1" joins call "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200 (v4)
     And user "guest" sees 0 peers in call "room" with 404 (v4)
-    Then user "guest" joins room "room" with 200 (v4)
+    Then user "guest" joins room "room" with 200 (v4) session name "guest1"
     Then user "participant1" sees 1 peers in call "room" with 200 (v4)
     And user "guest" sees 1 peers in call "room" with 200 (v4)
     And user "guest" joins call "room" with 200 (v4)
     Then user "participant1" sees 2 peers in call "room" with 200 (v4)
     And user "guest" sees 2 peers in call "room" with 200 (v4)
+    And user "participant2" downloads call participants from "room" as "csv" with 403 (v4)
+    And user "participant1" downloads call participants from "room" as "csv" with 200 (v4)
+      | name                     | type   | identifier   |
+      | participant1-displayname | users  | participant1 |
+      |                          | guests | guest1       |
     Then user "guest" leaves call "room" with 200 (v4)
     Then user "participant1" sees 1 peers in call "room" with 200 (v4)
     And user "guest" sees 1 peers in call "room" with 200 (v4)
