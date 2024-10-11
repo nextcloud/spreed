@@ -126,9 +126,10 @@ class PollController {
 
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'question'|'room'}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
+	 * 200: Draft created successfully
 	 * 201: Poll created successfully
 	 * 400: Creating poll is not possible
 	 *
@@ -150,7 +151,8 @@ class PollController {
 
 		$status = $proxy->getStatusCode();
 		if ($status === Http::STATUS_BAD_REQUEST) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			$data = $this->proxy->getOCSData($proxy, [Http::STATUS_BAD_REQUEST]);
+			return new DataResponse($data, Http::STATUS_BAD_REQUEST);
 		}
 
 		/** @var TalkPoll $data */

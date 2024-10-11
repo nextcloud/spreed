@@ -5190,7 +5190,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "draft" | "options" | "question" | "room";
+                            };
                         };
                     };
                 };
