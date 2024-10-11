@@ -20,6 +20,20 @@
             }
         },
         "schemas": {
+            "ActorTypes": {
+                "type": "string",
+                "enum": [
+                    "users",
+                    "groups",
+                    "guests",
+                    "emails",
+                    "circles",
+                    "bridged",
+                    "bots",
+                    "federated_users",
+                    "phones"
+                ]
+            },
             "Ban": {
                 "type": "object",
                 "required": [
@@ -729,6 +743,43 @@
                 }
             },
             "Poll": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PollDraft"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "details": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PollVote"
+                                }
+                            },
+                            "numVoters": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 0
+                            },
+                            "votedSelf": {
+                                "type": "array",
+                                "items": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "votes": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "PollDraft": {
                 "type": "object",
                 "required": [
                     "actorDisplayName",
@@ -746,28 +797,21 @@
                         "type": "string"
                     },
                     "actorId": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1
                     },
                     "actorType": {
-                        "type": "string"
-                    },
-                    "details": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/PollVote"
-                        }
+                        "$ref": "#/components/schemas/ActorTypes"
                     },
                     "id": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "minimum": 1
                     },
                     "maxVotes": {
                         "type": "integer",
-                        "format": "int64"
-                    },
-                    "numVoters": {
-                        "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "minimum": 0
                     },
                     "options": {
                         "type": "array",
@@ -776,29 +820,25 @@
                         }
                     },
                     "question": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1
                     },
                     "resultMode": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "enum": [
+                            0,
+                            1
+                        ]
                     },
                     "status": {
                         "type": "integer",
-                        "format": "int64"
-                    },
-                    "votedSelf": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    "votes": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
+                        "format": "int64",
+                        "enum": [
+                            0,
+                            1,
+                            2
+                        ]
                     }
                 }
             },
@@ -8611,6 +8651,11 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "description": "Number of maximum votes per voter"
+                                    },
+                                    "draft": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)"
                                     }
                                 }
                             }
@@ -8651,6 +8696,36 @@
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "Draft created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PollDraft"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "201": {
                         "description": "Poll created successfully",
                         "content": {
@@ -8683,6 +8758,165 @@
                     },
                     "400": {
                         "description": "Creating poll is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "draft",
+                                                                "options",
+                                                                "question",
+                                                                "room"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/drafts": {
+            "get": {
+                "operationId": "poll-get-all-draft-polls",
+                "summary": "Get all drafted polls",
+                "description": "Required capability: `talk-polls-drafts`",
+                "tags": [
+                    "poll"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Poll returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PollDraft"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "User is not a moderator",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Poll not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -9085,6 +9319,34 @@
                                                 "data": {
                                                     "$ref": "#/components/schemas/Poll"
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Poll draft was deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }

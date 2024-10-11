@@ -158,4 +158,5 @@
 
 ## 20.1
 * `archived-conversations` (local) - Conversations can be marked as archived which will hide them from the conversation list by default
+* `talk-polls-drafts` - Whether moderators can store and retrieve poll drafts
 * `config => call => start-without-media` (local) - Boolean, whether media should be disabled when starting or joining a conversation

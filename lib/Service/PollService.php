@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Exceptions\PollPropertyException;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\PollMapper;
@@ -29,23 +30,26 @@ class PollService {
 	) {
 	}
 
-	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {
+	/**
+	 * @throws PollPropertyException
+	 */
+	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): Poll {
 		$question = trim($question);
 
 		if ($question === '' || strlen($question) > 32_000) {
-			throw new \UnexpectedValueException();
+			throw new PollPropertyException(PollPropertyException::REASON_QUESTION);
 		}
 
 		try {
 			json_encode($options, JSON_THROW_ON_ERROR, 1);
-		} catch (\Exception $e) {
-			throw new \RuntimeException();
+		} catch (\Exception) {
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
 		}
 
 		$validOptions = [];
 		foreach ($options as $option) {
 			if (!is_string($option)) {
-				throw new \RuntimeException();
+				throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
 			}
 
 			$option = trim($option);
@@ -55,17 +59,17 @@ class PollService {
 		}
 
 		if (count($validOptions) < 2) {
-			throw new \RuntimeException();
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
 		}
 
 		try {
 			$jsonOptions = json_encode($validOptions, JSON_THROW_ON_ERROR, 1);
-		} catch (\Exception $e) {
-			throw new \RuntimeException();
+		} catch (\Exception) {
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
 		}
 
 		if (strlen($jsonOptions) > 60_000) {
-			throw new \UnexpectedValueException();
+			throw new PollPropertyException(PollPropertyException::REASON_OPTIONS);
 		}
 
 		$poll = new Poll();
@@ -78,10 +82,21 @@ class PollService {
 		$poll->setVotes(json_encode([]));
 		$poll->setResultMode($resultMode);
 		$poll->setMaxVotes($maxVotes);
+		if ($draft) {
+			$poll->setStatus(Poll::STATUS_DRAFT);
+		}
 
 		$this->pollMapper->insert($poll);
 
 		return $poll;
+	}
+
+	/**
+	 * @param int $roomId
+	 * @return Poll[]
+	 */
+	public function getDraftsForRoom(int $roomId): array {
+		return $this->pollMapper->getDraftsByRoomId($roomId);
 	}
 
 	/**

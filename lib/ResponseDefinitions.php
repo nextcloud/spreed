@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 /**
+ * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
+ *
  * @psalm-type TalkBan = array{
  *     id: int,
  *     moderatorActorType: string,
@@ -197,18 +199,21 @@ namespace OCA\Talk;
  *     optionId: int,
  *  }
  *
- * @psalm-type TalkPoll = array{
+ * @psalm-type TalkPollDraft = array{
  *     actorDisplayName: string,
- *     actorId: string,
- *     actorType: string,
+ *     actorId: non-empty-string,
+ *     actorType: TalkActorTypes,
+ *     id: int<1, max>,
+ *     maxVotes: int<0, max>,
+ *     options: list<string>,
+ *     question: non-empty-string,
+ *     resultMode: 0|1,
+ *     status: 0|1|2,
+ * }
+ *
+ * @psalm-type TalkPoll = TalkPollDraft&array{
  *     details?: TalkPollVote[],
- *     id: int,
- *     maxVotes: int,
- *     numVoters?: int,
- *     options: string[],
- *     question: string,
- *     resultMode: int,
- *     status: int,
+ *     numVoters?: int<0, max>,
  *     votedSelf?: int[],
  *     votes?: array<string, int>,
  * }
