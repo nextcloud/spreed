@@ -186,7 +186,7 @@
     "An administrator demoted {user} from moderator" : "تم تخفيض رتبة الاشراف من {user} من قبل الادارة",
     "{actor} shared a file which is no longer available" : "{actor} قام بمشاركة ملف لم يعد متاح",
     "You shared a file which is no longer available" : "قمت بمشاركة ملف لم يعد متاح",
-    "File shares are currently not supported in federated conversations" : "مشاركة الملفات غير مدعومة حاليّاً في حالة المحادثات الاتحاديّة",
+    "File shares are currently not supported in federated conversations" : "مشاركة الملفات غير مدعومة حاليّاً في حالة المحادثات عبر السحابة الموحدة",
     "The shared location is malformed" : "الموقع المشترك غير صحيح",
     "{actor} set up Matterbridge to synchronize this conversation with other chats" : "قام {actor} بإعداد Matterbridge لمزامنة هذه المحادثة مع الدردشات الأخرى.",
     "You set up Matterbridge to synchronize this conversation with other chats" : "قمت بإعداد Matterbridge لمزامنة هذه المحادثة مع الدردشات الأخرى.",
@@ -682,7 +682,7 @@
     "Conversation not found" : "المحادثة غير موجودة",
     "Path is already shared with this conversation" : "المسار سبقت مشاركته سلفاً مع هذه المحادثة",
     "Chat, video & audio-conferencing using WebRTC" : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC",
-    "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat** Nextcloud Talk comes with a simple text chat, allowing you to share or upload files from your Nextcloud Files app or local device and mention other participants.\n* 👥 **Private, group, public and password protected calls!** Invite someone, a whole group or send a public link to invite to a call.\n* 🌐 **Federated chats** Chat with other Nextcloud users on their servers\n* 💻 **Screen sharing!** Share your screen with the participants of your call.\n* 🚀 **Integration with other Nextcloud apps** like Files, Calendar, User status, Dashboard, Flow, Maps, Smart picker, Contacts, Deck, and many more.\n* 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa." : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC\n\n * 💬 **الدردشة** يأتي تطبيق المحادثة Talk في نكست كلاود مع محادثة نصية بسيطة، مما يسمح لك بمشاركة أو تحميل الملفات من تطبيق الملفات Files  في نكست كلاود أو من الجهاز المحلي، و الإشارة إلى المشاركين الآخرين. \n* 👥 **مكالمات خاصة وجماعية وعامة ومحمية بكلمة مرور! ** قم بدعوة شخص ما أو مجموعة كاملة أو أرسل رابطًا عامًا للدعوة لإجراء مكالمة.\n * 🌐 **الدردشات الموحدة** قم بالدردشة مع مستخدمي نكست كلاود الآخرين على خوادمهم \n* 💻 **مشاركة الشاشة!** شارك شاشتك مع المشاركين في مكالمتك. \n* 🚀 **التكامل مع تطبيقات نكست كلاود الأخرى** مثل الملفات والتقويم وحالة المستخدم ولوحة المعلومات وأتمتة الإجراءات والخرائط و اللاقط الذكي وجهات الاتصال و رزم البطاقات وغير ذلك الكثير. \n* 🌉 **المزامنة مع حلول الدردشة الأخرى** من خلال دمج [Matterbridge] (https://github.com/42wim/matterbridge/) في Talk، يمكنك بسهولة مزامنة الكثير من حلول الدردشة الأخرى مع تطبيق المحادثة Talk في نكست كلاود، و كذلك بالعكس.",
+    "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat** Nextcloud Talk comes with a simple text chat, allowing you to share or upload files from your Nextcloud Files app or local device and mention other participants.\n* 👥 **Private, group, public and password protected calls!** Invite someone, a whole group or send a public link to invite to a call.\n* 🌐 **Federated chats** Chat with other Nextcloud users on their servers\n* 💻 **Screen sharing!** Share your screen with the participants of your call.\n* 🚀 **Integration with other Nextcloud apps** like Files, Calendar, User status, Dashboard, Flow, Maps, Smart picker, Contacts, Deck, and many more.\n* 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa." : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC\n\n * 💬 **الدردشة** يأتي تطبيق المحادثة Talk في نكست كلاود مع محادثة نصية بسيطة، مما يسمح لك بمشاركة أو تحميل الملفات من تطبيق الملفات Files  في نكست كلاود أو من الجهاز المحلي، و الإشارة إلى المشاركين الآخرين. \n* 👥 **مكالمات خاصة وجماعية وعامة ومحمية بكلمة مرور! ** قم بدعوة شخص ما أو مجموعة كاملة أو أرسل رابطًا عامًا للدعوة لإجراء مكالمة.\n * 🌐 **الدردشات الموحدة** قم بالدردشة مع مستخدمي نكست كلاود الآخرين على خوادمهم \n* 💻 **مشاركة الشاشة!** شارك شاشتك مع المشاركين في مكالمتك. \n* 🚀 **التكامل مع تطبيقات نكست كلاود الأخرى** مثل الملفات والتقويم وحالة المستخدم ولوحة المعلومات وأتمتة سير العمل والخرائط و اللاقط الذكي وجهات الاتصال و رزم البطاقات وغير ذلك الكثير. \n* 🌉 **المزامنة مع حلول الدردشة الأخرى** من خلال دمج [Matterbridge] (https://github.com/42wim/matterbridge/) في Talk، يمكنك بسهولة مزامنة الكثير من حلول الدردشة الأخرى مع تطبيق المحادثة Talk في نكست كلاود، و كذلك بالعكس.",
     "Duplicate session" : "تكرار الجلسة",
     "Navigating away from the page will leave the call in {conversation}" : "الخروج من هذه الصفحة سيؤدي لمغادرة المكالمة في {conversation}",
     "Leave call" : "مغادرة المكالمة",
@@ -731,10 +731,10 @@
     "Enable Federation in Talk app" : "تمكين تطبيق \"المحادثة\" talk من التواصل عبر السحابة الاتحادية ",
     "Permissions" : "التصريحات",
     "Allow users to be invited to federated conversations" : "السماح للمستخدِمين بأن تتم دعوتهم إلى المحادثات الاتحادية",
-    "Allow users to invite federated users into conversation" : "السماح للمستخدِمين بدعوة مستخدِمين اتحاديين إلى المحادثة ",
+    "Allow users to invite federated users into conversation" : "السماح للمستخدِمين بدعوة مستخدِمين من السحابة الموحدة إلى المحادثة ",
     "Only allow to federate with trusted servers" : "السماح فقط بالاتحاد مع الخوادم الموثوقة",
-    "When at least one group is selected, only people of the listed groups can invite federated users to conversations." : "عند تحديد مجموعة واحدة على الأقل، يمكن لأشخاص المجموعات المدرجة فقط دعوة المستخدِمين الاتحاديين إلى المحادثة.",
-    "Groups allowed to invite federated users" : "المجموعات التي يحق لها دعوة مستخدِمين اتحاديين",
+    "When at least one group is selected, only people of the listed groups can invite federated users to conversations." : "عند تحديد مجموعة واحدة على الأقل، يمكن لأشخاص المجموعات المدرجة فقط دعوة المستخدِمين من السحابة الموحدة إلى المحادثة.",
+    "Groups allowed to invite federated users" : "المجموعات التي يحق لها دعوة مستخدِمين من السحابة الموحدة",
     "Select groups …" : "حدِّد المجموعات ...",
     "Trusted servers can be configured at {linkstart}Sharing settings page{linkend}." : "يمكن تكوين الخوادم الموثوقة في {linkstart} صفحة إعدادات المشاركة {linkend}.",
     "General settings" : "الإعدادات العامة",
@@ -848,7 +848,7 @@
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
     "TURN settings saved" : "تم حفظ إعدادات خادم TURN",
     "Web server setup checks" : "التحقق من تنصيب خادم الويب",
-    "Files required for virtual background can be loaded" : "يمكن تحمي الملفات اللازمة للخلفيات الافتراضية",
+    "Files required for virtual background can be loaded" : "يمكن تحميل الملفات المطلوبة للخلفية الافتراضية",
     "Failed" : "فشل",
     "OK" : "موافق",
     "Checking …" : "جاري التحقق … ",
@@ -857,7 +857,7 @@
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "حسنًا: تم إرجاع ملفات \".wasm\" و \".tflite\" بشكل صحيح من قبل خادم الويب.",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "يبدو أن إعدادات PHP و Apache غير متوافقة. يرجى ملاحظة أنه لا يمكن استخدام PHP إلا مع الوحدة النمطية MPM_PREFORK ولا يمكن استخدام PHP-FPM إلا مع الوحدة النمطية MPM_EVENT.",
     "Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "تعذر اكتشاف تهيئة PHP و Apache لأن exec معطل أو أن apachectl لا يعمل علي النحو المتوقع. يرجى ملاحظة أنه لا يمكن استخدام PHP إلا مع الوحدة النمطية MPM_PREFORK ولا يمكن استخدام PHP-FPM إلا مع الوحدة النمطية MPM_EVENT.",
-    "Federated user" : "مستخدِم اتحادي",
+    "Federated user" : "مستخدِم السحابة الموحدة",
     "Number of breakout rooms" : "عدد الغرف الجانبية",
     "You can create from 1 to 20 breakout rooms." : "يمكنك إنشاء من 1 حتى 20 غرفة جانبية.",
     "Assignment method" : "طريقة التكليف",
@@ -891,7 +891,7 @@
     "Collapse stripe" : "طي الشريط ",
     "Expand stripe" : "توسيع الشريط ",
     "Copy link" : "انسخ الرابط",
-    "Recording consent is required" : "إذن التسجيل لازم",
+    "Recording consent is required" : "إذن التسجيل مطلوب",
     "This conversation is read-only" : "هذه المحادثة للقراءة فقط",
     "Conversation not found or not joined" : "المحادثة غير موجودة أو لم يتم الانضمام إليها",
     "Connection failed" : "تعذّر الاتصال",
@@ -910,7 +910,7 @@
     "Mute audio (M)" : "كتم الصوت (M)",
     "Unmute audio" : "تشغيل الصوت",
     "Unmute audio (M)" : "تشغيل الصوت (M)",
-    "Hide presenter video" : "قُم بإخفاء فيديو العارض",
+    "Hide presenter video" : "إخفاء فيديو مقدم العرض",
     "Access to camera was denied" : "تم رفض الوصول للكاميرا",
     "Error while accessing camera: It is likely in use by another program" : "خطأ أثناء الوصول إلى الكاميرا: من المحتمل أن تكون قيد الاستخدام من قبل برنامج آخر",
     "Error while accessing camera" : "حدث خطأ اثناء الوصول للكاميرا",
@@ -924,7 +924,7 @@
     "Enable video - Your connection will be briefly interrupted when enabling the video for the first time" : "تمكين الفيديو - سوف ينقطع اتصالك مؤقّتاً عند تمكين الفيديو للمرة الاولى",
     "Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time" : "تفعيل الفيديو (v) - سيتم قطع اتصالك للحظات عند تشغيل الفيديو للمره الأولى",
     "Enable video. Your connection will be briefly interrupted when enabling the video for the first time" : "سماح الفيديو - سيتم قطع اتصالك للحظات عند تشغيل الفيديو للمره الاولى",
-    "Show presenter" : "إظهار العارض",
+    "Show presenter" : "إظهار مقدم العرض",
     "You" : "أنت",
     "Show screen" : "اظهار الشاشة",
     "Stop following" : "ايقاف المتابعة",
@@ -942,7 +942,7 @@
     "You need to be logged in to upload files" : "يجب عليك تسجيل الدخول لرفع الملفات",
     "Drop your files to upload" : "افلت الملفات لرفعها",
     "Favorite" : "المفضلة",
-    "Federated conversation" : "محادثة اتحادية",
+    "Federated conversation" : "محادثة السحابة الموحدة",
     "Public conversation" : "محادثة عمومية",
     "Banned users" : "مستخدِمون محظورون",
     "Manage the list of banned users in this conversation." : "إدارة قائمة المستخدمين المحظورين في هذه المحادثة",
@@ -1186,7 +1186,7 @@
     "New private conversation" : "محادثة جديدة على الخاص",
     "Groups" : "المجموعات",
     "Teams" : "الفرق",
-    "Federated users" : "مستخدِمون اتحاديّون",
+    "Federated users" : "مستخدِمون من السحابة الموحدة",
     "No search results" : "لا توجد نتائج",
     "Loading" : "جاري التحميل",
     "Talk settings" : "إعدادات التحدث",
@@ -1503,7 +1503,7 @@
     "Add groups or teams" : "إضافة مجموعات و فِرَق",
     "Add other sources" : "اضافة مصدر آخر",
     "Participants" : "المشاركون",
-    "You can search or add participants via name, email, or Federated Cloud ID" : "بمكنك البحث عن او اضافة مشاركين بدلالة الاسم أو الايميل أو معرف السحابة الاتحادية",
+    "You can search or add participants via name, email, or Federated Cloud ID" : "بمكنك البحث عن او اضافة مشاركين بدلالة الاسم أو الايميل أو معرف السحابة الموحدة",
     "Search or add participants" : "بحث او اضافة مشاركين",
     "An error occurred while adding the participants" : "حدث خطأ اثناء إضافة المشاركين",
     "Chat" : "الدردشة",
@@ -1739,7 +1739,7 @@
     "Location has been posted to {conversation}" : "تم نشر الموقع في {conversation}",
     "In conversation" : "في المحادثة ...",
     "Search in conversation: {conversation}" : "البحث في المحادثة: {conversation}",
-    "Nextcloud Talk Federation was updated, please reload the page" : "تمّ تحديث المحادثة الاتحادية لنكست كلاود. رجاءً، أعِد تحميل الصفحة",
+    "Nextcloud Talk Federation was updated, please reload the page" : "تمّ تحديث المحادثة عبر السحابة الموحدة لنكست كلاود. رجاءً، أعِد تحميل الصفحة",
     "Error while sharing file" : "خطأ اثناء مشاركة ملف",
     "Your requests are throttled at the moment due to brute force protection" : "يتم تقييد طلباتك في الوقت الحالي كإجراء تحسبي للحماية من هجمات القوة الغاشمة",
     "Error while clearing conversation history" : "خطأ أثناء مسح محفوظات المحادثة",
