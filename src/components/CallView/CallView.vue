@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div id="call-container" :style="callContainerStyle">
+	<div id="call-container" :class="callContainerClass">
 		<ViewerOverlayCallView v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
@@ -141,11 +141,12 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
+import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 
-const serverVersion = loadState('core', 'config', {}).versionstring ?? '29.0.0'
-const serverSupportsBackgroundBlurred = '29.0.4'.localeCompare(serverVersion) < 1
+const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
+const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
 export default {
 	name: 'CallView',
@@ -179,9 +180,8 @@ export default {
 	},
 
 	setup() {
-		const isBackgroundBlurred = ref(serverSupportsBackgroundBlurred
-			? null
-			: BrowserStorage.getItem('background-blurred') !== 'false')
+		// Fallback ref for versions before v29.0.4
+		const isBackgroundBlurred = ref(BrowserStorage.getItem('background-blurred') !== 'false')
 
 		return {
 			localMediaModel,
@@ -350,14 +350,12 @@ export default {
 		/**
 		 * Fallback style for versions before v29.0.4
 		 */
-		callContainerStyle() {
+		callContainerClass() {
 			if (serverSupportsBackgroundBlurred) {
 				return
 			}
 
-			return {
-				'backdrop-filter': this.isBackgroundBlurred ? 'blur(25px)' : 'none',
-			}
+			return this.isBackgroundBlurred ? 'call-container__blurred' : 'call-container__non-blurred'
 		}
 	},
 
@@ -761,6 +759,13 @@ export default {
 	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
 	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
+
+	&.call-container__blurred {
+		backdrop-filter: blur(25px);
+	}
+	&.call-container__non-blurred {
+		backdrop-filter: none;
+	}
 }
 
 #videos {
