@@ -20,6 +20,14 @@
 			:name="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
+			<NcCheckboxRadioSwitch id="call-media"
+				:checked="startWithoutMediaEnabled"
+				:disabled="mediaLoading"
+				type="switch"
+				class="checkbox call-media"
+				@update:checked="toggleStartWithoutMedia">
+				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
+			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="attachments"
@@ -196,6 +204,7 @@ import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
+import { setUserConfig } from '../../services/settingsService.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 
@@ -235,6 +244,7 @@ export default {
 			attachmentFolderLoading: true,
 			privacyLoading: false,
 			playSoundsLoading: false,
+			mediaLoading: false,
 		}
 	},
 
@@ -263,6 +273,10 @@ export default {
 			return this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
 		},
 
+		startWithoutMediaEnabled() {
+			return this.settingsStore.startWithoutMedia
+		},
+
 		settingsUrl() {
 			return generateUrl('/settings/user/notifications')
 		},
@@ -284,12 +298,11 @@ export default {
 		},
 	},
 
-	created() {
+	async created() {
 		const blurred = BrowserStorage.getItem('background-blurred')
 		if (blurred === 'false' && isBackgroundBlurred === '') {
 			console.debug('Blur was disabled intentionally, propagating last choice to server')
-			axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/theming/force_enable_blur_filter'),
-				{ configValue: 'no' })
+			await setUserConfig('theming', 'force_enable_blur_filter', 'no')
 		}
 		BrowserStorage.removeItem('background-blurred')
 	},
@@ -362,6 +375,18 @@ export default {
 			this.playSoundsLoading = false
 		},
 
+		async toggleStartWithoutMedia(value) {
+			this.mediaLoading = true
+			try {
+				await this.settingsStore.setStartWithoutMedia(value)
+				showSuccess(t('spreed', 'Your default media state has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting default media state'))
+			} finally {
+				this.mediaLoading = false
+			}
+		},
+
 		handleShowSettings() {
 			this.showSettings = true
 		},
@@ -418,6 +443,10 @@ export default {
 	.shortcut-description {
 		width: calc(100% - 160px);
 	}
+}
+
+.call-media {
+	margin: calc(3 * var(--default-grid-baseline)) 0;
 }
 
 </style>

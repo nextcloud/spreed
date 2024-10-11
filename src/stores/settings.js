@@ -10,7 +10,12 @@ import { loadState } from '@nextcloud/initial-state'
 
 import { PRIVACY } from '../constants.js'
 import BrowserStorage from '../services/BrowserStorage.js'
-import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../services/settingsService.js'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
+import {
+	setReadStatusPrivacy,
+	setTypingStatusPrivacy,
+	setStartWithoutMedia
+} from '../services/settingsService.js'
 
 /**
  * @typedef {string} Token
@@ -33,7 +38,8 @@ export const useSettingsStore = defineStore('settings', {
 	state: () => ({
 		readStatusPrivacy: loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE),
 		typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
-		showMediaSettings: {}
+		showMediaSettings: {},
+		startWithoutMedia: getTalkConfig('local', 'call', 'start-without-media'),
 	}),
 
 	getters: {
@@ -95,6 +101,11 @@ export const useSettingsStore = defineStore('settings', {
 				BrowserStorage.setItem('showMediaSettings_' + token, 'false')
 			}
 			Vue.set(this.showMediaSettings, token, value)
+		},
+
+		async setStartWithoutMedia(value) {
+			await setStartWithoutMedia(value)
+			this.startWithoutMedia = value
 		},
 	},
 })
