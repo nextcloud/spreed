@@ -105,6 +105,7 @@ class Capabilities implements IPublicCapability {
 		'edit-messages-note-to-self',
 		'archived-conversations',
 		'talk-polls-drafts',
+		'download-call-participants',
 	];
 
 	public const LOCAL_FEATURES = [

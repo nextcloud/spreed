@@ -261,6 +261,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download the list of current call participants
+         * @description Required capability: `download-call-participants`
+         */
+        get: operations["call-download-participants-for-call"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/federation": {
         parameters: {
             query?: never;
@@ -2921,6 +2941,43 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    "call-download-participants-for-call": {
+        parameters: {
+            query?: {
+                /** @description Download format */
+                format?: "csv" | "pdf";
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of participants in the call downloaded in the requested format */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                    "application/pdf": string;
+                };
+            };
+            /** @description No call in progress */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
