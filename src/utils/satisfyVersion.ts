@@ -13,9 +13,9 @@ function satisfyVersion(version: string, requirement: string): boolean {
 	const versionMap = version.split('.').map(Number)
 	const requirementMap = requirement.split('.').map(Number)
 
-	for (let i = 0; i < requirementMap.length; i++) {
-		if (versionMap[i] !== requirementMap[i]) {
-			return versionMap[i] > requirementMap[i]
+	for (let i = 0; i < Math.max(versionMap.length, requirementMap.length); i++) {
+		if ((versionMap[i] ?? 0) !== (requirementMap[i] ?? 0)) {
+			return (versionMap[i] ?? 0) > (requirementMap[i] ?? 0)
 		}
 	}
 	return true
