@@ -13,29 +13,39 @@ use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
+ * @psalm-method int<1, max> getId()
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
+ * @psalm-method int<1, max> getRoomId()
  * @method void setQuestion(string $question)
  * @method string getQuestion()
+ * @psalm-method non-empty-string getQuestion()
  * @method void setOptions(string $options)
  * @method string getOptions()
  * @method void setVotes(string $votes)
  * @method string getVotes()
  * @method void setNumVoters(int $numVoters)
  * @method int getNumVoters()
+ * @psalm-method int<0, max> getNumVoters()
  * @method void setActorType(string $actorType)
  * @method string getActorType()
+ * @psalm-method TalkActorTypes getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
+ * @psalm-method non-empty-string getActorId()
  * @method void setDisplayName(string $displayName)
  * @method string getDisplayName()
  * @method void setStatus(int $status)
  * @method int getStatus()
+ * @psalm-method self::STATUS_* getStatus()
  * @method void setResultMode(int $resultMode)
  * @method int getResultMode()
+ * @psalm-method self::MODE_* getResultMode()
  * @method void setMaxVotes(int $maxVotes)
  * @method int getMaxVotes()
+ * @psalm-method int<0, max> getMaxVotes()
  *
+ * @psalm-import-type TalkActorTypes from ResponseDefinitions
  * @psalm-import-type TalkPoll from ResponseDefinitions
  * @psalm-import-type TalkPollDraft from ResponseDefinitions
  */

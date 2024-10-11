@@ -1825,6 +1825,8 @@ export type paths = {
 export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
+        /** @enum {string} */
+        ActorTypes: "users" | "groups" | "guests" | "emails" | "circles" | "bridged" | "bots" | "federated_users" | "phones";
         Ban: {
             /** Format: int64 */
             id: number;
@@ -2067,17 +2069,23 @@ export type components = {
         PollDraft: {
             actorDisplayName: string;
             actorId: string;
-            actorType: string;
+            actorType: components["schemas"]["ActorTypes"];
             /** Format: int64 */
             id: number;
             /** Format: int64 */
             maxVotes: number;
             options: string[];
             question: string;
-            /** Format: int64 */
-            resultMode: number;
-            /** Format: int64 */
-            status: number;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            resultMode: 0 | 1;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            status: 0 | 1 | 2;
         };
         PollVote: {
             actorDisplayName: string;
