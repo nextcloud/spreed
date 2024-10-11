@@ -5143,6 +5143,20 @@ export interface operations {
             };
         };
         responses: {
+            /** @description Draft created successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["PollDraft"];
+                        };
+                    };
+                };
+            };
             /** @description Poll created successfully */
             201: {
                 headers: {
