@@ -156,11 +156,12 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
+import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 
-const serverVersion = loadState('core', 'config', {}).versionstring ?? '29.0.0'
-const serverSupportsBackgroundBlurred = '29.0.4'.localeCompare(serverVersion) < 1
+const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
+const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
 export default {
 	name: 'CallView',
@@ -201,9 +202,8 @@ export default {
 		const screenshotMode = ref(false)
 		provide('CallView:screenshotModeEnabled', screenshotMode)
 
-		const isBackgroundBlurred = ref(serverSupportsBackgroundBlurred
-			? null
-			: BrowserStorage.getItem('background-blurred') !== 'false')
+		// Fallback ref for versions before v29.0.4
+		const isBackgroundBlurred = ref(BrowserStorage.getItem('background-blurred') !== 'false')
 
 		return {
 			localMediaModel,
