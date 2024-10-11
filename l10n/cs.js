@@ -1652,6 +1652,7 @@ OC.L10N.register(
     "_%n minute _::_%n minutes_" : ["%n minuta ","%n minuty ","%n minut ","%n minuty "],
     "Conversation link copied to clipboard" : "Odkaz na konverzaci zkopírován do schránky",
     "The link could not be copied" : "Odkaz se nepodařilo zkopírovat",
+    "Error while parsing a PROPFIND error" : "Chyba při zpracovávání PROPFIND chyby",
     "Sending signaling message has failed" : "Odeslání signálové zprávy se nezdařilo",
     "Lost connection to signaling server. Trying to reconnect." : "Ztraceno spojení se signalizačním serverem. Probíhá pokus o opětovné navázání spojení.",
     "Lost connection to signaling server. Try to reload the page manually." : "Ztraceno spojení se signalizačním serverem. Zkuste ručně stránku načíst znovu.",
