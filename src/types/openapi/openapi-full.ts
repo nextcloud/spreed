@@ -583,6 +583,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all drafted polls
+         * @description Required capability: `talk-polls-drafts`
+         */
+        get: operations["poll-get-all-draft-polls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/{pollId}": {
         parameters: {
             query?: never;
@@ -1805,6 +1825,8 @@ export type paths = {
 export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
+        /** @enum {string} */
+        ActorTypes: "users" | "groups" | "guests" | "emails" | "circles" | "bridged" | "bots" | "federated_users" | "phones";
         Ban: {
             /** Format: int64 */
             id: number;
@@ -2035,27 +2057,35 @@ export type components = {
             phoneNumber?: string | null;
             callId?: string | null;
         };
-        Poll: {
-            actorDisplayName: string;
-            actorId: string;
-            actorType: string;
+        Poll: components["schemas"]["PollDraft"] & {
             details?: components["schemas"]["PollVote"][];
             /** Format: int64 */
-            id: number;
-            /** Format: int64 */
-            maxVotes: number;
-            /** Format: int64 */
             numVoters?: number;
-            options: string[];
-            question: string;
-            /** Format: int64 */
-            resultMode: number;
-            /** Format: int64 */
-            status: number;
             votedSelf?: number[];
             votes?: {
                 [key: string]: number;
             };
+        };
+        PollDraft: {
+            actorDisplayName: string;
+            actorId: string;
+            actorType: components["schemas"]["ActorTypes"];
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            maxVotes: number;
+            options: string[];
+            question: string;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            resultMode: 0 | 1;
+            /**
+             * Format: int64
+             * @enum {integer}
+             */
+            status: 0 | 1 | 2;
         };
         PollVote: {
             actorDisplayName: string;
@@ -5114,10 +5144,29 @@ export interface operations {
                      * @description Number of maximum votes per voter
                      */
                     maxVotes: number;
+                    /**
+                     * @description Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
+                     * @default false
+                     */
+                    draft?: boolean;
                 };
             };
         };
         responses: {
+            /** @description Draft created successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["PollDraft"];
+                        };
+                    };
+                };
+            };
             /** @description Poll created successfully */
             201: {
                 headers: {
@@ -5134,6 +5183,68 @@ export interface operations {
             };
             /** @description Creating poll is not possible */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "draft" | "options" | "question" | "room";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "poll-get-all-draft-polls": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["PollDraft"][];
+                        };
+                    };
+                };
+            };
+            /** @description User is not a moderator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Poll not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5293,6 +5404,20 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Poll"];
+                        };
+                    };
+                };
+            };
+            /** @description Poll draft was deleted successfully */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };

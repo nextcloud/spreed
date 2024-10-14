@@ -28,6 +28,21 @@ class PollMapper extends QBMapper {
 	}
 
 	/**
+	 * @return Poll[]
+	 */
+	public function getDraftsByRoomId(int $roomId): array {
+		$query = $this->db->getQueryBuilder();
+
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('status', $query->createNamedParameter(Poll::STATUS_DRAFT, IQueryBuilder::PARAM_INT)))
+			->orderBy('id', 'ASC');
+
+		return $this->findEntities($query);
+	}
+
+	/**
 	 * @param int $pollId
 	 * @return Poll
 	 * @throws DoesNotExistException
