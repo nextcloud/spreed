@@ -1300,6 +1300,15 @@ class SystemMessageTest extends TestCase {
 
 	public static function dataParseCall(): array {
 		return [
+			'1 user' => [
+				'call_ended',
+				['users' => ['user1'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'admin', 'name' => 'Admin'],
+				[
+					'Call with {user1} ended (Duration "duration")',
+					['user1' => ['data' => 'user1']],
+				],
+			],
 			'1 user + guests' => [
 				'call_ended',
 				['users' => ['user1'], 'guests' => 3, 'duration' => 42],
@@ -1417,6 +1426,15 @@ class SystemMessageTest extends TestCase {
 				[
 					'{actor} ended the call with {user1} and 3 guests (Duration "duration")',
 					['user1' => ['data' => 'user2']],
+				],
+			],
+			'meeting 1 user' => [
+				'call_ended_everyone',
+				['users' => ['user1'], 'guests' => 0, 'duration' => 42],
+				['type' => 'user', 'id' => 'user1', 'name' => 'user1'],
+				[
+					'{actor} ended the call (Duration "duration")',
+					[],
 				],
 			],
 			'meeting 1 user + guests' => [
