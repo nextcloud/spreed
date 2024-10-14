@@ -138,6 +138,7 @@ import { SIMULCAST } from '../../constants.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
+import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 
@@ -173,6 +174,12 @@ export default {
 	},
 
 	setup() {
+		const settingsStore = useSettingsStore()
+		const startWithoutMediaEnabled = settingsStore.startWithoutMedia
+		if (startWithoutMediaEnabled) {
+			localMediaModel.disableAudio()
+			localMediaModel.disableVideo()
+		}
 		return {
 			localMediaModel,
 			localCallParticipantModel,
