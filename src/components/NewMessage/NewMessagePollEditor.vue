@@ -8,6 +8,16 @@
 		:close-on-click-outside="!isFilled"
 		v-on="$listeners"
 		@update:open="emit('close')">
+		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
+			class="poll-editor__back-button"
+			type="tertiary"
+			:title="t('spreed', 'Back')"
+			:aria-label="t('spreed', 'Back')"
+			@click="goBack">
+			<template #icon>
+				<IconArrowLeft :size="20" />
+			</template>
+		</NcButton>
 		<!-- Poll Question -->
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
@@ -83,6 +93,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
 
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -109,12 +120,16 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
+defineExpose({
+	fillPollEditorFromDraft,
+})
 
 const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
 
 const store = useStore()
 const pollsStore = usePollsStore()
 
+const isOpenedFromDraft = ref(false)
 const pollOption = ref(null)
 
 const pollForm = reactive<createPollParams>({
@@ -177,6 +192,31 @@ async function createPoll() {
 }
 
 /**
+ * Pre-fills form from the draft
+ * @param id poll draft ID
+ * @param isAlreadyOpened poll draft ID
+ */
+function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
+	if (!isAlreadyOpened) {
+		isOpenedFromDraft.value = true
+	}
+
+	if (pollsStore.drafts[props.token][id]) {
+		fillPollForm(pollsStore.drafts[props.token][id])
+	}
+}
+
+/**
+ * Insert data into form fields
+ * @param payload data to fill with
+ */
+function fillPollForm(payload: createPollParams) {
+	for (const key of Object.keys(pollForm)) {
+		pollForm[key] = payload[key]
+	}
+}
+
+/**
  * Saves a poll draft for this conversation
  */
 async function createPollDraft() {
@@ -191,6 +231,18 @@ async function createPollDraft() {
  */
 function openPollDraftHandler() {
 	EventBus.emit('poll-drafts-open')
+}
+
+/**
+ * Open a PollDraftHandler dialog as Back action
+ */
+function goBack() {
+	openPollDraftHandler()
+	if (isOpenedFromDraft.value) {
+		nextTick(() => {
+			emit('close')
+		})
+	}
 }
 </script>
 
@@ -221,6 +273,13 @@ function openPollDraftHandler() {
 		flex-direction: column;
 		gap: 4px;
 		margin-bottom: 8px;
+	}
+
+	&__back-button {
+		position: absolute !important;
+		top: var(--default-grid-baseline);
+		left: var(--default-grid-baseline);
+		z-index: 1;
 	}
 }
 </style>
