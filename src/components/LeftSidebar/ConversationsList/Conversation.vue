@@ -57,10 +57,21 @@
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
 
+			<NcActionButton v-if="supportsArchive"
+				key="toggle-archive"
+				close-after-click
+				@click="toggleArchiveConversation">
+				<template #icon>
+					<IconArchive v-if="!item.isArchived" :size="16" />
+					<IconArchiveOff v-else :size="16" />
+				</template>
+				{{ labelArchive }}
+			</NcActionButton>
+
 			<NcActionButton v-if="item.canLeaveConversation"
 				key="leave-conversation"
 				close-after-click
-				@click="leaveConversation">
+				@click="isLeaveDialogOpen = true">
 				<template #icon>
 					<IconExitToApp :size="16" />
 				</template>
@@ -71,7 +82,7 @@
 				key="delete-conversation"
 				close-after-click
 				class="critical"
-				@click="isDialogOpen = true">
+				@click="isDeleteDialogOpen = true">
 				<template #icon>
 					<IconDelete :size="16" />
 				</template>
@@ -95,13 +106,35 @@
 			</NcActionButton>
 		</template>
 
-		<!-- confirmation required to delete conversation -->
-		<template v-if="isDialogOpen" #extra>
-			<NcDialog :open.sync="isDialogOpen"
-				:name="t('spreed','Delete conversation')"
-				:message="dialogMessage">
+		<!-- confirmation required to leave / delete conversation -->
+		<template v-if="isLeaveDialogOpen || isDeleteDialogOpen" #extra>
+			<NcDialog v-if="isLeaveDialogOpen"
+				:open.sync="isLeaveDialogOpen"
+				:name="t('spreed', 'Leave conversation')">
+				<template #default>
+					<p>{{ dialogLeaveMessage }}</p>
+					<p v-if="supportsArchive && !item.isArchived">
+						{{ t('spreed', 'You can archive this conversation instead.') }}
+					</p>
+				</template>
 				<template #actions>
-					<NcButton type="tertiary" @click="isDialogOpen = false">
+					<NcButton type="tertiary" @click="isLeaveDialogOpen = false">
+						{{ t('spreed', 'No') }}
+					</NcButton>
+					<NcButton v-if="supportsArchive && !item.isArchived" type="secondary" @click="toggleArchiveConversation">
+						{{ t('spreed', 'Archive conversation') }}
+					</NcButton>
+					<NcButton type="warning" @click="leaveConversation">
+						{{ t('spreed', 'Yes') }}
+					</NcButton>
+				</template>
+			</NcDialog>
+			<NcDialog v-if="isDeleteDialogOpen"
+				:open.sync="isDeleteDialogOpen"
+				:name="t('spreed','Delete conversation')"
+				:message="dialogDeleteMessage">
+				<template #actions>
+					<NcButton type="tertiary" @click="isDeleteDialogOpen = false">
 						{{ t('spreed', 'No') }}
 					</NcButton>
 					<NcButton type="error" @click="deleteConversation">
@@ -115,9 +148,11 @@
 
 <script>
 
-import { toRefs } from 'vue'
+import { toRefs, ref } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
+import IconArchive from 'vue-material-design-icons/Archive.vue'
+import IconArchiveOff from 'vue-material-design-icons/ArchiveOff.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconCog from 'vue-material-design-icons/Cog.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
@@ -140,7 +175,10 @@ import ConversationIcon from './../../ConversationIcon.vue'
 
 import { useConversationInfo } from '../../../composables/useConversationInfo.js'
 import { PARTICIPANT } from '../../../constants.js'
+import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
+
+const supportsArchive = hasTalkFeature('local', 'archived-conversations')
 
 export default {
 	name: 'Conversation',
@@ -151,6 +189,8 @@ export default {
 		NcActionButton,
 		NcDialog,
 		NcListItem,
+		IconArchive,
+		IconArchiveOff,
 		IconArrowRight,
 		IconCog,
 		IconContentCopy,
@@ -159,7 +199,6 @@ export default {
 		IconEyeOff,
 		IconEye,
 		IconStar,
-
 	},
 
 	props: {
@@ -192,18 +231,17 @@ export default {
 	emits: ['click'],
 
 	setup(props) {
+		const isLeaveDialogOpen = ref(false)
+		const isDeleteDialogOpen = ref(false)
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
 		return {
+			supportsArchive,
+			isLeaveDialogOpen,
+			isDeleteDialogOpen,
 			counterType,
 			conversationInformation,
-		}
-	},
-
-	data() {
-		return {
-			isDialogOpen: false,
 		}
 	},
 
@@ -220,7 +258,20 @@ export default {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
 		},
 
-		dialogMessage() {
+		labelArchive() {
+			return this.item.isArchived
+				? t('spreed', 'Unarchive conversation')
+				: t('spreed', 'Archive conversation')
+		},
+
+		dialogLeaveMessage() {
+			return t('spreed', 'Do you really want to leave "{displayName}"?', this.item, undefined, {
+				escape: false,
+				sanitize: false,
+			})
+		},
+
+		dialogDeleteMessage() {
 			return t('spreed', 'Do you really want to delete "{displayName}"?', this.item, undefined, {
 				escape: false,
 				sanitize: false,
@@ -261,7 +312,7 @@ export default {
 		 */
 		async deleteConversation() {
 			try {
-				this.isDialogOpen = false
+				this.isDeleteDialogOpen = false
 				if (this.isActive) {
 					await this.$store.dispatch('leaveConversation', { token: this.item.token })
 					await this.$router.push({ name: 'root' })
@@ -279,6 +330,7 @@ export default {
 		 */
 		async leaveConversation() {
 			try {
+				this.isLeaveDialogOpen = false
 				if (this.isActive) {
 					await this.$store.dispatch('leaveConversation', { token: this.item.token })
 					await this.$router.push({ name: 'root' })
@@ -296,6 +348,11 @@ export default {
 
 		async toggleFavoriteConversation() {
 			this.$store.dispatch('toggleFavorite', this.item)
+		},
+
+		async toggleArchiveConversation() {
+			this.isLeaveDialogOpen = false
+			this.$store.dispatch('toggleArchive', this.item)
 		},
 
 		/**
