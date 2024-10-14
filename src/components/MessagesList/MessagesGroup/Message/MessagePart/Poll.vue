@@ -7,12 +7,22 @@
 	<!-- Poll card -->
 	<div v-if="draft" class="poll-card" @click="openDraft">
 		<span class="poll-card__header">
-			<PollIcon :size="20" />
+			<IconPoll :size="20" />
 			<span>{{ name }}</span>
 		</span>
 		<span class="poll-card__footer">
 			{{ pollFooterText }}
 		</span>
+
+		<NcButton class="poll-card__delete-draft"
+			type="tertiary"
+			:title="t('spreed', 'Delete poll draft')"
+			:aria-label="t('spreed', 'Delete poll draft')"
+			@click.stop="deleteDraft">
+			<template #icon>
+				<IconDelete :size="20" />
+			</template>
+		</NcButton>
 	</div>
 	<a v-else-if="!showAsButton"
 		v-intersection-observer="getPollData"
@@ -21,7 +31,7 @@
 		role="button"
 		@click="openPoll">
 		<span class="poll-card__header">
-			<PollIcon :size="20" />
+			<IconPoll :size="20" />
 			<span>{{ name }}</span>
 		</span>
 		<span class="poll-card__footer">
@@ -41,7 +51,8 @@
 <script>
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 
-import PollIcon from 'vue-material-design-icons/Poll.vue'
+import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { t, n } from '@nextcloud/l10n'
 
@@ -55,7 +66,8 @@ export default {
 
 	components: {
 		NcButton,
-		PollIcon,
+		IconDelete,
+		IconPoll,
 	},
 
 	directives: {
@@ -135,6 +147,13 @@ export default {
 			this.$emit('click', this.id)
 		},
 
+		deleteDraft() {
+			this.pollsStore.deletePollDraft({
+				token: this.token,
+				pollId: this.id,
+			})
+		},
+
 		openPoll() {
 			this.pollsStore.setActivePoll({
 				token: this.token,
@@ -148,9 +167,10 @@ export default {
 
 <style lang="scss" scoped>
 .poll-card {
+	position: relative;
 	display: block;
 	max-width: 300px;
-	padding: 16px;
+	padding: calc(3 * var(--default-grid-baseline)) calc(2 * var(--default-grid-baseline));
 	border: 2px solid var(--color-border);
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
@@ -171,6 +191,7 @@ export default {
 		font-weight: bold;
 		white-space: normal;
 		word-wrap: anywhere;
+		margin-right: var(--default-clickable-area);
 
 		:deep(.material-design-icon) {
 			margin-bottom: auto;
@@ -180,6 +201,12 @@ export default {
 	&__footer {
 		color: var(--color-text-maxcontrast);
 		white-space: normal;
+	}
+
+	& &__delete-draft {
+		position: absolute;
+		top: var(--default-grid-baseline);
+		right: var(--default-grid-baseline);
 	}
 }
 
