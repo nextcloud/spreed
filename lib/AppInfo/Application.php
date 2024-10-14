@@ -109,6 +109,7 @@ use OCA\Talk\Search\UnifiedSearchFilterPlugin;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\SetupCheck\BackgroundBlurLoading;
+use OCA\Talk\SetupCheck\Configuration;
 use OCA\Talk\SetupCheck\FederationLockCache;
 use OCA\Talk\SetupCheck\HighPerformanceBackend;
 use OCA\Talk\SetupCheck\RecordingBackend;
@@ -341,6 +342,7 @@ class Application extends App implements IBootstrap {
 
 		$context->registerTeamResourceProvider(TalkTeamResourceProvider::class);
 
+		$context->registerSetupCheck(Configuration::class);
 		$context->registerSetupCheck(HighPerformanceBackend::class);
 		$context->registerSetupCheck(FederationLockCache::class);
 		$context->registerSetupCheck(RecordingBackend::class);
