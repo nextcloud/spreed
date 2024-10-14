@@ -199,6 +199,7 @@ class Capabilities implements IPublicCapability {
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
 					'can-enable-sip' => false,
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
+					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
