@@ -2436,6 +2436,9 @@ class RoomController extends AEnvironmentAwareController {
 			if (isset($data['config']['chat']['typing-privacy'])) {
 				$data['config']['chat']['typing-privacy'] = Participant::PRIVACY_PRIVATE;
 			}
+			if (isset($data['config']['call']['start-without-media'])) {
+				$data['config']['call']['start-without-media'] = $this->talkConfig->getCallsStartWithoutMedia($this->userId);
+			}
 
 			if ($response->getHeaders()['X-Nextcloud-Talk-Hash']) {
 				$headers['X-Nextcloud-Talk-Proxy-Hash'] = $response->getHeaders()['X-Nextcloud-Talk-Hash'];
