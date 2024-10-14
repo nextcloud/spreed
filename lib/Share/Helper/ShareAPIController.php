@@ -121,7 +121,7 @@ class ShareAPIController {
 	/**
 	 * Returns whether the given user can access the given room share or not.
 	 *
-	 * A user can access a room share only if she is a participant of the room.
+	 * A user can access a room share only if they are a participant of the room.
 	 *
 	 * @param IShare $share
 	 * @param string $user

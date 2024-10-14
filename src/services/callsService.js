@@ -28,7 +28,7 @@ import {
  * @param {number} flags The available PARTICIPANT.CALL_FLAG for this participants
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
- * @param {boolean} recordingConsent Whether the participant gave his consent to be recorded
+ * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
  * @return {number} The actual flags based on the available media
  */
 const joinCall = async function(token, flags, silent, recordingConsent) {

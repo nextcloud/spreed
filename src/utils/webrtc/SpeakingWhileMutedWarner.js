@@ -6,7 +6,7 @@
 import { t } from '@nextcloud/l10n'
 
 /**
-	* Helper to warn the user if she is talking while muted.
+	* Helper to warn the user if they are talking while muted.
 	*
 	* The WebRTC helper emits events when it detects that the user is speaking
 	* while muted; this helper shows a warning to the user based on those

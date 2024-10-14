@@ -29,9 +29,9 @@ use OCP\EventDispatcher\IEventListener;
  *
  * The rooms to request the password for a share are temporary, short-lived
  * rooms intended to give the sharer the chance to verify the identity of the
- * sharee before granting her access to the share. They are always created by a
+ * sharee before granting them access to the share. They are always created by a
  * guest or user (the sharee) who then waits for the sharer (who will be the
- * owner of the room) to join and provide her the password.
+ * owner of the room) to join and provide their the password.
  *
  * These rooms are associated to a "share:password" object, and their custom
  * behaviour is provided by calling the methods of this class as a response to

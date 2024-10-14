@@ -184,7 +184,7 @@ class Notifier {
 	 * The comment must be a chat message comment. That is, its "objectId" must
 	 * be the room ID.
 	 *
-	 * The author of the message is notified only if he is still able to participate in the room
+	 * The author of the message is notified only if they are still able to participate in the room
 	 *
 	 * @param Room $chat
 	 * @param IComment $comment

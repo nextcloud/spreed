@@ -1123,7 +1123,7 @@ class SignalingControllerTest extends TestCase {
 
 	public function testLeaveRoomWithOldSession(): void {
 		// Make sure that leaving a user with an old session id doesn't remove
-		// the current user from the room if he re-joined in the meantime.
+		// the current user from the room if they re-joined in the meantime.
 		$dbConnection = \OCP\Server::get(IDBConnection::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		/** @var ParticipantService $participantService */
@@ -1178,7 +1178,7 @@ class SignalingControllerTest extends TestCase {
 		$participant = $participantService->getParticipant($room, $this->userId, $oldSessionId);
 		$this->assertEquals($oldSessionId, $participant->getSession()->getSessionId());
 
-		// The user is reloading the browser which will join him with another
+		// The user is reloading the browser which will join them with another
 		// session id.
 		$newParticipant = $participantService->joinRoom($roomService, $room, $testUser, '');
 		$newSessionId = $newParticipant->getSession()->getSessionId();

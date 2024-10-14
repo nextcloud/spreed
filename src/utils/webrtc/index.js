@@ -141,7 +141,7 @@ let failedToStartCall = null
  * @param {object} configuration Media to connect with
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
- * @param {boolean} recordingConsent Whether the participant gave his consent to be recorded
+ * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
  */
 function startCall(signaling, configuration, silent, recordingConsent) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
@@ -199,7 +199,7 @@ async function signalingJoinConversation(token, sessionId) {
  * @param {number} flags Bitwise combination of PARTICIPANT.CALL_FLAG
  * @param {boolean} silent Whether the call should trigger a notifications and
  * sound for other participants or not
- * @param {boolean} recordingConsent Whether the participant gave his consent to be recorded
+ * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
  * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
