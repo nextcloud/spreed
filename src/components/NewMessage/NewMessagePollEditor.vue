@@ -12,7 +12,17 @@
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
 		</p>
-		<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+		<div class="poll-editor__wrapper">
+			<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcActions v-if="supportPollDrafts" force-menu>
+				<NcActionButton v-if="isModerator" close-after-click @click="openPollDraftHandler">
+					<template #icon>
+						<IconFileEdit :size="20" />
+					</template>
+					{{ t('spreed', 'Browse poll drafts') }}
+				</NcActionButton>
+			</NcActions>
+		</div>
 
 		<!-- Poll options -->
 		<p class="poll-editor__caption">
@@ -89,6 +99,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
 
@@ -174,10 +185,23 @@ async function createPollDraft() {
 		form: pollForm,
 	})
 }
+
+/**
+ * Open a PollDraftHandler dialog
+ */
+function openPollDraftHandler() {
+	EventBus.emit('poll-drafts-open')
+}
 </script>
 
 <style lang="scss" scoped>
 .poll-editor {
+	&__wrapper {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
+	}
+
 	&__caption {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
