@@ -7,6 +7,8 @@
 import { computed, ref } from 'vue'
 import type { Component } from 'vue'
 
+import { isRTL } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import TransitionExpand from './TransitionExpand.vue'
@@ -28,6 +30,8 @@ const emit = defineEmits<{
 
 /** Whether the tab panel is open */
 const isOpen = ref(!!props.active)
+
+const isRTLDirection = isRTL()
 
 // A11y ReferenceIDs
 const randomId = Math.random().toString(36).substring(7)
@@ -126,7 +130,7 @@ function handleTabsAfterClosed() {
 					:inert="!isActive(tab.id)"
 					:aria-hidden="!isActive(tab.id)"
 					:aria-labelledby="getRefId('tab', tab.id)"
-					:style="activeIndex !== -1 ? `transform: translateX(${-activeIndex * 100}%)` : ''">
+					:style="activeIndex !== -1 ? `transform: translateX(${(isRTLDirection ? 1 : -1) * activeIndex * 100}%)` : ''">
 					<slot :name="`tab-panel:${tab.id}`" />
 				</div>
 			</div>
