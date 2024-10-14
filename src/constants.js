@@ -242,6 +242,7 @@ export const POLL = {
 	STATUS: {
 		OPEN: 0,
 		CLOSED: 1,
+		DRAFT: 2,
 	},
 
 	MODE: {
