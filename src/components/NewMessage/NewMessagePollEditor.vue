@@ -113,6 +113,9 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
+defineExpose({
+	fillPollEditorFromDraft,
+})
 
 const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
 
@@ -177,6 +180,24 @@ async function createPoll() {
 	})
 	if (poll) {
 		emit('close')
+	}
+}
+
+/**
+ * Pre-fills form from the draft
+ * @param id poll draft ID
+ */
+function fillPollEditorFromDraft(id: number) {
+	fillPollForm(pollsStore.drafts[props.token][id])
+}
+
+/**
+ * Insert data into form fields
+ * @param payload data to fill with
+ */
+function fillPollForm(payload: createPollParams) {
+	for (const key of Object.keys(pollForm)) {
+		pollForm[key] = payload[key]
 	}
 }
 

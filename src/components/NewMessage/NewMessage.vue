@@ -148,6 +148,7 @@
 
 		<!-- Poll creation dialog -->
 		<NewMessagePollEditor v-if="showPollEditor"
+			ref="pollEditor"
 			:token="token"
 			@close="togglePollEditor" />
 
@@ -545,6 +546,7 @@ export default {
 		EventBus.on('upload-discard', this.handleUploadSideEffects)
 		EventBus.on('retry-message', this.handleRetryMessage)
 		EventBus.on('smart-picker-open', this.handleOpenTributeMenu)
+		EventBus.on('poll-editor-open', this.fillPollEditorFromDraft)
 		EventBus.on('poll-drafts-open', this.togglePollDraftHandler)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
@@ -558,6 +560,7 @@ export default {
 		EventBus.off('upload-discard', this.handleUploadSideEffects)
 		EventBus.off('retry-message', this.handleRetryMessage)
 		EventBus.off('smart-picker-open', this.handleOpenTributeMenu)
+		EventBus.off('poll-editor-open', this.fillPollEditorFromDraft)
 		EventBus.off('poll-drafts-open', this.togglePollDraftHandler)
 	},
 
@@ -899,6 +902,17 @@ export default {
 
 		togglePollEditor() {
 			this.showPollEditor = !this.showPollEditor
+		},
+
+		fillPollEditorFromDraft(id) {
+			this.showPollEditor = true
+			this.$nextTick(() => {
+				if (id) {
+					this.$refs.pollEditor?.fillPollEditorFromDraft(id)
+				}
+				// Wait for editor to be mounted and filled before unmounting drafts dialog
+				this.togglePollDraftHandler()
+			})
 		},
 
 		togglePollDraftHandler() {

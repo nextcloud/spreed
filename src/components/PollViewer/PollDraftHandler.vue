@@ -24,8 +24,14 @@
 				:key="item.id"
 				:token="token"
 				:name="item.question"
-				draft />
+				draft
+				@click="openPollEditor(item.id)" />
 		</div>
+		<template #actions>
+			<NcButton @click="openPollEditor(null)">
+				{{ t('spreed', 'Create new poll') }}
+			</NcButton>
+		</template>
 	</NcDialog>
 </template>
 
@@ -36,6 +42,7 @@ import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 
 import EmptyView from '../EmptyView.vue'
@@ -43,6 +50,7 @@ import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
 
 import { useStore } from '../../composables/useStore.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 
 const props = defineProps<{
@@ -63,6 +71,14 @@ if (supportPollDrafts && isModerator.value) {
 	pollsStore.getPollDrafts(props.token)
 }
 const pollDrafts = computed(() => supportPollDrafts ? pollsStore.getDrafts(props.token) : [])
+
+/**
+ * Opens poll editor pre-filled from the draft
+ * @param id poll draft ID
+ */
+function openPollEditor(id) {
+	EventBus.emit('poll-editor-open', id)
+}
 </script>
 
 <style lang="scss" scoped>
