@@ -21,7 +21,8 @@
 			<ConversationIcon :item="item" :hide-favorite="false" :hide-call="false" />
 		</template>
 		<template #subname>
-			{{ conversationInformation }}
+			<!-- eslint-disable-next-line vue/no-v-html -->
+			<span v-html="conversationInformation" />
 		</template>
 		<template v-if="!isSearchResult" #actions>
 			<NcActionButton v-if="canFavorite"

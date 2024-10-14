@@ -21,6 +21,7 @@ import router from '../../../__mocks__/router.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
+import { getMessageIcon } from '../../../utils/getMessageIcon.ts'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
@@ -126,7 +127,7 @@ describe('Conversation.vue', () => {
 			})
 
 			const el = wrapper.findComponent({ name: 'NcListItem' })
-			expect(el.vm.$slots.subname[0].text.trim()).toBe(expectedText)
+			expect(el.vm.$slots.subname[0].data.domProps.innerHTML).toBe(expectedText)
 		}
 
 		test('display joining conversation message when not joined yet', () => {
@@ -197,8 +198,8 @@ describe('Conversation.vue', () => {
 					name: 'filename.jpg',
 				},
 			}
-
-			testConversationLabel(item, 'Alice: filename.jpg')
+			const svgTemplate = getMessageIcon(item.lastMessage)
+			testConversationLabel(item, 'Alice: ' + svgTemplate + ' filename.jpg')
 		})
 	})
 
