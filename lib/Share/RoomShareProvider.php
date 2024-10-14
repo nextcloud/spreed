@@ -1061,7 +1061,7 @@ class RoomShareProvider implements IShareProvider {
 	/**
 	 * Delete all shares in a room, or only those from the given user.
 	 *
-	 * When a user is given all her shares are removed, both own shares and
+	 * When a user is given all their shares are removed, both own shares and
 	 * received shares.
 	 *
 	 * Not part of IShareProvider API, but needed by the hooks in

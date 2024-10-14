@@ -1123,7 +1123,7 @@ class SignalingControllerTest extends TestCase {
 
 	public function testLeaveRoomWithOldSession(): void {
 		// Make sure that leaving a user with an old session id doesn't remove
-		// the current user from the room if he re-joined in the meantime.
+		// the current user from the room if they re-joined in the meantime.
 		$dbConnection = \OCP\Server::get(IDBConnection::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		/** @var ParticipantService $participantService */

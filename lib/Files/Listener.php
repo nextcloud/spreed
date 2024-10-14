@@ -78,9 +78,9 @@ class Listener implements IEventListener {
 	 * A user has access to the file if the file is publicly accessible (through
 	 * a link share, for example) or if the user has direct access to it.
 	 *
-	 * A user has direct access to a file if she received the file (or an
+	 * A user has direct access to a file if they received the file (or an
 	 * ancestor) through a user, group, circle or room share (but not through a
-	 * link share, for example), or if she is the owner of such a file.
+	 * link share, for example), or if they are the owner of such a file.
 	 *
 	 * This method should be called before a user joins a room.
 	 *

@@ -70,9 +70,9 @@ class FilesIntegrationController extends OCSController {
 	 * In any case, to create or even get the token of the room, the file must
 	 * be shared and the user must be the owner of a public share of the file
 	 * (like a link share, for example) or have direct access to that file; an
-	 * error is returned otherwise. A user has direct access to a file if she
-	 * has access to it (or to an ancestor) through a user, group, circle or
-	 * room share (but not through a link share, for example), or if she is the
+	 * error is returned otherwise. A user has direct access to a file if they
+	 * have access to it (or to an ancestor) through a user, group, circle or
+	 * room share (but not through a link share, for example), or if they are the
 	 * owner of such a file.
 	 *
 	 * @param string $fileId ID of the file
