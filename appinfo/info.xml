@@ -45,6 +45,7 @@
 	<category>workflow</category>
 
 	<website>https://github.com/nextcloud/spreed</website>
+	<discussion>https://help.nextcloud.com/c/support/talk/52</discussion>
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 	<repository>https://github.com/nextcloud/spreed.git</repository>
 
