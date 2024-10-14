@@ -1112,29 +1112,28 @@ class SystemMessage implements IEventListener {
 
 		switch ($numUsers) {
 			case 0:
-				if ($actorIsSystem) {
-					if ($parameters['guests'] === 0) {
+				if ($parameters['guests'] === 0) {
+					// Call without users and guests
+					if ($actorIsSystem) {
 						$subject = $this->l->t('Call was ended, as it reached the maximum call duration (Duration {duration})');
+					} elseif ($message === 'call_ended') {
+						$subject = $this->l->t('Call ended (Duration {duration})');
 					} else {
+						$subject = $this->l->t('{actor} ended the call (Duration {duration})');
+					}
+				} else {
+					if ($actorIsSystem) {
 						$subject = $this->l->n(
 							'Call with %n guest was ended, as it reached the maximum call duration (Duration {duration})',
 							'Call with %n guests was ended, as it reached the maximum call duration (Duration {duration})',
 							$parameters['guests']
 						);
-					}
-				} elseif ($message === 'call_ended') {
-					if ($parameters['guests'] === 0) {
-						$subject = $this->l->t('Call ended (Duration {duration})');
-					} else {
+					} elseif ($message === 'call_ended') {
 						$subject = $this->l->n(
 							'Call with %n guest ended (Duration {duration})',
 							'Call with %n guests ended (Duration {duration})',
 							$parameters['guests']
 						);
-					}
-				} else {
-					if ($parameters['guests'] === 0) {
-						$subject = $this->l->t('{actor} ended the call (Duration {duration})');
 					} else {
 						$subject = $this->l->n(
 							'{actor} ended the call with %n guest (Duration {duration})',
@@ -1145,26 +1144,24 @@ class SystemMessage implements IEventListener {
 				}
 				break;
 			case 1:
-				if ($actorIsSystem) {
-					if ($parameters['guests'] === 0) {
+				if ($parameters['guests'] === 0) {
+					if ($actorIsSystem) {
 						$subject = $this->l->t('Call with {user1} was ended, as it reached the maximum call duration (Duration {duration})');
-					} else {
-						$subject = $this->l->t('Call with {user1} and {user2} was ended, as it reached the maximum call duration (Duration {duration})');
-					}
-				} elseif ($message === 'call_ended') {
-					if ($parameters['guests'] === 0) {
+					} elseif ($message === 'call_ended') {
 						$subject = $this->l->t('Call with {user1} ended (Duration {duration})');
 					} else {
-						$subject = $this->l->t('Call with {user1} and {user2} ended (Duration {duration})');
+						$subject = $this->l->t('{actor} ended the call with {user1} (Duration {duration})');
 					}
 				} else {
-					if ($parameters['guests'] === 0) {
-						$subject = $this->l->t('{actor} ended the call with {user1} (Duration {duration})');
+					if ($actorIsSystem) {
+						$subject = $this->l->t('Call with {user1} and {user2} was ended, as it reached the maximum call duration (Duration {duration})');
+					} elseif ($message === 'call_ended') {
+						$subject = $this->l->t('Call with {user1} and {user2} ended (Duration {duration})');
 					} else {
 						$subject = $this->l->t('{actor} ended the call with {user1} and {user2} (Duration {duration})');
 					}
+					$subject = str_replace('{user2}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
-				$subject = str_replace('{user2}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				break;
 			case 2:
 				if ($parameters['guests'] === 0) {
