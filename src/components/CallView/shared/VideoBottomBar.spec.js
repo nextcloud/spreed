@@ -4,6 +4,7 @@
  */
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex, { Store } from 'vuex'
 
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
@@ -20,6 +21,7 @@ import VideoBottomBar from './VideoBottomBar.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
+import { useCallViewStore } from '../../../stores/callView.js'
 import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
@@ -35,10 +37,10 @@ describe('VideoBottomBar.vue', () => {
 	const USER_ID = 'user-id-1'
 	let localVue
 	let store
+	let callViewStore
 	let testStoreConfig
 	let componentProps
 	let conversationProps
-	let selectedVideoPeerIdMock
 
 	const audioIndicatorAriaLabels = [t('spreed', 'Mute'), t('spreed', 'Muted')]
 	const videoIndicatorAriaLabels = [t('spreed', 'Disable video'), t('spreed', 'Enable video')]
@@ -48,6 +50,8 @@ describe('VideoBottomBar.vue', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
+		callViewStore = useCallViewStore()
 
 		conversationProps = {
 			token: TOKEN,
@@ -85,12 +89,6 @@ describe('VideoBottomBar.vue', () => {
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation = jest.fn().mockReturnValue((token) => conversationProps)
 		testStoreConfig.modules.actorStore.getters.getUserId = jest.fn().mockReturnValue(() => USER_ID)
-
-		selectedVideoPeerIdMock = jest.fn().mockReturnValue(() => null)
-		testStoreConfig.modules.callViewStore.getters.selectedVideoPeerId = selectedVideoPeerIdMock()
-		testStoreConfig.modules.callViewStore.actions.stopPresentation = jest.fn()
-		testStoreConfig.modules.callViewStore.actions.selectedVideoPeerId = jest.fn()
-
 		store = new Store(testStoreConfig)
 	})
 
@@ -515,10 +513,7 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				test('button is rendered when source is selected', () => {
-					selectedVideoPeerIdMock = jest.fn().mockReturnValue(() => PEER_ID)
-					testStoreConfig.modules.callViewStore.getters.selectedVideoPeerId = selectedVideoPeerIdMock()
-					store = new Store(testStoreConfig)
-
+					callViewStore.setSelectedVideoPeerId(PEER_ID)
 					componentProps.isBig = true
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
@@ -531,9 +526,10 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				test('method is called after click', async () => {
-					selectedVideoPeerIdMock = jest.fn().mockReturnValue(() => PEER_ID)
-					testStoreConfig.modules.callViewStore.getters.selectedVideoPeerId = selectedVideoPeerIdMock()
-					store = new Store(testStoreConfig)
+					callViewStore.setSelectedVideoPeerId(PEER_ID)
+					callViewStore.startPresentation()
+					expect(callViewStore.selectedVideoPeerId).toBe(PEER_ID)
+					expect(callViewStore.presentationStarted).toBeTruthy()
 
 					componentProps.isBig = true
 					const wrapper = shallowMount(VideoBottomBar, {
@@ -548,9 +544,8 @@ describe('VideoBottomBar.vue', () => {
 					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					await followingButton.trigger('click')
 
-					expect(testStoreConfig.modules.callViewStore.actions.stopPresentation).toHaveBeenCalled()
-					expect(testStoreConfig.modules.callViewStore.actions.selectedVideoPeerId).toHaveBeenCalled()
-					expect(testStoreConfig.modules.callViewStore.actions.selectedVideoPeerId).toHaveBeenCalledWith(expect.anything(), null)
+					expect(callViewStore.selectedVideoPeerId).toBe(null)
+					expect(callViewStore.presentationStarted).toBeFalsy()
 				})
 			})
 		})

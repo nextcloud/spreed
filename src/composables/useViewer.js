@@ -6,7 +6,7 @@
 import { nextTick, ref } from 'vue'
 
 import { useIsInCall } from './useIsInCall.js'
-import { useStore } from './useStore.js'
+import { useCallViewStore } from '../stores/callView.js'
 import { useSidebarStore } from '../stores/sidebar.js'
 
 /**
@@ -70,8 +70,8 @@ const isViewerOpen = ref(false)
  * @return {{ openViewer: OpenViewer, isViewerOpen: import('vue').Ref<boolean> }}
  */
 export function useViewer(fileAPI) {
-	const store = useStore()
 	const isInCall = useIsInCall()
+	const callViewStore = useCallViewStore()
 	const sidebarStore = useSidebarStore()
 
 	/**
@@ -111,7 +111,7 @@ export function useViewer(fileAPI) {
 		}
 
 		if (isInCall.value) {
-			store.dispatch('setCallViewMode', { isViewerOverlay: true })
+			callViewStore.setIsViewerOverlay(true)
 		}
 
 		OCA.Viewer.open({
@@ -120,7 +120,7 @@ export function useViewer(fileAPI) {
 			fileInfo: generateViewerObject(fileInfo),
 			onClose: () => {
 				isViewerOpen.value = false
-				store.dispatch('setCallViewMode', { isViewerOverlay: false })
+				callViewStore.setIsViewerOverlay(false)
 			},
 			loadMore,
 			canLoop: false,

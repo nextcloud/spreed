@@ -154,6 +154,7 @@ import { SIMULCAST } from '../../constants.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
+import { useCallViewStore } from '../../stores/callView.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
@@ -208,6 +209,7 @@ export default {
 			localCallParticipantModel,
 			callParticipantCollection,
 			devMode,
+			callViewStore: useCallViewStore(),
 		}
 	},
 
@@ -250,15 +252,15 @@ export default {
 		},
 
 		isViewerOverlay() {
-			return this.$store.getters.isViewerOverlay
+			return this.callViewStore.isViewerOverlay
 		},
 
 		isGrid() {
-			return this.$store.getters.isGrid && !this.isSidebar
+			return this.callViewStore.isGrid && !this.isSidebar
 		},
 
 		selectedVideoPeerId() {
-			return this.$store.getters.selectedVideoPeerId
+			return this.callViewStore.selectedVideoPeerId
 		},
 
 		selectedCallParticipantModel() {
@@ -423,25 +425,25 @@ export default {
 		callParticipantModelsWithScreen(newValue, previousValue) {
 			// Everytime a new screen is shared, switch to promoted view
 			if (newValue.length > previousValue.length) {
-				this.$store.dispatch('startPresentation')
+				this.callViewStore.startPresentation()
 			} else if (newValue.length === 0 && previousValue.length > 0 && !this.hasLocalScreen && !this.selectedVideoPeerId) {
 				// last screen share stopped and no selected video, restoring previous state
-				this.$store.dispatch('stopPresentation')
+				this.callViewStore.stopPresentation()
 			}
 		},
 		showLocalScreen(showLocalScreen) {
 			// Everytime the local screen is shared, switch to promoted view
 			if (showLocalScreen) {
-				this.$store.dispatch('startPresentation')
+				this.callViewStore.startPresentation()
 			} else if (this.callParticipantModelsWithScreen.length === 0 && !this.selectedVideoPeerId) {
 				// last screen share stopped and no selected video, restoring previous state
-				this.$store.dispatch('stopPresentation')
+				this.callViewStore.stopPresentation()
 			}
 		},
 		hasLocalVideo(newValue) {
-			if (this.$store.getters.selectedVideoPeerId === 'local') {
+			if (this.selectedVideoPeerId === 'local') {
 				if (!newValue) {
-					this.$store.dispatch('selectedVideoPeerId', null)
+					this.callViewStore.setSelectedVideoPeerId(null)
 				}
 			}
 		},
@@ -451,7 +453,7 @@ export default {
 		},
 
 		showEmptyCallView(value) {
-			this.$store.dispatch('isEmptyCallView', value)
+			this.callViewStore.setIsEmptyCallView(value)
 		},
 	},
 
@@ -472,7 +474,7 @@ export default {
 
 	beforeDestroy() {
 		this.debounceFetchPeers.clear?.()
-		this.$store.dispatch('isEmptyCallView', true)
+		this.callViewStore.setIsEmptyCallView(true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
@@ -653,16 +655,16 @@ export default {
 				return
 			}
 
-			if (this.$store.getters.presentationStarted) {
-				this.$store.dispatch('setCallViewMode', {
+			if (this.callViewStore.presentationStarted) {
+				this.callViewStore.setCallViewMode({
 					isGrid: false,
 					isStripeOpen: false,
 					clearLast: false,
 				})
 			} else {
-				this.$store.dispatch('startPresentation')
+				this.callViewStore.startPresentation()
 			}
-			this.$store.dispatch('selectedVideoPeerId', null)
+			this.callViewStore.setSelectedVideoPeerId(null)
 			this.screens.splice(index, 1)
 			this.screens.unshift(id)
 		},
@@ -691,8 +693,8 @@ export default {
 			if (this.isSidebar) {
 				return
 			}
-			this.$store.dispatch('selectedVideoPeerId', peerId)
-			this.$store.dispatch('startPresentation')
+			this.callViewStore.setSelectedVideoPeerId(peerId)
+			this.callViewStore.startPresentation()
 		},
 		handleClickLocalVideo() {
 			// DO nothing if no video
@@ -700,8 +702,8 @@ export default {
 				return
 			}
 			// Deselect possible selected video
-			this.$store.dispatch('selectedVideoPeerId', 'local')
-			this.$store.dispatch('startPresentation')
+			this.callViewStore.setSelectedVideoPeerId('local')
+			this.callViewStore.startPresentation()
 		},
 
 		async fetchPeers() {
