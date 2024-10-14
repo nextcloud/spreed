@@ -64,7 +64,6 @@ updates:
 # Composer: Tooling
 - package-ecosystem: composer
   directories:
-    - "/"
     - "/tests/integration"
     - "/vendor-bin/csfixer"
     - "/vendor-bin/mozart"
