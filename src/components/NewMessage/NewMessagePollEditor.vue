@@ -55,9 +55,14 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<template #actions>
-			<NcButton type="tertiary" @click="emit('close')">
-				{{ t('spreed', 'Dismiss') }}
-			</NcButton>
+			<NcActions v-if="supportPollDrafts" force-menu>
+				<NcActionButton v-if="isModerator" :disabled="!isFilled" @click="createPollDraft">
+					<template #icon>
+						<IconFileEdit :size="20" />
+					</template>
+					{{ t('spreed', 'Save as draft') }}
+				</NcActionButton>
+			</NcActions>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
 			</NcButton>
@@ -69,16 +74,21 @@
 import { computed, nextTick, reactive, ref } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
+import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
 
@@ -89,6 +99,9 @@ const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
 
+const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
+
+const store = useStore()
 const pollsStore = usePollsStore()
 
 const pollOption = ref(null)
@@ -100,7 +113,7 @@ const pollForm = reactive<createPollParams>({
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
 })
 
-const isFilled = computed(() => !!pollForm.question || pollForm.options.some(option => option))
+const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
 
 const isPrivate = computed({
 	get() {
@@ -120,6 +133,7 @@ const isMultipleAnswer = computed({
 	}
 })
 
+const isModerator = computed(() => (store.getters as unknown).isModerator)
 /**
  * Remove a previously added option
  * @param index option index
@@ -149,6 +163,16 @@ async function createPoll() {
 	if (poll) {
 		emit('close')
 	}
+}
+
+/**
+ * Saves a poll draft for this conversation
+ */
+async function createPollDraft() {
+	await pollsStore.createPollDraft({
+		token: props.token,
+		form: pollForm,
+	})
 }
 </script>
 

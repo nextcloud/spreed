@@ -71,8 +71,13 @@
 					@click="modalPage = 'voting'">
 					{{ t('spreed', 'Change your vote') }}
 				</NcButton>
-				<!-- End poll button-->
 				<NcActions v-if="canEndPoll" force-menu>
+					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
+						<template #icon>
+							<IconFileEdit :size="20" />
+						</template>
+						{{ t('spreed', 'Save as draft') }}
+					</NcActionButton>
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
@@ -81,17 +86,27 @@
 					</NcActionButton>
 				</NcActions>
 			</div>
+			<div v-else-if="supportPollDrafts && isModerator" class="poll-modal__actions">
+				<NcButton type="tertiary" @click="createPollDraft">
+					<template #icon>
+						<IconFileEdit :size="20" />
+					</template>
+					{{ t('spreed', 'Save as draft') }}
+				</NcButton>
+			</div>
 		</div>
 		<NcLoadingIcon v-else class="poll-modal__loading" />
 	</NcModal>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
+import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
+import { showSuccess } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -107,6 +122,7 @@ import PollVotersDetails from './PollVotersDetails.vue'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 
@@ -124,6 +140,7 @@ export default {
 		PollVotersDetails,
 		// icons
 		FileLock,
+		IconFileEdit,
 		PollIcon,
 	},
 
@@ -133,37 +150,31 @@ export default {
 		const loading = ref(false)
 		const dialogHeaderId = `guest-welcome-header-${useId()}`
 
+		const pollsStore = usePollsStore()
+		const activePoll = computed(() => pollsStore.activePoll)
+		const name = computed(() => activePoll.value?.name)
+		const id = computed(() => activePoll.value?.id)
+		const token = computed(() => activePoll.value?.token)
+
+		const poll = computed(() => pollsStore.getPoll(token.value, id.value))
+		const supportPollDrafts = computed(() => hasTalkFeature(token.value, 'talk-polls-drafts'))
+
 		return {
 			isInCall: useIsInCall(),
-			pollsStore: usePollsStore(),
+			pollsStore,
 			voteToSubmit,
 			modalPage,
 			loading,
 			dialogHeaderId,
+			name,
+			id,
+			token,
+			poll,
+			supportPollDrafts,
 		}
 	},
 
 	computed: {
-		activePoll() {
-			return this.pollsStore.activePoll
-		},
-
-		name() {
-			return this.activePoll?.name
-		},
-
-		id() {
-			return this.activePoll?.id
-		},
-
-		token() {
-			return this.activePoll?.token
-		},
-
-		poll() {
-			return this.pollsStore.getPoll(this.token, this.id)
-		},
-
 		selfHasVoted() {
 			return this.poll?.votedSelf?.length > 0
 		},
@@ -197,8 +208,12 @@ export default {
 			return this.loading || this.voteToSubmit.length === 0
 		},
 
-		selfIsOwnerOrModerator() {
+		isModerator() {
 			return this.$store.getters.isModerator
+		},
+
+		selfIsOwnerOrModerator() {
+			return this.isModerator
 				|| (this.poll?.actorType === this.$store.getters.getActorType()
 					&& this.poll?.actorId === this.$store.getters.getActorId())
 		},
@@ -322,6 +337,13 @@ export default {
 				console.error(error)
 			}
 			this.loading = false
+		},
+
+		async createPollDraft() {
+			await this.pollsStore.createPollDraft({
+				token: this.token,
+				form: this.poll,
+			})
 		},
 
 		selfHasVotedOption(index) {
