@@ -8,6 +8,14 @@
 		<LoadingComponent v-if="loading" class="shared-items-tab__loading" />
 
 		<template v-else>
+			<NcButton v-if="canCreatePollDrafts"
+				wide
+				@click="openPollDraftHandler">
+				<template #icon>
+					<IconPoll :size="20" />
+				</template>
+				{{ t('spreed', 'Browse poll drafts') }}
+			</NcButton>
 			<!-- Shared items grouped by type -->
 			<template v-for="type in sharedItemsOrder">
 				<div v-if="sharedItems[type]" :key="type">
@@ -68,6 +76,7 @@
 <script>
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+import IconPoll from 'vue-material-design-icons/Poll.vue'
 
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -88,6 +97,8 @@ import {
 	sharedItemsWithPreviewLimit,
 	sharedItemTitle,
 } from './sharedItemsConstants.js'
+import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../../services/EventBus.js'
 import { useSharedItemsStore } from '../../../stores/sharedItems.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
 
@@ -98,6 +109,7 @@ export default {
 	components: {
 		DotsHorizontal,
 		FolderMultipleImage,
+		IconPoll,
 		LoadingComponent,
 		NcAppNavigationCaption,
 		NcButton,
@@ -148,6 +160,10 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
+		canCreatePollDrafts() {
+			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
+		},
+
 		loading() {
 			return !this.sharedItemsStore.overviewLoaded[this.token]
 		},
@@ -194,6 +210,10 @@ export default {
 		limit(type) {
 			return this.sharedItemsWithPreviewLimit.includes(type) ? 2 : 6
 		},
+
+		openPollDraftHandler() {
+			EventBus.emit('poll-drafts-open')
+		}
 	},
 }
 </script>

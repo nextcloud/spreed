@@ -5,7 +5,16 @@
 
 <template>
 	<!-- Poll card -->
-	<a v-if="!showAsButton"
+	<div v-if="draft" class="poll-card" @click="openDraft">
+		<span class="poll-card__header">
+			<PollIcon :size="20" />
+			<span>{{ name }}</span>
+		</span>
+		<span class="poll-card__footer">
+			{{ pollFooterText }}
+		</span>
+	</div>
+	<a v-else-if="!showAsButton"
 		v-intersection-observer="getPollData"
 		:aria-label="t('spreed', 'Poll')"
 		class="poll-card"
@@ -34,7 +43,7 @@ import { vIntersectionObserver as IntersectionObserver } from '@vueuse/component
 
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
-import { t } from '@nextcloud/l10n'
+import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -73,7 +82,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		draft: {
+			type: Boolean,
+			default: false,
+		},
 	},
+
+	emits: ['click'],
 
 	setup() {
 		return {
@@ -83,7 +99,9 @@ export default {
 
 	computed: {
 		poll() {
-			return this.pollsStore.getPoll(this.token, this.id)
+			return !this.draft
+				? this.pollsStore.getPoll(this.token, this.id)
+				: this.pollsStore.drafts[this.token][this.id]
 		},
 
 		pollFooterText() {
@@ -91,6 +109,8 @@ export default {
 				return this.poll?.votedSelf.length > 0
 					? t('spreed', 'Open poll • You voted already')
 					: t('spreed', 'Open poll • Click to vote')
+			} else if (this.draft) {
+				return n('spreed', 'Poll draft • %n option', 'Poll draft • %n options', this.poll?.options?.length)
 			} else {
 				return this.poll?.status === POLL.STATUS.CLOSED
 					? t('spreed', 'Poll • Ended')
@@ -101,6 +121,7 @@ export default {
 
 	methods: {
 		t,
+		n,
 		getPollData() {
 			if (!this.poll) {
 				this.pollsStore.getPollData({
@@ -108,6 +129,10 @@ export default {
 					pollId: this.id,
 				})
 			}
+		},
+
+		openDraft() {
+			this.$emit('click', this.id)
 		},
 
 		openPoll() {
