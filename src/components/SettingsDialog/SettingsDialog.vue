@@ -204,6 +204,7 @@ import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
+import { setUserConfig } from '../../services/settingsService.js'
 import { useSettingsStore } from '../../stores/settings.js'
 import { useSoundsStore } from '../../stores/sounds.js'
 
@@ -297,12 +298,11 @@ export default {
 		},
 	},
 
-	created() {
+	async created() {
 		const blurred = BrowserStorage.getItem('background-blurred')
 		if (blurred === 'false' && isBackgroundBlurred === '') {
 			console.debug('Blur was disabled intentionally, propagating last choice to server')
-			axios.post(generateOcsUrl('apps/provisioning_api/api/v1/config/users/theming/force_enable_blur_filter'),
-				{ configValue: 'no' })
+			await setUserConfig('theming', 'force_enable_blur_filter', 'no')
 		}
 		BrowserStorage.removeItem('background-blurred')
 	},
