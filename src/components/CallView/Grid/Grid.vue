@@ -59,11 +59,11 @@
 						</template>
 						<!-- Grid developer mode -->
 						<template v-if="devMode">
-							<div v-for="(video, key) in displayedVideos"
-								:key="video"
+							<div v-for="key in displayedVideos"
+								:key="key"
 								class="dev-mode-video video"
 								:class="{'dev-mode-screenshot': screenshotMode}">
-								<img :src="placeholderImage(key)">
+								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar :has-shadow="false"
 									:model="placeholderModel(key)"
 									:shared-data="placeholderSharedData(key)"
@@ -73,11 +73,8 @@
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
 							</h1>
-							<div v-else
-								class="dev-mode-video--self video"
-								:style="{'background': 'url(' + placeholderImage(8) + ')'}" />
 						</template>
-						<LocalVideo v-if="!isStripe && !isRecording && !screenshotMode"
+						<LocalVideo v-if="!isStripe && !isRecording"
 							ref="localVideo"
 							class="video"
 							is-grid
@@ -98,7 +95,7 @@
 						</template>
 					</NcButton>
 				</div>
-				<LocalVideo v-if="isStripe && !isRecording && !screenshotMode"
+				<LocalVideo v-if="isStripe && !isRecording"
 					ref="localVideo"
 					class="video"
 					:is-stripe="true"
@@ -108,19 +105,36 @@
 					:local-call-participant-model="localCallParticipantModel"
 					@click-video="handleClickLocalVideo" />
 
-				<div v-if="devMode && !screenshotMode" class="dev-mode__data">
-					<p>GRID INFO</p>
-					<p>Videos (total): {{ videosCount }}</p>
-					<p>Displayed videos n: {{ displayedVideos.length }}</p>
-					<p>Max per page: ~{{ videosCap }}</p>
-					<p>Grid width: {{ gridWidth }}</p>
-					<p>Grid height: {{ gridHeight }}</p>
-					<p>Min video width: {{ minWidth }} </p>
-					<p>Min video Height: {{ minHeight }} </p>
-					<p>Grid aspect ratio: {{ gridAspectRatio }}</p>
-					<p>Number of pages: {{ numberOfPages }}</p>
-					<p>Current page: {{ currentPage }}</p>
-				</div>
+				<template v-if="devMode">
+					<NcButton type="tertiary"
+						class="dev-mode__toggle"
+						aria-label="Toggle screenshot mode"
+						@click="screenshotMode = !screenshotMode">
+						<template #icon>
+							<ChevronLeft v-if="!screenshotMode" fill-color="#00FF41" :size="20" />
+						</template>
+					</NcButton>
+					<div v-if="!screenshotMode" class="dev-mode__data">
+						<span>GRID INFO</span>
+						<NcButton small @click="disableDevMode">
+							Disable
+						</NcButton>
+						<span>Videos (total):</span><span>{{ videosCount }}</span>
+						<span>Displayed videos:</span><span>{{ displayedVideos.length }}</span>
+						<span>Max per page:</span><span>~{{ videosCap }}</span>
+						<span>Grid width:</span><span>{{ gridWidth }}px</span>
+						<span>Grid height:</span><span>{{ gridHeight }}px</span>
+						<span>Min video width:</span><span>{{ minWidth }}px</span>
+						<span>Min video Height:</span><span>{{ minHeight }}px</span>
+						<span>Grid aspect ratio:</span><span>{{ gridAspectRatio }}</span>
+						<span>Number of pages:</span><span>{{ numberOfPages }}</span>
+						<span>Current page:</span><span>{{ currentPage }}</span>
+						<span>Dummies:</span><input v-model.number="dummies" type="number">
+						<span>Stripe mode:</span><input v-model="devStripe" type="checkbox">
+						<span>Screenshot mode:</span><input v-model="screenshotMode" type="checkbox">
+
+					</div>
+				</template>
 			</div>
 		</TransitionWrapper>
 	</div>
@@ -128,6 +142,7 @@
 
 <script>
 import debounce from 'debounce'
+import { inject, ref } from 'vue'
 
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -137,7 +152,6 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { generateFilePath } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -147,6 +161,7 @@ import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import { useSidebarStore } from '../../../stores/sidebar.js'
 
@@ -171,25 +186,6 @@ export default {
 	},
 
 	props: {
-		/**
-		 * Developer mode: If enabled it allows to debug the grid using dummy
-		 * videos
-		 */
-		devMode: {
-			type: Boolean,
-			default: false,
-		},
-		screenshotMode: {
-			type: Boolean,
-			default: false,
-		},
-		/**
-		 * The number of dummy videos in dev mode
-		 */
-		dummies: {
-			type: Number,
-			default: 8,
-		},
 		/**
 		 * Display the overflow of videos in separate pages;
 		 */
@@ -245,7 +241,16 @@ export default {
 	emits: ['select-video', 'click-local-video'],
 
 	setup() {
+		// Developer mode: If enabled it allows to debug the grid using dummy videos
+		const devMode = inject('CallView:devModeEnabled', ref(false))
+		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
+		// The number of dummy videos in dev mode
+		const dummies = ref(4)
+
 		return {
+			devMode,
+			dummies,
+			screenshotMode,
 			videosCap,
 			videosCapEnforced,
 			sidebarStore: useSidebarStore(),
@@ -494,7 +499,7 @@ export default {
 		orderedVideos() {
 			// Dynamic ordering is not possible for guests because
 			// participants store is not initialized
-			if (this.isGuestNonModerator) {
+			if (this.isGuestNonModerator || this.devMode) {
 				return this.videos
 			}
 
@@ -544,6 +549,15 @@ export default {
 
 		speakersWithAudioOff() {
 			return this.tempPromotedModels.filter(model => !model.attributes.audioAvailable)
+		},
+
+		devStripe: {
+			get() {
+				return this.isStripe
+			},
+			set(value) {
+				this.$store.dispatch('setCallViewMode', { isGrid: !value, clearLast: false })
+			},
 		},
 	},
 
@@ -667,76 +681,16 @@ export default {
 			}
 		},
 
-		placeholderImage(i) {
-			return generateFilePath('spreed', 'docs', 'screenshotplaceholders/placeholder-' + i + '.jpeg')
-		},
+		// Placeholder data for devMode and screenshotMode
+		placeholderImage,
+		placeholderName,
+		placeholderModel,
+		placeholderSharedData,
 
-		placeholderName(i) {
-			switch (i) {
-			case 0:
-				return 'Sandra McKinney'
-			case 1:
-				return 'Chris Wurst'
-			case 2:
-				return 'Edeltraut Bobb'
-			case 3:
-				return 'Arthur Blitz'
-			case 4:
-				return 'Roeland Douma'
-			case 5:
-				return 'Vanessa Steg'
-			case 6:
-				return 'Emily Grant'
-			case 7:
-				return 'Tobias Kaminsky'
-			case 8:
-				return 'Adrian Ada'
-			}
+		disableDevMode() {
+			this.screenshotMode = false
+			this.devMode = false
 		},
-
-		placeholderModel(i) {
-			return {
-				attributes: {
-					audioAvailable: i === 1 || i === 2 || i === 4 || i === 5 || i === 6 || i === 7 || i === 8,
-					audioEnabled: i === 8,
-					videoAvailable: true,
-					screen: false,
-					currentVolume: 0.75,
-					volumeThreshold: 0.75,
-					localScreen: false,
-					raisedHand: {
-						state: i === 0 || i === 1 || i === 6,
-					},
-				},
-				forceMute: () => {},
-				on: () => {},
-				off: () => {},
-				getWebRtc: () => {
-					return {
-						connection: {
-							getSendVideoIfAvailable: () => {},
-						},
-					}
-				},
-			}
-		},
-
-		placeholderSharedData() {
-			return {
-				videoEnabled: {
-					isVideoEnabled() {
-						return true
-					},
-				},
-				remoteVideoBlocker: {
-					isVideoEnabled() {
-						return true
-					},
-				},
-				screenVisible: false,
-			}
-		},
-
 		// whenever the document is resized, re-set the 'clientWidth' variable
 		handleResize(event) {
 			// TODO: properly handle resizes when not on first page:
@@ -1053,22 +1007,17 @@ export default {
 
 .dev-mode-video {
 	&:not(.dev-mode-screenshot) {
-		border: 1px solid #00FF41;
+		outline: 1px solid #00FF41;
 		color: #00FF41;
 	}
 
 	position: relative;
 
-	&--self {
-		background-size: cover !important;
-		border-radius: calc(var(--default-clickable-area) / 2);
-	}
-
 	img {
 		object-fit: cover;
 		height: 100%;
 		width: 100%;
-		border-radius: calc(var(--default-clickable-area) / 2);
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	}
 
 	.wrapper {
@@ -1088,23 +1037,37 @@ export default {
 	opacity: 25%;
 }
 
+.dev-mode__toggle {
+	position: fixed !important;
+	left: 20px;
+	top: calc(2 * var(--header-height));
+}
+
 .dev-mode__data {
 	font-family: monospace;
 	position: fixed;
 	color: #00FF41;
 	left: 20px;
-	bottom: 50%;
-	padding: 20px;
+	top: calc(2 * var(--header-height) + 40px);
+	padding: 5px;
 	background: rgba(0, 0, 0, 0.8);
 	border: 1px solid #00FF41;
-	width: 212px;
-	font-size: 12px;
-	z-index: 999999999999999;
+	display: grid;
+	grid-template-columns: 165px 75px;
+	align-items: center;
+	justify-content: flex-start;
+	z-index: 1;
 
-	& p {
+	& span {
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
+	}
+	& input {
+		max-width: 65px;
+		height: 22.5px !important;
+		min-height: unset;
+		margin: 0;
 	}
 }
 

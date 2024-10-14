@@ -16,7 +16,9 @@
 			<EmptyCallView v-if="showEmptyCallView" :is-sidebar="isSidebar" />
 
 			<div id="videos">
-				<div v-if="!isGrid || !callParticipantModels.length" class="video__promoted" :class="{'full-page': showFullPage}">
+				<div v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
+					class="video__promoted"
+					:class="{'full-page': showFullPage}">
 					<!-- Selected video override mode -->
 					<VideoVue v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="`promoted-${selectedVideoPeerId}`"
@@ -50,21 +52,12 @@
 						:shared-data="localSharedData"
 						is-big />
 					<!-- Remote or selected screen -->
-					<template v-else-if="showRemoteScreen || showSelectedScreen">
-						<Screen v-if="shownRemoteScreenCallParticipantModel"
-							:key="`screen-${shownRemoteScreenPeerId}`"
-							:token="token"
-							:call-participant-model="shownRemoteScreenCallParticipantModel"
-							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-							is-big />
-						<!-- presenter overlay -->
-						<PresenterOverlay v-if="shouldShowPresenterOverlay"
-							:token="token"
-							:model="shownRemoteScreenCallParticipantModel"
-							:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-							:is-collapsed="!showPresenterOverlay"
-							@click="toggleShowPresenterOverlay" />
-					</template>
+					<Screen v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
+						:key="`screen-${shownRemoteScreenPeerId}`"
+						:token="token"
+						:call-participant-model="shownRemoteScreenCallParticipantModel"
+						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
+						is-big />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue v-else-if="promotedParticipantModel"
 						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
@@ -78,11 +71,31 @@
 						:is-one-to-one="isOneToOne"
 						:is-sidebar="isSidebar"
 						@force-promote-video="forcePromotedModel = $event" />
+					<!-- presenter overlay -->
+					<PresenterOverlay v-if="shouldShowPresenterOverlay"
+						:token="token"
+						:model="presenterModel"
+						:shared-data="presenterSharedData"
+						:is-local-presenter="showLocalScreen"
+						:local-media-model="localMediaModel"
+						:is-collapsed="!showPresenterOverlay"
+						@click="toggleShowPresenterOverlay" />
+
+					<div v-else-if="devMode && !isGrid"
+						class="dev-mode-video--promoted">
+						<img :alt="placeholderName(6)" :src="placeholderImage(6)">
+						<VideoBottomBar :has-shadow="false"
+							:model="placeholderModel(6)"
+							:shared-data="placeholderSharedData(6)"
+							:token="token"
+							:participant-name="placeholderName(6)"
+							is-big />
+					</div>
 				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<Grid v-if="!isSidebar"
-					:is-stripe="!isGrid || !callParticipantModels.length"
+					:is-stripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					:is-recording="isRecording"
 					:token="token"
 					:has-pagination="true"
@@ -120,6 +133,7 @@
 
 <script>
 import debounce from 'debounce'
+import { provide, ref } from 'vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -131,9 +145,11 @@ import LocalVideo from './shared/LocalVideo.vue'
 import PresenterOverlay from './shared/PresenterOverlay.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
 import Screen from './shared/Screen.vue'
+import VideoBottomBar from './shared/VideoBottomBar.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 
+import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
 import { SIMULCAST } from '../../constants.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -147,13 +163,14 @@ export default {
 
 	components: {
 		EmptyCallView,
-		ViewerOverlayCallView,
 		Grid,
 		LocalVideo,
 		PresenterOverlay,
 		ReactionToaster,
 		Screen,
+		VideoBottomBar,
 		VideoVue,
+		ViewerOverlayCallView,
 	},
 
 	props: {
@@ -174,6 +191,12 @@ export default {
 	},
 
 	setup() {
+		// For debug and screenshot purposes. Set to true to enable
+		const devMode = ref(false)
+		provide('CallView:devModeEnabled', devMode)
+		const screenshotMode = ref(false)
+		provide('CallView:screenshotModeEnabled', screenshotMode)
+
 		const settingsStore = useSettingsStore()
 		const startWithoutMediaEnabled = settingsStore.startWithoutMedia
 		if (startWithoutMediaEnabled) {
@@ -184,6 +207,7 @@ export default {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
+			devMode,
 		}
 	},
 
@@ -327,8 +351,19 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
-			return this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)
+			return (this.showLocalScreen && this.hasLocalVideo)
+			|| ((this.showRemoteScreen || this.showSelectedScreen)
+			&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
 
+		},
+
+		presenterModel() {
+			// Prioritize local screen over remote screen, if both are available (as in DOM order)
+			return this.showLocalScreen ? this.localCallParticipantModel : this.shownRemoteScreenCallParticipantModel
+		},
+
+		presenterSharedData() {
+			return this.showLocalScreen ? this.localSharedData : this.sharedDatas[this.shownRemoteScreenPeerId]
 		},
 
 		presenterVideoBlockerEnabled() {
@@ -336,7 +371,7 @@ export default {
 		},
 
 		showEmptyCallView() {
-			return !this.callParticipantModels.length && !this.screenSharingActive
+			return !this.callParticipantModels.length && !this.screenSharingActive && !this.devMode
 		},
 
 		supportedReactions() {
@@ -447,6 +482,11 @@ export default {
 
 	methods: {
 		t,
+		// Placeholder data for devMode and screenshotMode
+		placeholderImage,
+		placeholderName,
+		placeholderModel,
+		placeholderSharedData,
 		/**
 		 * Updates data properties that depend on the CallParticipantModels.
 		 *
@@ -707,13 +747,16 @@ export default {
 		},
 
 		isModelWithVideo(callParticipantModel) {
+			if (!callParticipantModel) {
+				return false
+			}
 			return callParticipantModel.attributes.videoAvailable
 				&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
 				&& (typeof callParticipantModel.attributes.stream === 'object')
 		},
 
 		toggleShowPresenterOverlay() {
-			if (!this.presenterVideoBlockerEnabled) {
+			if (!this.showLocalScreen && !this.presenterVideoBlockerEnabled) {
 				this.sharedDatas[this.shownRemoteScreenPeerId].remoteVideoBlocker.setVideoEnabled(true)
 			} else {
 				this.showPresenterOverlay = !this.showPresenterOverlay
@@ -758,6 +801,22 @@ export default {
 		// force the promoted remote or local video to cover the whole call view
 		// doesn't affect screen shares, as it's a different MediaStream
 		position: static;
+	}
+
+	.dev-mode-video--promoted {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	.dev-mode-video--promoted img {
+		position: absolute;
+		height: 100%;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	}
 }
 

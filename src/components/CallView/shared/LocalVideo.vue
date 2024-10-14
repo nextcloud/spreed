@@ -10,7 +10,12 @@
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
 		@click="$emit('click-video')">
-		<div v-show="localMediaModel.attributes.videoEnabled"
+		<img v-if="screenshotModeUrl"
+			class="dev-mode-video--self videoWrapper"
+			alt="dev-mode-video--self"
+			:src="screenshotModeUrl">
+
+		<div v-show="!screenshotModeUrl && localMediaModel.attributes.videoEnabled"
 			class="videoWrapper"
 			:style="videoWrapperStyle">
 			<video id="localVideo"
@@ -19,11 +24,17 @@
 				:class="fitVideo ? 'video--fit' : 'video--fill'"
 				class="video"
 				@playing="updateVideoAspectRatio" />
+			<AccountOff v-if="isPresenterOverlay && mouseover"
+				class="presenter-icon__hide"
+				:aria-label="t('spreed', 'Hide presenter video')"
+				:title="t('spreed', 'Hide presenter video')"
+				:size="32"
+				@click="$emit('click-presenter')" />
 			<NcLoadingIcon v-if="isNotConnected"
 				:size="avatarSize / 2"
 				class="video-loading" />
 		</div>
-		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
+		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
@@ -49,6 +60,10 @@
 </template>
 
 <script>
+import { inject, ref } from 'vue'
+
+import AccountOff from 'vue-material-design-icons/AccountOff.vue'
+
 import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
@@ -61,6 +76,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { AVATAR } from '../../../constants.js'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { placeholderImage } from '../Grid/gridPlaceholders.ts'
 
 export default {
 
@@ -68,6 +84,7 @@ export default {
 
 	components: {
 		AvatarWrapper,
+		AccountOff,
 		NcButton,
 		VideoBackground,
 		NcLoadingIcon,
@@ -118,9 +135,23 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isPresenterOverlay: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
-	emits: ['click-video'],
+	emits: ['click-video', 'click-presenter'],
+
+	setup() {
+		const devMode = inject('CallView:devModeEnabled', ref(false))
+		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
+
+		return {
+			devMode,
+			screenshotMode,
+		}
+	},
 
 	data() {
 		return {
@@ -152,6 +183,8 @@ export default {
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
 				'video-container-small': this.isSmall,
+				presenter: this.isPresenterOverlay && this.mouseover,
+				'presenter-overlay': this.isPresenterOverlay,
 				'hover-shadow': this.isSelectable && this.mouseover,
 				speaking: this.localMediaModel.attributes.speaking,
 			}
@@ -202,6 +235,10 @@ export default {
 
 		isSelectable() {
 			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+		},
+
+		screenshotModeUrl() {
+			return this.screenshotMode ? placeholderImage(8) : ''
 		},
 	},
 
@@ -401,7 +438,12 @@ export default {
 	margin: auto;
 }
 
-.localVideoContainer:after {
+.presenter-overlay,
+.presenter-overlay * {
+	border-radius: 50%;
+}
+
+.localVideoContainer::after {
 	position: absolute;
 	height: 100%;
 	width: 100%;
@@ -410,13 +452,18 @@ export default {
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 }
 
-.hover-shadow:after {
+.presenter-overlay::after {
+	border-radius: 50%;
+	z-index: 1;
+}
+
+.hover-shadow::after {
 	content: '';
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
 }
 
-.speaking:after {
+.speaking::after {
 	content: '';
 	box-shadow: inset 0 0 0 2px white;
 }
@@ -444,5 +491,34 @@ export default {
 			opacity: 1;
 		}
 	}
+}
+
+.dev-mode-video--self {
+	object-fit: cover !important;
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+
+	.presenter-overlay & {
+		border-radius: 50%;
+	}
+}
+
+.presenter-icon__hide {
+	position: absolute;
+	color: white;
+	left: calc(50% - var(--default-clickable-area) / 2);
+	top: calc(100% - var(--default-grid-baseline) - var(--default-clickable-area));
+	opacity: 0.7;
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 50%;
+	padding: 6px;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
+	z-index: 2; // Above video and its border
+
+	&:hover {
+		cursor: pointer;
+		opacity: 0.9;
+	}
+
 }
 </style>
