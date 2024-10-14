@@ -1538,7 +1538,7 @@ OC.L10N.register(
     "Number is not valid" : "الرقم غير صحيح",
     "Edit display name" : "عَدِّل اسم العرض",
     "Save name" : "حفظ الاسم",
-    "Display name: {name}" : "الاسم المعروض: {name}",
+    "Display name: {name}" : "اسم العرض: {name}",
     "Calls are not supported in your browser" : "المكالمات غير مدعومة في متصفحك",
     "Access to microphone is only possible with HTTPS" : "الوصول إلى المايكرفون مسموح فقط في HTTPS",
     "Access to microphone was denied" : "تم رفض الوصول للمايكرفون",
