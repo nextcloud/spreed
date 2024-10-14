@@ -23,6 +23,11 @@ updates:
   ignore:
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
 
 - package-ecosystem: composer
   target-branch: stable29
@@ -34,6 +39,11 @@ updates:
   ignore:
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
 
 - package-ecosystem: composer
   target-branch: stable28
@@ -45,6 +55,11 @@ updates:
   ignore:
     - dependency-name: "*"
       update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
 
 # Composer: Tooling
 - package-ecosystem: composer
