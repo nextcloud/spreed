@@ -1178,7 +1178,7 @@ class SignalingControllerTest extends TestCase {
 		$participant = $participantService->getParticipant($room, $this->userId, $oldSessionId);
 		$this->assertEquals($oldSessionId, $participant->getSession()->getSessionId());
 
-		// The user is reloading the browser which will join him with another
+		// The user is reloading the browser which will join them with another
 		// session id.
 		$newParticipant = $participantService->joinRoom($roomService, $room, $testUser, '');
 		$newSessionId = $newParticipant->getSession()->getSessionId();
