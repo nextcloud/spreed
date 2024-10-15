@@ -2234,6 +2234,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" downloads call participants from "([^"]*)" as "(csv)" with (\d+) \((v4)\)$/
+	 */
+	public function userDownloadsPeersInCall(string $user, string $identifier, string $format, int $statusCode, string $apiVersion, ?TableNode $tableNode = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/download', [
+			'format' => $format,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== 200) {
+			return;
+		}
+
+		$expected = [];
+		foreach ($tableNode->getRows() as $row) {
+			if ($row[1] === 'guests') {
+				$row[2] = self::$sessionNameToActorId[$row[2]];
+			}
+			$expected[] = implode(',', $row);
+		}
+
+		Assert::assertEquals(implode("\n", $expected) . "\n", $this->response->getBody()->getContents());
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" (silent sends|sends) message ("[^"]*"|'[^']*') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

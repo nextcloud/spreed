@@ -15,6 +15,8 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\CallController::getPeersForCall() */
 		['name' => 'Call#getPeersForCall', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\CallController::downloadParticipantsForCall() */
+		['name' => 'Call#downloadParticipantsForCall', 'url' => '/api/{apiVersion}/call/{token}/download', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::joinCall() */
 		['name' => 'Call#joinCall', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::joinFederatedCall() */
