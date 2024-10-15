@@ -436,14 +436,15 @@ class PageController extends Controller {
 		string $accessToken,
 	): Response {
 		try {
+			$actorId = hash('sha256', $email);
 			$this->manager->getRoomByAccessToken(
 				$token,
 				Attendee::ACTOR_EMAILS,
-				$email,
+				$actorId,
 				$accessToken,
 			);
 			$this->talkSession->renewSessionId();
-			$this->talkSession->setAuthedEmailActorIdForRoom($token, $email);
+			$this->talkSession->setAuthedEmailActorIdForRoom($token, $actorId);
 		} catch (RoomNotFoundException) {
 			$redirectUrl = $this->url->linkToRoute('spreed.Page.index');
 			if ($token) {
