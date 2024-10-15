@@ -205,13 +205,10 @@ function fillPollForm(payload: createPollParams) {
  * Saves a poll draft for this conversation
  */
 async function createPollDraft() {
-	const poll = await pollsStore.createPollDraft({
+	await pollsStore.createPollDraft({
 		token: props.token,
 		form: pollForm,
 	})
-	if (poll) {
-		showSuccess(t('spreed', 'Poll draft has been saved'))
-	}
 }
 
 /**
