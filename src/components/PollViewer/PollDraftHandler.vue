@@ -25,7 +25,7 @@
 				:token="token"
 				:name="item.question"
 				draft
-				@click="openPollEditor(item.id)" />
+				@click="openPollEditor" />
 		</div>
 		<template #actions>
 			<NcButton @click="openPollEditor(null)">
