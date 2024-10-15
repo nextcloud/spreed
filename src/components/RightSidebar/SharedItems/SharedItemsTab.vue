@@ -8,7 +8,7 @@
 		<LoadingComponent v-if="loading" class="shared-items-tab__loading" />
 
 		<template v-else>
-			<NcButton v-if="supportPollDrafts && isModerator"
+			<NcButton v-if="canCreatePollDrafts"
 				wide
 				@click="openPollDraftHandler">
 				<template #icon>
@@ -160,12 +160,8 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		supportPollDrafts() {
-			return hasTalkFeature(this.token, 'talk-polls-drafts')
-		},
-
-		isModerator() {
-			return this.$store.getters.isModerator
+		canCreatePollDrafts() {
+			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
 		},
 
 		loading() {

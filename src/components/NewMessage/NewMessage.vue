@@ -152,7 +152,7 @@
 			:token="token"
 			@close="togglePollEditor" />
 
-		<PollDraftHandler v-if="showPollDraftHandler"
+		<PollDraftHandler v-if="canCreatePollDrafts && showPollDraftHandler"
 			:token="token"
 			@close="togglePollDraftHandler" />
 
@@ -392,6 +392,10 @@ export default {
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
+		canCreatePollDrafts() {
+			return hasTalkFeature(this.token, 'talk-polls-drafts') && this.$store.getters.isModerator
 		},
 
 		currentConversationIsJoined() {

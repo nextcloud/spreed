@@ -224,7 +224,7 @@ function openPollDraftHandler() {
 	&__wrapper {
 		display: flex;
 		align-items: flex-end;
-		gap: 4px;
+		gap: var(--default-grid-baseline);
 	}
 
 	&__caption {

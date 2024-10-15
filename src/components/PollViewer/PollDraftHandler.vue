@@ -49,7 +49,6 @@ import EmptyView from '../EmptyView.vue'
 import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
 
 import { useStore } from '../../composables/useStore.js'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 
@@ -60,17 +59,13 @@ const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
 
-const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
 const store = useStore()
 const pollsStore = usePollsStore()
 /**
  * Receive poll drafts for the current conversation as owner/moderator
  */
-const isModerator = computed(() => (store.getters as unknown).isModerator)
-if (supportPollDrafts && isModerator.value) {
-	pollsStore.getPollDrafts(props.token)
-}
-const pollDrafts = computed(() => supportPollDrafts ? pollsStore.getDrafts(props.token) : [])
+pollsStore.getPollDrafts(props.token)
+const pollDrafts = computed(() => pollsStore.getDrafts(props.token))
 
 /**
  * Opens poll editor pre-filled from the draft
