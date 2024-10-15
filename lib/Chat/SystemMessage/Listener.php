@@ -311,7 +311,11 @@ class Listener implements IEventListener {
 		$room = $event->getRoom();
 		$attendee = $event->getParticipant()->getAttendee();
 
-		if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+		if (!in_array($attendee->getActorType(), [
+			Attendee::ACTOR_USERS,
+			Attendee::ACTOR_EMAILS,
+			Attendee::ACTOR_GUESTS,
+		], true)) {
 			return;
 		}
 
