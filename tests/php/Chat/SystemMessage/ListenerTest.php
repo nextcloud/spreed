@@ -259,7 +259,7 @@ class ListenerTest extends TestCase {
 	public static function dataParticipantTypeChange(): array {
 		return [
 			[
-				Attendee::ACTOR_EMAILS,
+				Attendee::ACTOR_GROUPS,
 				Participant::USER,
 				Participant::MODERATOR,
 				[],
