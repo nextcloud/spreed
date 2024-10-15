@@ -17,6 +17,7 @@ use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireFederatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
@@ -33,7 +34,9 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -109,6 +112,53 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse($result);
+	}
+
+	/**
+	 * Download the list of current call participants
+	 *
+	 * Required capability: `download-call-participants`
+	 *
+	 * @param 'csv'|'pdf' $format Download format
+	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv'|'application/pdf', array{}>|Response<Http::STATUS_BAD_REQUEST, array{}>
+	 *
+	 * 200: List of participants in the call downloaded in the requested format
+	 * 400: No call in progress
+	 */
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	public function downloadParticipantsForCall(string $format = 'csv'): DataDownloadResponse|Response {
+		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
+		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);
+
+		if (empty($participants)) {
+			return new Response(Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($format !== 'csv' && $format !== 'pdf') {
+			// Unsupported format
+			return new Response(Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($format !== 'csv') {
+			// FIXME Remove once pdf was implemented.
+			return new Response(Http::STATUS_BAD_REQUEST);
+		}
+
+		$output = fopen('php://memory', 'w');
+		fputcsv($output, [
+			'name',
+			'type',
+			'identifier',
+		]);
+
+		foreach ($participants as $participant) {
+			fputcsv($output, [$participant->getAttendee()->getDisplayName(), $participant->getAttendee()->getActorType(), $participant->getAttendee()->getActorId()]);
+		}
+
+		fseek($output, 0);
+
+		return new DataDownloadResponse(stream_get_contents($output), 'participants.csv', 'text/csv');
 	}
 
 	/**
