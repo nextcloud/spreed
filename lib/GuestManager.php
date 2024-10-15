@@ -73,7 +73,7 @@ class GuestManager {
 		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
 			throw new \InvalidArgumentException('Cannot send email for non-email participant actor type');
 		}
-		$email = $participant->getAttendee()->getActorId();
+		$email = $participant->getAttendee()->getInvitedCloudId();
 		$pin = $participant->getAttendee()->getPin();
 
 		$event = new BeforeEmailInvitationSentEvent($room, $participant->getAttendee());
