@@ -136,17 +136,18 @@ class MessageParser {
 		} elseif ($actorType === Attendee::ACTOR_BRIDGED) {
 			$displayName = $actorId;
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
-		} elseif ($actorType === Attendee::ACTOR_GUESTS
+		} elseif (($actorType === Attendee::ACTOR_GUESTS || $actorType === Attendee::ACTOR_EMAILS)
 			&& !in_array($actorId, [Attendee::ACTOR_ID_CLI, Attendee::ACTOR_ID_CHANGELOG], true)) {
-			if (isset($this->guestNames[$actorId])) {
-				$displayName = $this->guestNames[$actorId];
+			$cacheKey = $actorType . '/' . $actorId;
+			if (isset($this->guestNames[$cacheKey])) {
+				$displayName = $this->guestNames[$cacheKey];
 			} else {
 				try {
-					$participant = $this->participantService->getParticipantByActor($message->getRoom(), str_contains($actorId, '@') ? Attendee::ACTOR_EMAILS : Attendee::ACTOR_GUESTS, $actorId);
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), $actorType, $actorId);
 					$displayName = $participant->getAttendee()->getDisplayName();
 				} catch (ParticipantNotFoundException) {
 				}
-				$this->guestNames[$actorId] = $displayName;
+				$this->guestNames[$cacheKey] = $displayName;
 			}
 		} elseif ($actorType === Attendee::ACTOR_BOTS) {
 			$displayName = $actorId . '-bot';
