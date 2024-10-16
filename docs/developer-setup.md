@@ -171,7 +171,7 @@ The provided `docker-compose.yml` file from `nextcloud-docker-dev` supports spin
     ```
     docker compose cp data/ssl/nextcloud2.local.crt nextcloud:/tmp
     docker compose cp data/ssl/nextcloud.local.crt nextcloud2:/tmp
-
+    
     ./scripts/occ.sh nextcloud2 -- security:certificates:import /tmp/nextcloud.local.crt
     ./scripts/occ.sh nextcloud -- security:certificates:import /tmp/nextcloud2.local.crt
     ```
@@ -183,7 +183,12 @@ The provided `docker-compose.yml` file from `nextcloud-docker-dev` supports spin
     ./scripts/occ.sh nextcloud -- security:certificates
     ```
 
-6. Enable federation in the admin settings of Nextcloud Talk.
+6. Enable federation in the admin settings of Nextcloud Talk or alternatively via occ:
+
+    ```
+    ./scripts/occ.sh nextcloud -- config:app:set spreed federation_enabled --value yes
+    ./scripts/occ.sh nextcloud2 -- config:app:set spreed federation_enabled --value yes
+    ```
 
 ### Rebuild / update Talk after code changes
 
