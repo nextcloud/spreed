@@ -127,6 +127,7 @@ class CallController extends AEnvironmentAwareController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[Http\Attribute\NoCSRFRequired]
 	public function downloadParticipantsForCall(string $format = 'csv'): DataDownloadResponse|Response {
 		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
 		$participants = $this->participantService->getParticipantsInCall($this->room, $timeout);
