@@ -567,6 +567,7 @@ OC.L10N.register(
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Error while sharing file" : "Fejl ved deling af fil",
     "An error occurred while fetching the participants" : "Kunne ikke hente listen over deltagere",
+    "Error while parsing a PROPFIND error" : "Fejl under parsing af en PROPFIND-fejl",
     "Do not disturb" : "Forstyr ikke",
     "Away" : "Ikke tilstede",
     "Default" : "Standard",

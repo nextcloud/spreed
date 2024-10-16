@@ -888,6 +888,7 @@ OC.L10N.register(
     "Loading …" : "S'està carregant…",
     "Hide details" : "Amaga els detalls",
     "Show details" : "Mostra els detalls",
+    "Unban" : "Anul·la la prohibició",
     "Date:" : "Data:",
     "Enter a name for this conversation" : "Introduïu un nom per a la nova conversa",
     "Edit conversation name" : "Edició del nom de la conversa",
