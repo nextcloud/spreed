@@ -31,7 +31,7 @@ There are many ways of running Nextcloud for development purposes. In the follow
 
 Clone `nextcloud-docker-dev` in a directory of your choice:
 
-```
+```shell
 cd /path/to/directory
 git clone https://github.com/juliushaertl/nextcloud-docker-dev
 cd nextcloud-docker-dev
@@ -39,7 +39,7 @@ cd nextcloud-docker-dev
 
 `bootstrap.sh` is used to setup the enviroment, it supports multiple parameters that may depend on your development focus:
 
-```
+```shell
 bootstrap.sh [--full-clone|--clone-no-blobs] [--clone-all-apps-filtered] [--] APPS
 
 This command will initialize the debug environment for app developers.
@@ -62,7 +62,7 @@ The following options can be provided:
 
 Clones only the latest `master/main` from Nextcloud Server without history, but full history for all other apps, including Nextcloud Talk. This is perfectly fine if you plan on working with the latest version of Nextcloud / Nextcloud Talk.
 
-```
+```shell
 ./bootstrap.sh -- spreed
 ```
 
@@ -70,7 +70,7 @@ Clones only the latest `master/main` from Nextcloud Server without history, but 
 
 Clones the full Nextcloud Server repository, but omitting file contents.  All other apps, including Nextcloud Talk are still fully cloned. This way you also have the full history of Nextcloud Server, without needing to download everything at once
 
-```
+```shell
 ./bootstrap.sh --clone-no-blobs -- spreed
 ```
 
@@ -78,7 +78,7 @@ Clones the full Nextcloud Server repository, but omitting file contents.  All ot
 
 Clones the full Nextcloud Server repository and all apps with full history. This is the slowest option
 
-```
+```shell
 ./bootstrap.sh --full-clone -- spreed
 ```
 
@@ -94,13 +94,13 @@ Nextcloud Talk needs camera and microphone access for audio/video conferencing. 
 
 Enter the Nextcloud Talk directory and install the required components for development:
 
-```
+```shell
 cd workspace/server/apps-extra/spreed
 make dev-setup
 ```
 
 If you do not have NPM, Node or Composer you can run all of them from inside the container instead (note that they will be run as root, so the file owner of the created files will be also root):
-```
+```shell
 docker compose exec nextcloud bash --login -c "cd /var/www/html/apps-extra/spreed && make dev-setup"
 ```
 
@@ -108,13 +108,13 @@ docker compose exec nextcloud bash --login -c "cd /var/www/html/apps-extra/spree
 
 In the directory of `nextcloud-docker-dev` execute the following:
 
-```
+```shell
 docker compose up -d nextcloud
 ```
 
 Enable Nextcloud Talk:
 
-```
+```shell
 ./scripts/occ.sh nextcloud -- app:enable spreed
 ```
 
@@ -130,7 +130,7 @@ If you want to enable the HPB for your development setup, just execute
 
 to start the needed containers and add the configuration to the Nextcloud installation. You can check if everything is working in Settings -> Talk -> High Performance Backend.
 
-### Enable Nextcoud Talk Recording Server
+### Enable Nextcloud Talk Recording Server
 
 **Important:** Make sure that the HPB is correctly running!
 
@@ -148,47 +148,35 @@ The provided `docker-compose.yml` file from `nextcloud-docker-dev` supports spin
 
 1. Make sure to have 2 instances of Nextcloud running with
 
-    ```
-    docker compose up -d nextcloud nextcloud2
-    ```
+         docker compose up -d nextcloud nextcloud2
 
 2. In case of federated calling, the HPB needs to be enabled on both instances
 
-    ```
-    ./scripts/enable-talk-hpb.sh nextcloud
-    ./scripts/enable-talk-hpb.sh nextcloud2
-    ```
+        ./scripts/enable-talk-hpb.sh nextcloud
+        ./scripts/enable-talk-hpb.sh nextcloud2
 
-3. Allow self signed certs on both instances
+3. Allow self-signed certs on both instances
 
-    ```
-    ./scripts/occ.sh nextcloud -- config:system:set sharing.federation.allowSelfSignedCertificates --value true --type bool
-    ./scripts/occ.sh nextcloud2 -- config:system:set sharing.federation.allowSelfSignedCertificates --value true --type bool
-    ```
+        ./scripts/occ.sh nextcloud -- config:system:set sharing.federation.allowSelfSignedCertificates --value true --type bool
+        ./scripts/occ.sh nextcloud2 -- config:system:set sharing.federation.allowSelfSignedCertificates --value true --type bool
 
 4. Copy and import the certificates to the other instance
 
-    ```
-    docker compose cp data/ssl/nextcloud2.local.crt nextcloud:/tmp
-    docker compose cp data/ssl/nextcloud.local.crt nextcloud2:/tmp
-    
-    ./scripts/occ.sh nextcloud2 -- security:certificates:import /tmp/nextcloud.local.crt
-    ./scripts/occ.sh nextcloud -- security:certificates:import /tmp/nextcloud2.local.crt
-    ```
+        docker compose cp data/ssl/nextcloud2.local.crt nextcloud:/tmp
+        docker compose cp data/ssl/nextcloud.local.crt nextcloud2:/tmp
+
+        ./scripts/occ.sh nextcloud2 -- security:certificates:import /tmp/nextcloud.local.crt
+        ./scripts/occ.sh nextcloud -- security:certificates:import /tmp/nextcloud2.local.crt
 
 5. Optional: Verify certs
 
-    ```
-    ./scripts/occ.sh nextcloud2 -- security:certificates
-    ./scripts/occ.sh nextcloud -- security:certificates
-    ```
+        ./scripts/occ.sh nextcloud2 -- security:certificates
+        ./scripts/occ.sh nextcloud -- security:certificates
 
 6. Enable federation in the admin settings of Nextcloud Talk or alternatively via occ:
 
-    ```
-    ./scripts/occ.sh nextcloud -- config:app:set spreed federation_enabled --value yes
-    ./scripts/occ.sh nextcloud2 -- config:app:set spreed federation_enabled --value yes
-    ```
+        ./scripts/occ.sh nextcloud -- config:app:set spreed federation_enabled --value yes
+        ./scripts/occ.sh nextcloud2 -- config:app:set spreed federation_enabled --value yes
 
 ### Rebuild / update Talk after code changes
 
@@ -196,13 +184,13 @@ The provided `docker-compose.yml` file from `nextcloud-docker-dev` supports spin
 
 If you modify any JavaScript file, either directly or by switching to a different branch, you will need to rebuild them. You can do that with:
 
-```
+```shell
 cd workspace/server/apps-extra/spreed
 make build-js
 ```
 
 For JavaScript development rather than manually rebuilding the files whenever you modify them you can instead run a watcher that will automatically rebuild them when they are changed:
-```
+```shell
 cd workspace/server/apps-extra/spreed
 make watch-js
 ```
@@ -218,24 +206,24 @@ Besides manually force refreshing the page you can disable the cache in the _Net
 In the case of Firefox you can disable the cache in all cases by opening `about:config` and setting `browser.cache.disk.enable` and `browser.cache.memory.enable` to `false`.
 
 If you do not have NPM or Node you can rebuild the JavaScript files from inside the container instead (like before, note that the file owner of the created files will be also root):
-```
+```shell
 docker compose exec nextcloud bash --login -c "cd /var/www/html/apps-extra/spreed && make build-js"
 ```
 
 Or, in the case of the watcher, with:
-```
+```shell
 docker compose exec nextcloud bash --login -c "cd /var/www/html/apps-extra/spreed && make watch-js"
 ```
 
 #### PHP dependencies
 
 PHP files themselves do not need to be rebuilt, although if the PHP dependencies change they need to be updated. Note that this does not happen frequently, so in most cases you can switch to another branch without needing to update the PHP dependencies. Nevertheless, if the PHP dependencies changed (that is, if the `composer.lock` file changed) you can update them with:
-```
+```shell
 cd workspace/server/apps-extra/spreed
 make composer-install-dev
 ```
 
 If you do not have Composer you can update the PHP dependencies from inside the container instead (like before, note that the file owner of the created files will be also root):
-```
+```shell
 docker compose exec nextcloud bash --login -c "cd /var/www/html/apps-extra/spreed && make composer-install-dev"
 ```
