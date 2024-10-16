@@ -35,6 +35,11 @@ export const useSoundsStore = defineStore('sounds', {
 			leave: null,
 			wait: null,
 		},
+		audioObjectsPromises: {
+			join: null,
+			leave: null,
+			wait: null,
+		},
 	}),
 
 	actions: {
@@ -51,11 +56,16 @@ export const useSoundsStore = defineStore('sounds', {
 			if (!this.audioObjectsCreated) {
 				this.initAudioObjects()
 			}
-			this.audioObjects[key].play()
+			this.audioObjectsPromises[key] = this.audioObjects[key].play()
+			this.audioObjectsPromises[key].catch(error => {
+				console.error(error)
+			})
 		},
 
 		pauseAudio(key) {
-			this.audioObjects[key]?.pause()
+			if (this.audioObjectsPromises[key]) {
+				this.audioObjects[key].pause()
+			}
 		},
 
 		/**
@@ -70,6 +80,16 @@ export const useSoundsStore = defineStore('sounds', {
 			const audio = new Audio(filePath)
 			audio.load()
 			audio.volume = volume
+
+			audio.addEventListener('pause', () => {
+				this.audioObjectsPromises[key] = null
+				audio.currentTime = 0
+			})
+
+			audio.addEventListener('ended', () => {
+				this.audioObjectsPromises[key] = null
+			})
+
 			Vue.set(this.audioObjects, key, audio)
 		},
 
