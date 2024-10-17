@@ -148,6 +148,12 @@ class SystemMessage implements IEventListener {
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
 				$currentActorId === $parsedParameters['actor']['id'] &&
 				empty($parsedParameters['actor']['server']);
+		} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS) {
+			$currentActorType = $participant->getAttendee()->getActorType();
+			$currentActorId = $participant->getAttendee()->getActorId();
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'email' &&
+				$participant->getAttendee()->getActorType() === Attendee::ACTOR_EMAILS &&
+				$participant->getAttendee()->getActorId() === $parsedParameters['actor']['id'];
 		} else {
 			$currentActorType = $participant->getAttendee()->getActorType();
 			$currentActorId = $participant->getAttendee()->getActorId();
@@ -457,7 +463,12 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('An administrator demoted {user} from moderator');
 			}
 		} elseif ($message === 'guest_moderator_promoted') {
-			$parsedParameters['user'] = $this->getGuest($room, Attendee::ACTOR_GUESTS, $parameters['session']);
+			if (isset($parameters['type'], $parameters['id'])) {
+				$parsedParameters['user'] = $this->getGuest($room, $parameters['type'], $parameters['id']);
+			} else {
+				// Before Nextcloud 30
+				$parsedParameters['user'] = $this->getGuest($room, Attendee::ACTOR_GUESTS, $parameters['session']);
+			}
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
@@ -470,7 +481,12 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('An administrator promoted {user} to moderator');
 			}
 		} elseif ($message === 'guest_moderator_demoted') {
-			$parsedParameters['user'] = $this->getGuest($room, Attendee::ACTOR_GUESTS, $parameters['session']);
+			if (isset($parameters['type'], $parameters['id'])) {
+				$parsedParameters['user'] = $this->getGuest($room, $parameters['type'], $parameters['id']);
+			} else {
+				// Before Nextcloud 30
+				$parsedParameters['user'] = $this->getGuest($room, Attendee::ACTOR_GUESTS, $parameters['session']);
+			}
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
@@ -847,6 +863,9 @@ class SystemMessage implements IEventListener {
 		if ($currentActorType === Attendee::ACTOR_GUESTS) {
 			return $parameter['type'] === 'guest' && $currentActorId === $parameter['id'];
 		}
+		if ($currentActorType === Attendee::ACTOR_EMAILS) {
+			return $parameter['type'] === 'guest' && 'email/' . $currentActorId === $parameter['id'];
+		}
 
 		if (isset($parameter['server'])
 			&& $currentActorType === Attendee::ACTOR_FEDERATED_USERS
@@ -1019,7 +1038,7 @@ class SystemMessage implements IEventListener {
 
 		return [
 			'type' => 'guest',
-			'id' => 'guest/' . $actorId,
+			'id' => ($actorType === Attendee::ACTOR_GUESTS ? 'guest/' : 'email/') . $actorId,
 			'name' => $this->guestNames[$key],
 		];
 	}
