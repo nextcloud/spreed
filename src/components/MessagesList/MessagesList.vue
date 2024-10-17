@@ -298,7 +298,7 @@ export default {
 				}
 
 				// scroll to bottom if needed
-				this.scrollToBottom({ smooth: true })
+				this.scrollToBottom({ smooth: false })
 
 				if (this.conversation?.type === CONVERSATION.TYPE.NOTE_TO_SELF) {
 					this.$nextTick(() => {
@@ -639,7 +639,7 @@ export default {
 				if (!isFocused) {
 					// Safeguard 2: in case the fallback message is not found too
 					// scroll to bottom
-					this.scrollToBottom({ force: true })
+					this.scrollToBottom({ smooth: false, force: true })
 				} else {
 					this.$store.dispatch('setVisualLastReadMessageId', {
 						token: this.token,
