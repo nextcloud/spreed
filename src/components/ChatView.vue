@@ -37,7 +37,7 @@
 					:aria-label="t('spreed', 'Scroll to bottom')"
 					:title="t('spreed', 'Scroll to bottom')"
 					class="scroll-to-bottom__button"
-					@click="smoothScrollToBottom">
+					@click="scrollToBottom">
 					<template #icon>
 						<ChevronDoubleDown :size="20" />
 					</template>
@@ -198,8 +198,8 @@ export default {
 			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId })
 		},
 
-		smoothScrollToBottom() {
-			EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
+		scrollToBottom() {
+			EventBus.emit('scroll-chat-to-bottom', { smooth: false, force: true })
 		},
 	},
 
