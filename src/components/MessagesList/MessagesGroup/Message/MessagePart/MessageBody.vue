@@ -5,7 +5,7 @@
 
 <template>
 	<div ref="messageMain"
-		v-element-size="[onResize, { width: 0, height: 24 }]"
+		v-element-size="[onResize, { width: 0, height: 22.5 }]"
 		v-intersection-observer="onIntersectionObserver"
 		class="message-main">
 		<!-- System or deleted message body content -->
@@ -50,6 +50,7 @@
 				:interactive="message.markdown && isEditable"
 				:use-extended-markdown="message.markdown"
 				:reference-limit="1"
+				reference-interactive-opt-in
 				@interact:todo="handleInteraction" />
 
 			<!-- Additional controls -->
@@ -217,7 +218,7 @@ export default {
 			currentCodeBlock: null,
 			copyButtonOffset: 0,
 			isVisible: false,
-			previousSize: { width: 0, height: 24 }, // default height of one-line message body without widgets
+			previousSize: { width: 0, height: 22.5 }, // default height of one-line message body without widgets
 		}
 	},
 
