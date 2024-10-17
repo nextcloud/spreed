@@ -42,13 +42,11 @@ export default {
 		}
 	},
 
-	data() {
-		return {
-			isPlayingTestSound: false,
-		}
-	},
-
 	computed: {
+		isPlayingTestSound() {
+			return this.soundsStore.audioObjectsPromises.wait !== null
+		},
+
 		buttonLabel() {
 			return this.isPlayingTestSound
 				// TRANSLATORS Playing the test sound to check speakers
@@ -67,23 +65,18 @@ export default {
 		}
 	},
 
+	beforeDestroy() {
+		this.soundsStore.pauseAudio('wait')
+	},
+
 	methods: {
 		t,
 
 		playTestSound() {
 			if (this.isPlayingTestSound) {
 				this.soundsStore.pauseAudio('wait')
-				return
-			}
-			this.isPlayingTestSound = true
-			try {
+			} else {
 				this.soundsStore.playAudio('wait')
-				this.soundsStore.audioObjects.wait.addEventListener('ended', () => {
-					this.isPlayingTestSound = false
-				}, { once: true })
-			} catch (error) {
-				console.error(error)
-				this.isPlayingTestSound = false
 			}
 		},
 	},
