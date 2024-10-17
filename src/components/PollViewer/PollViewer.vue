@@ -71,8 +71,15 @@
 					@click="modalPage = 'voting'">
 					{{ t('spreed', 'Change your vote') }}
 				</NcButton>
-				<!-- End poll button-->
 				<NcActions v-if="canEndPoll" force-menu>
+					<!-- Export poll button-->
+					<NcActionLink :href="exportPollBlob" :download="exportPollFileName">
+						<template #icon>
+							<IconFileDownload :size="20" />
+						</template>
+						{{ t('spreed', 'Export poll form') }}
+					</NcActionLink>
+					<!-- End poll button-->
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
@@ -81,20 +88,31 @@
 					</NcActionButton>
 				</NcActions>
 			</div>
+			<div v-else-if="selfIsOwnerOrModerator" class="poll-modal__actions">
+				<!-- Export poll button-->
+				<NcButton type="tertiary" :href="exportPollBlob" :download="exportPollFileName">
+					<template #icon>
+						<IconFileDownload :size="20" />
+					</template>
+					{{ t('spreed', 'Export poll form') }}
+				</NcButton>
+			</div>
 		</div>
 		<NcLoadingIcon v-else class="poll-modal__loading" />
 	</NcModal>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
+import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
 import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
 import { t, n } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -116,6 +134,7 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
+		NcActionLink,
 		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
 		NcModal,
@@ -124,6 +143,7 @@ export default {
 		PollVotersDetails,
 		// icons
 		FileLock,
+		IconFileDownload,
 		PollIcon,
 	},
 
@@ -133,37 +153,44 @@ export default {
 		const loading = ref(false)
 		const dialogHeaderId = `guest-welcome-header-${useId()}`
 
+		const pollsStore = usePollsStore()
+		const activePoll = computed(() => pollsStore.activePoll)
+		const name = computed(() => activePoll.value?.name)
+		const id = computed(() => activePoll.value?.id)
+		const token = computed(() => activePoll.value?.token)
+
+		const poll = computed(() => pollsStore.getPoll(token.value, id.value))
+
+		const exportPollBlob = computed(() => {
+			const jsonString = JSON.stringify({
+				question: poll.value.question,
+				options: poll.value.options,
+				isPrivate: poll.value.resultMode === POLL.MODE.HIDDEN,
+				isMultipleAnswer: poll.value.maxVotes === POLL.ANSWER_TYPE.MULTIPLE,
+			}, null, 2)
+			const blob = new Blob([jsonString], { type: 'application/json' })
+
+			return URL.createObjectURL(blob)
+		})
+		const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
+
 		return {
 			isInCall: useIsInCall(),
-			pollsStore: usePollsStore(),
+			pollsStore,
 			voteToSubmit,
 			modalPage,
 			loading,
 			dialogHeaderId,
+			name,
+			id,
+			token,
+			poll,
+			exportPollBlob,
+			exportPollFileName,
 		}
 	},
 
 	computed: {
-		activePoll() {
-			return this.pollsStore.activePoll
-		},
-
-		name() {
-			return this.activePoll?.name
-		},
-
-		id() {
-			return this.activePoll?.id
-		},
-
-		token() {
-			return this.activePoll?.token
-		},
-
-		poll() {
-			return this.pollsStore.getPoll(this.token, this.id)
-		},
-
 		selfHasVoted() {
 			return this.poll?.votedSelf?.length > 0
 		},
