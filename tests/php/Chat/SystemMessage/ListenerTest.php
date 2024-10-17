@@ -280,13 +280,25 @@ class ListenerTest extends TestCase {
 				Attendee::ACTOR_GUESTS,
 				Participant::GUEST,
 				Participant::GUEST_MODERATOR,
-				[['message' => 'guest_moderator_promoted', 'parameters' => ['session' => 'bob_participant']]],
+				[['message' => 'guest_moderator_promoted', 'parameters' => ['type' => 'guests', 'id' => 'bob_participant']]],
 			],
 			[
 				Attendee::ACTOR_GUESTS,
 				Participant::GUEST_MODERATOR,
 				Participant::GUEST,
-				[['message' => 'guest_moderator_demoted', 'parameters' => ['session' => 'bob_participant']]],
+				[['message' => 'guest_moderator_demoted', 'parameters' => ['type' => 'guests', 'id' => 'bob_participant']]],
+			],
+			[
+				Attendee::ACTOR_EMAILS,
+				Participant::GUEST,
+				Participant::GUEST_MODERATOR,
+				[['message' => 'guest_moderator_promoted', 'parameters' => ['type' => 'emails', 'id' => 'bob_participant']]],
+			],
+			[
+				Attendee::ACTOR_EMAILS,
+				Participant::GUEST_MODERATOR,
+				Participant::GUEST,
+				[['message' => 'guest_moderator_demoted', 'parameters' => ['type' => 'emails', 'id' => 'bob_participant']]],
 			],
 			[
 				Attendee::ACTOR_USERS,
