@@ -131,6 +131,7 @@ class UserMention implements IEventListener {
 			$message = str_replace('@"' . $search . '"', '{' . $mentionParameterId . '}', $message);
 			if (!str_contains($search, ' ')
 				&& !str_starts_with($search, 'guest/')
+				&& !str_starts_with($search, 'email/')
 				&& !str_starts_with($search, 'group/')
 				// && !str_starts_with($search, 'federated_group/')
 				// && !str_starts_with($search, 'team/')
@@ -157,6 +158,20 @@ class UserMention implements IEventListener {
 					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_GUESTS, substr($mention['id'], strlen('guest/')));
 					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
 				} catch (ParticipantNotFoundException $e) {
+					$displayName = $this->l->t('Guest');
+				}
+
+				$messageParameters[$mentionParameterId] = [
+					'type' => $mention['type'],
+					'id' => $mention['id'],
+					'name' => $displayName,
+				];
+			} elseif ($mention['type'] === 'email') {
+				try {
+					$mention['id'] = substr($mention['id'], strlen('email/'));
+					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_EMAILS, $mention['id']);
+					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
+				} catch (ParticipantNotFoundException) {
 					$displayName = $this->l->t('Guest');
 				}
 
