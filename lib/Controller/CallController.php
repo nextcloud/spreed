@@ -159,7 +159,14 @@ class CallController extends AEnvironmentAwareController {
 
 		fseek($output, 0);
 
-		return new DataDownloadResponse(stream_get_contents($output), 'participants.csv', 'text/csv');
+		// Clean the room name
+		$cleanedRoomName = preg_replace('/[\/\\:*?"<>|\- ]+/', '-', $this->room->getName());
+		// Limit to a reasonable length
+		$cleanedRoomName = substr($cleanedRoomName, 0, 100);
+		$date = $this->timeFactory->getDateTime()->format('Y-m-d');
+		$fileName = $cleanedRoomName . ' ' . $date . '.csv';
+	
+		return new DataDownloadResponse(stream_get_contents($output), $fileName, 'text/csv');
 	}
 
 	/**
