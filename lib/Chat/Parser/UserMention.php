@@ -114,6 +114,7 @@ class UserMention implements IEventListener {
 
 			$search = $mention['id'];
 			if (
+				$mention['type'] === 'email' ||
 				$mention['type'] === 'group' ||
 				// $mention['type'] === 'federated_group' ||
 				// $mention['type'] === 'team' ||
@@ -168,7 +169,6 @@ class UserMention implements IEventListener {
 				];
 			} elseif ($mention['type'] === 'email') {
 				try {
-					$mention['id'] = substr($mention['id'], strlen('email/'));
 					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_EMAILS, $mention['id']);
 					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
 				} catch (ParticipantNotFoundException) {
