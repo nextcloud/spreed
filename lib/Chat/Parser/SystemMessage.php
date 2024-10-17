@@ -864,7 +864,7 @@ class SystemMessage implements IEventListener {
 			return $parameter['type'] === 'guest' && $currentActorId === $parameter['id'];
 		}
 		if ($currentActorType === Attendee::ACTOR_EMAILS) {
-			return $parameter['type'] === 'email' && $currentActorId === $parameter['id'];
+			return $parameter['type'] === 'guest' && 'email/' . $currentActorId === $parameter['id'];
 		}
 
 		if (isset($parameter['server'])
@@ -1037,8 +1037,8 @@ class SystemMessage implements IEventListener {
 		}
 
 		return [
-			'type' => $actorType === Attendee::ACTOR_GUESTS ? 'guest' : 'email',
-			'id' => ($actorType === Attendee::ACTOR_GUESTS ? 'guest/' : '') . $actorId,
+			'type' => 'guest',
+			'id' => ($actorType === Attendee::ACTOR_GUESTS ? 'guest/' : 'email/') . $actorId,
 			'name' => $this->guestNames[$key],
 		];
 	}
