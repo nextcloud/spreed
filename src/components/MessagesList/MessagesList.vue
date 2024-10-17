@@ -178,6 +178,8 @@ export default {
 			dateSeparatorLabels: {},
 
 			endScrollTimeout: () => {},
+
+			isScrollingToBottom: false,
 		}
 	},
 
@@ -940,6 +942,10 @@ export default {
 
 		endScroll() {
 			this.isScrolling = false
+			// set timeout to avoid flickering
+			setTimeout(() => {
+				this.isScrollingToBottom = false
+			}, 500)
 			clearTimeout(this.endScrollTimeout)
 		},
 
@@ -1104,6 +1110,7 @@ export default {
 				let newTop
 				if (options?.force) {
 					newTop = this.$refs.scroller.scrollHeight
+					this.isScrollingToBottom = true
 					this.setChatScrolledToBottom(true)
 				} else if (!this.isSticky) {
 					// Reading old messages
@@ -1278,6 +1285,11 @@ export default {
 		},
 
 		onMessageHeightChanged({ heightDiff }) {
+			if (this.isScrollingToBottom || heightDiff <= 0) {
+				// Don't scroll while the user is scrolling
+				// or if the height difference is negative (e.g. when a message is deleted)
+				return
+			}
 			// scroll down by the height difference
 			this.$refs.scroller.scrollTop += heightDiff
 		},
