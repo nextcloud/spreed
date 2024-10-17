@@ -171,7 +171,7 @@ export default {
 
 			stopFetchingOldMessages: false,
 
-			isScrolling: false,
+			isScrolling: null,
 
 			stickyDate: null,
 
@@ -856,12 +856,13 @@ export default {
 			})
 		},
 
-		onScroll() {
+		onScroll(event) {
 			// handle scrolling status
 			if (this.isScrolling) {
 				clearTimeout(this.endScrollTimeout)
 			}
-			this.isScrolling = true
+			this.isScrolling = this.previousScrollTopValue > event.target.scrollTop ? 'up' : 'down'
+			this.previousScrollTopValue = event.target.scrollTop
 			this.endScrollTimeout = setTimeout(this.endScroll, 3000)
 			// handle sticky date
 			if (this.$refs.scroller.scrollTop === 0) {
@@ -909,14 +910,13 @@ export default {
 			if (Math.abs(scrollOffset - clientHeight) < SCROLL_TOLERANCE && !this.hasMoreMessagesToLoad && scrollTop > 0) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
-				this.previousScrollTopValue = scrollTop
 				this.debounceUpdateReadMarkerPosition()
 				return
 			}
 
 			this.setChatScrolledToBottom(false)
 
-			if ((scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue)
+			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
 				|| skipHeightCheck) {
 				if (this.loadingOldMessages || this.isChatBeginningReached) {
 					// already loading, don't do it twice
@@ -934,12 +934,12 @@ export default {
 				this.setChatScrolledToBottom(false, { auto: true })
 			}
 
-			this.previousScrollTopValue = this.$refs.scroller.scrollTop
 			this.debounceUpdateReadMarkerPosition()
 		},
 
 		endScroll() {
-			this.isScrolling = false
+			this.debounceHandleScroll.flush?.()
+			this.isScrolling = null
 			clearTimeout(this.endScrollTimeout)
 		},
 
