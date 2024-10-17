@@ -299,18 +299,36 @@ class ParticipantService {
 	}
 
 	/**
-	 * @param Participant $participant
+	 * @return Participant::NOTIFY_*
 	 */
+	protected function getDefaultGroupNotification(): int {
+		$config = (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_MENTION);
+		return max(Participant::NOTIFY_DEFAULT, min($config, Participant::NOTIFY_NEVER));
+	}
+
 	public function archiveConversation(Participant $participant): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setArchived(true);
 		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+
+		$room = $participant->getRoom();
+		if ($room->getType() === Room::TYPE_PUBLIC || $room->getType() === Room::TYPE_GROUP) {
+			// Turn of call notifications by default
+			if ($attendee->getNotificationCalls() === Participant::NOTIFY_CALLS_ON) {
+				$attendee->setNotificationCalls(Participant::NOTIFY_CALLS_OFF);
+			}
+
+			// Reduce notifications when it was "Always" via the default
+			// Otherwise we respect the attendees selection
+			if ($attendee->getNotificationLevel() === Participant::NOTIFY_DEFAULT
+				&& $this->getDefaultGroupNotification() !== Participant::NOTIFY_NEVER) {
+				$attendee->setNotificationCalls(Participant::NOTIFY_MENTION);
+			}
+		}
+
 		$this->attendeeMapper->update($attendee);
 	}
 
-	/**
-	 * @param Participant $participant
-	 */
 	public function unarchiveConversation(Participant $participant): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setArchived(false);
