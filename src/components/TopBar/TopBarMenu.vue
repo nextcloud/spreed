@@ -139,6 +139,14 @@
 				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
+			<NcActionLink v-if="isInCall && canModerate"
+				:href="downloadCallParticipantsLink"
+				target="_blank">
+				<template #icon>
+					<IconDownload :size="20" />
+				</template>
+				{{ t('spreed', 'Download attendance list') }}
+			</NcActionLink>
 		</NcActions>
 	</div>
 </template>
@@ -147,6 +155,7 @@
 import Cog from 'vue-material-design-icons/Cog.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import IconDownload from 'vue-material-design-icons/Download.vue'
 import File from 'vue-material-design-icons/File.vue'
 import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
@@ -161,6 +170,7 @@ import GridView from 'vue-material-design-icons/ViewGrid.vue'
 import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { generateOcsUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
@@ -208,6 +218,7 @@ export default {
 		FullscreenExit,
 		GridView,
 		HandBackLeft,
+		IconDownload,
 		MicrophoneOff,
 		PromotedView,
 		RecordCircle,
@@ -368,6 +379,10 @@ export default {
 
 		showCallLayoutSwitch() {
 			return !this.callViewStore.isEmptyCallView
+		},
+
+		downloadCallParticipantsLink() {
+			return generateOcsUrl('apps/spreed/api/v4/call/{token}/download', { token: this.token })
 		},
 	},
 
