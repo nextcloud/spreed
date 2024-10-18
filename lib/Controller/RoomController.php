@@ -1082,11 +1082,8 @@ class RoomController extends AEnvironmentAwareController {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
-				if ($this->participant->hasModeratorPermissions()) {
-					$result['status'] = IUserStatus::OFFLINE;
-					$result['statusIcon'] = null;
-					$result['statusMessage'] = $participant->getAttendee()->getInvitedCloudId();
-					$result['statusClearAt'] = null;
+				if ($this->participant->hasModeratorPermissions() || $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId()) {
+					$result['invitedActorId'] = $participant->getAttendee()->getInvitedCloudId();
 				}
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 				if ($participant->getSession() instanceof Session && $participant->getSession()->getLastPing() <= $maxPingAge) {

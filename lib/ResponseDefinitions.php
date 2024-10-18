@@ -173,6 +173,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkParticipant = array{
  *     actorId: string,
+ *     invitedActorId?: string,
  *     actorType: string,
  *     attendeeId: int,
  *     attendeePermissions: int,
@@ -227,6 +228,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkRoom = array{
  *     actorId: string,
+ *     invitedActorId?: string,
  *     actorType: string,
  *     attendeeId: int,
  *     attendeePermissions: int,
