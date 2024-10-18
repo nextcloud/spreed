@@ -69,7 +69,8 @@ class Listener implements IEventListener {
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$userIds = $this->participantService->getParticipantUserIds($room, $activeSince);
 		$cloudIds = $this->participantService->getParticipantActorIdsByActorType($room, [Attendee::ACTOR_FEDERATED_USERS], $activeSince);
-		$numGuests = $this->participantService->getGuestCount($room, $activeSince);
+		$numGuests = $this->participantService->getActorsCountByType($room, Attendee::ACTOR_GUESTS, $activeSince->getTimestamp());
+		$numGuests += $this->participantService->getActorsCountByType($room, Attendee::ACTOR_EMAILS, $activeSince->getTimestamp());
 
 		$message = 'call_ended';
 		if ($event instanceof CallEndedForEveryoneEvent) {
