@@ -311,7 +311,11 @@ class Listener implements IEventListener {
 		$room = $event->getRoom();
 		$attendee = $event->getParticipant()->getAttendee();
 
-		if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+		if (!in_array($attendee->getActorType(), [
+			Attendee::ACTOR_USERS,
+			Attendee::ACTOR_EMAILS,
+			Attendee::ACTOR_GUESTS,
+		], true)) {
 			return;
 		}
 
@@ -324,9 +328,9 @@ class Listener implements IEventListener {
 				$this->sendSystemMessage($room, 'moderator_demoted', ['user' => $attendee->getActorId()]);
 			}
 		} elseif ($event->getNewValue() === Participant::GUEST_MODERATOR) {
-			$this->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => $attendee->getActorId()]);
+			$this->sendSystemMessage($room, 'guest_moderator_promoted', ['type' => $attendee->getActorType(), 'id' => $attendee->getActorId()]);
 		} elseif ($event->getNewValue() === Participant::GUEST) {
-			$this->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
+			$this->sendSystemMessage($room, 'guest_moderator_demoted', ['type' => $attendee->getActorType(), 'id' => $attendee->getActorId()]);
 		}
 	}
 

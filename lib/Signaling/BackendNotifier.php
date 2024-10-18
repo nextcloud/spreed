@@ -325,6 +325,7 @@ class BackendNotifier {
 			$attendee = $participant->getAttendee();
 			if ($attendee->getActorType() !== Attendee::ACTOR_USERS
 				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS
+				&& $attendee->getActorType() !== Attendee::ACTOR_EMAILS
 				&& $attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 				continue;
 			}
@@ -418,6 +419,7 @@ class BackendNotifier {
 				$attendee = $participant->getAttendee();
 				if ($attendee->getActorType() !== Attendee::ACTOR_USERS
 					&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS
+					&& $attendee->getActorType() !== Attendee::ACTOR_EMAILS
 					&& $attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 					continue;
 				}

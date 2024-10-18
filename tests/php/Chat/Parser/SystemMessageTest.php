@@ -1217,15 +1217,15 @@ class SystemMessageTest extends TestCase {
 
 	public static function dataGetGuest(): array {
 		return [
-			[Attendee::ACTOR_GUESTS, sha1('name')],
-			[Attendee::ACTOR_EMAILS, 'test@test.tld'],
+			[Attendee::ACTOR_GUESTS, sha1('name'), 'guest/' . sha1('name')],
+			[Attendee::ACTOR_EMAILS, hash('sha256', 'test@test.tld'), 'email/' . hash('sha256', 'test@test.tld')],
 		];
 	}
 
 	/**
 	 * @dataProvider dataGetGuest
 	 */
-	public function testGetGuest(string $attendeeType, string $actorId): void {
+	public function testGetGuest(string $attendeeType, string $actorId, string $expected): void {
 		/** @var Room&MockObject $room */
 		$room = $this->createMock(Room::class);
 
@@ -1237,14 +1237,14 @@ class SystemMessageTest extends TestCase {
 
 		$this->assertSame([
 			'type' => 'guest',
-			'id' => 'guest/' . $actorId,
+			'id' => $expected,
 			'name' => 'name',
 		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 
 		// Cached call: no call to getGuestName() again
 		$this->assertSame([
 			'type' => 'guest',
-			'id' => 'guest/' . $actorId,
+			'id' => $expected,
 			'name' => 'name',
 		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 	}
