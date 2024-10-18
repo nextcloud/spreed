@@ -191,7 +191,7 @@ class BotService {
 		];
 
 		$data = [
-			'verify' => false,// $this->certificateManager->getAbsoluteBundlePath(),
+			'verify' => $this->certificateManager->getAbsoluteBundlePath(),
 			'nextcloud' => [
 				'allow_local_address' => true,
 			],
