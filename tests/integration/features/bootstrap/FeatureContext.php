@@ -847,6 +847,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['callId'])) {
 					$data['callId'] = (string)$attendee['callId'];
 				}
+				if (isset($expectedKeys['invitedActorId'], $attendee['invitedActorId'])) {
+					$data['invitedActorId'] = (string)$attendee['invitedActorId'];
+				}
 				if (isset($expectedKeys['status'], $attendee['status'])) {
 					$data['status'] = (string)$attendee['status'];
 				}
@@ -891,6 +894,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($attendee['actorId']) && str_ends_with($attendee['actorId'], '@{$REMOTE_URL}')) {
 					$attendee['actorId'] = str_replace('{$REMOTE_URL}', rtrim($this->remoteServerUrl, '/'), $attendee['actorId']);
 				}
+				if (preg_match('/^SHA256\(([a-z0-9@.+\-]+)\)$/', $attendee['actorId'], $match)) {
+					$attendee['actorId'] = hash('sha256', $match[1]);
+				}
 
 				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users' && !str_contains($attendee['actorId'], '@')) {
 					$attendee['actorId'] .= '@' . rtrim($this->localRemoteServerUrl, '/');
@@ -926,6 +932,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 				if (isset($attendee['actorType']) && $attendee['actorType'] === 'phones') {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
+				}
+
+				if (isset($attendee['invitedActorId']) && $attendee['invitedActorId'] === 'ABSENT') {
+					unset($attendee['invitedActorId']);
 				}
 
 				if (isset($attendee['status']) && $attendee['status'] === 'ABSENT') {
@@ -1382,9 +1392,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$body = null;
 		if ($formData instanceof TableNode) {
 			$attendee = $formData?->getRowsHash()['attendeeId'] ?? '';
-			if (isset(self::$userToAttendeeId[$identifier]['emails'][$attendee])) {
+			$actorId = hash('sha256', $attendee);
+			if (isset(self::$userToAttendeeId[$identifier]['emails'][$actorId])) {
 				$body = [
-					'attendeeId' => self::$userToAttendeeId[$identifier]['emails'][$attendee],
+					'attendeeId' => self::$userToAttendeeId[$identifier]['emails'][$actorId],
 				];
 			} elseif (str_starts_with($attendee, 'not-found')) {
 				$body = [
