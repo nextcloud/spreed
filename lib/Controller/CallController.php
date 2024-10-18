@@ -38,6 +38,7 @@ use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IUserManager;
 
@@ -55,6 +56,7 @@ class CallController extends AEnvironmentAwareController {
 		private RoomService $roomService,
 		private IUserManager $userManager,
 		private ITimeFactory $timeFactory,
+		private IConfig $serverConfig,
 		private Config $talkConfig,
 		protected Authenticator $federationAuthenticator,
 		private SIPDialOutService $dialOutService,
@@ -163,9 +165,21 @@ class CallController extends AEnvironmentAwareController {
 		$cleanedRoomName = preg_replace('/[\/\\:*?"<>|\- ]+/', '-', $this->room->getName());
 		// Limit to a reasonable length
 		$cleanedRoomName = substr($cleanedRoomName, 0, 100);
-		$date = $this->timeFactory->getDateTime()->format('Y-m-d');
+
+		$timezone = 'UTC';
+		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$timezone = $this->serverConfig->getUserValue($this->participant->getAttendee()->getActorId(), 'core', 'timezone', 'UTC');
+		}
+
+		try {
+			$dateTimeZone = new \DateTimeZone($timezone);
+		} catch (\DateInvalidTimeZoneException) {
+			$dateTimeZone = null;
+		}
+
+		$date = $this->timeFactory->getDateTime('now', $dateTimeZone)->format('Y-m-d');
 		$fileName = $cleanedRoomName . ' ' . $date . '.csv';
-	
+
 		return new DataDownloadResponse(stream_get_contents($output), $fileName, 'text/csv');
 	}
 
