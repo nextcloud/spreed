@@ -24,12 +24,24 @@
 		</p>
 		<div class="poll-editor__wrapper">
 			<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<!--native file picker, hidden -->
+			<input id="poll-upload"
+				ref="pollImport"
+				type="file"
+				class="hidden-visually"
+				@change="importPoll">
 			<NcActions v-if="supportPollDrafts" force-menu>
 				<NcActionButton v-if="isModerator" close-after-click @click="openPollDraftHandler">
 					<template #icon>
 						<IconFileEdit :size="20" />
 					</template>
 					{{ t('spreed', 'Browse poll drafts') }}
+				</NcActionButton>
+				<NcActionButton close-after-click @click="triggerImport">
+					<template #icon>
+						<IconFileUpload :size="20" />
+					</template>
+					{{ t('spreed', 'Import draft from file') }}
 				</NcActionButton>
 			</NcActions>
 		</div>
@@ -96,8 +108,10 @@ import { computed, nextTick, reactive, ref } from 'vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
+import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -113,6 +127,7 @@ import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
+import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
 	token: string,
@@ -131,6 +146,7 @@ const pollsStore = usePollsStore()
 
 const isOpenedFromDraft = ref(false)
 const pollOption = ref(null)
+const pollImport = ref(null)
 
 const pollForm = reactive<createPollParams>({
 	question: '',
@@ -204,6 +220,36 @@ function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
 	if (pollsStore.drafts[props.token][id]) {
 		fillPollForm(pollsStore.drafts[props.token][id])
 	}
+}
+
+/**
+ * Call native input[type='file'] to import a file
+ */
+function triggerImport() {
+	pollImport.value.click()
+}
+
+/**
+ * Validate imported file and insert data into form fields
+ * @param event import event
+ */
+function importPoll(event: Event) {
+	if (!(event.target as HTMLInputElement).files?.[0]) {
+		return
+	}
+
+	const reader = new FileReader()
+	reader.onload = (e: ProgressEvent) => {
+		try {
+			const parsedObject = validatePollForm(JSON.parse((e.target as FileReader).result as string))
+			fillPollForm(parsedObject)
+		} catch (error) {
+			showError(t('spreed', 'Error while importing poll'))
+			console.error('Error while importing poll:', error)
+		}
+	}
+
+	reader.readAsText((event.target as HTMLInputElement).files[0])
 }
 
 /**
