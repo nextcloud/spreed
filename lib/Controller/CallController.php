@@ -173,7 +173,7 @@ class CallController extends AEnvironmentAwareController {
 
 		try {
 			$dateTimeZone = new \DateTimeZone($timezone);
-		} catch (\DateInvalidTimeZoneException) {
+		} catch (\Throwable) {
 			$dateTimeZone = null;
 		}
 
