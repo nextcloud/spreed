@@ -94,6 +94,12 @@
 					</template>
 					{{ t('spreed', 'Save as draft') }}
 				</NcActionButton>
+				<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+					<template #icon>
+						<IconFileDownload :size="20" />
+					</template>
+					{{ t('spreed', 'Export draft to file') }}
+				</NcActionLink>
 			</NcActions>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
@@ -107,6 +113,7 @@ import { computed, nextTick, reactive, ref } from 'vue'
 
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
+import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
 import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import IconFileUpload from 'vue-material-design-icons/FileUpload.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -115,6 +122,7 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -127,6 +135,7 @@ import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
+import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 import { validatePollForm } from '../../utils/validatePollForm.ts'
 
 const props = defineProps<{
@@ -176,6 +185,10 @@ const isMultipleAnswer = computed({
 })
 
 const isModerator = computed(() => (store.getters as unknown).isModerator)
+
+const exportPollURI = computed(() => convertToJSONDataURI(pollForm))
+const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
+
 /**
  * Remove a previously added option
  * @param index option index
