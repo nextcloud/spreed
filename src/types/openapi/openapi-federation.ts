@@ -296,6 +296,7 @@ export type components = {
         };
         Room: {
             actorId: string;
+            invitedActorId?: string;
             actorType: string;
             /** Format: int64 */
             attendeeId: number;
