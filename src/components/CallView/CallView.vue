@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div id="call-container">
+	<div id="call-container" :class="callContainerClass">
 		<ViewerOverlayCallView v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
@@ -137,6 +137,7 @@ import { provide, ref } from 'vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import Grid from './Grid/Grid.vue'
@@ -151,13 +152,18 @@ import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
 import { SIMULCAST } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { useCallViewStore } from '../../stores/callView.js'
 import { useSettingsStore } from '../../stores/settings.js'
+import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
+
+const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
+const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
 export default {
 	name: 'CallView',
@@ -204,12 +210,16 @@ export default {
 			localMediaModel.disableVideo()
 		}
 
+		// Fallback ref for versions before v29.0.4
+		const isBackgroundBlurred = ref(BrowserStorage.getItem('background-blurred') !== 'false')
+
 		return {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
 			devMode,
 			callViewStore: useCallViewStore(),
+			isBackgroundBlurred,
 		}
 	},
 
@@ -379,6 +389,17 @@ export default {
 		supportedReactions() {
 			return getTalkConfig(this.token, 'call', 'supported-reactions')
 		},
+
+		/**
+		 * Fallback style for versions before v29.0.4
+		 */
+		callContainerClass() {
+			if (serverSupportsBackgroundBlurred) {
+				return
+			}
+
+			return this.isBackgroundBlurred ? 'call-container__blurred' : 'call-container__non-blurred'
+		}
 	},
 
 	watch: {
@@ -470,6 +491,7 @@ export default {
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
+		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 
 	beforeDestroy() {
@@ -480,6 +502,7 @@ export default {
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
+		unsubscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 
 	methods: {
@@ -748,6 +771,14 @@ export default {
 			}
 		},
 
+		/**
+		 * Fallback method for versions before v29.0.4
+		 * @param {boolean} value whether background should be blurred
+		 */
+		setBackgroundBlurred(value) {
+			this.isBackgroundBlurred = value
+		},
+
 		isModelWithVideo(callParticipantModel) {
 			if (!callParticipantModel) {
 				return false
@@ -776,8 +807,16 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: $color-call-background;
+	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
 	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
+
+	&.call-container__blurred {
+		backdrop-filter: blur(25px);
+	}
+	&.call-container__non-blurred {
+		backdrop-filter: none;
+	}
 }
 
 #videos {
