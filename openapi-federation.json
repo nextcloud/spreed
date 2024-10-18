@@ -624,6 +624,9 @@
                     "actorId": {
                         "type": "string"
                     },
+                    "invitedActorId": {
+                        "type": "string"
+                    },
                     "actorType": {
                         "type": "string"
                     },

@@ -2052,6 +2052,7 @@ export type components = {
         };
         Participant: {
             actorId: string;
+            invitedActorId?: string;
             actorType: string;
             /** Format: int64 */
             attendeeId: number;
@@ -2160,6 +2161,7 @@ export type components = {
         };
         Room: {
             actorId: string;
+            invitedActorId?: string;
             actorType: string;
             /** Format: int64 */
             attendeeId: number;
@@ -2545,7 +2547,7 @@ export interface operations {
                      * @description Type of actor to ban, or `ip` when banning a clients remote address
                      * @enum {string}
                      */
-                    actorType: "users" | "guests" | "ip";
+                    actorType: "users" | "guests" | "emails" | "ip";
                     /** @description Actor ID or the IP address or range in case of type `ip` */
                     actorId: string;
                     /**
