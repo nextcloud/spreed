@@ -8,11 +8,31 @@
 		:close-on-click-outside="!isFilled"
 		v-on="$listeners"
 		@update:open="emit('close')">
+		<NcButton v-if="supportPollDrafts && isOpenedFromDraft"
+			class="poll-editor__back-button"
+			type="tertiary"
+			:title="t('spreed', 'Back')"
+			:aria-label="t('spreed', 'Back')"
+			@click="goBack">
+			<template #icon>
+				<IconArrowLeft :size="20" />
+			</template>
+		</NcButton>
 		<!-- Poll Question -->
 		<p class="poll-editor__caption">
 			{{ t('spreed', 'Question') }}
 		</p>
-		<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+		<div class="poll-editor__wrapper">
+			<NcTextField :value.sync="pollForm.question" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcActions v-if="supportPollDrafts" force-menu>
+				<NcActionButton v-if="isModerator" close-after-click @click="openPollDraftHandler">
+					<template #icon>
+						<IconFileEdit :size="20" />
+					</template>
+					{{ t('spreed', 'Browse poll drafts') }}
+				</NcActionButton>
+			</NcActions>
+		</div>
 
 		<!-- Poll options -->
 		<p class="poll-editor__caption">
@@ -55,9 +75,14 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<template #actions>
-			<NcButton type="tertiary" @click="emit('close')">
-				{{ t('spreed', 'Dismiss') }}
-			</NcButton>
+			<NcActions v-if="supportPollDrafts" force-menu>
+				<NcActionButton v-if="isModerator" :disabled="!isFilled" @click="createPollDraft">
+					<template #icon>
+						<IconFileEdit :size="20" />
+					</template>
+					{{ t('spreed', 'Save as draft') }}
+				</NcActionButton>
+			</NcActions>
 			<NcButton type="primary" :disabled="!isFilled" @click="createPoll">
 				{{ t('spreed', 'Create poll') }}
 			</NcButton>
@@ -68,17 +93,24 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
 
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
+import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { t } from '@nextcloud/l10n'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import { useStore } from '../../composables/useStore.js'
 import { POLL } from '../../constants.js'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
 import type { createPollParams } from '../../types/index.ts'
 
@@ -88,9 +120,16 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(event: 'close'): void,
 }>()
+defineExpose({
+	fillPollEditorFromDraft,
+})
 
+const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
+
+const store = useStore()
 const pollsStore = usePollsStore()
 
+const isOpenedFromDraft = ref(false)
 const pollOption = ref(null)
 
 const pollForm = reactive<createPollParams>({
@@ -100,7 +139,7 @@ const pollForm = reactive<createPollParams>({
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
 })
 
-const isFilled = computed(() => !!pollForm.question || pollForm.options.some(option => option))
+const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter(option => Boolean(option)).length >= 2)
 
 const isPrivate = computed({
 	get() {
@@ -120,6 +159,7 @@ const isMultipleAnswer = computed({
 	}
 })
 
+const isModerator = computed(() => (store.getters as unknown).isModerator)
 /**
  * Remove a previously added option
  * @param index option index
@@ -150,10 +190,70 @@ async function createPoll() {
 		emit('close')
 	}
 }
+
+/**
+ * Pre-fills form from the draft
+ * @param id poll draft ID
+ * @param isAlreadyOpened poll draft ID
+ */
+function fillPollEditorFromDraft(id: number|null, isAlreadyOpened: boolean) {
+	if (!isAlreadyOpened) {
+		isOpenedFromDraft.value = true
+	}
+
+	if (pollsStore.drafts[props.token][id]) {
+		fillPollForm(pollsStore.drafts[props.token][id])
+	}
+}
+
+/**
+ * Insert data into form fields
+ * @param payload data to fill with
+ */
+function fillPollForm(payload: createPollParams) {
+	for (const key of Object.keys(pollForm)) {
+		pollForm[key] = payload[key]
+	}
+}
+
+/**
+ * Saves a poll draft for this conversation
+ */
+async function createPollDraft() {
+	await pollsStore.createPollDraft({
+		token: props.token,
+		form: pollForm,
+	})
+}
+
+/**
+ * Open a PollDraftHandler dialog
+ */
+function openPollDraftHandler() {
+	EventBus.emit('poll-drafts-open')
+}
+
+/**
+ * Open a PollDraftHandler dialog as Back action
+ */
+function goBack() {
+	openPollDraftHandler()
+	if (isOpenedFromDraft.value) {
+		nextTick(() => {
+			emit('close')
+		})
+	}
+}
 </script>
 
 <style lang="scss" scoped>
 .poll-editor {
+	&__wrapper {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
+	}
+
 	&__caption {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline);
 		font-weight: bold;
@@ -173,6 +273,13 @@ async function createPoll() {
 		flex-direction: column;
 		gap: 4px;
 		margin-bottom: 8px;
+	}
+
+	&__back-button {
+		position: absolute !important;
+		top: var(--default-grid-baseline);
+		left: var(--default-grid-baseline);
+		z-index: 1;
 	}
 }
 </style>

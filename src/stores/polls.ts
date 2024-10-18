@@ -6,7 +6,7 @@ import debounce from 'debounce'
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
-import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { showError, showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
 import {
@@ -141,8 +141,11 @@ export const usePollsStore = defineStore('polls', {
 			try {
 				const response = await createPollDraft({ token, ...form })
 				this.addPollDraft({ token, draft: response.data.ocs.data })
+
+				showSuccess(t('spreed', 'Poll draft has been saved'))
 				return response.data.ocs.data
 			} catch (error) {
+				showError(t('spreed', 'An error occurred while saving the draft'))
 				console.error(error)
 			}
 		},
