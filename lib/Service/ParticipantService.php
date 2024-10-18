@@ -1724,13 +1724,8 @@ class ParticipantService {
 		}, $attendees);
 	}
 
-	public function getGuestCount(Room $room, ?\DateTime $maxLastJoined = null): int {
-		$maxLastJoinedTimestamp = null;
-		if ($maxLastJoined !== null) {
-			$maxLastJoinedTimestamp = $maxLastJoined->getTimestamp();
-		}
-
-		return $this->attendeeMapper->getActorsCountByType($room->getId(), Attendee::ACTOR_GUESTS, $maxLastJoinedTimestamp);
+	public function getActorsCountByType(Room $room, string $actorType, int $maxLastJoined): int {
+		return $this->attendeeMapper->getActorsCountByType($room->getId(), $actorType, $maxLastJoined);
 	}
 
 	/**
