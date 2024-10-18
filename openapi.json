@@ -679,6 +679,9 @@
                     "actorId": {
                         "type": "string"
                     },
+                    "invitedActorId": {
+                        "type": "string"
+                    },
                     "actorType": {
                         "type": "string"
                     },
@@ -1083,6 +1086,9 @@
                 ],
                 "properties": {
                     "actorId": {
+                        "type": "string"
+                    },
+                    "invitedActorId": {
                         "type": "string"
                     },
                     "actorType": {
@@ -2028,6 +2034,7 @@
                                         "enum": [
                                             "users",
                                             "guests",
+                                            "emails",
                                             "ip"
                                         ],
                                         "description": "Type of actor to ban, or `ip` when banning a clients remote address"
