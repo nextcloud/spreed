@@ -43,7 +43,7 @@
     "@vueuse/core": "^11.0.3",
     "blurhash": "^2.0.5",
     "crypto-js": "^4.2.0",
-    "debounce": "^2.1.0",
+    "debounce": "^2.2.0",
     "emoji-regex": "^10.4.0",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.2.14",
