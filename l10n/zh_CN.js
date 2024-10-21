@@ -31,7 +31,7 @@ OC.L10N.register(
     "- Check out the new grid and call view" : "- 体验一下新的排列和通话界面",
     "- You can now upload and drag'n'drop files directly from your device into the chat" : "- 您现在可以从您的设备上传或拖拽文件到一场对话",
     "- Shared files are now opened directly inside the chat view with the viewer apps" : "- 分享文件现在可以直接从聊天界面使用查看应用打开",
-    "- You can now search for chats and messages in the unified search in the top bar" : "- 您现在可以在顶栏中的统一搜索框搜索聊天和消息",
+    "- You can now search for chats and messages in the unified search in the top bar" : "- 你现在可以在顶栏的统一搜索框搜索聊天和消息",
     "- Spice up your messages with emojis from the emoji picker" : "- 用从表情选择器挑选来的表情符号为您的消息加点料",
     "- You can now change your camera and microphone while being in a call" : "- 您现在可以在通话时切换您的摄像头和麦克风",
     "- Give your conversations some context with a description and open it up so logged in users can find it and join themselves" : "- 给你的对话提供一些背景和描述，并打开它，以便登录用户可以找到它并加入他们自己",
