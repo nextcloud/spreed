@@ -89,22 +89,22 @@ export MAIN_SERVER_CONFIG_DIR
 export REAL_FEDERATED_SERVER_CONFIG_DIR
 
 export NEXTCLOUD_CONFIG_DIR="$MAIN_SERVER_CONFIG_DIR"
-OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
+MAIN_OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
+MAIN_SKELETON_DIR=$(${ROOT_DIR}/occ config:system:get skeletondirectory)
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "http://localhost:8080/"
+if [[ "$MAIN_SKELETON_DIR" != "" && -d $MAIN_SKELETON_DIR ]]; then
+	echo "Resetting custom skeletondirectory so that tests pass"
+	${ROOT_DIR}/occ config:system:delete skeletondirectory
+fi
 
 export NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR"
-OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
+REAL_FEDERATED_OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
+REAL_FEDERATED_SKELETON_DIR=$(${ROOT_DIR}/occ config:system:get skeletondirectory)
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "$TEST_REMOTE_URL"
-
-for CONFIG_DIR in $MAIN_SERVER_CONFIG_DIR $REAL_FEDERATED_SERVER_CONFIG_DIR; do
-	export NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR"
-
-	SKELETON_DIR=$(${ROOT_DIR}/occ config:system:get skeletondirectory)
-	if [[ "$SKELETON_DIR" ]]; then
-		echo "Resetting custom skeletondirectory so that tests pass"
-		${ROOT_DIR}/occ config:system:delete skeletondirectory
-	fi
-done
+if [[ "$REAL_FEDERATED_SKELETON_DIR" != "" && -d $REAL_FEDERATED_SKELETON_DIR ]]; then
+	echo "Resetting custom skeletondirectory so that tests pass"
+	${ROOT_DIR}/occ config:system:delete skeletondirectory
+fi
 
 echo ''
 echo -e "\033[0;36m#\033[0m"
@@ -193,18 +193,25 @@ echo ''
 echo -e "\033[0;36m#\033[0m"
 echo -e "\033[0;36m# Reverting configuration changes and disabling spreedcheats\033[0m"
 echo -e "\033[0;36m#\033[0m"
-for CONFIG_DIR in $MAIN_SERVER_CONFIG_DIR $REAL_FEDERATED_SERVER_CONFIG_DIR; do
-	export NEXTCLOUD_CONFIG_DIR="$CONFIG_DIR"
 
-	${ROOT_DIR}/occ app:disable spreedcheats
-	${ROOT_DIR}/occ config:system:set overwrite.cli.url --value $OVERWRITE_CLI_URL
-	if [[ "$SKELETON_DIR" ]]; then
-		${ROOT_DIR}/occ config:system:set skeletondirectory --value "$SKELETON_DIR"
-	fi
-done
+# Main server
+export NEXTCLOUD_CONFIG_DIR="$MAIN_SERVER_CONFIG_DIR"
+${ROOT_DIR}/occ app:disable spreedcheats
+${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "$MAIN_OVERWRITE_CLI_URL"
+if [[ "$MAIN_SKELETON_DIR" != "" && -d $MAIN_SKELETON_DIR ]]; then
+	${ROOT_DIR}/occ config:system:set skeletondirectory --value "$MAIN_SKELETON_DIR"
+fi
 
+# Real federated server
 if $DESTROY_REAL_FEDERATED_SERVER; then
-	rm -rf "$REAL_FEDERATED_SERVER_CONFIG_DIR" "$REAL_FEDERATED_SERVER_DATA_DIR"
+	rm -rf "'$REAL_FEDERATED_SERVER_CONFIG_DIR'" "'$REAL_FEDERATED_SERVER_DATA_DIR'"
+else
+	export NEXTCLOUD_CONFIG_DIR="$REAL_FEDERATED_SERVER_CONFIG_DIR"
+	${ROOT_DIR}/occ app:disable spreedcheats
+	${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "$REAL_FEDERATED_OVERWRITE_CLI_URL"
+	if [[ "$REAL_FEDERATED_SKELETON_DIR" != "" && -d $REAL_FEDERATED_SKELETON_DIR ]]; then
+		${ROOT_DIR}/occ config:system:set skeletondirectory --value "$REAL_FEDERATED_SKELETON_DIR"
+	fi
 fi
 
 rm -rf ../../../spreedcheats
@@ -212,5 +219,10 @@ rm -rf ../../../spreedcheats
 wait $PHPPID1
 wait $PHPPID2
 wait $PHPPID3
+
+echo ''
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Gracefully completed\033[0m"
+echo -e "\033[0;36m#\033[0m"
 
 exit $RESULT
