@@ -217,9 +217,10 @@ import MediaDevicesPreview from './MediaDevicesPreview.vue'
 import { PRIVACY } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { useSettingsStore } from '../../stores/settings.js'
+import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 
-const serverVersion = loadState('core', 'config', {}).versionstring ?? '29.0.0'
-const serverSupportsBackgroundBlurred = '29.0.4'.localeCompare(serverVersion) < 1
+const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
+const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
 const isBackgroundBlurredState = serverSupportsBackgroundBlurred
 	? loadState('spreed', 'force_enable_blur_filter', '') // 'yes', 'no', ''
@@ -320,11 +321,9 @@ export default {
 					{ configValue: 'no' })
 			}
 			BrowserStorage.removeItem('background-blurred')
-		} else {
+		} else if (blurred === null) {
 			// Fallback to BrowserStorage
-			if (blurred === null) {
-				BrowserStorage.setItem('background-blurred', 'true')
-			}
+			BrowserStorage.setItem('background-blurred', 'true')
 		}
 	},
 
@@ -380,12 +379,13 @@ export default {
 			this.privacyLoading = false
 		},
 
+		/**
+		 * Fallback method for versions before v29.0.4
+		 * @param {boolean} value whether background should be blurred
+		 */
 		toggleBackgroundBlurred(value) {
-			if (serverSupportsBackgroundBlurred) {
-				return
-			}
-			this.isBackgroundBlurred = value ? 'true' : 'false'
-			BrowserStorage.setItem('background-blurred', value)
+			this.isBackgroundBlurred = value.toString()
+			BrowserStorage.setItem('background-blurred', this.isBackgroundBlurred)
 			emit('set-background-blurred', value)
 		},
 
