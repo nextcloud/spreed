@@ -73,13 +73,13 @@ class GuestManager {
 		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
 			throw new \InvalidArgumentException('Cannot send email for non-email participant actor type');
 		}
-		$email = $participant->getAttendee()->getActorId();
+		$email = $participant->getAttendee()->getInvitedCloudId();
 		$pin = $participant->getAttendee()->getPin();
 
 		$event = new BeforeEmailInvitationSentEvent($room, $participant->getAttendee());
 		$this->dispatcher->dispatchTyped($event);
 
-		$link = $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
+		$link = $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken(), 'email' => $email, 'access' => $participant->getAttendee()->getAccessToken()]);
 
 		$message = $this->mailer->createMessage();
 
