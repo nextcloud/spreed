@@ -65,6 +65,8 @@ const state = {
 	},
 	inCall: {
 	},
+	joiningCall: {
+	},
 	connecting: {
 	},
 	connectionFailed: {
@@ -87,6 +89,10 @@ const state = {
 const getters = {
 	isInCall: (state) => (token) => {
 		return !!(state.inCall[token] && Object.keys(state.inCall[token]).length > 0)
+	},
+
+	isJoiningCall: (state) => (token) => {
+		return !!(state.joiningCall[token] && Object.keys(state.joiningCall[token]).length > 0)
 	},
 
 	isConnecting: (state) => (token) => {
@@ -335,6 +341,19 @@ const mutations = {
 
 	clearConnectionFailed(state, token) {
 		Vue.delete(state.connectionFailed, token)
+	},
+
+	joiningCall(state, { token, sessionId, flags }) {
+		if (!state.joiningCall[token]) {
+			Vue.set(state.joiningCall, token, {})
+		}
+		Vue.set(state.joiningCall[token], sessionId, flags)
+	},
+
+	finishedJoiningCall(state, { token, sessionId }) {
+		if (state.joiningCall[token] && state.joiningCall[token][sessionId]) {
+			Vue.delete(state.joiningCall[token], sessionId)
+		}
 	},
 
 	connecting(state, { token, sessionId, flags }) {
@@ -780,7 +799,12 @@ const actions = {
 	},
 
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags, silent, recordingConsent }) {
-		commit('connecting', { token, sessionId: participantIdentifier.sessionId, flags })
+		// t0: press join -> joinining call : true
+		// t1: signaling-join-call received -> joinining : false, inCall : true, connecting: true
+		// t1': signaling-join-call-failed  received -> joinining : false, inCall: false, connecting: false
+		// t2: signaling-users-in-room (internal signaling) OR signaling-participant-list-changed (external signaling) -> connecting: false
+
+		commit('joiningCall', { token, sessionId: participantIdentifier.sessionId, flags })
 
 		if (!participantIdentifier?.sessionId) {
 			console.error('Trying to join call without sessionId')
@@ -800,13 +824,31 @@ const actions = {
 				sessionId: participantIdentifier.sessionId,
 				flags,
 			})
-			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+			commit('finishedJoiningCall', { token, sessionId: participantIdentifier.sessionId })
+			// Set connecting until participants list is received
+			commit('connecting', { token, sessionId: participantIdentifier.sessionId, flags })
 		})
 
 		// Preparing the event listener for the signaling-join-call-failed event
 		EventBus.once('signaling-join-call-failed', () => {
+			commit('finishedJoiningCall', { token, sessionId: participantIdentifier.sessionId })
+		})
+
+		// Internal signaling event
+		EventBus.once('signaling-users-in-room', () => {
 			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
 		})
+
+		// External signaling event
+		// FIXME: This is a workaround for the missing signaling event
+		EventBus.once('signaling-participant-list-changed', () => {
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+		})
+		setTimeout(() => {
+			// If by accident we never receive a users list, just switch to
+			// "Waiting for others to join the call …" after some seconds.
+			commit('finishedConnecting', { token, sessionId: participantIdentifier.sessionId })
+		}, 10000)
 
 		try {
 			const actualFlags = await joinCall(token, flags, silent, recordingConsent)

@@ -9,11 +9,11 @@
 			id="call_button"
 			:title="startCallTitle"
 			:aria-label="startCallLabel"
-			:disabled="startCallButtonDisabled || loading || isConnecting"
+			:disabled="startCallButtonDisabled || loading || isJoiningCall"
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<NcLoadingIcon v-if="isConnecting || loading" />
+				<NcLoadingIcon v-if="isJoiningCall || loading" />
 				<IconPhoneDial v-else-if="isPhoneRoom" :size="20" />
 				<IconPhoneOutline v-else-if="silentCall" :size="20" />
 				<IconPhone v-else :size="20" />
@@ -274,7 +274,7 @@ export default {
 				return t('spreed', 'Join call')
 			}
 
-			if (this.isConnecting) {
+			if (this.isJoiningCall) {
 				return t('spreed', 'Connecting...')
 			}
 
@@ -345,8 +345,8 @@ export default {
 			return this.$store.getters.isInLobby
 		},
 
-		isConnecting() {
-			return this.$store.getters.isConnecting(this.token)
+		isJoiningCall() {
+			return this.$store.getters.isJoiningCall(this.token)
 		},
 
 		connectionFailed() {

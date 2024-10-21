@@ -33,6 +33,7 @@ import IconPhone from 'vue-material-design-icons/Phone.vue'
 import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
@@ -43,6 +44,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcLoadingIcon,
 		IconAccountMultiple,
 		IconLinkVariant,
 		IconPhone,
@@ -66,9 +68,12 @@ export default {
 	},
 
 	computed: {
-
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		isConnecting() {
+			return this.$store.getters.isConnecting(this.token)
 		},
 
 		conversation() {
@@ -116,7 +121,9 @@ export default {
 		},
 
 		emptyCallViewIcon() {
-			if (this.isPhoneConversation) {
+			if (this.isConnecting) {
+				return NcLoadingIcon
+			} else if (this.isPhoneConversation) {
 				return IconPhone
 			} else {
 				return this.isPublicConversation ? IconLinkVariant : IconAccountMultiple
@@ -124,6 +131,9 @@ export default {
 		},
 
 		title() {
+			if (this.isConnecting) {
+				return t('spreed', 'Connecting …')
+			}
 			if (this.isPhoneConversation) {
 				return t('spreed', 'Calling …')
 			}
@@ -134,6 +144,10 @@ export default {
 		},
 
 		message() {
+			if (this.isConnecting) {
+				return ''
+			}
+
 			if (this.isPasswordRequestConversation || this.isFileConversation) {
 				return ''
 			}
