@@ -50,6 +50,10 @@ export TEST_REMOTE_URL="http://localhost:8180/"
 
 OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "http://localhost:8080/"
+if [[ "$MAIN_SKELETON_DIR" != "" && -d $MAIN_SKELETON_DIR ]]; then
+	echo "Resetting custom skeletondirectory so that tests pass"
+	${ROOT_DIR}/occ config:system:delete skeletondirectory
+fi
 
 SKELETON_DIR=$(${ROOT_DIR}/occ config:system:get skeletondirectory)
 if [[ "$SKELETON_DIR" ]]; then
@@ -133,5 +137,10 @@ rm -rf ../../../spreedcheats
 
 wait $PHPPID1
 wait $PHPPID2
+
+echo ''
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Gracefully completed\033[0m"
+echo -e "\033[0;36m#\033[0m"
 
 exit $RESULT
