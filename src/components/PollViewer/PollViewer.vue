@@ -39,7 +39,7 @@
 					<div class="results__option-title">
 						<p>{{ option }}</p>
 						<p class="percentage">
-							{{ getVotePercentage(index) + '%' }}
+							{{ votePercentage[index] + '%' }}
 						</p>
 					</div>
 					<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
@@ -52,7 +52,7 @@
 						</p>
 					</div>
 					<NcProgressBar class="results__option-progress"
-						:value="getVotePercentage(index)"
+						:value="votePercentage[index]"
 						size="medium" />
 				</div>
 			</div>
@@ -125,6 +125,7 @@ import { POLL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
+import { countPollVotes } from '../../utils/countPollVotes.ts'
 
 export default {
 	name: 'PollViewer',
@@ -236,6 +237,11 @@ export default {
 
 		canEndPoll() {
 			return this.isPollOpen && this.selfIsOwnerOrModerator
+		},
+
+		votePercentage() {
+			const votes = Object.keys(Object(this.poll?.options)).map(index => this.poll?.votes['option-' + index] ?? 0)
+			return countPollVotes(votes, this.poll.numVoters)
 		},
 	},
 
@@ -352,13 +358,6 @@ export default {
 
 		getFilteredDetails(index) {
 			return (this.poll?.details || []).filter(item => item.optionId === index)
-		},
-
-		getVotePercentage(index) {
-			if (!this.poll?.votes['option-' + index] || !this.poll?.numVoters) {
-				return 0
-			}
-			return parseInt(this.poll?.votes['option-' + index] / this.poll?.numVoters * 100)
 		},
 	},
 }
