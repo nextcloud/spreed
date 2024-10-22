@@ -78,6 +78,12 @@
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
+					<NcActionLink v-if="supportPollDrafts" :href="exportPollURI" :download="exportPollFileName">
+						<template #icon>
+							<IconFileDownload :size="20" />
+						</template>
+						{{ t('spreed', 'Export draft to file') }}
+					</NcActionLink>
 					<NcActionButton class="critical" @click="endPoll">
 						{{ t('spreed', 'End poll') }}
 						<template #icon>
@@ -86,13 +92,21 @@
 					</NcActionButton>
 				</NcActions>
 			</div>
-			<div v-else-if="supportPollDrafts && isModerator" class="poll-modal__actions">
-				<NcButton type="tertiary" @click="createPollDraft">
-					<template #icon>
-						<IconFileEdit :size="20" />
-					</template>
-					{{ t('spreed', 'Save as draft') }}
-				</NcButton>
+			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
+				<NcActions force-menu>
+					<NcActionButton v-if="isModerator" @click="createPollDraft">
+						<template #icon>
+							<IconFileEdit :size="20" />
+						</template>
+						{{ t('spreed', 'Save as draft') }}
+					</NcActionButton>
+					<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+						<template #icon>
+							<IconFileDownload :size="20" />
+						</template>
+						{{ t('spreed', 'Export draft to file') }}
+					</NcActionLink>
+				</NcActions>
 			</div>
 		</div>
 		<NcLoadingIcon v-else class="poll-modal__loading" />
@@ -102,14 +116,15 @@
 <script>
 import { computed, ref } from 'vue'
 
+import IconFileDownload from 'vue-material-design-icons/FileDownload.vue'
 import IconFileEdit from 'vue-material-design-icons/FileEdit.vue'
 import FileLock from 'vue-material-design-icons/FileLock.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
-import { showSuccess } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -125,6 +140,7 @@ import { POLL } from '../../constants.js'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.js'
 import { usePollsStore } from '../../stores/polls.ts'
+import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
 
 export default {
 	name: 'PollViewer',
@@ -132,6 +148,7 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
+		NcActionLink,
 		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
 		NcModal,
@@ -140,6 +157,7 @@ export default {
 		PollVotersDetails,
 		// icons
 		FileLock,
+		IconFileDownload,
 		IconFileEdit,
 		PollIcon,
 	},
@@ -159,6 +177,14 @@ export default {
 		const poll = computed(() => pollsStore.getPoll(token.value, id.value))
 		const supportPollDrafts = computed(() => hasTalkFeature(token.value, 'talk-polls-drafts'))
 
+		const exportPollURI = computed(() => convertToJSONDataURI({
+			question: poll.value.question,
+			options: poll.value.options,
+			resultMode: poll.value.resultMode,
+			maxVotes: poll.value.maxVotes,
+		}))
+		const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
+
 		return {
 			isInCall: useIsInCall(),
 			pollsStore,
@@ -171,6 +197,8 @@ export default {
 			token,
 			poll,
 			supportPollDrafts,
+			exportPollURI,
+			exportPollFileName,
 		}
 	},
 
