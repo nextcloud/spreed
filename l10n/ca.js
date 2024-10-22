@@ -1623,6 +1623,7 @@ OC.L10N.register(
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "El navegador que utilitzeu no és totalment compatible amb Nextcloud Talk. Feu servir la darrera versió de Mozilla Firefox, Microsoft Edge, Google Chrome, Opera o Apple Safari.",
     "Conversation link copied to clipboard" : "L'enllaç de la conversa s'ha copiat al porta-retalls",
     "The link could not be copied" : "No s'ha pogut copiar l'enllaç",
+    "Error while parsing a PROPFIND error" : "S'ha produït un error en analitzar un error PROPFIND",
     "Sending signaling message has failed" : "No s'ha pogut enviar el missatge de senyalització",
     "Lost connection to signaling server. Trying to reconnect." : "S'ha perdut la connexió al servidor de senyalització. S'està intentant tornar a connectar.",
     "Lost connection to signaling server. Try to reload the page manually." : "S'ha perdut la connexió al servidor de senyalització. Proveu de tornar a carregar la pàgina manualment.",
