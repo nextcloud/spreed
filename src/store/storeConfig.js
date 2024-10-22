@@ -4,7 +4,6 @@
  */
 
 import actorStore from './actorStore.js'
-import audioRecorderStore from './audioRecorderStore.js'
 import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
 import messagesStore from './messagesStore.js'
@@ -14,7 +13,6 @@ import tokenStore from './tokenStore.js'
 export default {
 	modules: {
 		actorStore,
-		audioRecorderStore,
 		conversationsStore,
 		fileUploadStore,
 		messagesStore,
