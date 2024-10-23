@@ -204,9 +204,6 @@ export default {
 		},
 
 		fallbackLocalUrl() {
-			if (!this.file.mimetype.startsWith('image/') && !this.file.mimetype.startsWith('video/')) {
-				return undefined
-			}
 			return this.$store.getters.getLocalUrl(this.referenceId)
 		},
 
@@ -228,6 +225,7 @@ export default {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
+					localUrl: this.fallbackLocalUrl,
 				}
 			}
 			return {
