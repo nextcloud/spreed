@@ -127,7 +127,9 @@ const mutations = {
 			totalSize: file.size,
 			temporaryMessage,
 		 })
-		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
+		if (localUrl) {
+			Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
+		}
 	},
 
 	// Marks a given file as initialized (for retry)
@@ -244,8 +246,6 @@ const actions = {
 				localUrl = URL.createObjectURL(file)
 			} else if (isVoiceMessage) {
 				localUrl = file.localUrl
-			} else {
-				localUrl = OC.MimeType.getIconUrl(file.type)
 			}
 			// Create a unique index for each file
 			const date = new Date()
